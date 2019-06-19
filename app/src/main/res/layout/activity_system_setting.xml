@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="5dp"
+        android:text="@string/system_setting"
+        android:textColor="@color/black"
+        android:textSize="18sp" />
+
+    <!--<android.support.v4.widget.NestedScrollView-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusableInTouchMode="true">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:orientation="vertical">
+
+            <!--android:paddingLeft="50dp"-->
+            <!--android:paddingTop="30dp"-->
+
+            <!--<TextView-->
+            <!--style="@style/style_setting_tv_title"-->
+            <!--android:text="测试机器:"-->
+            <!--/>-->
+
+            <!--<TextView-->
+            <!--style="@style/style_setting_tv_title"-->
+            <!--android:text="测试项目:"-->
+            <!--/>-->
+
+            <TextView
+                style="@style/style_setting_tv_title"
+                android:text="测试名称:" />
+
+            <TextView
+                style="@style/style_setting_tv_title"
+                android:text="测试地点:" />
+
+            <TextView
+                style="@style/style_setting_tv_title"
+                android:text="服务器地址:" />
+
+            <TextView
+                style="@style/style_setting_tv_title"
+                android:text="主机号:" />
+
+            <TextView
+                style="@style/style_setting_tv_title"
+                android:text="成绩播报:" />
+
+            <TextView
+                style="@style/style_setting_tv_title"
+                android:text="实时上传:" />
+
+            <TextView
+                style="@style/style_setting_tv_title"
+                android:text="自动打印:" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:orientation="vertical">
+
+            <!--<Spinner-->
+            <!--android:id="@+id/sp_machine_name"-->
+            <!--style="@style/style_setting_tv_title"-->
+            <!--android:layout_width="150dp"-->
+            <!--android:gravity="center"-->
+            <!--/>-->
+
+            <!--<Spinner-->
+            <!--android:id="@+id/sp_item_name"-->
+            <!--style="@style/style_setting_tv_title"-->
+            <!--android:layout_width="150dp"-->
+            <!--android:gravity="center"-->
+            <!--/>-->
+
+            <EditText
+                android:id="@+id/et_test_name"
+                style="@style/style_setting_tv_title"
+                android:layout_width="150dp"
+                android:background="@drawable/edittext_bg"
+                android:gravity="center"
+                android:maxLines="1" />
+            <!--android:padding="5dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginLeft="20dp"-->
+            <!--android:layout_marginLeft="20dp"-->
+
+            <EditText
+                android:id="@+id/et_test_site"
+                style="@style/style_setting_tv_title"
+                android:layout_width="150dp"
+                android:background="@drawable/edittext_bg"
+                android:gravity="center"
+                android:maxLines="1" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/et_sever_ip"
+                    style="@style/style_setting_tv_title"
+                    android:layout_width="300dp"
+                    android:background="@drawable/edittext_bg"
+                    android:gravity="center"
+                    android:inputType="textUri"
+                    android:maxLines="1" />
+
+                <TextView
+                    android:id="@+id/btn_bind"
+                    style="@style/style_setting_tv_title"
+                    android:layout_marginLeft="15dp"
+                    android:background="@drawable/edittext_bg"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="绑定" />
+                <!--android:layout_width="80dp"-->
+                <!--android:layout_height="30dp"-->
+
+                <TextView
+                    android:id="@+id/btn_default"
+                    style="@style/style_setting_tv_title"
+                    android:layout_marginLeft="15dp"
+                    android:background="@drawable/edittext_bg"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="默认" />
+                <!--android:layout_width="80dp"-->
+                <!--android:layout_height="30dp"-->
+
+            </LinearLayout>
+
+            <Spinner
+                android:id="@+id/sp_host_id"
+                style="@style/style_setting_tv_title"
+                android:layout_width="100dp" />
+
+
+            <Switch
+                android:id="@+id/sw_auto_broadcast"
+                style="@style/style_setting_tv_title" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Switch
+                    android:id="@+id/sw_rt_upload"
+                    style="@style/style_setting_tv_title" />
+
+                <TextView
+                    android:id="@+id/btn_net_setting"
+                    style="@style/style_setting_tv_title"
+                    android:layout_marginLeft="15dp"
+                    android:background="@drawable/edittext_bg"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:padding="1dp"
+                    android:text="网络设置" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Switch
+                    android:id="@+id/sw_auto_print"
+                    style="@style/style_setting_tv_title" />
+
+                <!--<TextView-->
+                <!--android:id="@+id/btn_print_setting"-->
+                <!--style="@style/style_setting_tv_title"-->
+                <!--android:layout_marginLeft="15dp"-->
+                <!--android:background="@drawable/edittext_bg"-->
+                <!--android:gravity="center"-->
+                <!--android:padding="1dp"-->
+                <!--android:maxLines="1"-->
+                <!--android:text="打印设置"-->
+                <!--/>-->
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!--</android.support.v4.widget.NestedScrollView>-->
+
+</LinearLayout>

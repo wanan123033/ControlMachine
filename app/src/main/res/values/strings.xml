@@ -1,0 +1,69 @@
+<resources>
+    <string name="app_name">智能主机(体测版)</string>
+    <string name="jump_rope">跳绳</string>
+    <string name="broad_Jump">跳远</string>
+    <string name="host_style">体测版本</string>
+    <string name="jump_rope_setting">1.跳绳设置</string>
+    <string name="hand_setting">2.手柄配对</string>
+    <string name="jump_rope_start">3.开始测试</string>
+    <string name="rope_setting">跳绳设置</string>
+    <string name="rope_test_time">测试时间</string>
+    <string name="hand_max">手柄个数</string>
+    <string name="studentName">姓名 :</string>
+    <string name="studentGender">性别 :</string>
+    <string name="studentCode">学号 :</string>
+    <string name="grades">成绩 :</string>
+    <string name="start">开始</string>
+    <string name="stop_using">暂停使用</string>
+    <string name="end">结束</string>
+
+    <string name="service_bind_fail">aidl service bind failed</string>
+    <string name="service_bind_success">aidl service bind success</string>
+    <string name="stand_jump">立定跳远</string>
+    <string name="start_test">开始测试</string>
+    <string name="system_setting">系统设置</string>
+    <string name="data_manage">数据管理</string>
+    <string name="title_activity_system_setting">系统设置</string>
+    <string name="title_activity_data_manage">数据管理</string>
+    <string name="title_activity_about">关于</string>
+
+    <string name="help"><b>帮助:</b></string>
+
+    <string name="help_content"><b>项目切换和项目设置:</b>进入应用时,通过点击界面右上角菜单选择\"项目切换\"或\"项目设置\"。
+    \n\n<b>检录:</b>进入应用时,可以通过条码扫描/刷IC卡/身份证或输入考号/身份证号进行学生信息检录,选择学生进行测试。
+    \n<b>考号检索支持模糊查询(最小输入字符个数>3)</b>
+    \n\n<b>犯规:</b>在测试过程中,机器检测到犯规,会自动记录。如果机器未检测到犯规,但是实际存在犯规,老师也可以通过点击\"犯规\"按钮,将本次成绩做犯规处理。
+    \n\n<b>退出测试:</b>获得成绩10s后会自动退出测试;测试过程中,老师可以点击\"结束测试\"按钮,结束本次测试。
+    \n\n<b>成绩上传:</b>打开\"成绩实时上传\"时,测试完成会自动上传成绩;关闭时需要手动进入\"数据管理\"中进行成绩上传;如果成绩自动上传失败,可在\"数据管理\"中手动上传。
+    \n\n<b>测试信息查询:</b>在\"数据管理\"中选择\"信息检索\",可以按条件检索学生成绩信息,也可以通过刷IC卡/身份证/条形码进行检索。检索到学生成绩信息后,可以选择指定学生成绩信息进行上传。
+    </string>
+
+    <string name="version_info"><b>版本信息:</b></string>
+    <string name="title_activity_check">CheckActivity</string>
+    <string name="title_activity_splash_screen">控制主机</string>
+    <string name="title_activity_data_display">DataDisplayActivity</string>
+    <string name="title_activity_sargent_jump">SargentJumpActivity</string>
+
+    <array name="sargent_jump_test_mode">
+        <item>原地</item>
+        <item>助跑</item>
+    </array>
+
+    <array name="array_time_out_deal">
+        <item>停止</item>
+        <item>不计数</item>
+    </array>
+
+    <string-array name="base_line_set">
+        <item>55</item>
+        <item>65</item>
+        <item>75</item>
+    </string-array>
+
+
+    <string name="student_Name">姓名:%1$s</string>
+    <string name="student_Gender">性别:%1$s</string>
+    <string name="student_Code">学号:%1$s</string>
+    <string name="student_Result">成绩:%1$s</string>
+    <string name="student_Portrait">头像:</string>
+</resources>

@@ -1,0 +1,269 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:windowSoftInputMode="stateHidden">
+
+    <LinearLayout
+        android:id="@+id/view_choose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="2dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="成绩状态:"
+            android:textSize="18sp" />
+
+        <RadioGroup
+            android:id="@+id/rg_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:orientation="horizontal">
+            <!--android:checked="true"-->
+
+        </RadioGroup>
+
+        <RadioButton
+            android:id="@+id/rb_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="所有" />
+
+        <CheckBox
+            android:id="@+id/cb_un_upload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="未上传" />
+
+        <CheckBox
+            android:id="@+id/cb_uploaded"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="已上传" />
+
+        <CheckBox
+            android:id="@+id/cb_tested"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="已测" />
+
+        <CheckBox
+            android:id="@+id/cb_un_tested"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="未测" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/view_seach"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/view_choose"
+        android:orientation="vertical"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#ffffff" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:orientation="horizontal"
+            android:focusableInTouchMode="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="学号："
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/et_input_text"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_weight="2"
+                android:background="@drawable/edit_search_white_bg"
+                android:inputType="number"
+                android:maxLines="1"
+                android:paddingLeft="5dp"
+                android:textSize="16sp" />
+                <!--android:minEms="6"-->
+
+            <Button
+                android:id="@+id/btn_query"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/btn_click_bg_selected"
+                android:text="检索"
+                android:textSize="15sp" />
+
+            <!--<ImageButton-->
+                <!--android:id="@+id/imgbtn_scan"-->
+                <!--android:layout_width="30dp"-->
+                <!--android:layout_height="30dp"-->
+                <!--android:layout_marginLeft="30dp"-->
+                <!--android:layout_marginRight="5dp"-->
+                <!--android:adjustViewBounds="true"-->
+                <!--android:background="@drawable/scan"-->
+                <!--android:scaleType="centerCrop" />-->
+
+            <Button
+                android:id="@+id/btn_upload"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:background="@drawable/btn_click_bg_unselected"
+                android:text="上传"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:background="#cdcdcd" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/view_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+
+            android:background="@color/black" />
+
+        <TextView
+            android:id="@+id/txt_stu_sumNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="50dp"
+            android:text="总数：" />
+
+        <TextView
+            android:id="@+id/txt_stu_manNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="50dp"
+            android:layout_toRightOf="@+id/txt_stu_sumNumber"
+            android:text="男:" />
+
+        <TextView
+            android:id="@+id/txt_stu_womemNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="50dp"
+            android:layout_toRightOf="@+id/txt_stu_manNumber"
+            android:text="女:" />
+
+        <Button
+            android:layout_width="80dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="50dp"
+            android:background="@drawable/btn_click_bg_unselected"
+            android:text="打印"
+            android:textSize="14sp"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/view_data_head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/view_seach"
+        android:background="#cdcdcd"
+        android:orientation="horizontal"
+        android:paddingBottom="1dp">
+
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="1dp"
+            android:layout_weight="1.5"
+            android:background="#ffffff"
+            android:gravity="center"
+            android:text="学号" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="1dp"
+            android:layout_weight="1.5"
+            android:background="#ffffff"
+            android:gravity="center"
+            android:text="姓名" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="1dp"
+            android:layout_weight="1"
+            android:background="#ffffff"
+            android:gravity="center"
+            android:text="性别" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="1dp"
+            android:layout_weight="1"
+            android:background="#ffffff"
+            android:gravity="center"
+            android:text="测试状态" />
+
+        <CheckBox
+            android:id="@+id/cb_select_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <!--<TextView-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_marginLeft="1dp"-->
+        <!--android:layout_weight="1"-->
+        <!--android:background="#ffffff"-->
+        <!--android:gravity="center"-->
+        <!--android:text="成绩"/>-->
+    </LinearLayout>
+
+    <com.feipulai.common.view.SwipeRefreshView
+        android:id="@+id/swiperefresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/view_bottom"
+        android:layout_below="@+id/view_data_head">
+
+        <ListView
+            android:id="@+id/lv_results"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </ListView>
+
+    </com.feipulai.common.view.SwipeRefreshView>
+
+</RelativeLayout>

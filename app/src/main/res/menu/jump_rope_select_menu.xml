@@ -1,0 +1,27 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/select_project_switch"
+        android:title="项目切换"
+        android:orderInCategory="80"
+        android:showAsAction="always"
+        />
+    <!--android:title="项目切换"-->
+    <item
+        android:id="@+id/select_machine_setting"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:title="系统设置"/>
+    <!--android:title="系统设置"-->
+    <item
+        android:id="@+id/select_data_manage_setting"
+        android:orderInCategory="110"
+        android:showAsAction="always"
+        android:title="数据管理"/>
+    <!--<item-->
+    <!--android:id="@+id/led_setting"-->
+    <!--android:orderInCategory="110"-->
+    <!--android:showAsAction="always"-->
+    <!--android:title="Led设置"/>-->
+
+</menu>

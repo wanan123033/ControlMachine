@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="group_btn_function">
+        <item>设备匹配</item>
+        <item>切换分组</item>
+        <item>故障更换</item>
+        <item>开始计数</item>
+        <item>暂停使用</item>
+        <item>显示屏</item>
+        <item>删除</item>
+        <item>全删除</item>
+    </array>
+    <array name="main_function">
+        <item>显示屏</item>
+        <item>系统</item>
+        <item>数据</item>
+        <item>查询</item>
+        <item>设置</item>
+        <item>打印</item>
+    </array>
+</resources>

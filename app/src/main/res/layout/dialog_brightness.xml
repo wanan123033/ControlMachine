@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="屏幕亮度"
+        android:textSize="14sp"/>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/tv_decrease"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@mipmap/minus"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:textSize="14sp"/>
+
+        <SeekBar
+            android:id="@+id/skb_brightness"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="255"/>
+
+        <ImageButton
+            android:id="@+id/tv_increase"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:background="@mipmap/plus"
+            android:textSize="14sp"/>
+
+    </LinearLayout>
+
+</LinearLayout>

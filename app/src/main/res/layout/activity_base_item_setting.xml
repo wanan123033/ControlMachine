@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:myapp="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context="com.feipulai.host.activity.base.BaseItemSettingActivity">
+
+    <TextView
+        android:id="@+id/tv_device_self_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:background="@drawable/bg_selector"
+        android:paddingBottom="8dp"
+        android:paddingLeft="18dp"
+        android:paddingRight="18dp"
+        android:paddingTop="8dp"
+        android:text="终端自检" />
+
+
+    <TextView
+        android:id="@+id/tv_standard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_device_self_check"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/bg_selector"
+        android:enabled="true"
+        android:paddingBottom="8dp"
+        android:paddingLeft="18dp"
+        android:paddingRight="18dp"
+        android:paddingTop="8dp"
+        android:text="查看评分标准" />
+
+    <com.feipulai.host.view.NumPickerView
+        android:id="@+id/ll_device_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_standard"
+        myapp:title="终端数量：" />
+
+    <!-- <com.feipulai.host.view.NumSelectView
+         android:layout_below="@+id/tv_standard"
+         android:id="@+id/ll_device_time"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         myapp:title = "终端数量："/>-->
+    <Button
+        android:id="@+id/btn_terminal_matching"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_below="@id/tv_standard"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@id/ll_device_time"
+        android:background="@drawable/btn_click_bg"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:text="终端匹配"
+        android:visibility="gone" />
+
+    <!-- <com.feipulai.host.view.NumSelectView
+         android:layout_below="@+id/ll_device_time"
+         android:id="@+id/ll_test_time"
+         myapp:title ="测试次数："
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"/>-->
+    <com.feipulai.host.view.NumPickerView
+        android:id="@+id/ll_test_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_device_time"
+        myapp:title="测试次数：" />
+
+    <TextView
+        android:id="@+id/txt_stamdjump"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_test_time"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:text="测量杆数:"
+        android:visibility="gone"
+        android:textSize="16sp" />
+
+    <Spinner
+        android:id="@+id/sp_stamdjump_points"
+        style="@style/style_setting_tv_title"
+        android:layout_width="100dp"
+        android:layout_below="@+id/ll_test_time"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="@dimen/dp_10"
+        android:visibility="gone"
+        android:layout_toRightOf="@+id/txt_stamdjump" />
+
+    <LinearLayout
+        android:id="@+id/ll_begin_point"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="40dp"
+        android:layout_below="@+id/ll_test_time"
+        android:layout_marginTop="@dimen/dp_10"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_gravity="center_vertical"
+            style="@style/style_free_test"
+            android:text="初始距离" />
+
+        <EditText
+            android:layout_gravity="center_vertical"
+            android:id="@+id/et_begin_point"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:inputType="number"
+            android:minWidth="50dp" />
+
+        <TextView
+            android:layout_gravity="center_vertical"
+            style="@style/style_free_test"
+            android:text="cm" />
+    </LinearLayout>
+</RelativeLayout>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_battery"
+    android:layout_width="28dp"
+    android:layout_height="13dp"
+    android:paddingBottom="1.3dp"
+    android:paddingLeft="1.3dp"
+    android:paddingRight="3.7dp"
+    android:paddingTop="1.3dp">
+
+    <ImageView
+        android:id="@+id/iv_battery_state"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
+
+    <ImageView
+        android:id="@+id/iv_charge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:paddingRight="2dp"
+        android:src="@mipmap/common_ic_battery_white_charge"
+        android:visibility="gone"/>
+
+</RelativeLayout>

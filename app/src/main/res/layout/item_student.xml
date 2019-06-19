@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="320dp">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/view_bottom"
+        android:layout_centerInParent="true">
+
+        <ImageView
+            android:id="@+id/iv_avatar"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/icon_head_photo" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@id/iv_avatar"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_stu_num"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                tools:text="学号：1234567" />
+
+            <TextView
+                android:id="@+id/tv_stu_sex"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                tools:text="性别：男" />
+
+            <TextView
+                android:id="@+id/tv_stu_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                tools:text="姓名：张三" />
+
+            <TextView
+                android:id="@+id/tv_stu_mark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                tools:text="成绩：" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/view_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="20dp"
+        android:gravity="right">
+
+        <TextView
+            android:id="@+id/tv_device_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/dp_10"
+            android:text="设备状态"
+            android:textColor="#33CC00"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/iv_device_state"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_radio_checked" />
+    </LinearLayout>
+</RelativeLayout>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/led_connect"
+        android:icon="@mipmap/ic_launcher"
+        android:title="LED连接"/>
+
+    <item
+        android:id="@+id/led_bright_up"
+        android:icon="@mipmap/ic_launcher"
+        android:title="LED屏亮"/>
+
+    <item
+        android:id="@+id/led_bright_down"
+        android:icon="@mipmap/ic_launcher"
+        android:title="LED屏暗"/>
+
+    <item
+        android:id="@+id/led_exam"
+        android:icon="@mipmap/ic_launcher"
+        android:title="LED屏自检"/>
+</menu>

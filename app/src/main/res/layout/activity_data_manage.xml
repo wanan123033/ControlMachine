@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:custom="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <com.github.lzyzsd.circleprogress.DonutProgress
+        android:id="@+id/donut_progress"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="15dp"
+        custom:donut_finished_color="@color/colorHost"
+        custom:donut_finished_stroke_width="3dp"
+        custom:donut_max="100"
+        custom:donut_progress="30"
+        custom:donut_text="30%"
+        custom:donut_text_color="@color/black"
+        custom:donut_text_size="12sp"
+        custom:donut_unfinished_stroke_width="3dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/donut_progress"
+        android:layout_below="@+id/donut_progress"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="10dp"
+        android:text="存储"
+        android:textColor="@color/black"/>
+
+    <TextView
+        android:id="@+id/tv_setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:text="数据管理"
+        android:textColor="@color/black"
+        android:textSize="18sp"/>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tv_setting">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_data_download"
+                    android:layout_width="120dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginRight="100dp"
+                    android:background="@drawable/btn_click_bg"
+                    android:text="名单下载"
+                    android:textSize="16sp"/>
+
+                <Button
+                    android:id="@+id/btn_data_import"
+                    android:layout_width="120dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/btn_click_bg"
+                    android:text="名单导入"
+                    android:textSize="16sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/dp_10"
+                android:layout_marginTop="@dimen/dp_10"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_portrait_download"
+                    android:layout_width="120dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginRight="100dp"
+                    android:background="@drawable/btn_click_bg"
+                    android:text="头像下载"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"/>
+
+                <Button
+                    android:id="@+id/btn_portrait_import"
+                    android:layout_width="120dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/btn_click_bg"
+                    android:text="头像导入"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/black"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/dp_10"
+                android:layout_marginTop="@dimen/dp_10"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_data_export"
+                    android:layout_width="120dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/btn_click_bg"
+                    android:text="成绩导出"
+                    android:textSize="16sp"/>
+
+                <Button
+                    android:id="@+id/btn_data_backup"
+                    android:layout_width="120dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="15dp"
+                    android:background="@drawable/btn_click_bg"
+                    android:text="数据备份"
+                    android:textSize="16sp"/>
+
+                <Button
+                    android:id="@+id/btn_data_restore"
+                    android:layout_width="120dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="15dp"
+                    android:background="@drawable/btn_click_bg"
+                    android:text="数据恢复"
+                    android:textSize="16sp"/>
+
+                <Button
+
+                    android:id="@+id/btn_data_retrieve"
+                    android:layout_width="120dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="15dp"
+                    android:background="@drawable/btn_click_bg"
+                    android:text="数据查看"
+                    android:textSize="16sp"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/black"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/dp_10"
+                android:layout_marginTop="@dimen/dp_10"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_result_delete"
+                    android:layout_width="120dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/btn_click_bg"
+                    android:text="删除成绩"
+                    android:textSize="16sp"/>
+
+                <Button
+                    android:id="@+id/btn_portrait_delete"
+                    android:layout_width="120dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="25dp"
+                    android:background="@drawable/btn_click_bg"
+                    android:text="删除头像"
+
+                    android:textSize="16sp"/>
+
+                <Button
+                    android:id="@+id/btn_data_clear"
+                    android:layout_width="120dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="25dp"
+                    android:background="@drawable/btn_click_bg"
+                    android:text="数据清空"
+                    android:textSize="16sp"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/black"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/dp_10"
+                android:layout_marginTop="@dimen/dp_10"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_scoring_import"
+                    android:layout_width="120dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/btn_click_bg"
+                    android:text="导入评分标准"
+
+                    android:textSize="16sp"/>
+
+                <Button
+                    android:id="@+id/btn_scoring_delete"
+                    android:layout_width="120dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="25dp"
+                    android:background="@drawable/btn_click_bg"
+                    android:text="删除评分标准"
+
+                    android:textSize="16sp"/>
+
+                <Button
+                    android:id="@+id/btn_scoring_retrieve"
+                    android:layout_width="120dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="25dp"
+                    android:background="@drawable/btn_click_bg"
+                    android:text="查看评分标准"
+                    android:textSize="16sp"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/black"/>
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+    <!--<com.feipulai.host.view.FileSelectView-->
+        <!--android:id="@+id/fileListView"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:background="#FFFFFFFF"-->
+        <!--android:visibility="gone"/>-->
+
+</RelativeLayout>

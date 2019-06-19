@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="Theme">
+        <!--<attr name="colorPrimary" format="color|reference" />-->
+    </declare-styleable>
+
+    <declare-styleable name="select_num">
+        <attr name="title" format="string" />
+        <attr name="title_color" format="color" />
+        <attr name="title_drawable" format="reference|integer" />
+    </declare-styleable>
+</resources>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <RelativeLayout
+        android:id="@+id/rl_gv_pair"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/tv_gv_line"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/tv_device_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/shape_round_textview"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
+
+
+    <!--<TextView-->
+    <!--android:id="@+id/tv_gv_line"-->
+    <!--android:layout_width="1dp"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:background="@color/sbc_header_text"-->
+    <!--android:visibility="gone"/>-->
+
+    <TextView
+        android:id="@+id/tv_stu_info"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@+id/tv_gv_line"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textSize="18sp" />
+
+
+</LinearLayout>

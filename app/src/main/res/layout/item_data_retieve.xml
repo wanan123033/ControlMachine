@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="#cdcdcd"
+              android:descendantFocusability="afterDescendants"
+              android:orientation="horizontal"
+              android:paddingBottom="1dp">
+    <!-- android:descendantFocusability="afterDescendants"
+    设置ViewGroup和子View之间的焦点处理方式,不然setOnItemClickListener不管用
+    -->
+
+
+    <!--android:focusable="false"这里必须设置为false,不然setOnItemClickListener不管用-->
+
+    <TextView
+        android:id="@+id/tv_stuCode"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="1dp"
+        android:layout_weight="1.5"
+        android:background="#ffffff"
+        android:gravity="center"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/tv_stuName"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="1dp"
+        android:layout_weight="1.5"
+        android:background="#ffffff"
+        android:gravity="center"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/tv_sex"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="1dp"
+        android:layout_weight="1"
+        android:background="#ffffff"
+        android:gravity="center"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/tv_testState"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="1dp"
+        android:layout_weight="1"
+        android:background="#ffffff"
+        android:gravity="center"
+        android:textSize="18sp"/>
+
+    <!--<TextView-->
+    <!--android:id="@+id/tv_score"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_marginLeft="1dp"-->
+    <!--android:layout_weight="1"-->
+    <!--android:background="#ffffff"-->
+    <!--android:gravity="center"-->
+    <!--android:textSize="18sp"/>-->
+    <CheckBox
+        android:id="@+id/cb_select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:focusable="false"/>
+</LinearLayout>

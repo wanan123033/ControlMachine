@@ -1,0 +1,305 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center_horizontal"
+        android:textSize="18sp"/>
+
+    <LinearLayout
+        android:id="@+id/ll_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusableInTouchMode="true"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp">
+
+        <com.feipulai.host.view.StuSearchEditText
+            android:id="@+id/et_input_text"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_weight="1"
+            android:background="@drawable/edit_search_bg"
+            android:cursorVisible="true"
+            android:drawablePadding="5dp"
+            android:drawableStart="@mipmap/icon_search"
+            android:gravity="center"
+            android:hint="请输入考号"
+            android:inputType="number"
+            android:paddingEnd="10dp"
+            android:paddingStart="15dp"
+            android:singleLine="true"
+            android:textCursorDrawable="@drawable/cursor_color"/>
+        <!--android:digits="0123456789X"-->
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_weight="1"
+        >
+
+        <ListView
+            android:id="@+id/lv_results"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@color/sbc_header_text"
+            android:dividerHeight="1dp"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:id="@+id/ll_test"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/dp_10"
+            android:orientation="vertical"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="100dp"
+                        android:layout_height="150dp"
+                        android:src="@drawable/default_head_portrait"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        >
+
+                        <TextView
+                            android:layout_width="50dp"
+                            android:layout_height="25dp"
+                            android:gravity="center"
+                            android:text="学号:"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"/>
+
+                        <TextView
+                            android:id="@+id/tv_student_code"
+                            android:layout_width="wrap_content"
+                            android:layout_height="25dp"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        >
+
+                        <TextView
+                            android:layout_width="50dp"
+                            android:layout_height="25dp"
+                            android:gravity="center"
+                            android:text="姓名:"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"/>
+
+                        <TextView
+                            android:id="@+id/tv_student_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="25dp"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        >
+
+                        <TextView
+                            android:layout_width="50dp"
+                            android:layout_height="25dp"
+                            android:gravity="center"
+                            android:text="性别:"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"/>
+
+                        <TextView
+                            android:id="@+id/tv_gender"
+                            android:layout_width="wrap_content"
+                            android:layout_height="25dp"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        >
+
+                        <TextView
+                            android:layout_width="50dp"
+                            android:layout_height="25dp"
+                            android:gravity="center"
+                            android:text="身高:"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"/>
+
+                        <TextView
+                            android:id="@+id/tv_exist_height"
+                            android:layout_width="wrap_content"
+                            android:layout_height="25dp"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        >
+
+                        <TextView
+                            android:layout_width="50dp"
+                            android:layout_height="25dp"
+                            android:gravity="center"
+                            android:text="体重:"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"/>
+
+                        <TextView
+                            android:id="@+id/tv_exist_weight"
+                            android:layout_width="wrap_content"
+                            android:layout_height="25dp"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/black"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="测试结果"
+                android:textSize="18sp"
+                />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:orientation="horizontal"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:padding="5dp"
+                    android:text="身高:"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/tv_height_result"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:maxLines="1"
+                    android:padding="5dp"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:padding="5dp"
+                    android:text="    体重:"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/tv_weight_result"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:maxLines="1"
+                    android:padding="5dp"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"/>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_confirm"
+                android:layout_width="90dp"
+                android:layout_height="45dp"
+                android:layout_margin="20dp"
+                android:background="@drawable/btn_click_bg"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="确认"
+                android:layout_gravity="right"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <!--<TextView-->
+    <!--android:id="@+id/tv_led_setting"-->
+    <!--android:layout_width="90dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_centerVertical="true"-->
+    <!--android:layout_alignParentRight="true"-->
+    <!--android:background="@drawable/btn_click_bg"-->
+    <!--android:gravity="center"-->
+    <!--android:layout_margin="20dp"-->
+    <!--android:padding="8dp"-->
+    <!--android:text="LED显示屏"/>-->
+
+    <!--<Button-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:onClick="test"-->
+        <!--android:text="测试"-->
+        <!--android:textSize="18sp"/>-->
+
+
+</LinearLayout>

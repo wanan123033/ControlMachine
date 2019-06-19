@@ -1,0 +1,147 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:background="@drawable/circle_corner_button"
+        android:padding="3dp"
+        android:text="姓名:"
+        android:textColor="@color/white"/>
+
+    <TextView
+        android:id="@+id/tv_stuName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/name"
+        android:layout_toRightOf="@id/name"
+        android:padding="3dp"
+        android:text="111"
+        android:textColor="@color/black"/>
+
+    <TextView
+        android:id="@+id/stuCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/name"
+        android:layout_marginLeft="200dp"
+        android:background="@drawable/circle_corner_button"
+        android:padding="3dp"
+        android:text="考号:"
+        android:textColor="@color/white"/>
+
+    <TextView
+        android:id="@+id/tv_stuCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/stuCode"
+        android:layout_alignBottom="@+id/stuCode"
+        android:layout_toEndOf="@+id/stuCode"
+        android:padding="3dp"
+        android:text="111"
+        android:textColor="@color/black"/>
+
+    <TextView
+        android:id="@+id/sex"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/name"
+        android:layout_below="@+id/name"
+        android:background="@drawable/circle_corner_button"
+        android:padding="3dp"
+        android:text="性别:"
+        android:textColor="@color/white"/>
+
+    <TextView
+        android:id="@+id/tv_sex"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/sex"
+        android:layout_alignBottom="@+id/sex"
+        android:layout_toEndOf="@+id/sex"
+        android:padding="3dp"
+        android:text="111"
+        android:textColor="@color/black"/>
+
+    <TextView
+        android:id="@+id/idcard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/name"
+        android:layout_below="@+id/sex"
+        android:layout_marginTop="3dp"
+        android:background="@drawable/circle_corner_button"
+        android:padding="3dp"
+        android:text="身份证号:"
+        android:textColor="@color/white"/>
+
+    <com.feipulai.host.view.IDTextView
+        android:id="@+id/tvidcard_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/idcard"
+        android:layout_alignTop="@+id/idcard"
+        android:layout_toRightOf="@id/idcard"
+        android:padding="3dp"
+        android:text="111"
+        android:textColor="@color/black"/>
+
+    <TextView
+        android:id="@+id/grade"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/name"
+        android:layout_below="@id/idcard"
+        android:layout_marginTop="3dp"
+        android:background="@drawable/circle_corner_button"
+        android:padding="3dp"
+        android:text="年级:"
+        android:textColor="@color/white"/>
+
+    <TextView
+        android:id="@+id/tv_gradename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/grade"
+        android:layout_alignTop="@+id/grade"
+        android:layout_toRightOf="@id/grade"
+        android:padding="3dp"
+        android:text="111"
+        android:textColor="@color/black"/>
+
+    <TextView
+        android:id="@+id/classes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/stuCode"
+        android:layout_alignTop="@id/grade"
+        android:background="@drawable/circle_corner_button"
+        android:padding="3dp"
+        android:text="班级:"
+        android:textColor="@color/white"/>
+
+    <TextView
+        android:id="@+id/tv_classname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/grade"
+        android:layout_alignTop="@+id/grade"
+        android:layout_toRightOf="@id/classes"
+        android:padding="3dp"
+        android:text="111"
+        android:textColor="@color/black"/>
+
+    <ImageView
+        android:id="@+id/stu_picture"
+        android:layout_width="120dp"
+        android:layout_height="130dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="15dp"
+        android:background="#00ff99"
+        android:scaleType="centerCrop"
+        android:src="@drawable/default_head_portrait"/>
+
+</RelativeLayout>
