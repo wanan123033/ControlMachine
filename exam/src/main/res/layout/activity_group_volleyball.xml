@@ -1,0 +1,282 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_testing_pairs"
+        android:layout_width="267dp"
+        android:layout_height="match_parent"
+        android:background="@color/white" />
+
+    <View
+        android:layout_width="8dp"
+        android:layout_height="match_parent"
+        android:background="@color/grey_light" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="128dp"
+                    android:layout_height="38dp"
+                    android:layout_marginLeft="30dp"
+                    android:src="@mipmap/icon_test_logo" />
+
+                <TextView
+                    android:id="@+id/tv_group_name"
+                    android:layout_width="360dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/icon_test_result_bg"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tv_led_setting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="21dp"
+                    android:layout_toLeftOf="@+id/tv_start_test"
+                    android:background="@color/colorAccent"
+                    android:drawableLeft="@mipmap/icon_led_setting"
+                    android:drawablePadding="6dp"
+                    android:gravity="center"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:text="外接屏幕"
+                    android:textColor="@color/white"
+                    android:textSize="20dp" />
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="276dp"
+                android:background="#313131">
+
+                <TextView
+                    android:id="@+id/tv_result"
+                    android:layout_width="362dp"
+                    android:layout_height="154dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="40dp"
+                    android:background="@mipmap/icon_test_result_bg"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="61sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:background="@mipmap/icon_device_bg"
+                    android:gravity="right"
+                    android:padding="10dp">
+
+                    <CheckBox
+                        android:id="@+id/cb_device_state"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/dp_10"
+                        android:button="@null"
+                        android:checked="true"
+                        android:drawableLeft="@drawable/cb_device_state"
+                        android:drawablePadding="10dp"
+                        android:enabled="false"
+                        android:paddingLeft="35dp"
+                        android:text="设备状态"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_test_result"
+                    android:layout_width="579dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:overScrollMode="never" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_start_test"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_margin="5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/icon_btn_blue_bg"
+                        android:gravity="center"
+                        android:text="开始测试"
+                        android:textColor="@color/white"
+                        android:textSize="22sp"
+                        android:visibility="gone" />
+
+                    <!--<TextView-->
+                    <!--android:id="@+id/tv_exit_test"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="0dp"-->
+                    <!--android:layout_margin="5dp"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:background="@drawable/icon_btn_blue_bg"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="退出测试"-->
+                    <!--android:textColor="@color/white"-->
+                    <!--android:textSize="22sp"-->
+                    <!--android:visibility="gone" />-->
+
+
+                    <TextView
+                        android:id="@+id/tv_stop_test"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_margin="5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/icon_btn_blue_bg"
+                        android:gravity="center"
+                        android:text="结束测试"
+                        android:textColor="@color/white"
+                        android:textSize="22sp"
+                        android:visibility="gone" />
+
+
+                    <TextView
+                        android:id="@+id/tv_time_count"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_margin="10dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_count_text"
+                        android:gravity="center"
+                        android:padding="5dp"
+                        android:textSize="40sp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tv_punish"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_margin="5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/icon_btn_blue_bg"
+                        android:gravity="center"
+                        android:text="判罚"
+                        android:textColor="@color/white"
+                        android:textSize="22sp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tv_confirm"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_margin="5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/icon_btn_blue_bg"
+                        android:gravity="center"
+                        android:text="确定"
+                        android:textColor="@color/white"
+                        android:textSize="22sp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tv_abandon_test"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_margin="5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/icon_btn_blue_bg"
+                        android:gravity="center"
+                        android:text="放弃测试"
+                        android:textColor="@color/white"
+                        android:textSize="22sp"
+                        android:visibility="gone" />
+
+                    <!--<TextView-->
+                    <!--android:id="@+id/tv_finish_test"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="0dp"-->
+                    <!--android:layout_margin="5dp"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:background="@drawable/icon_btn_blue_bg"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="测试完成"-->
+                    <!--android:textColor="@color/white"-->
+                    <!--android:textSize="22sp"-->
+                    <!--android:visibility="gone" />-->
+
+                    <!--<TextView-->
+                    <!--android:id="@+id/tv_next"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="0dp"-->
+                    <!--android:layout_margin="5dp"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:background="@drawable/icon_btn_blue_bg"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="下一位"-->
+                    <!--android:textColor="@color/white"-->
+                    <!--android:textSize="22sp"-->
+                    <!--android:visibility="gone" />-->
+
+                    <TextView
+                        android:id="@+id/tv_print"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_margin="5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/icon_btn_blue_bg"
+                        android:gravity="center"
+                        android:text="打印"
+                        android:textColor="@color/white"
+                        android:textSize="22sp"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/lv_results"
+            android:layout_width="321dp"
+            android:layout_height="260dp"
+            android:layout_marginLeft="190dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/btn_bg_white"
+            android:divider="@color/sbc_header_text"
+            android:dividerHeight="1dp"
+            android:paddingBottom="@dimen/dp_10"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="@dimen/dp_10"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+</LinearLayout>

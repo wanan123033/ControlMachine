@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/icon_white_bg">
+
+    <ProgressBar
+        android:id="@+id/progress_storage"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="133dp"
+        android:layout_height="4dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="34dp"
+        android:background="@color/black_T20"
+        android:max="100"
+        android:progress="20"
+        android:progressDrawable="@drawable/progress_bg" />
+
+    <TextView
+        android:id="@+id/txt_storage_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/progress_storage"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="34dp"
+        android:layout_marginTop="10dp"
+        android:text="总容量4GB剩余2GB"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sp_16" />
+
+    <LinearLayout
+        android:layout_width="602dp"
+        android:layout_height="405dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/btn_bg_white"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingLeft="100dp"
+        android:paddingRight="100dp"
+        android:paddingTop="22dp">
+
+
+        <com.yhy.gvp.widget.GridViewPager
+            android:id="@+id/grid_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="360dp"
+            app:num_columns="3"
+            app:page_size="6" />
+
+        <net.lucode.hackware.magicindicator.MagicIndicator
+            android:id="@+id/indicator_container"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:text="数据管理"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
+
+</RelativeLayout>

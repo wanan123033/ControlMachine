@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="group_btn_function">
+        <item>设备匹配</item>
+        <item>切换分组</item>
+        <item>故障更换</item>
+        <item>开始计数</item>
+        <item>暂停使用</item>
+        <item>显示屏</item>
+        <item>删除</item>
+        <item>全删除</item>
+    </array>
+    <array name="main_function">
+        <item>显示屏</item>
+        <item>系统</item>
+        <item>数据</item>
+        <item>查询</item>
+        <item>设置</item>
+        <item>打印</item>
+    </array>
+
+    <array name="data_admin">
+        <item>个人名单导入</item>
+        <item>分组名单导入</item>
+        <item>名单下载</item>
+        <item>头像导入</item>
+        <item>头像下载</item>
+        <item>删除头像</item>
+        <item>数据备份</item>
+        <item>数据还原</item>
+        <item>数据查看</item>
+        <item>数据清空</item>
+        <item>成绩上传</item>
+        <item>成绩导出</item>
+        <!--<item>成绩删除</item>-->
+
+    </array>
+
+    <array name="check_tool">
+        <item>条形码/二维码</item>
+        <item>身份证</item>
+        <item>IC卡</item>
+        <item>外接扫描枪</item>
+    </array>
+    <array name="angleLevel">
+        <item>55度</item>
+        <item>65度</item>
+        <item>75度</item>
+    </array>
+</resources>

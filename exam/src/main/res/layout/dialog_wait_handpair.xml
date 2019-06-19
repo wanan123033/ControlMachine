@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:background="@color/main_background"
+              android:gravity="center"
+              android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/ll_wait_dialog"
+        android:layout_width="250dp"
+        android:layout_height="180dp"
+        android:background="@drawable/yuanjiao">
+
+        <TextView
+            android:id="@+id/tv_wait_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="5dp"
+            android:textColor="@color/black"/>
+            <!--android:text="请按下手柄按钮"-->
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_above="@+id/avi"
+            android:background="#eeeeee"/>
+
+        <com.wang.avi.AVLoadingIndicatorView
+            android:id="@+id/avi"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_below="@+id/tv_wait_title"
+            android:layout_centerHorizontal="true"
+            android:visibility="visible"
+            app:indicatorColor="#ffff0000"
+            app:indicatorName="BallScaleMultipleIndicator"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_above="@+id/btn_wait_pair"
+            android:background="#eeeeee"/>
+
+        <Button
+            android:id="@+id/btn_wait_pair"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/btn_selector"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="取消"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

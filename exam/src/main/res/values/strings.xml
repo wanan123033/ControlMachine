@@ -1,0 +1,71 @@
+<resources>
+    <string name="app_name">智能主机(考试版)</string>
+    <string name="host_style">考试版本</string>
+    <string name="advanced_setting">高级设置</string>
+    <string name="txt_stu_code">考号：%1$s</string>
+    <string name="txt_stu_name">姓名：%1$s</string>
+    <string name="test_speak_hint">请%1$s第%2$d次准备</string>
+
+    <string name="data_txt_stu_code">考号：%1$s</string>
+    <string name="data_txt_stu_name">姓名：%1$s</string>
+    <string name="data_txt_stu_sex">姓别：%1$s</string>
+    <string name="data_txt_stu_result">最终成绩：%1$s</string>
+    <string name="jump_rope">跳绳</string>
+    <string name="broad_Jump">跳远</string>
+    <string name="jump_rope_setting">1.跳绳设置</string>
+    <string name="hand_setting">2.手柄配对</string>
+    <string name="jump_rope_start">3.开始测试</string>
+    <string name="rope_setting">跳绳设置</string>
+    <string name="rope_test_time">测试时间</string>
+    <string name="hand_max">手柄个数</string>
+    <string name="studentName">姓名 :</string>
+    <string name="studentGender">性别 :</string>
+    <string name="studentCode">考号 :</string>
+    <string name="grades">成绩 :</string>
+    <string name="grades1">成绩1 :</string>
+    <string name="grades2">成绩2 :</string>
+    <string name="grades3">成绩3 :</string>
+    <string name="start">开始</string>
+    <string name="stop_using">暂停使用</string>
+    <string name="end">结束</string>
+
+    <string name="service_bind_fail">aidl service bind failed</string>
+    <string name="service_bind_success">aidl service bind success</string>
+    <string name="stand_jump">立定跳远</string>
+    <string name="start_test">开始测试</string>
+    <string name="system_setting">系统设置</string>
+    <string name="data_manage">数据管理</string>
+    <string name="title_activity_system_setting">系统设置</string>
+    <string name="title_activity_data_manage">数据管理</string>
+    <string name="title_activity_about">关于</string>
+
+    <string name="version_info"><b>版本信息:</b></string>
+    <string name="title_activity_check">CheckActivity</string>
+    <string name="title_activity_splash_screen">控制主机</string>
+    <string name="title_activity_data_display">DataDisplayActivity</string>
+
+    <array name="array_time_out_deal">
+        <item>停止</item>
+        <item>不计数</item>
+    </array>
+
+    <string-array name="base_line_set">
+        <item>55</item>
+        <item>65</item>
+        <item>75</item>
+    </string-array>
+
+
+    <string name="student_Name">姓名:%1$s</string>
+    <string name="student_Gender">性别:%1$s</string>
+    <string name="student_Code">学号:%1$s</string>
+    <string name="student_Result">成绩:%1$s</string>
+    <string name="student_Portrait">头像:</string>
+
+    <!--账号提示-->
+    <string name="hint_account">请输入用户名</string>
+    <!--密码提示-->
+    <string name="hint_pass">请输入密码</string>
+
+    <string name="loading_hint">正在处理，请等待...</string>
+</resources>

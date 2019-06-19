@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.MiddleDistanceRace.MiddleDistanceRaceActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/btn_start1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="开始1" />
+
+        <Chronometer
+            android:id="@+id/timer1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:format="00:00:00"
+            android:gravity="center"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+
+    <EditText
+        android:id="@+id/et_udp_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:enabled="false"
+        android:textSize="20sp"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/btn_start2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="开始2" />
+
+        <Chronometer
+            android:id="@+id/timer2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:format="00:00:00"
+            android:gravity="center"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/et_udp_input2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:enabled="false"
+        android:textSize="20sp"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btn_udp_send"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/et_udp_input"
+        android:layout_centerHorizontal="true"
+        android:padding="@dimen/dp_10"
+        android:text="开始计时"
+        android:textSize="20sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dp_10">
+
+        <TextView
+            style="@style/style_setting_tv_title"
+            android:text="日程:" />
+
+        <Spinner
+            android:id="@+id/sp_race_schedule"
+            android:layout_width="240dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="30dp"
+            android:background="@drawable/icon_spinner_bg" />
+
+        <TextView
+            style="@style/style_setting_tv_title"
+            android:layout_marginLeft="20dp"
+            android:text="项目:" />
+
+        <Spinner
+            android:id="@+id/sp_race_item"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="30dp"
+            android:background="@drawable/icon_spinner_bg" />
+
+        <TextView
+            style="@style/style_setting_tv_title"
+            android:layout_marginLeft="20dp"
+            android:text="状态:" />
+
+        <Spinner
+            android:id="@+id/sp_race_state"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="30dp"
+            android:background="@drawable/icon_spinner_bg" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="1dp">
+
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include layout="@layout/item_race_student_group" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_race_student_group"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:overScrollMode="never" />
+        </LinearLayout>
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_race_group"
+            android:layout_width="400dp"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:background="@color/white"
+            android:overScrollMode="never" />
+
+        <!--<android.support.v7.widget.RecyclerView-->
+            <!--android:id="@+id/rv_race_result"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_margin="5dp"-->
+            <!--android:background="@color/white"-->
+            <!--android:overScrollMode="never"-->
+            <!--android:visibility="gone" />-->
+
+        <com.feipulai.exam.view.MiddleRace.ScrollablePanel
+            android:id="@+id/race_scrollablePanel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:layout_width="128dp"
+        android:layout_height="38dp"
+        android:layout_marginLeft="29dp"
+        android:src="@mipmap/icon_test_logo" />
+
+    <com.feipulai.exam.view.StuSearchEditText
+        android:id="@+id/et_input_text"
+        android:layout_width="345dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="31dp" />
+
+    <TextView
+        android:id="@+id/btn_scan"
+        android:layout_width="80dp"
+        android:layout_height="35dp"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/tv_start_test"
+        android:background="@color/colorAccent"
+        android:gravity="center"
+        android:text="搜索"
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        android:visibility="gone" />
+
+
+</LinearLayout>

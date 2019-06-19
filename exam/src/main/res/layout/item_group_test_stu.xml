@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/view_content"
+    android:layout_width="match_parent"
+    android:layout_height="85dp">
+
+
+    <ImageView
+        android:id="@+id/item_img_portrait"
+        android:layout_width="50dp"
+        android:layout_height="70dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="7dp"
+        android:scaleType="fitXY"
+        android:src="@mipmap/icon_head_photo" />
+
+
+    <TextView
+        android:id="@+id/item_txt_stu_code"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/item_img_portrait"
+        android:layout_marginLeft="12dp"
+        android:layout_toRightOf="@+id/item_img_portrait"
+        android:text="学号："
+        android:textColor="@color/black"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/item_txt_stu_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/item_img_portrait"
+        android:layout_marginLeft="12dp"
+        android:layout_toRightOf="@+id/item_img_portrait"
+        android:text="姓名："
+        android:textColor="@color/black"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/item_trackno"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/item_img_portrait"
+        android:layout_marginRight="7dp"
+        android:background="@drawable/icon_test_result_bg"
+        android:gravity="center"
+        android:text="1"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/grey_light" />
+</RelativeLayout>

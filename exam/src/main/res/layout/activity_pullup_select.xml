@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_count_time"
+        style="@style/style_setting_tv_title"
+        android:layout_width="200dp"
+        android:layout_height="45dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="15dp"
+        android:background="@drawable/btn_click_bg_selected"
+        android:gravity="center"
+        android:text="计时模式"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:id="@+id/tv_countless"
+        style="@style/style_setting_tv_title"
+        android:layout_width="200dp"
+        android:layout_height="45dp"
+        android:layout_margin="15dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/btn_click_bg_selected"
+        android:gravity="center"
+        android:text="不计时模式"
+        android:textColor="@color/white" />
+
+</LinearLayout>

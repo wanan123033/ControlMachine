@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/icon_white_bg"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="500dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_bg_white"
+        android:orientation="vertical"
+        android:paddingBottom="40dp"
+        android:paddingLeft="35dp"
+        android:paddingRight="35dp"
+        android:paddingTop="40dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="APP_KEY："
+                android:textColor="@color/black_10"
+                android:textSize="20sp" />
+
+
+            <EditText
+                android:id="@+id/edit_appkey"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:background="@drawable/edit_search_bg"
+                android:hint="APP_KEY"
+                android:imeOptions="actionNext"
+                android:paddingLeft="10dp"
+                android:singleLine="true" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="7dp"
+            android:text="请勿随意修改KEY值,有问题请咨询服务管理人员"
+            android:textColor="@color/grey_A8" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DDDDDD" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="35dp"
+            android:layout_marginTop="35dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="仰卧起坐子机角度："
+                android:textColor="@color/black_10"
+                android:textSize="20sp" />
+
+
+            <Spinner
+                android:id="@+id/sp_situp_angle"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_marginLeft="30dp"
+                android:background="@drawable/icon_spinner_bg" />
+                <!--android:entries="@array/situp_angles"-->
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DDDDDD" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="单项判罚开关：（只有减）" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical"
+            android:padding="1dp">
+
+            <TextView
+                style="@style/style_setting_tv_title"
+                android:text="仰卧起坐测试仪：" />
+
+            <CheckBox
+                android:id="@+id/sw_situp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:button="@drawable/checkbox_switch_selected" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="27dp"
+            android:gravity="center_vertical"
+            android:padding="1dp">
+
+            <TextView
+                style="@style/style_setting_tv_title"
+                android:text="引体向上测试仪：" />
+
+            <CheckBox
+                android:id="@+id/sw_pullup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:button="@drawable/checkbox_switch_selected" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="27dp"
+            android:gravity="center_vertical"
+            android:padding="1dp">
+
+        <TextView
+            style="@style/style_setting_tv_title"
+            android:text="排球垫球：" />
+
+        <CheckBox
+            android:id="@+id/sw_volleyball"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:button="@drawable/checkbox_switch_selected" />
+        </RelativeLayout>
+        <!--<CheckBox-->
+        <!--android:id="@+id/cb_resurvey"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:button="@null"-->
+        <!--android:drawablePadding="20dp"-->
+        <!--android:drawableRight="@drawable/checkbox_switch_selected"-->
+        <!--android:text="重测功能（全部项目）" />-->
+
+    </LinearLayout>
+</LinearLayout>

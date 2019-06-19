@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <include layout="@layout/layout_stu_info" />
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@color/black" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <RelativeLayout
+                android:id="@+id/rl_check_in"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:gravity="center" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_pairs"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/rl_check_in" />
+
+            <ListView
+                android:id="@+id/lv_results"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/rl_check_in"
+                android:divider="@color/sbc_header_text"
+                android:dividerHeight="1dp"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/view_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/black" />
+
+            <include layout="@layout/ll_device_state_illustrate" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/black" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_start_test"
+                    style="@style/style_rectangle_btn"
+                    android:text="开始" />
+
+                <Button
+                    android:id="@+id/btn_change_hand_group"
+                    style="@style/style_rectangle_btn"
+                    android:drawableTop="@drawable/change_group"
+                    android:text="切换分组" />
+
+                <com.feipulai.common.view.StopUseButton
+                    android:id="@+id/btn_stop_use"
+                    style="@style/style_rectangle_btn"
+                    android:drawableTop="@drawable/pause"
+                    android:text="暂停使用" />
+
+                <Button
+                    android:id="@+id/btn_change_bad"
+                    style="@style/style_rectangle_btn"
+                    android:drawableTop="@drawable/change_bad"
+                    android:text="故障更换" />
+
+                <Button
+                    android:id="@+id/btn_device_pair"
+                    style="@style/style_rectangle_btn"
+                    android:drawableTop="@drawable/pair"
+                    android:text="手柄匹配" />
+
+                <Button
+                    android:id="@+id/btn_led_setting"
+                    style="@style/style_rectangle_btn"
+                    android:drawableTop="@drawable/led_screen"
+                    android:text="外接屏幕" />
+
+                <Button
+                    android:id="@+id/btn_kill_devices"
+                    style="@style/style_rectangle_btn"
+                    android:background="#ffff0000"
+                    android:text="清除所有设备" />
+                    <!--android:drawableTop="@drawable/led_screen"-->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/btn_delete_student"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_margin="5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/btn_rectangle_red_selector"
+                        android:gravity="center"
+                        android:text="删除"
+                        android:textColor="@color/white"
+                        android:textSize="18sp" />
+
+                    <Button
+                        android:id="@+id/btn_del_all"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_margin="5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/btn_rectangle_red_selector"
+                        android:gravity="center"
+                        android:text="全删除"
+                        android:textColor="@color/white"
+                        android:textSize="18sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

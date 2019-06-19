@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/icon_white_bg"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="34dp"
+        android:layout_marginTop="26dp"
+        android:background="@drawable/btn_bg_white"
+        android:orientation="vertical"
+        android:paddingBottom="69dp"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:paddingTop="33dp">
+
+        <Button
+            android:id="@+id/btn_led_connect"
+            android:layout_width="306dp"
+            android:layout_height="42dp"
+            android:background="@drawable/btn_click_bg_selected"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:text="外接屏幕连接"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/btn_led_self"
+            android:layout_width="306dp"
+            android:layout_height="42dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/btn_click_bg_selected"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:text="外接屏幕自检"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+        <RelativeLayout
+            android:layout_width="306dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="42dp">
+
+            <TextView
+                style="@style/style_setting_tv_title"
+                android:layout_centerVertical="true"
+                android:text="外界显示屏亮度" />
+
+            <ImageView
+                android:id="@+id/img_led_luminance_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="37dp"
+                android:background="@drawable/led_add_selector" />
+
+            <ImageView
+                android:id="@+id/img_led_luminance_munus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/img_led_luminance_add"
+                android:background="@drawable/led_subtract_selector" />
+
+
+        </RelativeLayout>
+    </LinearLayout>
+
+
+</LinearLayout>

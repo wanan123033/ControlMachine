@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@mipmap/icon_add_selected" android:state_focused="true" />
+    <item android:drawable="@mipmap/icon_add_unselected" android:state_focused="false" />
+    <item android:drawable="@mipmap/icon_add_unselected" />
+</selector>

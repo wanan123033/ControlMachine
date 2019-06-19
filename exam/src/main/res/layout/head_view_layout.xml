@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="37dp"
+    android:layout_weight="1"
+    android:background="#06DBE6"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tv_num"
+        style="@style/style_run_timer_title"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:text="序号" />
+
+    <TextView
+        android:id="@+id/tv_stuCode"
+        style="@style/style_run_timer_title"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1.5"
+        android:text="考号"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/tv_stuName"
+        style="@style/style_run_timer_title"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="2"
+        android:text="姓名" />
+
+    <TextView
+        android:id="@+id/tv_stuMark"
+        style="@style/style_run_timer_title"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="2"
+        android:text="成绩" />
+
+    <TextView
+        style="@style/style_run_timer_title"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="2" />
+</LinearLayout>
