@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#FF258EFF</color>
+    <color name="colorAccent">#FF258EFF</color>
+    <color name="colorHost">#25b1bf</color>
+    <color name="white">#ffffff</color>
+    <color name="rice_white">#feeeee</color>
+    <color name="black">#000000</color>
+    <color name="hostStyle">#e47f33</color>
+    <color name="greenBG">#11a8ca</color>
+    <color name="transparent">#00000000</color>
+    <color name="viewfinder_frame">#ff000000</color>
+    <color name="viewfinder_laser">#ffff0000</color>
+    <color name="viewfinder_mask">#60000000</color>
+    <color name="result_points">#c000ff00</color>
+    <color name="result_view">#b0000000</color>
+    <color name="sbc_header_text">#ff808080</color>
+    <color name="possible_result_points">#c0ffff00</color>
+    <color name="main_background">#1e90ff</color>
+    <color name="green">#59BBFF</color>
+    <color name="huise">#999999</color>
+
+    <color name="swipe_color_1">#B6DB49</color>
+    <color name="swipe_color_2">#99CC00</color>
+    <color name="swipe_color_3">#8ABD00</color>
+    <color name="swipe_color_4">#7CAF00</color>
+    <color name="grey">#FF666666</color>
+    <color name="light_green">#FF41C7DB</color>
+    <color name="blue">#41C7DB</color>
+    <color name="background_color">#fff5f5f5</color>
+    <color name="green_yellow">#00ff00</color>
+    <color name="blue_sky">#47e5ff</color>
+
+    <color name="test_first_color">#484848</color>
+    <color name="test_second_color">#333333</color>
+    <color name="test_thirdly_color">#1C1C1C</color>
+    <color name="test_first_result_color">#8DC4FF</color>
+    <color name="test_second_result_color">#258EFF</color>
+    <color name="test_thirdly_result_color">#3F51B5</color>
+
+    <color name="grey_F7">#F7F7F7</color>
+    <color name="grey_A8">#A8A8A8</color>
+    <color name="blue_CB">#CBD3FF</color>
+    <color name="blue_8A">#8A99EC</color>
+    <color name="blue_25">#258EFF</color>
+    <color name="blue_30">#30B0FF</color>
+    <color name="black_T20">#33000000</color>
+    <color name="black_10">#101010</color>
+    <color name="grey_light">#BFBFBF</color>
+</resources>

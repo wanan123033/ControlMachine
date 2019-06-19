@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<item>
+    <!-- 目前的 IC卡模块不使用这个-->
+    <property blockNo="4"/>
+
+    <!-- 1,2为学生信息，60,61,62为扩展信息 -->
+    <stuBlockNo>
+        <blockNo num="1"/>
+        <blockNo num="2"/>
+        <blockNo num="60"/>
+        <blockNo num="61"/>
+        <blockNo num="62"/>
+    </stuBlockNo>
+
+    <!-- 第61块，6字节到13字节为学年。即学年：byte[22]—byte[29] 8个字节 -->
+    <stuYear blockNo="61" end="13" start="6"/>
+
+    <!-- 项目元素 -->
+    <element name="身高、体重" blockNum="1" code="1"/>
+    <element name="肺活量" blockNum="2" code="2"/>
+    <element name="立定跳远" blockNum="2" code="3"/>
+    <element name="摸高" blockNum="2" code="4"/>
+    <element name="俯卧撑" blockNum="1" code="5"/>
+    <element name="仰卧起坐" blockNum="1" code="6"/>
+    <element name="坐位体前屈" blockNum="2" code="7"/>
+    <element name="跳绳" blockNum="1" code="8"/>
+    <element name="视力" blockNum="1" code="9"/>
+    <element name="引体向上" blockNum="1" code="10"/>
+    <element name="红外实心球" blockNum="2" code="11"/>
+    <element name="中长跑（800,1000）" blockNum="1" code="12"/>
+    <element name="排球" blockNum="1" code="13"/>
+    <element name="篮球运球" blockNum="1" code="14"/>
+    <element name="折返跑" blockNum="1" code="15"/>
+    <element name="1500米健步走" blockNum="1" code="16"/>
+    <element name="2000米健步走" blockNum="1" code="17"/>
+    <element name="50米" blockNum="1" code="18"/>
+    <element name="足球运球" blockNum="1" code="19"/>
+    <element name="踢毽子" blockNum="1" code="20"/>
+    <element name="游泳" blockNum="1" code="21"/>
+
+</item>

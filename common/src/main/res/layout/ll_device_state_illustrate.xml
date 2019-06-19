@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:gravity="center_vertical"
+    android:paddingLeft="5dp">
+
+    <LinearLayout
+        android:id="@+id/ll_device_group"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:paddingLeft="5dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="手柄分组:" />
+
+        <TextView
+            android:id="@+id/tv_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="A组" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:drawableLeft="@drawable/shape_state_default"
+        android:drawablePadding="10dp"
+        android:gravity="center_vertical"
+        android:text="正常"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:drawableLeft="@drawable/shape_state_red"
+        android:gravity="center_vertical"
+        android:text="中断"/>
+        <!--android:drawablePadding="10dp"-->
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:drawableLeft="@drawable/shape_state_yellow"
+        android:drawablePadding="10dp"
+        android:gravity="center_vertical"
+        android:text="电量低"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:drawableLeft="@drawable/shape_state_grey"
+        android:drawablePadding="10dp"
+        android:gravity="center_vertical"
+        android:text="暂停使用"/>
+
+    <TextView
+        android:id="@+id/tv_conflict"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:drawableLeft="@drawable/shape_state_conflict"
+        android:drawablePadding="10dp"
+        android:gravity="center_vertical"
+        android:text="冲突"
+        android:visibility="gone"/>
+
+</LinearLayout>

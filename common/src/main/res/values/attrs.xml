@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--刷新控件自定义控件属性文件，下拉属性控件的属性 -->
+    <declare-styleable name="PullToRefreshView">
+        <attr name="modes">
+            <flag name="pullDownFromTop" value="0x1" />
+            <flag name="pullUpFromBottom" value="0x2" />
+            <flag name="both" value="0x3" />
+            <flag name="allNone" value="0x4" />
+        </attr>
+        <attr name="headstyle">
+            <flag name="patientia" value="0x1" />
+            <flag name="classics" value="0x2" />
+            <flag name="copyios" value="0x3" />
+        </attr>
+    </declare-styleable>
+
+
+</resources>

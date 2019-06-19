@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<MachineCode>
+    <!--code即为machineCode-->
+    <element code="0" size="2">手工测试</element>
+    <element code="1" size="1">身高体重</element>
+    <element code="2" size="2">肺活量</element>
+    <element code="3" size="2">立定跳远</element>
+    <element code="4" size="2">摸高</element>
+    <element code="5" size="1">俯卧撑</element>
+    <element code="6" size="1">仰卧起坐</element>
+    <element code="7" size="2">坐位体前屈</element>
+    <element code="8" size="1">跳绳</element>
+    <element code="9" size="1">视力</element>
+    <element code="10" size="1">引体向上</element>
+    <element code="11" size="2">红外实心球</element>
+    <element code="12" size="1">中长跑</element>
+    <element code="13" size="1">排球</element>
+    <element code="14" size="1">篮球运球</element>
+    <element code="15" size="1">折返跑</element>
+    <element code="16" size="1">1500米健步走</element>
+    <element code="17" size="1">2000米健步走</element>
+    <element code="18" size="1">50米</element>
+    <element code="19" size="1">足球运球</element>
+    <element code="20" size="1">踢毽子</element>
+    <element code="21" size="1">游泳</element>
+</MachineCode>
