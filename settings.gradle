@@ -1,0 +1,1 @@
+include ':app', ':logger', ':devicelib', ':common', ':exam', ':testandroid', ':wireless', ':magicindicator', ':gpstime'/*, ':ic_finger'*//*, ":BaiduTTSdemo"*/

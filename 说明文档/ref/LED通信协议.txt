@@ -1,0 +1,58 @@
+1）联机命令：0xAA dev ledDev 0x00 0x00 0xA1 hostId ledId rate 0x0D
+0xAA和0x0D：包头包尾字节。
+dev：控制主机主机项目设备号，为兼容以前的跳绳坐位体前屈设备，在原有基础上添加，设置如下：
+1--跳绳 2--坐位体前屈 3--摸高 4--立定跳远 5--身高体重 6--实心球 7--俯卧撑 8--肺活量 7--引体向上 10--仰卧起坐 5---50m
+ledDev：led设备号，固定为0xA1
+0xA1：联机命令
+
+hostId：控制主机的主机号
+ledId：led屏的id号，为0x01(一个主机需要带多个屏时,可以扩充)
+
+rate：无线速率，设为4（24k）
+
+2）字符显示命令：0xAA dev ledDev hostId ledId 0xA2 clr upd len x y n*data 0x00 0x00
+0xA2：字符显示命令
+clr：1--清除显示buffer  0--不清除
+upd：1--刷新显示  0--不刷新
+x y：字符串在led屏上的显示坐标
+n*data：n字节的显示内容
+
+3）清屏命令：0xAA dev ledDev hostId ledId 0xA5 0x01 0x00 0x00
+0xA5：清屏命令
+0x01：立刻刷新
+
+4）bmp显示命令： 0xAA dev ledDev hostId ledId 0xA3 clr upd len x y n*data 0x00 0x00
+0xA3：bmp显示命令
+
+5）led测试命令：0xAA dev ledDev hostId ledId 0xA6 0x0D
+0xA6：led测试命令
+
+6）亮度增加：0xAA dev ledDev hostId ledId 0xA4 0xBB 0x0D
+0xA4：改变亮度
+0xBB：亮度增加
+
+7）亮度减少：0xAA dev ledDev hostId ledId 0xA4 0xAA 0x0D
+0xAA：亮度减少
+
+8）亮度最暗：0xAA dev ledDev hostId ledId 0xA4 0x00 0x0D
+
+
+//各个项目无线模块的起始频段号
+const u8 hostFreqList[]=
+{
+    0,  //null
+    41, //身高体重  41--50      //10
+    110, //肺活量 110--124      //15
+    55, //立定跳远  55--69          //15
+    40,  //摸高测试  40--54     //15
+    25, //俯卧撑25--39      //15
+    10, //仰卧起坐 10--24       //15
+    41, //坐位体(旧)  95--109   //15
+    1, /计数    1--9       //9
+    0,  //视力测试
+    25, //引体向上  25--39      //15
+    70, //实心球 70--84     //15
+    0,  //中长跑
+    110, //排球垫球110--124  //15
+    41 //坐位体(新)  95--109   //15
+};

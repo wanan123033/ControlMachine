@@ -1,0 +1,20 @@
+apply plugin: 'com.android.library'
+android {
+
+    compileSdkVersion 19
+    buildToolsVersion '26.0.2'
+
+    defaultConfig {
+        minSdkVersion 17
+    }
+
+    dependencies {
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+}
+dependencies {
+}

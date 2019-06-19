@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginLeft="@dimen/dp_10"
+    >
+    <RelativeLayout
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40">
+        <TextView
+            style="@style/style_device_text"
+            android:text="子机号:1"
+            android:layout_centerVertical="true"
+            android:id="@+id/tv_device_id"
+             />
+
+        <TextView
+            style="@style/style_device_text"
+            android:text="状态:在线"
+            android:layout_centerInParent="true"
+            android:id="@+id/tv_device_state"
+            />
+
+        <TextView
+            style="@style/style_device_text"
+            android:text="电量:20%"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/dp_10"
+            android:id="@+id/tv_device_power"
+            />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tv_device_vital"
+            style="@style/style_device_text"
+            android:layout_centerVertical="true"
+            android:text="肺活量:500ml"/>
+        <TextView
+            android:id="@+id/btn_start_test"
+            android:gravity="center"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/black"
+            android:text="开始测试"
+            android:textSize="14sp"
+            android:background="@drawable/bg_rectangle"
+            android:layout_width="80dp"
+            android:layout_height="30dp" />
+
+        <TextView
+            android:id="@+id/btn_set_free"
+            android:gravity="center"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/dp_10"
+            android:textColor="@color/black"
+            android:text="空闲"
+            android:textSize="14sp"
+            android:background="@drawable/bg_rectangle"
+            android:layout_width="80dp"
+            android:layout_height="30dp" />
+    </RelativeLayout>
+
+</LinearLayout>
