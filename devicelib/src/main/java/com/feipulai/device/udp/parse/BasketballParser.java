@@ -1,0 +1,74 @@
+package com.feipulai.device.udp.parse;
+
+
+import com.feipulai.device.udp.result.BasketballResult;
+import com.feipulai.device.udp.result.UDPResult;
+
+/**
+ * Created by zzs on  2019/5/23
+ * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
+ */
+public class BasketballParser extends UDPParser {
+    @Override
+    public UDPResult parse(byte[] data) {
+        if ((data[0] & 0xff) != 0xa6)
+            return null;
+        UDPResult udpResult = new UDPResult();
+        BasketballResult result = new BasketballResult();
+        result.setType((data[1] & 0xff));
+        switch ((data[1] & 0xff)) {
+            case 0x01://设置显示内容返回：0XA6， CMD_SET_TIME , Hund, Second, Minute, Hour,0XFF
+                result.setHund(data[2]);
+                result.setSecond(data[3]);
+                result.setMinute(data[4]);
+                result.setHour(data[5]);
+                break;
+            case 0x04://获取时间显示 0XA6(包头) CMD_GET_TIME (命令), ucFD(遮挡1,2) , Hund(毫秒), Second(秒), Minute(分), Hour(时), flag(标志) ,0XFF(包尾)
+                result.setUcFD(data[2]);
+                result.setHund(data[3]);
+                result.setSecond(data[4]);
+                result.setMinute(data[5]);
+                result.setHour(data[6]);
+                result.setFlag(data[7]);
+                break;
+            case 0x05://设置显示内容
+                break;
+            case 0x02://设置工作状态 0XA6,CMD_SET_STATUS, ucStatus,0XFF
+            case 0x03://获取工作状态
+            case 0x11://同步时间并暂停显示0XA6(包头) CMD_SET_STATUS (命令), ucStatus(状态),0XFF(包尾)
+            case 0x12://同步时间不暂停显示
+            case 0x13://显示时间并暂停，不同步时间
+                result.setUcStatus(data[2]);
+                break;
+            case 0X36://停止
+                result.setHund(data[2]);
+                result.setSecond(data[3]);
+                result.setMinute(data[4]);
+                result.setHour(data[5]);
+                break;
+            case 0x40://中断时间
+                result.settNum(data[2]);
+                result.setHund(data[3]);
+                result.setSecond(data[4]);
+                result.setMinute(data[5]);
+                result.setHour(data[6]);
+                break;
+
+            case 0x46://设置拦截器拦截的时间：0XA6， CMD_SET_ BLOCKERTIME, Second, 0XFF
+            case 0x47://获取拦截器拦截的时间0XA6， CMD_ GET _ BLOCKERTIME, Second, 0XFF
+                result.setSecond(data[2]);
+                break;
+            case 0x48://设置计时器时间显示精度
+            case 0x49://获取计时器时间显示精度
+                result.setuPrecision(data[2]);
+                break;
+            case 0X39://灵敏度
+                break;
+            default:
+                return null;
+        }
+        udpResult.setType(result.getType());
+        udpResult.setResult(result);
+        return udpResult;
+    }
+}

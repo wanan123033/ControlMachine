@@ -1,0 +1,14 @@
+<resources>
+
+
+
+    <style name="style_device_text">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:padding">2dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <color name="black">#000000</color>
+</resources>
