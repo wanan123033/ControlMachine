@@ -14,6 +14,7 @@ import com.feipulai.exam.activity.RadioTimer.RunTimerSetting;
 import com.feipulai.exam.activity.RadioTimer.RunTimerSettingActivity;
 import com.feipulai.exam.activity.SubItemsSelectActivity;
 import com.feipulai.exam.activity.basketball.BasketBallSetting;
+import com.feipulai.exam.activity.basketball.BasketBallSettingActivity;
 import com.feipulai.exam.activity.basketball.BasketballIndividualActivity;
 import com.feipulai.exam.activity.basketball.FootballIndividualActivity;
 import com.feipulai.exam.activity.jump_rope.check.JumpRopeCheckActivity;
@@ -291,6 +292,7 @@ public class TestConfigs {
         TestConfigs.settingActivity.put(ItemDefault.CODE_MG, SargentSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_FWC, PushUpSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_ZCP, MiddleRaceSettingActivity.class);
+        TestConfigs.settingActivity.put(ItemDefault.CODE_LQYQ, BasketBallSettingActivity.class);
         // 每个机器码对应的机器名称
         TestConfigs.itemMinScope.put(ItemDefault.CODE_ZWTQQ, -200);
         TestConfigs.itemMaxScope.put(ItemDefault.CODE_ZWTQQ, 400);
@@ -305,7 +307,7 @@ public class TestConfigs {
         TestConfigs.itemMinScope.put(ItemDefault.CODE_YTXS, 0);
         TestConfigs.itemMaxScope.put(ItemDefault.CODE_YTXS, 999);
         TestConfigs.itemMinScope.put(ItemDefault.CODE_ZFP, 0);
-        TestConfigs.itemMaxScope.put(ItemDefault.CODE_ZFP, 3600);
+        TestConfigs.itemMaxScope.put(ItemDefault.CODE_ZFP, 360000);
         // todo change
         TestConfigs.itemMinScope.put(ItemDefault.CODE_MG, 0);
         TestConfigs.itemMaxScope.put(ItemDefault.CODE_MG, 3600);
