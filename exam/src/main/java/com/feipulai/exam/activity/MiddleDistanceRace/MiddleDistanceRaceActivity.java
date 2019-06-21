@@ -16,6 +16,7 @@ import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.feipulai.common.utils.DialogUtils;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.tcp.NettyClient;
@@ -155,12 +156,12 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
 
         TimingBean timingBean;
         for (int i = 0; i < 3; i++) {
-            timingBean = new TimingBean(0, 0, 0,"");
+            timingBean = new TimingBean(0, 0, 0, "");
             timingLists.add(timingBean);
         }
         Log.i("timingLists", "---------" + timingLists.size());
         //选中组recycleView
-        raceTimingAdapter = new RaceTimingAdapter(timingLists, this);
+        raceTimingAdapter = new RaceTimingAdapter(this, timingLists, this);
         rvRaceGroup.setLayoutManager(new LinearLayoutManager(this));
         rvRaceGroup.setAdapter(raceTimingAdapter);
 
@@ -352,7 +353,8 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         mHander.sendEmptyMessage(3);
         for (TimingBean timing : timingLists
                 ) {
-            if (timing.getState() == 1) {
+            //当前处于等待状态的组别开始计时
+            if (timing.getState() == TimingBean.TIMING_STATE_WAITING) {
                 timing.setTime(time);
             }
         }
@@ -423,7 +425,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
      * 点击“等待发令”按钮回调
      */
     @Override
-    public void clickTimingWaitListener(int position) {
+    public void clickTimingWaitListener(int position, final RaceTimingAdapter.VH holder) {
         ToastUtils.showShort(position + "");
         timingLists.get(position).setState(1);
     }
@@ -432,18 +434,46 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
      * 点击“违规返回”按钮回调
      */
     @Override
-    public void clickTimingBackListener(int position) {
-        timingLists.get(position).setState(2);
-        raceTimingAdapter.notifyDataSetChanged();
+    public void clickTimingBackListener(final int position, final RaceTimingAdapter.VH holder) {
+        DialogUtil.showCommonDialog(this, "是否违规返回", new DialogUtil.DialogListener() {
+            @Override
+            public void onPositiveClick() {
+                raceTimingAdapter.notifyBackGround(holder, TimingBean.TIMING_STATE_BACK);
+                timingLists.get(position).setState(2);
+                raceTimingAdapter.notifyDataSetChanged();
+                Log.i("clickTimingBackListener", timingLists.toString());
+            }
 
-        Log.i("clickTimingBackListener", timingLists.toString());
+            @Override
+            public void onNegativeClick() {
+
+            }
+        });
     }
 
     /**
      * 点击“完成计时”按钮回调
      */
     @Override
-    public void clickTimingCompleteListener(int position) {
+    public void clickTimingCompleteListener(int position, final RaceTimingAdapter.VH holder) {
+        DialogUtil.showCommonDialog(this, "是否完成计时", new DialogUtil.DialogListener() {
+            @Override
+            public void onPositiveClick() {
+                raceTimingAdapter.notifyBackGround(holder, TimingBean.TIMING_STATE_COMPLETE);
+            }
+
+            @Override
+            public void onNegativeClick() {
+
+            }
+        });
+    }
+
+    /**
+     * 点击删除按钮回调
+     */
+    @Override
+    public void clickTimingDelete(int position) {
 
     }
 
@@ -457,9 +487,19 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         }
     }
 
+
     @Override
     public void onLongClick(int position) {
-        ToastUtils.showShort("----" + position+1);
+        //先判断当前选入的组是否已存在
+        for (TimingBean timingBean : timingLists
+                ) {
+            if (timingBean.getNo() == position + 1) {
+                ToastUtils.showShort("该组已存在");
+                return;
+            }
+        }
+
+        ToastUtils.showShort("----" + position + 1);
         groupList.get(position).getGroupNo();
         List<GroupItem> groupItems = DBManager.getInstance().queryGroupItem(groupList.get(position).getItemCode(), groupList.get(position).getGroupNo(), groupList.get(position).getGroupType());
 
@@ -484,12 +524,24 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         for (int i = 0; i < timingLists.size(); i++) {
             if (timingLists.get(i).getNo() == 0) {
                 timingLists.get(i).setNo(position + 1);//分配组的序号
-                // TODO: 2019/6/18  
-                timingLists.get(i).setItemGroupName("");//组名
+                String sex = "";
+                switch (groupList.get(position).getGroupType()) {
+                    case 0:
+                        sex = "男子";
+                        break;
+                    case 1:
+                        sex = "女子";
+                        break;
+                    case 2:
+                        sex = "混合";
+                        break;
+                    default:
+                        break;
+                }
+                timingLists.get(i).setItemGroupName(sex + items[mItemPosition] + "第" + groupList.get(position).getGroupNo() + "组");//组名
                 break;
             }
         }
-
-
+        raceTimingAdapter.notifyDataSetChanged();
     }
 }

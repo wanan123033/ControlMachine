@@ -1,26 +1,33 @@
 package com.feipulai.exam.adapter;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.SystemClock;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.MiddleDistanceRace.DialogUtil;
 import com.feipulai.exam.activity.MiddleDistanceRace.TimingBean;
-import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.utils.DateUtil;
 
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.feipulai.exam.activity.MiddleDistanceRace.TimingBean.TIMING_STATE_BACK;
+import static com.feipulai.exam.activity.MiddleDistanceRace.TimingBean.TIMING_STATE_COMPLETE;
+import static com.feipulai.exam.activity.MiddleDistanceRace.TimingBean.TIMING_STATE_NOMAL;
+import static com.feipulai.exam.activity.MiddleDistanceRace.TimingBean.TIMING_STATE_TIMING;
+import static com.feipulai.exam.activity.MiddleDistanceRace.TimingBean.TIMING_STATE_WAITING;
 
 /**
  * created by ww on 2019/6/12.
@@ -28,19 +35,23 @@ import butterknife.ButterKnife;
 public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH> {
     private MyClickListener myClickListener;
     private List<TimingBean> timingLists;//选中开始组的信息 参数1：组序号 参数2：组状态（1等待发令2违规返回3完成计时）
+    private Context mContext;
 
-    public RaceTimingAdapter(List<TimingBean> timingLists, MyClickListener listener) {
+    public RaceTimingAdapter(Context context, List<TimingBean> timingLists, MyClickListener listener) {
         this.timingLists = timingLists;
         this.myClickListener = listener;
+        mContext = context;
     }
 
     //自定义接口，用于回调按钮点击事件到Activity
     public interface MyClickListener {
-        void clickTimingWaitListener(int position);
+        void clickTimingWaitListener(int position, VH holder);
 
-        void clickTimingBackListener(int position);
+        void clickTimingBackListener(int position, VH holder);
 
-        void clickTimingCompleteListener(int position);
+        void clickTimingCompleteListener(int position, VH holder);
+
+        void clickTimingDelete(int position);
     }
 
     //创建ViewHolder
@@ -57,8 +68,14 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
         Button btnTimingComplete;
         @BindView(R.id.tv_timing_time)
         TextView tvTimingTime;
+        @BindView(R.id.tv_group_color_no)
+        TextView tvGroupColorNo;
+        @BindView(R.id.tv_group_color)
+        TextView tvGroupColor;
         @BindView(R.id.tv_timing_group)
         TextView tvTimingGroup;
+        @BindView(R.id.iv_timing_delete)
+        ImageView ivDelete;
 
         public VH(View v) {
             super(v);
@@ -69,23 +86,41 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
 
     //在Adapter中实现3个方法
     @Override
-    public void onBindViewHolder(VH holder, final int position) {
+    public void onBindViewHolder(final VH holder, final int position) {
+        holder.tvGroupColorNo.setText("A1");
+        holder.tvGroupColor.setBackgroundColor(Color.YELLOW);
+        holder.tvTimingGroup.setText(timingLists.get(position).getItemGroupName());
         holder.tvTimingTime.setText(timingLists.get(position).getTime() == 0 ? "发令时刻：" : "发令时刻：" + DateUtil.formatTime(timingLists.get(position).getTime(), "yyyy-MM-dd HH:mm:ss.SSS"));
         switch (timingLists.get(position).getState()) {
-            case 1:
+            case TIMING_STATE_NOMAL://初始化状态
+                holder.tvTimingState.setText("空闲");
+                holder.tvTimingState.setTextColor(Color.BLACK);
+                holder.tvTimingState.setBackgroundResource(R.color.result_points);
+                break;
+            case TIMING_STATE_WAITING://等待发令状态(此刻已经开始计时)
+                holder.timer.setTextColor(Color.GREEN);
+                //开始计时后完成计时按钮才可点击
+
+                holder.btnTimingComplete.setEnabled(true);
+                holder.btnTimingComplete.setBackgroundResource(R.drawable.btn_background);
+                holder.btnTimingComplete.setTextColor(Color.WHITE);
+
                 startTiming(holder.timer);
                 holder.tvTimingState.setText("计时");
                 holder.tvTimingState.setTextColor(Color.WHITE);
                 holder.tvTimingState.setBackgroundResource(R.color.viewfinder_laser);
                 break;
-            case 2:
+            case TIMING_STATE_BACK:
                 holder.timer.setBase(SystemClock.elapsedRealtime());//计时器清零
+                holder.timer.setTextColor(Color.WHITE);
                 holder.timer.stop();
                 holder.tvTimingState.setText("空闲");
                 holder.tvTimingState.setTextColor(Color.BLACK);
-                holder.tvTimingState.setBackgroundResource(R.color.green_yellow);
+                holder.tvTimingState.setBackgroundResource(R.color.result_points);
                 break;
-            case 3:
+            case TIMING_STATE_COMPLETE:
+                break;
+            case TIMING_STATE_TIMING://当前正在计时状态（要和等待状态分清楚）
                 break;
             default:
                 break;
@@ -95,23 +130,83 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
             holder.btnTimingWait.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    myClickListener.clickTimingWaitListener(position);
+                    if (timingLists.get(position).getNo() != 0) {
+                        myClickListener.clickTimingWaitListener(position, holder);
+                        notifyBackGround(holder, TIMING_STATE_WAITING);
+                    } else {
+                        ToastUtils.showShort("请先选入组别");
+                    }
                 }
             });
             holder.btnTimingBack.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    myClickListener.clickTimingBackListener(position);
+                    myClickListener.clickTimingBackListener(position, holder);
                 }
             });
+
             holder.btnTimingComplete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    myClickListener.clickTimingCompleteListener(position);
+                    myClickListener.clickTimingCompleteListener(position, holder);
+                }
+            });
+
+            holder.ivDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    myClickListener.clickTimingDelete(position);
                 }
             });
         }
     }
+
+    public void notifyBackGround(VH holder, int flag) {
+        switch (flag) {
+            case TIMING_STATE_WAITING:
+                holder.btnTimingWait.setEnabled(false);
+                holder.btnTimingWait.setBackgroundResource(R.color.grey_A8);
+                holder.btnTimingWait.setTextColor(Color.GRAY);
+
+                holder.btnTimingBack.setEnabled(true);
+                holder.btnTimingBack.setBackgroundResource(R.drawable.btn_background);
+                holder.btnTimingBack.setTextColor(Color.WHITE);
+
+                holder.btnTimingComplete.setEnabled(false);
+                holder.btnTimingComplete.setBackgroundResource(R.color.grey_A8);
+                holder.btnTimingComplete.setTextColor(Color.GRAY);
+                break;
+            case TIMING_STATE_BACK:
+                holder.btnTimingWait.setEnabled(true);
+                holder.btnTimingWait.setBackgroundResource(R.drawable.btn_background);
+                holder.btnTimingWait.setTextColor(Color.WHITE);
+
+                holder.btnTimingBack.setEnabled(false);
+                holder.btnTimingBack.setBackgroundResource(R.color.grey_A8);
+                holder.btnTimingBack.setTextColor(Color.GRAY);
+
+                holder.btnTimingComplete.setEnabled(false);
+                holder.btnTimingComplete.setBackgroundResource(R.color.grey_A8);
+                holder.btnTimingComplete.setTextColor(Color.GRAY);
+                break;
+            case TIMING_STATE_COMPLETE:
+                holder.btnTimingWait.setEnabled(true);
+                holder.btnTimingWait.setBackgroundResource(R.drawable.btn_background);
+                holder.btnTimingWait.setTextColor(Color.WHITE);
+
+                holder.btnTimingBack.setEnabled(false);
+                holder.btnTimingBack.setBackgroundResource(R.color.grey_A8);
+                holder.btnTimingBack.setTextColor(Color.GRAY);
+
+                holder.btnTimingComplete.setEnabled(false);
+                holder.btnTimingComplete.setBackgroundResource(R.color.grey_A8);
+                holder.btnTimingComplete.setTextColor(Color.GRAY);
+                break;
+            default:
+                break;
+        }
+    }
+
 
     private void startTiming(Chronometer time) {
         time.setBase(SystemClock.elapsedRealtime());//计时器清零

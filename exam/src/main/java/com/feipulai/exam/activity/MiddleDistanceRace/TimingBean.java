@@ -4,6 +4,9 @@ package com.feipulai.exam.activity.MiddleDistanceRace;
  * created by ww on 2019/6/14.
  */
 public class TimingBean {
+    /**
+     * 初始状态
+     */
     public static final int TIMING_STATE_NOMAL = 0;
     public static final int TIMING_STATE_WAITING = 1;
     public static final int TIMING_STATE_BACK = 2;
@@ -12,7 +15,7 @@ public class TimingBean {
     private int no;//组序号
     private int state;//组状态（0无1等待发令2违规返回3完成计时4正在计时状态）
     private long time;//发令时刻
-    private String itemGroupName;
+    private String itemGroupName;//组名
 
     public TimingBean(int no, int state, long time, String itemGroupName) {
         this.no = no;
