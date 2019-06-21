@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.feipulai.common.utils.ActivityUtils;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
@@ -34,7 +35,6 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.view.DividerItemDecoration;
 import com.feipulai.exam.view.WaitDialog;
-import com.feipulai.exam.view.baseToolbar.BaseToolbar;
 
 import org.greenrobot.eventbus.EventBus;
 

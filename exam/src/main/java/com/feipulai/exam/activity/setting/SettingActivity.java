@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.feipulai.common.utils.AudioUtil;
 import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.udp.UdpLEDUtil;
 import com.feipulai.exam.R;
@@ -26,7 +27,6 @@ import com.feipulai.exam.activity.LoginActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.netUtils.HttpManager;
-import com.feipulai.exam.view.baseToolbar.BaseToolbar;
 
 import java.util.ArrayList;
 import java.util.Arrays;

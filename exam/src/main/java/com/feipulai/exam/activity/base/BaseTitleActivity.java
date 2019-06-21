@@ -8,9 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.common.view.baseToolbar.StatusBarUtil;
 import com.feipulai.exam.R;
-import com.feipulai.exam.view.baseToolbar.BaseToolbar;
-import com.feipulai.exam.view.baseToolbar.StatusBarUtil;
 
 import butterknife.ButterKnife;
 

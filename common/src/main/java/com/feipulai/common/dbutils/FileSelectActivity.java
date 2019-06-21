@@ -10,6 +10,7 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -22,6 +23,8 @@ import com.feipulai.common.R;
 import com.feipulai.common.dbutils.receiver.UsbStateChangeReceiver;
 import com.feipulai.common.dbutils.receiver.UsbStatusChangeEvent;
 import com.feipulai.common.utils.ActivityCollector;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.common.view.baseToolbar.StatusBarUtil;
 import com.github.mjdev.libaums.UsbMassStorageDevice;
 import com.github.mjdev.libaums.fs.FileSystem;
 import com.github.mjdev.libaums.fs.UsbFile;
@@ -43,7 +46,7 @@ public class FileSelectActivity extends Activity
         implements View.OnClickListener,
         AdapterView.OnItemClickListener,
         AdapterView.OnItemLongClickListener {
-    
+
     public static final String FILE = "file";
     public static final String BACK_TO_ROOT = "back_to_root";
     public static final String BACK_TO_PARENT = "back_to_parent";
@@ -52,7 +55,7 @@ public class FileSelectActivity extends Activity
 
     public static final int CHOOSE_DIR = 0x01;
     public static final int CHOOSE_FILE = 0x02;
-
+    BaseToolbar toolbar;
     TextView mTvAutoBackFile;
     Button mBtnConfirm;
     Button mBtnCanceL;
@@ -76,7 +79,9 @@ public class FileSelectActivity extends Activity
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
+        StatusBarUtil.setImmersiveTransparentStatusBar(this);//设置沉浸式透明状态栏 配合使用
         setContentView(R.layout.layout_files_elect);
+        toolbar = findViewById(R.id.toolbar);
         mTvAutoBackFile = findViewById(R.id.tv_auto_back_file);
         mBtnConfirm = findViewById(R.id.btn_confirm);
         mBtnCanceL = findViewById(R.id.btn_cancel);
@@ -89,6 +94,8 @@ public class FileSelectActivity extends Activity
         listView.setOnItemLongClickListener(this);
         listView.setOnItemClickListener(this);
         init();
+        initToolbar();
+
     }
 
     private void init() {
@@ -99,11 +106,50 @@ public class FileSelectActivity extends Activity
             mBtnConfirm.setVisibility(View.GONE);
             mBtnCanceL.setVisibility(View.GONE);
             tvGuide.setText("请选择文件");
+            toolbar.setTitle("请选择文件");
         } else {
             tvGuide.setText("长按选择文件夹");
+            toolbar.setTitle("长按选择文件夹");
         }
         attachUsbs();
         registerUDiskReceiver();
+        updateFilesDir();
+    }
+
+    private void initToolbar() {
+
+        toolbar.setBackButton(R.drawable.icon_white_goback);
+        toolbar.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        toolbar.setToolbarBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+        toolbar.setSubTextColor(ContextCompat.getColor(this, R.color.white));
+        toolbar.setStatusBarTransparent();
+        toolbar.addRightImage(R.drawable.icon_auto_back_file, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gotoAutoBackFile();
+            }
+        });
+        toolbar.addRightText("自动备份", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gotoAutoBackFile();
+            }
+        });
+        toolbar.addLeftText("返回", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
+
+    private void gotoAutoBackFile() {
+        File backupFile = new File(BackupManager.AUTO_BACKUP_DIR);
+        if (!backupFile.exists()) {
+            backupFile.mkdirs();
+        }
+        currentFile = new UsbFileAdapter(backupFile);
         updateFilesDir();
     }
 
@@ -168,7 +214,7 @@ public class FileSelectActivity extends Activity
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
-                   // Toast.makeText(this, "U盘初始化失败...", Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(this, "U盘初始化失败...", Toast.LENGTH_SHORT).show();
                 }
             }
         } else {
@@ -196,7 +242,7 @@ public class FileSelectActivity extends Activity
         UsbMassStorageDevice[] allUSBStorageDevices = UsbMassStorageDevice.getMassStorageDevices(this);
         usingStorageDeviceSet.clear();
         // Log.i("james","allUSBStorageDevices.length:" + allUSBStorageDevices.length);
-        
+
         for (UsbMassStorageDevice device : allUSBStorageDevices) {
             // Log.i("james",device.toString());
             // 对每个设备都要有权限

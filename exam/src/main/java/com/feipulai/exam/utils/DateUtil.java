@@ -1,5 +1,7 @@
 package com.feipulai.exam.utils;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -82,17 +84,43 @@ public class DateUtil {
      * <h3>CreateAuthor</h3> zzs
      * <h3>UpdateAuthor</h3>
      * <h3>UpdateInfo</h3> (此处输入修改内容,若无修改可不写.)
+     *
+     * @param digital   1 百分位 2 十分位
+     * @param carryMode 0
      */
-    public static String caculateTime(long caculTime) {
-        if (caculTime < 60 * 1000) {
-            return formatTime(caculTime, "ss.SS");
-        } else if (caculTime >= 60 * 1000 && caculTime < 60 * 60 * 1000) { // 一小时之内
-            return formatTime(caculTime, "mm:ss.SS");
-        } else if (caculTime >= 60 * 60 * 1000 && caculTime < 60 * 60 * 24 * 1000) { // 同一天之内
-            return formatTime(caculTime, "HH:mm:ss.SS");
-        } else {
-            return formatTime(caculTime, "dd HH:mm:ss.SS");
+    public static String caculateTime(long caculTime, int digital, int carryMode) {
+        BigDecimal bigDecimal = new BigDecimal(caculTime / 1000);
+        long carryTime;
+        switch (carryMode) {
+            case 0://不去舍
+                carryTime = caculTime;
+                break;
+            case 1://四舍五入
+                carryTime = bigDecimal.setScale(digital, BigDecimal.ROUND_HALF_UP).longValue() * 1000;
+                break;
+            case 2:
+                String pattern = "#.";
+                for (int i = 0; i < digital; i++) {
+                    pattern += "0";
+                }
+                carryTime = Long.valueOf(new DecimalFormat(pattern).format(caculTime / 1000)) * 1000;
+                break;
+            case 3://非0进位
+                carryTime = bigDecimal.setScale(digital, BigDecimal.ROUND_UP).longValue() * 1000;
+                break;
+            default:
+                carryTime = caculTime;
+                break;
         }
-
+        if (caculTime < 60 * 1000) {
+            return formatTime(carryTime, "ss." + (digital == 1 ? "S" : "SS"));
+        } else if (caculTime >= 60 * 1000 && caculTime < 60 * 60 * 1000) { // 一小时之内
+            return formatTime(carryTime, "mm:ss." + (digital == 1 ? "S" : "SS"));
+        } else if (caculTime >= 60 * 60 * 1000 && caculTime < 60 * 60 * 24 * 1000) { // 同一天之内
+            return formatTime(carryTime, "HH:mm:ss." + (digital == 1 ? "S" : "SS"));
+        } else {
+            return formatTime(carryTime, "dd HH:mm:ss." + (digital == 1 ? "S" : "SS"));
+        }
     }
+
 }

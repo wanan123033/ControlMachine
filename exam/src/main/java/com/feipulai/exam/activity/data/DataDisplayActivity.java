@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
@@ -17,7 +18,6 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.utils.ResultDisplayUtils;
-import com.feipulai.exam.view.baseToolbar.BaseToolbar;
 
 import java.util.Collections;
 import java.util.Comparator;

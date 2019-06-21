@@ -1,4 +1,4 @@
-package com.feipulai.exam.view.baseToolbar;
+package com.feipulai.common.view.baseToolbar;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -15,7 +15,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
-import com.feipulai.exam.R;
+import com.feipulai.common.R;
 
 
 /**

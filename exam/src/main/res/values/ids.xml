@@ -32,6 +32,4 @@
   <item name="id_circle_menu_item_image" type="id" />
   <item name="id_circle_menu_item_text" type="id" />
   <item name="id_circle_menu_item_center" type="id" />
-  <item name="statusbarutil_fake_status_bar_view" type="id"/>
-  <item name="statusbarutil_translucent_view" type="id"/>
 </resources>

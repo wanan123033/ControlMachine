@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.beans.RunTimerResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
@@ -31,7 +32,6 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.view.CommonPopupWindow;
 import com.feipulai.exam.view.ResultPopWindow;
-import com.feipulai.exam.view.baseToolbar.BaseToolbar;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;

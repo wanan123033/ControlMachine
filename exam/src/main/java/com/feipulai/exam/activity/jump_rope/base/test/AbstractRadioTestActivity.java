@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
@@ -24,7 +25,6 @@ import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.view.DividerItemDecoration;
-import com.feipulai.exam.view.baseToolbar.BaseToolbar;
 
 import java.util.List;
 

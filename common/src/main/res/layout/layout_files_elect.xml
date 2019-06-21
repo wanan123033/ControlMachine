@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="#FFFFFF"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical">
+
+    <com.feipulai.common.view.baseToolbar.BaseToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/tv_guide"
@@ -15,13 +21,12 @@
             android:layout_height="match_parent"
             android:padding="5dp"
             android:textColor="@color/blue"
-            android:textSize="18sp">
-        </TextView>
+            android:textSize="18sp"></TextView>
 
         <View
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"/>
+            android:layout_weight="1" />
 
         <Button
             android:id="@+id/tv_auto_back_file"
@@ -46,9 +51,7 @@
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:descendantFocusability="afterDescendants"
-            >
-        </ListView>
+            android:descendantFocusability="afterDescendants"></ListView>
 
     </RelativeLayout>
 
@@ -68,8 +71,7 @@
             android:layout_weight="1"
             android:background="@drawable/circle_corner_button_selector"
             android:text="确定"
-            android:textColor="@color/black"
-            />
+            android:textColor="@color/black" />
 
         <Button
             android:id="@+id/btn_cancel"
@@ -78,7 +80,7 @@
             android:layout_weight="1"
             android:background="@drawable/circle_corner_button_selector"
             android:text="取消"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black" />
 
     </LinearLayout>
 

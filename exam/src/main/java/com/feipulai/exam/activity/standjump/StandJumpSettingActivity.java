@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.JumpSelfCheckResult;
@@ -35,7 +36,6 @@ import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
-import com.feipulai.exam.view.baseToolbar.BaseToolbar;
 
 import org.greenrobot.eventbus.EventBus;
 

@@ -178,6 +178,7 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
 
         @Override
         public void onFree() {
+            check = 0;
             if (!isConnect) {
                 isConnect = true;
                 //修改设备状态为连接

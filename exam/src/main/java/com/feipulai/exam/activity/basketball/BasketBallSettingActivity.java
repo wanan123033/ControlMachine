@@ -16,6 +16,7 @@ import android.widget.Spinner;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.udp.UDPBasketBallConfig;
 import com.feipulai.device.udp.UdpClient;
 import com.feipulai.device.udp.result.BasketballResult;
@@ -24,9 +25,12 @@ import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.config.BaseEvent;
+import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
-import com.feipulai.exam.view.baseToolbar.BaseToolbar;
 import com.orhanobut.logger.Logger;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.lang.ref.WeakReference;
 
@@ -66,9 +70,11 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
     Spinner spCarryMode;
     @BindView(R.id.view_carryMode)
     LinearLayout viewCarryMode;
+    @BindView(R.id.et_penaltySecond)
+    EditText etPenaltySecond;
     private Integer[] testRound = new Integer[]{1, 2, 3};
 
-    private String[] carryMode = new String[]{"不进位", "四舍五入", "非零进位"};
+    private String[] carryMode = new String[]{"四舍五入", "不进位", "非零进位"};
     private BasketBallSetting setting;
     //    private UdpClient udpClient;
     private MyHandler mHandler = new MyHandler(this);
@@ -121,7 +127,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, carryMode);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spCarryMode.setAdapter(adapter);
-        spCarryMode.setSelection(setting.getCarryMode() == 3 ? 2 : setting.getCarryMode());
+        spCarryMode.setSelection(setting.getCarryMode() - 1);
         viewCarryMode.setVisibility(setting.getResultAccuracy() == 0 ? View.VISIBLE : View.GONE);
 
         etInterceptTime.setText(setting.getInterceptSecond() + "");
@@ -129,6 +135,8 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
         etHostIp.setText(setting.getHostIp());
         etPort.setText(setting.getPost() + "");
         rgAccuracy.check(setting.getResultAccuracy() == 0 ? R.id.rb_tenths : R.id.rb_percentile);
+
+        etPenaltySecond.setText(setting.getPenaltySecond() + "");
     }
 
     @Override
@@ -154,15 +162,20 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
                 BasketballResult basketballResult = (BasketballResult) result.getResult();
                 setting.setResultAccuracy(basketballResult.getuPrecision());
                 break;
+            case UDPBasketBallConfig.CMD_SET_BLOCKERTIME_RESPONSE:
+                ToastUtils.showShort("设置成功");
+                basketballResult = (BasketballResult) result.getResult();
+                setting.setInterceptSecond(basketballResult.getSecond());
+                break;
         }
 
     }
 
     @Override
     public void finish() {
-        if (!TextUtils.isEmpty(etInterceptTime.getText().toString()))
-            setting.setInterceptSecond(Integer.valueOf(etInterceptTime.getText().toString()));
-
+        if (!TextUtils.isEmpty(etPenaltySecond.getText().toString()))
+            setting.setPenaltySecond(Integer.valueOf(etPenaltySecond.getText().toString()));
+        EventBus.getDefault().post(new BaseEvent(EventConfigs.ITEM_SETTING_UPDATE));
         SharedPrefsUtil.save(this, setting);
         Logger.i("保存设置:" + setting.toString());
         super.finish();
@@ -235,15 +248,23 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
     public void spinnerItemSelected(Spinner spinner, int position) {
         switch (spinner.getId()) {
             case R.id.sp_carryMode:
-                setting.setCarryMode(position == 2 ? 3 : position);
+                setting.setCarryMode(position + 1);
                 break;
 
         }
     }
 
-    @OnClick({R.id.tv_sensitivity_use, R.id.tv_ip_connect, R.id.tv_accuracy_use})
+    @OnClick({R.id.tv_sensitivity_use, R.id.tv_ip_connect, R.id.tv_accuracy_use, R.id.tv_intercept_time_use})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            case R.id.tv_intercept_time_use:
+                if (TextUtils.isEmpty(etInterceptTime.getText().toString())) {
+                    ToastUtils.showShort("请输拦截秒数");
+                    return;
+                }
+                UdpClient.getInstance().setHostIpPost(setting.getHostIp(), setting.getPost());
+                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_BLOCKERTIME(Integer.valueOf(etInterceptTime.getText().toString())));
+                break;
             case R.id.tv_sensitivity_use://灵敏度
                 if (TextUtils.isEmpty(etSensitivity.getText().toString())) {
                     ToastUtils.showShort("请输入灵敏度");
@@ -279,6 +300,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
                 break;
         }
     }
+
 
     private static class MyHandler extends Handler {
 

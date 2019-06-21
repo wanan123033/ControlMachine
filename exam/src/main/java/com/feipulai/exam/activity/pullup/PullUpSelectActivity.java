@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.pullup.check.PullUpCheckActivity;
@@ -14,7 +15,6 @@ import com.feipulai.exam.activity.pullup.test.PullUpIndividualActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.TestConfigs;
-import com.feipulai.exam.view.baseToolbar.BaseToolbar;
 
 import butterknife.OnClick;
 
