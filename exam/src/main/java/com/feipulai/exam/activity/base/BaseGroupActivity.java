@@ -19,7 +19,6 @@ import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.led.RunLEDManager;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.exam.R;
-import com.feipulai.exam.activity.RadioTimer.RunTimerSetting;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.medicineBall.MedicineBallSetting;
 import com.feipulai.exam.activity.person.BaseDeviceState;

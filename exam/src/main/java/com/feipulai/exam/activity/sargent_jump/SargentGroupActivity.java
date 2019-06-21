@@ -3,10 +3,8 @@ package com.feipulai.exam.activity.sargent_jump;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
-import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
@@ -16,13 +14,10 @@ import com.feipulai.exam.activity.medicineBall.TestState;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseGroupTestActivity;
 import com.feipulai.exam.activity.person.BaseStuPair;
-import com.feipulai.exam.config.BaseEvent;
-import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
 
-import java.util.EventListener;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -45,6 +40,7 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
     //保存当前测试考生
     private BaseStuPair baseStuPair;
     private RadioManager radioManager;
+    private boolean isSetBase = false;
     @Override
     public void initData() {
         sargentSetting = SharedPrefsUtil.loadFormSource(this, SargentSetting.class);
@@ -132,7 +128,17 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
         baseStuPair.setBaseDevice(baseDevice);
         updateDevice(baseDevice);
         if (isConnect) {
-            testState = TestState.WAIT_RESULT;
+            if (! isSetBase) {
+                if (sargentSetting.getType() == 0){
+                    mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
+                            SerialConfigs.CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight())));
+                }else {
+                    radioManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
+                            SerialConfigs.CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight())));
+                }
+                isSetBase = true;
+            }
+
             if (sargentSetting.getType() == 0){
                 mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                         SerialConfigs.CMD_SARGENT_JUMP_START));
@@ -142,6 +148,7 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
             }
 
         }
+        testState = TestState.WAIT_RESULT;
     }
 
     @Override
@@ -171,17 +178,6 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
 
         @Override
         public void onFree() {
-            if (check == 1) {
-                if (sargentSetting.getType() == 0){
-                    mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
-                            SerialConfigs.CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight())));
-                }else {
-                    radioManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
-                            SerialConfigs.CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight())));
-                }
-
-            }
-
             if (!isConnect) {
                 isConnect = true;
                 //修改设备状态为连接
@@ -257,21 +253,6 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
             }
             testState = TestState.UN_STARTED;
         }
-    }
-
-    @Override
-    public void onEventMainThread(BaseEvent baseEvent) {
-        switch (baseEvent.getTagInt()) {
-            case EventConfigs.ITEM_SETTING_UPDATE:
-                Log.i(TAG,"ITEM_SETTING_UPDATE");
-                initData();
-                if (checkService!= null){
-                    checkService.shutdown();
-                }
-                sendEmpty();
-                break;
-        }
-
     }
 
     @Override

@@ -149,7 +149,7 @@ public class ResultDisplayTools {
                             hs= 0;
                             if (s>59){
                                 m+=1;
-                                s=59;
+                                s=00;
                             }
                         }
                     }
@@ -162,7 +162,7 @@ public class ResultDisplayTools {
                             hs= 0;
                             if (s>59){
                                 m+=1;
-                                s=59;
+                                s=00;
                             }
                         }
                     }

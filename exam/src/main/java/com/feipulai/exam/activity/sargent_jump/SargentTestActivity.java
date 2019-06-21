@@ -43,7 +43,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
     private volatile int check = 0;
     private boolean isConnect;
     private RadioManager radioManager;
-
+    private boolean isSetBase = false;
     private void init() {
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
     }
@@ -123,7 +123,16 @@ public class SargentTestActivity extends BasePersonTestActivity {
         updateDevice(baseDevice);
 
         if (isConnect) {
-            testState = TestState.WAIT_RESULT;
+            if (! isSetBase) {
+                if (sargentSetting.getType() == 0){
+                    mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
+                            SerialConfigs.CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight())));
+                }else {
+                    radioManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
+                            SerialConfigs.CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight())));
+                }
+                isSetBase = true;
+            }
 //                    updateDevice(new BaseDeviceState(BaseDeviceState.STATE_ONUSE, 1));
             toastSpeak("开始测试");
             if (sargentSetting.getType() == 0){
@@ -133,9 +142,9 @@ public class SargentTestActivity extends BasePersonTestActivity {
                 radioManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                         SerialConfigs.CMD_SARGENT_JUMP_START));
             }
-
-            setBegin(0);
         }
+        setBegin(0);
+        testState = TestState.WAIT_RESULT;
     }
 
     @Override
@@ -190,17 +199,6 @@ public class SargentTestActivity extends BasePersonTestActivity {
 
         @Override
         public void onFree() {
-            if (check == 1) {
-                if (sargentSetting.getType() == 0){
-                    mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
-                            SerialConfigs.CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight())));
-                }else {
-                    radioManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
-                            SerialConfigs.CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight())));
-                }
-
-            }
-
             if (!isConnect) {
                 isConnect = true;
                 //修改设备状态为连接

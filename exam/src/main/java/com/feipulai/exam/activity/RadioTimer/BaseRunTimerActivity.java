@@ -456,7 +456,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
                             hs= 0;
                             if (s>59){
                                 m+=1;
-                                s=59;
+                                s=00;
                             }
                         }
                     }
@@ -469,7 +469,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
                             hs= 0;
                             if (s>59){
                                 m+=1;
-                                s=59;
+                                s=00;
                             }
                         }
                     }
