@@ -52,6 +52,14 @@ public class UDPBasketBallConfig {
 
     /**
      * 设置工作状态
+     * @return
+     */
+    public static final byte[] BASKETBALL_CMD_SET_STOP_STATUS() {
+        byte[] cmdBype = {(byte) 0XA6, 0X02, 0X36, (byte) 0XFF};
+        return cmdBype;
+    }
+    /**
+     * 设置工作状态
      *
      * @param status STATUS_FREE		1		//FREE
      *               STATUS_WAIT  		2		//WAIT To Start
@@ -65,7 +73,6 @@ public class UDPBasketBallConfig {
         cmdBype[2] = (byte) (status & 0xff);// 毫秒
         return cmdBype;
     }
-
     /**
      * 设置显示内容
      *

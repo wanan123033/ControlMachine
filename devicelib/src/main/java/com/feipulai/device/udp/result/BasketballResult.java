@@ -58,7 +58,7 @@ public class BasketballResult implements IDeviceResult {
 
     @Override
     public int getResult() {
-        return (hour * 60 * 60 * 1000) + (minute * 60 * 1000) + (second * 1000) + hund;
+        return (hour * 60 * 60 * 1000) + (minute * 60 * 1000) + (second * 1000) + (hund * 10);
     }
 
     @Override

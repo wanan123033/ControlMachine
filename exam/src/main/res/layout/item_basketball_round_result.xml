@@ -2,8 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/view_content"
     android:layout_width="match_parent"
-    android:background="@drawable/data_retieve_selector"
-    android:layout_height="40dp">
+    android:layout_height="40dp"
+    android:background="@color/grey_F7">
 
 
     <LinearLayout
@@ -20,16 +20,16 @@
             android:gravity="center"
             android:text="轮次" />
 
-        <Spinner
-            android:id="@+id/sp_round_result"
-            android:layout_width="80dp"
+        <com.feipulai.exam.view.MySpinner
+            android:id="@+id/item_sp_round_result"
+            android:layout_width="170dp"
             android:layout_height="35dp"
-            android:layout_weight="1"
-            android:background="@drawable/icon_spinner_bg" />
+            android:background="@drawable/icon_spinner_bg"
+            android:paddingRight="30dp" />
 
         <TextView
-            android:id="@+id/sp_practical_result"
-            android:layout_width="wrap_content"
+            android:id="@+id/item_txt_practical_result"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
@@ -37,7 +37,7 @@
 
         <TextView
             android:id="@+id/item_txt_penalize_num"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
@@ -45,9 +45,8 @@
 
         <TextView
             android:id="@+id/item_txt_result_status"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:gravity="center"
             android:text="状态" />
     </LinearLayout>
