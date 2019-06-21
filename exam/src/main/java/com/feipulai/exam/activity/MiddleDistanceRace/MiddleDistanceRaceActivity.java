@@ -18,6 +18,7 @@ import android.widget.Spinner;
 
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.tcp.NettyClient;
 import com.feipulai.device.tcp.NettyListener;
 import com.feipulai.device.tcp.TcpConfig;
@@ -37,7 +38,6 @@ import com.feipulai.exam.entity.Item;
 import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.utils.DateUtil;
 import com.feipulai.exam.view.MiddleRace.ScrollablePanel;
-import com.feipulai.exam.view.baseToolbar.BaseToolbar;
 
 import java.util.ArrayList;
 import java.util.List;

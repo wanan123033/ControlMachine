@@ -1,4 +1,4 @@
-package com.feipulai.exam.view.baseToolbar;
+package com.feipulai.common.view.baseToolbar;
 
 import android.app.Activity;
 import android.content.Context;
@@ -20,7 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.feipulai.exam.R;
+import com.feipulai.common.R;
 
 import java.util.ArrayList;
 

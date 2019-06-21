@@ -2,27 +2,21 @@ package com.feipulai.exam.activity.RadioTimer;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.RunTimerConnectState;
 import com.feipulai.device.serial.beans.RunTimerResult;
 import com.feipulai.device.serial.command.ConvertCommand;
-import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
-import com.feipulai.exam.view.baseToolbar.BaseToolbar;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
@@ -37,9 +31,9 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.feipulai.exam.activity.RadioTimer.RunTimerConstant.CONNECT_STATE;
+import static com.feipulai.exam.activity.RadioTimer.RunTimerConstant.ILLEGAL_BACK;
 import static com.feipulai.exam.activity.RadioTimer.RunTimerConstant.TIME_RESPONSE;
 import static com.feipulai.exam.activity.RadioTimer.RunTimerConstant.TIME_UPDATE;
-import static com.feipulai.exam.activity.RadioTimer.RunTimerConstant.ILLEGAL_BACK;
 
 /**
  * Created by pengjf on 2018/12/18.

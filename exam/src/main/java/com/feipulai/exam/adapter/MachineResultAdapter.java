@@ -56,7 +56,7 @@ public class MachineResultAdapter extends BaseAdapter {
         }
         holder.txtName.setText("第" + dataList.get(position).getRoundNo() + "轮 第" +
                 (position + 1) + "次拦截成绩：" +
-                DateUtil.caculateTime((long) dataList.get(position).getResult())+"      ");
+                DateUtil.caculateTime((long) dataList.get(position).getResult(), 2, 1) + "      ");
 
 
         return convertView;

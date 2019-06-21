@@ -8,6 +8,7 @@ import android.widget.EditText;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
@@ -16,7 +17,6 @@ import com.feipulai.exam.bean.UserBean;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.netUtils.OnResultListener;
 import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
-import com.feipulai.exam.view.baseToolbar.BaseToolbar;
 
 import butterknife.BindView;
 import butterknife.OnClick;

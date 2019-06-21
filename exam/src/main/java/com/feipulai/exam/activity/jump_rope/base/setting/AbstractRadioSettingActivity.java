@@ -1,7 +1,8 @@
 package com.feipulai.exam.activity.jump_rope.base.setting;
 
 import android.annotation.SuppressLint;
-import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -14,16 +15,16 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.R;
-import com.feipulai.exam.activity.base.BaseActivity;
+import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.config.TestConfigs;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public abstract class AbstractRadioSettingActivity
-        extends BaseActivity
+        extends BaseTitleActivity
         implements RadioSettingContract.View<AbstractRadioSettingPresenter>,
         RadioGroup.OnCheckedChangeListener,
         TextWatcher,
@@ -45,11 +46,12 @@ public abstract class AbstractRadioSettingActivity
     private AbstractRadioSettingPresenter presenter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_radio_setting);
-        ButterKnife.bind(this);
+    protected int setLayoutResID() {
+        return R.layout.activity_radio_setting;
+    }
 
+    @Override
+    protected void initData() {
         presenter = getPresenter();
 
         presenter.start();
@@ -57,6 +59,16 @@ public abstract class AbstractRadioSettingActivity
         mNpSecond.addTextChangedListener(this);
     }
 
+    @Nullable
+    @Override
+    protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
+        return builder.setTitle("项目设置").addLeftText("返回", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
     protected abstract AbstractRadioSettingPresenter getPresenter();
 
     @Override
