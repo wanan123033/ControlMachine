@@ -199,6 +199,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
 
         @Override
         public void onFree() {
+            check = 0;
             if (!isConnect) {
                 isConnect = true;
                 //修改设备状态为连接
@@ -256,6 +257,13 @@ public class SargentTestActivity extends BasePersonTestActivity {
 
     private void onResultArrived(int result, BaseStuPair stuPair) {
         if (testState == TestState.WAIT_RESULT) {
+            if (sargentSetting.isFullReturn()) {
+                if (stuPair.getStudent().getSex() == Student.MALE) {
+                    stuPair.setFullMark(stuPair.getResult() >= Integer.parseInt(sargentSetting.getMaleFull()) * 10);
+                } else {
+                    stuPair.setFullMark(stuPair.getResult() >= Integer.parseInt(sargentSetting.getFemaleFull()) * 10);
+                }
+            }
             stuPair.setResult(result);
             stuPair.setResultState(0);
             updateResult(stuPair);
