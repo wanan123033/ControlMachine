@@ -11,8 +11,8 @@ public class BasketBallSetting {
     private String hostIp = "192.168.0.227";//计时仪IP
     private int post = 1026;//端口
     private int penaltySecond;//违例罚秒
-    private int resultAccuracy = 1;//0 十分位  1 百分位
-    private int carryMode = 0;//进位方式 对应项目进位（0.不去舍，1.四舍五入 2.舍位 3.非零进取），只使用0.不去舍，1.四舍五入 3.非零进取
+    private int resultAccuracy = 1;//0 十分秒  1 百分秒
+    private int carryMode = 1;//进位方式 对应项目进位（1.四舍五入 2.舍位 3.非零进取）
     /**
      * 满分跳过
      */
