@@ -60,7 +60,7 @@ public class DBManager {
     private static MachineResultDao machineResultDao;
     private static Database db;
     private static DaoSession daoSession;
-    public static DaoMaster.DevOpenHelper helper;
+    public static DBOpenHelper helper;
     private DaoMaster daoMaster;
 
     private DBManager() {
@@ -78,7 +78,7 @@ public class DBManager {
      * 数据库初始化
      */
     public void initDB() {
-        helper = new DaoMaster.DevOpenHelper(MyApplication.getInstance(), DB_NAME);
+        helper = new DBOpenHelper(MyApplication.getInstance(), DB_NAME);
         db = BuildConfig.DEBUG ? helper.getWritableDb() : helper.getEncryptedWritableDb(DB_PASSWORD);
         daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();
