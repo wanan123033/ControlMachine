@@ -16,7 +16,6 @@ import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.feipulai.common.utils.DialogUtils;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -28,7 +27,7 @@ import com.feipulai.device.udp.result.UDPResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
-import com.feipulai.exam.adapter.MiddleRaceGroupAdapter;
+import com.feipulai.exam.activity.MiddleDistanceRace.adapter.MiddleRaceGroupAdapter;
 import com.feipulai.exam.adapter.RaceTimingAdapter;
 import com.feipulai.exam.adapter.ScheduleAdapter;
 import com.feipulai.exam.config.TestConfigs;
@@ -41,6 +40,7 @@ import com.feipulai.exam.utils.DateUtil;
 import com.feipulai.exam.view.MiddleRace.ScrollablePanel;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -49,6 +49,8 @@ import butterknife.OnClick;
 import butterknife.OnItemSelected;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
+
+import static com.feipulai.exam.activity.MiddleDistanceRace.TimingBean.TIMING_STATE_NOMAL;
 
 public class MiddleDistanceRaceActivity extends BaseTitleActivity implements UdpClient.UDPChannelListerner, NettyListener, RaceTimingAdapter.MyClickListener, ChannelFutureListener, MiddleRaceGroupAdapter.OnItemClickListener {
 
@@ -119,7 +121,6 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
     private RaceTimingAdapter raceTimingAdapter;
     private List<Item> itemList;
     private String[] items;
-//    private MiddleRaceResultAdapter raceResultAdapter;
 
     @Override
     protected int setLayoutResID() {
@@ -130,8 +131,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
     private List<Schedule> scheduleList = new ArrayList<>();
     private List<Group> groupList = new ArrayList<>();
     private List<TimingBean> timingLists = new ArrayList<>();
-    //    private List<MiddleTimingResultBean> resultDatas;
-    private List<List<String>> resultDataList;
+    private List<RaceResultBean2> resultDataList;
 
     @Override
     protected void initData() {
@@ -169,16 +169,26 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
 
         resultDataList = new ArrayList<>();
 
-        List<String> strings = new ArrayList<>();
-
-        strings.add("道次");
-        strings.add("姓名");
-        strings.add("最终成绩");
-        strings.add("第1圈");
-        strings.add("第2圈");
-        strings.add("第3圈");
-        strings.add("第4圈");
-        resultDataList.add(strings);
+        RaceResultBean2 raceResultBean = new RaceResultBean2();
+//        List<String> strings = new ArrayList<>();
+//
+//        strings.add("道次");
+//        strings.add("姓名");
+//        strings.add("最终成绩");
+//        strings.add("第1圈");
+//        strings.add("第2圈");
+//        strings.add("第3圈");
+//        strings.add("第4圈");
+        String[] strings = new String[7];
+        strings[0] = "道次";
+        strings[1] = "姓名";
+        strings[2] = "最终成绩";
+        for (int i = 3; i < 7; i++) {
+            strings[i] = "第" + (i - 2) + "圈";
+        }
+        raceResultBean.setNo("0");
+        raceResultBean.setResults(strings);
+        resultDataList.add(raceResultBean);
 
         TestPanelAdapter testPanelAdapter = new TestPanelAdapter(resultDataList);
         scrollablePanel.setPanelAdapter(testPanelAdapter);
@@ -267,7 +277,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
     }
 
     private void send() {
-        if (!nettyClient.getConnectStatus()) {//获取连接状态，必须连接才能点。
+        if (!nettyClient.getConnectStatus()) {//获取连接状态
             ToastUtils.showShort("正在连接中");
         } else {
             nettyClient.sendMsgToServer(TcpConfig.CMD_CONNECT, this);
@@ -277,8 +287,6 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mHander.removeMessages(2);
-
         //停止计时命令
         nettyClient.sendMsgToServer(TcpConfig.getCmdEndTiming(), this);
 
@@ -314,11 +322,6 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
 
     @Override
     public void onMessageReceive(long time, final String cardId1, final String cardId2) {
-//        for (TimingBean timing : timingLists
-//                ) {
-//            if (timing.getState() == TimingBean.TIMING_STATE_TIMING) {
-//            }
-//        }
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -473,8 +476,32 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
      * 点击删除按钮回调
      */
     @Override
-    public void clickTimingDelete(int position) {
+    public void clickTimingDelete(final int position) {
+        DialogUtil.showCommonDialog(this, "是否删除当前组", new DialogUtil.DialogListener() {
+            @Override
+            public void onPositiveClick() {
+                //在成绩显示列删除选中组的所有考生
+                Iterator<RaceResultBean2> it = resultDataList.iterator();
+                while (it.hasNext()) {
+                    String x = it.next().getNo();
+                    if (x.equals(timingLists.get(position).getNo() + "")) {
+                        it.remove();
+                    }
+                }
+                scrollablePanel.notifyDataSetChanged();
+                //要删除的组恢复默认状态
+                timingLists.get(position).setState(TIMING_STATE_NOMAL);
+                timingLists.get(position).setItemGroupName("");
+                timingLists.get(position).setNo(0);
+                timingLists.get(position).setTime(0);
+                raceTimingAdapter.notifyDataSetChanged();
+            }
 
+            @Override
+            public void onNegativeClick() {
+
+            }
+        });
     }
 
     @Override
@@ -500,21 +527,19 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         }
 
         ToastUtils.showShort("----" + position + 1);
-        groupList.get(position).getGroupNo();
         List<GroupItem> groupItems = DBManager.getInstance().queryGroupItem(groupList.get(position).getItemCode(), groupList.get(position).getGroupNo(), groupList.get(position).getGroupType());
 
-        List<String> strings2;
+        String[] strings2;
+        RaceResultBean2 raceResultBean;
         for (GroupItem groupItem : groupItems
                 ) {
-            strings2 = new ArrayList<>();
-            strings2.add(groupItem.getTrackNo() + "");
-            strings2.add(DBManager.getInstance().queryStudentByStuCode(groupItem.getStudentCode()).getStudentName());
-            strings2.add("");
-            strings2.add("");
-            strings2.add("");
-            strings2.add("");
-            strings2.add("");
-            resultDataList.add(strings2);
+            strings2 = new String[7];
+            strings2[0] = groupItem.getTrackNo() + "";
+            strings2[1] = DBManager.getInstance().queryStudentByStuCode(groupItem.getStudentCode()).getStudentName();
+            raceResultBean = new RaceResultBean2();
+            raceResultBean.setResults(strings2);
+            raceResultBean.setNo(position + 1 + "");
+            resultDataList.add(raceResultBean);
         }
 
         Log.i("resultDataList", resultDataList.toString());

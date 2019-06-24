@@ -1,4 +1,15 @@
 <resources>
+    <string-array name="middle_race_number">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+    <string-array name="vest_chip_no">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
     <string name="app_name">智能主机(考试版)</string>
     <string name="host_style">考试版本</string>
     <string name="advanced_setting">高级设置</string>

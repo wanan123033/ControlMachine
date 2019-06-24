@@ -15,20 +15,20 @@ import java.util.List;
  * created by ww on 2019/6/18.
  */
 public class TestPanelAdapter extends PanelAdapter {
-    private List<List<String>> data;
+    private List<RaceResultBean2> datas;
 
-    public TestPanelAdapter(List<List<String>> data) {
-        this.data = data;
+    public TestPanelAdapter(List<RaceResultBean2> data) {
+        this.datas = data;
     }
 
     @Override
     public int getRowCount() {
-        return data.size();
+        return datas.size();
     }
 
     @Override
     public int getColumnCount() {
-        return data.get(0).size();
+        return datas.get(0).getResults().length;
     }
 
     @Override
@@ -38,9 +38,9 @@ public class TestPanelAdapter extends PanelAdapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int row, int column) {
-        String title = data.get(row).get(column);
+        String string = datas.get(row).getResults()[column];
         TitleViewHolder titleViewHolder = (TitleViewHolder) holder;
-        titleViewHolder.titleTextView.setText(title);
+        titleViewHolder.titleTextView.setText(string);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class TestPanelAdapter extends PanelAdapter {
 
         public TitleViewHolder(View view) {
             super(view);
-            this.titleTextView = (TextView) view.findViewById(R.id.title);
+            this.titleTextView = view.findViewById(R.id.title);
         }
     }
 }

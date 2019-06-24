@@ -27,6 +27,7 @@
     <color name="swipe_color_3">#8ABD00</color>
     <color name="swipe_color_4">#7CAF00</color>
     <color name="grey">#FF666666</color>
+    <color name="grey_555">#FF555555</color>
     <color name="light_green">#FF41C7DB</color>
     <color name="blue">#41C7DB</color>
     <color name="blue2">#FF0788F2</color>
@@ -47,6 +48,7 @@
     <color name="blue_8A">#8A99EC</color>
     <color name="blue_25">#258EFF</color>
     <color name="blue_30">#30B0FF</color>
+    <color name="blue_1e">#1e78fc</color>
     <color name="black_T20">#33000000</color>
     <color name="black_10">#101010</color>
     <color name="grey_light">#BFBFBF</color>

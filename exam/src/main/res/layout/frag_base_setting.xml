@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/icon_white_bg"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_margin="30dp"
+        android:background="@drawable/btn_bg_white"
+        android:padding="@dimen/dp_10">
+
+        <TextView
+            android:id="@+id/tv1"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_marginTop="20dp"
+            android:text="同时计时项目数量："
+            android:textSize="18sp" />
+
+        <Spinner
+            android:id="@+id/sp_base_no"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:layout_alignBaseline="@+id/tv1"
+            android:layout_marginStart="20dp"
+            android:layout_toEndOf="@+id/tv1"
+            android:background="@drawable/icon_spinner_bg"
+            android:entries="@array/middle_race_number" />
+
+        <TextView
+            android:id="@+id/tv2"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/tv1"
+            android:layout_below="@+id/tv1"
+            android:layout_marginTop="30dp"
+            android:text="首次接收时间/秒："
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/et_middle_race_time_first"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/tv2"
+            android:layout_marginStart="20dp"
+            android:layout_toEndOf="@+id/tv2"
+            android:gravity="center"
+            android:background="@drawable/edit_search_bg2"
+            android:imeOptions="actionGo"
+            android:inputType="number"
+            android:maxLength="5"
+            android:maxLines="1" />
+
+        <TextView
+            android:id="@+id/tv3"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/tv1"
+            android:layout_below="@+id/tv2"
+            android:layout_marginTop="30dp"
+            android:text="最小时间间隔/秒："
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/et_middle_race_time_span"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/tv3"
+            android:layout_marginStart="20dp"
+            android:gravity="center"
+            android:layout_toEndOf="@+id/tv3"
+            android:background="@drawable/edit_search_bg2"
+            android:imeOptions="actionGo"
+            android:inputType="number"
+            android:maxLength="5"
+            android:maxLines="1" />
+
+        <RadioGroup
+            android:id="@+id/rg_carry_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv3"
+            android:layout_marginTop="40dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rb_carry_mode_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dp_10"
+                android:text="四舍五入" />
+
+            <RadioButton
+                android:id="@+id/rb_carry_mode_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dp_10"
+                android:text="非零取整" />
+
+            <RadioButton
+                android:id="@+id/rb_carry_mode_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dp_10"
+                android:text="非零进位" />
+        </RadioGroup>
+    </RelativeLayout>
+
+</LinearLayout>

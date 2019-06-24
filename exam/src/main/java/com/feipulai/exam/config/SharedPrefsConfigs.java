@@ -84,4 +84,18 @@ public class SharedPrefsConfigs {
     public static final int DEFAULT_MACHINE_CODE = 0;
 
     public static final String DEFAULT_SERVER_TOKEN = "DEFAULT_SERVER_TOKEN";
+
+    //中长跑参数设置
+    public static final String MIDDLE_RACE = "middle_race";
+    public static final String MIDDLE_RACE_NUMBER = "middle_race_number";
+    public static final String MIDDLE_RACE_TIME_FIRST = "middle_race_time_first";//首次接收时间/秒
+    public static final String MIDDLE_RACE_TIME_SPAN = "middle_race_time_span";//最小时间间隔/秒
+
+    public static final String MIDDLE_RACE_CARRY = "middle_race_carry";//成绩进位方式
+//    public static final String MIDDLE_RACE_ROUNDING = "middle_race_rounding";//成绩进位方式 四舍五入 0
+//    public static final String MIDDLE_RACE_NON_ZERO_INTEGER = "middle_race_non_zero_integer";//成绩进位方式 非零取整1
+//    public static final String MIDDLE_RACE_NON_ZERO_CARRY = "middle_race_non_zero_carry";//成绩进位方式 非零进位2
+
+    public static final int FIRST_TIME = 10;//首次接收时间/秒
+    public static final int SPAN_TIME = 10;//最小时间间隔/秒
 }
