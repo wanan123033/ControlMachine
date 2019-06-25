@@ -98,4 +98,5 @@ public class SharedPrefsConfigs {
 
     public static final int FIRST_TIME = 10;//首次接收时间/秒
     public static final int SPAN_TIME = 10;//最小时间间隔/秒
+    public static final String VEST_CHIP_NO = "vest_chip_no";//背心芯片数
 }
