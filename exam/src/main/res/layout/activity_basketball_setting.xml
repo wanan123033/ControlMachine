@@ -153,6 +153,29 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/ll_use_mode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="使用模式：" />
+
+        <Spinner
+            android:id="@+id/sp_test_mode"
+            android:layout_width="180dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="50dp"
+            android:background="@drawable/icon_spinner_bg" />
+
+    </LinearLayout>
+
     <RadioGroup
         android:id="@+id/rg_group_mode"
         android:layout_width="match_parent"
