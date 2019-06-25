@@ -24,6 +24,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".activity.basketball.FootBallSettingActivity"></activity>
         <activity android:name=".activity.basketball.FootballIndividualActivity" />
         <activity
             android:name=".activity.SplashScreenActivity"
