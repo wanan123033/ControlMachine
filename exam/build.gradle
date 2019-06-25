@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao'
-
+// 进行版本 更新版本号与名称  数据库有更改进行数据库版本号
 android {
     compileSdkVersion 26
     buildToolsVersion '26.0.1'
@@ -14,8 +14,8 @@ android {
         applicationId "com.feipulai.exam"
         minSdkVersion 17
         targetSdkVersion 26
-        versionCode 1
-        versionName "1.0.2"
+        versionCode 3
+        versionName "1.0.3"
         multiDexEnabled true
         ndk {
             abiFilters "armeabi-v7a"

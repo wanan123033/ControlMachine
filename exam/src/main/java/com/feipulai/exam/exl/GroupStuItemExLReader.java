@@ -108,23 +108,30 @@ public class GroupStuItemExLReader extends ExlReader {
         // 项目代码还是默认的,需要更新当前的项目的项目代码,并且将之前有的 报名信息 和 成绩 的项目代码更改
         Item nameItem = DBManager.getInstance().queryItemByName(mItemName);
         if (itemCode == null) {
-
-            Logger.i(mItemCode + " :  " + mItemName);
-            if (nameItem == null) {
-                TestConfigs.sCurrentItem.setItemCode(mItemCode);
-                TestConfigs.sCurrentItem.setItemName(mItemName);
-                DBManager.getInstance().updateItem(TestConfigs.sCurrentItem);// 更新项目表中信息
-            } else {
-                if (TestConfigs.sCurrentItem.getMachineCode() == nameItem.getMachineCode()) {
+            try {
+                Logger.i(mItemCode + " :  " + mItemName);
+                if (nameItem == null) {
                     TestConfigs.sCurrentItem.setItemCode(mItemCode);
                     TestConfigs.sCurrentItem.setItemName(mItemName);
                     DBManager.getInstance().updateItem(TestConfigs.sCurrentItem);// 更新项目表中信息
                 } else {
-                    listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel导入失败,导入项目名已存在,拒绝导入");
-                    Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel导入失败,导入项目名已存在,拒绝导入");
-                    return false;
+                    if (TestConfigs.sCurrentItem.getMachineCode() == nameItem.getMachineCode()) {
+                        TestConfigs.sCurrentItem.setItemCode(mItemCode);
+                        TestConfigs.sCurrentItem.setItemName(mItemName);
+                        DBManager.getInstance().updateItem(TestConfigs.sCurrentItem);// 更新项目表中信息
+                    } else {
+                        listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel导入失败,导入项目名已存在,拒绝导入");
+                        Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel导入失败,导入项目名已存在,拒绝导入");
+                        return false;
+                    }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
+                listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel导入失败,导入项目代码已存在,拒绝导入");
+                Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel导入失败,拒绝导入" + e.getMessage());
+                return false;
             }
+
 //            TestConfigs.sCurrentItem.setItemCode(mItemCode);
 //            TestConfigs.sCurrentItem.setItemName(mItemName);
 //            try {

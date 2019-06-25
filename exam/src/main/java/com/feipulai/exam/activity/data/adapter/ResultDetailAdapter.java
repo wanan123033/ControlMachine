@@ -1,4 +1,4 @@
-package com.feipulai.exam.adapter;
+package com.feipulai.exam.activity.data.adapter;
 
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -8,9 +8,13 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.feipulai.common.utils.DialogUtils;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.data.MachineResultView;
 import com.feipulai.exam.config.HWConfigs;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.MachineResult;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 
@@ -47,7 +51,7 @@ public class ResultDetailAdapter extends BaseQuickAdapter<RoundResult, ResultDet
     }
 
     @Override
-    protected void convert(ViewHolder viewHolder, RoundResult roundResult) {
+    protected void convert(ViewHolder viewHolder, final RoundResult roundResult) {
         String displayStr;
         if (!isHW) {
             viewHolder.mTvTimes.setText(roundResult.getRoundNo() + "");
@@ -70,6 +74,22 @@ public class ResultDetailAdapter extends BaseQuickAdapter<RoundResult, ResultDet
             viewHolder.mTvStatus.setText(setResultState(roundResult.getExamType()));
         } else {
             viewHolder.mViewHead.setVisibility(View.GONE);
+        }
+        viewHolder.mTvResult.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setMachineResult(roundResult);
+            }
+        });
+    }
+
+    private void setMachineResult(RoundResult roundResult) {
+        List<MachineResult> machineResultList = DBManager.getInstance().getItemRoundMachineResult(roundResult.getStudentCode(),
+                roundResult.getTestNo(), roundResult.getRoundNo());
+        if (machineResultList.size() > 0) {
+            MachineResultView resultView = new MachineResultView(mContext);
+            resultView.setData(machineResultList);
+            DialogUtils.create(mContext, resultView, true).show();
         }
     }
 

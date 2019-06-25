@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.feipulai.exam.R;
 import com.feipulai.exam.entity.MachineResult;
-import com.feipulai.exam.utils.DateUtil;
+import com.feipulai.exam.utils.ResultDisplayUtils;
 
 import java.util.List;
 
@@ -56,7 +56,7 @@ public class MachineResultAdapter extends BaseAdapter {
         }
         holder.txtName.setText("第" + dataList.get(position).getRoundNo() + "轮 第" +
                 (position + 1) + "次拦截成绩：" +
-                DateUtil.caculateTime((long) dataList.get(position).getResult(), 2, 1) + "      ");
+                ResultDisplayUtils.getStrResultForDisplay(dataList.get(position).getResult()) + "      ");
 
 
         return convertView;

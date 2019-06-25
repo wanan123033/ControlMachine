@@ -115,8 +115,9 @@ public class ResultDisplayTools {
 
             case "分'秒":
             case "秒":
+                strResult = DateUtil.caculateTime(dbResult, digital, carryMode);
 //                strResult = analyzeTimeResult(dbResult, unit, digital, carryMode, isReturnUnit);
-                strResult = getFormatTime(dbResult,digital,carryMode);
+//                strResult = getFormatTime(dbResult,digital,carryMode);
                 break;
 
             case "千克":
@@ -133,36 +134,36 @@ public class ResultDisplayTools {
         return strResult;
     }
 
-    public static String getFormatTime(int time,int digital,int carryMode) {
+    public static String getFormatTime(int time, int digital, int carryMode) {
         int s = ((time / 1000) % 60);//秒
         int m = time / 60000;//分钟
         int hs;
-        boolean isSecond = digital==1;//计时只有保留一位或2位小数点
+        boolean isSecond = digital == 1;//计时只有保留一位或2位小数点
         switch (carryMode) {
             case 3://非0进位
                 if (isSecond) {//十分位 11006 11.0 11.01
                     hs = (time % 1000 / 100);
-                    if ((time%100)-9> 0){
-                        hs+=1;
-                        if (hs>9){
-                            s+=1;
-                            hs= 0;
-                            if (s>59){
-                                m+=1;
-                                s=00;
+                    if ((time % 100) - 9 > 0) {
+                        hs += 1;
+                        if (hs > 9) {
+                            s += 1;
+                            hs = 0;
+                            if (s > 59) {
+                                m += 1;
+                                s = 00;
                             }
                         }
                     }
                 } else {
                     hs = (time % 1000 / 10);
-                    if (time%10>0){
-                        hs+=1;
-                        if (hs>9){
-                            s+=1;
-                            hs= 0;
-                            if (s>59){
-                                m+=1;
-                                s=00;
+                    if (time % 10 > 0) {
+                        hs += 1;
+                        if (hs > 9) {
+                            s += 1;
+                            hs = 0;
+                            if (s > 59) {
+                                m += 1;
+                                s = 00;
                             }
                         }
                     }
@@ -187,9 +188,9 @@ public class ResultDisplayTools {
                 break;
 
         }
-        if (isSecond){
+        if (isSecond) {
             return String.format("%02d:%02d.%1d", m, s, hs);
-        }else {
+        } else {
             return String.format("%02d:%02d.%02d", m, s, hs);
         }
     }

@@ -12,11 +12,10 @@ import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.exam.R;
-import com.feipulai.exam.activity.MiddleDistanceRace.DialogUtil;
 import com.feipulai.exam.activity.MiddleDistanceRace.TimingBean;
-import com.feipulai.exam.utils.DateUtil;
 
 import java.util.List;
 

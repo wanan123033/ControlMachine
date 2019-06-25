@@ -12,7 +12,7 @@ import com.feipulai.exam.R;
 import com.feipulai.exam.activity.basketball.result.BasketBallTestResult;
 import com.feipulai.exam.entity.MachineResult;
 import com.feipulai.exam.entity.RoundResult;
-import com.feipulai.exam.utils.DateUtil;
+import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.MySpinner;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class BasketBallResultAdapter extends BaseQuickAdapter<BasketBallTestResu
     protected void convert(BasketBallResultAdapter.ViewHolder helper, final BasketBallTestResult item) {
         helper.txtRound.setText(item.getRoundNo() + "");
         helper.txtPenalizeNum.setText(item.getPenalizeNum() + "");
-        helper.txtPracticalResult.setText(item.getResult() < 0 ? "" : DateUtil.caculateTime((long) item.getResult(),2,1));
+        helper.txtPracticalResult.setText(item.getResult() < 0 ? "" : ResultDisplayUtils.getStrResultForDisplay(item.getResult()));
 //
         if (selectPosition == helper.getLayoutPosition()) {
             helper.viewContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.blue_CB));

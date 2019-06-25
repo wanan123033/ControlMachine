@@ -8,9 +8,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.exam.R;
 import com.feipulai.exam.entity.Schedule;
-import com.feipulai.exam.utils.DateUtil;
 
 import java.util.List;
 
