@@ -95,6 +95,18 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
                 holder.tvTimingState.setText("空闲");
                 holder.tvTimingState.setTextColor(Color.BLACK);
                 holder.tvTimingState.setBackgroundResource(R.color.result_points);
+
+                holder.btnTimingWait.setEnabled(true);
+                holder.btnTimingWait.setBackgroundResource(R.drawable.btn_background);
+                holder.btnTimingWait.setTextColor(Color.WHITE);
+
+                holder.btnTimingBack.setEnabled(false);
+                holder.btnTimingBack.setBackgroundResource(R.color.grey_A8);
+                holder.btnTimingBack.setTextColor(Color.GRAY);
+
+                holder.btnTimingComplete.setEnabled(false);
+                holder.btnTimingComplete.setBackgroundResource(R.color.grey_A8);
+                holder.btnTimingComplete.setTextColor(Color.GRAY);
                 break;
             case TIMING_STATE_WAITING://等待发令状态(此刻已经开始计时)
                 holder.timer.setTextColor(Color.GREEN);

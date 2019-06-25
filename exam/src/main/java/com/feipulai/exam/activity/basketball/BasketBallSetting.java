@@ -13,6 +13,7 @@ public class BasketBallSetting {
     private int penaltySecond;//违例罚秒
     private int resultAccuracy = 1;//0 十分秒  1 百分秒
     private int carryMode = 1;//进位方式 对应项目进位（1.四舍五入 2.舍位 3.非零进取）
+    private int useMode = 0 ;
     /**
      * 满分跳过
      */
@@ -136,5 +137,13 @@ public class BasketBallSetting {
                 ", femaleFullScore=" + femaleFullScore +
                 ", testPattern=" + testPattern +
                 '}';
+    }
+
+    public int getUseMode() {
+        return useMode;
+    }
+
+    public void setUseMode(int useMode) {
+        this.useMode = useMode;
     }
 }

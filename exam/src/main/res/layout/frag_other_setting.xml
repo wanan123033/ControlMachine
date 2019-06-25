@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/icon_white_bg"
+    android:orientation="horizontal">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_margin="30dp"
+        android:background="@drawable/btn_bg_white"
+        android:padding="@dimen/dp_10">
+
+        <LinearLayout
+            android:id="@+id/ll"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_edittext"
+            android:padding="20dp"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="背心芯片数" />
+
+            <Spinner
+                android:id="@+id/sp_vest_chip_no"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/icon_spinner_bg"
+                android:entries="@array/vest_chip_no" />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_chip_add"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="15dp"
+            android:layout_toRightOf="@+id/ll">
+
+            <include
+                android:id="@+id/view_title"
+                layout="@layout/item_color_group" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_color_group"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/view_title"
+                android:background="@color/white"
+                android:overScrollMode="never" />
+        </RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>
