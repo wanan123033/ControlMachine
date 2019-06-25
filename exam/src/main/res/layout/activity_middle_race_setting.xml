@@ -1,8 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".activity.MiddleDistanceRace.MiddleRaceSettingActivity">
 
-</RelativeLayout>
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp_middle_race_setting"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <RadioGroup
+        android:id="@+id/rg_middle_race_setting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#fafafa"
+        android:orientation="horizontal"
+        android:weightSum="3">
+
+        <RadioButton
+            android:id="@+id/rb_basic"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@null"
+            android:gravity="center"
+            android:padding="@dimen/dp_10"
+            android:text="参数设置"
+            android:textColor="@color/tv_selector"
+            android:textSize="25sp" />
+
+        <RadioButton
+            android:id="@+id/rb_chip"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@null"
+            android:gravity="center"
+            android:padding="@dimen/dp_10"
+            android:text="芯片设置"
+            android:textColor="@color/tv_selector"
+            android:textSize="25sp" />
+
+        <RadioButton
+            android:id="@+id/rb_other"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@null"
+            android:gravity="center"
+            android:padding="@dimen/dp_10"
+            android:text="其它"
+            android:textColor="@color/tv_selector"
+            android:textSize="25sp" />
+    </RadioGroup>
+
+</LinearLayout>

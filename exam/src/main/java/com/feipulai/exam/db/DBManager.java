@@ -9,6 +9,8 @@ import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.entity.ChipGroupDao;
+import com.feipulai.exam.entity.ChipInfoDao;
 import com.feipulai.exam.entity.DaoMaster;
 import com.feipulai.exam.entity.DaoSession;
 import com.feipulai.exam.entity.Group;
@@ -58,6 +60,8 @@ public class DBManager {
     private static GroupDao groupDao;
     private static GroupItemDao groupItemDao;
     private static MachineResultDao machineResultDao;
+    private static ChipGroupDao chipGroupDao;
+    private static ChipInfoDao chipInfoDao;
     private static Database db;
     private static DaoSession daoSession;
     public static DBOpenHelper helper;
@@ -92,6 +96,8 @@ public class DBManager {
         scheduleDao = daoSession.getScheduleDao();
         itemScheduleDao = daoSession.getItemScheduleDao();
         machineResultDao = daoSession.getMachineResultDao();
+        chipGroupDao=daoSession.getChipGroupDao();
+        chipInfoDao=daoSession.getChipInfoDao();
         int[] supportMachineCodes = {/*ItemDefault.CODE_HW, */ItemDefault.CODE_TS, ItemDefault.CODE_YWQZ, ItemDefault.CODE_YTXS,
                 ItemDefault.CODE_LDTY, ItemDefault.CODE_ZWTQQ,
                 ItemDefault.CODE_HWSXQ, ItemDefault.CODE_FHL, ItemDefault.CODE_ZFP,
