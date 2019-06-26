@@ -153,7 +153,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
         String title;
         boolean isTestNameEmpty = TextUtils.isEmpty(SettingHelper.getSystemSetting().getTestName());
-        title =  TestConfigs.machineNameMap.get(machineCode)
+        title = TestConfigs.machineNameMap.get(machineCode)
                 + SettingHelper.getSystemSetting().getHostId() + "号机"
                 + (isTestNameEmpty ? "" : ("-" + SettingHelper.getSystemSetting().getTestName()));
         return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {
@@ -170,6 +170,15 @@ public class PushUpIndividualActivity extends BaseTitleActivity
             @Override
             public void onClick(View v) {
                 startProjectSetting();
+            }
+        }).addRightText("外接屏幕", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isConfigurableNow()) {
+                    startActivity(new Intent(PushUpIndividualActivity.this, LEDSettingActivity.class));
+                } else {
+                    toastSpeak("测试中,不能进行外接屏幕设置");
+                }
             }
         });
     }
@@ -272,7 +281,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
                 if (intervalCount > 0) {
                     //显示最终成绩
                     ledManager.showString(systemSetting.getHostId(),
-                            "最终成绩:" + ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult()- intervalCount),
+                            "最终成绩:" + ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult() - intervalCount),
                             1, 3, false, true);
                 }
                 break;
