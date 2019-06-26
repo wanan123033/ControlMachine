@@ -14,38 +14,12 @@
         android:background="@drawable/btn_bg_white"
         android:padding="@dimen/dp_10">
 
-        <LinearLayout
-            android:id="@+id/ll"
-            android:layout_centerVertical="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_edittext"
-            android:padding="20dp"
-            android:orientation="vertical">
-
-
-            <TextView
-                android:id="@+id/tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="背心芯片数" />
-
-            <Spinner
-                android:id="@+id/sp_vest_chip_no"
-                android:layout_width="80dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/icon_spinner_bg"
-                android:entries="@array/vest_chip_no" />
-
-        </LinearLayout>
-
         <RelativeLayout
             android:id="@+id/rl_chip_add"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="15dp"
-            android:layout_toRightOf="@+id/ll">
+            android:layout_toLeftOf="@+id/ll">
 
             <include
                 android:id="@+id/view_title"
@@ -59,5 +33,74 @@
                 android:background="@color/white"
                 android:overScrollMode="never" />
         </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/ll"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:background="@drawable/bg_edittext"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+
+            <TextView
+                android:id="@+id/tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="背心芯片数" />
+
+            <Spinner
+                android:id="@+id/sp_vest_chip_no"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/icon_spinner_bg"
+                android:entries="@array/vest_chip_no" />
+
+            <Button
+                android:id="@+id/btn_clear_chip"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/btn_background"
+                android:text="初始化芯片表"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/btn_color_add"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/btn_background"
+                android:text="设置颜色组"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/btn_import_chip"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/btn_background"
+                android:text="导入芯片表"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/btn_explore_chip"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/btn_background"
+                android:text="导出芯片表"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
     </RelativeLayout>
 </LinearLayout>

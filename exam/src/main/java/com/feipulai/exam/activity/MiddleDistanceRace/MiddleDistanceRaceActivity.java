@@ -203,6 +203,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         itemList = DBManager.getInstance().queryItemsByMachineCode(TestConfigs.sCurrentItem.getMachineCode());
 
         items = new String[itemList.size()];
+
     }
 
     /**
@@ -254,6 +255,11 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
             public void onClick(View v) {
                 startProjectSetting();
             }
+        }).addRightText("主机参数设置", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
         });
     }
 
@@ -270,18 +276,30 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         if (!nettyClient.getConnectStatus()) {
             nettyClient.setListener(this);
             nettyClient.connect();
-            send();
-        } else {
-            nettyClient.disconnect();
+//            send();
         }
     }
 
     private void send() {
-        if (!nettyClient.getConnectStatus()) {//获取连接状态
-            ToastUtils.showShort("正在连接中");
-        } else {
-            nettyClient.sendMsgToServer(TcpConfig.CMD_CONNECT, this);
+//        if (!nettyClient.getConnectStatus()) {//获取连接状态
+//            ToastUtils.showShort("正在连接中");
+//        } else {
+        nettyClient.sendMsgToServer(TcpConfig.CMD_CONNECT, this);
+//        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!nettyClient.getConnectStatus()) {
+            nettyClient.connect();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        nettyClient.disconnect();
     }
 
     @Override
@@ -290,12 +308,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         //停止计时命令
         nettyClient.sendMsgToServer(TcpConfig.getCmdEndTiming(), this);
 
-        mHander.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                nettyClient.disconnect();
-            }
-        }, 1000);
+        nettyClient.disconnect();
 //        UdpClient.getInstance().close();
     }
 
@@ -339,6 +352,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
 
     @Override
     public void onConnected(String text) {
+        Log.i("onConnected", "onConnected-----------------------");
         mHander.sendMessage(mHander.obtainMessage(1, text));
     }
 
