@@ -1,18 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@color/blue"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_edittext">
 
     <GridView
         android:id="@+id/gv_color"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:gravity="center"
-        android:horizontalSpacing="1dp"
-        android:verticalSpacing="1dp"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ll_btn"
+        android:layout_alignTop="@+id/tv1"
         android:layout_gravity="center"
-        android:numColumns="7"
-        android:stretchMode="columnWidth" />
+        android:layout_marginLeft="100dp"
+        android:layout_toEndOf="@+id/et_color_group_name"
+        android:background="@color/grey_light"
+        android:numColumns="6"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="2dp" />
 
-</LinearLayout>
+
+    <TextView
+        android:id="@+id/tv1"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="50dp"
+        android:gravity="center"
+        android:text="名称："
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/et_color_group_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tv1"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/tv1"
+        android:background="@drawable/edit_search_bg"
+        android:maxLines="1" />
+
+    <TextView
+        android:id="@+id/tv2"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/tv1"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:text="组颜色："
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/tv_group_color"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_alignTop="@+id/tv2"
+        android:layout_marginLeft="20dp"
+        android:layout_toEndOf="@+id/tv1"
+        android:background="@color/grey" />
+
+    <TextView
+        android:id="@+id/tv3"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/tv2"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:text="组属性："
+        android:textSize="18sp" />
+
+    <Spinner
+        android:id="@+id/sp_group_style"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_alignBaseline="@+id/tv3"
+        android:layout_marginLeft="20dp"
+        android:layout_toEndOf="@+id/tv3"
+        android:background="@drawable/icon_spinner_bg"
+        android:entries="@array/color_group_style"
+        android:spinnerMode="dialog" />
+
+    <TextView
+        android:id="@+id/tv4"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/tv3"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:text="组人数："
+        android:textSize="18sp" />
+
+
+    <EditText
+        android:id="@+id/et_color_group_no"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tv4"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/tv4"
+        android:background="@drawable/edit_search_bg"
+        android:inputType="number"
+        android:maxLines="1" />
+
+
+    <LinearLayout
+        android:id="@+id/ll_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/btn_color_cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_background"
+            android:text="取消"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btn_color_sure"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_background"
+            android:text="确定"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+</RelativeLayout>

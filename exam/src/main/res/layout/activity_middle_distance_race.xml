@@ -6,73 +6,10 @@
     android:orientation="vertical"
     tools:context=".activity.MiddleDistanceRace.MiddleDistanceRaceActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:visibility="gone">
-
-        <Button
-            android:id="@+id/btn_start1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="开始1" />
-
-        <Chronometer
-            android:id="@+id/timer1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:format="00:00:00"
-            android:gravity="center"
-            android:textSize="20sp" />
-    </LinearLayout>
-
-
-    <EditText
-        android:id="@+id/et_udp_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:enabled="false"
-        android:textSize="20sp"
-        android:visibility="gone" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:visibility="gone">
-
-        <Button
-            android:id="@+id/btn_start2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="开始2" />
-
-        <Chronometer
-            android:id="@+id/timer2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:format="00:00:00"
-            android:gravity="center"
-            android:textSize="20sp" />
-    </LinearLayout>
-
-    <EditText
-        android:id="@+id/et_udp_input2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:enabled="false"
-        android:textSize="20sp"
-        android:visibility="gone" />
-
     <Button
         android:id="@+id/btn_udp_send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/et_udp_input"
-        android:layout_centerHorizontal="true"
         android:padding="@dimen/dp_10"
         android:text="开始计时"
         android:textSize="20sp" />
@@ -116,6 +53,12 @@
             android:layout_height="40dp"
             android:layout_marginLeft="30dp"
             android:background="@drawable/icon_spinner_bg" />
+
+        <View
+            android:id="@+id/view_style"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/red_circle" />
     </LinearLayout>
 
     <View
@@ -153,13 +96,13 @@
             android:overScrollMode="never" />
 
         <!--<android.support.v7.widget.RecyclerView-->
-            <!--android:id="@+id/rv_race_result"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_margin="5dp"-->
-            <!--android:background="@color/white"-->
-            <!--android:overScrollMode="never"-->
-            <!--android:visibility="gone" />-->
+        <!--android:id="@+id/rv_race_result"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_margin="5dp"-->
+        <!--android:background="@color/white"-->
+        <!--android:overScrollMode="never"-->
+        <!--android:visibility="gone" />-->
 
         <com.feipulai.exam.view.MiddleRace.ScrollablePanel
             android:id="@+id/race_scrollablePanel"

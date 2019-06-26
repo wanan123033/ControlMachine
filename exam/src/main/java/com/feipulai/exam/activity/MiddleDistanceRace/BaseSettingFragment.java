@@ -85,6 +85,7 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
         rgCarryMode.setOnCheckedChangeListener(this);
         etMiddleRaceTime_Span.setText(time_span + "");
         etMiddleRaceTimeFirst.setText(time_first + "");
+        etMiddleRaceTimeFirst.setSelection(String.valueOf(time_first).length());
     }
 
     @Override
