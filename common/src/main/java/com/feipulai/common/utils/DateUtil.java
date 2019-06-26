@@ -104,7 +104,7 @@ public class DateUtil {
                 for (int i = 0; i < digital; i++) {
                     pattern += "0";
                 }
-                carryTime = Long.valueOf(new DecimalFormat(pattern).format(caculTime / 1000)) * 1000;
+                carryTime = (long) (Double.valueOf(new DecimalFormat(pattern).format(bigTime)) * 1000);
                 break;
             case 3://非0进位
                 carryTime = (long) (bigDecimal.setScale(digital, BigDecimal.ROUND_UP).doubleValue() * 1000);
