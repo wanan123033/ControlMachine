@@ -11,8 +11,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.tcp.NettyClient;
+import com.feipulai.device.tcp.NettyListener;
 import com.feipulai.exam.R;
-import com.feipulai.exam.activity.base.BaseFragmentActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MiddleRaceSettingActivity extends BaseTitleActivity {
+public class MiddleRaceSettingActivity extends BaseTitleActivity{
 
     @BindView(R.id.vp_middle_race_setting)
     ViewPager vpMiddleRaceSetting;
@@ -36,12 +37,12 @@ public class MiddleRaceSettingActivity extends BaseTitleActivity {
 
     private int[] rbs = {R.id.rb_basic, R.id.rb_chip, R.id.rb_other};
     private List<Fragment> mFragments;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         initListener();
+
     }
 
     @Nullable

@@ -20,6 +20,7 @@ import com.feipulai.exam.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 import static com.feipulai.exam.config.SharedPrefsConfigs.FIRST_TIME;
 import static com.feipulai.exam.config.SharedPrefsConfigs.MIDDLE_RACE;
@@ -53,15 +54,23 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
     private int time_span;//最小时间间隔
     private int carry_mode;//进位方式（0四舍五入1非零取整2非零进位）
     private int[] rbCarry = {R.id.rb_carry_mode_1, R.id.rb_carry_mode_2, R.id.rb_carry_mode_3};
+    Unbinder unbinder;
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag_base_setting, container, false);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
         mContext = getActivity();
 
         initEvent();
         return view;
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
+
 
     private void initEvent() {
         baseNo = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MIDDLE_RACE_NUMBER, 3);
@@ -86,12 +95,6 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
-    }
-
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        Log.i("onHiddenChanged", "onHiddenChanged--------------");
     }
 
     @Override

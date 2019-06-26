@@ -10,9 +10,8 @@ import android.widget.TextView;
 
 import com.feipulai.exam.R;
 import com.feipulai.exam.db.DBManager;
-import com.feipulai.exam.entity.ChipInfo;
+import com.feipulai.exam.entity.ChipGroup;
 import com.feipulai.exam.entity.Group;
-import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.Item;
 
 import java.util.List;
@@ -23,33 +22,34 @@ import butterknife.ButterKnife;
 /**
  * created by ww on 2019/6/12.
  */
-public class ChipSettingAdapter extends RecyclerView.Adapter<ChipSettingAdapter.VH> {
+public class ColorGroupAdapter extends RecyclerView.Adapter<ColorGroupAdapter.VH> {
+
+    private List<ChipGroup> chipGroups;
     private OnItemClickListener onRecyclerViewItemClickListener;
 
     //创建ViewHolder
     public static class VH extends RecyclerView.ViewHolder {
-        @BindView(R.id.tv_chip_setting_no)
-        TextView tvChipSettingNo;
-        @BindView(R.id.tv_chip_color_name)
-        TextView tvChipColorName;
-        @BindView(R.id.tv_chip_no)
-        TextView tvChipNo;
-        @BindView(R.id.tv_chip_ID1)
-        TextView tvChipID1;
-        @BindView(R.id.tv_chip_ID2)
-        TextView tvChipID2;
-        @BindView(R.id.ll_chip_item)
-        LinearLayout llChipItem;
+        @BindView(R.id.tv_color_group_no)
+        TextView tvColorGroupNo;
+        @BindView(R.id.tv_color_group_name)
+        TextView tvColorGroupName;
+        @BindView(R.id.tv_color)
+        TextView tvColor;
+        @BindView(R.id.tv_color_group_size)
+        TextView tvColorGroupSize;
+        @BindView(R.id.tv_remark)
+        TextView tvRemark;
+        @BindView(R.id.ll_color_group)
+        LinearLayout llColorGroupItem;
         public VH(View v) {
             super(v);
             ButterKnife.bind(this, v);
         }
     }
 
-    private List<ChipInfo> mDatas;
 
-    public ChipSettingAdapter(List<ChipInfo> data) {
-        this.mDatas = data;
+    public ColorGroupAdapter(List<ChipGroup> data) {
+        this.chipGroups = data;
     }
 
     public interface OnItemClickListener {
@@ -65,7 +65,7 @@ public class ChipSettingAdapter extends RecyclerView.Adapter<ChipSettingAdapter.
     @Override
     public void onBindViewHolder(final VH holder, final int position) {
         if (onRecyclerViewItemClickListener != null) {
-            holder.llChipItem.setOnLongClickListener(new View.OnLongClickListener() {
+            holder.llColorGroupItem.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     onRecyclerViewItemClickListener.onLongClick(position);
@@ -77,13 +77,13 @@ public class ChipSettingAdapter extends RecyclerView.Adapter<ChipSettingAdapter.
 
     @Override
     public int getItemCount() {
-        return mDatas.size();
+        return chipGroups.size();
     }
 
     @Override
     public VH onCreateViewHolder(ViewGroup parent, int viewType) {
         //LayoutInflater.from指定写法
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chip_setting, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_color_group, parent, false);
         return new VH(v);
     }
 }
