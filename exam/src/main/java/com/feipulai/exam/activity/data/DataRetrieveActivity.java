@@ -39,7 +39,7 @@ import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
-import com.feipulai.exam.adapter.DataRetrieveAdapter;
+import com.feipulai.exam.activity.data.adapter.DataRetrieveAdapter;
 import com.feipulai.exam.bean.DataRetrieveBean;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;

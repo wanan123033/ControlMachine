@@ -184,7 +184,7 @@ public class InteractUtils {
             } else {
                 StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
                 roundResult.setExamType(studentItem.getExamType());
-                // roundResult.setTestNo(TestCache.getInstance().getTestNoMap().get(student));
+                 roundResult.setTestNo(TestCache.getInstance().getTestNoMap().get(student));
                 roundResult.setScheduleNo(studentItem.getScheduleNo());
             }
 

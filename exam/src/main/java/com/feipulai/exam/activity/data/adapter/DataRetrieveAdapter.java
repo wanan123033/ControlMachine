@@ -1,4 +1,4 @@
-package com.feipulai.exam.adapter;
+package com.feipulai.exam.activity.data.adapter;
 
 import android.os.Handler;
 import android.support.annotation.Nullable;

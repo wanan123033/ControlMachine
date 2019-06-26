@@ -236,7 +236,7 @@ public class DataManageActivity
                     case 3://头像导入
                     case 5://删除头像
                         //TODO 测试使用
-                        DBManager.getInstance().roundResultClear();
+//                        DBManager.getInstance().roundResultClear();
                         ToastUtils.showShort("功能未开放，敬请期待");
                         break;
 

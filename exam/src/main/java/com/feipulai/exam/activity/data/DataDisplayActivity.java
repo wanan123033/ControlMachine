@@ -11,7 +11,7 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
-import com.feipulai.exam.adapter.ResultDetailAdapter;
+import com.feipulai.exam.activity.data.adapter.ResultDetailAdapter;
 import com.feipulai.exam.bean.DataRetrieveBean;
 import com.feipulai.exam.config.HWConfigs;
 import com.feipulai.exam.config.TestConfigs;

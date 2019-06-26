@@ -1,4 +1,4 @@
-package com.feipulai.exam.adapter;
+package com.feipulai.exam.activity.person.adapter;
 
 import android.support.annotation.Nullable;
 import android.text.TextUtils;

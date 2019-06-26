@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao'
-
+// 进行版本 更新版本号与名称  数据库有更改进行数据库版本号
 android {
     compileSdkVersion 26
     buildToolsVersion '26.0.1'
@@ -14,8 +14,8 @@ android {
         applicationId "com.feipulai.exam"
         minSdkVersion 17
         targetSdkVersion 26
-        versionCode 1
-        versionName "1.0.2"
+        versionCode 3
+        versionName "1.0.3"
         multiDexEnabled true
         ndk {
             abiFilters "armeabi-v7a"
@@ -91,7 +91,9 @@ dependencies {
     compile 'com.squareup.okhttp3:logging-interceptor:3.8.1'
     compile 'com.yhy:gvp:1.1.0'
 
-    compile 'com.github.zyyoona7:EasyPopup:1.1.2'//popupwindow
+    compile('com.github.zyyoona7:EasyPopup:1.1.2') {
+        exclude group: 'com.android.support'
+    }//popupwindow
 
 //    compile 'com.github.hackware1993:MagicIndicator:1.5.0'
 //    compile 'com.squareup.leakcanary:leakcanary-android:1.6.3'

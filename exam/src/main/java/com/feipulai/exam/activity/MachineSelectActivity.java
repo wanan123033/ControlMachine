@@ -51,11 +51,11 @@ public class MachineSelectActivity extends BaseTitleActivity
         mTupleList.add(new Tuple(ItemDefault.CODE_HWSXQ, "红外实心球", R.mipmap.icon_medicine_ball, 3));
         mTupleList.add(new Tuple(ItemDefault.CODE_YTXS, "引体向上", R.mipmap.icon_pullup, 3));
         mTupleList.add(new Tuple(ItemDefault.CODE_PQ, "排球垫球", R.mipmap.icon_volleyball, 3));
-        mTupleList.add(new Tuple(ItemDefault.CODE_MG, "摸高", R.mipmap.mogao, 3));
+//        mTupleList.add(new Tuple(ItemDefault.CODE_MG, "摸高", R.mipmap.mogao, 3));
         mTupleList.add(new Tuple(ItemDefault.CODE_FWC, "俯卧撑", R.mipmap.icon_fwc, 3));
-        mTupleList.add(new Tuple(ItemDefault.CODE_ZCP, "中长跑", R.mipmap.ic_launcher, 3));
-        mTupleList.add(new Tuple(ItemDefault.CODE_LQYQ, "篮球运球", R.mipmap.ic_launcher, 3));
-        mTupleList.add(new Tuple(ItemDefault.CODE_ZQYQ, "足球运球", R.mipmap.ic_launcher, 3));
+//        mTupleList.add(new Tuple(ItemDefault.CODE_ZCP, "中长跑", R.mipmap.ic_launcher, 3));
+//        mTupleList.add(new Tuple(ItemDefault.CODE_LQYQ, "篮球运球", R.mipmap.ic_launcher, 3));
+//        mTupleList.add(new Tuple(ItemDefault.CODE_ZQYQ, "足球运球", R.mipmap.ic_launcher, 3));
         RecyclerView recyclerView = findViewById(R.id.rv_item);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 12);
         recyclerView.setLayoutManager(layoutManager);

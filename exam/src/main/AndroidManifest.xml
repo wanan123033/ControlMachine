@@ -24,8 +24,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.basketball.FootBallSettingActivity"></activity>
-        <activity android:name=".activity.basketball.FootballIndividualActivity" />
         <activity
             android:name=".activity.SplashScreenActivity"
             android:screenOrientation="landscape"
@@ -152,6 +150,12 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.basketball.BasketBallSettingActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.footBall.FootballIndividualActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.football.FootBallSettingActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.MiddleDistanceRace.MiddleDistanceRaceActivity"

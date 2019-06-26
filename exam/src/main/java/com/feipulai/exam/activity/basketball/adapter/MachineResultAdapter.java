@@ -1,4 +1,4 @@
-package com.feipulai.exam.adapter;
+package com.feipulai.exam.activity.basketball.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.feipulai.exam.R;
 import com.feipulai.exam.entity.MachineResult;
-import com.feipulai.exam.utils.DateUtil;
+import com.feipulai.exam.utils.ResultDisplayUtils;
 
 import java.util.List;
 
@@ -54,11 +54,8 @@ public class MachineResultAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.txtName.setText("第" + dataList.get(position).getRoundNo() + "轮 第" +
-                (position + 1) + "次拦截成绩：" +
-                DateUtil.caculateTime((long) dataList.get(position).getResult(), 2, 1) + "      ");
-
-
+        holder.txtName.setText("第" + (position + 1) + "次拦截成绩：" +
+                ResultDisplayUtils.getStrResultForDisplay(dataList.get(position).getResult()) + "      ");
         return convertView;
     }
 

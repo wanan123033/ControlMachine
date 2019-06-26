@@ -40,7 +40,7 @@ import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.pullup.setting.PullUpSetting;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
-import com.feipulai.exam.adapter.BasePersonTestResultAdapter;
+import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
 import com.feipulai.exam.adapter.VolleyBallGroupStuAdapter;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;

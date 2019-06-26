@@ -1,4 +1,4 @@
-package com.feipulai.exam.utils;
+package com.feipulai.common.utils;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -89,30 +89,31 @@ public class DateUtil {
      * @param carryMode 0
      */
     public static String caculateTime(long caculTime, int digital, int carryMode) {
-        BigDecimal bigDecimal = new BigDecimal(caculTime / 1000);
+        double bigTime = Double.valueOf(caculTime) / 1000;
+        BigDecimal bigDecimal = new BigDecimal(bigTime);
         long carryTime;
         switch (carryMode) {
             case 0://不去舍
                 carryTime = caculTime;
                 break;
             case 1://四舍五入
-                carryTime = bigDecimal.setScale(digital, BigDecimal.ROUND_HALF_UP).longValue() * 1000;
+                carryTime = (long) (bigDecimal.setScale(digital, BigDecimal.ROUND_HALF_UP).doubleValue() * 1000);
                 break;
             case 2:
                 String pattern = "#.";
                 for (int i = 0; i < digital; i++) {
                     pattern += "0";
                 }
-                carryTime = Long.valueOf(new DecimalFormat(pattern).format(caculTime / 1000)) * 1000;
+                carryTime = (long) (Double.valueOf(new DecimalFormat(pattern).format(bigTime)) * 1000);
                 break;
             case 3://非0进位
-                carryTime = bigDecimal.setScale(digital, BigDecimal.ROUND_UP).longValue() * 1000;
+                carryTime = (long) (bigDecimal.setScale(digital, BigDecimal.ROUND_UP).doubleValue() * 1000);
                 break;
             default:
                 carryTime = caculTime;
                 break;
         }
-        if (caculTime < 60 * 1000) {
+        if (carryTime < 60 * 1000) {
             return formatTime(carryTime, "ss." + (digital == 1 ? "S" : "SS"));
         } else if (caculTime >= 60 * 1000 && caculTime < 60 * 60 * 1000) { // 一小时之内
             return formatTime(carryTime, "mm:ss." + (digital == 1 ? "S" : "SS"));
