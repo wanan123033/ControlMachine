@@ -11,9 +11,6 @@ public class BasketBallSetting {
     private String hostIp = "192.168.0.227";//计时仪IP
     private int post = 1026;//端口
     private int penaltySecond;//违例罚秒
-    private int resultAccuracy = 1;//0 十分秒  1 百分秒
-    private int carryMode = 1;//进位方式 对应项目进位（1.四舍五入 2.舍位 3.非零进取）
-    private int useMode = 0 ;
     /**
      * 满分跳过
      */
@@ -73,21 +70,6 @@ public class BasketBallSetting {
         this.penaltySecond = penaltySecond;
     }
 
-    public int getResultAccuracy() {
-        return resultAccuracy;
-    }
-
-    public void setResultAccuracy(int resultAccuracy) {
-        this.resultAccuracy = resultAccuracy;
-    }
-
-    public int getCarryMode() {
-        return carryMode;
-    }
-
-    public void setCarryMode(int carryMode) {
-        this.carryMode = carryMode;
-    }
 
     public boolean isFullSkip() {
         return fullSkip;
@@ -130,20 +112,10 @@ public class BasketBallSetting {
                 ", hostIp='" + hostIp + '\'' +
                 ", post=" + post +
                 ", penaltySecond=" + penaltySecond +
-                ", resultAccuracy=" + resultAccuracy +
-                ", carryMode=" + carryMode +
                 ", fullSkip=" + fullSkip +
                 ", maleFullScore=" + maleFullScore +
                 ", femaleFullScore=" + femaleFullScore +
                 ", testPattern=" + testPattern +
                 '}';
-    }
-
-    public int getUseMode() {
-        return useMode;
-    }
-
-    public void setUseMode(int useMode) {
-        this.useMode = useMode;
     }
 }

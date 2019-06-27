@@ -16,6 +16,7 @@ import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -25,9 +26,9 @@ import com.feipulai.device.tcp.TcpConfig;
 import com.feipulai.device.udp.UdpClient;
 import com.feipulai.device.udp.result.UDPResult;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.MiddleDistanceRace.adapter.MiddleRaceGroupAdapter;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
-import com.feipulai.exam.activity.MiddleDistanceRace.adapter.MiddleRaceGroupAdapter;
 import com.feipulai.exam.adapter.RaceTimingAdapter;
 import com.feipulai.exam.adapter.ScheduleAdapter;
 import com.feipulai.exam.config.TestConfigs;
@@ -36,7 +37,6 @@ import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.Item;
 import com.feipulai.exam.entity.Schedule;
-import com.feipulai.exam.utils.DateUtil;
 import com.feipulai.exam.view.MiddleRace.ScrollablePanel;
 
 import java.util.ArrayList;

@@ -36,7 +36,7 @@ public class BasketBallListener implements UdpClient.UDPChannelListerner {
                 }
                 break;
             case UDPBasketBallConfig.CMD_SET_STATUS_STOP_RESPONSE://停止计时
-                listener.getResult(basketballResult);
+                listener.getStatusStop(basketballResult);
 
                 break;
             case UDPBasketBallConfig.CMD_BREAK_RESPONSE://拦截成绩
@@ -46,10 +46,27 @@ public class BasketBallListener implements UdpClient.UDPChannelListerner {
     }
 
     public interface BaketBallResponseListener {
+
+
         void getDeviceStatus(int status);
 
+        /**
+         * 触发开发
+         */
         void triggerStart();
 
+        /**
+         * 拦截成绩
+         *
+         * @param result
+         */
         void getResult(BasketballResult result);
+
+        /**
+         * 停止
+         *
+         * @param result
+         */
+        void getStatusStop(BasketballResult result);
     }
 }
