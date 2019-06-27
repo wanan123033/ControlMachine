@@ -24,6 +24,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".activity.sargent_jump.SargentItemSelectActivity"></activity>
         <activity
             android:name=".activity.SplashScreenActivity"
             android:screenOrientation="landscape"
@@ -155,7 +156,7 @@
             android:name=".activity.footBall.FootballIndividualActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".activity.football.FootBallSettingActivity"
+            android:name=".activity.footBall.FootBallSettingActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.MiddleDistanceRace.MiddleDistanceRaceActivity"

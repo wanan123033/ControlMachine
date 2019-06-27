@@ -23,7 +23,7 @@ public abstract class BaseTitleActivity extends BaseActivity {
     /**
      * 标题
      */
-    private BaseToolbar mBaseToolbar;
+    public BaseToolbar mBaseToolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
