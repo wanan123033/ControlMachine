@@ -10,4 +10,6 @@ public class Constants {
     public static final int CONNECTED = 0XA2 ;
     public static final int GET_SCORE_RESPONSE = 0xA3;
     public static final int END_TEST = 0xA4 ;
+    public static final int SET_MATCH = 0Xa5;
+    public static final int MATCH_SUCCESS = 0Xa6;
 }

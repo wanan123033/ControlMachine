@@ -33,6 +33,7 @@ import com.feipulai.exam.activity.pushUp.PushUpSetting;
 import com.feipulai.exam.activity.pushUp.PushUpSettingActivity;
 import com.feipulai.exam.activity.pushUp.check.PushUpCheckActivity;
 import com.feipulai.exam.activity.sargent_jump.SargentGroupActivity;
+import com.feipulai.exam.activity.sargent_jump.SargentItemSelectActivity;
 import com.feipulai.exam.activity.sargent_jump.SargentSettingActivity;
 import com.feipulai.exam.activity.sargent_jump.SargentTestActivity;
 import com.feipulai.exam.activity.sitreach.SitReachGroupTestActivity;
@@ -249,7 +250,7 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_YWQZ, SitUpCheckActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_YTXS, PullUpSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_PQ, VolleyBallIndividualActivity.class);
-        TestConfigs.proActivity.put(ItemDefault.CODE_MG, SargentTestActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_MG, SargentItemSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_FWC, SubItemsSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_LQYQ, BasketballIndividualActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_ZCP, MiddleDistanceRaceActivity.class);
