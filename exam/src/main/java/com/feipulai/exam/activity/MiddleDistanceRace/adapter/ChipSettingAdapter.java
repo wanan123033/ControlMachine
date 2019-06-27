@@ -1,6 +1,7 @@
 package com.feipulai.exam.activity.MiddleDistanceRace.adapter;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,6 +71,8 @@ public class ChipSettingAdapter extends RecyclerView.Adapter<ChipSettingAdapter.
             } else if (IDCardNo == 2) {
                 holder.tvChipID2.setBackgroundResource(R.color.green_yellow);
             }
+        } else {
+            holder.tvChipID2.setBackgroundResource(R.color.white);
         }
         holder.tvChipNo.setText(mDatas.get(position).getVestNo() + "");
         holder.tvChipSettingNo.setText(position + 1 + "");

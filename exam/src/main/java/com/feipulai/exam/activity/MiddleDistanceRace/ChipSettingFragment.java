@@ -101,7 +101,9 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        Log.i("ChipSettingFragment","--------------onDestroyView");
         unbinder.unbind();
+        DBManager.getInstance().updateChipInfo(chipInfos);
         if (nettyClient != null)
             nettyClient.disconnect();
     }

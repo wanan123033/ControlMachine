@@ -284,6 +284,10 @@ public class DBManager {
         chipInfoDao.update(chipInfo);
     }
 
+    public void updateChipInfo(List<ChipInfo> chipInfos) {
+        chipInfoDao.updateInTx(chipInfos);
+    }
+
     /**
      * 中长跑
      * 插入芯片信息
