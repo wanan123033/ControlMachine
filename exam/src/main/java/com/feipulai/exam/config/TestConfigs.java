@@ -13,6 +13,7 @@ import com.feipulai.exam.activity.RadioTimer.RunTimerActivityTestActivity;
 import com.feipulai.exam.activity.RadioTimer.RunTimerSetting;
 import com.feipulai.exam.activity.RadioTimer.RunTimerSettingActivity;
 import com.feipulai.exam.activity.SubItemsSelectActivity;
+import com.feipulai.exam.activity.basketball.BasketBallGroupActivity;
 import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.basketball.BasketBallSettingActivity;
 import com.feipulai.exam.activity.basketball.BasketballIndividualActivity;
@@ -267,6 +268,7 @@ public class TestConfigs {
         TestConfigs.groupActivity.put(ItemDefault.CODE_MG, SargentGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_FWC, PushUpCheckActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_ZCP, MiddleDistanceRaceActivity.class);
+        TestConfigs.groupActivity.put(ItemDefault.CODE_LQYQ, BasketBallGroupActivity.class);
         // 每个机器码对应的机器名称
         TestConfigs.machineNameMap.put(ItemDefault.CODE_ZWTQQ, "坐位体前屈");
         TestConfigs.machineNameMap.put(ItemDefault.CODE_LDTY, "立定跳远");

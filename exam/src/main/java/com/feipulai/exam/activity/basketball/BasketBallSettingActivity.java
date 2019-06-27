@@ -1,6 +1,5 @@
 package com.feipulai.exam.activity.basketball;
 
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -29,6 +28,7 @@ import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.db.DBManager;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
@@ -36,7 +36,6 @@ import org.greenrobot.eventbus.EventBus;
 import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
 
@@ -81,7 +80,6 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
     private Integer[] testRound = new Integer[]{1, 2, 3};
 
     private String[] carryMode = new String[]{"四舍五入", "不进位", "非零进位"};
-    private String [] useMode = {"单拦截", "2:起点1:终点", "2:终点1:起点","2:折返点1:起终点","2:起终点1:折返点"};
     private BasketBallSetting setting;
     //    private UdpClient udpClient;
     private MyHandler mHandler = new MyHandler(this);
@@ -134,21 +132,28 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, carryMode);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spCarryMode.setAdapter(adapter);
-        spCarryMode.setSelection(setting.getCarryMode() - 1);
-        viewCarryMode.setVisibility(setting.getResultAccuracy() == 0 ? View.VISIBLE : View.GONE);
+        spCarryMode.setSelection(TestConfigs.sCurrentItem.getCarryMode() > 0 ? TestConfigs.sCurrentItem.getCarryMode() - 1 : 0);
+        viewCarryMode.setVisibility(getAccuracy() == 1 ? View.VISIBLE : View.GONE);
 
         etInterceptTime.setText(setting.getInterceptSecond() + "");
         etSensitivity.setText(setting.getSensitivity() + "");
         etHostIp.setText(setting.getHostIp());
         etPort.setText(setting.getPost() + "");
-        rgAccuracy.check(setting.getResultAccuracy() == 0 ? R.id.rb_tenths : R.id.rb_percentile);
+        rgAccuracy.check(getAccuracy() == 1 ? R.id.rb_tenths : R.id.rb_percentile);
 
         etPenaltySecond.setText(setting.getPenaltySecond() + "");
 
-        ArrayAdapter adapter1 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, useMode);
-        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spTestMode.setAdapter(adapter1);
-        spTestMode.setSelection(setting.getUseMode());
+
+    }
+
+    private int getAccuracy() {
+        switch (TestConfigs.sCurrentItem.getDigital()) {
+            case 1:
+            case 2:
+                return TestConfigs.sCurrentItem.getDigital();
+            default:
+                return 2;
+        }
     }
 
     @Override
@@ -172,7 +177,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
             case UDPBasketBallConfig.CMD_SET_PRECISION_RESPONSE:
                 ToastUtils.showShort("设置成功");
                 BasketballResult basketballResult = (BasketballResult) result.getResult();
-                setting.setResultAccuracy(basketballResult.getuPrecision());
+                TestConfigs.sCurrentItem.setDigital(basketballResult.getuPrecision() == 0 ? 1 : 2);
                 break;
             case UDPBasketBallConfig.CMD_SET_BLOCKERTIME_RESPONSE:
                 ToastUtils.showShort("设置成功");
@@ -189,6 +194,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
             setting.setPenaltySecond(Integer.valueOf(etPenaltySecond.getText().toString()));
         EventBus.getDefault().post(new BaseEvent(EventConfigs.ITEM_SETTING_UPDATE));
         SharedPrefsUtil.save(this, setting);
+        DBManager.getInstance().updateItem(TestConfigs.sCurrentItem);
         Logger.i("保存设置:" + setting.toString());
         super.finish();
     }
@@ -256,14 +262,11 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
         }
     }
 
-    @OnItemSelected({R.id.sp_carryMode,R.id.sp_test_mode})
+    @OnItemSelected({R.id.sp_carryMode})
     public void spinnerItemSelected(Spinner spinner, int position) {
         switch (spinner.getId()) {
             case R.id.sp_carryMode:
-                setting.setCarryMode(position + 1);
-                break;
-            case R.id.sp_test_mode:
-                setting.setUseMode(position);
+                TestConfigs.sCurrentItem.setCarryMode(position + 1);
                 break;
         }
     }
@@ -313,13 +316,6 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
                 }
                 break;
         }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
     }
 
 
