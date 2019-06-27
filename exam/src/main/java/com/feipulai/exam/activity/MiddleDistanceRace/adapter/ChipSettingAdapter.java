@@ -1,7 +1,6 @@
 package com.feipulai.exam.activity.MiddleDistanceRace.adapter;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,7 +50,7 @@ public class ChipSettingAdapter extends RecyclerView.Adapter<ChipSettingAdapter.
     }
 
     public interface OnItemClickListener {
-        void onLongClick(int position);
+        void onChipSettingLongClick(int position);
     }
 
     public void setOnRecyclerViewItemClickListener(OnItemClickListener onItemClickListener) {
@@ -73,14 +72,16 @@ public class ChipSettingAdapter extends RecyclerView.Adapter<ChipSettingAdapter.
             }
         } else {
             holder.tvChipID2.setBackgroundResource(R.color.white);
+            holder.tvChipID1.setBackgroundResource(R.color.white);
         }
         holder.tvChipNo.setText(mDatas.get(position).getVestNo() + "");
+        holder.tvChipColorName.setBackgroundResource(mDatas.get(position).getColor());
         holder.tvChipSettingNo.setText(position + 1 + "");
         if (onRecyclerViewItemClickListener != null) {
             holder.llChipItem.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    onRecyclerViewItemClickListener.onLongClick(position);
+                    onRecyclerViewItemClickListener.onChipSettingLongClick(position);
                     return false;
                 }
             });

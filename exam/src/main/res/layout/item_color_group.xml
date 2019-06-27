@@ -3,6 +3,7 @@
     android:id="@+id/ll_color_group"
     android:layout_width="match_parent"
     android:layout_height="50dp"
+    android:padding="2dp"
     android:background="@color/black"
     android:orientation="horizontal">
 
@@ -10,7 +11,9 @@
         android:id="@+id/tv_color_group_no"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_margin="1dp"
+        android:layout_marginBottom="1dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="1dp"
         android:layout_weight="1"
         android:background="@color/white"
         android:gravity="center"
@@ -18,11 +21,17 @@
         android:text="序号"
         android:textSize="20sp" />
 
+    <View
+        android:layout_width="1dp"
+        android:layout_height="wrap_content"
+        android:background="@color/black" />
+
     <TextView
         android:id="@+id/tv_color_group_name"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_margin="1dp"
+        android:layout_marginBottom="1dp"
+        android:layout_marginTop="1dp"
         android:layout_weight="2"
         android:background="@color/white"
         android:gravity="center"
@@ -30,11 +39,17 @@
         android:text="颜色组名"
         android:textSize="20sp" />
 
+    <View
+        android:layout_width="1dp"
+        android:layout_height="wrap_content"
+        android:background="@color/black" />
+
     <TextView
         android:id="@+id/tv_color"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_margin="1dp"
+        android:layout_marginBottom="1dp"
+        android:layout_marginTop="1dp"
         android:layout_weight="1"
         android:background="@color/white"
         android:gravity="center"
@@ -42,11 +57,17 @@
         android:text="颜色"
         android:textSize="20sp" />
 
+    <View
+        android:layout_width="1dp"
+        android:layout_height="wrap_content"
+        android:background="@color/black" />
+
     <TextView
         android:id="@+id/tv_color_group_size"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_margin="1dp"
+        android:layout_marginBottom="1dp"
+        android:layout_marginTop="1dp"
         android:layout_weight="1"
         android:background="@color/white"
         android:gravity="center"
@@ -54,11 +75,18 @@
         android:text="人数"
         android:textSize="20sp" />
 
+    <View
+        android:layout_width="1dp"
+        android:layout_height="wrap_content"
+        android:background="@color/black" />
+
     <TextView
         android:id="@+id/tv_remark"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_margin="1dp"
+        android:layout_marginBottom="1dp"
+        android:layout_marginRight="1dp"
+        android:layout_marginTop="1dp"
         android:layout_weight="2"
         android:background="@color/white"
         android:gravity="center"

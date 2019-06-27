@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.feipulai.common.utils.DateUtil;
@@ -75,6 +76,8 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
         TextView tvTimingGroup;
         @BindView(R.id.iv_timing_delete)
         ImageView ivDelete;
+        @BindView(R.id.ll_timing_item)
+        LinearLayout llItem;
 
         public VH(View v) {
             super(v);
@@ -90,6 +93,7 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
         holder.tvGroupColor.setBackgroundColor(Color.YELLOW);
         holder.tvTimingGroup.setText(timingLists.get(position).getItemGroupName());
         holder.tvTimingTime.setText(timingLists.get(position).getTime() == 0 ? "发令时刻：" : "发令时刻：" + DateUtil.formatTime(timingLists.get(position).getTime(), "yyyy-MM-dd HH:mm:ss.SSS"));
+        holder.llItem.setBackgroundResource(timingLists.get(position).getColor());
         switch (timingLists.get(position).getState()) {
             case TIMING_STATE_NOMAL://初始化状态
                 holder.tvTimingState.setText("空闲");

@@ -242,6 +242,10 @@ public class DBManager {
         return chipGroupDao.queryBuilder().where(ChipGroupDao.Properties.ColorGroupName.eq(colorName)).count();
     }
 
+    public ChipGroup queryChipGroupUni(String colorName) {
+        return chipGroupDao.queryBuilder().where(ChipGroupDao.Properties.ColorGroupName.eq(colorName)).unique();
+    }
+
     /**
      * 查询芯片表中芯片ID不为空
      *
@@ -1773,6 +1777,7 @@ public class DBManager {
         return groupDao.queryBuilder()
                 .where(GroupDao.Properties.ScheduleNo.eq(scheduleNo))
                 .where(GroupDao.Properties.ItemCode.eq(itemCode))
+                .orderAsc(GroupDao.Properties.GroupNo)
                 .list();
     }
 

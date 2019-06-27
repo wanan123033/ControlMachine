@@ -90,6 +90,7 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
 
         spVestChipNo.setSelection(chipNo - 1);
 
+        colorGroups.addAll(DBManager.getInstance().queryAllChipGroup());
         colorGroupAdapter = new ColorGroupAdapter(colorGroups);
         rvColorGroup.setLayoutManager(new LinearLayoutManager(mContext));
         rvColorGroup.setAdapter(colorGroupAdapter);
@@ -126,7 +127,8 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
 
         mCirclePop = EasyPopup.create()
                 .setContentView(mContext, R.layout.layout_pop_chip_group)
-                .setBackgroundDimEnable(false)
+                .setBackgroundDimEnable(true)
+                .setDimValue(0.5f)
                 //是否允许点击PopupWindow之外的地方消失
                 .setFocusAndOutsideEnable(false)
                 .setHeight(height * 3 / 4)
@@ -170,6 +172,8 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
                     @Override
                     public void onPositiveClick() {
                         DBManager.getInstance().deleteAllChip();
+                        colorGroups.clear();
+                        colorGroupAdapter.notifyDataSetChanged();
                     }
 
                     @Override
@@ -192,9 +196,9 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            colorGroups.clear();
-            colorGroups.addAll(DBManager.getInstance().queryAllChipGroup());
-            colorGroupAdapter.notifyDataSetChanged();
+//            colorGroups.clear();
+//            colorGroups.addAll(DBManager.getInstance().queryAllChipGroup());
+//            colorGroupAdapter.notifyDataSetChanged();
         }
     }
 
@@ -260,6 +264,7 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
                     chipInfo = new ChipInfo();
                     chipInfo.setColorGroupName(groupName);
                     chipInfo.setVestNo(i + 1);
+                    chipInfo.setColor(groupColor);
                     chipInfos.add(chipInfo);
                 }
                 DBManager.getInstance().insertChipInfos(chipInfos);
@@ -274,7 +279,7 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
     }
 
     @Override
-    public void onLongClick(final int position) {
+    public void onColorGroupLongClick(final int position) {
         final String groupName = colorGroups.get(position).getColorGroupName();
         final List<ChipInfo> chips = DBManager.getInstance().queryChipInfoHasChipID(groupName);
         String text;

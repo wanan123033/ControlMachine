@@ -38,7 +38,7 @@ public class Group {
     @NotNull
     private int examType;  //考试类型 0.正常 2.补考，1.缓考
     @NotNull
-    private int isTestComplete;//是否测试完成 0-未测试 1-已测试  2-未测完
+    private int isTestComplete;//是否测试完成 0-未测试 1-已测试  2-未测完 （中长跑:3-空闲 4-关联 5-完成)
     @NotNull
     private String itemCode;//项目代码
 
