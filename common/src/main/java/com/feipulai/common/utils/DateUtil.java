@@ -90,24 +90,25 @@ public class DateUtil {
      */
     public static String caculateTime(long caculTime, int digital, int carryMode) {
         double bigTime = Double.valueOf(caculTime) / 1000;
-        BigDecimal bigDecimal = new BigDecimal(bigTime);
+        BigDecimal bigDecimal = new BigDecimal(String.valueOf(bigTime));
         long carryTime;
         switch (carryMode) {
             case 0://不去舍
                 carryTime = caculTime;
                 break;
             case 1://四舍五入
-                carryTime = (long) (bigDecimal.setScale(digital, BigDecimal.ROUND_HALF_UP).doubleValue() * 1000);
+                carryTime = bigDecimal.setScale(digital, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(1000d)).longValue();
                 break;
             case 2:
                 String pattern = "#.";
                 for (int i = 0; i < digital; i++) {
                     pattern += "0";
                 }
-                carryTime = Long.valueOf(new DecimalFormat(pattern).format(caculTime / 1000)) * 1000;
+                double formatTime = Double.valueOf(new DecimalFormat(pattern).format(bigTime));
+                carryTime = BigDecimal.valueOf(formatTime).multiply(new BigDecimal(1000d)).longValue();
                 break;
             case 3://非0进位
-                carryTime = (long) (bigDecimal.setScale(digital, BigDecimal.ROUND_UP).doubleValue() * 1000);
+                carryTime = bigDecimal.setScale(digital, BigDecimal.ROUND_UP).multiply(new BigDecimal(1000d)).longValue();
                 break;
             default:
                 carryTime = caculTime;

@@ -42,7 +42,6 @@ public class MiddleRaceSettingActivity extends BaseTitleActivity{
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         initListener();
-
     }
 
     @Nullable

@@ -1,4 +1,4 @@
-package com.feipulai.exam.adapter;
+package com.feipulai.exam.activity.basketball.adapter;
 
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.basketball.result.BasketBallTestResult;
 import com.feipulai.exam.entity.MachineResult;
 import com.feipulai.exam.entity.RoundResult;
@@ -37,8 +38,11 @@ public class BasketBallResultAdapter extends BaseQuickAdapter<BasketBallTestResu
         return selectPosition;
     }
 
-    public BasketBallResultAdapter(@Nullable List<BasketBallTestResult> data) {
+    private BasketBallSetting setting;
+
+    public BasketBallResultAdapter(@Nullable List<BasketBallTestResult> data, BasketBallSetting setting) {
         super(R.layout.item_basketball_round_result, data);
+        this.setting = setting;
     }
 
     @Override
@@ -61,7 +65,7 @@ public class BasketBallResultAdapter extends BaseQuickAdapter<BasketBallTestResu
         helper.spRoundResult.setItemClick(new MySpinner.ItemClick() {
             @Override
             public void onClick(int position) {
-                item.setResult(item.getMachineResultList().get(position).getResult());
+                item.setResult(item.getMachineResultList().get(position).getResult() + (setting.getPenaltySecond() * item.getPenalizeNum()*1000));
                 notifyDataSetChanged();
             }
         });

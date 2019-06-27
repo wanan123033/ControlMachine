@@ -3,6 +3,8 @@ package com.feipulai.device.tcp;
 import android.os.SystemClock;
 import android.util.Log;
 
+import java.util.Arrays;
+
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -33,7 +35,7 @@ public class NettyClient {
     private static int reconnectNum = Integer.MAX_VALUE;//定义的重连到时候用
     private boolean isNeedReconnect = true;//是否需要重连
     private boolean isConnecting = false;//是否正在连接
-    private long reconnectIntervalTime = 200;//重连的时间
+    private long reconnectIntervalTime = 100;//重连的时间
 
     public String host;//ip
     public int tcp_port;//端口
@@ -160,6 +162,7 @@ public class NettyClient {
 
     public boolean sendMsgToServer(byte[] data, ChannelFutureListener listener) {
         boolean flag = channel != null && isConnect;
+        Log.i("sendMsgToServer", Arrays.toString(data) + "\n" + flag);
         if (flag) {
             ByteBuf byteBuf = Unpooled.copiedBuffer(data);
             channel.writeAndFlush(byteBuf).addListener(listener);
@@ -175,6 +178,7 @@ public class NettyClient {
     public void setReconnectIntervalTime(long reconnectIntervalTime) {
         this.reconnectIntervalTime = reconnectIntervalTime;
     }
+
     //现在连接的状态
     public boolean getConnectStatus() {
         return isConnect;

@@ -6,7 +6,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +19,14 @@ import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.tcp.NettyClient;
 import com.feipulai.device.tcp.NettyListener;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.MiddleDistanceRace.adapter.ChipSettingAdapter;
+import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.ChipInfo;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,7 +35,7 @@ import butterknife.Unbinder;
 /**
  * created by ww on 2019/6/24.
  */
-public class ChipSettingFragment extends Fragment implements View.OnLongClickListener, NettyListener {
+public class ChipSettingFragment extends Fragment implements NettyListener, ChipSettingAdapter.OnItemClickListener {
     @BindView(R.id.rv_chip_setting)
     RecyclerView rvChipSetting;
     @BindView(R.id.rl_chip_add)
@@ -41,12 +51,17 @@ public class ChipSettingFragment extends Fragment implements View.OnLongClickLis
                 case 0:
                     ToastUtils.showShort("chip-" + msg.obj.toString());
                     break;
+                case 1:
+                    chipAdapter.notifyDataSetChanged();
+                    break;
                 default:
                     break;
             }
             return false;
         }
     });
+    private List<ChipInfo> chipInfos;
+    private ChipSettingAdapter chipAdapter;
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag_chip_setting, container, false);
@@ -54,7 +69,6 @@ public class ChipSettingFragment extends Fragment implements View.OnLongClickLis
         mContext = getActivity();
 
         initEvent();
-
         initSocket();
         return view;
     }
@@ -71,21 +85,18 @@ public class ChipSettingFragment extends Fragment implements View.OnLongClickLis
         }
     }
 
+    private boolean isVisible;
+
     @Override
-    public void onResume() {
-        super.onResume();
-        Log.i("onResume", "------------------");
-        if (!nettyClient.getConnectStatus()) {
-            nettyClient.connect();
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        isVisible = isVisibleToUser;
+        if (isVisibleToUser) {
+            chipInfos.clear();
+            chipInfos.addAll(DBManager.getInstance().queryAllChipInfo());
+            chipAdapter.notifyDataSetChanged();
         }
     }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.i("onPause", "----------------");
-    }
-
 
     @Override
     public void onDestroyView() {
@@ -96,13 +107,11 @@ public class ChipSettingFragment extends Fragment implements View.OnLongClickLis
     }
 
     private void initEvent() {
-        rlChipAdd.setOnLongClickListener(this);
-    }
-
-    @Override
-    public boolean onLongClick(View v) {
-
-        return false;
+        chipInfos = new ArrayList<>();
+        chipAdapter = new ChipSettingAdapter(chipInfos);
+        rvChipSetting.setLayoutManager(new LinearLayoutManager(mContext));
+        rvChipSetting.setAdapter(chipAdapter);
+        chipAdapter.setOnRecyclerViewItemClickListener(this);
     }
 
     @Override
@@ -110,9 +119,66 @@ public class ChipSettingFragment extends Fragment implements View.OnLongClickLis
 
     }
 
+//    private ArrayList<String> cardIDs = new ArrayList<>();
+
     @Override
     public void onMessageReceive(long time, String cardId1, String cardId2) {
         mHandler.sendMessage(mHandler.obtainMessage(0, cardId1 + "---" + cardId2));
+        if (isVisible) {
+//            cardIDs.add(cardId1);
+//            if (!cardId2.isEmpty()) {
+//                cardIDs.add(cardId2);
+//            }
+            //将id信息按先后顺序并且无重复填充到chipInfos
+            for (int i = 0; i < chipInfos.size(); i++) {
+                //当芯片表中某一行第一个ID为空，可以直接填充两个ID（ID2可能为""）
+                if (TextUtils.isEmpty(chipInfos.get(i).getChipID1())) {
+                    //当为非第一行时，判断上一行的第二个ID是否和接收的ID相同
+                    if (i > 0) {
+                        if (cardId1.equals(chipInfos.get(i - 1).getChipID2())) {
+                            chipAdapter.changeBackGround(2, i - 1);
+                            mHandler.sendEmptyMessage(1);
+                            break;
+                        }
+                    }
+                    chipInfos.get(i).setChipID1(cardId1);
+                    chipInfos.get(i).setChipID2(cardId2);
+                    if ("".equals(cardId2)) {
+                        chipAdapter.changeBackGround(1, i);
+                    } else {
+                        chipAdapter.changeBackGround(2, i);
+                    }
+                    mHandler.sendEmptyMessage(1);
+                    break;
+                } else {
+                    //当芯片表中某一行第一个ID不为空，需要先判断这个ID和接收到的ID1，如果相同则跳出循环并使该行ID背景变色
+                    if (cardId1.equals(chipInfos.get(i).getChipID1())) {
+                        chipAdapter.changeBackGround(1, i);
+                        mHandler.sendEmptyMessage(1);
+                        break;
+                    }
+                    //当芯片表中某一行第二个ID为空，直接插入ID1到第二个ID中，并插入ID2到下一行的ID1中（ID2可能为""）
+                    if (TextUtils.isEmpty(chipInfos.get(i).getChipID2())) {
+                        chipInfos.get(i).setChipID2(cardId1);
+                        chipInfos.get(i + 1).setChipID1(cardId2);
+                        if ("".equals(cardId2)) {
+                            chipAdapter.changeBackGround(2, i);
+                        } else {
+                            chipAdapter.changeBackGround(1, i + 1);
+                        }
+                        mHandler.sendEmptyMessage(1);
+                        break;
+                    } else {
+                        //当芯片表中某一行第二个ID不为空，需要先判断这个ID和接收到的ID1，如果相同则跳出循环并使该行ID背景变色
+                        if (cardId1.equals(chipInfos.get(i).getChipID2())) {
+                            chipAdapter.changeBackGround(2, i);
+                            mHandler.sendEmptyMessage(1);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -133,5 +199,23 @@ public class ChipSettingFragment extends Fragment implements View.OnLongClickLis
     @Override
     public void onServiceStatusConnectChanged(int statusCode) {
 
+    }
+
+    @Override
+    public void onLongClick(final int position) {
+        DialogUtil.showCommonDialog(mContext, "是否清除" + chipInfos.get(position).getColorGroupName() + chipInfos.get(position).getVestNo() + "芯片ID标签", new DialogUtil.DialogListener() {
+            @Override
+            public void onPositiveClick() {
+                chipInfos.get(position).setChipID1("");
+                chipInfos.get(position).setChipID2("");
+                DBManager.getInstance().updateChipInfo(chipInfos.get(position));
+                chipAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onNegativeClick() {
+
+            }
+        });
     }
 }

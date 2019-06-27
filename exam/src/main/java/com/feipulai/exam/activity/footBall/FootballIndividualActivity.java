@@ -24,14 +24,13 @@ import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.basketball.result.BasketBallTestResult;
-import com.feipulai.exam.activity.footBall.FootBallSettingActivity;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.fragment.IndividualCheckFragment;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
-import com.feipulai.exam.adapter.BasketBallResultAdapter;
+import com.feipulai.exam.activity.basketball.adapter.BasketBallResultAdapter;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.MachineResult;
@@ -109,7 +108,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         setOperationUI();
         UdpClient.getInstance().init(1527);
 
-        resultAdapter = new BasketBallResultAdapter(resultList);
+        resultAdapter = new BasketBallResultAdapter(resultList,setting);
         rvTestResult.setLayoutManager(new LinearLayoutManager(this));
         rvTestResult.setAdapter(resultAdapter);
 

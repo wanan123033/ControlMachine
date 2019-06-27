@@ -9,7 +9,9 @@ import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.entity.ChipGroup;
 import com.feipulai.exam.entity.ChipGroupDao;
+import com.feipulai.exam.entity.ChipInfo;
 import com.feipulai.exam.entity.ChipInfoDao;
 import com.feipulai.exam.entity.DaoMaster;
 import com.feipulai.exam.entity.DaoSession;
@@ -96,8 +98,8 @@ public class DBManager {
         scheduleDao = daoSession.getScheduleDao();
         itemScheduleDao = daoSession.getItemScheduleDao();
         machineResultDao = daoSession.getMachineResultDao();
-        chipGroupDao=daoSession.getChipGroupDao();
-        chipInfoDao=daoSession.getChipInfoDao();
+        chipGroupDao = daoSession.getChipGroupDao();
+        chipInfoDao = daoSession.getChipInfoDao();
         int[] supportMachineCodes = {/*ItemDefault.CODE_HW, */ItemDefault.CODE_TS, ItemDefault.CODE_YWQZ, ItemDefault.CODE_YTXS,
                 ItemDefault.CODE_LDTY, ItemDefault.CODE_ZWTQQ,
                 ItemDefault.CODE_HWSXQ, ItemDefault.CODE_FHL, ItemDefault.CODE_ZFP,
@@ -180,6 +182,8 @@ public class DBManager {
         scheduleDao.deleteAll();
         itemScheduleDao.deleteAll();
         machineResultDao.deleteAll();
+        chipInfoDao.deleteAll();
+        chipGroupDao.deleteAll();
     }
 
     /**
@@ -218,6 +222,91 @@ public class DBManager {
         }
         studentDao.insertOrReplaceInTx(stuList);
         studentDao.detachAll();
+    }
+
+    /**
+     * 中长跑
+     * 插入颜色组
+     *
+     * @param chipGroup
+     */
+    public void insertChipGroup(ChipGroup chipGroup) {
+        chipGroupDao.insert(chipGroup);
+    }
+
+    public long queryChipGroup(int color) {
+        return chipGroupDao.queryBuilder().where(ChipGroupDao.Properties.Color.eq(color)).count();
+    }
+
+    public long queryChipGroup(String colorName) {
+        return chipGroupDao.queryBuilder().where(ChipGroupDao.Properties.ColorGroupName.eq(colorName)).count();
+    }
+
+    /**
+     * 查询芯片表中芯片ID不为空
+     *
+     * @param colorName
+     * @return
+     */
+    public List<ChipInfo> queryChipInfoHasChipID(String colorName) {
+        return chipInfoDao.queryBuilder()
+                .where(ChipInfoDao.Properties.ColorGroupName.eq(colorName))
+                .where(ChipInfoDao.Properties.ChipID1.isNotNull())
+                .list();
+    }
+
+    public void deleteChipInfo(List<ChipInfo> chipInfos) {
+        chipInfoDao.deleteInTx(chipInfos);
+    }
+
+    /**
+     * 删除所有该组名的芯片信息
+     *
+     * @param colorName
+     */
+    public void deleteChipInfo(String colorName) {
+        chipInfoDao.deleteInTx(chipInfoDao.queryBuilder().where(ChipInfoDao.Properties.ColorGroupName.eq(colorName)).list());
+    }
+
+    public void deleteChipGroup(ChipGroup chipGroup) {
+        chipGroupDao.delete(chipGroup);
+    }
+
+    public List<ChipGroup> queryAllChipGroup() {
+        return chipGroupDao.loadAll();
+    }
+
+    public List<ChipInfo> queryAllChipInfo() {
+        return chipInfoDao.loadAll();
+    }
+
+    public void updateChipInfo(ChipInfo chipInfo) {
+        chipInfoDao.update(chipInfo);
+    }
+
+    /**
+     * 中长跑
+     * 插入芯片信息
+     *
+     * @param chipInfo
+     */
+    public void insertChipInfo(ChipInfo chipInfo) {
+        chipInfoDao.insert(chipInfo);
+    }
+
+    /**
+     * 中长跑
+     * 插入芯片信息
+     *
+     * @param chipInfos
+     */
+    public void insertChipInfos(List<ChipInfo> chipInfos) {
+        chipInfoDao.insertInTx(chipInfos);
+    }
+
+    public void deleteAllChip() {
+        chipGroupDao.deleteAll();
+        chipInfoDao.deleteAll();
     }
 
     /**

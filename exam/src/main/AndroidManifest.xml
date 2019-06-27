@@ -153,6 +153,9 @@
             android:name=".activity.basketball.BasketBallSettingActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity
+            android:name=".activity.basketball.BasketBallGroupActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
             android:name=".activity.footBall.FootballIndividualActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity

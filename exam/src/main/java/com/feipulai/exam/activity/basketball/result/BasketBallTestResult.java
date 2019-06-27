@@ -14,7 +14,7 @@ public class BasketBallTestResult {
     private int selectMachineResult;//选中的机器成绩
     private int result;//实际成绩
     private int penalizeNum;//违例数
-    private int resultState;
+    private int resultState; //-999 预设置状态，不做成绩处理
 
     public BasketBallTestResult(int roundNo, List<MachineResult> machineResultList, int selectMachineResult, int result, int penalizeNum, int resultState) {
         this.roundNo = roundNo;

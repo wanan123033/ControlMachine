@@ -10,6 +10,10 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+    <string-array name="color_group_style">
+        <item>正常组</item>
+        <item>备用组</item>
+    </string-array>
     <string name="app_name">智能主机(考试版)</string>
     <string name="host_style">考试版本</string>
     <string name="advanced_setting">高级设置</string>

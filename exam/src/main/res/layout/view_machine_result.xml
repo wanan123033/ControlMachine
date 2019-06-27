@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="400dp"
-    android:layout_height="260dp"
+    android:layout_height="wrap_content"
     android:background="@drawable/btn_bg_white"
     android:gravity="center_horizontal"
+    android:maxHeight="260dp"
     android:orientation="vertical"
     android:padding="@dimen/dp_10">
 
@@ -19,6 +20,6 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_macResult"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

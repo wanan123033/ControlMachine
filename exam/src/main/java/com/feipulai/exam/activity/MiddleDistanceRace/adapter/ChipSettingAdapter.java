@@ -9,11 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.feipulai.exam.R;
-import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.ChipInfo;
-import com.feipulai.exam.entity.Group;
-import com.feipulai.exam.entity.GroupItem;
-import com.feipulai.exam.entity.Item;
 
 import java.util.List;
 
@@ -40,6 +36,7 @@ public class ChipSettingAdapter extends RecyclerView.Adapter<ChipSettingAdapter.
         TextView tvChipID2;
         @BindView(R.id.ll_chip_item)
         LinearLayout llChipItem;
+
         public VH(View v) {
             super(v);
             ButterKnife.bind(this, v);
@@ -64,6 +61,18 @@ public class ChipSettingAdapter extends RecyclerView.Adapter<ChipSettingAdapter.
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(final VH holder, final int position) {
+        holder.tvChipColorName.setText(mDatas.get(position).getColorGroupName());
+        holder.tvChipID1.setText(mDatas.get(position).getChipID1());
+        holder.tvChipID2.setText(mDatas.get(position).getChipID2());
+        if (currentposition == position) {
+            if (IDCardNo == 1) {
+                holder.tvChipID1.setBackgroundResource(R.color.green_yellow);
+            } else if (IDCardNo == 2) {
+                holder.tvChipID2.setBackgroundResource(R.color.green_yellow);
+            }
+        }
+        holder.tvChipNo.setText(mDatas.get(position).getVestNo() + "");
+        holder.tvChipSettingNo.setText(position + 1 + "");
         if (onRecyclerViewItemClickListener != null) {
             holder.llChipItem.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -73,6 +82,17 @@ public class ChipSettingAdapter extends RecyclerView.Adapter<ChipSettingAdapter.
                 }
             });
         }
+    }
+
+    private boolean isChangeBackGround = false;
+    private int IDCardNo = 0;
+    private int currentposition = -1;
+
+
+    public void changeBackGround(int n, int position) {
+        isChangeBackGround = true;
+        IDCardNo = n;
+        currentposition = position;
     }
 
     @Override

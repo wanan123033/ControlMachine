@@ -109,16 +109,6 @@ public class SubItemsSelectActivity extends BaseTitleActivity {
                         } else {
                             startActivity(new Intent(SubItemsSelectActivity.this, BaseGroupActivity.class));
                         }
-//                        if ((position == PushUpSetting.WIRELESS_TYPE && setting.getDeviceSum() == 1) || position == PushUpSetting.WIRED_TYPE) {
-//                            startActivity(new Intent(SubItemsSelectActivity.this,
-//                                    SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN ?
-//                                            PushUpGroupActivity.class : PushUpIndividualActivity.class));
-//                        } else {
-//                            startActivity(new Intent(SubItemsSelectActivity.this,
-//                                    PushUpCheckActivity.class));
-//                        }
-
-
                         SharedPrefsUtil.save(SubItemsSelectActivity.this, setting);
                         break;
                 }
