@@ -56,8 +56,8 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
 
     @BindView(R.id.btn_udp_send)
     Button btnUdpSend;
-    @BindView(R.id.et_udp_input)
-    EditText etUdpInput;
+    //    @BindView(R.id.et_udp_input)
+//    EditText etUdpInput;
     @BindView(R.id.sp_race_item)
     Spinner spRaceItem;
     @BindView(R.id.sp_race_state)
@@ -70,18 +70,20 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
 //    RecyclerView rvMiddleRaceResult;
     @BindView(R.id.sp_race_schedule)
     Spinner spRaceSchedule;
-    @BindView(R.id.et_udp_input2)
-    EditText etUdpInput2;
-    @BindView(R.id.timer1)
-    Chronometer timer1;
-    @BindView(R.id.timer2)
-    Chronometer timer2;
-    @BindView(R.id.btn_start1)
-    Button btnStart1;
-    @BindView(R.id.btn_start2)
-    Button btnStart2;
+    //    @BindView(R.id.et_udp_input2)
+//    EditText etUdpInput2;
+//    @BindView(R.id.timer1)
+//    Chronometer timer1;
+//    @BindView(R.id.timer2)
+//    Chronometer timer2;
+//    @BindView(R.id.btn_start1)
+//    Button btnStart1;
+//    @BindView(R.id.btn_start2)
+//    Button btnStart2;
     @BindView(R.id.race_scrollablePanel)
     ScrollablePanel scrollablePanel;
+    @BindView(R.id.view_style)
+    View viewStyle;
     private String TAG = "MiddleDistanceRaceActivity";
     private final int MESSAGE_A = 1;
 
@@ -91,6 +93,9 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
             switch (msg.what) {
                 case MESSAGE_A:
                     ToastUtils.showShort(msg.obj.toString());
+                    break;
+                case 2:
+                    send();
                     break;
                 case 3:
                     raceTimingAdapter.notifyDataSetChanged();
@@ -117,7 +122,6 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
     private String scheduleNo;
     private ArrayAdapter<String> itemAdapter;
     private long startTime;
-    private long startTime2;
     private RaceTimingAdapter raceTimingAdapter;
     private List<Item> itemList;
     private String[] items;
@@ -276,16 +280,15 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         if (!nettyClient.getConnectStatus()) {
             nettyClient.setListener(this);
             nettyClient.connect();
-//            send();
+            mHander.sendEmptyMessageDelayed(2, 500);
+        } else {
+            mHander.sendEmptyMessageDelayed(2, 200);
         }
     }
 
+    //发送连接设备命令
     private void send() {
-//        if (!nettyClient.getConnectStatus()) {//获取连接状态
-//            ToastUtils.showShort("正在连接中");
-//        } else {
         nettyClient.sendMsgToServer(TcpConfig.CMD_CONNECT, this);
-//        }
     }
 
     @Override
@@ -294,7 +297,9 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         if (!nettyClient.getConnectStatus()) {
             nettyClient.connect();
         }
+        mHander.sendEmptyMessageDelayed(2, 300);
     }
+
 
     @Override
     protected void onPause() {
@@ -306,7 +311,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
     protected void onDestroy() {
         super.onDestroy();
         //停止计时命令
-        nettyClient.sendMsgToServer(TcpConfig.getCmdEndTiming(), this);
+//        nettyClient.sendMsgToServer(TcpConfig.getCmdEndTiming(), this);
 
         nettyClient.disconnect();
 //        UdpClient.getInstance().close();
@@ -340,11 +345,9 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
             public void run() {
                 ToastUtils.showShort(cardId1 + "---" + cardId2);
                 if (cardId1.equals("fd2010f20161101e00010945")) {
-                    currentTime = DateUtil.getDeltaT2(startTime);
-                    etUdpInput.setText(currentTime);
+//                    currentTime = DateUtil.getDeltaT2(startTime);
                 } else if (cardId1.equals("fd2010f20161101e00010005")) {
-                    currentTime = DateUtil.getDeltaT2(startTime2);
-                    etUdpInput2.setText(currentTime);
+//                    currentTime = DateUtil.getDeltaT2(startTime2);
                 }
             }
         });
@@ -386,9 +389,11 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                 if (statusCode == NettyListener.STATUS_CONNECT_SUCCESS) {
                     Log.e(TAG, "STATUS_CONNECT_SUCCESS:");
                     if (nettyClient.getConnectStatus()) {
+                        viewStyle.setBackgroundResource(R.drawable.blue_circle);
 //                        ToastUtils.showShort("连接成功");
                     }
                 } else {
+                    viewStyle.setBackgroundResource(R.drawable.red_circle);
                     Log.e(TAG, "onServiceStatusConnectChanged:" + statusCode);
                     if (!nettyClient.getConnectStatus()) {
 //                        ToastUtils.showShort("网路不好，正在重连");
@@ -422,15 +427,9 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         ButterKnife.bind(this);
     }
 
-    @OnClick({R.id.btn_start1, R.id.btn_start2, R.id.btn_udp_send})
+    @OnClick({R.id.btn_udp_send})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.btn_start1:
-                break;
-            case R.id.btn_start2:
-                startTime2 = System.currentTimeMillis();
-//                mHander.sendEmptyMessage(4);
-                break;
             case R.id.btn_udp_send:
                 nettyClient.sendMsgToServer(TcpConfig.getCmdStartTiming(), this);
                 break;

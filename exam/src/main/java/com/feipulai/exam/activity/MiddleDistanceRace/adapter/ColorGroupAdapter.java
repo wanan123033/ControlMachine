@@ -2,6 +2,7 @@ package com.feipulai.exam.activity.MiddleDistanceRace.adapter;
 
 import android.annotation.SuppressLint;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,7 @@ public class ColorGroupAdapter extends RecyclerView.Adapter<ColorGroupAdapter.VH
         TextView tvRemark;
         @BindView(R.id.ll_color_group)
         LinearLayout llColorGroupItem;
+
         public VH(View v) {
             super(v);
             ButterKnife.bind(this, v);
@@ -61,9 +63,14 @@ public class ColorGroupAdapter extends RecyclerView.Adapter<ColorGroupAdapter.VH
     }
 
     //在Adapter中实现3个方法
-    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(final VH holder, final int position) {
+        holder.tvColor.setBackgroundResource(chipGroups.get(position).getColor());
+        holder.tvColor.setText("");
+        holder.tvColorGroupName.setText(chipGroups.get(position).getColorGroupName());
+        holder.tvColorGroupNo.setText(position + 1 + "");
+        holder.tvColorGroupSize.setText(chipGroups.get(position).getStudentNo() + "");
+        holder.tvRemark.setText(chipGroups.get(position).getGroupType() == 0 ? "正常组" : "备用组");
         if (onRecyclerViewItemClickListener != null) {
             holder.llColorGroupItem.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
