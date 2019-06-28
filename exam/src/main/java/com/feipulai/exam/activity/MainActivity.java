@@ -25,6 +25,7 @@ import com.feipulai.exam.activity.base.BaseActivity;
 import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.data.DataManageActivity;
 import com.feipulai.exam.activity.data.DataRetrieveActivity;
+import com.feipulai.exam.activity.sargent_jump.SargentItemSelectActivity;
 import com.feipulai.exam.activity.setting.SettingActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
@@ -124,7 +125,12 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                     if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
                         startActivity(new Intent(MainActivity.this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
                     } else {
-                        startActivity(new Intent(MainActivity.this, BaseGroupActivity.class));
+                        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_MG){
+                            startActivity(new Intent(MainActivity.this, SargentItemSelectActivity.class));
+                        }else {
+                            startActivity(new Intent(MainActivity.this, BaseGroupActivity.class));
+                        }
+
                     }
                 }
                 break;

@@ -19,7 +19,7 @@ import butterknife.ButterKnife;
 /**
  * created by ww on 2019/6/12.
  */
-public class ColorGroupAdapter extends RecyclerView.Adapter<ColorGroupAdapter.VH> {
+public class ColorSelectAdapter extends RecyclerView.Adapter<ColorSelectAdapter.VH> {
 
     private List<ChipGroup> chipGroups;
     private OnItemClickListener onRecyclerViewItemClickListener;
@@ -46,12 +46,12 @@ public class ColorGroupAdapter extends RecyclerView.Adapter<ColorGroupAdapter.VH
     }
 
 
-    public ColorGroupAdapter(List<ChipGroup> data) {
+    public ColorSelectAdapter(List<ChipGroup> data) {
         this.chipGroups = data;
     }
 
     public interface OnItemClickListener {
-        void onColorGroupLongClick(int position);
+        void onColorSelectClick(int position);
     }
 
     public void setOnRecyclerViewItemClickListener(OnItemClickListener onItemClickListener) {
@@ -67,15 +67,27 @@ public class ColorGroupAdapter extends RecyclerView.Adapter<ColorGroupAdapter.VH
         holder.tvColorGroupNo.setText(position + 1 + "");
         holder.tvColorGroupSize.setText(chipGroups.get(position).getStudentNo() + "");
         holder.tvRemark.setText(chipGroups.get(position).getGroupType() == 0 ? "正常组" : "备用组");
+
+        if (mPosi == position) {
+            holder.llColorGroupItem.setBackgroundResource(R.color.viewfinder_laser);
+        } else {
+            holder.llColorGroupItem.setBackgroundResource(R.color.grey);
+        }
         if (onRecyclerViewItemClickListener != null) {
-            holder.llColorGroupItem.setOnLongClickListener(new View.OnLongClickListener() {
+            holder.llColorGroupItem.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onLongClick(View v) {
-                    onRecyclerViewItemClickListener.onColorGroupLongClick(position);
-                    return false;
+                public void onClick(View v) {
+                    onRecyclerViewItemClickListener.onColorSelectClick(position);
+
                 }
             });
         }
+    }
+
+    private int mPosi = -1;
+
+    public void changeBackGround(int posi) {
+        mPosi = posi;
     }
 
     @Override

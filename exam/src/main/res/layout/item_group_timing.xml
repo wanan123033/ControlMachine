@@ -27,9 +27,9 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ll_timing_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/blue"
         android:orientation="vertical"
         android:padding="5dp">
 

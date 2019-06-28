@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -26,8 +27,8 @@ import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
-import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
+import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.BaseEvent;
@@ -82,6 +83,12 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     TextView tvBaseHeight;
     @BindView(R.id.txt_stu_skip)
     TextView txtStuSkip;
+    @BindView(R.id.txt_led_setting)
+    public TextView txtLedSetting;
+    @BindView(R.id.view_skip)
+    LinearLayout viewSkip;
+    @BindView(R.id.tv_device_pair)
+    public TextView tvDevicePair;
     //成绩
     private String[] result;
     private List<String> resultList = new ArrayList<>();
@@ -124,9 +131,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
         String title;
         if (TextUtils.isEmpty(SettingHelper.getSystemSetting().getTestName())) {
-            title =  TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机";
+            title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机";
         } else {
-            title =  TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机-" + SettingHelper.getSystemSetting().getTestName();
+            title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机-" + SettingHelper.getSystemSetting().getTestName();
         }
 
         return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {
@@ -178,8 +185,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         }
     }
 
-    public void setBegin(int isBegin){
-        txtStartTest.setText(isBegin == 0 ? "暂停测试":"开始测试");
+    public void setBegin(int isBegin) {
+        txtStartTest.setText(isBegin == 0 ? "暂停测试" : "开始测试");
     }
 
     private void refreshDevice() {
@@ -202,11 +209,10 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 
     public void setBaseHeightVisible(int visible) {
         tvBaseHeight.setVisibility(visible == 0 ? View.VISIBLE : View.GONE);
-        txtStuSkip.setVisibility(View.GONE);
     }
 
-    public void setBaseHeight(int height){
-        tvBaseHeight.setText("原始高度"+ height+ "厘米");
+    public void setBaseHeight(int height) {
+        tvBaseHeight.setText("原始高度" + height + "厘米");
     }
 
     /**
@@ -296,11 +302,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         switch (view.getId()) {
 
             case R.id.txt_led_setting:
-                if (pair.getBaseDevice().getState() != BaseDeviceState.STATE_NOT_BEGAIN && pair.getBaseDevice().getState() != BaseDeviceState.STATE_FREE) {
-                    toastSpeak("测试中不可使用");
-                    return;
-                }
-                startActivity(new Intent(this, LEDSettingActivity.class));
+                toLedSetting();
                 break;
             case R.id.txt_stu_skip:
                 if (pair.getStudent() != null) {
@@ -315,6 +317,14 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 
                 break;
         }
+    }
+
+    public void toLedSetting() {
+        if (pair.getBaseDevice().getState() != BaseDeviceState.STATE_NOT_BEGAIN && pair.getBaseDevice().getState() != BaseDeviceState.STATE_FREE) {
+            toastSpeak("测试中不可使用");
+            return;
+        }
+        startActivity(new Intent(this, LEDSettingActivity.class));
     }
 
 
@@ -334,14 +344,16 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 
 
     }
+
     /**
      * 开启助跑  0不助跑 1助跑
      */
     public int runUp;
-    public int baseHeight ;
+    public int baseHeight;
+
     private void addStudent(Student student) {
-        baseHeight = 0 ;
-        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_MG && runUp == 0){
+        baseHeight = 0;
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_MG && runUp == 0) {
             setBaseHeight(0);
         }
         if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
@@ -351,7 +363,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             refreshTxtStu(student);
             txtStuResult.setText("");
             toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), roundNo));
-            if (testType == 0){
+            if (testType == 0) {
                 sendTestCommand(pair);
             }
             setShowLed(pair);

@@ -12,6 +12,7 @@ import com.feipulai.exam.activity.RadioTimer.RunTimerActivityGroupActivity;
 import com.feipulai.exam.activity.RadioTimer.RunTimerActivityTestActivity;
 import com.feipulai.exam.activity.RadioTimer.RunTimerSetting;
 import com.feipulai.exam.activity.RadioTimer.RunTimerSettingActivity;
+import com.feipulai.exam.activity.SubItemsSelectActivity;
 import com.feipulai.exam.activity.basketball.BasketBallGroupActivity;
 import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.basketball.BasketBallSettingActivity;
@@ -28,7 +29,6 @@ import com.feipulai.exam.activity.medicineBall.MedicineBallTestActivity;
 import com.feipulai.exam.activity.pullup.PullUpSelectActivity;
 import com.feipulai.exam.activity.pullup.setting.PullUpSetting;
 import com.feipulai.exam.activity.pullup.setting.PullUpSettingActivity;
-import com.feipulai.exam.activity.pushUp.PushPatternSelectActivity;
 import com.feipulai.exam.activity.pushUp.PushUpSetting;
 import com.feipulai.exam.activity.pushUp.PushUpSettingActivity;
 import com.feipulai.exam.activity.pushUp.check.PushUpCheckActivity;
@@ -177,16 +177,6 @@ public class TestConfigs {
             return INIT_NO_MACHINE_CODE;
         }
         MachineCode.machineCode = machineCode;
-
-        if (machineCode == ItemDefault.CODE_ZCP) {
-
-            List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(machineCode);
-            SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, machineCode);
-            SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, itemList.get(0).getItemCode());
-            TestConfigs.sCurrentItem = itemList.get(0);
-            return INIT_SUCCESS;
-        }
-
         final List<RoundResult> roundResults = DBManager.getInstance().queryResultsByItemCodeDefault(machineCode);
         final List<StudentItem> studentItems = DBManager.getInstance().queryStuItemsByItemCodeDefault(machineCode);
 
@@ -259,7 +249,8 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_YWQZ, SitUpCheckActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_YTXS, PullUpSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_PQ, VolleyBallIndividualActivity.class);
-        TestConfigs.proActivity.put(ItemDefault.CODE_MG, SargentTestActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_MG, SargentItemSelectActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_FWC, SubItemsSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_FWC, PushPatternSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_LQYQ, BasketballIndividualActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_ZCP, MiddleDistanceRaceActivity.class);

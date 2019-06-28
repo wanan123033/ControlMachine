@@ -74,7 +74,7 @@ public class SargentJumpImpl implements SerialDeviceManager.RS232ResiltListener,
                     return;
                 }
                 jumpListener.onFree();
-//                Log.i(TAG, "空闲");
+                Log.i(TAG, "空闲");
                 break;
             case SARGENT_JUMP_START_RESPONSE:
                 Log.i(TAG, "开始");
@@ -99,7 +99,10 @@ public class SargentJumpImpl implements SerialDeviceManager.RS232ResiltListener,
                 Log.i(TAG, "result" + result.getScore());
                 break;
             case SARGENT_JUMP_SET_MATCH:
-
+                SargentJumpResult match = (SargentJumpResult) msg.obj;
+                if (jumpListener!= null){
+                    jumpListener.onMatch(match);
+                }
                 break;
         }
     }
@@ -112,5 +115,7 @@ public class SargentJumpImpl implements SerialDeviceManager.RS232ResiltListener,
         void onSelfCheck();
 
         void onFree();
+
+        void onMatch(SargentJumpResult match);
     }
 }

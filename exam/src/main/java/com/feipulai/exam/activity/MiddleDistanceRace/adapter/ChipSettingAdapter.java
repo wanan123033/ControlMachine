@@ -50,7 +50,7 @@ public class ChipSettingAdapter extends RecyclerView.Adapter<ChipSettingAdapter.
     }
 
     public interface OnItemClickListener {
-        void onLongClick(int position);
+        void onChipSettingLongClick(int position);
     }
 
     public void setOnRecyclerViewItemClickListener(OnItemClickListener onItemClickListener) {
@@ -70,14 +70,18 @@ public class ChipSettingAdapter extends RecyclerView.Adapter<ChipSettingAdapter.
             } else if (IDCardNo == 2) {
                 holder.tvChipID2.setBackgroundResource(R.color.green_yellow);
             }
+        } else {
+            holder.tvChipID2.setBackgroundResource(R.color.white);
+            holder.tvChipID1.setBackgroundResource(R.color.white);
         }
         holder.tvChipNo.setText(mDatas.get(position).getVestNo() + "");
+        holder.tvChipColorName.setBackgroundResource(mDatas.get(position).getColor());
         holder.tvChipSettingNo.setText(position + 1 + "");
         if (onRecyclerViewItemClickListener != null) {
             holder.llChipItem.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    onRecyclerViewItemClickListener.onLongClick(position);
+                    onRecyclerViewItemClickListener.onChipSettingLongClick(position);
                     return false;
                 }
             });
