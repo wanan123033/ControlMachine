@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.feipulai.exam.entity.DaoMaster;
+import com.feipulai.exam.entity.ItemDao;
 import com.feipulai.exam.entity.MachineResultDao;
 
 import org.greenrobot.greendao.database.Database;

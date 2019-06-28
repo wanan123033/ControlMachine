@@ -1,4 +1,4 @@
-package com.feipulai.exam.adapter;
+package com.feipulai.exam.activity.MiddleDistanceRace.adapter;
 
 import android.content.Context;
 import android.graphics.Color;

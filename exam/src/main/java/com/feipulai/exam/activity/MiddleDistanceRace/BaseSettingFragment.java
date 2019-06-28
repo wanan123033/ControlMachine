@@ -1,9 +1,14 @@
 package com.feipulai.exam.activity.MiddleDistanceRace;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +22,13 @@ import android.widget.Spinner;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.MiddleDistanceRace.adapter.ItemCycleAdapter;
+import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.Item;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,7 +45,7 @@ import static com.feipulai.exam.config.SharedPrefsConfigs.SPAN_TIME;
 /**
  * created by ww on 2019/6/24.
  */
-public class BaseSettingFragment extends Fragment implements AdapterView.OnItemSelectedListener, RadioGroup.OnCheckedChangeListener {
+public class BaseSettingFragment extends Fragment implements AdapterView.OnItemSelectedListener, RadioGroup.OnCheckedChangeListener, ItemCycleAdapter.OnItemClickListener {
     @BindView(R.id.sp_base_no)
     Spinner spBaseNo;
     @BindView(R.id.et_middle_race_time_first)
@@ -48,6 +60,8 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
     RadioButton rbCarryMode3;
     @BindView(R.id.rg_carry_mode)
     RadioGroup rgCarryMode;
+    @BindView(R.id.rv_race_cycles)
+    RecyclerView rvRaceCycles;
     private Context mContext;
     private int baseNo;
     private int time_first;//首次接收时间
@@ -55,6 +69,8 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
     private int carry_mode;//进位方式（0四舍五入1非零取整2非零进位）
     private int[] rbCarry = {R.id.rb_carry_mode_1, R.id.rb_carry_mode_2, R.id.rb_carry_mode_3};
     Unbinder unbinder;
+    private List<Item> itemList;
+    private ItemCycleAdapter itemCycleAdapter;
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag_base_setting, container, false);
@@ -86,6 +102,13 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
         etMiddleRaceTime_Span.setText(time_span + "");
         etMiddleRaceTimeFirst.setText(time_first + "");
         etMiddleRaceTimeFirst.setSelection(String.valueOf(time_first).length());
+
+        itemList = new ArrayList<>();
+        itemList.addAll(DBManager.getInstance().queryItemsByMachineCode(TestConfigs.sCurrentItem.getMachineCode()));
+        itemCycleAdapter = new ItemCycleAdapter(itemList);
+        rvRaceCycles.setLayoutManager(new LinearLayoutManager(mContext));
+        rvRaceCycles.setAdapter(itemCycleAdapter);
+        itemCycleAdapter.setOnRecyclerViewItemClickListener(this);
     }
 
     @Override
@@ -101,7 +124,6 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
     @Override
     public void onPause() {
         super.onPause();
-        Log.i("BaseSettingFragment", "onPause--------------");
         time_first = TextUtils.isEmpty(etMiddleRaceTimeFirst.getText().toString()) ? FIRST_TIME : Integer.parseInt(etMiddleRaceTimeFirst.getText().toString());
         time_span = TextUtils.isEmpty(etMiddleRaceTime_Span.getText().toString()) ? SPAN_TIME : Integer.parseInt(etMiddleRaceTime_Span.getText().toString());
         SharedPrefsUtil.putValue(mContext, MIDDLE_RACE, MIDDLE_RACE_TIME_FIRST, time_first);
@@ -118,5 +140,26 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
                 break;
             }
         }
+    }
+
+    @Override
+    public void onItemCycleLongClick(final int position) {
+        final EditText editText = new EditText(mContext);
+        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+        editText.setHint("圈数");
+        AlertDialog.Builder inputDialog = new AlertDialog.Builder(mContext);
+        inputDialog.setTitle(itemList.get(position).getItemName()).setView(editText);
+        inputDialog.setPositiveButton("确定",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (TextUtils.isEmpty(editText.getText().toString())) {
+                            return;
+                        }
+                        itemList.get(position).setCycleNo(Integer.parseInt(editText.getText().toString()));
+                        itemCycleAdapter.notifyDataSetChanged();
+                        DBManager.getInstance().updateItem(itemList.get(position));
+                    }
+                }).show();
     }
 }
