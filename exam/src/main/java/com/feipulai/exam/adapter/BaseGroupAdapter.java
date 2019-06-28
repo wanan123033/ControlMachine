@@ -8,6 +8,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.person.BaseStuPair;
+import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class BaseGroupAdapter extends BaseQuickAdapter<BaseStuPair, BaseViewHold
             helper.setText(R.id.tv_num, item.getTrackNo() + "");
             helper.setText(R.id.tv_stuCode, item.getStudent().getStudentCode());
             helper.setText(R.id.tv_stuName, item.getStudent().getStudentName());
-            helper.setText(R.id.tv_stuMark, item.getResultState() == 1?"X" : item.isNotBest()?" 未测":ResultDisplayUtils.getStrResultForDisplay(item.getResult()));
+            helper.setText(R.id.tv_stuMark, item.getResultState() ==  RoundResult.RESULT_STATE_FOUL?"X" : item.isNotBest()?" 未测":ResultDisplayUtils.getStrResultForDisplay(item.getResult()));
            helper.setChecked(R.id.rb_can_test,item.isCanTest());
 
             CheckBox checkBox = helper.getView(R.id.rb_can_test);

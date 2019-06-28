@@ -25,6 +25,7 @@ import com.feipulai.exam.activity.person.BaseGroupTestActivity;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.view.WaitDialog;
 import com.orhanobut.logger.Logger;
@@ -305,7 +306,7 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
                 }
             }
             stuPair.setResult(result);
-            stuPair.setResultState(0);
+            stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
             updateTestResult(stuPair);
             updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, 1));
             // 发送结束命令

@@ -147,6 +147,9 @@
             android:name=".activity.pushUp.PushUpGroupActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity
+            android:name=".activity.pushUp.PushPatternSelectActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
             android:name=".activity.basketball.BasketballIndividualActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity

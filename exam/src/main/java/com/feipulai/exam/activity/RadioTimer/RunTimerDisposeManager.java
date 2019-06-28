@@ -40,21 +40,21 @@ public class RunTimerDisposeManager {
         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId());
     }
 
-    protected void printResult(Student student, List<String> results, int current, int max,int groupNo) {
+    protected void printResult(Student student, List<String> results, int current, int max, int groupNo) {
         if (!SettingHelper.getSystemSetting().isAutoPrint() || current != max)
             return;
         PrinterManager.getInstance().print(" \n");
-        if (groupNo!=-1){
-            PrinterManager.getInstance().print(TestConfigs.sCurrentItem.getItemName() + SettingHelper.getSystemSetting().getHostId() + "号机"+ groupNo+ "组");
-        }else {
+        if (groupNo != -1) {
+            PrinterManager.getInstance().print(TestConfigs.sCurrentItem.getItemName() + SettingHelper.getSystemSetting().getHostId() + "号机" + groupNo + "组");
+        } else {
             PrinterManager.getInstance().print(TestConfigs.sCurrentItem.getItemName() + SettingHelper.getSystemSetting().getHostId() + "号机");
         }
-        PrinterManager.getInstance().print("考  号:" + student.getStudentCode() );
-        PrinterManager.getInstance().print("姓  名:" + student.getStudentName() );
+        PrinterManager.getInstance().print("考  号:" + student.getStudentCode());
+        PrinterManager.getInstance().print("姓  名:" + student.getStudentName());
         for (int i = 0; i < results.size(); i++) {
-            PrinterManager.getInstance().print(String.format("第%1$d次：", i + 1) + results.get(i) );
+            PrinterManager.getInstance().print(String.format("第%1$d次：", i + 1) + results.get(i));
         }
-        PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()) );
+        PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()));
         PrinterManager.getInstance().print(" \n");
     }
 
@@ -77,7 +77,7 @@ public class RunTimerDisposeManager {
         roundResult.setItemCode(TestConfigs.getCurrentItemCode());
         roundResult.setResult(result);
         roundResult.setMachineResult(result);
-        roundResult.setResultState(0);
+        roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
         roundResult.setTestTime(System.currentTimeMillis() + "");
         roundResult.setRoundNo(currentTestTime);
         roundResult.setTestNo(testNo);
@@ -87,7 +87,7 @@ public class RunTimerDisposeManager {
         RoundResult bestResult = DBManager.getInstance().queryBestScore(student.getStudentCode(), testNo);
         if (bestResult != null) {
             // 原有最好成绩犯规 或者原有最好成绩没有犯规但是现在成绩更好 //跑步时间越短越好
-            if (bestResult.getResultState() == 0 && bestResult.getResult() >= result) {
+            if (bestResult.getResultState() ==  RoundResult.RESULT_STATE_NORMAL && bestResult.getResult() >= result) {
                 // 这个时候就要同时修改这两个成绩了
                 roundResult.setIsLastResult(1);
                 bestResult.setIsLastResult(0);
@@ -125,7 +125,7 @@ public class RunTimerDisposeManager {
         roundResult.setItemCode(TestConfigs.getCurrentItemCode());
         roundResult.setResult(result);
         roundResult.setMachineResult(result);
-        roundResult.setResultState(0);
+        roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
         roundResult.setTestTime(System.currentTimeMillis() + "");
         roundResult.setRoundNo(currentTestTime);
         roundResult.setTestNo(1);
@@ -136,7 +136,7 @@ public class RunTimerDisposeManager {
         RoundResult bestResult = DBManager.getInstance().queryGroupBestScore(student.getStudentCode(), group.getId());
         if (bestResult != null) {
             // 原有最好成绩犯规 或者原有最好成绩没有犯规但是现在成绩更好
-            if (bestResult.getResultState() == 0 && bestResult.getResult() >= result) {
+            if (bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && bestResult.getResult() >= result) {
                 // 这个时候就要同时修改这两个成绩了
                 roundResult.setIsLastResult(1);
                 bestResult.setIsLastResult(0);
@@ -198,11 +198,11 @@ public class RunTimerDisposeManager {
         }
         for (int i = 0; i < realSize; i++) {
             Student student = runs.get(i).getStudent();
-            y = i ;
+            y = i;
             if (student != null) {
                 String name = getFormatName(student.getStudentName());
-                if (runs.get(i).getMark()!= null){
-                    name = name+runs.get(i).getMark();
+                if (runs.get(i).getMark() != null) {
+                    name = name + runs.get(i).getMark();
                 }
                 mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), name,
                         0, y, false, true);
@@ -224,16 +224,16 @@ public class RunTimerDisposeManager {
 
     }
 
-    public void showReady(List<RunStudent> runs,boolean ready) {
+    public void showReady(List<RunStudent> runs, boolean ready) {
         mLEDManager.clearScreen(SettingHelper.getSystemSetting().getHostId());
         for (int i = 0; i < runs.size(); i++) {
             Student student = runs.get(i).getStudent();
             if (student != null) {
                 String studentName = getFormatName(student.getStudentName());
-                if (ready){
+                if (ready) {
                     mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), String.format("%1d %-4s  %s", i + 1, studentName, "准备"),
                             0, i, false, true);
-                }else {
+                } else {
                     mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), String.format("%1d %-4s", i + 1, studentName),
                             0, i, false, true);
                 }

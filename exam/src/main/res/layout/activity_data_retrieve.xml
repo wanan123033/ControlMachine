@@ -145,6 +145,20 @@
         android:gravity="right|center_vertical"
         android:orientation="horizontal">
 
+        <TextView
+            android:id="@+id/txt_sp_title"
+            style="@style/style_setting_tv_title"
+            android:layout_marginLeft="50dp"
+            android:text="查询项目："
+            android:textSize="@dimen/sp_16"
+            android:visibility="gone" />
+
+        <Spinner
+            android:id="@+id/sp_select_items"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/icon_spinner_bg"
+            android:visibility="gone" />
 
         <TextView
             style="@style/style_setting_tv_title"
