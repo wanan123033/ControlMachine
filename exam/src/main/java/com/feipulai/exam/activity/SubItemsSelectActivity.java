@@ -13,13 +13,8 @@ import com.feipulai.common.utils.ActivityCollector;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.R;
-import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
-import com.feipulai.exam.activity.pushUp.PushUpIndividualActivity;
-import com.feipulai.exam.activity.pushUp.PushUpSetting;
-import com.feipulai.exam.activity.pushUp.check.PushUpCheckActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
-import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.adapter.SubItemsSelectAdapter;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
@@ -29,7 +24,6 @@ import com.feipulai.exam.entity.Item;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.StudentItem;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -43,9 +37,8 @@ public class SubItemsSelectActivity extends BaseTitleActivity {
 
     @BindView(R.id.rv_subitems)
     RecyclerView rvSubitems;
-    private SubItemsSelectAdapter adapter;
-    private List<Item> itemList;
-    private int selectType = 0;//0 项目选择 1 俯卧撑模式选择
+    protected SubItemsSelectAdapter adapter;
+    protected List<Item> itemList;
 
     @Override
     protected int setLayoutResID() {
@@ -56,23 +49,14 @@ public class SubItemsSelectActivity extends BaseTitleActivity {
     protected void initBundle(Bundle bundle) {
         super.initBundle(bundle);
         if (bundle != null) {
-            selectType = bundle.getInt("selectType", 0);
             machineCode = bundle.getInt("machineCode");
         }
     }
 
     @Override
     protected void initData() {
-        if (selectType == 0) {
-            toastSpeak("请选择当前考试对应项目");
-            itemList = DBManager.getInstance().queryItemsByMachineCode(machineCode);
-
-        } else {
-            itemList = new ArrayList<>();
-            itemList.add(new Item("有线模式"));
-            itemList.add(new Item("无线模式"));
-        }
-
+        toastSpeak("请选择当前考试对应项目");
+        itemList = DBManager.getInstance().queryItemsByMachineCode(machineCode);
 
         rvSubitems.setLayoutManager(new LinearLayoutManager(this));
         adapter = new SubItemsSelectAdapter(itemList);
@@ -80,38 +64,16 @@ public class SubItemsSelectActivity extends BaseTitleActivity {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                switch (selectType) {
-                    case 0:
-                        TestConfigs.sCurrentItem = itemList.get(position);
-                        List<RoundResult> roundResults = DBManager.getInstance().queryResultsByItemCodeDefault(machineCode);
-                        List<StudentItem> studentItems = DBManager.getInstance().queryStuItemsByItemCodeDefault(machineCode);
-                        MachineItemCodeUtil.fillDefaultItemCode(studentItems, roundResults, itemList.get(position).getItemCode());
-                        SharedPrefsUtil.putValue(SubItemsSelectActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, machineCode);
-                        SharedPrefsUtil.putValue(SubItemsSelectActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, itemList.get(position).getItemCode());
-                        SettingHelper.getSystemSetting().setHostId(1);
-                        SettingHelper.updateSettingCache(SettingHelper.getSystemSetting());
-                        ActivityCollector.finishAll();
-                        startActivity(new Intent(SubItemsSelectActivity.this, MainActivity.class));
-                        break;
-                    case 1:
-
-                        PushUpSetting setting = SharedPrefsUtil.loadFormSource(SubItemsSelectActivity.this, PushUpSetting.class);
-                        setting.setTestType(position);
-                        if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
-                            if ((position == PushUpSetting.WIRELESS_TYPE && setting.getDeviceSum() == 1) || position == PushUpSetting.WIRED_TYPE) {
-                                startActivity(new Intent(SubItemsSelectActivity.this,
-                                        PushUpIndividualActivity.class));
-                            } else {
-                                startActivity(new Intent(SubItemsSelectActivity.this,
-                                        PushUpCheckActivity.class));
-                            }
-
-                        } else {
-                            startActivity(new Intent(SubItemsSelectActivity.this, BaseGroupActivity.class));
-                        }
-                        SharedPrefsUtil.save(SubItemsSelectActivity.this, setting);
-                        break;
-                }
+                TestConfigs.sCurrentItem = itemList.get(position);
+                List<RoundResult> roundResults = DBManager.getInstance().queryResultsByItemCodeDefault(machineCode);
+                List<StudentItem> studentItems = DBManager.getInstance().queryStuItemsByItemCodeDefault(machineCode);
+                MachineItemCodeUtil.fillDefaultItemCode(studentItems, roundResults, itemList.get(position).getItemCode());
+                SharedPrefsUtil.putValue(SubItemsSelectActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, machineCode);
+                SharedPrefsUtil.putValue(SubItemsSelectActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, itemList.get(position).getItemCode());
+                SettingHelper.getSystemSetting().setHostId(1);
+                SettingHelper.updateSettingCache(SettingHelper.getSystemSetting());
+                ActivityCollector.finishAll();
+                startActivity(new Intent(SubItemsSelectActivity.this, MainActivity.class));
                 finish();
             }
         });
@@ -120,8 +82,7 @@ public class SubItemsSelectActivity extends BaseTitleActivity {
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        String title = selectType == 0 ? "项目选择" : "俯卧撑模式选择";
-        return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {
+        return builder.setTitle("项目选择").addLeftText("返回", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();

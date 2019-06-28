@@ -259,7 +259,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
                 }
             }
             stuPair.setResult(result);
-            stuPair.setResultState(fault ? RoundResult.RESULT_STATE_FOUL : 0);
+            stuPair.setResultState(fault ? RoundResult.RESULT_STATE_FOUL : RoundResult.RESULT_STATE_NORMAL);
             updateResult(stuPair);
             updateDevice(stuPair.getBaseDevice());
             // 发送结束命令

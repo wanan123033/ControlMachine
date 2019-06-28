@@ -20,6 +20,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -36,16 +37,18 @@ import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LoginActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.data.adapter.DataRetrieveAdapter;
+import com.feipulai.exam.activity.data.adapter.ItemSelectAdapter;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
-import com.feipulai.exam.activity.data.adapter.DataRetrieveAdapter;
 import com.feipulai.exam.bean.DataRetrieveBean;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.HWConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.Item;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
@@ -69,6 +72,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import butterknife.OnItemSelected;
 
 /**
  * 数据查询
@@ -109,17 +113,18 @@ public class DataRetrieveActivity extends BaseTitleActivity
     TextView txtStuManNumber;
     @BindView(R.id.txt_stu_womemNumber)
     TextView txtStuWomemNumber;
-    //	private Item mCurrentItem;
-
+    @BindView(R.id.txt_sp_title)
+    TextView txtSpTitle;
+    @BindView(R.id.sp_select_items)
+    Spinner spSelectItems;
+    private List<Item> itemList;
     private DataRetrieveAdapter mAdapter;
     private List<DataRetrieveBean> mList;
     private List<DataRetrieveBean> printList = new ArrayList<>();
     private static final int LOAD_ITEMS = 100;
     private int mPageNum;
-//    private ProgressDialog mProgressDialog;
-
-
     public BroadcastReceiver receiver;
+    private Item mCurrentItem;
 
     @Override
     protected int setLayoutResID() {
@@ -128,10 +133,10 @@ public class DataRetrieveActivity extends BaseTitleActivity
 
     @Override
     protected void initData() {
+        mCurrentItem = TestConfigs.sCurrentItem;
         PrinterManager.getInstance().init();
         mRbAll.setChecked(true);
         registerReceiver();
-//        SoftInputUtil.disableShowSoftInput(mEtInputText);
         mCbSelectAll.setOnCheckedChangeListener(this);
         cbUploaded.setOnCheckedChangeListener(this);
         cbUnUpload.setOnCheckedChangeListener(this);
@@ -178,8 +183,10 @@ public class DataRetrieveActivity extends BaseTitleActivity
         });
 
         setListAdapter();
+        setMoreItemInit();
         //查全部
         setAllList();
+
     }
 
 
@@ -193,12 +200,6 @@ public class DataRetrieveActivity extends BaseTitleActivity
             }
         });
     }
-
-//    @Override
-//    public void onCheckIn(Student student) {
-//        mEtInputText.setText(student.getStudentCode());
-//        queryData(student.getStudentCode());
-//    }
 
 
     @Override
@@ -368,6 +369,45 @@ public class DataRetrieveActivity extends BaseTitleActivity
         }
     }
 
+    @OnItemSelected({R.id.sp_select_items})
+    public void spinnerItemSelected(Spinner spinner, int position) {
+        switch (spinner.getId()) {
+            case R.id.sp_select_items:
+                mCurrentItem = itemList.get(position);
+                mPageNum = 0;
+                //刷选条件必须至少有一个
+                if (cbUploaded.isChecked() || cbUnUpload.isChecked() || cbTested.isChecked() || cbUnTested.isChecked()) {
+                    //选择未测，证明没有成绩，所有选择已上传与未上传都是空列表
+                    if (cbUnTested.isChecked() && (cbUploaded.isChecked() || cbUnUpload.isChecked())) {
+                        mList.clear();
+                        mAdapter.notifyDataSetChanged();
+                    } else {
+                        chooseStudent();
+                    }
+                } else if (!TextUtils.isEmpty(mEtInputText.getText().toString())) {
+                    queryData(mEtInputText.getText().toString());
+                } else {
+                    mRbAll.setChecked(true);
+                    //查全部
+                    setAllList();
+                }
+
+                break;
+        }
+    }
+
+    private void setMoreItemInit() {
+        switch (TestConfigs.sCurrentItem.getMachineCode()) {
+            case ItemDefault.CODE_ZCP:
+                txtSpTitle.setVisibility(View.VISIBLE);
+                spSelectItems.setVisibility(View.VISIBLE);
+                itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
+                mCurrentItem = itemList.get(0);
+                spSelectItems.setAdapter(new ItemSelectAdapter(this, itemList));
+                break;
+        }
+    }
+
     private void printResult(DataRetrieveBean dataRetrieveBean, List<RoundResult> printResults) {
 
         Map<Integer, List<RoundResult>> resultMap = new HashMap<>();
@@ -424,6 +464,9 @@ public class DataRetrieveActivity extends BaseTitleActivity
 
     }
 
+    private String getItemCode() {
+        return mCurrentItem.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : mCurrentItem.getItemCode();
+    }
 
     /**
      * 查找所有学生信息
@@ -432,7 +475,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
         DataBaseExecutor.addTask(new DataBaseTask(this, getString(R.string.loading_hint), true) {
             @Override
             public DataBaseRespon executeOper() {
-                List<Student> studentList = DBManager.getInstance().getItemStudent(LOAD_ITEMS, LOAD_ITEMS *
+                List<Student> studentList = DBManager.getInstance().getItemStudent(getItemCode(), LOAD_ITEMS, LOAD_ITEMS *
                         mPageNum);
                 return new DataBaseRespon(true, "", studentList);
             }
@@ -443,7 +486,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
                 List<Student> studentList = (List<Student>) respon.getObject();
                 if (mPageNum == 0) {
                     mList.clear();
-                    Map<String, Object> countMap = DBManager.getInstance().getItemStudenCount();
+                    Map<String, Object> countMap = DBManager.getInstance().getItemStudenCount(getItemCode());
                     setStuCount(countMap.get("count"), countMap.get("women_count"), countMap.get("man_count"));
                     Logger.i("zzs===>" + countMap.toString());
                 }
@@ -517,7 +560,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
         DataBaseExecutor.addTask(new DataBaseTask(this, getString(R.string.loading_hint), true) {
             @Override
             public DataBaseRespon executeOper() {
-                List<Student> students = DBManager.getInstance().fuzzyQueryByStuCode(inputText, LOAD_ITEMS, LOAD_ITEMS *
+                List<Student> students = DBManager.getInstance().fuzzyQueryByStuCode(getItemCode(), inputText, LOAD_ITEMS, LOAD_ITEMS *
                         mPageNum);
                 return new DataBaseRespon(true, "", students);
             }
@@ -549,7 +592,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
                 }
                 mRefreshView.finishRefreshAndLoad();
                 mAdapter.notifyDataSetChanged();
-                Map<String, Object> countMap = DBManager.getInstance().fuzzyQueryByStuCodeCount(inputText);
+                Map<String, Object> countMap = DBManager.getInstance().fuzzyQueryByStuCodeCount(getItemCode(), inputText);
                 setStuCount(countMap.get("count"), countMap.get("women_count"), countMap.get("man_count"));
             }
 
@@ -649,7 +692,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
         DataBaseExecutor.addTask(new DataBaseTask(this, getString(R.string.loading_hint), true) {
             @Override
             public DataBaseRespon executeOper() {
-                List<Student> studentList = DBManager.getInstance().getChooseStudentList(cbTested.isChecked(),
+                List<Student> studentList = DBManager.getInstance().getChooseStudentList(getItemCode(), cbTested.isChecked(),
                         cbUnTested.isChecked(),
                         cbUploaded.isChecked(), cbUnUpload.isChecked(), LOAD_ITEMS, LOAD_ITEMS * mPageNum);
                 return new DataBaseRespon(true, "", studentList);
@@ -662,7 +705,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
 
                 if (mPageNum == 0) {
                     mList.clear();
-                    Map<String, Object> countMap = DBManager.getInstance().getChooseStudentCount(cbTested.isChecked(), cbUnTested.isChecked(),
+                    Map<String, Object> countMap = DBManager.getInstance().getChooseStudentCount(getItemCode(), cbTested.isChecked(), cbUnTested.isChecked(),
                             cbUploaded.isChecked(), cbUnUpload.isChecked());
                     setStuCount(countMap.get("count"), countMap.get("women_count"), countMap.get("man_count"));
                     Logger.i("zzs===>" + countMap.toString());
@@ -708,37 +751,6 @@ public class DataRetrieveActivity extends BaseTitleActivity
         txtStuManNumber.setText(mamCount + "");
         txtStuWomemNumber.setText(womenCount + "");
     }
-
-//    @Override
-//    public void onRefresh() {
-//        // Stop the refreshing indicator
-//        mSwiperefresh.setRefreshing(false);
-//    }
-//
-//    @Override
-//    public void onLoadMore() {
-//        //如果这里设置adapter,会导致每次都自动跳转到第一个item显示
-//        //如果这里不设置adapter,那么在SwipeRefreshView中的
-//        //mListView.addFooterView(mFooterView)无效,
-//        //mListView.removeFooterView(mFooterView)会抛出异常导致奔溃
-//        //暂时的解决方案:我们对mFooterView的需求并不高,直接去掉就行,这里直接
-//        //notifyDataSetChanged,跳转的问题也解决了
-//        //setListAdapter();
-//        if (TextUtils.isEmpty(mEtInputText.getText().toString().trim())) {
-//
-//            if (mRbAll.isChecked()) {
-//                setAllList();
-//            } else {
-//                chooseStudent();
-//            }
-//        } else {
-//            queryData(mEtInputText.getText().toString().trim());
-//        }
-//        mAdapter.notifyDataSetChanged();
-//        Logger.i("loading");
-//        // 加载完数据设置为不加载状态,将加载进度收起来
-//        mSwiperefresh.setLoading(false);
-//    }
 
 
     @Override

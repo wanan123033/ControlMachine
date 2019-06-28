@@ -350,6 +350,13 @@ public class DBManager {
      * 根据学号模糊查询学生信息
      */
     public List<Student> fuzzyQueryByStuCode(String studentCode, int limit, int offset) {
+        return fuzzyQueryByStuCode(TestConfigs.getCurrentItemCode(), studentCode, limit, offset);
+    }
+
+    /**
+     * 根据学号模糊查询学生信息
+     */
+    public List<Student> fuzzyQueryByStuCode(String itemCode, String studentCode, int limit, int offset) {
 //        List<Student> students = studentDao.queryBuilder()
 //                .where(StudentDao.Properties.StudentCode.like("%" + studentCode + "%"))
 //                .limit(limit)
@@ -366,7 +373,7 @@ public class DBManager {
         sqlBuf.append(" WHERE  " + GroupItemDao.Properties.ItemCode.columnName + " = ?  )");
         sqlBuf.append(" AND  S." + StudentDao.Properties.StudentCode.columnName + " LIKE '%" + studentCode + "%' ");
         sqlBuf.append(" limit " + offset + "," + limit);
-        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{TestConfigs.getCurrentItemCode(), TestConfigs.getCurrentItemCode()});
+        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{itemCode, itemCode});
         List<Student> students = new ArrayList<>();
         while (c.moveToNext()) {
             Student student = studentDao.readEntity(c, 0);
@@ -384,7 +391,7 @@ public class DBManager {
      * @param offset 页数
      * @return
      */
-    public List<Student> getItemStudent(int limit, int offset) {
+    public List<Student> getItemStudent(String itemCode, int limit, int offset) {
         StringBuffer sqlBuf = new StringBuffer("SELECT S.* FROM " + StudentDao.TABLENAME + " S");
         sqlBuf.append(" WHERE S." + StudentDao.Properties.StudentCode.columnName + " IN ( ");
         sqlBuf.append(" SELECT  " + StudentItemDao.Properties.StudentCode.columnName);
@@ -396,7 +403,7 @@ public class DBManager {
         if (limit != -1)
             sqlBuf.append(" limit " + offset + "," + limit);
         Logger.i("=====sql1===>" + sqlBuf.toString());
-        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{TestConfigs.getCurrentItemCode(), TestConfigs.getCurrentItemCode()});
+        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{itemCode, itemCode});
         List<Student> students = new ArrayList<>();
         while (c.moveToNext()) {
             Student student = studentDao.readEntity(c, 0);
@@ -502,7 +509,7 @@ public class DBManager {
      * @param isUnUpload 选择未上传
      * @return
      */
-    public Map<String, Object> getChooseStudentCount(boolean isTested, boolean isUnTested, boolean isUpload, boolean isUnUpload) {
+    public Map<String, Object> getChooseStudentCount(String itemCode, boolean isTested, boolean isUnTested, boolean isUpload, boolean isUnUpload) {
         Logger.i("zzs===>" + isTested + "---" + isUnTested + "---" + isUpload + "---" + isUnUpload);
 
         StringBuffer sqlBuf = new StringBuffer("SELECT COUNT(*) AS STU_COUNT,");
@@ -556,11 +563,11 @@ public class DBManager {
             sqlBuf.append(" WHERE ");
         }
 
-        sqlBuf.append("  R." + RoundResultDao.Properties.ItemCode.columnName + " = '" + TestConfigs.getCurrentItemCode() + "'");
+        sqlBuf.append("  R." + RoundResultDao.Properties.ItemCode.columnName + " = '" + itemCode + "'");
         sqlBuf.append(")  ");
 
         Logger.i("=====sql1===>" + sqlBuf.toString());
-        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{TestConfigs.getCurrentItemCode(), TestConfigs.getCurrentItemCode()});
+        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{itemCode, itemCode});
 
         Map<String, Object> countMap = new HashMap<>();
 
@@ -583,7 +590,7 @@ public class DBManager {
      *
      * @return
      */
-    public Map<String, Object> getItemStudenCount() {
+    public Map<String, Object> getItemStudenCount(String itemCode) {
         StringBuffer sqlBuf = new StringBuffer("SELECT COUNT(*) AS STU_COUNT,");
 
         sqlBuf.append(" COUNT( CASE WHEN S." + StudentDao.Properties.Sex.columnName + "=0 THEN " + StudentDao.Properties.Sex.columnName + " END) AS" +
@@ -603,7 +610,7 @@ public class DBManager {
         sqlBuf.append(" WHERE  " + GroupItemDao.Properties.ItemCode.columnName + " = ?  ) ");
 
         Logger.i("=====sql1===>" + sqlBuf.toString());
-        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{TestConfigs.getCurrentItemCode(), TestConfigs.getCurrentItemCode()});
+        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{itemCode, itemCode});
 
         Map<String, Object> countMap = new HashMap<>();
 
@@ -624,7 +631,7 @@ public class DBManager {
     /**
      * 根据学号模糊查询学生信息
      */
-    public Map<String, Object> fuzzyQueryByStuCodeCount(String studentCode) {
+    public Map<String, Object> fuzzyQueryByStuCodeCount(String itemCode, String studentCode) {
         StringBuffer sqlBuf = new StringBuffer("SELECT COUNT(*) AS STU_COUNT,");
 
         sqlBuf.append(" COUNT( CASE WHEN S." + StudentDao.Properties.Sex.columnName + "=0 THEN " + StudentDao.Properties.Sex.columnName + " END) AS" +
@@ -642,7 +649,7 @@ public class DBManager {
         sqlBuf.append(" FROM " + GroupItemDao.TABLENAME);
         sqlBuf.append(" WHERE  " + GroupItemDao.Properties.ItemCode.columnName + " = ?  )");
         sqlBuf.append(" AND  S." + StudentDao.Properties.StudentCode.columnName + " LIKE '%" + studentCode + "%' ");
-        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{TestConfigs.getCurrentItemCode(), TestConfigs.getCurrentItemCode()});
+        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{itemCode, itemCode});
         Map<String, Object> countMap = new HashMap<>();
 
         if (c.moveToNext()) {
@@ -659,7 +666,7 @@ public class DBManager {
 
     }
 
-    public List<Student> getChooseStudentList(boolean isTested, boolean isUnTested, boolean isUpload, boolean isUnUpload, int limit, int offset) {
+    public List<Student> getChooseStudentList(String itemCode, boolean isTested, boolean isUnTested, boolean isUpload, boolean isUnUpload, int limit, int offset) {
         //获取报名项目所有学生
         //查询学生在当前项目个人报名与分组报名的并集里的
         List<Student> studentList = new ArrayList<>();
@@ -704,11 +711,11 @@ public class DBManager {
         } else {
             sqlBuf.append(" WHERE ");
         }
-        sqlBuf.append("  R." + RoundResultDao.Properties.ItemCode.columnName + " = '" + TestConfigs.getCurrentItemCode() + "'");
+        sqlBuf.append("  R." + RoundResultDao.Properties.ItemCode.columnName + " = '" + itemCode + "'");
         sqlBuf.append(")  ");
         sqlBuf.append(" limit " + offset + "," + limit);
 
-        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{TestConfigs.getCurrentItemCode(), TestConfigs.getCurrentItemCode()});
+        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{itemCode, itemCode});
         while (c.moveToNext()) {
             Student student = studentDao.readEntity(c, 0);
             studentList.add(student);

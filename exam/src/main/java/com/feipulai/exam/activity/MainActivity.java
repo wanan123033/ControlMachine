@@ -30,6 +30,7 @@ import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.netUtils.CommonUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,7 +41,8 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
     ImageView imgCode;
     @BindView(R.id.txt_main_title)
     TextView txtMainTitle;
-
+    @BindView(R.id.txt_deviceid)
+    TextView txtDeviceId;
     private boolean mIsExiting;
 
     @Override
@@ -93,6 +95,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
             sb.append("-").append(systemSetting.getTestName());
         }
         txtMainTitle.setText(sb.toString());
+        txtDeviceId.setText(CommonUtils.getDeviceId(this));
     }
 
     private boolean isSettingFinished() {
@@ -115,9 +118,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
 //                startActivity(new Intent(MainActivity.this, MiddleDistanceRaceActivity.class));
                 if (isSettingFinished()) {
                     if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_FWC) {
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("selectType", 1);
-                        IntentUtil.gotoActivity(this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode()), bundle);
+                        IntentUtil.gotoActivity(this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode()));
                         return;
                     }
                     if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
@@ -196,68 +197,6 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
             this.finish();
         }
     }
-    // @Override
-    // public void onEventMainThread(BaseEvent baseEvent) {
-    //     super.onEventMainThread(baseEvent);
-    //     if (EventConfigs.DATA_RESTORE_SUCCEED == baseEvent.getTagInt()) {
-    //         onResume();
-    //     }
-    // }
 
-    // for test
-    // private void addTestResult(int testNo) {
-    //     List<Group> groupList = DBManager.getInstance().getGroupByScheduleNo("1");
-    //     for (Group group : groupList) {
-    //         List<Map<String, Object>> dbStudentList = DBManager.getInstance().getStudenByStuItemAndGroup(group);
-    //         for (Map<String, Object> map : dbStudentList) {
-    //             Student student = (Student) map.get("student");
-    //             for (int i = 0; i < 2; i++) {
-    //                 RoundResult roundResult = new RoundResult();
-    //                 roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
-    //                 roundResult.setStudentCode(student.getStudentCode());
-    //                 String itemCode = TestConfigs.sCurrentItem.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : TestConfigs.sCurrentItem.getItemCode();
-    //                 roundResult.setItemCode(itemCode);
-    //                 roundResult.setResult(100);
-    //                 roundResult.setMachineResult(100);
-    //                 roundResult.setResultState(0);
-    //                 roundResult.setTestTime(System.currentTimeMillis() + "");
-    //                 roundResult.setRoundNo(i + 1);
-    //                 roundResult.setTestNo(testNo);
-    //                 roundResult.setExamType(0);
-    //                 roundResult.setGroupId(group.getId());
-    //                 roundResult.setUpdateState(0);
-    //                 roundResult.setScheduleNo("1");
-    //                 if (i == 1) {
-    //                     roundResult.setIsLastResult(1);
-    //                 }
-    //                 DBManager.getInstance().insertRoundResult(roundResult);
-    //             }
-    //         }
-    //     }
-    // }
-    // private void addTestResult() {
-    //     List<Student> dbStudentList = DBManager.getInstance().dumpAllStudents();
-    //     for (Student student : dbStudentList) {
-    //         for (int i = 0; i < 2; i++) {
-    //             RoundResult roundResult = new RoundResult();
-    //             roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
-    //             roundResult.setStudentCode(student.getStudentCode());
-    //             String itemCode = TestConfigs.sCurrentItem.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : TestConfigs.sCurrentItem.getItemCode();
-    //             roundResult.setItemCode(itemCode);
-    //             roundResult.setResult(100 + i);
-    //             roundResult.setResultState(0);
-    //             roundResult.setTestTime(TestConfigs.df.format(Calendar.getInstance().getTime()));
-    //             roundResult.setRoundNo(i);
-    //             roundResult.setTestNo(1);
-    //             roundResult.setExamType(0);
-    //             roundResult.setUpdateState(0);
-    //             roundResult.setScheduleNo("1");
-    //             if (i == 1) {
-    //                 roundResult.setIsLastResult(1);
-    //             }
-    //             DBManager.getInstance().insertRoundResult(roundResult);
-    //         }
-    //     }
-    // }
 
 }

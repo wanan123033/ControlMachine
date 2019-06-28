@@ -84,7 +84,7 @@ public class ResultExlWriter extends ExlWriter {
         // 这里以报名信息开始,因为报名信息是每个报名信息 学生 机器码 项目代码 的组合是唯一的
 //        List<StudentItem> studentItems = DBManager.getInstance()
 //                .querystuItemsByMachineItemCode(TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.getCurrentItemCode());
-        List<Student> studentList = DBManager.getInstance().getItemStudent(-1, 0);
+        List<Student> studentList = DBManager.getInstance().getItemStudent(TestConfigs.getCurrentItemCode(), -1, 0);
         rowIndex = 1;
 
         generateRows(studentList, sheet);

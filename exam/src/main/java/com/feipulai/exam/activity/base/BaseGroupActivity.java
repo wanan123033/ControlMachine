@@ -91,8 +91,8 @@ public class BaseGroupActivity extends BaseTitleActivity {
 
     private BaseGroupAdapter stuAdapter;
     private List<BaseStuPair> pairs = new ArrayList<>();
-    private LEDManager mLEDManager ;
-    private RunLEDManager runLEDManager ;
+    private LEDManager mLEDManager;
+    private RunLEDManager runLEDManager;
     private LedThread ledThread;
     private String scheduleText;
     private List<RoundResult> resultList = new ArrayList<>();
@@ -107,9 +107,9 @@ public class BaseGroupActivity extends BaseTitleActivity {
     protected void initData() {
         ButterKnife.bind(this);
         initView();
-        if (MachineCode.machineCode == ItemDefault.CODE_ZFP){
-            runLEDManager = new RunLEDManager() ;
-        }else {
+        if (MachineCode.machineCode == ItemDefault.CODE_ZFP) {
+            runLEDManager = new RunLEDManager();
+        } else {
             mLEDManager = new LEDManager();
         }
     }
@@ -119,9 +119,9 @@ public class BaseGroupActivity extends BaseTitleActivity {
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
         String title;
         if (TextUtils.isEmpty(SettingHelper.getSystemSetting().getTestName())) {
-            title =   TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机";
+            title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机";
         } else {
-            title =  TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机-" + SettingHelper.getSystemSetting().getTestName();
+            title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机-" + SettingHelper.getSystemSetting().getTestName();
         }
 
         return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {
@@ -193,13 +193,13 @@ public class BaseGroupActivity extends BaseTitleActivity {
     @Override
     public void finish() {
         super.finish();
-        if (mLEDManager != null){
+        if (mLEDManager != null) {
             mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
             String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()) + " " + SettingHelper.getSystemSetting().getHostId();
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), title, mLEDManager.getX(title), 0, true, false);
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "菲普莱体育", 3, 3, false, true);
             mLEDManager = null;
-        }else if(runLEDManager != null){
+        } else if (runLEDManager != null) {
             runLEDManager.link(SettingHelper.getSystemSetting().getHostId());
             String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()) + " " + SettingHelper.getSystemSetting().getHostId();
             runLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), title, runLEDManager.getX(title), 0, true, false);
@@ -222,7 +222,6 @@ public class BaseGroupActivity extends BaseTitleActivity {
     }
 
 
-
     /**
      * 获取日程
      */
@@ -230,6 +229,9 @@ public class BaseGroupActivity extends BaseTitleActivity {
         scheduleList.clear();
         List<Schedule> dbSchedule = DBManager.getInstance().getAllSchedules();
         scheduleList.addAll(dbSchedule);
+        if (TextUtils.equals(scheduleList.get(0).getScheduleNo(), "-1")) {
+            scheduleList.remove(0);
+        }
         scheduleAdapter.notifyDataSetChanged();
         if (scheduleList != null && scheduleList.size() > 0) {
             scheduleText = scheduleList.get(0).getScheduleNo();
@@ -553,9 +555,9 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     for (int i = 0; i < page; i++) {// 页
                         if (mLEDManager == null && runLEDManager == null)
                             return;
-                        if (MachineCode.machineCode == ItemDefault.CODE_ZFP){
-                            runLEDManager.showString(hostId,title,0,0,true,false);
-                        }else {
+                        if (MachineCode.machineCode == ItemDefault.CODE_ZFP) {
+                            runLEDManager.showString(hostId, title, 0, 0, true, false);
+                        } else {
                             mLEDManager.showString(hostId, title, 0, 0, true, false);
                         }
 
@@ -568,9 +570,9 @@ public class BaseGroupActivity extends BaseTitleActivity {
                             String rightStuName = showList.get(i * 6 + j * 2 + 1).getStudent().getStudentName();
                             rightStuName = InteractUtils.getStrWithLength(rightStuName, 4);
 
-                            if (MachineCode.machineCode == ItemDefault.CODE_ZFP){
-                                runLEDManager.showString(hostId,leftStuName + rightStuName,0,j+1,false,j== 2);
-                            }else {
+                            if (MachineCode.machineCode == ItemDefault.CODE_ZFP) {
+                                runLEDManager.showString(hostId, leftStuName + rightStuName, 0, j + 1, false, j == 2);
+                            } else {
                                 mLEDManager.showString(hostId, leftStuName + rightStuName, 0, j + 1, false, j == 2);
                             }
 
