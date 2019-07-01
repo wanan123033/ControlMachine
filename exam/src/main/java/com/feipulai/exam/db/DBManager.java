@@ -1025,6 +1025,7 @@ public class DBManager {
                 .where(RoundResultDao.Properties.StudentCode.eq(studentItem.getStudentCode()))
                 .where(RoundResultDao.Properties.GroupId.eq(RoundResult.DEAFULT_GROUP_ID))
                 .where(RoundResultDao.Properties.ExamType.eq(studentItem.getExamType()))
+                .orderAsc(RoundResultDao.Properties.RoundNo)
                 .list();
     }
 
@@ -1164,6 +1165,7 @@ public class DBManager {
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(RoundResultDao.Properties.TestNo.eq(testNo))
                 .where(RoundResultDao.Properties.IsLastResult.eq(1))
+                .limit(1)
                 .unique();
     }
 
@@ -1315,6 +1317,22 @@ public class DBManager {
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(RoundResultDao.Properties.RoundNo.eq(roundNo))
                 .list();
+    }
+
+    /**
+     * 查询对应考生当前项目轮次成绩
+     *
+     * @param studentCode 考号
+     * @return
+     */
+    public RoundResult queryRoundByRoundNo(String studentCode, int testNo, int roundNo) {
+        return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(RoundResultDao.Properties.RoundNo.eq(roundNo))
+                .where(RoundResultDao.Properties.TestNo.eq(testNo))
+                .unique();
     }
 
     /**

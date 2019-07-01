@@ -199,8 +199,9 @@ public class DataManageActivity
                         break;
 
                     case 2: //名单下载
-                        OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在下载最新数据...");
-                        ServerMessage.downloadData(DataManageActivity.this);
+//                        OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在下载最新数据...");
+//                        ServerMessage.downloadData(DataManageActivity.this);
+                        showDownloadDataDialog();
                         break;
 
                     case 6: //数据库备份
@@ -350,6 +351,22 @@ public class DataManageActivity
             return;
         }
         super.onBackPressed();
+    }
+
+    private void showDownloadDataDialog() {
+        String[] exemType = new String[]{"正常", "补考", "缓考"};
+        new AlertDialog.Builder(this).setTitle("选择下载考试类型")
+                .setItems(exemType, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在下载最新数据...");
+                                ServerMessage.downloadData(DataManageActivity.this);
+                                break;
+                        }
+                    }
+                }).create().show();
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {

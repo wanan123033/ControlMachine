@@ -229,7 +229,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
         scheduleList.clear();
         List<Schedule> dbSchedule = DBManager.getInstance().getAllSchedules();
         scheduleList.addAll(dbSchedule);
-        if (TextUtils.equals(scheduleList.get(0).getScheduleNo(), "-1")) {
+        if (scheduleList.size() > 0 && TextUtils.equals(scheduleList.get(0).getScheduleNo(), "-1")) {
             scheduleList.remove(0);
         }
         scheduleAdapter.notifyDataSetChanged();
