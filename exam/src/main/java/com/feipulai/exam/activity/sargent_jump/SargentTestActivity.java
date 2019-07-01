@@ -82,11 +82,11 @@ public class SargentTestActivity extends BasePersonTestActivity {
         if (sargentSetting.getType() == 0) {
             mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                     SerialConfigs.CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight())));
-            tvDevicePair.setVisibility(View.GONE);
         }
         sendEmpty();
 
         if (sargentSetting.getType() == 1 && mBaseToolbar != null) {
+            tvDevicePair.setVisibility(View.VISIBLE);
             if (!isAddTool){
                 isAddTool = true ;
                 mBaseToolbar.addRightText("外接屏幕", new View.OnClickListener() {

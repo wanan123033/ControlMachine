@@ -264,11 +264,13 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
                 case GET_SCORE_RESPONSE:
 
                     SargentJumpResult result = (SargentJumpResult) msg.obj;
-                    if (runUp == 0 && baseHeight == 0) {
+                    if (runUp == 0 && baseHeight == 0 ) {
                         //标记原始高度
-                        baseHeight = result.getScore();
-                        setBaseHeight(baseHeight);
-                        setBegin();
+                        if (testState == TestState.WAIT_RESULT){
+                            baseHeight = result.getScore();
+                            setBaseHeight(baseHeight);
+                        }
+
                     } else {
                         int dbResult = result.getScore() * 10;
                         //原地起跳高度

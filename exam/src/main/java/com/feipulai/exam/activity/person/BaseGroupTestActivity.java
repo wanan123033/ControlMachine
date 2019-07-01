@@ -1055,9 +1055,6 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 
     }
 
-    public void setBegin() {
-        tvStartTest.setText("开始测试");
-    }
 
     @Override
     protected void onDestroy() {
