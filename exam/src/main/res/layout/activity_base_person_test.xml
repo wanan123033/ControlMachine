@@ -204,6 +204,7 @@
                     android:paddingLeft="8dp"
                     android:paddingRight="8dp"
                     android:text="设备配对"
+                    android:visibility="gone"
                     android:textColor="@color/white"
                     android:textSize="20dp" />
             </LinearLayout>

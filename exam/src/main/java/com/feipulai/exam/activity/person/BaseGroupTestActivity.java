@@ -222,7 +222,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     }
 
     public void setBaseHeight(int height) {
-        tvBaseHeight.setText("原始高度" + height + "厘米");
+        tvBaseHeight.setText("原始高度" + ResultDisplayUtils.getStrResultForDisplay(height*10));
     }
     public void setBeginTxt(int isBegin){
         tvStartTest.setText(isBegin == 0 ? "暂停测试":"开始测试");

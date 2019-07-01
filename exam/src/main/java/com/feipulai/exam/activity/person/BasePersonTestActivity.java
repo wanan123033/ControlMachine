@@ -212,7 +212,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     }
 
     public void setBaseHeight(int height) {
-        tvBaseHeight.setText("原始高度" + height + "厘米");
+        tvBaseHeight.setText("原始高度" + ResultDisplayUtils.getStrResultForDisplay(height*10));
     }
 
     /**
@@ -472,6 +472,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                     }
 
                 } else {
+                    setBaseHeight(0);
                     //测试结束学生清除 ，设备设置空闲状态
                     roundNo = 1;
                     //4秒后清理学生信息

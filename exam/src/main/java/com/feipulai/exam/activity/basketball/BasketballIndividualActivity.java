@@ -53,7 +53,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 public class BasketballIndividualActivity extends BaseTitleActivity implements IndividualCheckFragment.OnIndividualCheckInListener
-        , BasketBallListener.BaketBallResponseListener, TimerUtil.TimerAccepListener {
+        , BasketBallListener.BasketBallResponseListener, TimerUtil.TimerAccepListener {
 
     @BindView(R.id.ll_stu_detail)
     LinearLayout llStuDetail;

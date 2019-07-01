@@ -52,7 +52,7 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class BasketBallGroupActivity extends BaseTitleActivity implements BasketBallListener.BaketBallResponseListener, TimerUtil.TimerAccepListener, BaseQuickAdapter.OnItemClickListener {
+public class BasketBallGroupActivity extends BaseTitleActivity implements BasketBallListener.BasketBallResponseListener, TimerUtil.TimerAccepListener, BaseQuickAdapter.OnItemClickListener {
 
 
     @BindView(R.id.rv_testing_pairs)
