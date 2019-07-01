@@ -42,8 +42,8 @@ public class Group {
     @NotNull
     private String itemCode;//项目代码
 
-    private String remark1;
-    private String remark2;
+    private String remark1;//备注1字段---颜色组名
+    private String remark2;//备注2字段---颜色
     private String remark3;
 
 

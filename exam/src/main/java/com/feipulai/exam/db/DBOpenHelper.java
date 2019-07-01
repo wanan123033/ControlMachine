@@ -6,6 +6,7 @@ import android.util.Log;
 import com.feipulai.exam.entity.ChipGroupDao;
 import com.feipulai.exam.entity.ChipInfoDao;
 import com.feipulai.exam.entity.DaoMaster;
+import com.feipulai.exam.entity.ItemDao;
 import com.feipulai.exam.entity.MachineResultDao;
 
 import org.greenrobot.greendao.database.Database;

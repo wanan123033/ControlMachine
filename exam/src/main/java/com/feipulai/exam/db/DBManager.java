@@ -255,7 +255,7 @@ public class DBManager {
     public List<ChipInfo> queryChipInfoHasChipID(String colorName) {
         return chipInfoDao.queryBuilder()
                 .where(ChipInfoDao.Properties.ColorGroupName.eq(colorName))
-                .where(ChipInfoDao.Properties.ChipID1.isNotNull())
+                .whereOr(ChipInfoDao.Properties.ChipID1.isNotNull(),ChipInfoDao.Properties.ChipID1.notEq(""))
                 .list();
     }
 

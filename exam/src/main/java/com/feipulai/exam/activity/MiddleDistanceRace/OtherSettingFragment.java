@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -206,7 +207,7 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        switch (view.getId()) {
+        switch (parent.getId()) {
             case R.id.sp_vest_chip_no:
                 chipNo = position + 1;
                 break;
@@ -281,6 +282,7 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
     @Override
     public void onColorGroupLongClick(final int position) {
         final String groupName = colorGroups.get(position).getColorGroupName();
+        Log.i("groupName","---------"+groupName);
         final List<ChipInfo> chips = DBManager.getInstance().queryChipInfoHasChipID(groupName);
         String text;
         if (chips != null && chips.size() > 0) {
