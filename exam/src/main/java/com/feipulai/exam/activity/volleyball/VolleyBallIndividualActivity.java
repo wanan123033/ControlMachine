@@ -280,7 +280,8 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         int result = pair.getDeviceResult().getResult() + pair.getPenalty();
 
         if (systemSetting.isAutoBroadcast()) {
-            TtsManager.getInstance().speak(ResultDisplayUtils.getStrResultForDisplay(result));
+            String stuName = SettingHelper.getSystemSetting().isBroadcastName() ? pair.getStudent().getStudentName() : "";
+            TtsManager.getInstance().speak(stuName+ResultDisplayUtils.getStrResultForDisplay(result));
         }
 
         // 是否需要进行下一次测试

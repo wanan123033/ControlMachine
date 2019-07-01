@@ -164,9 +164,9 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
         String title;
         if (TextUtils.isEmpty(SettingHelper.getSystemSetting().getTestName())) {
-            title =  TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机";
+            title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机";
         } else {
-            title =   TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机-" + SettingHelper.getSystemSetting().getTestName();
+            title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机-" + SettingHelper.getSystemSetting().getTestName();
         }
 
         return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {
@@ -222,11 +222,13 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     }
 
     public void setBaseHeight(int height) {
-        tvBaseHeight.setText("原始高度" + ResultDisplayUtils.getStrResultForDisplay(height*10));
+        tvBaseHeight.setText("原始高度" + ResultDisplayUtils.getStrResultForDisplay(height * 10));
     }
-    public void setBeginTxt(int isBegin){
-        tvStartTest.setText(isBegin == 0 ? "暂停测试":"开始测试");
+
+    public void setBeginTxt(int isBegin) {
+        tvStartTest.setText(isBegin == 0 ? "暂停测试" : "开始测试");
     }
+
     public abstract void initData();
 
     /**
@@ -663,10 +665,11 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
      */
     private void broadResult(@NonNull BaseStuPair baseStuPair) {
         if (SettingHelper.getSystemSetting().isAutoBroadcast()) {
+            String stuName = SettingHelper.getSystemSetting().isBroadcastName() ? baseStuPair.getStudent().getStudentName() : "";
             if (baseStuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) {
-                TtsManager.getInstance().speak(baseStuPair.getStudent().getStudentName() + "犯规");
+                TtsManager.getInstance().speak(stuName + "犯规");
             } else {
-                TtsManager.getInstance().speak(baseStuPair.getStudent().getStudentName() + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult()));
+                TtsManager.getInstance().speak(stuName + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult()));
             }
         }
     }
@@ -926,7 +929,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             for (int j = stuAdapter.getTestPosition(); j < stuPairsList.size(); j++) {
                 if (TextUtils.isEmpty(stuPairsList.get(j).getTimeResult()[i - 1])) {
                     if (stuPairsList.get(j).isFullMark() && stuPairsList.get(j).getResultState() == RoundResult.RESULT_STATE_NORMAL) {
-                            continue;
+                        continue;
                     }
                     roundNo = i;
                     stuAdapter.setTestPosition(j);

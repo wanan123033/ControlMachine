@@ -28,6 +28,10 @@ public class SystemSetting {
      */
     private boolean isAutoBroadcast = false;
     /**
+     * 成绩姓名播报
+     */
+    private boolean isBroadcastName = false;
+    /**
      * 自动打印
      */
     private boolean isAutoPrint = false;
@@ -74,7 +78,7 @@ public class SystemSetting {
     /**
      * 网络是否添加路由表
      */
-   private boolean isAddRoute = false;
+    private boolean isAddRoute = false;
 
     public int getQrLength() {
         return qrLength;
@@ -186,6 +190,14 @@ public class SystemSetting {
 
     public void setCheckTool(int checkTool) {
         this.checkTool = checkTool;
+    }
+
+    public boolean isBroadcastName() {
+        return isBroadcastName;
+    }
+
+    public void setBroadcastName(boolean broadcastName) {
+        isBroadcastName = broadcastName;
     }
 
     @Override

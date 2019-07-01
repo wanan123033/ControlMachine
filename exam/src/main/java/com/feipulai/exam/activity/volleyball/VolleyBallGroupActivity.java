@@ -213,7 +213,8 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         List<RoundResult> roundResults = testCache.getResults().get(student);
 
         if (systemSetting.isAutoBroadcast()) {
-            TtsManager.getInstance().speak(ResultDisplayUtils.getStrResultForDisplay(roundResults.get(roundResults.size() - 1).getResult()));
+            String stuName = SettingHelper.getSystemSetting().isBroadcastName() ? student.getStudentName() : "";
+            TtsManager.getInstance().speak(stuName + ResultDisplayUtils.getStrResultForDisplay(roundResults.get(roundResults.size() - 1).getResult()));
         }
 
         boolean isAllTest = isAllTest(roundResults, student);
@@ -244,8 +245,8 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         int groupMode = setting.getGroupMode();
         int nextPosition;
         if (groupMode == TestConfigs.GROUP_PATTERN_SUCCESIVE && !isAllTest) {
-                nextPosition = position();
-        }else {
+            nextPosition = position();
+        } else {
             nextPosition = nextPosition();
             if (nextPosition == -1) {
                 nextPosition = position();
@@ -276,7 +277,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
     }
 
     private boolean isAllTest(List<RoundResult> roundResults, Student student) {
-        if (roundResults == null || roundResults.size() == 0){
+        if (roundResults == null || roundResults.size() == 0) {
             return false;
         }
         boolean fullSkip = fullSkip(roundResults, student);
@@ -284,7 +285,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
     }
 
     private boolean fullSkip(List<RoundResult> roundResults, Student student) {
-        if (roundResults == null || roundResults.size() == 0){
+        if (roundResults == null || roundResults.size() == 0) {
             return false;
         }
         boolean fullSkip = setting.isFullSkip();
@@ -568,7 +569,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
         String title;
         boolean isTestNameEmpty = TextUtils.isEmpty(SettingHelper.getSystemSetting().getTestName());
-        title =  TestConfigs.machineNameMap.get(machineCode)
+        title = TestConfigs.machineNameMap.get(machineCode)
                 + SettingHelper.getSystemSetting().getHostId() + "号机"
                 + (isTestNameEmpty ? "" : ("-" + SettingHelper.getSystemSetting().getTestName()));
         return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {

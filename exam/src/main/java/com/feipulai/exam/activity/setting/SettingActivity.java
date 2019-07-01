@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -47,6 +48,10 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     Spinner mSpHostId;
     @BindView(R.id.sw_auto_broadcast)
     CheckBox mSwAutoBroadcast;
+    @BindView(R.id.sw_broadcast_name)
+    CheckBox mSwBroadcastName;
+    @BindView(R.id.rl_broadcast_name)
+    RelativeLayout rlBroadcastName;
     @BindView(R.id.sw_rt_upload)
     CheckBox mSwRtUpload;
     @BindView(R.id.sw_auto_print)
@@ -116,6 +121,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
 
         mSpHostId.setSelection(systemSetting.getHostId() - 1);
         mSwAutoBroadcast.setChecked(systemSetting.isAutoBroadcast());
+        mSwBroadcastName.setChecked(systemSetting.isBroadcastName());
         mSwAutoPrint.setChecked(systemSetting.isAutoPrint());
         mSwRtUpload.setChecked(systemSetting.isRtUpload());
         mSwIdentityMark.setChecked(systemSetting.isIdentityMark());
@@ -192,15 +198,22 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         }
     }
 
-    @OnClick({R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting
+    @OnClick({R.id.sw_auto_broadcast, R.id.sw_broadcast_name, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting
             , R.id.txt_advanced, R.id.sw_identity_mark, R.id.sw_add_student, R.id.cb_route})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
             case R.id.sw_auto_broadcast:
                 systemSetting.setAutoBroadcast(mSwAutoBroadcast.isChecked());
+                if (mSwAutoBroadcast.isChecked()) {
+                    rlBroadcastName.setVisibility(View.VISIBLE);
+                } else {
+                    rlBroadcastName.setVisibility(View.GONE);
+                }
                 break;
-
+            case R.id.sw_broadcast_name:
+                systemSetting.setBroadcastName(mSwBroadcastName.isChecked());
+                break;
             case R.id.sw_rt_upload:
                 systemSetting.setRtUpload(mSwRtUpload.isChecked());
                 break;

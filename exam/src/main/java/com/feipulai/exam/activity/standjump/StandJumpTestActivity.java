@@ -5,12 +5,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.command.ConvertCommand;
+import com.feipulai.exam.R;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BasePersonTestActivity;
 import com.feipulai.exam.activity.person.BaseStuPair;
@@ -20,12 +22,16 @@ import com.orhanobut.logger.Logger;
 
 import java.lang.ref.WeakReference;
 
+import butterknife.BindView;
+
 /**
  * 立定跳远个人模式
  * Created by zzs on 2018/11/20
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 public class StandJumpTestActivity extends BasePersonTestActivity {
+    @BindView(R.id.ll_state)
+    public LinearLayout llState;
     private final static String TAG = "StandJumpTest";
     private StandJumpSetting jumpSetting;
     private static final int MSG_DISCONNECT = 0X101;
@@ -51,6 +57,13 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
 //        SerialDeviceManager.getInstance().setRS232ResiltListener(standResiltListener);
 //        sendCheck();
 //        cbDeviceState.setVisibility(View.INVISIBLE);
+        llState.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toastSpeak("等待连接");
+                onResume();
+            }
+        });
     }
 
     @Override
@@ -61,13 +74,14 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
     @Override
     public void sendTestCommand(BaseStuPair baseStuPair) {
         this.baseStuPair = baseStuPair;
-//        sendCheck();
+        sendCheck();
+        standResiltListener.setTestState(StandResiltListener.TestState.START_TEST);
         //开始测试
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
         //设置当前设置为空闲状态
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE));
-        isDisconnect = true;
-        mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
+//        isDisconnect = true;
+//        mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
     }
 
     @Override
@@ -81,8 +95,14 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
 
     @Override
     public void gotoItemSetting() {
-        startActivity(new Intent(this, StandJumpSettingActivity.class));
-        finish();
+        if (standResiltListener.getTestState() == StandResiltListener.TestState.WAIT_RESULT
+                || standResiltListener.getTestState() == StandResiltListener.TestState.START_TEST) {
+            toastSpeak("测试中,不允许修改设置");
+        } else {
+            startActivity(new Intent(this, StandJumpSettingActivity.class));
+            finish();
+        }
+
     }
 
     @Override
@@ -104,11 +124,11 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
         SerialDeviceManager.getInstance().setRS232ResiltListener(standResiltListener);
         sendCheck();
-        cbDeviceState.setVisibility(View.INVISIBLE);
-        if (SerialDeviceManager.getInstance() != null && standResiltListener.getTestState() != StandResiltListener.TestState.UN_STARTED) {
-            //开始测试
-            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
-        }
+//        cbDeviceState.setVisibility(View.INVISIBLE);
+//        if (SerialDeviceManager.getInstance() != null && standResiltListener.getTestState() != StandResiltListener.TestState.UN_STARTED) {
+//            //开始测试
+//            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
+//        }
     }
 
     @Override
@@ -155,7 +175,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
                 switch (msg.what) {
                     case MSG_DISCONNECT://连接失败
                         if (activity.isDisconnect) {
-                            activity.cbDeviceState.setVisibility(View.VISIBLE);
+//                            activity.cbDeviceState.setVisibility(View.VISIBLE);
                             activity.toastSpeak("测量垫未连接");
 //                            // 判断2次提示时间
 //                            if (!activity.isDestroyed() && (System.currentTimeMillis() - activity.disconnectTime) > 30000) {
@@ -226,6 +246,10 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
         public void CheckDevice(boolean isCheckDevice) {
             Log.i("james", "CheckDevice");
             isDisconnect = !isCheckDevice;
+            if (isCheckDevice && standResiltListener.getTestState() == StandResiltListener.TestState.START_TEST) {
+                //开始测试
+                SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
+            }
 //            if (!isCheckDevice) {
 //                toastSpeak("测量垫已损坏,请更换测量垫");
 //            }
