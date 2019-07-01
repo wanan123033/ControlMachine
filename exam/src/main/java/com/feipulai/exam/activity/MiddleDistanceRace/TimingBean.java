@@ -12,17 +12,24 @@ public class TimingBean {
     public static final int TIMING_STATE_BACK = 2;
     public static final int TIMING_STATE_COMPLETE = 3;
     public static final int TIMING_STATE_TIMING = 4;
+
+    public static final int GROUP_3 = 3;//空闲
+    public static final int GROUP_4 = 4;//关联
+    public static final int GROUP_5 = 5;//完成
     private int no;//组序号
     private int state;//组状态（0无1等待发令2违规返回3完成计时4正在计时状态）
     private long time;//发令时刻
     private String itemGroupName;//组名
+    private int color;//组颜色
 
-    public TimingBean(int no, int state, long time, String itemGroupName) {
+    public TimingBean(int no, int state, long time, String itemGroupName, int color) {
         this.no = no;
         this.state = state;
         this.time = time;
         this.itemGroupName = itemGroupName;
+        this.color = color;
     }
+
 
     public TimingBean() {
     }
@@ -59,6 +66,14 @@ public class TimingBean {
         this.itemGroupName = itemGroupName;
     }
 
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
     @Override
     public String toString() {
         return "TimingBean{" +
@@ -66,6 +81,7 @@ public class TimingBean {
                 ", state=" + state +
                 ", time=" + time +
                 ", itemGroupName='" + itemGroupName + '\'' +
+                ", color=" + color +
                 '}';
     }
 }

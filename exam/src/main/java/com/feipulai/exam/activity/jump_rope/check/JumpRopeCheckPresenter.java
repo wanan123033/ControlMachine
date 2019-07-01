@@ -122,7 +122,7 @@ public class JumpRopeCheckPresenter
         StuDevicePair stuPair = pairs.get(position);
         BaseDeviceState jumpRopState = stuPair.getBaseDevice();
         String studentName = InteractUtils.getStrWithLength(stuPair.getStudent().getStudentName(), 6);
-        return String.format(Locale.CHINA,"%-1s%-3d", SerialConfigs.GROUP_NAME[setting.getDeviceGroup()],jumpRopState.getDeviceId())
+        return String.format(Locale.CHINA, "%-1s%-3d", SerialConfigs.GROUP_NAME[setting.getDeviceGroup()], jumpRopState.getDeviceId())
                 + studentName;
     }
 
@@ -145,7 +145,7 @@ public class JumpRopeCheckPresenter
     @Override
     public void dealConflict() {
         JumpDeviceState deviceState = (JumpDeviceState) pairs.get(focusPosition).getBaseDevice();
-        mJumpRopeManager.kill(systemSetting.getHostId(), deviceState.getDeviceId(), setting.getDeviceGroup() + 1,0);
+        mJumpRopeManager.kill(systemSetting.getHostId(), deviceState.getDeviceId(), setting.getDeviceGroup() + 1, 0);
         deviceState.setFactoryId(JumpDeviceState.INVALID_FACTORY_ID);
         deviceState.setState(BaseDeviceState.STATE_DISCONNECT);
         view.updateSpecificItem(focusPosition);
@@ -159,6 +159,7 @@ public class JumpRopeCheckPresenter
         for (StuDevicePair pair : pairs) {
             deviceState = (JumpDeviceState) pair.getBaseDevice();
             deviceState.setState(BaseDeviceState.STATE_DISCONNECT);
+            deviceState.setFactoryId(-1);
         }
         facade.resume();
         view.updateAllItems();
@@ -167,8 +168,8 @@ public class JumpRopeCheckPresenter
     @Override
     public void changeBadDevice(boolean killCurrent) {
         JumpDeviceState deviceState = (JumpDeviceState) pairs.get(focusPosition).getBaseDevice();
-        if(killCurrent){
-            mJumpRopeManager.kill(systemSetting.getHostId(), deviceState.getDeviceId(), setting.getDeviceGroup() + 1,0);
+        if (killCurrent) {
+            mJumpRopeManager.kill(systemSetting.getHostId(), deviceState.getDeviceId(), setting.getDeviceGroup() + 1, 0);
         }
         facade.pause();
         mLinking = true;

@@ -71,62 +71,96 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
             int[] timeByte = new int[7];
             long currentDate;
             //触发包标识 0xb0-触发包，0xb1-芯片包，0xb2-连接检查
-            switch (Integer.parseInt(response2[3], 16)) {
-                case 176://b0
-                    //触发包时间和其它不一样
-                    timeByte[0] = Integer.parseInt(response2[5] + response2[6], 16);
-                    for (int i = 0; i < 5; i++) {
-                        timeByte[i + 1] = Integer.parseInt(response2[7 + i], 16);
-                    }
-                    timeByte[6] = Integer.parseInt(response2[12] + response2[13], 16);
-                    Log.i("timeByte---", Arrays.toString(timeByte));
-                    currentDate = TcpConfig.getDateFromCMD(timeByte);
+            int flagNo = Integer.parseInt(response2[3], 16);
+            if (flagNo == 176) {//b0
+                //触发包时间和其它不一样
+                timeByte[0] = Integer.parseInt(response2[5] + response2[6], 16);
+                for (int i = 0; i < 5; i++) {
+                    timeByte[i + 1] = Integer.parseInt(response2[7 + i], 16);
+                }
+                timeByte[6] = Integer.parseInt(response2[12] + response2[13], 16);
+                Log.i("timeByte---", Arrays.toString(timeByte));
+                currentDate = TcpConfig.getDateFromCMD(timeByte);
+                listener.onStartTiming(currentDate);
+                return;
+            } else if (flagNo == 177) {//b1
+                return;
+            } else if (flagNo == 178) {//b2
+                return;
+            } else {
+                timeByte[0] = Integer.parseInt(response2[4] + response2[5], 16);
+                for (int i = 0; i < 5; i++) {
+                    timeByte[i + 1] = Integer.parseInt(response2[6 + i], 16);
+                }
+                timeByte[6] = Integer.parseInt(response2[11] + response2[12], 16);
+                Log.i("timeByte---", Arrays.toString(timeByte));
+                currentDate = TcpConfig.getDateFromCMD(timeByte);
 
-                    listener.onStartTiming(currentDate);
-                    break;
-                case 177://b1
-                    break;
-                case 178://b2
-                    break;
-                case 1://1个芯片
-                    timeByte[0] = Integer.parseInt(response2[4] + response2[5], 16);
-                    for (int i = 0; i < 5; i++) {
-                        timeByte[i + 1] = Integer.parseInt(response2[6 + i], 16);
-                    }
-                    timeByte[6] = Integer.parseInt(response2[11] + response2[12], 16);
-                    Log.i("timeByte---", Arrays.toString(timeByte));
-                    currentDate = TcpConfig.getDateFromCMD(timeByte);
-
-                    sb.setLength(0);
-                    for (int i = 13; i < 25; i++) {
-                        sb.append(response2[i]);
-                    }
-                    String cardId1 = sb.toString();
-                    listener.onMessageReceive(currentDate, cardId1, "");
-                    break;
-                case 2://2个芯片
-                    timeByte[0] = Integer.parseInt(response2[4] + response2[5], 16);
-                    for (int i = 0; i < 5; i++) {
-                        timeByte[i + 1] = Integer.parseInt(response2[6 + i], 16);
-                    }
-                    timeByte[6] = Integer.parseInt(response2[11] + response2[12], 16);
-                    Log.i("timeByte---", Arrays.toString(timeByte));
-                    currentDate = TcpConfig.getDateFromCMD(timeByte);
-
-                    sb.setLength(0);
-                    for (int i = 13; i < 25; i++) {
-                        sb.append(response2[i]);
-                    }
-                    cardId1 = sb.toString();
-                    sb.setLength(0);
-                    for (int i = 25; i < 37; i++) {
-                        sb.append(response2[i]);
-                    }
-                    String cardId2 = sb.toString();
-                    listener.onMessageReceive(currentDate, cardId1, cardId2);
-                    break;
-                default:
+                sb.setLength(0);
+                sb.append(response.substring(26, response.length() - 3));
+                String[] cardIds = new String[flagNo];
+                for (int i = 0; i < flagNo; i++) {
+                    cardIds[i] = sb.substring(i * 24, i * 24 + 24);
+                }
+                Log.i("cardIds", Arrays.toString(cardIds));
+                listener.onMessageReceive(currentDate, cardIds);
             }
+
+//            switch (Integer.parseInt(response2[3], 16)) {
+//                case 176://b0
+//                    //触发包时间和其它不一样
+//                    timeByte[0] = Integer.parseInt(response2[5] + response2[6], 16);
+//                    for (int i = 0; i < 5; i++) {
+//                        timeByte[i + 1] = Integer.parseInt(response2[7 + i], 16);
+//                    }
+//                    timeByte[6] = Integer.parseInt(response2[12] + response2[13], 16);
+//                    Log.i("timeByte---", Arrays.toString(timeByte));
+//                    currentDate = TcpConfig.getDateFromCMD(timeByte);
+//
+//                    listener.onStartTiming(currentDate);
+//                    break;
+//                case 177://b1
+//                    break;
+//                case 178://b2
+//                    break;
+//                case 1://1个芯片
+//                    timeByte[0] = Integer.parseInt(response2[4] + response2[5], 16);
+//                    for (int i = 0; i < 5; i++) {
+//                        timeByte[i + 1] = Integer.parseInt(response2[6 + i], 16);
+//                    }
+//                    timeByte[6] = Integer.parseInt(response2[11] + response2[12], 16);
+//                    Log.i("timeByte---", Arrays.toString(timeByte));
+//                    currentDate = TcpConfig.getDateFromCMD(timeByte);
+//
+//                    sb.setLength(0);
+//                    for (int i = 13; i < 25; i++) {
+//                        sb.append(response2[i]);
+//                    }
+//                    String cardId1 = sb.toString();
+//                    listener.onMessageReceive(currentDate, cardId1, "");
+//                    break;
+//                case 2://2个芯片
+//                    timeByte[0] = Integer.parseInt(response2[4] + response2[5], 16);
+//                    for (int i = 0; i < 5; i++) {
+//                        timeByte[i + 1] = Integer.parseInt(response2[6 + i], 16);
+//                    }
+//                    timeByte[6] = Integer.parseInt(response2[11] + response2[12], 16);
+//                    Log.i("timeByte---", Arrays.toString(timeByte));
+//                    currentDate = TcpConfig.getDateFromCMD(timeByte);
+//
+//                    sb.setLength(0);
+//                    for (int i = 13; i < 25; i++) {
+//                        sb.append(response2[i]);
+//                    }
+//                    cardId1 = sb.toString();
+//                    sb.setLength(0);
+//                    for (int i = 25; i < 37; i++) {
+//                        sb.append(response2[i]);
+//                    }
+//                    String cardId2 = sb.toString();
+//                    listener.onMessageReceive(currentDate, cardId1, cardId2);
+//                    break;
+//            }
         } else {
             listener.onMessageFailed("非法解析");
         }

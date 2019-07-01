@@ -1,7 +1,6 @@
 package com.feipulai.exam.activity.sargent_jump;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -9,7 +8,6 @@ import android.view.View;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
-import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
@@ -26,19 +24,18 @@ import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.view.WaitDialog;
 import com.orhanobut.logger.Logger;
-
-import org.openxmlformats.schemas.drawingml.x2006.main.impl.STLineWidthImpl;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static com.feipulai.exam.activity.sargent_jump.Constants.CONNECTED;
 import static com.feipulai.exam.activity.sargent_jump.Constants.END_TEST;
 import static com.feipulai.exam.activity.sargent_jump.Constants.GET_SCORE_RESPONSE;
-import static com.feipulai.exam.activity.sargent_jump.Constants.CONNECTED;
 import static com.feipulai.exam.activity.sargent_jump.Constants.MATCH_SUCCESS;
 import static com.feipulai.exam.activity.sargent_jump.Constants.SET_MATCH;
 import static com.feipulai.exam.activity.sargent_jump.Constants.UN_CONNECT;
@@ -303,7 +300,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
                 }
             }
             stuPair.setResult(result);
-            stuPair.setResultState(0);
+            stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
             updateResult(stuPair);
             updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, 1));
             // 发送结束命令

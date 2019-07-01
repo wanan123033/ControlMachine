@@ -1,5 +1,7 @@
 package com.feipulai.exam.activity.basketball;
 
+import com.feipulai.exam.config.TestConfigs;
+
 /**
  * Created by zzs on  2019/6/4
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
@@ -20,8 +22,7 @@ public class BasketBallSetting {
     /**
      * 分组测试模式 0 连续 1 循环
      */
-    private int testPattern = 0;
-
+    private int testPattern =TestConfigs.GROUP_PATTERN_SUCCESIVE;
     public int getTestNo() {
         return testNo;
     }

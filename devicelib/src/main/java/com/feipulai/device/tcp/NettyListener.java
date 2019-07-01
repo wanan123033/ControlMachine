@@ -20,10 +20,9 @@ public interface NettyListener {
     /**
      * 接收芯片信息
      * @param time 当前时间戳
-     * @param cardId1 第一张芯片id
-     * @param cardId2 第二张芯片id
+     * @param cardId 当前接收的所有芯片ID
      */
-    void onMessageReceive(long time, String cardId1, String cardId2);
+    void onMessageReceive(long time, String []cardId);
 
     /**
      * 连接设备成功

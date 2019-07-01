@@ -31,9 +31,11 @@ public class MyApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
-	    CrashHandler.getInstance().init(this);
+        CrashHandler.getInstance().init(this);
         SettingHelper.init(this);
         TOKEN = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.TOKEN, "");
+
+
         // 初始化工作已经移至mainactivity中,保证尽快进入界面,减少白屏时间
         // if (LeakCanary.isInAnalyzerProcess(this)) {
         //     // This process is dedicated to LeakCanary for heap analysis.

@@ -75,13 +75,9 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
     EditText etPenaltySecond;
     @BindView(R.id.sp_test_mode)
     Spinner spTestMode;
-    @BindView(R.id.ll_use_mode)
-    LinearLayout llUseMode;
     private Integer[] testRound = new Integer[]{1, 2, 3};
-
     private String[] carryMode = new String[]{"四舍五入", "不进位", "非零进位"};
     private BasketBallSetting setting;
-    //    private UdpClient udpClient;
     private MyHandler mHandler = new MyHandler(this);
     private static final int MSG_DISCONNECT = 0X101;
     //3秒内检测IP是否可以
@@ -98,7 +94,9 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
         setting = SharedPrefsUtil.loadFormSource(this, BasketBallSetting.class);
         if (setting == null)
             setting = new BasketBallSetting();
+        UdpClient.getInstance().init(1527);
         UdpClient.getInstance().setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(), this);
+
         //设置测试次数
         ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testRound);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -133,7 +131,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spCarryMode.setAdapter(adapter);
         spCarryMode.setSelection(TestConfigs.sCurrentItem.getCarryMode() > 0 ? TestConfigs.sCurrentItem.getCarryMode() - 1 : 0);
-        viewCarryMode.setVisibility(getAccuracy() == 1 ? View.VISIBLE : View.GONE);
+//        viewCarryMode.setVisibility(getAccuracy() == 1 ? View.VISIBLE : View.GONE);
 
         etInterceptTime.setText(setting.getInterceptSecond() + "");
         etSensitivity.setText(setting.getSensitivity() + "");
@@ -196,6 +194,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
         SharedPrefsUtil.save(this, setting);
         DBManager.getInstance().updateItem(TestConfigs.sCurrentItem);
         Logger.i("保存设置:" + setting.toString());
+        EventBus.getDefault().post(new BaseEvent(EventConfigs.UPDATE_TEST_RESULT));
         super.finish();
     }
 
@@ -250,23 +249,26 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
             case R.id.rb_successive://连续测试
                 setting.setTestPattern(0);
                 break;
-            case R.id.rb_tenths: //十分位
-//                setting.setResultAccuracy(0);
-                viewCarryMode.setVisibility(View.VISIBLE);
-
-                break;
-            case R.id.rb_percentile://百分位
-//                setting.setResultAccuracy(1);
-                viewCarryMode.setVisibility(View.GONE);
-                break;
+//            case R.id.rb_tenths: //十分位
+////                setting.setResultAccuracy(0);
+//                viewCarryMode.setVisibility(View.VISIBLE);
+//
+//                break;
+//            case R.id.rb_percentile://百分位
+////                setting.setResultAccuracy(1);
+//                viewCarryMode.setVisibility(View.GONE);
+//                break;
         }
     }
 
-    @OnItemSelected({R.id.sp_carryMode})
+    @OnItemSelected({R.id.sp_carryMode, R.id.sp_test_no})
     public void spinnerItemSelected(Spinner spinner, int position) {
         switch (spinner.getId()) {
             case R.id.sp_carryMode:
                 TestConfigs.sCurrentItem.setCarryMode(position + 1);
+                break;
+            case R.id.sp_test_no:
+                setting.setTestNo(position + 1);
                 break;
         }
     }

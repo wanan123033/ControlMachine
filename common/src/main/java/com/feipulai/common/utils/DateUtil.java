@@ -114,15 +114,38 @@ public class DateUtil {
                 carryTime = caculTime;
                 break;
         }
-        if (carryTime < 60 * 1000) {
-            return formatTime(carryTime, "ss." + (digital == 1 ? "S" : "SS"));
-        } else if (caculTime >= 60 * 1000 && caculTime < 60 * 60 * 1000) { // 一小时之内
-            return formatTime(carryTime, "mm:ss." + (digital == 1 ? "S" : "SS"));
-        } else if (caculTime >= 60 * 60 * 1000 && caculTime < 60 * 60 * 24 * 1000) { // 同一天之内
-            return formatTime(carryTime, "HH:mm:ss." + (digital == 1 ? "S" : "SS"));
-        } else {
-            return formatTime(carryTime, "dd HH:mm:ss." + (digital == 1 ? "S" : "SS"));
-        }
+        return caculateFormatTime(carryTime,digital);
+//        if (carryTime < 60 * 1000) {
+//            return formatTime(carryTime, "ss." + (digital == 1 ? "S" : "SS"));
+//        } else if (caculTime >= 60 * 1000 && caculTime < 60 * 60 * 1000) { // 一小时之内
+//            return formatTime(carryTime, "mm:ss." + (digital == 1 ? "S" : "SS"));
+//        } else if (caculTime >= 60 * 60 * 1000 && caculTime < 60 * 60 * 24 * 1000) { // 同一天之内
+//            return formatTime(carryTime, "HH:mm:ss." + (digital == 1 ? "S" : "SS"));
+//        } else {
+//            return formatTime(carryTime, "dd HH:mm:ss." + (digital == 1 ? "S" : "SS"));
+//        }
     }
 
+    /**
+     * 时间计算
+     * <h3>Version</h3> 1.0
+     * <h3>CreateTime</h3> 2017/10/18,16:15
+     * <h3>UpdateTime</h3> 2017/10/18,16:15
+     * <h3>CreateAuthor</h3> zzs
+     * <h3>UpdateAuthor</h3>
+     * <h3>UpdateInfo</h3> (此处输入修改内容,若无修改可不写.)
+     *
+     * @param digital 1 百分位 2 十分位
+     */
+    public static String caculateFormatTime(long caculTime, int digital) {
+        if (caculTime < 60 * 1000) {
+            return formatTime(caculTime, "ss." + (digital == 1 ? "S" : "SS"));
+        } else if (caculTime >= 60 * 1000 && caculTime < 60 * 60 * 1000) { // 一小时之内
+            return formatTime(caculTime, "mm:ss." + (digital == 1 ? "S" : "SS"));
+        } else if (caculTime >= 60 * 60 * 1000 && caculTime < 60 * 60 * 24 * 1000) { // 同一天之内
+            return formatTime(caculTime, "HH:mm:ss." + (digital == 1 ? "S" : "SS"));
+        } else {
+            return formatTime(caculTime, "dd HH:mm:ss." + (digital == 1 ? "S" : "SS"));
+        }
+    }
 }

@@ -89,7 +89,7 @@ public class MachineSelectActivity extends BaseTitleActivity
 
     private void setCurrentItem(int machineCode) {
         List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(machineCode);
-        if (itemList.size() == 1) {
+        if (itemList.size() == 1||machineCode==ItemDefault.CODE_ZCP) {
             int init = TestConfigs.init(this, machineCode, null, this);
             if (init == TestConfigs.INIT_SUCCESS) {
                 systemSetting.setHostId(1);

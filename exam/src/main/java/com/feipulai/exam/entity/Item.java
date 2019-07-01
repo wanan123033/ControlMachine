@@ -32,17 +32,26 @@ public class Item {
     private int carryMode;//进位方式	不取舍,四舍五入,非零进一,非零舍去  与显示成绩有关 （0.不去舍，1.四舍五入 2.舍位 3.非零进取）
     private int testType;    //项目测量方式,计时，计数，远度，力量,但是暂时不用
     private int lastResultMode;//最终成绩选择模式 （1.最后成绩，2.补考成绩，3.最好）
+    private int cycleNo;//中长跑圈数
 
     private String remark1;//备注1
     private String remark2;//备注2
     private String remark3;//备注3
 
 
-    @Generated(hash = 1887604558)
-    public Item(Long id, String itemCode, int machineCode, @NotNull String itemName,
-                int minValue, int maxValue, String unit, int digital, int testNum, int carryMode,
-                int testType, int lastResultMode, String remark1, String remark2,
-                String remark3) {
+
+    @Generated(hash = 1470900980)
+    public Item() {
+    }
+
+    public Item(String itemName) {
+        this.itemName = itemName;
+    }
+
+    @Generated(hash = 1391249749)
+    public Item(Long id, String itemCode, int machineCode, @NotNull String itemName, int minValue,
+            int maxValue, String unit, int digital, int testNum, int carryMode, int testType,
+            int lastResultMode, int cycleNo, String remark1, String remark2, String remark3) {
         this.id = id;
         this.itemCode = itemCode;
         this.machineCode = machineCode;
@@ -55,17 +64,10 @@ public class Item {
         this.carryMode = carryMode;
         this.testType = testType;
         this.lastResultMode = lastResultMode;
+        this.cycleNo = cycleNo;
         this.remark1 = remark1;
         this.remark2 = remark2;
         this.remark3 = remark3;
-    }
-
-    @Generated(hash = 1470900980)
-    public Item() {
-    }
-
-    public Item(String itemName) {
-        this.itemName = itemName;
     }
 
     public Long getId() {
@@ -189,24 +191,13 @@ public class Item {
         this.lastResultMode = lastResultMode;
     }
 
-    @Override
-    public String toString() {
-        return "Item{" +
-                "id=" + id +
-                ", itemCode='" + itemCode + '\'' +
-                ", machineCode=" + machineCode +
-                ", itemName='" + itemName + '\'' +
-                ", minValue=" + minValue +
-                ", maxValue=" + maxValue +
-                ", unit='" + unit + '\'' +
-                ", digital=" + digital +
-                ", testNum=" + testNum +
-                ", carryMode=" + carryMode +
-                ", testType=" + testType +
-                ", lastResultMode=" + lastResultMode +
-                ", remark1='" + remark1 + '\'' +
-                ", remark2='" + remark2 + '\'' +
-                ", remark3='" + remark3 + '\'' +
-                '}';
+    public int getCycleNo() {
+        return this.cycleNo;
     }
+
+    public void setCycleNo(int cycleNo) {
+        this.cycleNo = cycleNo;
+    }
+
+
 }

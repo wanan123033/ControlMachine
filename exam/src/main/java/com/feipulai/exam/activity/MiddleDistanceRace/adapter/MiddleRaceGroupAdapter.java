@@ -2,6 +2,7 @@ package com.feipulai.exam.activity.MiddleDistanceRace.adapter;
 
 import android.annotation.SuppressLint;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +53,7 @@ public class MiddleRaceGroupAdapter extends RecyclerView.Adapter<MiddleRaceGroup
     }
 
     public interface OnItemClickListener {
-        void onLongClick(int position);
+        void onMiddleRaceGroupLongClick(int position);
     }
 
     public void setOnRecyclerViewItemClickListener(OnItemClickListener onItemClickListener) {
@@ -83,13 +84,32 @@ public class MiddleRaceGroupAdapter extends RecyclerView.Adapter<MiddleRaceGroup
         }
         holder.tvItemRaceItem.setText(sex + item.getItemName() + "第" + mDatas.get(position).getGroupNo() + "组");
         holder.tvItemRaceNumber.setText(String.valueOf(groupItems.size()));
-        holder.tvItemRaceState.setText(mDatas.get(position).getIsTestComplete() == 0 ? "空闲" : "已测完");
+
+        switch (mDatas.get(position).getIsTestComplete()) {
+            case 0:
+                holder.tvItemRaceState.setText("");
+                holder.tvItemRaceNo.setBackgroundResource(R.color.white);
+                break;
+            case 3:
+                holder.tvItemRaceState.setText("空闲");
+                holder.tvItemRaceNo.setBackgroundResource(Integer.parseInt(mDatas.get(position).getRemark2()));
+                break;
+            case 4:
+                holder.tvItemRaceState.setText("关联");
+                holder.tvItemRaceNo.setBackgroundResource(Integer.parseInt(mDatas.get(position).getRemark2()));
+                break;
+            case 5:
+                holder.tvItemRaceState.setText("已完成");
+                break;
+            default:
+                break;
+        }
 
         if (onRecyclerViewItemClickListener != null) {
             holder.ll.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    onRecyclerViewItemClickListener.onLongClick(position);
+                    onRecyclerViewItemClickListener.onMiddleRaceGroupLongClick(position);
                     return false;
                 }
             });

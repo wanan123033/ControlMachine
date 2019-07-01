@@ -1,13 +1,17 @@
 package com.feipulai.exam.netUtils.netapi;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.bean.ScheduleBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.Item;
 import com.feipulai.exam.view.LoadingDialog;
 import com.orhanobut.logger.Logger;
 
@@ -21,12 +25,16 @@ import java.util.List;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 public class ServerMessage {
+    static List<Item> itemList = null;
+    static int position = 0;
+
     /**
      * 下载数据
      *
      * @param context
      */
     public static void downloadData(final Context context) {
+        itemList = null;
         final HttpSubscriber subscriber = new HttpSubscriber();
         subscriber.setOnRequestEndListener(new HttpSubscriber.OnRequestEndListener() {
             @Override
@@ -36,9 +44,31 @@ public class ServerMessage {
                         subscriber.getItemAll(context);
                         break;
                     case HttpSubscriber.ITEM_BIZ://项目
-                        subscriber.getItemStudent();
+                        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+                            itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
+                        }
+                        if (itemList != null) {
+                            for (int i = 0; i < itemList.size(); i++) {
+                                if (!TextUtils.isEmpty(itemList.get(i).getItemCode())) {
+                                    subscriber.getItemStudent(itemList.get(i).getItemCode());
+                                    position = i+1;
+                                    return;
+                                }
+                            }
+
+                        } else {
+                            subscriber.getItemStudent(TestConfigs.getCurrentItemCode());
+                        }
+
                         break;
                     case HttpSubscriber.STUDENT_BIZ://学生
+                        if (itemList != null) {
+                            if (position < itemList.size()) {
+                                subscriber.getItemStudent(itemList.get(position).getItemCode());
+                                position++;
+                                return;
+                            }
+                        }
                         if (ScheduleBean.SITE_EXAMTYPE == 1) {
                             subscriber.getItemGroupAll();
                         } else {
@@ -110,7 +140,7 @@ public class ServerMessage {
         });
         subscriber.getScheduleAll();
     }
-    
+
     /**
      * 自动上传成绩,不处理没有项目代码等(处理项目代码等可能会导致 项目代码 变更,在测试过程中不应该出现这种情况)
      */
@@ -130,7 +160,7 @@ public class ServerMessage {
                         break;
                 }
             }
-            
+
             @Override
             public void onFault(int bizType) {
                 Logger.i("成绩自动上传失败");
@@ -138,7 +168,7 @@ public class ServerMessage {
         });
         subscriber.uploadResult(uploadResultsList);
     }
-    
+
     /**
      * 上传单个成绩
      *

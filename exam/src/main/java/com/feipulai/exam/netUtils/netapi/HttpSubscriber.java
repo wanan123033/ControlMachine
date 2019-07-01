@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
@@ -75,7 +76,7 @@ public class HttpSubscriber {
      */
     public void login(Context context, String username, String password, OnResultListener listener) {
         Map<String, String> parameData = new HashMap<>();
-        parameData.put("username", username);
+        parameData.put("username", username + "@" + CommonUtils.getDeviceId(context));
         parameData.put("password", password);
         //TODO 登录协议与其它接口分离，单传用户名和密码
         String serverToken = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.DEFAULT_SERVER_TOKEN, "dGVybWluYWw6dGVybWluYWxfc2VjcmV0");
@@ -191,38 +192,35 @@ public class HttpSubscriber {
                             }
                             return;
                         }
-
-//                        TestConfigs.sCurrentItem = items.get(0);
-//                        SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, TestConfigs.getCurrentItemCode());
-//                        // 这里将所有表中为项目代码为default的表内容改为已知的项目代码
-//                        fillItemCodes();
-
                     }
-//                    else {
-//                        showSelectItemDialog(context, items);
-//                    }
-                    int initState = TestConfigs.init(context, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            if (TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
-                                EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_FAULT));
-                                ToastUtils.showShort("当前考点无此项目，请重新选择项目");
-                                if (onRequestEndListener != null) {
-                                    onRequestEndListener.onFault(ITEM_BIZ);
+                    if (TestConfigs.sCurrentItem.getMachineCode() != ItemDefault.CODE_ZCP) {
+                        int initState = TestConfigs.init(context, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
+                                    EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_FAULT));
+                                    ToastUtils.showShort("当前考点无此项目，请重新选择项目");
+                                    if (onRequestEndListener != null) {
+                                        onRequestEndListener.onFault(ITEM_BIZ);
+                                    }
+                                    return;
                                 }
-                                return;
+                                if (onRequestEndListener != null)
+                                    onRequestEndListener.onSuccess(ITEM_BIZ);
                             }
-                            if (onRequestEndListener != null)
+                        });
+                        if (onRequestEndListener != null) {
+                            if (initState == TestConfigs.INIT_SUCCESS) {
                                 onRequestEndListener.onSuccess(ITEM_BIZ);
+                            } else {
+                                onRequestEndListener.onFault(ITEM_BIZ);
+                            }
                         }
-                    });
-                    if (onRequestEndListener != null) {
-                        if (initState == TestConfigs.INIT_SUCCESS) {
+                    } else {
+                        if (onRequestEndListener != null)
                             onRequestEndListener.onSuccess(ITEM_BIZ);
-                        } else {
-                            onRequestEndListener.onFault(ITEM_BIZ);
-                        }
                     }
+
 
                 } else {
                     if (onRequestEndListener != null)
@@ -294,9 +292,9 @@ public class HttpSubscriber {
     /**
      * 获取当前项目考生
      */
-    public void getItemStudent() {
+    public void getItemStudent(String itemCode) {
         Map<String, Object> parameData = new HashMap<>();
-        parameData.put("examItemCode", TestConfigs.getCurrentItemCode());
+        parameData.put("examItemCode", itemCode);
         Observable<HttpResult<List<StudentBean>>> observable = HttpManager.getInstance().getHttpApi().getStudent("bearer " + MyApplication.TOKEN,
                 CommonUtils.encryptQuery(STUDENT_BIZ + "", parameData));
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<List<StudentBean>>(new OnResultListener<List<StudentBean>>() {
@@ -333,6 +331,12 @@ public class HttpSubscriber {
                                 studentBean.getExamType(), studentBean.getScheduleNo());
                         studentItemList.add(studentItem);
                     } else {
+                        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+                            StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
+                                    studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
+                                    studentBean.getExamType(), studentBean.getScheduleNo());
+                            studentItemList.add(studentItem);
+                        }
                         SettingHelper.getSystemSetting().setTestPattern(SystemSetting.GROUP_PATTERN);
                     }
                 }
@@ -388,7 +392,10 @@ public class HttpSubscriber {
 
                 }
                 DBManager.getInstance().insertGroupList(groupList);
-                DBManager.getInstance().insertGroupItemList(groupItemList);
+                if (TestConfigs.sCurrentItem.getMachineCode() != ItemDefault.CODE_ZCP) {
+                    DBManager.getInstance().insertGroupItemList(groupItemList);
+                }
+
                 if (onRequestEndListener != null)
                     onRequestEndListener.onSuccess(GROUP_BIZ);
             }
@@ -407,9 +414,9 @@ public class HttpSubscriber {
     /**
      * 获取分组信息
      */
-    public void getItemGroupInFo(String scheduleNo, String sortName, String groupNo, String groupType) {
+    public void getItemGroupInFo(String itemCode, String scheduleNo, String sortName, String groupNo, String groupType) {
         Map<String, Object> parameData = new HashMap<>();
-        parameData.put("examItemCode", TestConfigs.getCurrentItemCode());
+        parameData.put("examItemCode", itemCode);
         parameData.put("scheduleNo", scheduleNo);
         parameData.put("sortName", sortName);
         parameData.put("groupNo", groupNo);
@@ -422,15 +429,8 @@ public class HttpSubscriber {
                 Logger.i("getItemGroupInFo====>" + result.toString());
                 if (result == null)
                     return;
-                List<Group> groupList = new ArrayList<>();
                 List<GroupItem> groupItemList = new ArrayList<>();
-
                 for (GroupBean groupBean : result) {
-                    //int groupType, String sortName, int groupNo, String scheduleNo,String itemCode, int examType, int isTestComplete
-                    Group group = new Group(groupBean.getGroupType(), groupBean.getSortName(), groupBean.getGroupNo()
-                            , groupBean.getScheduleNo(), TestConfigs.getCurrentItemCode(), groupBean.getExamType(), 0);
-                    groupList.add(group);
-
                     if (groupBean.getStudentCodeList() != null) {
                         for (StudentBean student : groupBean.getStudentCodeList()) {
                             //String itemCode, int groupType, String sortName, int groupNo, String scheduleNo, String studentCode, int trackNo, int identityMark
@@ -441,7 +441,6 @@ public class HttpSubscriber {
                     }
 
                 }
-                DBManager.getInstance().insertGroupList(groupList);
                 DBManager.getInstance().insertGroupItemList(groupItemList);
                 if (onRequestEndListener != null)
                     onRequestEndListener.onSuccess(GROUP_INFO_BIZ);

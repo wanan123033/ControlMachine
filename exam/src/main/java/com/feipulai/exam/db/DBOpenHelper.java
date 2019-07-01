@@ -3,7 +3,10 @@ package com.feipulai.exam.db;
 import android.content.Context;
 import android.util.Log;
 
+import com.feipulai.exam.entity.ChipGroupDao;
+import com.feipulai.exam.entity.ChipInfoDao;
 import com.feipulai.exam.entity.DaoMaster;
+import com.feipulai.exam.entity.ItemDao;
 import com.feipulai.exam.entity.MachineResultDao;
 
 import org.greenrobot.greendao.database.Database;
@@ -29,6 +32,8 @@ public class DBOpenHelper extends DaoMaster.OpenHelper {
             switch (newVersion) {
                 case 2:
                     MigrationHelper.migrate(db, MachineResultDao.class);
+                    MigrationHelper.migrate(db, ChipInfoDao.class);
+                    MigrationHelper.migrate(db, ChipGroupDao.class);
                     break;
 
             }
