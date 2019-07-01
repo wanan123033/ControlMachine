@@ -64,7 +64,8 @@ public class RunTimerDisposeManager {
      */
     protected void broadResult(Student student, String results) {
         if (SettingHelper.getSystemSetting().isAutoBroadcast()) {
-            TtsManager.getInstance().speak(student.getStudentName() + results);
+            String stuName = SettingHelper.getSystemSetting().isBroadcastName() ? student.getStudentName() : "";
+            TtsManager.getInstance().speak(stuName + results);
         }
     }
 

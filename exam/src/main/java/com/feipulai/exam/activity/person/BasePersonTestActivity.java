@@ -212,7 +212,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     }
 
     public void setBaseHeight(int height) {
-        tvBaseHeight.setText("原始高度" + ResultDisplayUtils.getStrResultForDisplay(height*10));
+        tvBaseHeight.setText("原始高度" + ResultDisplayUtils.getStrResultForDisplay(height * 10));
     }
 
     /**
@@ -593,10 +593,11 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
      */
     private void broadResult(@NonNull BaseStuPair baseStuPair) {
         if (SettingHelper.getSystemSetting().isAutoBroadcast()) {
+            String stuName = SettingHelper.getSystemSetting().isBroadcastName() ? baseStuPair.getStudent().getStudentName() : "";
             if (baseStuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) {
-                TtsManager.getInstance().speak(baseStuPair.getStudent().getStudentName() + "犯规");
+                TtsManager.getInstance().speak(stuName + "犯规");
             } else {
-                TtsManager.getInstance().speak(baseStuPair.getStudent().getStudentName() + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult()));
+                TtsManager.getInstance().speak(stuName + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult()));
             }
 
 

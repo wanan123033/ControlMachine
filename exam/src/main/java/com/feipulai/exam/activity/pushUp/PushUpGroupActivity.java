@@ -243,7 +243,8 @@ public class PushUpGroupActivity extends BaseTitleActivity
         List<RoundResult> roundResults = testCache.getResults().get(student);
 
         if (systemSetting.isAutoBroadcast()) {
-            TtsManager.getInstance().speak(ResultDisplayUtils.getStrResultForDisplay(roundResults.get(roundResults.size() - 1).getResult()));
+            String stuName = SettingHelper.getSystemSetting().isBroadcastName() ? student.getStudentName() : "";
+            TtsManager.getInstance().speak(stuName+ResultDisplayUtils.getStrResultForDisplay(roundResults.get(roundResults.size() - 1).getResult()));
         }
         uploadResults();
 
