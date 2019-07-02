@@ -1,6 +1,7 @@
 package com.feipulai.exam.activity.MiddleDistanceRace.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +45,11 @@ public class TestPanelAdapter extends PanelAdapter {
         titleViewHolder.titleTextView.setText(string);
         if (column == 0) {
             titleViewHolder.titleTextView.setBackgroundResource(datas.get(row).getColor());
+        }
+
+        if (column > datas.get(row).getCycle() + 3 && row > 0) {
+            titleViewHolder.titleTextView.setText("X");
+            titleViewHolder.titleTextView.setBackgroundResource(R.color.grey_light);
         }
     }
 

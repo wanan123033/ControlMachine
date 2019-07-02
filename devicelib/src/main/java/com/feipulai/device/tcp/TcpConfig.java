@@ -50,6 +50,7 @@ public class TcpConfig {
      */
     private static byte[] getTimingCMD(byte[] firstByte) {
         byte[] currentDateByte = dateToByte();
+        Log.i("currentDateByte", Arrays.toString(currentDateByte));
         byte[] result = Arrays.copyOf(firstByte, firstByte.length + currentDateByte.length);
         System.arraycopy(currentDateByte, 0, result, 4, currentDateByte.length);
         Log.i("getTimingCMD", "------" + bytesToHex(result));
@@ -128,7 +129,8 @@ public class TcpConfig {
     public static byte[] dateToByte() {
         getDateInt();
         byte[] bytes = new byte[9];
-        String year = intToHex(dates[0]);
+        String year = Integer.toHexString(dates[0]);
+        Log.i("year", "-----------" + year);
         if (year.length() > 3) {
             bytes[0] = Integer.valueOf(year.substring(0, 2), 16).byteValue();
             bytes[1] = Integer.valueOf(year.substring(2, year.length()), 16).byteValue();
@@ -138,10 +140,10 @@ public class TcpConfig {
         }
 
         for (int i = 2; i < 7; i++) {
-            bytes[i] = Integer.valueOf(intToHex(dates[i - 1]), 16).byteValue();
+            bytes[i] = Integer.valueOf(Integer.toHexString(dates[i - 1]), 16).byteValue();
         }
 
-        String ms = intToHex(dates[6]);
+        String ms = Integer.toHexString(dates[6]);
         if (ms.length() > 2) {
             bytes[7] = Integer.valueOf(ms.substring(0, 1), 16).byteValue();
             bytes[8] = Integer.valueOf(ms.substring(1, year.length()), 16).byteValue();
@@ -152,24 +154,24 @@ public class TcpConfig {
         return bytes;
     }
 
-    private static String intToHex(int n) {
-        StringBuilder sb = new StringBuilder(8);
-        String a;
-        char[] b = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-        while (n != 0) {
-            sb = sb.append(b[n % 16]);
-            n = n / 16;
-        }
-        a = sb.reverse().toString().isEmpty() ? "0" : sb.reverse().toString();
-        return a;
-    }
+//    private static String intToHex(int n) {
+//        StringBuilder sb = new StringBuilder(8);
+//        String a;
+//        char[] b = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+//        while (n != 0) {
+//            sb = sb.append(b[n % 16]);
+//            n = n / 16;
+//        }
+//        a = sb.reverse().toString().isEmpty() ? "0" : sb.reverse().toString();
+//        return a;
+//    }
 
     /**
      * @param date
      */
     public static long getDateFromCMD(int[] date) {
         cal.set(Calendar.YEAR, date[0]);
-        cal.set(Calendar.MONTH, date[1]-1);
+        cal.set(Calendar.MONTH, date[1] - 1);
         cal.set(Calendar.DATE, date[2]);
         cal.set(Calendar.HOUR_OF_DAY, date[3]);
         cal.set(Calendar.MINUTE, date[4]);

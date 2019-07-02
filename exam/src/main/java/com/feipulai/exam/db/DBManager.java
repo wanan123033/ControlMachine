@@ -242,6 +242,10 @@ public class DBManager {
         return chipGroupDao.queryBuilder().where(ChipGroupDao.Properties.ColorGroupName.eq(colorName)).count();
     }
 
+    public ChipInfo queryChipInfo(String chipInfo) {
+        return chipInfoDao.queryBuilder().whereOr(ChipInfoDao.Properties.ChipID1.eq(chipInfo), ChipInfoDao.Properties.ChipID2.eq(chipInfo)).unique();
+    }
+
     public ChipGroup queryChipGroupUni(String colorName) {
         return chipGroupDao.queryBuilder().where(ChipGroupDao.Properties.ColorGroupName.eq(colorName)).unique();
     }
@@ -255,7 +259,7 @@ public class DBManager {
     public List<ChipInfo> queryChipInfoHasChipID(String colorName) {
         return chipInfoDao.queryBuilder()
                 .where(ChipInfoDao.Properties.ColorGroupName.eq(colorName))
-                .whereOr(ChipInfoDao.Properties.ChipID1.isNotNull(),ChipInfoDao.Properties.ChipID1.notEq(""))
+                .whereOr(ChipInfoDao.Properties.ChipID1.isNotNull(), ChipInfoDao.Properties.ChipID1.notEq(""))
                 .list();
     }
 
@@ -1683,6 +1687,17 @@ public class DBManager {
         return scheduleDao.queryBuilder().where(ScheduleDao.Properties.ScheduleNo.eq(scheduleNo)).unique();
     }
 
+//    public List<Schedule> getSchedulesByItemCode(String itemCode) {
+//        List<ItemSchedule> itemSchedules = itemScheduleDao.queryBuilder().where(ItemScheduleDao.Properties.ItemCode.eq(itemCode)).list();
+//        if (itemSchedules != null && itemSchedules.size() > 0) {
+//            for (ItemSchedule itemSchedule : itemSchedules
+//                    ) {
+//                return scheduleDao.queryBuilder().where(ScheduleDao.Properties.ScheduleNo.eq(itemSchedule.getScheduleNo())).list();
+//            }
+//        }
+//        return null;
+//    }
+
     /**
      * 获取日程
      *
@@ -1851,6 +1866,14 @@ public class DBManager {
      */
     public void updateGroup(Group group) {
         groupDao.update(group);
+    }
+
+    public void updateGroups(List<Group> groups) {
+        groupDao.updateInTx(groups);
+    }
+
+    public List<Group> queryGroupByItemCode(String itemCode) {
+        return groupDao.queryBuilder().where(GroupDao.Properties.ItemCode.eq(itemCode)).list();
     }
 
     /**

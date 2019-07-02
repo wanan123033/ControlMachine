@@ -24,12 +24,11 @@ public class DateUtil {
         return sdf.format(new Date(timeMillis));
     }
 
-    public static String getDeltaT2(long startTime) {
-        long timeUsedInsec = System.currentTimeMillis() - startTime;
+    public static String getDeltaT2(long time) {
 //        SimpleDateFormat sf = new SimpleDateFormat("yyyy年MM月dd日 HH时mm分ss秒SSS毫秒");
 //        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd- HH:mm:ss.SSS", Locale.CHINA);
         SimpleDateFormat sf = new SimpleDateFormat("HH:mm:ss.SSS", Locale.CHINA);
-        Date now = new Date(timeUsedInsec);
+        Date now = new Date(time);
         String str = sf.format(now);
         return str;
     }
@@ -39,11 +38,10 @@ public class DateUtil {
      *
      * @return
      */
-    public static String getDeltaT(long startTime) {
-        long timeUsedInsec = System.currentTimeMillis() - startTime;
-        int min = (int) ((timeUsedInsec) / 60000);
-        int sec = (int) ((timeUsedInsec - min * 60000) / 1000);
-        int longmill = (int) (timeUsedInsec - min * 60000 - sec * 1000);
+    public static String getDeltaT(long time) {
+        int min = (int) ((time) / 60000);
+        int sec = (int) ((time - min * 60000) / 1000);
+        int longmill = (int) (time - min * 60000 - sec * 1000);
         String string = "";
         if (longmill < 991 && longmill > 90) {
             if (longmill % 10 == 0) {
