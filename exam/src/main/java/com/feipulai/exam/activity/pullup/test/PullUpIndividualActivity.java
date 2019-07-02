@@ -211,7 +211,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
 
     protected void displayCheckedInLED(RoundResult lastResult) {
         int hostId = SettingHelper.getSystemSetting().getHostId();
-        ledManager.showString(hostId, pairs.get(0).getStudent().getStudentName(), 5, 0, true, lastResult == null);
+        ledManager.showString(hostId, pairs.get(0).getStudent().getLEDStuName(), 5, 0, true, lastResult == null);
         if (lastResult != null) {
             String displayResult = ResultDisplayUtils.getStrResultForDisplay(lastResult.getResult());
             ledManager.showString(hostId, "已有成绩:" + displayResult, 2, 3, false, true);
@@ -283,8 +283,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
         int result = pair.getDeviceResult().getResult() + pair.getPenalty();
 
         if (systemSetting.isAutoBroadcast()) {
-            String stuName = SettingHelper.getSystemSetting().isBroadcastName() ? pair.getStudent().getStudentName() : "";
-            TtsManager.getInstance().speak(stuName + ResultDisplayUtils.getStrResultForDisplay(result));
+            TtsManager.getInstance().speak(pair.getStudent().getSpeakStuName() + ResultDisplayUtils.getStrResultForDisplay(result));
         }
 
         // 是否需要进行下一次测试
@@ -442,7 +441,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
     @Override
     public void onGetReadyTimerFinish() {
         tickInUI("开始");
-        ledManager.showString(SettingHelper.getSystemSetting().getHostId(), pairs.get(0).getStudent().getStudentName(), 5, 0, true, true);
+        ledManager.showString(SettingHelper.getSystemSetting().getHostId(), pairs.get(0).getStudent().getLEDStuName(), 5, 0, true, true);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

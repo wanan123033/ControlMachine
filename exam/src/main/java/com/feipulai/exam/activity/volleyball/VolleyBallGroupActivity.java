@@ -213,8 +213,8 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         List<RoundResult> roundResults = testCache.getResults().get(student);
 
         if (systemSetting.isAutoBroadcast()) {
-            String stuName = SettingHelper.getSystemSetting().isBroadcastName() ? student.getStudentName() : "";
-            TtsManager.getInstance().speak(stuName + ResultDisplayUtils.getStrResultForDisplay(roundResults.get(roundResults.size() - 1).getResult()));
+
+            TtsManager.getInstance().speak(student.getSpeakStuName() + ResultDisplayUtils.getStrResultForDisplay(roundResults.get(roundResults.size() - 1).getResult()));
         }
 
         boolean isAllTest = isAllTest(roundResults, student);
@@ -358,7 +358,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
             lastResult = results.get(results.size() - 1);
         }
         int hostId = systemSetting.getHostId();
-        ledManager.showString(hostId, pairs.get(position()).getStudent().getStudentName(), 5, 0, true, lastResult == null);
+        ledManager.showString(hostId, pairs.get(position()).getStudent().getLEDStuName(), 5, 0, true, lastResult == null);
         if (lastResult != null) {
             String displayResult = ResultDisplayUtils.getStrResultForDisplay(lastResult.getResult());
             ledManager.showString(hostId, "已有成绩:" + displayResult, 2, 3, false, true);
@@ -446,7 +446,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
     public void onGetReadyTimerFinish() {
         tickInUI("开始");
         // onScoreArrived(new VolleyBallResult());
-        ledManager.showString(SettingHelper.getSystemSetting().getHostId(), pairs.get(position()).getStudent().getStudentName(), 5, 0, true, true);
+        ledManager.showString(SettingHelper.getSystemSetting().getHostId(), pairs.get(position()).getStudent().getLEDStuName(), 5, 0, true, true);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

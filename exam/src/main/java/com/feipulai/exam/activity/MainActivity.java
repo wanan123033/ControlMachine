@@ -70,7 +70,6 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
             String routeIp = locatIp.substring(0, locatIp.lastIndexOf("."));
             UdpLEDUtil.shellExec("ip route add " + routeIp + ".0/24 dev eth0 proto static scope link table wlan0 \n");
         }
-
     }
 
     @Override

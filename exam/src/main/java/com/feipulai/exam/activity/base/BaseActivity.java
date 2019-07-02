@@ -40,7 +40,7 @@ public class BaseActivity extends FragmentActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
-       // StatusNavUtils.setNavigationBarColor(this, 0x33000000);
+        // StatusNavUtils.setNavigationBarColor(this, 0x33000000);
         EventBus.getDefault().register(this);
         //知晓当前是在哪一个Activity
         mActivityName = getClass().getSimpleName();
@@ -53,13 +53,13 @@ public class BaseActivity extends FragmentActivity {
         machineCode = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, SharedPrefsConfigs
                 .DEFAULT_MACHINE_CODE);
     }
-    
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         Logger.i(newConfig.toString());
         super.onConfigurationChanged(newConfig);
     }
-    
+
     @Override
     protected void onRestart() {
         Logger.d(mActivityName + ".onRestart");
@@ -120,6 +120,39 @@ public class BaseActivity extends FragmentActivity {
             }
         });
     }
+
+//    protected void toastBatchSpeak(final String msg) {
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                // 播报时间间隔必须>500ms
+//                long tmp = System.currentTimeMillis();
+//                if (tmp - lastBroadcastTime > 500) {
+//                    lastBroadcastTime = tmp;
+//                    ToastUtils.showShort(msg);
+//                    TtsManager.getInstance().batchSpeak(msg);
+//                    Logger.i(msg);
+//                }
+//            }
+//        });
+//    }
+
+    public void toastSpeak(final String speakMsg, final String toastMsg) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // 播报时间间隔必须>500ms
+                long tmp = System.currentTimeMillis();
+                if (tmp - lastBroadcastTime > 500) {
+                    lastBroadcastTime = tmp;
+                    ToastUtils.showShort(toastMsg);
+                    TtsManager.getInstance().speak(speakMsg);
+                    Logger.i(toastMsg.toString());
+                }
+            }
+        });
+    }
+
     @Subscribe
     public void onEventMainThread(BaseEvent baseEvent) {
 //        if (baseEvent.getTagInt() == EventConfigs.TOKEN_ERROR) {
@@ -127,27 +160,28 @@ public class BaseActivity extends FragmentActivity {
 //        }
     }
 
-    protected static class MyHandler extends Handler{
+    protected static class MyHandler extends Handler {
 
-		private WeakReference<BaseActivity> mWeakReference;
+        private WeakReference<BaseActivity> mWeakReference;
 
-		public MyHandler(BaseActivity activity){
-			mWeakReference = new WeakReference<>(activity);
-		}
+        public MyHandler(BaseActivity activity) {
+            mWeakReference = new WeakReference<>(activity);
+        }
 
-		@Override
-		public void handleMessage(Message msg){
-			BaseActivity activity = mWeakReference.get();
-			if(activity == null){
-				return;
-			}
-			activity.handleMessage(msg);
-		}
+        @Override
+        public void handleMessage(Message msg) {
+            BaseActivity activity = mWeakReference.get();
+            if (activity == null) {
+                return;
+            }
+            activity.handleMessage(msg);
+        }
 
-	}
+    }
 
-	protected void handleMessage(Message msg){}
-	/**
+    protected void handleMessage(Message msg) {
+    }
+    /**
      * 重写方法返回 true 可以显示 menu
      */
     //public boolean getIsShowMenu(){

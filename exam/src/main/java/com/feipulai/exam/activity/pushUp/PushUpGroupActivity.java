@@ -197,7 +197,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
                 if (intervalCount > 0) {
                     //显示最终成绩
                     ledManager.showString(systemSetting.getHostId(),
-                            "最终成绩:" + ResultDisplayUtils.getStrResultForDisplay(pairs.get(position()).getDeviceResult().getResult()- intervalCount),
+                            "最终成绩:" + ResultDisplayUtils.getStrResultForDisplay(pairs.get(position()).getDeviceResult().getResult() - intervalCount),
                             1, 3, false, true);
                 }
                 break;
@@ -243,8 +243,8 @@ public class PushUpGroupActivity extends BaseTitleActivity
         List<RoundResult> roundResults = testCache.getResults().get(student);
 
         if (systemSetting.isAutoBroadcast()) {
-            String stuName = SettingHelper.getSystemSetting().isBroadcastName() ? student.getStudentName() : "";
-            TtsManager.getInstance().speak(stuName+ResultDisplayUtils.getStrResultForDisplay(roundResults.get(roundResults.size() - 1).getResult()));
+
+            TtsManager.getInstance().speak(student.getSpeakStuName()+ResultDisplayUtils.getStrResultForDisplay(roundResults.get(roundResults.size() - 1).getResult()));
         }
         uploadResults();
 
@@ -389,7 +389,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
             lastResult = results.get(results.size() - 1);
         }
         int hostId = systemSetting.getHostId();
-        ledManager.showString(hostId, pairs.get(position()).getStudent().getStudentName(), 5, 0, true, lastResult == null);
+        ledManager.showString(hostId, pairs.get(position()).getStudent().getLEDStuName(), 5, 0, true, lastResult == null);
         if (lastResult != null) {
             String displayResult = ResultDisplayUtils.getStrResultForDisplay(lastResult.getResult());
             ledManager.showString(hostId, "已有成绩:" + displayResult, 2, 3, false, true);
@@ -479,7 +479,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
         // tickInUI("开始");
         // Log.i("james", "onGetReadyTimerFinish");
         onScoreArrived(new SitPushUpStateResult(), 0);
-        ledManager.showString(SettingHelper.getSystemSetting().getHostId(), pairs.get(position()).getStudent().getStudentName(), 5, 0, true, true);
+        ledManager.showString(SettingHelper.getSystemSetting().getHostId(), pairs.get(position()).getStudent().getLEDStuName(), 5, 0, true, true);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -586,7 +586,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
         String title;
         boolean isTestNameEmpty = TextUtils.isEmpty(SettingHelper.getSystemSetting().getTestName());
-        title =   TestConfigs.machineNameMap.get(machineCode)
+        title = TestConfigs.machineNameMap.get(machineCode)
                 + SettingHelper.getSystemSetting().getHostId() + "号机"
                 + (isTestNameEmpty ? "" : ("-" + SettingHelper.getSystemSetting().getTestName()));
         return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {

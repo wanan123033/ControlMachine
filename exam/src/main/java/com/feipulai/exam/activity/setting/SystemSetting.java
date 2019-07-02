@@ -28,10 +28,6 @@ public class SystemSetting {
      */
     private boolean isAutoBroadcast = false;
     /**
-     * 成绩姓名播报
-     */
-    private boolean isBroadcastName = false;
-    /**
      * 自动打印
      */
     private boolean isAutoPrint = false;
@@ -192,13 +188,6 @@ public class SystemSetting {
         this.checkTool = checkTool;
     }
 
-    public boolean isBroadcastName() {
-        return isBroadcastName;
-    }
-
-    public void setBroadcastName(boolean broadcastName) {
-        isBroadcastName = broadcastName;
-    }
 
     @Override
     public String toString() {

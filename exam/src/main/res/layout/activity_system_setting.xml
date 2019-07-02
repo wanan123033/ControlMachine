@@ -269,27 +269,6 @@
             </RelativeLayout>
 
 
-            <RelativeLayout
-                android:id="@+id/rl_broadcast_name"
-                android:layout_width="520dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:gravity="center_vertical"
-                android:visibility="gone"
-                android:padding="1dp">
-
-                <TextView
-                    style="@style/style_setting_tv_title"
-                    android:text="成绩姓名播报:" />
-
-                <CheckBox
-                    android:id="@+id/sw_broadcast_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:button="@drawable/checkbox_switch_selected" />
-            </RelativeLayout>
-
             <View
                 style="@style/divider_gray_horizontal_style"
                 android:layout_marginTop="8dp" />

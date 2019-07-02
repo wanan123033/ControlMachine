@@ -64,8 +64,8 @@ public class RunTimerDisposeManager {
      */
     protected void broadResult(Student student, String results) {
         if (SettingHelper.getSystemSetting().isAutoBroadcast()) {
-            String stuName = SettingHelper.getSystemSetting().isBroadcastName() ? student.getStudentName() : "";
-            TtsManager.getInstance().speak(stuName + results);
+
+            TtsManager.getInstance().speak(student.getSpeakStuName() + results);
         }
     }
 
@@ -88,7 +88,7 @@ public class RunTimerDisposeManager {
         RoundResult bestResult = DBManager.getInstance().queryBestScore(student.getStudentCode(), testNo);
         if (bestResult != null) {
             // 原有最好成绩犯规 或者原有最好成绩没有犯规但是现在成绩更好 //跑步时间越短越好
-            if (bestResult.getResultState() ==  RoundResult.RESULT_STATE_NORMAL && bestResult.getResult() >= result) {
+            if (bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && bestResult.getResult() >= result) {
                 // 这个时候就要同时修改这两个成绩了
                 roundResult.setIsLastResult(1);
                 bestResult.setIsLastResult(0);

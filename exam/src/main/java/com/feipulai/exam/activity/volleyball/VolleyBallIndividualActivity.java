@@ -138,7 +138,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
         String title;
         boolean isTestNameEmpty = TextUtils.isEmpty(SettingHelper.getSystemSetting().getTestName());
-        title =  TestConfigs.machineNameMap.get(machineCode)
+        title = TestConfigs.machineNameMap.get(machineCode)
                 + SettingHelper.getSystemSetting().getHostId() + "号机"
                 + (isTestNameEmpty ? "" : ("-" + SettingHelper.getSystemSetting().getTestName()));
         return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {
@@ -212,7 +212,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
 
     protected void displayCheckedInLED(RoundResult lastResult) {
         int hostId = SettingHelper.getSystemSetting().getHostId();
-        ledManager.showString(hostId, pairs.get(0).getStudent().getStudentName(), 5, 0, true, lastResult == null);
+        ledManager.showString(hostId, pairs.get(0).getStudent().getLEDStuName(), 5, 0, true, lastResult == null);
         if (lastResult != null) {
             String displayResult = ResultDisplayUtils.getStrResultForDisplay(lastResult.getResult());
             ledManager.showString(hostId, "已有成绩:" + displayResult, 2, 3, false, true);
@@ -280,8 +280,8 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         int result = pair.getDeviceResult().getResult() + pair.getPenalty();
 
         if (systemSetting.isAutoBroadcast()) {
-            String stuName = SettingHelper.getSystemSetting().isBroadcastName() ? pair.getStudent().getStudentName() : "";
-            TtsManager.getInstance().speak(stuName+ResultDisplayUtils.getStrResultForDisplay(result));
+
+            TtsManager.getInstance().speak(pair.getStudent().getSpeakStuName() + ResultDisplayUtils.getStrResultForDisplay(result));
         }
 
         // 是否需要进行下一次测试
@@ -447,7 +447,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
     @Override
     public void onGetReadyTimerFinish() {
         tickInUI("开始");
-        ledManager.showString(SettingHelper.getSystemSetting().getHostId(), pairs.get(0).getStudent().getStudentName(), 5, 0, true, true);
+        ledManager.showString(SettingHelper.getSystemSetting().getHostId(), pairs.get(0).getStudent().getLEDStuName(), 5, 0, true, true);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
