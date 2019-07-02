@@ -1,13 +1,13 @@
 package com.feipulai.exam.db;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.feipulai.exam.entity.ChipGroupDao;
 import com.feipulai.exam.entity.ChipInfoDao;
 import com.feipulai.exam.entity.DaoMaster;
 import com.feipulai.exam.entity.ItemDao;
 import com.feipulai.exam.entity.MachineResultDao;
+import com.orhanobut.logger.Logger;
 
 import org.greenrobot.greendao.database.Database;
 
@@ -26,7 +26,7 @@ public class DBOpenHelper extends DaoMaster.OpenHelper {
     @Override
     public void onUpgrade(Database db, int oldVersion, int newVersion) {
         super.onUpgrade(db, oldVersion, newVersion);
-        Log.i("version", oldVersion + "---先前和更新之后的版本---" + newVersion);
+        Logger.i("version", oldVersion + "---先前和更新之后的版本---" + newVersion);
 
         if (oldVersion < newVersion) {
             switch (newVersion) {
@@ -34,6 +34,7 @@ public class DBOpenHelper extends DaoMaster.OpenHelper {
                     MigrationHelper.migrate(db, MachineResultDao.class);
                     MigrationHelper.migrate(db, ChipInfoDao.class);
                     MigrationHelper.migrate(db, ChipGroupDao.class);
+                    MigrationHelper.migrate(db, ItemDao.class);
                     break;
 
             }

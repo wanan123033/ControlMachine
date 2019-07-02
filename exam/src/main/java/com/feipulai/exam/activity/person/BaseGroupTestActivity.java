@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -24,9 +25,9 @@ import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
-import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.person.adapter.BaseGroupTestStuAdapter;
 import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
+import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.BaseEvent;
@@ -72,6 +73,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     RecyclerView rvTestResult;
     @BindView(R.id.txt_test_result)
     TextView txtStuResult;
+    @BindView(R.id.ll_state)
+    public LinearLayout llState;
     @BindView(R.id.cb_device_state)
     public CheckBox cbDeviceState;
     @BindView(R.id.tv_base_height)
@@ -158,6 +161,12 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         setStuShowLed(stuAdapter.getTestPosition() != -1 ? stuPairsList.get(stuAdapter.getTestPosition()) : null);
     }
 
+    public BaseStuPair getTestPair() {
+        if (stuAdapter == null || stuAdapter.getTestPosition() == -1) {
+            return null;
+        }
+        return stuPairsList.get(stuAdapter.getTestPosition());
+    }
 
     @Nullable
     @Override

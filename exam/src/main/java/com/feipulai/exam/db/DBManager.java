@@ -255,7 +255,7 @@ public class DBManager {
     public List<ChipInfo> queryChipInfoHasChipID(String colorName) {
         return chipInfoDao.queryBuilder()
                 .where(ChipInfoDao.Properties.ColorGroupName.eq(colorName))
-                .whereOr(ChipInfoDao.Properties.ChipID1.isNotNull(),ChipInfoDao.Properties.ChipID1.notEq(""))
+                .whereOr(ChipInfoDao.Properties.ChipID1.isNotNull(), ChipInfoDao.Properties.ChipID1.notEq(""))
                 .list();
     }
 
@@ -1165,6 +1165,26 @@ public class DBManager {
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(RoundResultDao.Properties.TestNo.eq(testNo))
                 .where(RoundResultDao.Properties.IsLastResult.eq(1))
+                .limit(1)
+                .unique();
+    }
+
+    /**
+     * 查询对应考生当前项目升序第一条成绩
+     *
+     * @param studentCode 考号
+     * @return 成绩
+     */
+    public RoundResult queryOrderAscScore(String studentCode, int testNo) {
+        Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
+                + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\ttestNo:" + testNo);
+        return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(RoundResultDao.Properties.TestNo.eq(testNo))
+                .where(RoundResultDao.Properties.ResultState.eq(RoundResult.RESULT_STATE_NORMAL))
+                .orderAsc(RoundResultDao.Properties.Result)
                 .limit(1)
                 .unique();
     }

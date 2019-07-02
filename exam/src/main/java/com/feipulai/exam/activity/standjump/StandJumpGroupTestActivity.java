@@ -26,6 +26,7 @@ import java.lang.ref.WeakReference;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
+
     private final static String TAG = "StandJumpGroupTest";
     private StandJumpSetting jumpSetting;
     private MyHandler mHandler;
@@ -49,6 +50,18 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
         mHandler = new MyHandler(this);
 //        SerialDeviceManager.getInstance().setRS232ResiltListener(standResiltListener);
 //        sendCheck();
+
+        llState.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getTestPair() == null || getTestPair().getBaseDevice().getState() == BaseDeviceState.STATE_ERROR) {
+                    toastSpeak("等待连接");
+                    onResume();
+                }
+
+            }
+        });
+
     }
 
     @Override
@@ -59,6 +72,7 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
             return jumpSetting.getTestCount();
         }
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -66,12 +80,13 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_ERROR, 1));
         SerialDeviceManager.getInstance().setRS232ResiltListener(standResiltListener);
         sendCheck();
-        cbDeviceState.setVisibility(View.INVISIBLE);
-        if (SerialDeviceManager.getInstance() != null && standResiltListener.getTestState() != StandResiltListener.TestState.UN_STARTED) {
-            //开始测试
-            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
-        }
+//        cbDeviceState.setVisibility(View.INVISIBLE);
+//        if (SerialDeviceManager.getInstance() != null && standResiltListener.getTestState() != StandResiltListener.TestState.UN_STARTED) {
+//            //开始测试
+//            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
+//        }
     }
+
     @Override
     public void gotoItemSetting() {
         startActivity(new Intent(this, StandJumpSettingActivity.class));
@@ -82,12 +97,19 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
     public void startTest(BaseStuPair stuPair) {
         baseStuPair = stuPair;
 //        sendCheck();
+//        //开始测试
+//        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
+//        //设置当前设置为空闲状态
+//        updateDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE));
+//        isDisconnect = true;
+//        mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
+        sendCheck();
+        standResiltListener.setTestState(StandResiltListener.TestState.START_TEST);
         //开始测试
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
         //设置当前设置为空闲状态
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE));
-        isDisconnect = true;
-        mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
+
     }
 
     @Override
@@ -206,6 +228,10 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
         public void CheckDevice(boolean isCheckDevice) {
             Log.i("james", "CheckDevice");
             isDisconnect = !isCheckDevice;
+            if (isCheckDevice && standResiltListener.getTestState() == StandResiltListener.TestState.START_TEST) {
+                //开始测试
+                SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
+            }
 //            if (!isCheckDevice) {
 //                toastSpeak("测量垫已损坏,请更换测量垫");
 //            }
@@ -216,7 +242,7 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
 
             toastSpeak("测试开始");
             isDisconnect = false;
-            cbDeviceState.setVisibility(View.INVISIBLE);
+//            cbDeviceState.setVisibility(View.INVISIBLE);
         }
 
         @Override

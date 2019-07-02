@@ -75,6 +75,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     RecyclerView rvTestResult;
     @BindView(R.id.cb_device_state)
     public CheckBox cbDeviceState;
+    @BindView(R.id.ll_state)
+    public LinearLayout llState;
     @BindView(R.id.txt_test_result)
     TextView txtStuResult;
     @BindView(R.id.txt_start_test)
@@ -96,7 +98,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     /**
      * 当前设备
      */
-    private BaseStuPair pair = new BaseStuPair();
+    public BaseStuPair pair = new BaseStuPair();
     /**
      * 当前测试次数位
      */

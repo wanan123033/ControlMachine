@@ -5,14 +5,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.command.ConvertCommand;
-import com.feipulai.exam.R;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BasePersonTestActivity;
 import com.feipulai.exam.activity.person.BaseStuPair;
@@ -22,16 +20,13 @@ import com.orhanobut.logger.Logger;
 
 import java.lang.ref.WeakReference;
 
-import butterknife.BindView;
-
 /**
  * 立定跳远个人模式
  * Created by zzs on 2018/11/20
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 public class StandJumpTestActivity extends BasePersonTestActivity {
-    @BindView(R.id.ll_state)
-    public LinearLayout llState;
+
     private final static String TAG = "StandJumpTest";
     private StandJumpSetting jumpSetting;
     private static final int MSG_DISCONNECT = 0X101;
@@ -43,7 +38,6 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
     private MyHandler mHandler;
     //3秒内检测测量垫是否可用
     private volatile boolean isDisconnect;
-    private BaseStuPair baseStuPair;
     private long disconnectTime;
 
     @Override
@@ -60,8 +54,11 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
         llState.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toastSpeak("等待连接");
-                onResume();
+                if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_ERROR) {
+                    toastSpeak("等待连接");
+                    onResume();
+                }
+
             }
         });
     }
@@ -73,7 +70,6 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
 
     @Override
     public void sendTestCommand(BaseStuPair baseStuPair) {
-        this.baseStuPair = baseStuPair;
         sendCheck();
         standResiltListener.setTestState(StandResiltListener.TestState.START_TEST);
         //开始测试
@@ -230,7 +226,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
         @Override
         public void getResult(final BaseStuPair deviceState) {
             if (jumpSetting.isFullReturn()) {
-                if (baseStuPair.getStudent().getSex() == Student.MALE) {
+                if (pair.getStudent().getSex() == Student.MALE) {
                     deviceState.setFullMark(deviceState.getResult() >= jumpSetting.getManFull() * 10);
                 } else {
                     deviceState.setFullMark(deviceState.getResult() >= jumpSetting.getWomenFull() * 10);
@@ -260,7 +256,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
             isDisconnect = false;
 //            toastSpeak("测试开始");
             mHandler.sendEmptyMessageDelayed(TOAST_SPEAK, 1000);
-            cbDeviceState.setVisibility(View.INVISIBLE);
+//            cbDeviceState.setVisibility(View.INVISIBLE);
         }
 
         @Override

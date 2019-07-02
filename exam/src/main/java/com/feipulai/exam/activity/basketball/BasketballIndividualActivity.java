@@ -257,16 +257,17 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         }
         pairs.get(0).setDeviceResult(result);
         Student student = pairs.get(0).getStudent();
+        int testNo = TestCache.getInstance().getTestNoMap().get(student);
         state = WAIT_CONFIRM;
         txtDeviceStatus.setText("中断");
         List<MachineResult> machineResultList = DBManager.getInstance().getItemRoundMachineResult(student.getStudentCode()
-                , TestCache.getInstance().getTestNoMap().get(student),
+                , testNo,
                 roundNo);
 
         MachineResult machineResult = new MachineResult();
         machineResult.setItemCode(TestConfigs.getCurrentItemCode());
         machineResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
-        machineResult.setTestNo(TestCache.getInstance().getTestNoMap().get(student));
+        machineResult.setTestNo(testNo);
         machineResult.setRoundNo(roundNo);
         machineResult.setStudentCode(student.getStudentCode());
         machineResult.setResult(result.getResult());
@@ -283,29 +284,22 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             machineResultList.add(machineResult);
 //            RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(mStudentItem.getStudentCode());
             RoundResult testRoundResult = DBManager.getInstance().queryRoundByRoundNo(student.getStudentCode(),
-                    TestCache.getInstance().getTestNoMap().get(student), roundNo);
+                    testNo, roundNo);
             testRoundResult.setResult(result.getResult());
             testRoundResult.setMachineResult(result.getResult());
 
-            // 重新判断最好成绩
-            RoundResult bestResult = DBManager.getInstance().queryBestScore(student.getStudentCode(), TestCache.getInstance().getTestNoMap().get(student));
-            // Log.i("james", "\nroundResult:" + roundResult.toString());
-            if (testRoundResult.getId() != bestResult.getId()) {
-                if (bestResult.getResult() < testRoundResult.getResult()) {
-                    testRoundResult.setIsLastResult(0);
-                    // Log.i("james", "bestResult" +  bestResult.toString());
-                } else {
-                    testRoundResult.setIsLastResult(1);
-                    if (bestResult != null) {
-                        bestResult.setIsLastResult(0);
-                        DBManager.getInstance().updateRoundResult(bestResult);
-                        Logger.i("更新成绩:" + bestResult.toString());
-                    }
-                }
-            }
-
-            //更新成绩，最后一次成绩保存 todo最好成绩更新
+            //更新成绩，
             DBManager.getInstance().updateRoundResult(testRoundResult);
+            //获取所有成绩设置为非最好成绩
+            List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(mStudentItem);
+            for (RoundResult roundResult : results) {
+                roundResult.setIsLastResult(0);
+                DBManager.getInstance().updateRoundResult(roundResult);
+            }
+            //获取最小成绩设置为最好成绩
+            RoundResult dbAscResult = DBManager.getInstance().queryOrderAscScore(student.getStudentCode(), testNo);
+            dbAscResult.setIsLastResult(1);
+            DBManager.getInstance().updateRoundResult(dbAscResult);
             showStuInfoResult();
             resultList.get(resultAdapter.getSelectPosition()).setSelectMachineResult(machineResult.getResult());
             resultList.get(resultAdapter.getSelectPosition()).setResult(result.getResult());
@@ -498,13 +492,14 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
 
                 break;
             case R.id.tv_confirm://确定
-                tvResult.setText("");
-//                pairs.get(0).getDeviceResult().setResult(pairs.get(0).getDeviceResult().getResult());
-//                InteractUtils.saveResults(pairs, testDate);
+
                 if (state == WAIT_CONFIRM) {
                     UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
                 }
-                onResultConfirmed();
+                if (state == WAIT_CHECK_IN || state == WAIT_CONFIRM || (pairs.get(0).getStudent() != null && state == WAIT_FREE)) {
+                    tvResult.setText("");
+                    onResultConfirmed();
+                }
                 break;
             case R.id.txt_finish_test:
                 if (state == TESTING) {
@@ -600,14 +595,16 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
      * 成绩确定
      */
     private void onResultConfirmed() {
-        if (pairs.get(0).getStudent() == null)
+        StuDevicePair pair = pairs.get(0);
+        if (pair.getStudent() == null)
             return;
+        int testNo = TestCache.getInstance().getTestNoMap().get(pair.getStudent());
         List<RoundResult> updateResult = new ArrayList<>();
         for (int i = 0; i < resultList.size(); i++) {
             BasketBallTestResult testResult = resultList.get(i);
             if (testResult.getResult() >= 0) {
-                RoundResult roundResult = DBManager.getInstance().queryRoundByRoundNo(pairs.get(0).getStudent().getStudentCode(),
-                        TestCache.getInstance().getTestNoMap().get(pairs.get(0).getStudent()), i + 1);
+                RoundResult roundResult = DBManager.getInstance().queryRoundByRoundNo(pair.getStudent().getStudentCode(),
+                        testNo, i + 1);
                 if (roundResult != null) {
                     //是否有进行更改，有更改成绩为未上传
                     if (roundResult.getResult() != testResult.getResult() || roundResult.getPenaltyNum() != testResult.getPenalizeNum()
@@ -620,22 +617,6 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                     }
 
                 }
-//                else {
-//                    roundResult = new RoundResult();
-//                    roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
-//                    roundResult.setStudentCode(mStudentItem.getStudentCode());
-//                    roundResult.setItemCode(TestConfigs.getCurrentItemCode());
-//                    roundResult.setResult(testResult.getResult());
-//                    roundResult.setMachineResult(testResult.getResult());
-//                    roundResult.setResultState(testResult.getResultState());
-//                    roundResult.setTestTime(System.currentTimeMillis() + "");
-//                    roundResult.setRoundNo(resultList.get(i).getRoundNo());
-//                    roundResult.setTestNo(TestCache.getInstance().getTestNoMap().get(pairs.get(0).getStudent()));
-//                    roundResult.setExamType(mStudentItem.getExamType());
-//                    roundResult.setScheduleNo(mStudentItem.getScheduleNo());
-//                    roundResult.setUpdateState(0);
-//                    DBManager.getInstance().insertRoundResult(roundResult);
-//                }
             } else {
                 if (testResult.getResultState() != -999 && testResult.getResultState() != RoundResult.RESULT_STATE_NORMAL) {
                     RoundResult roundResult = new RoundResult();
@@ -647,13 +628,11 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                     roundResult.setResultState(testResult.getResultState());
                     roundResult.setTestTime(System.currentTimeMillis() + "");
                     roundResult.setRoundNo(resultList.get(i).getRoundNo());
-                    roundResult.setTestNo(TestCache.getInstance().getTestNoMap().get(pairs.get(0).getStudent()));
+                    roundResult.setTestNo(testNo);
                     roundResult.setExamType(mStudentItem.getExamType());
                     roundResult.setScheduleNo(mStudentItem.getScheduleNo());
                     roundResult.setUpdateState(0);
-                    // 重新判断最好成绩
-                    RoundResult bestResult = DBManager.getInstance().queryBestScore(mStudentItem.getStudentCode(), TestCache.getInstance().getTestNoMap().get(pairs.get(0).getStudent()));
-                    roundResult.setIsLastResult(bestResult == null ? 1 : 0);
+                    roundResult.setIsLastResult(0);
                     DBManager.getInstance().insertRoundResult(roundResult);
                     resultList.get(i).setResult(0);
                     resultAdapter.notifyDataSetChanged();
@@ -662,21 +641,37 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             }
 
         }
+        //更新修改成绩
         if (updateResult.size() > 0) {
             DBManager.getInstance().updateRoundResult(updateResult);
         }
+
         List<RoundResult> dbRoundResult = DBManager.getInstance().queryResultsByStuItem(mStudentItem);
         if (dbRoundResult != null) {
-            TestCache.getInstance().getResults().put(pairs.get(0).getStudent(), dbRoundResult);
+            TestCache.getInstance().getResults().put(pair.getStudent(), dbRoundResult);
+        }
+        //获取所有成绩设置为非最好成绩
+        for (RoundResult roundResult : dbRoundResult) {
+            roundResult.setIsLastResult(0);
+            DBManager.getInstance().updateRoundResult(roundResult);
+        }
+        //获取最小成绩设置为最好成绩
+        RoundResult dbAscResult = DBManager.getInstance().queryOrderAscScore(mStudentItem.getStudentCode(), testNo);
+        if (dbAscResult != null) {
+            dbAscResult.setIsLastResult(1);
+            DBManager.getInstance().updateRoundResult(dbAscResult);
+        } else if (dbRoundResult != null && dbRoundResult.size() > 0) {
+            dbRoundResult.get(0).setIsLastResult(1);
+            DBManager.getInstance().updateRoundResult(dbRoundResult.get(0));
         }
 
         //Todo 确定成绩播报的时刻
-        StuDevicePair pair = pairs.get(0);
+
         int result = pair.getDeviceResult().getResult();
 //        if (SettingHelper.getSystemSetting().isAutoBroadcast()) {
 //            TtsManager.getInstance().speak(ResultDisplayUtils.getStrResultForDisplay(result));
 //        }
-        uploadResult(pairs.get(0).getStudent());
+        uploadResult(pair.getStudent());
 
         showStuInfoResult();
         // 是否需要进行下一次测试

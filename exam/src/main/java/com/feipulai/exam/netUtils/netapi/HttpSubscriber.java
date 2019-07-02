@@ -77,6 +77,7 @@ public class HttpSubscriber {
     public void login(Context context, String username, String password, OnResultListener listener) {
         Map<String, String> parameData = new HashMap<>();
         parameData.put("username", username + "@" + CommonUtils.getDeviceId(context));
+//        parameData.put("username", username);
         parameData.put("password", password);
         //TODO 登录协议与其它接口分离，单传用户名和密码
         String serverToken = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.DEFAULT_SERVER_TOKEN, "dGVybWluYWw6dGVybWluYWxfc2VjcmV0");
