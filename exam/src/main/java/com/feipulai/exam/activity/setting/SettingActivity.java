@@ -205,7 +205,6 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
             case R.id.sw_auto_broadcast:
                 systemSetting.setAutoBroadcast(mSwAutoBroadcast.isChecked());
                 break;
-
             case R.id.sw_rt_upload:
                 systemSetting.setRtUpload(mSwRtUpload.isChecked());
                 break;

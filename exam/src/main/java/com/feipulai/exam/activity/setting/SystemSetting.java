@@ -74,7 +74,7 @@ public class SystemSetting {
     /**
      * 网络是否添加路由表
      */
-   private boolean isAddRoute = false;
+    private boolean isAddRoute = false;
 
     public int getQrLength() {
         return qrLength;
@@ -187,6 +187,7 @@ public class SystemSetting {
     public void setCheckTool(int checkTool) {
         this.checkTool = checkTool;
     }
+
 
     @Override
     public String toString() {

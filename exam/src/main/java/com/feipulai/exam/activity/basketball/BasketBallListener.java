@@ -11,9 +11,9 @@ import com.feipulai.device.udp.result.UDPResult;
  */
 public class BasketBallListener implements UdpClient.UDPChannelListerner {
 
-    private BaketBallResponseListener listener;
+    private BasketBallResponseListener listener;
 
-    public BasketBallListener(BaketBallResponseListener listener) {
+    public BasketBallListener(BasketBallResponseListener listener) {
         this.listener = listener;
     }
 
@@ -45,7 +45,7 @@ public class BasketBallListener implements UdpClient.UDPChannelListerner {
         }
     }
 
-    public interface BaketBallResponseListener {
+    public interface BasketBallResponseListener {
 
 
         void getDeviceStatus(int status);

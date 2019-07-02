@@ -94,7 +94,9 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
         setting = SharedPrefsUtil.loadFormSource(this, BasketBallSetting.class);
         if (setting == null)
             setting = new BasketBallSetting();
+        UdpClient.getInstance().init(1527);
         UdpClient.getInstance().setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(), this);
+
         //设置测试次数
         ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testRound);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -192,6 +194,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
         SharedPrefsUtil.save(this, setting);
         DBManager.getInstance().updateItem(TestConfigs.sCurrentItem);
         Logger.i("保存设置:" + setting.toString());
+        EventBus.getDefault().post(new BaseEvent(EventConfigs.UPDATE_TEST_RESULT));
         super.finish();
     }
 
@@ -258,11 +261,14 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
         }
     }
 
-    @OnItemSelected({R.id.sp_carryMode})
+    @OnItemSelected({R.id.sp_carryMode, R.id.sp_test_no})
     public void spinnerItemSelected(Spinner spinner, int position) {
         switch (spinner.getId()) {
             case R.id.sp_carryMode:
                 TestConfigs.sCurrentItem.setCarryMode(position + 1);
+                break;
+            case R.id.sp_test_no:
+                setting.setTestNo(position + 1);
                 break;
         }
     }

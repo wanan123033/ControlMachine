@@ -54,6 +54,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
     private int frequency;//需设定的主机频段
     private int currentFrequency;//当前主机频段
     private boolean isAddTool;
+    private BaseStuPair baseStuPair;
     private void init() {
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
     }
@@ -81,11 +82,11 @@ public class SargentTestActivity extends BasePersonTestActivity {
         if (sargentSetting.getType() == 0) {
             mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                     SerialConfigs.CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight())));
-            tvDevicePair.setVisibility(View.GONE);
         }
         sendEmpty();
 
         if (sargentSetting.getType() == 1 && mBaseToolbar != null) {
+            tvDevicePair.setVisibility(View.VISIBLE);
             if (!isAddTool){
                 isAddTool = true ;
                 mBaseToolbar.addRightText("外接屏幕", new View.OnClickListener() {
@@ -143,6 +144,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
             toastSpeak("请先添加学生");
             return;
         }
+        this.baseStuPair = baseStuPair;
         testState = TestState.UN_STARTED;
         if (sargentSetting.getType() == 0) {
             mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
@@ -250,7 +252,9 @@ public class SargentTestActivity extends BasePersonTestActivity {
                     if (runUp == 0 && baseHeight == 0) {
                         //标记原始高度
                         baseHeight = result.getScore();
-                        setBaseHeight(baseHeight);
+                        if (baseStuPair==null ||baseStuPair.getStudent() != null){
+                            setBaseHeight(baseHeight);
+                        }
 
                     } else {
                         int dbResult = result.getScore() * 10;
@@ -258,13 +262,11 @@ public class SargentTestActivity extends BasePersonTestActivity {
                         if (runUp == 0) {
                             dbResult = result.getScore() * 10 - baseHeight * 10;
                             if (dbResult > 0) {
-                                BaseStuPair basePair = new BaseStuPair();
-                                onResultArrived(dbResult, basePair);
+                                onResultArrived(dbResult, baseStuPair);
                             }
 
                         } else {
-                            BaseStuPair basePair = new BaseStuPair();
-                            onResultArrived(dbResult, basePair);
+                            onResultArrived(dbResult, baseStuPair);
                         }
                     }
 
@@ -287,6 +289,8 @@ public class SargentTestActivity extends BasePersonTestActivity {
     }
 
     private void onResultArrived(int result, BaseStuPair stuPair) {
+        if (stuPair ==null || stuPair.getStudent() == null)
+            return;
         if (testState == TestState.WAIT_RESULT) {
             if (sargentSetting.isFullReturn()) {
                 if (stuPair.getStudent().getSex() == Student.MALE) {

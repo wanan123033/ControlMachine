@@ -571,6 +571,8 @@ public class DataRetrieveActivity extends BaseTitleActivity
                 if (mPageNum == 0) {
                     if (students == null || students.size() == 0) {
                         ToastUtils.showShort("该考生不存在");
+                        mList.clear();
+                        mAdapter.notifyDataSetChanged();
                         return;
                     }
                     mList.clear();

@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -24,9 +25,9 @@ import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
-import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.person.adapter.BaseGroupTestStuAdapter;
 import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
+import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.BaseEvent;
@@ -72,6 +73,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     RecyclerView rvTestResult;
     @BindView(R.id.txt_test_result)
     TextView txtStuResult;
+    @BindView(R.id.ll_state)
+    public LinearLayout llState;
     @BindView(R.id.cb_device_state)
     public CheckBox cbDeviceState;
     @BindView(R.id.tv_base_height)
@@ -158,15 +161,21 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         setStuShowLed(stuAdapter.getTestPosition() != -1 ? stuPairsList.get(stuAdapter.getTestPosition()) : null);
     }
 
+    public BaseStuPair getTestPair() {
+        if (stuAdapter == null || stuAdapter.getTestPosition() == -1) {
+            return null;
+        }
+        return stuPairsList.get(stuAdapter.getTestPosition());
+    }
 
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
         String title;
         if (TextUtils.isEmpty(SettingHelper.getSystemSetting().getTestName())) {
-            title =  TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机";
+            title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机";
         } else {
-            title =   TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机-" + SettingHelper.getSystemSetting().getTestName();
+            title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机-" + SettingHelper.getSystemSetting().getTestName();
         }
 
         return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {
@@ -202,9 +211,11 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 groupItem.setIdentityMark(1);
                 DBManager.getInstance().updateStudentGroupItem(groupItem);
             } else if (groupItem == null) {//没报名
-                toastSpeak(student.getStudentName() + "考生没有在选择的分组内，无法测试");
+                toastSpeak(student.getSpeakStuName() + "考生没有在选择的分组内，无法测试",
+                        student.getStudentName() + "考生没有在选择的分组内，无法测试");
             } else if (roundResultList.size() > 0) {
-                toastSpeak(student.getStudentName() + "考生已测试完成");
+                toastSpeak(student.getSpeakStuName() + "考生已测试完成",
+                        student.getStudentName() + "考生已测试完成");
             }
         }
     }
@@ -222,11 +233,13 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     }
 
     public void setBaseHeight(int height) {
-        tvBaseHeight.setText("原始高度" + height + "厘米");
+        tvBaseHeight.setText("原始高度" + ResultDisplayUtils.getStrResultForDisplay(height * 10));
     }
-    public void setBeginTxt(int isBegin){
-        tvStartTest.setText(isBegin == 0 ? "暂停测试":"开始测试");
+
+    public void setBeginTxt(int isBegin) {
+        tvStartTest.setText(isBegin == 0 ? "暂停测试" : "开始测试");
     }
+
     public abstract void initData();
 
     /**
@@ -278,7 +291,10 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                     if (!SettingHelper.getSystemSetting().isIdentityMark()) {
 //
                         isStop = false;
-                        toastSpeak(String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getStudentName(), roundNo));
+
+                        toastSpeak(String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getSpeakStuName(), roundNo),
+                                String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getStudentName(), roundNo));
+
                         if (testType == 1) {
                             startTest(stuPairsList.get(stuAdapter.getTestPosition()));
                             setShowLed(stuPairsList.get(stuAdapter.getTestPosition()));
@@ -664,9 +680,9 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     private void broadResult(@NonNull BaseStuPair baseStuPair) {
         if (SettingHelper.getSystemSetting().isAutoBroadcast()) {
             if (baseStuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) {
-                TtsManager.getInstance().speak(baseStuPair.getStudent().getStudentName() + "犯规");
+                TtsManager.getInstance().speak(baseStuPair.getStudent().getSpeakStuName() + "犯规");
             } else {
-                TtsManager.getInstance().speak(baseStuPair.getStudent().getStudentName() + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult()));
+                TtsManager.getInstance().speak(baseStuPair.getStudent().getSpeakStuName() + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult()));
             }
         }
     }
@@ -677,7 +693,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
      * @param stuPair
      */
     private void setShowLed(BaseStuPair stuPair) {
-        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), stuPair.getStudent().getStudentName() + "   第" + roundNo + "次", 0, 0, true, false);
+        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), stuPair.getStudent().getLEDStuName() + "   第" + roundNo + "次", 0, 0, true, false);
         mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "当前：", 0, 1, false, true);
         RoundResult bestResult = DBManager.getInstance().queryGroupBestScore(stuPair.getStudent().getStudentCode(), group.getId());
         if (bestResult != null && bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
@@ -743,11 +759,11 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 if (roundNo == setTestCount()) {
                     return "";
                 } else {
-                    return stuPairsList.get(0).getStudent().getStudentName();
+                    return stuPairsList.get(0).getStudent().getLEDStuName();
                 }
             }
         } else {
-            return stuPairsList.get(stuAdapter.getTestPosition() + 1).getStudent().getStudentName();
+            return stuPairsList.get(stuAdapter.getTestPosition() + 1).getStudent().getLEDStuName();
         }
     }
 
@@ -759,7 +775,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     private void setStuShowLed(BaseStuPair stuPair) {
         if (stuPair == null)
             return;
-        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), stuPair.getTrackNo() + "   " + stuPair.getStudent().getStudentName(), 0, 0, true, false);
+        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), stuPair.getTrackNo() + "   " + stuPair.getStudent().getLEDStuName(), 0, 0, true, false);
         for (int i = 0; i < stuPair.getTimeResult().length; i++) {
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(),
                     String.format("%-4s", String.format("第%1$d次：", i + 1)) + (TextUtils.isEmpty(stuPair.getTimeResult()[i]) ? "" : stuPair.getTimeResult()[i]),
@@ -827,7 +843,9 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 isStop = true;
                 tvStartTest.setText("开始测试");
             } else {
-                toastSpeak(String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getStudentName(), roundNo));
+                toastSpeak(String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getSpeakStuName(), roundNo),
+                        String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getStudentName(), roundNo));
+
             }
             Message msg = new Message();
             msg.obj = stuPairsList.get(stuAdapter.getTestPosition());
@@ -867,7 +885,9 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                     tvStartTest.setText("开始测试");
                 } else {
                     //最后一次测试的成绩
-                    toastSpeak(String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getStudentName(), roundNo));
+                    toastSpeak(String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getSpeakStuName(), roundNo),
+                            String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getStudentName(), roundNo));
+
                 }
                 Message msg = new Message();
                 msg.obj = stuPairsList.get(stuAdapter.getTestPosition());
@@ -926,7 +946,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             for (int j = stuAdapter.getTestPosition(); j < stuPairsList.size(); j++) {
                 if (TextUtils.isEmpty(stuPairsList.get(j).getTimeResult()[i - 1])) {
                     if (stuPairsList.get(j).isFullMark() && stuPairsList.get(j).getResultState() == RoundResult.RESULT_STATE_NORMAL) {
-                            continue;
+                        continue;
                     }
                     roundNo = i;
                     stuAdapter.setTestPosition(j);
@@ -935,7 +955,9 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                         isStop = true;
                         tvStartTest.setText("开始测试");
                     } else {
-                        toastSpeak(String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getStudentName(), roundNo));
+                        toastSpeak(String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getSpeakStuName(), roundNo),
+                                String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getStudentName(), roundNo));
+
                     }
                     Message msg = new Message();
                     msg.obj = stuPairsList.get(stuAdapter.getTestPosition());
@@ -987,7 +1009,9 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 isStop = true;
                 tvStartTest.setText("开始测试");
             } else {
-                toastSpeak(String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getStudentName(), roundNo));
+                toastSpeak(String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getSpeakStuName(), roundNo),
+                        String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getStudentName(), roundNo));
+
 
             }
             Message msg = new Message();
@@ -1055,9 +1079,6 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 
     }
 
-    public void setBegin() {
-        tvStartTest.setText("开始测试");
-    }
 
     @Override
     protected void onDestroy() {

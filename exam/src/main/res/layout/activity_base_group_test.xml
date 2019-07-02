@@ -87,36 +87,44 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:background="@mipmap/icon_device_bg"
-                android:gravity="right"
-                android:padding="10dp">
+                android:gravity="right">
 
-                <CheckBox
-                    android:id="@+id/cb_device_state"
+                <LinearLayout
+                    android:id="@+id/ll_state"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/dp_10"
-                    android:button="@null"
-                    android:checked="true"
-                    android:drawableLeft="@drawable/cb_device_state"
-                    android:drawablePadding="10dp"
-                    android:enabled="false"
-                    android:paddingLeft="35dp"
-                    android:text="设备状态"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
+                    android:clickable="true"
+                    android:padding="10dp">
+
+                    <CheckBox
+                        android:id="@+id/cb_device_state"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/dp_10"
+                        android:button="@null"
+                        android:checked="true"
+                        android:clickable="false"
+                        android:drawableLeft="@drawable/cb_device_state"
+                        android:drawablePadding="10dp"
+                        android:enabled="false"
+                        android:paddingLeft="35dp"
+                        android:text="设备状态"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+                </LinearLayout>
             </LinearLayout>
 
             <TextView
                 android:id="@+id/tv_base_height"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="15dp"
+                android:text="原始高度: 厘米"
+                android:textColor="@color/white"
                 android:textSize="14sp"
-                android:visibility="gone"
-                android:text="原始高度: 厘米"/>
+                android:visibility="gone" />
         </RelativeLayout>
 
 
@@ -168,7 +176,7 @@
                     android:gravity="center"
                     android:text="跳过"
                     android:textColor="@color/white"
-                    android:textSize="22sp"/>
+                    android:textSize="22sp" />
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>

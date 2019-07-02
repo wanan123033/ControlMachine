@@ -37,7 +37,7 @@ public abstract class SitPullUpCheckPresenter<Setting>
     @Override
     protected void displayCheckedInLED(Student student, int deviceId, RoundResult lastResult) {
         int hostId = systemSetting.getHostId();
-        mLEDManager.showString(hostId, student.getStudentName(), 5, 0, true, false);
+        mLEDManager.showString(hostId, student.getLEDStuName(), 5, 0, true, false);
         if (lastResult == null) {
             mLEDManager.showString(hostId, deviceId + "号设备", 4, 1, false, true);
         } else {

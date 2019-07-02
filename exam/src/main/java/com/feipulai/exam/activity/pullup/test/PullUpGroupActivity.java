@@ -148,7 +148,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
     }
 
     @OnClick({R.id.tv_start_test, R.id.tv_stop_test, R.id.tv_print, R.id.tv_led_setting, R.id.tv_confirm,
-            R.id.tv_punish, R.id.tv_abandon_test,R.id.tv_pair})
+            R.id.tv_punish, R.id.tv_abandon_test, R.id.tv_pair})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
@@ -214,7 +214,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
         List<RoundResult> roundResults = testCache.getResults().get(student);
 
         if (systemSetting.isAutoBroadcast()) {
-            TtsManager.getInstance().speak(ResultDisplayUtils.getStrResultForDisplay(roundResults.get(roundResults.size() - 1).getResult()));
+            TtsManager.getInstance().speak(student.getSpeakStuName()+ ResultDisplayUtils.getStrResultForDisplay(roundResults.get(roundResults.size() - 1).getResult()));
         }
 
         boolean isAllTest = isAllTest(roundResults, student);
@@ -325,7 +325,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
             lastResult = results.get(results.size() - 1);
         }
         int hostId = systemSetting.getHostId();
-        ledManager.showString(hostId, pairs.get(position()).getStudent().getStudentName(), 5, 0, true, lastResult == null);
+        ledManager.showString(hostId, pairs.get(position()).getStudent().getLEDStuName(), 5, 0, true, lastResult == null);
         if (lastResult != null) {
             String displayResult = ResultDisplayUtils.getStrResultForDisplay(lastResult.getResult());
             ledManager.showString(hostId, "已有成绩:" + displayResult, 2, 3, false, true);
@@ -413,7 +413,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
     public void onGetReadyTimerFinish() {
         tickInUI("开始");
         // onScoreArrived(new PullUpResult());
-        ledManager.showString(SettingHelper.getSystemSetting().getHostId(), pairs.get(position()).getStudent().getStudentName(), 5, 0, true, true);
+        ledManager.showString(SettingHelper.getSystemSetting().getHostId(), pairs.get(position()).getStudent().getLEDStuName(), 5, 0, true, true);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -518,7 +518,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
         String title;
         boolean isTestNameEmpty = TextUtils.isEmpty(SettingHelper.getSystemSetting().getTestName());
-        title =  TestConfigs.machineNameMap.get(machineCode)
+        title = TestConfigs.machineNameMap.get(machineCode)
                 + SettingHelper.getSystemSetting().getHostId() + "号机"
                 + (isTestNameEmpty ? "" : ("-" + SettingHelper.getSystemSetting().getTestName()));
         return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {

@@ -77,6 +77,7 @@ public class HttpSubscriber {
     public void login(Context context, String username, String password, OnResultListener listener) {
         Map<String, String> parameData = new HashMap<>();
         parameData.put("username", username + "@" + CommonUtils.getDeviceId(context));
+//        parameData.put("username", username);
         parameData.put("password", password);
         //TODO 登录协议与其它接口分离，单传用户名和密码
         String serverToken = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.DEFAULT_SERVER_TOKEN, "dGVybWluYWw6dGVybWluYWxfc2VjcmV0");
@@ -414,9 +415,9 @@ public class HttpSubscriber {
     /**
      * 获取分组信息
      */
-    public void getItemGroupInFo(String scheduleNo, String sortName, String groupNo, String groupType) {
+    public void getItemGroupInFo(String itemCode, String scheduleNo, String sortName, String groupNo, String groupType) {
         Map<String, Object> parameData = new HashMap<>();
-        parameData.put("examItemCode", TestConfigs.getCurrentItemCode());
+        parameData.put("examItemCode", itemCode);
         parameData.put("scheduleNo", scheduleNo);
         parameData.put("sortName", sortName);
         parameData.put("groupNo", groupNo);
@@ -429,15 +430,8 @@ public class HttpSubscriber {
                 Logger.i("getItemGroupInFo====>" + result.toString());
                 if (result == null)
                     return;
-                List<Group> groupList = new ArrayList<>();
                 List<GroupItem> groupItemList = new ArrayList<>();
-
                 for (GroupBean groupBean : result) {
-                    //int groupType, String sortName, int groupNo, String scheduleNo,String itemCode, int examType, int isTestComplete
-                    Group group = new Group(groupBean.getGroupType(), groupBean.getSortName(), groupBean.getGroupNo()
-                            , groupBean.getScheduleNo(), TestConfigs.getCurrentItemCode(), groupBean.getExamType(), 0);
-                    groupList.add(group);
-
                     if (groupBean.getStudentCodeList() != null) {
                         for (StudentBean student : groupBean.getStudentCodeList()) {
                             //String itemCode, int groupType, String sortName, int groupNo, String scheduleNo, String studentCode, int trackNo, int identityMark
@@ -448,7 +442,6 @@ public class HttpSubscriber {
                     }
 
                 }
-                DBManager.getInstance().insertGroupList(groupList);
                 DBManager.getInstance().insertGroupItemList(groupItemList);
                 if (onRequestEndListener != null)
                     onRequestEndListener.onSuccess(GROUP_INFO_BIZ);

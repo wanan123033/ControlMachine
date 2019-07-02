@@ -143,7 +143,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
         String title;
         boolean isTestNameEmpty = TextUtils.isEmpty(SettingHelper.getSystemSetting().getTestName());
-        title =  TestConfigs.machineNameMap.get(machineCode)
+        title = TestConfigs.machineNameMap.get(machineCode)
                 + SettingHelper.getSystemSetting().getHostId() + "号机"
                 + (isTestNameEmpty ? "" : ("-" + SettingHelper.getSystemSetting().getTestName()));
         return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {
@@ -211,7 +211,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
 
     protected void displayCheckedInLED(RoundResult lastResult) {
         int hostId = SettingHelper.getSystemSetting().getHostId();
-        ledManager.showString(hostId, pairs.get(0).getStudent().getStudentName(), 5, 0, true, lastResult == null);
+        ledManager.showString(hostId, pairs.get(0).getStudent().getLEDStuName(), 5, 0, true, lastResult == null);
         if (lastResult != null) {
             String displayResult = ResultDisplayUtils.getStrResultForDisplay(lastResult.getResult());
             ledManager.showString(hostId, "已有成绩:" + displayResult, 2, 3, false, true);
@@ -283,7 +283,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
         int result = pair.getDeviceResult().getResult() + pair.getPenalty();
 
         if (systemSetting.isAutoBroadcast()) {
-            TtsManager.getInstance().speak(ResultDisplayUtils.getStrResultForDisplay(result));
+            TtsManager.getInstance().speak(pair.getStudent().getSpeakStuName() + ResultDisplayUtils.getStrResultForDisplay(result));
         }
 
         // 是否需要进行下一次测试
@@ -303,7 +303,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
 
     private void prepareView(boolean rvResultEnable, boolean tvFinishTestEnable, boolean tvPrintEnable,
                              boolean tvStartTestEnable, boolean tvAbandonTestEnable, boolean tvConfirmEnable,
-                             boolean tvStopTestEnable, boolean tvPunishEnable, boolean tvExitTestEnable,boolean tvCountEnable) {
+                             boolean tvStopTestEnable, boolean tvPunishEnable, boolean tvExitTestEnable, boolean tvCountEnable) {
         rvTestResult.setVisibility(rvResultEnable ? View.VISIBLE : View.INVISIBLE);
         tvFinishTest.setVisibility(tvFinishTestEnable ? View.VISIBLE : View.GONE);
         tvPrint.setVisibility(tvPrintEnable ? View.VISIBLE : View.GONE);
@@ -331,7 +331,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
 
         prepareView(false, false, false, false,
                 false, false, false,
-                false, false,false);
+                false, false, false);
 
         state = WAIT_CHECK_IN;
     }
@@ -345,7 +345,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
 
         prepareView(true, false, true, true,
                 false, false, false,
-                false, true,false);
+                false, true, false);
 
         state = WAIT_BEGIN;
     }
@@ -358,7 +358,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
 
         prepareView(true, false, false, false,
                 true, false, false,
-                false, false,true);
+                false, false, true);
 
         tvResult.setText("准备");
         testDate = System.currentTimeMillis() + "";
@@ -370,13 +370,13 @@ public class PullUpIndividualActivity extends BaseTitleActivity
         state = WAIT_CONFIRM;
         prepareView(true, false, false, false,
                 false, true, false,
-                setting.isPenalize(), false,false);
+                setting.isPenalize(), false, false);
     }
 
     private void prepareForFinish() {
         prepareView(true, true, true, false,
                 false, false, false,
-                false, false,false);
+                false, false, false);
 
         TestCache testCache = TestCache.getInstance();
         Student student = pairs.get(0).getStudent();
@@ -441,14 +441,14 @@ public class PullUpIndividualActivity extends BaseTitleActivity
     @Override
     public void onGetReadyTimerFinish() {
         tickInUI("开始");
-        ledManager.showString(SettingHelper.getSystemSetting().getHostId(), pairs.get(0).getStudent().getStudentName(), 5, 0, true, true);
+        ledManager.showString(SettingHelper.getSystemSetting().getHostId(), pairs.get(0).getStudent().getLEDStuName(), 5, 0, true, true);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 tvResult.setText("");
                 prepareView(true, false, false, false,
                         true, false, true,
-                        false, false,false);
+                        false, false, false);
             }
         });
     }

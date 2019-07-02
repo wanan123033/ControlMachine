@@ -159,11 +159,12 @@ public class StuSearchEditText extends RelativeLayout {
                         imgDelete.setVisibility(INVISIBLE);
                         return;
                     }
+                    imgDelete.setVisibility(VISIBLE);
                     //外接扫描不实时查
                     if (SettingHelper.getSystemSetting().getCheckTool() == 3) {
                         return;
                     }
-                    imgDelete.setVisibility(VISIBLE);
+
                     if (length == 18) {
                         //精确搜索身份证
                         Student student = DBManager.getInstance().queryStudentByIDCode(str);

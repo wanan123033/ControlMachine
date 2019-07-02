@@ -75,6 +75,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     RecyclerView rvTestResult;
     @BindView(R.id.cb_device_state)
     public CheckBox cbDeviceState;
+    @BindView(R.id.ll_state)
+    public LinearLayout llState;
     @BindView(R.id.txt_test_result)
     TextView txtStuResult;
     @BindView(R.id.txt_start_test)
@@ -96,7 +98,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     /**
      * 当前设备
      */
-    private BaseStuPair pair = new BaseStuPair();
+    public BaseStuPair pair = new BaseStuPair();
     /**
      * 当前测试次数位
      */
@@ -212,7 +214,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     }
 
     public void setBaseHeight(int height) {
-        tvBaseHeight.setText("原始高度" + height + "厘米");
+        tvBaseHeight.setText("原始高度" + ResultDisplayUtils.getStrResultForDisplay(height * 10));
     }
 
     /**
@@ -362,7 +364,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             pair.setStudent(student);
             refreshTxtStu(student);
             txtStuResult.setText("");
-            toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), roundNo));
+            toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), roundNo)
+                    , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), roundNo));
             if (testType == 0) {
                 sendTestCommand(pair);
             }
@@ -462,7 +465,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                     }
                     roundNo++;
                     txtStuResult.setText("");
-                    toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), roundNo));
+                    toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), roundNo)
+                            , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), roundNo));
                     Message msg = new Message();
                     msg.obj = pair;
                     ledHandler.sendMessageDelayed(msg, 2000);
@@ -472,6 +476,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                     }
 
                 } else {
+                    setBaseHeight(0);
                     //测试结束学生清除 ，设备设置空闲状态
                     roundNo = 1;
                     //4秒后清理学生信息
@@ -593,9 +598,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     private void broadResult(@NonNull BaseStuPair baseStuPair) {
         if (SettingHelper.getSystemSetting().isAutoBroadcast()) {
             if (baseStuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) {
-                TtsManager.getInstance().speak(baseStuPair.getStudent().getStudentName() + "犯规");
+                TtsManager.getInstance().speak(baseStuPair.getStudent().getSpeakStuName() + "犯规");
             } else {
-                TtsManager.getInstance().speak(baseStuPair.getStudent().getStudentName() + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult()));
+                TtsManager.getInstance().speak(baseStuPair.getStudent().getSpeakStuName() + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult()));
             }
 
 
@@ -609,7 +614,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
      */
     private void setShowLed(BaseStuPair stuPair) {
 
-        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), stuPair.getStudent().getStudentName() + "   第" + roundNo + "次", 0, 0, true, false);
+        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), stuPair.getStudent().getLEDStuName() + "   第" + roundNo + "次", 0, 0, true, false);
         mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "当前：", 0, 1, false, true);
         RoundResult bestResult = DBManager.getInstance().queryBestScore(stuPair.getStudent().getStudentCode(), testNo);
         if (bestResult != null && bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
