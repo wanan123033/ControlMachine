@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by zzs on  2019/3/8
@@ -21,6 +22,7 @@ public class DateUtil {
      */
     public static String formatTime(long timeMillis, String pattern) {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
         return sdf.format(new Date(timeMillis));
     }
 
