@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -20,6 +22,7 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.tcp.NettyClient;
 import com.feipulai.device.tcp.NettyListener;
+import com.feipulai.device.tcp.TcpConfig;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.ChipSettingAdapter;
 import com.feipulai.exam.db.DBManager;
@@ -33,19 +36,23 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+import static com.feipulai.exam.config.SharedPrefsConfigs.MACHINE_IP;
+import static com.feipulai.exam.config.SharedPrefsConfigs.MACHINE_PORT;
 import static com.feipulai.exam.config.SharedPrefsConfigs.MIDDLE_RACE;
 import static com.feipulai.exam.config.SharedPrefsConfigs.VEST_CHIP_NO;
 
 /**
  * created by ww on 2019/6/24.
  */
-public class ChipSettingFragment extends Fragment implements NettyListener, ChipSettingAdapter.OnItemClickListener {
+public class ChipSettingFragment extends Fragment implements NettyListener, ChipSettingAdapter.OnItemClickListener, CompoundButton.OnCheckedChangeListener {
     @BindView(R.id.rv_chip_setting)
     RecyclerView rvChipSetting;
     @BindView(R.id.rl_chip_add)
     RelativeLayout rlChipAdd;
     @BindView(R.id.tv_chip_ID1)
     TextView tvChipID1;
+    @BindView(R.id.cb_chip_connect)
+    CheckBox cbChipConnect;
     private Context mContext;
     private Unbinder unbinder;
     private NettyClient nettyClient;
@@ -59,7 +66,6 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
                     break;
                 case 1:
                     chipAdapter.notifyDataSetChanged();
-//                    ((LinearLayoutManager) rvChipSetting.getLayoutManager()).scrollToPositionWithOffset((Integer) msg.obj, 0);
                     rvChipSetting.getLayoutManager().scrollToPosition((Integer) msg.obj);
                     break;
                 default:
@@ -71,30 +77,30 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
     private List<ChipInfo> chipInfos;
     private ChipSettingAdapter chipAdapter;
     private int chipNo;
+    private String machine_ip;
+    private String machine_port;
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag_chip_setting, container, false);
         unbinder = ButterKnife.bind(this, view);
         mContext = getActivity();
-
+        machine_ip = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MACHINE_IP, "");
+        machine_port = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MACHINE_PORT, "0");
         initEvent();
         initSocket();
         return view;
     }
 
-    String host = "192.168.0.177";
-    int port = 1401;
-
     //    初始化 连接设备
     private void initSocket() {
-        nettyClient = new NettyClient(host, port);
+        nettyClient = new NettyClient(machine_ip, Integer.parseInt(machine_port));
         if (!nettyClient.getConnectStatus()) {
             nettyClient.setListener(this);
             nettyClient.connect();
         }
     }
 
-    private boolean isVisible;
+    private boolean isVisible;//当前fragment是否显示
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -119,6 +125,8 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
     }
 
     private void initEvent() {
+        cbChipConnect.setOnCheckedChangeListener(this);
+
         chipInfos = new ArrayList<>();
         chipAdapter = new ChipSettingAdapter(chipInfos);
         rvChipSetting.setLayoutManager(new LinearLayoutManager(mContext));
@@ -159,7 +167,7 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
     @Override
     public void onMessageReceive(long time, String[] cardIds) {
         mHandler.sendMessage(mHandler.obtainMessage(0, Arrays.toString(cardIds)));
-        if (isVisible) {
+        if (isVisible && isSelect) {
             //将芯片id信息按先后顺序并且无重复填充到chipInfos
             if (chipNo == 1) {//如果一个背心对应1个芯片
                 for (int i = 0; i < cardIds.length; i++) {
@@ -229,57 +237,6 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
                     }
                 }
             }
-
-
-//            for (int i = 0; i < chipInfos.size(); i++) {
-//                //当芯片表中某一行第一个ID为空，可以直接填充两个ID（ID2可能为""）
-//                if (TextUtils.isEmpty(chipInfos.get(i).getChipID1())) {
-//                    //当为非第一行时，判断上一行的第二个ID是否和接收的ID相同
-//                    if (i > 0) {
-//                        if (cardId1.equals(chipInfos.get(i - 1).getChipID2())) {
-//                            chipAdapter.changeBackGround(2, i - 1);
-//                            mHandler.sendMessage(mHandler.obtainMessage(1, i - 1));
-//                            break;
-//                        }
-//                    }
-//                    chipInfos.get(i).setChipID1(cardId1);
-//                    chipInfos.get(i).setChipID2(cardId2);
-//                    if ("".equals(cardId2)) {
-//                        chipAdapter.changeBackGround(1, i);
-//                    } else {
-//                        chipAdapter.changeBackGround(2, i);
-//                    }
-//                    mHandler.sendMessage(mHandler.obtainMessage(1, i));
-//                    break;
-//                } else {
-//                    //当芯片表中某一行第一个ID不为空，需要先判断这个ID和接收到的ID1，如果相同则跳出循环并使该行ID背景变色
-//                    if (cardId1.equals(chipInfos.get(i).getChipID1())) {
-//                        chipAdapter.changeBackGround(1, i);
-//                        mHandler.sendMessage(mHandler.obtainMessage(1, i));
-//                        break;
-//                    }
-//                    //当芯片表中某一行第二个ID为空，直接插入ID1到第二个ID中，并插入ID2到下一行的ID1中（ID2可能为""）
-//                    if (TextUtils.isEmpty(chipInfos.get(i).getChipID2())) {
-//                        chipInfos.get(i).setChipID2(cardId1);
-//                        chipInfos.get(i + 1).setChipID1(cardId2);
-//                        if ("".equals(cardId2)) {
-//                            chipAdapter.changeBackGround(2, i);
-//                            mHandler.sendMessage(mHandler.obtainMessage(1, i));
-//                        } else {
-//                            chipAdapter.changeBackGround(1, i + 1);
-//                            mHandler.sendMessage(mHandler.obtainMessage(1, i + 1));
-//                        }
-//                        break;
-//                    } else {
-//                        //当芯片表中某一行第二个ID不为空，需要先判断这个ID和接收到的ID1，如果相同则跳出循环并使该行ID背景变色
-//                        if (cardId1.equals(chipInfos.get(i).getChipID2())) {
-//                            chipAdapter.changeBackGround(2, i);
-//                            mHandler.sendMessage(mHandler.obtainMessage(1, i));
-//                            break;
-//                        }
-//                    }
-//                }
-//            }
         }
     }
 
@@ -319,5 +276,17 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
 
             }
         });
+    }
+
+    private boolean isSelect = false;
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        isSelect = isChecked;
+        if (isChecked) {
+            nettyClient.sendMsgToServer(TcpConfig.getCmdStartTiming(), null);
+        } else {
+            nettyClient.sendMsgToServer(TcpConfig.getCmdEndTiming(), null);
+        }
     }
 }
