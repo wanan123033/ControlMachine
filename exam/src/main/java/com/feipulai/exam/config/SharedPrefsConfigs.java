@@ -87,7 +87,7 @@ public class SharedPrefsConfigs {
 
     //中长跑参数设置
     public static final String MIDDLE_RACE = "middle_race";
-    public static final String MIDDLE_RACE_NUMBER = "middle_race_number";
+    public static final String MIDDLE_RACE_NUMBER = "middle_race_number";//计时器数量
     public static final String MIDDLE_RACE_TIME_FIRST = "middle_race_time_first";//首次接收时间/秒
     public static final String MIDDLE_RACE_TIME_SPAN = "middle_race_time_span";//最小时间间隔/秒
 
@@ -99,4 +99,7 @@ public class SharedPrefsConfigs {
     public static final int FIRST_TIME = 10;//首次接收时间/秒
     public static final int SPAN_TIME = 10;//最小时间间隔/秒
     public static final String VEST_CHIP_NO = "vest_chip_no";//背心芯片数
+
+    public static final String MACHINE_IP = "machine_ip";//连接设备ip
+    public static final String MACHINE_PORT = "machine_port";//连接设备端口
 }

@@ -23,7 +23,7 @@ public class ItemDefault {
     public static final int CODE_SL = 9;        //视力
     public static final int CODE_YTXS = 10;    //引体向上
     public static final int CODE_HWSXQ = 11;    //红外实心球
-    public static final int CODE_ZCP = 12;    //中长跑（800,1000）
+    public static final int CODE_ZCP = 12;    //中长跑（800,1000...）
     public static final int CODE_PQ = 13;        //排球
     public static final int CODE_LQYQ = 14;    //篮球运球
     public static final int CODE_ZFP = 15;    //红外计时仪

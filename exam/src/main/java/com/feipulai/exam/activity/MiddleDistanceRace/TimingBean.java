@@ -19,19 +19,28 @@ public class TimingBean {
     private int no;//组序号
     private int state;//组状态（0无1等待发令2违规返回3完成计时4正在计时状态）
     private long time;//发令时刻
+    private String itemCode;
     private String itemGroupName;//组名
     private int color;//组颜色
 
-    public TimingBean(int no, int state, long time, String itemGroupName, int color) {
+    public TimingBean(int no, int state, long time, String itemCode, String itemGroupName, int color) {
         this.no = no;
         this.state = state;
         this.time = time;
+        this.itemCode = itemCode;
         this.itemGroupName = itemGroupName;
         this.color = color;
     }
 
-
     public TimingBean() {
+    }
+
+    public String getItemCode() {
+        return itemCode;
+    }
+
+    public void setItemCode(String itemCode) {
+        this.itemCode = itemCode;
     }
 
     public long getTime() {
@@ -80,6 +89,7 @@ public class TimingBean {
                 "no=" + no +
                 ", state=" + state +
                 ", time=" + time +
+                ", itemCode='" + itemCode + '\'' +
                 ", itemGroupName='" + itemGroupName + '\'' +
                 ", color=" + color +
                 '}';

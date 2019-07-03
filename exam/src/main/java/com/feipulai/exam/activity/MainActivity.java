@@ -177,6 +177,10 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                         IntentUtil.gotoActivity(this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode()));
                         return;
                     }
+                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+                        IntentUtil.gotoActivity(this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode()));
+                        return;
+                    }
                     if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
                         startActivity(new Intent(MainActivity.this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
                     } else {
@@ -185,7 +189,6 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                         } else {
                             startActivity(new Intent(MainActivity.this, BaseGroupActivity.class));
                         }
-
                     }
                 }
                 break;
