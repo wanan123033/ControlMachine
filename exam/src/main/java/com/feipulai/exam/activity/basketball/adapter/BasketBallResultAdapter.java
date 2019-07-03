@@ -59,13 +59,20 @@ public class BasketBallResultAdapter extends BaseQuickAdapter<BasketBallTestResu
         helper.txtResultStatus.setText(setResultState(item.getResultState()));
         if (item.getMachineResultList() != null && item.getMachineResultList().size() > 0) {
             helper.spRoundResult.setAdapter(new MachineResultAdapter(mContext, item.getMachineResultList()));
+            for (int i = 0; i < item.getMachineResultList().size(); i++) {
+                if (item.getMachineResultList().get(i).getResult() == item.getSelectMachineResult()) {
+                    helper.spRoundResult.setSelection(i);
+                    break;
+                }
+            }
         } else {
             helper.spRoundResult.setAdapter(new MachineResultAdapter(mContext, new ArrayList<MachineResult>()));
         }
         helper.spRoundResult.setItemClick(new MySpinner.ItemClick() {
             @Override
             public void onClick(int position) {
-                item.setResult(item.getMachineResultList().get(position).getResult() + (setting.getPenaltySecond() * item.getPenalizeNum()*1000));
+                item.setResult(item.getMachineResultList().get(position).getResult() + (setting.getPenaltySecond() * item.getPenalizeNum() * 1000));
+                item.setSelectMachineResult(item.getMachineResultList().get(position).getResult());
                 notifyDataSetChanged();
             }
         });

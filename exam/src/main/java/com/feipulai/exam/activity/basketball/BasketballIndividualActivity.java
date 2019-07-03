@@ -498,6 +498,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 }
                 if (state == WAIT_CHECK_IN || state == WAIT_CONFIRM || (pairs.get(0).getStudent() != null && state == WAIT_FREE)) {
                     tvResult.setText("");
+                    txtDeviceStatus.setText("空闲");
                     onResultConfirmed();
                 }
                 break;
@@ -508,7 +509,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                     resultAdapter.setSelectPosition(-1);
                     prepareForCheckIn();
                     UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
-
+                    txtDeviceStatus.setText("空闲");
                 }
 
                 break;
@@ -610,6 +611,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                     if (roundResult.getResult() != testResult.getResult() || roundResult.getPenaltyNum() != testResult.getPenalizeNum()
                             || roundResult.getResultState() != testResult.getResultState()) {
                         roundResult.setUpdateState(0);
+                        roundResult.setMachineResult(testResult.getSelectMachineResult());
                         roundResult.setResult(testResult.getResult());
                         roundResult.setPenaltyNum(testResult.getPenalizeNum());
                         roundResult.setResultState(testResult.getResultState());
