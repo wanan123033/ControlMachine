@@ -1,5 +1,7 @@
 package com.feipulai.exam.activity.sargent_jump;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,6 +36,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static com.feipulai.exam.activity.RadioTimer.RunTimerConstant.ILLEGAL_BACK;
 import static com.feipulai.exam.activity.sargent_jump.Constants.CONNECTED;
 import static com.feipulai.exam.activity.sargent_jump.Constants.END_TEST;
 import static com.feipulai.exam.activity.sargent_jump.Constants.GET_SCORE_RESPONSE;
@@ -98,10 +101,30 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
                         showChangeBadDialog();
                     }
                 });
+                mBaseToolbar.addRightText("获取成绩", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showGetScore();
+                    }
+                });
             }
 
         }
         frequency = SerialConfigs.sProChannels.get(ItemDefault.CODE_MG) + SettingHelper.getSystemSetting().getHostId() - 1;
+    }
+
+    /**
+     * 显示是否获取成绩
+     */
+    private void showGetScore() {
+        new AlertDialog.Builder(this).setMessage("确认要获取成绩吗?")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        radioManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,SerialConfigs.CMD_SARGENT_JUMP_GET_SCORE ));
+                        dialog.dismiss();
+                    }
+                }).setNegativeButton("取消", null).show();
     }
 
     public void sendEmpty() {

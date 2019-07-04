@@ -1,7 +1,5 @@
 package com.feipulai.exam.activity.basketball.util;
 
-import com.orhanobut.logger.Logger;
-
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -30,7 +28,7 @@ public class TimerUtil {
                 .subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(Long aLong) throws Exception {
-                        Logger.i("accept-------->" + aLong);
+//                        Logger.i("accept-------->" + aLong);
                         if (listener != null)
                             listener.timer(aLong);
                     }

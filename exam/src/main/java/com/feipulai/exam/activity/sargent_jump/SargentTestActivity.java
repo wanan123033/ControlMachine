@@ -1,5 +1,7 @@
 package com.feipulai.exam.activity.sargent_jump;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
@@ -96,6 +98,13 @@ public class SargentTestActivity extends BasePersonTestActivity {
                     }
                 });
                 txtLedSetting.setVisibility(View.GONE);
+
+                mBaseToolbar.addRightText("获取成绩", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showGetScore();
+                    }
+                });
             }
 
         }
@@ -115,6 +124,21 @@ public class SargentTestActivity extends BasePersonTestActivity {
 
         frequency = SerialConfigs.sProChannels.get(ItemDefault.CODE_MG) + SettingHelper.getSystemSetting().getHostId() - 1;
     }
+
+    /**
+     * 显示是否获取成绩
+     */
+    private void showGetScore() {
+        new AlertDialog.Builder(this).setMessage("确认要获取成绩吗?")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        radioManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,SerialConfigs.CMD_SARGENT_JUMP_GET_SCORE ));
+                        dialog.dismiss();
+                    }
+                }).setNegativeButton("取消", null).show();
+    }
+
 
     public void sendEmpty() {
         checkService.scheduleAtFixedRate(new Runnable() {
