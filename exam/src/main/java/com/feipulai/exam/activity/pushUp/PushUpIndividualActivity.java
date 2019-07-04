@@ -329,7 +329,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
         int result = pair.getDeviceResult().getResult() + pair.getPenalty();
 
         if (systemSetting.isAutoBroadcast()) {
-            TtsManager.getInstance().speak(pair.getStudent().getSpeakStuName()+ResultDisplayUtils.getStrResultForDisplay(result));
+            TtsManager.getInstance().speak(String.format(getString(R.string.speak_result), pair.getStudent().getSpeakStuName(), ResultDisplayUtils.getStrResultForDisplay(result)));
         }
         uploadResult(pairs.get(0).getStudent());
         // 是否需要进行下一次测试

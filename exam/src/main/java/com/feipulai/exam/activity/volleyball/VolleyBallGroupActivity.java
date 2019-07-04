@@ -214,7 +214,9 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
 
         if (systemSetting.isAutoBroadcast()) {
 
-            TtsManager.getInstance().speak(student.getSpeakStuName() + ResultDisplayUtils.getStrResultForDisplay(roundResults.get(roundResults.size() - 1).getResult()));
+            TtsManager.getInstance().speak(
+                    String.format(getString(R.string.speak_result), student.getSpeakStuName(), ResultDisplayUtils.getStrResultForDisplay(roundResults.get(roundResults.size() - 1).getResult()))
+            );
         }
 
         boolean isAllTest = isAllTest(roundResults, student);

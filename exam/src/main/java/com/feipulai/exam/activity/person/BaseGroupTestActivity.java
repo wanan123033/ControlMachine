@@ -611,14 +611,14 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         RoundResult bestResult = DBManager.getInstance().queryGroupBestScore(baseStuPair.getStudent().getStudentCode(), group.getId());
         if (bestResult != null) {
             // 原有最好成绩犯规 或者原有最好成绩没有犯规但是现在成绩更好
-            if (bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && baseStuPair.getResultState() == 0 && bestResult.getResult() <= baseStuPair.getResult()) {
+            if (bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && baseStuPair.getResultState() == RoundResult.RESULT_STATE_NORMAL && bestResult.getResult() <= baseStuPair.getResult()) {
                 // 这个时候就要同时修改这两个成绩了
                 roundResult.setIsLastResult(1);
                 bestResult.setIsLastResult(0);
                 DBManager.getInstance().updateRoundResult(bestResult);
                 updateLastResultLed(roundResult);
             } else {
-                if (bestResult.getResultState() != 0) {
+                if (bestResult.getResultState() != RoundResult.RESULT_STATE_NORMAL) {
                     roundResult.setIsLastResult(1);
                     bestResult.setIsLastResult(0);
                     DBManager.getInstance().updateRoundResult(bestResult);
@@ -682,7 +682,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             if (baseStuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) {
                 TtsManager.getInstance().speak(baseStuPair.getStudent().getSpeakStuName() + "犯规");
             } else {
-                TtsManager.getInstance().speak(baseStuPair.getStudent().getSpeakStuName() + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult()));
+                TtsManager.getInstance().speak(String.format(getString(R.string.speak_result), baseStuPair.getStudent().getSpeakStuName(), ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult())));
             }
         }
     }

@@ -83,4 +83,6 @@
     <string name="hint_pass">请输入密码</string>
 
     <string name="loading_hint">正在处理，请等待...</string>
+
+    <string name="speak_result">%1$s成绩%2$s</string>
 </resources>

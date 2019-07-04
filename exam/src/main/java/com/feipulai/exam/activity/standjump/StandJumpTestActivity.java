@@ -57,6 +57,9 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
                 if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_ERROR) {
                     toastSpeak("等待连接");
                     onResume();
+                    if (pair.getStudent() != null) {
+                        standResiltListener.setTestState(StandResiltListener.TestState.START_TEST);
+                    }
                 }
 
             }
