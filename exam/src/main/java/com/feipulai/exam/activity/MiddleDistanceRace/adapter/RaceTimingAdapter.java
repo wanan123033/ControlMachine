@@ -134,6 +134,12 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
                 holder.tvTimingState.setBackgroundResource(R.color.result_points);
                 break;
             case TIMING_STATE_COMPLETE:
+                holder.timer.setBase(SystemClock.elapsedRealtime());//计时器清零
+                holder.timer.setTextColor(Color.WHITE);
+                holder.timer.stop();
+                holder.tvTimingState.setText("空闲");
+                holder.tvTimingState.setTextColor(Color.BLACK);
+                holder.tvTimingState.setBackgroundResource(R.color.result_points);
                 break;
             case TIMING_STATE_TIMING://当前正在计时状态（要和等待状态分清楚）
                 break;
@@ -179,6 +185,7 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
     public void notifyBackGround(VH holder, int flag) {
         switch (flag) {
             case TIMING_STATE_WAITING:
+                holder.tvTimingState.setText("等待");
                 holder.btnTimingWait.setEnabled(false);
                 holder.btnTimingWait.setBackgroundResource(R.color.grey_A8);
                 holder.btnTimingWait.setTextColor(Color.GRAY);

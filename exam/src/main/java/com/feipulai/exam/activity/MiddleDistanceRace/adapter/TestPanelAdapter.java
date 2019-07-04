@@ -47,7 +47,7 @@ public class TestPanelAdapter extends PanelAdapter {
             titleViewHolder.titleTextView.setBackgroundResource(datas.get(row).getColor());
         }
 
-        if (column > datas.get(row).getCycle() + 3 && row > 0) {
+        if (column > datas.get(row).getCycle() + 2 && row > 0) {
             titleViewHolder.titleTextView.setText("X");
             titleViewHolder.titleTextView.setBackgroundResource(R.color.grey_light);
         }

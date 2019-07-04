@@ -37,6 +37,8 @@ public class MiddleRaceSettingActivity extends BaseTitleActivity{
 
     private int[] rbs = {R.id.rb_basic, R.id.rb_chip, R.id.rb_other};
     private List<Fragment> mFragments;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

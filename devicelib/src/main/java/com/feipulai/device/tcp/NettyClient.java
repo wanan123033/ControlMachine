@@ -35,7 +35,7 @@ public class NettyClient {
     private static int reconnectNum = Integer.MAX_VALUE;//定义的重连到时候用
     private boolean isNeedReconnect = true;//是否需要重连
     private boolean isConnecting = false;//是否正在连接
-    private long reconnectIntervalTime = 200;//重连的时间
+    private long reconnectIntervalTime = 1000;//重连的时间
 
     public String host;//ip
     public int tcp_port;//端口
@@ -116,7 +116,7 @@ public class NettyClient {
                     e.printStackTrace();
                 } finally {
                     isConnect = false;
-                    listener.onServiceStatusConnectChanged(NettyListener.STATUS_CONNECT_CLOSED);//STATUS_CONNECT_CLOSED 这我自己定义的 接口标识
+                    listener.onServiceStatusConnectChanged(NettyListener.STATUS_CONNECT_CLOSED);//
                     if (null != channelFuture) {
                         if (channelFuture.channel() != null && channelFuture.channel().isOpen()) {
                             channelFuture.channel().close();
@@ -165,7 +165,11 @@ public class NettyClient {
         Log.i("sendMsgToServer", Arrays.toString(data) + "\n" + flag);
         if (flag) {
             ByteBuf byteBuf = Unpooled.copiedBuffer(data);
-            channel.writeAndFlush(byteBuf).addListener(listener);
+            if (listener == null) {
+                channel.writeAndFlush(byteBuf);
+            } else {
+                channel.writeAndFlush(byteBuf).addListener(listener);
+            }
         }
         return flag;
     }
