@@ -96,7 +96,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     private LEDManager mLEDManager;
     private Group group;
 
-    private LedHandler ledHandler = new LedHandler(this);
+    private TestResultHandler testHandler = new TestResultHandler(this);
     private int testType = 0;//0自动 1手动
     /**
      * 开启助跑  0不助跑 1助跑
@@ -301,7 +301,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                         } else {
                             Message msg = new Message();
                             msg.obj = stuPairsList.get(stuAdapter.getTestPosition());
-                            ledHandler.sendMessageDelayed(msg, 1000);
+                            testHandler.sendMessageDelayed(msg, 1000);
                         }
 
                         tvStartTest.setText("停止测试");
@@ -399,7 +399,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 }
                 Message msg = new Message();
                 msg.obj = stuPairsList.get(stuAdapter.getTestPosition());
-                ledHandler.sendMessageDelayed(msg, 3000);
+                testHandler.sendMessageDelayed(msg, 3000);
                 break;
             }
         }
@@ -454,6 +454,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                         (stuPairsList.get(i).getStudent().getStudentCode(), group.getId() + "");
                 if ((roundResultList == null || roundResultList.size() == 0) && stuAdapter.getTestPosition() == -1) {
                     stuAdapter.setTestPosition(i);
+
                     rvTestStu.scrollToPosition(i);
                     roundNo = 1;
                 }
@@ -849,7 +850,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             }
             Message msg = new Message();
             msg.obj = stuPairsList.get(stuAdapter.getTestPosition());
-            ledHandler.sendMessageDelayed(msg, 3000);
+            testHandler.sendMessageDelayed(msg, 3000);
         } else {
             //是否测试到最后一位
             if (stuAdapter.getTestPosition() == stuPairsList.size() - 1) {
@@ -878,7 +879,13 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 
                 roundNo = roundResultList == null || roundResultList.size() == 0 ? 1 : roundResultList.size() + 1;
                 stuAdapter.setTestPosition(i);
-                rvTestStu.scrollToPosition(stuAdapter.getTestPosition());
+                testHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        rvTestStu.scrollToPosition(stuAdapter.getTestPosition());
+                    }
+                },3000);
+
 
                 if (testType == 1) {
                     isStop = true;
@@ -891,7 +898,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 }
                 Message msg = new Message();
                 msg.obj = stuPairsList.get(stuAdapter.getTestPosition());
-                ledHandler.sendMessageDelayed(msg, 3000);
+                testHandler.sendMessageDelayed(msg, 3000);
                 Logger.i("addStudent:" + stuPairsList.get(i).getStudent().toString());
                 Logger.i("addStudent:当前考生进行第" + 1 + "次的第" + roundNo + "轮测试");
                 group.setIsTestComplete(2);
@@ -950,7 +957,14 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                     }
                     roundNo = i;
                     stuAdapter.setTestPosition(j);
-                    rvTestStu.scrollToPosition(j);
+                    final int pos = j;
+                    testHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            rvTestStu.scrollToPosition(pos);
+                        }
+                    },3000);
+
                     if (testType == 1) {
                         isStop = true;
                         tvStartTest.setText("开始测试");
@@ -961,7 +975,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                     }
                     Message msg = new Message();
                     msg.obj = stuPairsList.get(stuAdapter.getTestPosition());
-                    ledHandler.sendMessageDelayed(msg, 3000);
+                    testHandler.sendMessageDelayed(msg, 3000);
                     Logger.i("下一位测试考生：" + stuPairsList.get(stuAdapter.getTestPosition()).getStudent());
 //                    resultList.clear();
 //                    resultList.addAll(Arrays.asList(stuPairsList.get(stuAdapter.getTestPosition()).getTimeResult()));
@@ -1016,7 +1030,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             }
             Message msg = new Message();
             msg.obj = stuPairsList.get(stuAdapter.getTestPosition());
-            ledHandler.sendMessageDelayed(msg, 3000);
+            testHandler.sendMessageDelayed(msg, 3000);
         } else {
             //检测是否考生全部完成测试
             checkTestComplete();
@@ -1054,11 +1068,11 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         DBManager.getInstance().updateGroup(group);
     }
 
-    private static class LedHandler extends Handler {
+    private static class TestResultHandler extends Handler {
 
         private WeakReference<BaseGroupTestActivity> mActivityWeakReference;
 
-        public LedHandler(BaseGroupTestActivity activity) {
+        public TestResultHandler(BaseGroupTestActivity activity) {
             mActivityWeakReference = new WeakReference<>(activity);
         }
 

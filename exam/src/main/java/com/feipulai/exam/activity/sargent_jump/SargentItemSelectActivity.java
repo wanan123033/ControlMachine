@@ -84,7 +84,7 @@ public class SargentItemSelectActivity extends BaseTitleActivity {
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        String title = selectType == 0 ? "项目选择" : "摸高模式选择";
+        String title =  "摸高模式选择";
         return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
