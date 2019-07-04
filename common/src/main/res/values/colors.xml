@@ -22,6 +22,9 @@
     <color name="green">#59BBFF</color>
     <color name="huise">#999999</color>
 
+    <color name="black_semi_transparent">#B2000000</color>
+    <color name="half_black">#808080</color>
+
     <color name="swipe_color_1">#B6DB49</color>
     <color name="swipe_color_2">#99CC00</color>
     <color name="swipe_color_3">#8ABD00</color>

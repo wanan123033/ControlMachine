@@ -8,14 +8,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -27,7 +24,6 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
@@ -42,7 +38,7 @@ import com.feipulai.exam.R;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.ColorSelectAdapter;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.MiddleRaceGroupAdapter;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.RaceTimingAdapter;
-import com.feipulai.exam.activity.MiddleDistanceRace.adapter.TestPanelAdapter;
+import com.feipulai.exam.activity.MiddleDistanceRace.adapter.ResultShowAdapter;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.adapter.ScheduleAdapter;
@@ -55,6 +51,8 @@ import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.Item;
 import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.view.MiddleRace.ScrollablePanel;
+import com.feipulai.floatingactionbutton.FloatingActionButton;
+import com.feipulai.floatingactionbutton.FloatingActionsMenu;
 import com.zyyoona7.popup.EasyPopup;
 
 import java.util.ArrayList;
@@ -76,12 +74,16 @@ import static com.feipulai.exam.activity.MiddleDistanceRace.TimingBean.TIMING_ST
 import static com.feipulai.exam.activity.MiddleDistanceRace.TimingBean.TIMING_STATE_NOMAL;
 import static com.feipulai.exam.activity.MiddleDistanceRace.TimingBean.TIMING_STATE_TIMING;
 import static com.feipulai.exam.activity.MiddleDistanceRace.TimingBean.TIMING_STATE_WAITING;
+import static com.feipulai.exam.config.SharedPrefsConfigs.FIRST_TIME;
 import static com.feipulai.exam.config.SharedPrefsConfigs.MACHINE_IP;
 import static com.feipulai.exam.config.SharedPrefsConfigs.MACHINE_PORT;
 import static com.feipulai.exam.config.SharedPrefsConfigs.MIDDLE_RACE;
 import static com.feipulai.exam.config.SharedPrefsConfigs.MIDDLE_RACE_NUMBER;
+import static com.feipulai.exam.config.SharedPrefsConfigs.MIDDLE_RACE_TIME_FIRST;
+import static com.feipulai.exam.config.SharedPrefsConfigs.MIDDLE_RACE_TIME_SPAN;
+import static com.feipulai.exam.config.SharedPrefsConfigs.SPAN_TIME;
 
-public class MiddleDistanceRaceActivity extends BaseTitleActivity implements UdpClient.UDPChannelListerner, NettyListener, RaceTimingAdapter.MyClickListener, ChannelFutureListener, MiddleRaceGroupAdapter.OnItemClickListener, ColorSelectAdapter.OnItemClickListener, PopupMenu.OnMenuItemClickListener {
+public class MiddleDistanceRaceActivity extends BaseTitleActivity implements UdpClient.UDPChannelListerner, NettyListener, RaceTimingAdapter.MyClickListener, ChannelFutureListener, MiddleRaceGroupAdapter.OnItemClickListener, ColorSelectAdapter.OnItemClickListener {
 
     @BindView(R.id.btn_udp_send)
     Button btnUdpSend;
@@ -101,8 +103,14 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
 //    View viewStyle;
     @BindView(R.id.ll_show_item)
     LinearLayout llShowItem;
-    @BindView(R.id.floatbutton)
-    FloatingActionButton floatbutton;
+    @BindView(R.id.floatMenu)
+    FloatingActionsMenu floatMenu;
+    @BindView(R.id.float_button_show)
+    FloatingActionButton floatButtonShow;
+    @BindView(R.id.float_button_connect)
+    FloatingActionButton floatButtonConnect;
+    @BindView(R.id.float_button_item_set)
+    FloatingActionButton floatButtonItemSet;
     private String TAG = "MiddleDistanceRaceActivity";
     private final int MESSAGE_A = 1;
     private boolean isFlag = true;
@@ -117,7 +125,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                 case 2:
                     if (isConnect) {
                         send();
-                        mHander.sendEmptyMessageDelayed(2, 5000);
+                        mHander.sendEmptyMessageDelayed(5, 5000);
                     }
                     break;
                 case 3:
@@ -133,6 +141,10 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                     }
                     Log.i("timingLists", timingLists.toString());
                     break;
+                case 5:
+                    send2();
+                    mHander.sendEmptyMessageDelayed(5, 5000);
+                    break;
                 default:
                     break;
             }
@@ -144,7 +156,6 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
     private ScheduleAdapter scheduleAdapter;
     private String scheduleNo;
     private ArrayAdapter<String> itemAdapter;
-    private long startTime;
     private RaceTimingAdapter raceTimingAdapter;
     private List<Item> itemList;
     private String[] items;
@@ -156,7 +167,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
     private List<ChipGroup> colorGroups;
     private ColorSelectAdapter colorGroupAdapter;
     private int timers;
-    private TestPanelAdapter resultAdapter;
+    private ResultShowAdapter resultAdapter;
     private EasyPopup mMachinePop;
     private EditText etIP;
     private EditText etPort;
@@ -165,6 +176,8 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
     private RadioGroup rgVersion;
     private Context mContext;
     private PopupMenu popup;
+    private int firstTime;//芯片首次接收时间间隔
+    private int spanTime;//芯片接收时间间隔
 
     @Override
     protected int setLayoutResID() {
@@ -227,14 +240,14 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         raceResultBean.setItemCode(itemList.get(mItemPosition).getItemCode());
         resultDataList.add(raceResultBean);
 
-        resultAdapter = new TestPanelAdapter(resultDataList);
+        resultAdapter = new ResultShowAdapter(resultDataList);
         scrollablePanel.setPanelAdapter(resultAdapter);
 
         groupAdapter.setOnRecyclerViewItemClickListener(this);
 
         updateSchedules();
 
-        getGroupList();
+//        getGroupList();
 
         initConnectPop();
 //        initTiming();
@@ -252,7 +265,6 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                 cycleNo = itemList.get(i).getCycleNo();
             }
         }
-
 
         for (int i = 0; i < itemList.size(); i++) {
             items[i] = itemList.get(i).getItemName();
@@ -322,17 +334,37 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                clickBack();
+            }
+        });
+//                .addRightText("项目设置", new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startProjectSetting();
+//            }
+//        }).addRightImage(R.mipmap.icon_setting, new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startProjectSetting();
+//            }
+//        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        clickBack();
+    }
+
+    private void clickBack() {
+        DialogUtil.showCommonDialog(mContext, "确定退出？", new DialogUtil.DialogListener() {
+            @Override
+            public void onPositiveClick() {
                 finish();
             }
-        }).addRightText("项目设置", new View.OnClickListener() {
+
             @Override
-            public void onClick(View v) {
-                startProjectSetting();
-            }
-        }).addRightImage(R.mipmap.icon_setting, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startProjectSetting();
+            public void onNegativeClick() {
+
             }
         });
     }
@@ -419,10 +451,24 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         nettyClient.sendMsgToServer(TcpConfig.CMD_CONNECT, this);
     }
 
+    //随便发送一个东西保持tcp不断
+    private void send2() {
+        nettyClient.sendMsgToServer(TcpConfig.CMD_NOTHING, this);
+    }
+
+
     @Override
     protected void onResume() {
         super.onResume();
+        firstTime = SharedPrefsUtil.getValue(this, MIDDLE_RACE, MIDDLE_RACE_TIME_FIRST, FIRST_TIME);
+        spanTime = SharedPrefsUtil.getValue(this, MIDDLE_RACE, MIDDLE_RACE_TIME_SPAN, SPAN_TIME);
+
         getItems();
+
+        getGroupList();
+
+        colorGroups.clear();
+        colorGroups.addAll(DBManager.getInstance().queryAllChipGroup());
 
         if (nettyClient != null && !nettyClient.getConnectStatus()) {
             nettyClient.connect();
@@ -473,7 +519,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         super.onPause();
         Log.i("MiddleDistance", "---------------onPause");
         if (nettyClient != null) {
-            mHander.removeMessages(2);
+            mHander.removeMessages(5);
             isFlag = true;
             nettyClient.disconnect();
         }
@@ -525,7 +571,6 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
 
     @Override
     public void onMessageReceive(long time, final String[] cardIds) {
-        String usedTime = DateUtil.getDeltaT(time - startTime);
         for (String card : cardIds
                 ) {
             ChipInfo chipInfo = DBManager.getInstance().queryChipInfo(card);
@@ -535,9 +580,24 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
             for (int i = 0; i < resultDataList.size(); i++) {
                 if (resultDataList.get(i).getColor() == chipInfo.getColor() && resultDataList.get(i).getVestNo() == chipInfo.getVestNo()) {
                     String[] result = resultDataList.get(i).getResults();
+                    if (resultDataList.get(i).getStartTime() == 0) {
+                        break;
+                    }
+                    String usedTime = String.valueOf(time - resultDataList.get(i).getStartTime());
                     for (int j = 0; j < resultDataList.get(i).getCycle(); j++) {
-                        if (TextUtils.isEmpty(result[j+3])) {
-                            result[j+3] = usedTime;
+                        if (TextUtils.isEmpty(result[j + 3])) {
+                            if (j == 0) {
+                                if (Long.parseLong(usedTime) < firstTime * 1000) {
+                                    Log.i("firstTime--------", "usedTime:" + usedTime);
+                                    break;
+                                }
+                            } else {
+                                if ((time - resultDataList.get(i).getStartTime() - Long.parseLong(result[j + 2])) < spanTime * 1000) {
+                                    Log.i("spanTime--------", "usedTime:" + (time - Long.parseLong(result[j + 2])));
+                                    break;
+                                }
+                            }
+                            result[j + 3] = usedTime;
                             if (j == resultDataList.get(i).getCycle() - 1) {
                                 result[2] = usedTime;
                             }
@@ -575,9 +635,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
 
     @Override
     public void onStartTiming(long time) {
-        Log.i("onMessageResponse", "开始计时---------------");
-        //        // 记录开始的时间ms数
-        startTime = System.currentTimeMillis();
+        Log.i("onMessageResponse", "开始计时---------" + time);
         Log.i("timingLists", timingLists.toString());
         mHander.sendEmptyMessage(3);
         for (TimingBean timing : timingLists
@@ -585,6 +643,13 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
             //当前处于等待状态的组别开始计时
             if (timing.getState() == TIMING_STATE_WAITING) {
                 timing.setTime(time);
+                //将开始时间保存到每个人的数据中
+                for (RaceResultBean2 raceResultBean2 : resultDataList
+                        ) {
+                    if (raceResultBean2.getColor() == timing.getColor()) {
+                        raceResultBean2.setStartTime(time);
+                    }
+                }
             }
         }
         mHander.sendEmptyMessageDelayed(4, 1500);
@@ -599,14 +664,14 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                     isConnect = true;
                     mHander.sendEmptyMessage(2);
                     Log.e(TAG, "STATUS_CONNECT_SUCCESS:");
-                    floatbutton.setBackgroundTintList(getResources().getColorStateList(R.color.green_yellow));
+                    floatMenu.setNormalColor(getResources().getColor(R.color.green_yellow));
                 } else {
                     if (isFirst) {
                         ToastUtils.showShort("连接失败");
                         isFirst = false;
                     }
                     isConnect = false;
-                    floatbutton.setBackgroundTintList(getResources().getColorStateList(R.color.Red));
+                    floatMenu.setNormalColor(getResources().getColor(R.color.Red));
                     Log.e(TAG, "onServiceStatusConnectChanged:" + statusCode);
                 }
             }
@@ -639,23 +704,31 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
 
     private boolean isShow = true;
 
-    @OnClick({R.id.btn_udp_send, R.id.floatbutton})
+    @OnClick({R.id.btn_udp_send, R.id.float_button_show, R.id.float_button_connect, R.id.float_button_item_set})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_udp_send:
                 nettyClient.sendMsgToServer(TcpConfig.getCmdStartTiming(), this);
                 break;
-            case R.id.floatbutton:
-                if (popup == null) {
-                    popup = new PopupMenu(this, view);//第二个参数是绑定的那个view
-                    //获取菜单填充器
-                    MenuInflater inflater = popup.getMenuInflater();
-                    //填充菜单
-                    inflater.inflate(R.menu.menu_select, popup.getMenu());
-                    //绑定菜单项的点击事件
-                    popup.setOnMenuItemClickListener(this);
+            case R.id.float_button_show:
+                isShow = !isShow;
+                if (isShow) {
+                    floatButtonShow.setTitle("隐藏项目组");
+                    llShowItem.setVisibility(View.VISIBLE);
+                } else {
+                    floatButtonShow.setTitle("显示项目组");
+                    llShowItem.setVisibility(View.GONE);
                 }
-                popup.show();
+                floatMenu.collapse();
+                break;
+            case R.id.float_button_connect:
+                mMachinePop.showAtLocation(getWindow().getDecorView(), Gravity.CENTER, 0, 0);
+                floatMenu.collapse();
+                break;
+            case R.id.float_button_item_set:
+                startProjectSetting();
+                floatMenu.collapse();
+                break;
         }
     }
 
@@ -665,14 +738,26 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
      */
     @Override
     public void clickTimingWaitListener(int position, final RaceTimingAdapter.VH holder) {
+        if (!isConnect) {
+            ToastUtils.showShort("请先连接设备");
+            return;
+        }
+
+        if (timingLists.get(position).getNo() != 0) {
+            raceTimingAdapter.notifyBackGround(holder, TIMING_STATE_WAITING);
+        } else {
+            ToastUtils.showShort("请先选入组别");
+            return;
+        }
         timingLists.get(position).setState(TIMING_STATE_WAITING);
         //点击等待，须清除当前等待组的以往成绩
         for (RaceResultBean2 resultBean2 : resultDataList
                 ) {
             if (resultBean2.getColor() == timingLists.get(position).getColor()) {
+                resultBean2.setStartTime(0);
                 String[] result = resultBean2.getResults();
                 for (int i = 0; i < result.length; i++) {
-                    if (i > 1 && !TextUtils.isEmpty(result[i])&&i<resultBean2.getCycle()+3) {
+                    if (i > 1 && !TextUtils.isEmpty(result[i])) {
                         result[i] = "";
                     }
                 }
@@ -692,6 +777,13 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                 raceTimingAdapter.notifyBackGround(holder, TIMING_STATE_BACK);
                 timingLists.get(position).setState(TIMING_STATE_BACK);
                 raceTimingAdapter.notifyDataSetChanged();
+                //初始化开始时间
+                for (RaceResultBean2 resultBean2 : resultDataList
+                        ) {
+                    if (resultBean2.getColor() == timingLists.get(position).getColor()) {
+                        resultBean2.setStartTime(0);
+                    }
+                }
                 Log.i("clickTimingBackListener", timingLists.toString());
             }
 
@@ -713,6 +805,13 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                 timingLists.get(position).setState(TimingBean.TIMING_STATE_COMPLETE);
                 raceTimingAdapter.notifyBackGround(holder, TimingBean.TIMING_STATE_COMPLETE);
                 raceTimingAdapter.notifyDataSetChanged();
+                //初始化开始时间
+                for (RaceResultBean2 resultBean2 : resultDataList
+                        ) {
+                    if (resultBean2.getColor() == timingLists.get(position).getColor()) {
+                        resultBean2.setStartTime(0);
+                    }
+                }
             }
 
             @Override
@@ -811,7 +910,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         btnAddColor = mCirclePop.findViewById(R.id.btn_color_select_add);
         btnSelectColor = mCirclePop.findViewById(R.id.btn_color_select);
 
-        colorGroups = DBManager.getInstance().queryAllChipGroup();
+        colorGroups = new ArrayList<>();
         colorGroupAdapter = new ColorSelectAdapter(colorGroups);
         rvColorSelect.setLayoutManager(new LinearLayoutManager(this));
         rvColorSelect.setAdapter(colorGroupAdapter);
@@ -863,6 +962,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                             ToastUtils.showShort("该组已完成");
                             break;
                         }
+                        colorGroupAdapter.notifyDataSetChanged();
                         tvGroupName.setText(groupName);
                         mCirclePop.showAtLocation(getWindow().getDecorView(), Gravity.CENTER, 0, 0);
                         break;
@@ -1027,25 +1127,25 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         colorGroupAdapter.notifyDataSetChanged();
     }
 
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.show:
-                isShow = !isShow;
-                if (isShow) {
-                    item.setTitle("隐藏项目组");
-                    llShowItem.setVisibility(View.VISIBLE);
-                } else {
-                    item.setTitle("显示项目组");
-                    llShowItem.setVisibility(View.GONE);
-                }
-                break;
-            case R.id.connect:
-                mMachinePop.showAtLocation(getWindow().getDecorView(), Gravity.CENTER, 0, 0);
-                break;
-            default:
-                break;
-        }
-        return false;
-    }
+//    @Override
+//    public boolean onMenuItemClick(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.show:
+//                isShow = !isShow;
+//                if (isShow) {
+//                    item.setTitle("隐藏项目组");
+//                    llShowItem.setVisibility(View.VISIBLE);
+//                } else {
+//                    item.setTitle("显示项目组");
+//                    llShowItem.setVisibility(View.GONE);
+//                }
+//                break;
+//            case R.id.connect:
+//                mMachinePop.showAtLocation(getWindow().getDecorView(), Gravity.CENTER, 0, 0);
+//                break;
+//            default:
+//                break;
+//        }
+//        return false;
+//    }
 }

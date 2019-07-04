@@ -151,12 +151,12 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
             holder.btnTimingWait.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (timingLists.get(position).getNo() != 0) {
-                        myClickListener.clickTimingWaitListener(position, holder);
-                        notifyBackGround(holder, TIMING_STATE_WAITING);
-                    } else {
-                        ToastUtils.showShort("请先选入组别");
-                    }
+//                    if (timingLists.get(position).getNo() != 0) {
+                    myClickListener.clickTimingWaitListener(position, holder);
+//                        notifyBackGround(holder, TIMING_STATE_WAITING);
+//                    } else {
+//                        ToastUtils.showShort("请先选入组别");
+//                    }
                 }
             });
             holder.btnTimingBack.setOnClickListener(new View.OnClickListener() {
