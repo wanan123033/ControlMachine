@@ -561,7 +561,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             }
         }
         //更新界面成绩
-        stuAdapter.notifyDataSetChanged();
+//        stuAdapter.notifyDataSetChanged();
+
 
     }
 
@@ -877,9 +878,10 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             if (roundResultList == null || roundResultList.size() == 0 || roundResultList.size() < setTestCount()) {
 
                 roundNo = roundResultList == null || roundResultList.size() == 0 ? 1 : roundResultList.size() + 1;
-                stuAdapter.setTestPosition(i);
-                rvTestStu.scrollToPosition(stuAdapter.getTestPosition());
 
+
+                stuAdapter.setTestPosition(i);
+//                rvTestStu.scrollToPosition(i);
                 if (testType == 1) {
                     isStop = true;
                     tvStartTest.setText("开始测试");
@@ -949,8 +951,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                         continue;
                     }
                     roundNo = i;
+//                    rvTestStu.scrollToPosition(j);
                     stuAdapter.setTestPosition(j);
-                    rvTestStu.scrollToPosition(j);
                     if (testType == 1) {
                         isStop = true;
                         tvStartTest.setText("开始测试");
@@ -1075,6 +1077,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             activity.resultList.clear();
             activity.resultList.addAll(Arrays.asList(activity.stuPairsList.get(activity.stuAdapter.getTestPosition()).getTimeResult()));
             activity.testResultAdapter.notifyDataSetChanged();
+            activity.rvTestStu.scrollToPosition(activity.stuAdapter.getTestPosition());
+            activity.stuAdapter.notifyDataSetChanged();
         }
 
     }
