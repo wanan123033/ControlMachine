@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -125,18 +126,43 @@
             android:layout_height="match_parent"
             android:background="@color/background_color" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/floatbutton"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_gravity="end|bottom"
+        <com.feipulai.floatingactionbutton.FloatingActionsMenu
+            android:id="@+id/floatMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
             android:layout_marginBottom="50dp"
             android:layout_marginRight="50dp"
-            android:clickable="true"
-            app:backgroundTint="@color/Red"
-            app:borderWidth="0dp"
-            app:elevation="6dp"
-            app:pressedTranslationZ="12dp"
-            app:rippleColor="#0097a7" />
+            app:fab_addButtonColorPressed="@color/grey"
+            fab:fab_addButtonColorNormal="@color/Red"
+            fab:fab_addButtonPlusIconColor="@color/half_black"
+            fab:fab_labelStyle="@style/menu_labels_style"
+            >
+
+            <com.feipulai.floatingactionbutton.FloatingActionButton
+                android:id="@+id/float_button_show"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                fab:fab_colorNormal="@color/blue"
+                fab:fab_colorPressed="@color/grey"
+                fab:fab_title="隐藏项目组" />
+
+            <com.feipulai.floatingactionbutton.FloatingActionButton
+                android:id="@+id/float_button_connect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                fab:fab_colorNormal="@color/hostStyle"
+                fab:fab_colorPressed="@color/grey"
+                fab:fab_title="连接设备" />
+            <com.feipulai.floatingactionbutton.FloatingActionButton
+                android:id="@+id/float_button_item_set"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                fab:fab_colorNormal="@color/hostStyle"
+                fab:fab_colorPressed="@color/grey"
+                fab:fab_icon="@mipmap/icon_setting"
+                fab:fab_title="项目设置" />
+
+        </com.feipulai.floatingactionbutton.FloatingActionsMenu>
     </FrameLayout>
 </LinearLayout>

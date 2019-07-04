@@ -18,4 +18,7 @@
   <!-- Messages IDs -->
   <item name="statusbarutil_fake_status_bar_view" type="id"/>
   <item name="statusbarutil_translucent_view" type="id"/>
+
+  <item name="fab_expand_menu_button" type="id"/>
+  <item name="fab_label" type="id"/>
 </resources>

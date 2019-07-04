@@ -1914,6 +1914,14 @@ public class DBManager {
         return groupDao.queryBuilder().where(GroupDao.Properties.ItemCode.eq(itemCode)).list();
     }
 
+    public List<Group> queryGroupByColorName(String colorName) {
+        return groupDao.queryBuilder().where(GroupDao.Properties.Remark1.eq(colorName)).list();
+    }
+
+    public List<Group> loadAllGroup() {
+        return groupDao.loadAll();
+    }
+
     /**
      * 批量添加分组学生报名
      *

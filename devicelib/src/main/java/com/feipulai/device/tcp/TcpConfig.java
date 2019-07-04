@@ -10,6 +10,8 @@ import java.util.Date;
  * created by ww on 2019/6/4.
  */
 public class TcpConfig {
+
+    public static final byte[] CMD_NOTHING = {(byte) 0x00};
     /**
      * 设备连接返回包
      */
@@ -19,7 +21,7 @@ public class TcpConfig {
     /**
      * 同步时间  包头(1)+包长(2)+命令标识(1)+时间(9)+包尾(2)，包长15字节
      */
-    private static final byte[] CMD_UPDATE_DATE = {(byte) 0xa0, (byte) 0x00, (byte) 0x0f, (byte) 0xc2, (byte) 0xff, (byte) 0xf8};
+    public static final byte[] CMD_UPDATE_DATE = {(byte) 0xa0, (byte) 0x00, (byte) 0x0f, (byte) 0xc2, (byte) 0xff, (byte) 0xf8};
     /**
      * 开始计时 包头(1)+包长(2)+命令标识(1)+时间(9)+包尾(2)，包长15字节
      */
