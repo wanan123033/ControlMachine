@@ -208,7 +208,7 @@
                         android:text="轮次" />
 
                     <TextView
-                        android:layout_width="170dp"
+                        android:layout_width="200dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="机器成绩" />

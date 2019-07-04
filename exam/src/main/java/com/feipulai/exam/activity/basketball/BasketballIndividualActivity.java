@@ -161,6 +161,16 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
     @Override
     public void onIndividualCheckIn(Student student, StudentItem studentItem, List<RoundResult> results) {
         if (state == WAIT_FREE || state == WAIT_CHECK_IN) {
+            pairs.get(0).setStudent(student);
+
+            for (RoundResult result : results) {
+                if (isFullSkip(result.getResult(), result.getResultState())) {
+                    toastSpeak("满分");
+                    pairs.get(0).setStudent(null);
+                    return;
+                }
+            }
+
             resultAdapter.setSelectPosition(-1);
             mStudentItem = studentItem;
             state = WAIT_CHECK_IN;
@@ -321,13 +331,22 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             return;
         }
         timerUtil.stop();
-        pairs.get(0).setDeviceResult(result);
-        state = WAIT_STOP;
-        setOperationUI();
         txtDeviceStatus.setText("停止");
-        tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()));
-        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
-                UdpLEDUtil.getLedByte(ResultDisplayUtils.getStrResultForDisplay(result.getResult()), Paint.Align.RIGHT)));
+        //还未开始停止返回检入考生状态
+        if (state == WAIT_BEGIN) {
+            state = WAIT_CHECK_IN;
+            setOperationUI();
+            tvResult.setText(DateUtil.caculateFormatTime(0, TestConfigs.sCurrentItem.getDigital()));
+            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
+                    UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
+        } else {
+            pairs.get(0).setDeviceResult(result);
+            state = WAIT_STOP;
+            setOperationUI();
+            tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()));
+            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
+                    UdpLEDUtil.getLedByte(ResultDisplayUtils.getStrResultForDisplay(result.getResult()), Paint.Align.RIGHT)));
+        }
 
 
     }
@@ -405,19 +424,25 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
     private boolean isExistTestPlace() {
         if (resultAdapter.getSelectPosition() == -1)
             return false;
-        if (resultList.get(resultAdapter.getSelectPosition()).getMachineResultList() != null
-                && resultList.get(resultAdapter.getSelectPosition()).getMachineResultList().size() > 0) {
 
+//        (resultList.get(resultAdapter.getSelectPosition()).getMachineResultList() != null
+//                && resultList.get(resultAdapter.getSelectPosition()).getMachineResultList().size() > 0)
+        if (resultList.get(resultAdapter.getSelectPosition()).getResultState() != -999) {
             for (int i = 0; i < resultList.size(); i++) {
-                List<MachineResult> machineResultList = resultList.get(i).getMachineResultList();
-                if (machineResultList == null || machineResultList.size() == 0) {
+                if (resultList.get(i).getResultState() == -999) {
                     resultAdapter.setSelectPosition(i);
                     roundNo = i + 1;
                     resultAdapter.notifyDataSetChanged();
                     return true;
+                } else {
+                    if (isFullSkip(resultList.get(i).getResult(), resultList.get(i).getResultState())) {
+                        toastSpeak("满分");
+                        return false;
+                    }
                 }
             }
             toastSpeak("该考生已全部测试完成");
+
             return false;
         } else {
             roundNo = resultAdapter.getSelectPosition() + 1;
@@ -484,11 +509,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 setResultState(RoundResult.RESULT_STATE_NORMAL);
                 break;
             case R.id.tv_print://打印
-                if (pairs.get(0).getStudent() != null) {
-                    TestCache testCache = TestCache.getInstance();
-                    InteractUtils.printResults(null, testCache.getAllStudents(), testCache.getResults(),
-                            TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
-                }
+                print();
 
                 break;
             case R.id.tv_confirm://确定
@@ -516,6 +537,14 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         }
     }
 
+    private void print() {
+        if (pairs.get(0).getStudent() != null) {
+            TestCache testCache = TestCache.getInstance();
+            InteractUtils.printResults(null, testCache.getAllStudents(), testCache.getResults(),
+                    TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
+        }
+    }
+
     /**
      * 判罚成绩
      *
@@ -528,7 +557,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             if (resultAdapter.getSelectPosition() == -1)
                 return;
             BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
-            if ((testResult.getResult() < 0 && (testResult.getResultState() == -999
+            if ((testResult.getResult() <= 0 && (testResult.getResultState() == -999
                     || testResult.getResultState() != RoundResult.RESULT_STATE_NORMAL))) {
                 toastSpeak("成绩不存在");
                 return;
@@ -555,7 +584,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
      */
     private void setResultState(int resultState) {
         //TESTING---->WAIT_STOP
-        if (state == TESTING || state == WAIT_STOP) {
+        if (state == TESTING || state == WAIT_STOP || state == WAIT_BEGIN) {
             toastSpeak("测试中,不允许更改考试成绩状态");
         } else {
             if (resultAdapter.getSelectPosition() == -1)
@@ -666,13 +695,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             dbRoundResult.get(0).setIsLastResult(1);
             DBManager.getInstance().updateRoundResult(dbRoundResult.get(0));
         }
-
-        //Todo 确定成绩播报的时刻
-
         int result = pair.getDeviceResult().getResult();
-//        if (SettingHelper.getSystemSetting().isAutoBroadcast()) {
-//            TtsManager.getInstance().speak(ResultDisplayUtils.getStrResultForDisplay(result));
-//        }
         uploadResult(pair.getStudent());
 
         showStuInfoResult();
@@ -800,15 +823,21 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         TestCache testCache = TestCache.getInstance();
         Student student = testCache.getAllStudents().get(0);
         boolean hasRemain = isExistTestPlace();// 测试次数未完成
-        boolean fullSkip = setting.isFullSkip();
-        if (fullSkip) {
+
+        return hasRemain;
+    }
+
+    private boolean isFullSkip(int result, int resultState) {
+        Student student = pairs.get(0).getStudent();
+        if (setting.isFullSkip() && resultState == RoundResult.RESULT_STATE_NORMAL) {
+//            int result = testResult.getSelectMachineResult() + (testResult.getPenalizeNum() * setting.getPenaltySecond() * 1000);
             if (student.getSex() == Student.MALE) {
-                fullSkip = result <= setting.getMaleFullScore();
+                return result <= setting.getMaleFullScore() * 1000;
             } else {
-                fullSkip = result <= setting.getFemaleFullScore();
+                return result <= setting.getFemaleFullScore() * 1000;
             }
         }
-        return hasRemain && !fullSkip;
+        return false;
     }
 
     /**
