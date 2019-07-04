@@ -1067,7 +1067,11 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+
             BaseGroupTestActivity activity = mActivityWeakReference.get();
+            if (activity.stuAdapter.getTestPosition() == -1) {
+                return;
+            }
             activity.setShowLed((BaseStuPair) msg.obj);
             activity.txtStuResult.setText("");
             if (activity.testType == 0) {
