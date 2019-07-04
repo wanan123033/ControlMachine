@@ -37,7 +37,7 @@ public class SargentJumpImpl implements SerialDeviceManager.RS232ResiltListener,
                     jumpListener.onFree();
                 }
 
-//                Log.i(TAG, "空闲");
+                Log.i(TAG, "空闲");
                 break;
             case SARGENT_JUMP_START_RESPONSE:
                 Log.i(TAG, "开始");

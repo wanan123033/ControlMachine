@@ -561,7 +561,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             }
         }
         //更新界面成绩
-        stuAdapter.notifyDataSetChanged();
+//        stuAdapter.notifyDataSetChanged();
+
 
     }
 
@@ -611,14 +612,14 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         RoundResult bestResult = DBManager.getInstance().queryGroupBestScore(baseStuPair.getStudent().getStudentCode(), group.getId());
         if (bestResult != null) {
             // 原有最好成绩犯规 或者原有最好成绩没有犯规但是现在成绩更好
-            if (bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && baseStuPair.getResultState() == 0 && bestResult.getResult() <= baseStuPair.getResult()) {
+            if (bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && baseStuPair.getResultState() == RoundResult.RESULT_STATE_NORMAL && bestResult.getResult() <= baseStuPair.getResult()) {
                 // 这个时候就要同时修改这两个成绩了
                 roundResult.setIsLastResult(1);
                 bestResult.setIsLastResult(0);
                 DBManager.getInstance().updateRoundResult(bestResult);
                 updateLastResultLed(roundResult);
             } else {
-                if (bestResult.getResultState() != 0) {
+                if (bestResult.getResultState() != RoundResult.RESULT_STATE_NORMAL) {
                     roundResult.setIsLastResult(1);
                     bestResult.setIsLastResult(0);
                     DBManager.getInstance().updateRoundResult(bestResult);
@@ -682,7 +683,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             if (baseStuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) {
                 TtsManager.getInstance().speak(baseStuPair.getStudent().getSpeakStuName() + "犯规");
             } else {
-                TtsManager.getInstance().speak(baseStuPair.getStudent().getSpeakStuName() + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult()));
+                TtsManager.getInstance().speak(String.format(getString(R.string.speak_result), baseStuPair.getStudent().getSpeakStuName(), ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult())));
             }
         }
     }
@@ -877,9 +878,10 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             if (roundResultList == null || roundResultList.size() == 0 || roundResultList.size() < setTestCount()) {
 
                 roundNo = roundResultList == null || roundResultList.size() == 0 ? 1 : roundResultList.size() + 1;
-                stuAdapter.setTestPosition(i);
-                rvTestStu.scrollToPosition(stuAdapter.getTestPosition());
 
+
+                stuAdapter.setTestPosition(i);
+//                rvTestStu.scrollToPosition(i);
                 if (testType == 1) {
                     isStop = true;
                     tvStartTest.setText("开始测试");
@@ -949,8 +951,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                         continue;
                     }
                     roundNo = i;
+//                    rvTestStu.scrollToPosition(j);
                     stuAdapter.setTestPosition(j);
-                    rvTestStu.scrollToPosition(j);
                     if (testType == 1) {
                         isStop = true;
                         tvStartTest.setText("开始测试");
@@ -1065,7 +1067,11 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+
             BaseGroupTestActivity activity = mActivityWeakReference.get();
+            if (activity.stuAdapter.getTestPosition() == -1) {
+                return;
+            }
             activity.setShowLed((BaseStuPair) msg.obj);
             activity.txtStuResult.setText("");
             if (activity.testType == 0) {
@@ -1075,6 +1081,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             activity.resultList.clear();
             activity.resultList.addAll(Arrays.asList(activity.stuPairsList.get(activity.stuAdapter.getTestPosition()).getTimeResult()));
             activity.testResultAdapter.notifyDataSetChanged();
+            activity.rvTestStu.scrollToPosition(activity.stuAdapter.getTestPosition());
+            activity.stuAdapter.notifyDataSetChanged();
         }
 
     }

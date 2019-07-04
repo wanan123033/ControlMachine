@@ -52,6 +52,7 @@ public class ResultDisplayTools {
                 }
                 break;
             case ItemDefault.CODE_LQYQ:
+            case ItemDefault.CODE_ZQYQ:
             case ItemDefault.CODE_ZFP:
                 if ("分'秒".equals(unit) || "秒".equals(unit)) {
                     result = unit;

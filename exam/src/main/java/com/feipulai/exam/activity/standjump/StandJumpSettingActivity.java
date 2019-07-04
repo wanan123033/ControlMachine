@@ -99,6 +99,7 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
     private volatile boolean isSetPoints = true;
     private int scope;
     private int testPoints;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_standjump_setting;
@@ -164,6 +165,7 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
             }
         });
     }
+
     /**
      * 初始化测量杆和点数
      */
@@ -178,7 +180,7 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
         }
         txtDeviceScope.setText("范围：51cm-" + (standSetting.getTestPoints() * 100 + 50 - 8) + "cm");
         scope = standSetting.getPointsScope();
-        testPoints=standSetting.getTestPoints();
+        testPoints = standSetting.getTestPoints();
     }
 
     @Override
@@ -218,7 +220,7 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
                 }
 
 
-                testPoints=position + 1;
+                testPoints = position + 1;
                 break;
 
         }
@@ -262,7 +264,7 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
                     if (number > 340) {
                         ToastUtils.showShort("输入范围超出（50~340）");
                         editManFull.setText(manFull);
-                        editManFull.setSelection(manFull.length()-1);
+                        editManFull.setSelection(manFull.length() - 1);
                     }
                 }
 
@@ -292,7 +294,7 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
                     if (number > 340) {
                         ToastUtils.showShort("输入范围超出（50~340）");
                         editWomenFull.setText(womenFull);
-                        editWomenFull.setSelection(womenFull.length()-1);
+                        editWomenFull.setSelection(womenFull.length() - 1);
                     }
                 }
             }
@@ -384,14 +386,14 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
                     return;
                 }
                 scope = Integer.valueOf(editDeviceScope.getText().toString());
-                if (scope < 51 || scope > (testPoints* 100 + 50 - 8)) {
+                if (scope < 51 || scope > (testPoints * 100 + 50 - 8)) {
                     ToastUtils.showShort("请输入正确的设置范围");
                     return;
                 }
                 standSetting.setTestPoints(testPoints);
                 mProgressDialog = ProgressDialog.show(this, "", "设置范围中...", true);
                 isSetPoints = false;
-                SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.SET_CMD_SARGENT_JUMP_SETTING_POINTS(scope)));
+                SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.SET_CMD_SARGENT_JUMP_SETTING_POINTS(scope - 42)));
 
                 //3秒自检
                 mHandler.sendEmptyMessageDelayed(JUMP_SET_POINTS_FAILURE, 3000);

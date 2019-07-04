@@ -74,6 +74,7 @@ public abstract class UdpChannelInboundHandler extends SimpleChannelInboundHandl
         UDPParser parser = null;
         switch (MachineCode.machineCode) {
             case ItemDefault.CODE_LQYQ:
+            case ItemDefault.CODE_ZQYQ:
                 parser = new BasketballParser();
                 break;
             case ItemDefault.CODE_ZCP:
