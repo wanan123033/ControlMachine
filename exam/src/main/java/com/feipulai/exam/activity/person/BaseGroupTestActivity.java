@@ -979,6 +979,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             roundNo = 1;
             stuAdapter.setTestPosition(0);
             loopTestNext();
+            return;
         }
 
         //全部次数测试完，
