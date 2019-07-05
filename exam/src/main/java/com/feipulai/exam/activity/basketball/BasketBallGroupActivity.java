@@ -201,7 +201,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
     }
 
     @Override
-    public void triggerStart() {
+    public void triggerStart(BasketballResult basketballResult) {
         state = TESTING;
         txtDeviceStatus.setText("计时");
         testDate = System.currentTimeMillis() + "";

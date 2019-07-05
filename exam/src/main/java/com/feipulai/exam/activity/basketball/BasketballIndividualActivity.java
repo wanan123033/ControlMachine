@@ -240,7 +240,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
     }
 
     @Override
-    public void triggerStart() {
+    public void triggerStart(BasketballResult basketballResult) {
         state = TESTING;
         txtDeviceStatus.setText("计时");
         testDate = System.currentTimeMillis() + "";

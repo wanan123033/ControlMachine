@@ -244,7 +244,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
     }
 
     @Override
-    public void triggerStart() {
+    public void triggerStart(BasketballResult basketballResult) {
         state = TESTING;
         txtDeviceStatus.setText("计时");
         testDate = System.currentTimeMillis() + "";
@@ -265,30 +265,28 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
 
             case 1://"2:起点1:终点"
                 if (result.gettNum() == 1){//拦截到了起点，重新计时
-                    timerUtil.startTime(10);
-                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(STATUS_RUNNING ));
-                }else {//拦截到终点，正常
 
+                }else {//拦截到终点，正常
+                    doGetResult(result);
                 }
 
                 break;
             case 2://2:终点1:起点
                 if (result.gettNum() == 2){//拦截到了起点，重新计时
-                    timerUtil.startTime(10);
-                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(STATUS_RUNNING ));
-                }else {//拦截到终点，正常
 
+                }else {//拦截到终点，正常
+                    doGetResult(result);
                 }
 
                 break;
             case 0://单拦截
             case 3://2:折返点1:起终点
             case 4://2:起终点1:折返点
-
+                doGetResult(result);
                 break;
 
         }
-        doGetResult(result);
+
     }
 
     private void doGetResult(BasketballResult result) {
@@ -506,7 +504,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                 break;
             case R.id.txt_stop_timing://停止计时
                 UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
-
+                timerUtil.stop();
                 break;
             case R.id.tv_punish_add: //违例+
                 setPunish(1);
