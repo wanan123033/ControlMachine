@@ -278,13 +278,21 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             return;
         }
         timerUtil.stop();
-        pairs.get(position()).setDeviceResult(result);
-        state = WAIT_STOP;
         txtDeviceStatus.setText("停止");
-        setOperationUI();
-        tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()));
-        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
-                UdpLEDUtil.getLedByte(ResultDisplayUtils.getStrResultForDisplay(result.getResult()), Paint.Align.RIGHT)));
+        if (state == WAIT_BEGIN) {
+            state = WAIT_CHECK_IN;
+            setOperationUI();
+            tvResult.setText(DateUtil.caculateFormatTime(0, TestConfigs.sCurrentItem.getDigital()));
+            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
+                    UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
+        } else {
+            pairs.get(position()).setDeviceResult(result);
+            state = WAIT_STOP;
+            setOperationUI();
+            tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()));
+            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
+                    UdpLEDUtil.getLedByte(ResultDisplayUtils.getStrResultForDisplay(result.getResult()), Paint.Align.RIGHT)));
+        }
 
 
     }
@@ -431,7 +439,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             if (resultAdapter.getSelectPosition() == -1)
                 return;
             BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
-            if ((testResult.getResult() < 0 && (testResult.getResultState() == -999
+            if ((testResult.getResult() <= 0 && (testResult.getResultState() == -999
                     || testResult.getResultState() != RoundResult.RESULT_STATE_NORMAL))) {
                 toastSpeak("成绩不存在");
                 return;
@@ -511,25 +519,41 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
     private boolean isExistTestPlace() {
         if (resultAdapter.getSelectPosition() == -1)
             return false;
-        if (resultList.get(resultAdapter.getSelectPosition()).getMachineResultList() != null
-                && resultList.get(resultAdapter.getSelectPosition()).getMachineResultList().size() > 0) {
 
+        if (resultList.get(resultAdapter.getSelectPosition()).getResultState() != -999) {
             for (int i = 0; i < resultList.size(); i++) {
-                List<MachineResult> machineResultList = resultList.get(i).getMachineResultList();
-                if (machineResultList == null || machineResultList.size() == 0) {
+                if (resultList.get(i).getResultState() == -999) {
                     resultAdapter.setSelectPosition(i);
                     roundNo = i + 1;
                     resultAdapter.notifyDataSetChanged();
                     return true;
+                } else {
+                    if (isFullSkip(resultList.get(i).getResult(), resultList.get(i).getResultState())) {
+                        toastSpeak("满分");
+                        return false;
+                    }
                 }
             }
-            state = WAIT_FREE;
+            toastSpeak("该考生已全部测试完成");
             return false;
         } else {
             roundNo = resultAdapter.getSelectPosition() + 1;
             return true;
         }
 
+    }
+
+    private boolean isFullSkip(int result, int resultState) {
+        Student student = pairs.get(position()).getStudent();
+        if (setting.isFullSkip() && resultState == RoundResult.RESULT_STATE_NORMAL) {
+//            int result = testResult.getSelectMachineResult() + (testResult.getPenalizeNum() * setting.getPenaltySecond() * 1000);
+            if (student.getSex() == Student.MALE) {
+                return result <= setting.getMaleFullScore() * 1000;
+            } else {
+                return result <= setting.getFemaleFullScore() * 1000;
+            }
+        }
+        return false;
     }
 
     /**

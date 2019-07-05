@@ -35,7 +35,7 @@ public class NettyClient {
     private static int reconnectNum = Integer.MAX_VALUE;//定义的重连到时候用
     private boolean isNeedReconnect = true;//是否需要重连
     private boolean isConnecting = false;//是否正在连接
-    private long reconnectIntervalTime = 1000;//重连的时间
+    private long reconnectIntervalTime = 200;//重连的时间
 
     public String host;//ip
     public int tcp_port;//端口

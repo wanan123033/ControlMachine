@@ -28,6 +28,7 @@ import com.feipulai.exam.activity.MiddleDistanceRace.adapter.GridViewColorAdapte
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.ChipGroup;
 import com.feipulai.exam.entity.ChipInfo;
+import com.feipulai.exam.entity.Group;
 import com.zyyoona7.popup.EasyPopup;
 
 import java.util.ArrayList;
@@ -175,6 +176,18 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
                         DBManager.getInstance().deleteAllChip();
                         colorGroups.clear();
                         colorGroupAdapter.notifyDataSetChanged();
+
+                        //清除所有颜色组时，先前绑定的项目组必须一起清除关联关系
+                        List<Group> groups = DBManager.getInstance().loadAllGroup();
+                        for (Group group : groups
+                                ) {
+                            if (!TextUtils.isEmpty(group.getRemark1())) {
+                                group.setRemark1("");
+                                group.setRemark2("");
+                                group.setIsTestComplete(0);
+                            }
+                        }
+                        DBManager.getInstance().updateGroups(groups);
                     }
 
                     @Override
@@ -282,7 +295,7 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
     @Override
     public void onColorGroupLongClick(final int position) {
         final String groupName = colorGroups.get(position).getColorGroupName();
-        Log.i("groupName","---------"+groupName);
+        Log.i("groupName", "---------" + groupName);
         final List<ChipInfo> chips = DBManager.getInstance().queryChipInfoHasChipID(groupName);
         String text;
         if (chips != null && chips.size() > 0) {
@@ -303,6 +316,18 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
                 }
                 colorGroupAdapter.notifyDataSetChanged();
                 DBManager.getInstance().deleteChipInfo(groupName);
+
+                //清除所有颜色组时，先前绑定的项目组必须一起清除关联关系
+                List<Group> groups = DBManager.getInstance().queryGroupByColorName(groupName);
+                for (Group group : groups
+                        ) {
+                    if (!TextUtils.isEmpty(group.getRemark1())) {
+                        group.setRemark1("");
+                        group.setRemark2("");
+                        group.setIsTestComplete(0);
+                    }
+                }
+                DBManager.getInstance().updateGroups(groups);
             }
 
             @Override

@@ -8,12 +8,21 @@ import java.util.Arrays;
 public class RaceResultBean2 {
     private String no;//组的序号（非组号，与数据库无关）
     private int cycle;//圈数
+    private long startTime;//开始时间
     private int vestNo;//背心号
     private String itemCode;//
     private String[] results;//{道次,姓名,最终成绩,第一圈,第二圈,第三圈,第四圈...}
     private int color;//颜色
 
     public RaceResultBean2() {
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
     }
 
     public int getVestNo() {
@@ -69,6 +78,7 @@ public class RaceResultBean2 {
         return "RaceResultBean2{" +
                 "no='" + no + '\'' +
                 ", cycle=" + cycle +
+                ", startTime=" + startTime +
                 ", vestNo=" + vestNo +
                 ", itemCode='" + itemCode + '\'' +
                 ", results=" + Arrays.toString(results) +

@@ -184,7 +184,7 @@ public class InteractUtils {
             } else {
                 StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
                 roundResult.setExamType(studentItem.getExamType());
-                 roundResult.setTestNo(TestCache.getInstance().getTestNoMap().get(student));
+                roundResult.setTestNo(TestCache.getInstance().getTestNoMap().get(student));
                 roundResult.setScheduleNo(studentItem.getScheduleNo());
             }
 
@@ -269,7 +269,7 @@ public class InteractUtils {
                                 : String.format(Locale.CHINA, "    %-10s%-4s", studentName,
                                 ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult(), false));
                         break;
-                    }else {
+                    } else {
                         line = isGroupMode
                                 ? String.format(Locale.CHINA, "%-4d%-10s%-4s", trackNo, studentName,
                                 ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult(), false))
@@ -309,8 +309,8 @@ public class InteractUtils {
             } else {
                 for (int j = 0; j < resultList.size(); j++) {
                     RoundResult result = resultList.get(j);
-                    String printResult = "第" + (j + 1) + "次:" + (result.getResultState() == RoundResult.RESULT_STATE_FOUL
-                            ? "X" : ResultDisplayUtils.getStrResultForDisplay(result.getResult(), false));
+                    String printResult = "第" + (j + 1) + "次:" + (result.getResultState() == RoundResult.RESULT_STATE_NORMAL
+                            ? ResultDisplayUtils.getStrResultForDisplay(result.getResult(), false) : "X");
 
                     // 跳绳需要打印绊绳次数
                     switch (TestConfigs.sCurrentItem.getMachineCode()) {
