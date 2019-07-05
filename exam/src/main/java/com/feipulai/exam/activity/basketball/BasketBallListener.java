@@ -30,7 +30,7 @@ public class BasketBallListener implements UdpClient.UDPChannelListerner {
             case UDPBasketBallConfig.CMD_GET_STATUS_RESPONSE:
             case UDPBasketBallConfig.CMD_SET_STATUS_RESPONSE:
                 if (basketballResult.getUcStatus() == 0) {
-                    listener.triggerStart();
+                    listener.triggerStart(basketballResult);
                 } else {
                     listener.getDeviceStatus(basketballResult.getUcStatus());
                 }
@@ -53,7 +53,7 @@ public class BasketBallListener implements UdpClient.UDPChannelListerner {
         /**
          * 触发开发
          */
-        void triggerStart();
+        void triggerStart(BasketballResult basketballResult);
 
         /**
          * 拦截成绩

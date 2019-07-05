@@ -853,11 +853,11 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             ledHandler.sendMessageDelayed(msg, 3000);
         } else {
             //是否测试到最后一位
-            if (stuAdapter.getTestPosition() == stuPairsList.size() - 1) {
-                //全部次数测试完，
-                allTestComplete();
-                return;
-            }
+//            if (stuAdapter.getTestPosition() == stuPairsList.size() - 1) {
+//                //全部次数测试完，
+//                allTestComplete();
+//                return;
+//            }
             continuousTestNext();
         }
     }
@@ -906,7 +906,12 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             }
 
         }
-
+        if (!isAllTest()) {
+            roundNo = 1;
+            stuAdapter.setTestPosition(0);
+            continuousTest();
+            return;
+        }
         //全部次数测试完，
         allTestComplete();
     }
@@ -979,6 +984,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             roundNo = 1;
             stuAdapter.setTestPosition(0);
             loopTestNext();
+            return;
         }
 
         //全部次数测试完，
