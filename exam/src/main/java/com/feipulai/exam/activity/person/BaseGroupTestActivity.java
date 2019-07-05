@@ -906,7 +906,12 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             }
 
         }
-
+        if (!isAllTest()) {
+            roundNo = 1;
+            stuAdapter.setTestPosition(0);
+            continuousTest();
+            return;
+        }
         //全部次数测试完，
         allTestComplete();
     }
