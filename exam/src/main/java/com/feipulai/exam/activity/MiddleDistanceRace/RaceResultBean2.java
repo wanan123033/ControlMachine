@@ -1,5 +1,7 @@
 package com.feipulai.exam.activity.MiddleDistanceRace;
 
+import com.feipulai.exam.entity.Student;
+
 import java.util.Arrays;
 
 /**
@@ -13,8 +15,26 @@ public class RaceResultBean2 {
     private String itemCode;//
     private String[] results;//{道次,姓名,最终成绩,第一圈,第二圈,第三圈,第四圈...}
     private int color;//颜色
+    private String studentName;
+    private String studentCode;
 
     public RaceResultBean2() {
+    }
+
+    public String getStudentName() {
+        return studentName;
+    }
+
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
+    }
+
+    public String getStudentCode() {
+        return studentCode;
+    }
+
+    public void setStudentCode(String studentCode) {
+        this.studentCode = studentCode;
     }
 
     public long getStartTime() {
@@ -83,6 +103,8 @@ public class RaceResultBean2 {
                 ", itemCode='" + itemCode + '\'' +
                 ", results=" + Arrays.toString(results) +
                 ", color=" + color +
+                ", studentName='" + studentName + '\'' +
+                ", studentCode='" + studentCode + '\'' +
                 '}';
     }
 }

@@ -68,10 +68,6 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
         Button btnTimingComplete;
         @BindView(R.id.tv_timing_time)
         TextView tvTimingTime;
-        @BindView(R.id.tv_group_color_no)
-        TextView tvGroupColorNo;
-        @BindView(R.id.tv_group_color)
-        TextView tvGroupColor;
         @BindView(R.id.tv_timing_group)
         TextView tvTimingGroup;
         @BindView(R.id.iv_timing_delete)
@@ -89,8 +85,6 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
     //在Adapter中实现3个方法
     @Override
     public void onBindViewHolder(final VH holder, final int position) {
-        holder.tvGroupColorNo.setText("A1");
-        holder.tvGroupColor.setBackgroundColor(Color.YELLOW);
         holder.tvTimingGroup.setText(timingLists.get(position).getItemGroupName());
         holder.tvTimingTime.setText(timingLists.get(position).getTime() == 0 ? "发令时刻：" : "发令时刻：" + DateUtil.formatTime(timingLists.get(position).getTime(), "yyyy-MM-dd HH:mm:ss.SSS"));
         holder.llItem.setBackgroundResource(timingLists.get(position).getColor());

@@ -137,6 +137,7 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
         for (int i = 0; i < rbCarry.length; i++) {
             if (rbCarry[i] == checkedId) {
                 carry_mode = i;
+                ((MiddleRaceSettingActivity) getActivity()).setChange(true);
                 break;
             }
         }
@@ -153,6 +154,8 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        ((MiddleRaceSettingActivity) getActivity()).setChange(true);
+
                         if (TextUtils.isEmpty(editText.getText().toString())) {
                             return;
                         }
