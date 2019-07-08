@@ -22,7 +22,7 @@ public class DateUtil {
      */
     public static String formatTime(long timeMillis, String pattern) {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-        sdf.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
         return sdf.format(new Date(timeMillis));
     }
 

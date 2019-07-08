@@ -13,9 +13,9 @@ public class TimingBean {
     public static final int TIMING_STATE_COMPLETE = 3;
     public static final int TIMING_STATE_TIMING = 4;
 
-    public static final int GROUP_3 = 3;//空闲
-    public static final int GROUP_4 = 4;//关联
-    public static final int GROUP_FINISH = 5;//完成
+    public static final int GROUP_3 = 3;//空闲(Group表中字段)
+    public static final int GROUP_4 = 4;//关联(Group表中字段)
+    public static final int GROUP_FINISH = 5;//完成(Group表中字段)
     private int no;//组序号
     private int state;//组状态（0无1等待发令2违规返回3完成计时4正在计时状态）
     private long time;//发令时刻
