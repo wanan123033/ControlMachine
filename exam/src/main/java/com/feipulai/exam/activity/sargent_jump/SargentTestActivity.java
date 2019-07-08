@@ -46,11 +46,9 @@ public class SargentTestActivity extends BasePersonTestActivity {
     private static final String TAG = "SargentTestActivity";
     private SargentSetting sargentSetting;
     private ScheduledExecutorService checkService  = Executors.newSingleThreadScheduledExecutor();
-    private SerialDeviceManager mSerialManager;
     private TestState testState = TestState.UN_STARTED;
     private volatile int check = 0;
     private boolean isConnect;
-    private RadioManager radioManager;
     private boolean isSetBase = false;
     private WaitDialog changBadDialog;
     private int frequency;//需设定的主机频段
@@ -69,12 +67,10 @@ public class SargentTestActivity extends BasePersonTestActivity {
             sargentSetting = new SargentSetting();
         }
         if (sargentSetting.getType() == 0) {
-            mSerialManager = SerialDeviceManager.getInstance();
-            mSerialManager.setRS232ResiltListener(resultImpl);
+            SerialDeviceManager.getInstance().setRS232ResiltListener(resultImpl);
         } else {
-            radioManager = RadioManager.getInstance();
-            radioManager.init();
-            radioManager.setOnRadioArrived(resultImpl);
+            RadioManager.getInstance().init();
+            RadioManager.getInstance().setOnRadioArrived(resultImpl);
         }
 
         Logger.i(TAG + ":sargentSetting ->" + sargentSetting.toString());
@@ -82,7 +78,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
         // 0 显示 原地起跳 1 隐藏 助跑
         setBaseHeightVisible(runUp);
         if (sargentSetting.getType() == 0) {
-            mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
+            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                     SerialConfigs.CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight())));
         }
         sendEmpty();
@@ -113,7 +109,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
             @Override
             public void onClick(View v) {
                 if (sargentSetting.getType() == 1) {
-                    radioManager.sendCommand(new ConvertCommand(new RadioChannelCommand(0)));
+                    RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(0)));
                     currentFrequency = 0 ;
                     showChangeBadDialog();
 
@@ -133,7 +129,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        radioManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,SerialConfigs.CMD_SARGENT_JUMP_GET_SCORE ));
+                        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,SerialConfigs.CMD_SARGENT_JUMP_GET_SCORE ));
                         dialog.dismiss();
                     }
                 }).setNegativeButton("取消", null).show();
@@ -146,10 +142,10 @@ public class SargentTestActivity extends BasePersonTestActivity {
             public void run() {
                 check++;
                 if (sargentSetting.getType() == 0) {
-                    mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
+                    SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                             SerialConfigs.CMD_SARGENT_JUMP_EMPTY));
                 } else {
-                    radioManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, SerialConfigs.CMD_SARGENT_JUMP_EMPTY));
+                    RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, SerialConfigs.CMD_SARGENT_JUMP_EMPTY));
                 }
                 if (check > 2) {
                     // 失去连接
@@ -171,10 +167,10 @@ public class SargentTestActivity extends BasePersonTestActivity {
         this.baseStuPair = baseStuPair;
         testState = TestState.UN_STARTED;
         if (sargentSetting.getType() == 0) {
-            mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
+            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                     SerialConfigs.CMD_SARGENT_JUMP_EMPTY));
         } else {
-            radioManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
+            RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                     SerialConfigs.CMD_SARGENT_JUMP_EMPTY));
         }
 
@@ -190,10 +186,10 @@ public class SargentTestActivity extends BasePersonTestActivity {
         if (isConnect) {
             if (!isSetBase) {
                 if (sargentSetting.getType() == 0) {
-                    mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
+                    SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                             SerialConfigs.CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight())));
                 } else {
-                    radioManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
+                    RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                             SerialConfigs.CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight())));
                 }
                 isSetBase = true;
@@ -201,10 +197,10 @@ public class SargentTestActivity extends BasePersonTestActivity {
 //                    updateDevice(new BaseDeviceState(BaseDeviceState.STATE_ONUSE, 1));
             toastSpeak("开始测试");
             if (sargentSetting.getType() == 0) {
-                mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
+                SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                         SerialConfigs.CMD_SARGENT_JUMP_START));
             } else {
-                radioManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
+                RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                         SerialConfigs.CMD_SARGENT_JUMP_START));
             }
         }
@@ -255,8 +251,8 @@ public class SargentTestActivity extends BasePersonTestActivity {
                     cmd[8] = (byte) (frequency);
                     cmd[13] = (byte) (sum(cmd) & 0xff);
                     Log.i("match", "cmd:" + StringUtility.bytesToHexString(cmd));
-                    radioManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
-                    radioManager.sendCommand(new ConvertCommand(new RadioChannelCommand(frequency)));
+                    RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+                    RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(frequency)));
                     currentFrequency = frequency;
                 case MATCH_SUCCESS:
                     ToastUtils.showShort("配对成功");
@@ -313,6 +309,10 @@ public class SargentTestActivity extends BasePersonTestActivity {
     }
 
     private void onResultArrived(int result, BaseStuPair stuPair) {
+        if (result< sargentSetting.getBaseHeight()*10 || result > (sargentSetting.getBaseHeight()+116)*10 ){
+            toastSpeak("数据异常，请重测");
+            return;
+        }
         if (stuPair ==null || stuPair.getStudent() == null)
             return;
         if (testState == TestState.WAIT_RESULT) {
@@ -329,9 +329,9 @@ public class SargentTestActivity extends BasePersonTestActivity {
             updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, 1));
             // 发送结束命令
             if (sargentSetting.getType() == 0) {
-                mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SARGENT_JUMP_STOP));
+                SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SARGENT_JUMP_STOP));
             } else {
-                radioManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, SerialConfigs.CMD_SARGENT_JUMP_STOP));
+                RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, SerialConfigs.CMD_SARGENT_JUMP_STOP));
             }
 
 //            testState = TestState.UN_STARTED;
@@ -341,8 +341,8 @@ public class SargentTestActivity extends BasePersonTestActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mSerialManager != null)
-            mSerialManager.close();
+        if (SerialDeviceManager.getInstance() != null)
+            SerialDeviceManager.getInstance().close();
         if (checkService != null) {
             checkService.shutdown();
             checkService = null;
@@ -398,7 +398,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
         public void onMatch(SargentJumpResult match) {
             int fre = match.getFrequency();
             if (currentFrequency != frequency) {
-                radioManager.sendCommand(new ConvertCommand(new RadioChannelCommand(fre)));
+                RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(fre)));
                 mHandler.sendEmptyMessageDelayed(SET_MATCH, 600);
                 currentFrequency = fre;
             } else {
