@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.udp.UDPBasketBallConfig;
 import com.feipulai.device.udp.UdpClient;
@@ -38,7 +39,6 @@ import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.MachineResult;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
-import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
@@ -93,7 +93,6 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
     private TimerUtil timerUtil;
     private String testDate;
     private int roundNo;
-    private StudentItem mStudentItem;
 
     @Override
     protected int setLayoutResID() {
@@ -106,7 +105,11 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         setting = SharedPrefsUtil.loadFormSource(this, BasketBallSetting.class);
         if (setting == null)
             setting = new BasketBallSetting();
+
         UdpClient.getInstance().init(1527);
+        UdpClient.getInstance().setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(), new BasketBallListener(this));
+        //设置精度
+        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1));
         timerUtil = new TimerUtil(this);
         group = (Group) TestConfigs.baseGroupMap.get("group");
         String type = "男女混合";
@@ -129,13 +132,18 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         resultAdapter = new BasketBallResultAdapter(resultList, setting);
         rvTestResult.setLayoutManager(new LinearLayoutManager(this));
         rvTestResult.setAdapter(resultAdapter);
-        presetResult();
+        resultAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                if (!isConfigurableNow()) {
+                    resultAdapter.setSelectPosition(position);
+                    resultAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+        fristCheckTest();
 
-        setOperationUI();
-        UdpClient.getInstance().setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(), new BasketBallListener(this));
-        //设置精度
-        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1));
-        prepareForBegin();
+
     }
 
 
@@ -221,8 +229,9 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
 
         state = WAIT_CONFIRM;
         txtDeviceStatus.setText("中断");
-        List<MachineResult> machineResultList = DBManager.getInstance().getItemRoundMachineResult(pairs.get(position()).getStudent().getStudentCode()
-                , 1,
+        Student student = pairs.get(position()).getStudent();
+        List<MachineResult> machineResultList = DBManager.getInstance().getItemGroupFRoundMachineResult(student.getStudentCode()
+                , group.getId(),
                 roundNo);
 
         MachineResult machineResult = new MachineResult();
@@ -230,8 +239,9 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         machineResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
         machineResult.setTestNo(1);
         machineResult.setRoundNo(roundNo);
-        machineResult.setStudentCode(pairs.get(0).getStudent().getStudentCode());
+        machineResult.setStudentCode(student.getStudentCode());
         machineResult.setResult(result.getResult());
+        machineResult.setGroupId(group.getId());
         //第一次拦截保存成绩，其他拦截只保存
         if (machineResultList.size() == 0 || machineResultList == null) {
             machineResultList.add(machineResult);
@@ -243,13 +253,13 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             resultList.get(resultAdapter.getSelectPosition()).setResultState(RoundResult.RESULT_STATE_NORMAL);
         } else {
             machineResultList.add(machineResult);
-            RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(pairs.get(position()).getStudent().getStudentCode());
+            RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
             testRoundResult.setResult(result.getResult());
             //更新成绩，最后一次成绩保存
             DBManager.getInstance().updateRoundResult(testRoundResult);
 
             //获取所有成绩设置为非最好成绩
-            List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(mStudentItem);
+            List<RoundResult> results = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");
             for (RoundResult roundResult : results) {
                 roundResult.setIsLastResult(0);
                 DBManager.getInstance().updateRoundResult(roundResult);
@@ -304,16 +314,23 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
 
     @Override
     public void onItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
-//        if (!isConfigurableNow()) {
-//            resultAdapter.setSelectPosition(-1);
-//            stuPairAdapter.setTestPosition(i);
-//            stuPairAdapter.notifyDataSetChanged();
-//            presetResult();
-//            if (isExistTestPlace())
-//                prepareForBegin();
-//        } else {
-//            ToastUtils.showShort("测试中,不能更换考生");
-//        }
+        if (!isConfigurableNow()) {
+            resultAdapter.setSelectPosition(-1);
+            stuPairAdapter.setTestPosition(i);
+            stuPairAdapter.notifyDataSetChanged();
+            presetResult();
+            if (isExistTestPlace()) {
+                toastSpeak(String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getSpeakStuName(), roundNo),
+                        String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getStudentName(), roundNo));
+                prepareForBegin();
+            } else {
+                state = WAIT_FREE;
+                setOperationUI();
+            }
+
+        } else {
+            ToastUtils.showShort("测试中,不能更换考生");
+        }
     }
 
     @OnClick({R.id.tv_punish_add, R.id.tv_punish_subtract, R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal, R.id.tv_print, R.id.tv_confirm
@@ -360,7 +377,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                 if (state == WAIT_CONFIRM) {
                     UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
                 }
-                if (state == WAIT_CHECK_IN || state == WAIT_CONFIRM) {
+                if (state == WAIT_CHECK_IN || state == WAIT_CONFIRM || state == WAIT_FREE) {
                     tvResult.setText("");
                     onResultConfirmed();
                 }
@@ -369,9 +386,8 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                 if (state == TESTING) {
                     toastSpeak("测试中,不允许跳过本次测试");
                 } else {
-                    state = WAIT_FREE;
                     UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
-                    //TODO 下一位
+                    prepareForFinish();
                 }
 
                 break;
@@ -396,21 +412,23 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
      * @param basketballResult
      */
     private void addRoundResult(BasketballResult basketballResult) {
+        Student student = pairs.get(position()).getStudent();
         RoundResult roundResult = new RoundResult();
         roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
-        roundResult.setStudentCode(mStudentItem.getStudentCode());
+        roundResult.setStudentCode(student.getStudentCode());
         roundResult.setItemCode(TestConfigs.getCurrentItemCode());
         roundResult.setResult(basketballResult.getResult());
         roundResult.setMachineResult(basketballResult.getResult());
         roundResult.setRoundNo(roundNo);
         roundResult.setTestNo(1);
-        roundResult.setExamType(mStudentItem.getExamType());
-        roundResult.setScheduleNo(mStudentItem.getScheduleNo());
+        roundResult.setExamType(group.getExamType());
+        roundResult.setScheduleNo(group.getScheduleNo());
         roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
         roundResult.setTestTime(testDate);
+        roundResult.setGroupId(group.getId());
         roundResult.setUpdateState(0);
         // 重新判断最好成绩
-        RoundResult bestResult = InteractUtils.getBestResult(TestCache.getInstance().getResults().get(pairs.get(0).getStudent()));
+        RoundResult bestResult = InteractUtils.getBestResult(TestCache.getInstance().getResults().get(student));
         // Log.i("james", "\nroundResult:" + roundResult.toString());
         if (bestResult != null && bestResult.getResult() < roundResult.getResult()) {
             roundResult.setIsLastResult(0);
@@ -490,20 +508,20 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
 
     private void presetResult() {
         resultList.clear();
+        resultAdapter.setSelectPosition(-1);
         Student student = TestCache.getInstance().getAllStudents().get(position());
-        mStudentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
         List<RoundResult> roundResults = TestCache.getInstance().getResults().get(student);
         roundNo = (roundResults == null ? 1 : roundResults.size() + 1);
         for (int i = 0; i < TestConfigs.getMaxTestCount(this); i++) {
-            RoundResult roundResult = DBManager.getInstance().queryRoundByRoundNo(student.getStudentCode(), 1, i + 1);
+            RoundResult roundResult = DBManager.getInstance().queryGroupRoundNoResult(student.getStudentCode(), group.getId() + "", i + 1);
             if (roundResult == null) {
                 resultList.add(new BasketBallTestResult(i + 1, null, 0, -999, 0, -999));
                 if (resultAdapter.getSelectPosition() == -1) {
                     resultAdapter.setSelectPosition(i);
                 }
             } else {
-                List<MachineResult> machineResultList = DBManager.getInstance().getItemRoundMachineResult(student.getStudentCode(),
-                        TestCache.getInstance().getTestNoMap().get(student), i + 1);
+                List<MachineResult> machineResultList = DBManager.getInstance().getItemGroupFRoundMachineResult(student.getStudentCode(),
+                        group.getId(), i + 1);
                 resultList.add(new BasketBallTestResult(i + 1, machineResultList, roundResult.getMachineResult(), roundResult.getResult(), roundResult.getPenaltyNum(), roundResult.getResultState()));
 
             }
@@ -519,7 +537,6 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
     private boolean isExistTestPlace() {
         if (resultAdapter.getSelectPosition() == -1)
             return false;
-
         if (resultList.get(resultAdapter.getSelectPosition()).getResultState() != -999) {
             for (int i = 0; i < resultList.size(); i++) {
                 if (resultList.get(i).getResultState() == -999) {
@@ -529,12 +546,10 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                     return true;
                 } else {
                     if (isFullSkip(resultList.get(i).getResult(), resultList.get(i).getResultState())) {
-                        toastSpeak("满分");
                         return false;
                     }
                 }
             }
-            toastSpeak("该考生已全部测试完成");
             return false;
         } else {
             roundNo = resultAdapter.getSelectPosition() + 1;
@@ -562,12 +577,12 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
     private void onResultConfirmed() {
         if (pairs.get(position()) == null)
             return;
+        Student student = pairs.get(position()).getStudent();
         List<RoundResult> updateResult = new ArrayList<>();
         for (int i = 0; i < resultList.size(); i++) {
             BasketBallTestResult testResult = resultList.get(i);
             if (testResult.getResult() >= 0) {
-                RoundResult roundResult = DBManager.getInstance().queryRoundByRoundNo(pairs.get(position()).getStudent().getStudentCode(),
-                        1, resultList.get(i).getRoundNo());
+                RoundResult roundResult = DBManager.getInstance().queryGroupRoundNoResult(student.getStudentCode(), group.getId() + "", resultList.get(i).getRoundNo());
                 if (roundResult != null) {
                     //是否有进行更改，有更改成绩为未上传
                     if (roundResult.getResult() != testResult.getResult() || roundResult.getPenaltyNum() != testResult.getPenalizeNum()
@@ -583,7 +598,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                 if (testResult.getResultState() != -999 && testResult.getResultState() != RoundResult.RESULT_STATE_NORMAL) {
                     RoundResult roundResult = new RoundResult();
                     roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
-                    roundResult.setStudentCode(mStudentItem.getStudentCode());
+                    roundResult.setStudentCode(student.getStudentCode());
                     roundResult.setItemCode(TestConfigs.getCurrentItemCode());
                     roundResult.setResult(0);
                     roundResult.setMachineResult(0);
@@ -591,9 +606,10 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                     roundResult.setTestTime(System.currentTimeMillis() + "");
                     roundResult.setRoundNo(resultList.get(i).getRoundNo());
                     roundResult.setTestNo(1);
-                    roundResult.setExamType(mStudentItem.getExamType());
-                    roundResult.setScheduleNo(mStudentItem.getScheduleNo());
+                    roundResult.setExamType(group.getExamType());
+                    roundResult.setScheduleNo(group.getScheduleNo());
                     roundResult.setUpdateState(0);
+                    roundResult.setGroupId(group.getId());
                     DBManager.getInstance().insertRoundResult(roundResult);
                     resultList.get(i).setResult(0);
                     resultAdapter.notifyDataSetChanged();
@@ -606,9 +622,9 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             DBManager.getInstance().updateRoundResult(updateResult);
         }
 
-        List<RoundResult> dbRoundResult = DBManager.getInstance().queryResultsByStuItem(mStudentItem);
+        List<RoundResult> dbRoundResult = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");
         if (dbRoundResult != null) {
-            TestCache.getInstance().getResults().put(pairs.get(position()).getStudent(), dbRoundResult);
+            TestCache.getInstance().getResults().put(student, dbRoundResult);
         }
         //获取所有成绩设置为非最好成绩
         for (RoundResult roundResult : dbRoundResult) {
@@ -616,7 +632,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             DBManager.getInstance().updateRoundResult(roundResult);
         }
         //获取最小成绩设置为最好成绩
-        RoundResult dbAscResult = DBManager.getInstance().queryOrderAscScore(mStudentItem.getStudentCode(), 1);
+        RoundResult dbAscResult = DBManager.getInstance().queryOrderAscScore(student.getStudentCode(), 1);
         if (dbAscResult != null) {
             dbAscResult.setIsLastResult(1);
             DBManager.getInstance().updateRoundResult(dbAscResult);
@@ -625,15 +641,9 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             DBManager.getInstance().updateRoundResult(dbRoundResult.get(0));
         }
 
-        //Todo 确定成绩播报的时刻
-//        StuDevicePair pair = pairs.get(position());
-//        int result = pair.getDeviceResult().getResult();
-//
-//        if (SettingHelper.getSystemSetting().isAutoBroadcast()) {
-//            TtsManager.getInstance().speak(ResultDisplayUtils.getStrResultForDisplay(result));
-//        }
-        uploadResults();
 
+        uploadResults();
+        nextTest();
     }
 
     /**
@@ -670,22 +680,186 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         tvResult.setText(student.getStudentName());
         state = WAIT_CHECK_IN;
         setOperationUI();
-        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(1, UdpLEDUtil.getLedByte(student.getStudentName(), Paint.Align.CENTER)));
-
+        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(1,
+                UdpLEDUtil.getLedByte(pairs.get(position()).getStudent().getSpeakStuName(), Paint.Align.CENTER)));
+        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
+                UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
     }
+
 
     /**
      * 结束 下一位
      */
     private void prepareForFinish() {
-        TestCache testCache = TestCache.getInstance();
-        if (SettingHelper.getSystemSetting().isAutoPrint() && isExistTestPlace()) {
-            InteractUtils.printResults(null, testCache.getAllStudents(), testCache.getResults(),
-                    TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
-        }
-
         state = WAIT_FREE;
         setOperationUI();
+//        nextTest();
+        if (setting.getTestPattern() == TestConfigs.GROUP_PATTERN_SUCCESIVE) {
+            continuousTestNext();
+        } else {
+            //循环
+            loopTestNext();
+        }
+    }
+
+    private void nextTest() {
+        //连续测试
+        if (setting.getTestPattern() == TestConfigs.GROUP_PATTERN_SUCCESIVE) {
+            continuousTest();
+        } else {
+            //循环
+            loopTestNext();
+        }
+    }
+
+    /**
+     * 连续测试
+     */
+    private void continuousTest() {
+        if (roundNo < TestConfigs.getMaxTestCount(this)) {
+            //是否存在可以测试位置
+            if (isExistTestPlace()) {
+                prepareForBegin();
+                toastSpeak(String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getSpeakStuName(), roundNo),
+                        String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getStudentName(), roundNo));
+            } else {
+                continuousTestNext();
+            }
+        } else {
+            //是否测试到最后一位
+            if (position() == pairs.size() - 1) {
+                fristCheckTest();
+            } else {
+                continuousTestNext();
+            }
+
+
+        }
+    }
+
+
+    /**
+     * 连续测试下一位
+     */
+    private void continuousTestNext() {
+
+        for (int i = (position() + 1); i < pairs.size(); i++) {
+
+            if (isStuAllTest(pairs.get(i).getStudent().getStudentCode())) {
+                return;
+            }
+
+            stuPairAdapter.setTestPosition(i);
+            prepareForBegin();
+            presetResult();
+            //最后一次测试的成绩
+            toastSpeak(String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getSpeakStuName(), roundNo),
+                    String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getStudentName(), roundNo));
+            Logger.i("addStudent:" + pairs.get(i).getStudent().toString());
+            Logger.i("addStudent:当前考生进行第" + 1 + "次的第" + roundNo + "轮测试");
+
+            group.setIsTestComplete(2);
+            DBManager.getInstance().updateGroup(group);
+            stuPairAdapter.notifyDataSetChanged();
+            return;
+        }
+        //全部次数测试完，
+        fristCheckTest();
+
+    }
+
+//    private void loopTest() {
+//        //是否测试到最后一位
+//        if (stuPairAdapter.getTestPosition() == pairs.size() - 1) {
+//            fristCheckTest();
+//        } else {
+//            loopTestNext();
+//        }
+//    }
+
+    private void fristCheckTest() {
+        //是否为最后一次测试，开启新的测试
+        for (int i = 0; i < pairs.size(); i++) {
+            if (!isStuAllTest(pairs.get(i).getStudent().getStudentCode())) {
+                stuPairAdapter.setTestPosition(i);
+                presetResult();
+                isExistTestPlace();
+                prepareForBegin();
+                toastSpeak(String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getSpeakStuName(), roundNo),
+                        String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getStudentName(), roundNo));
+                stuPairAdapter.notifyDataSetChanged();
+                return;
+            }
+        }
+        allTestComplete();
+    }
+
+    /**
+     * 循环测试下一位测试
+     */
+    private void loopTestNext() {
+        for (int i = (position() + 1); i < pairs.size(); i++) {
+            if (isStuAllTest(pairs.get(i).getStudent().getStudentCode())) {
+                return;
+            }
+            presetResult();
+            stuPairAdapter.setTestPosition(i);
+            prepareForBegin();
+            //最后一次测试的成绩
+            toastSpeak(String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getSpeakStuName(), roundNo),
+                    String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getStudentName(), roundNo));
+            Logger.i("addStudent:" + pairs.get(i).getStudent().toString());
+            Logger.i("addStudent:当前考生进行第" + 1 + "次的第" + roundNo + "轮测试");
+            stuPairAdapter.notifyDataSetChanged();
+            group.setIsTestComplete(2);
+            DBManager.getInstance().updateGroup(group);
+            return;
+        }
+        fristCheckTest();
+    }
+
+    /**
+     * 全部次数测试完
+     */
+    private void allTestComplete() {
+        //全部次数测试完，
+        toastSpeak("分组考生全部测试完成，请选择下一组");
+        group.setIsTestComplete(1);
+        DBManager.getInstance().updateGroup(group);
+
+
+        //        TestCache testCache = TestCache.getInstance();
+//        if (SettingHelper.getSystemSetting().isAutoPrint() && isExistTestPlace()) {
+//            InteractUtils.printResults(null, testCache.getAllStudents(), testCache.getResults(),
+//                    TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
+//        }
+    }
+
+    /**
+     * 考生是否全部测试完成或满分
+     *
+     * @param studentCode
+     * @return
+     */
+    private boolean isStuAllTest(String studentCode) {
+        //  查询学生成绩 当有成绩则添加数据跳过测试
+        List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound
+                (studentCode, group.getId() + "");
+        //成绩数量是否小于测试次数
+        if (roundResultList.size() < TestConfigs.getMaxTestCount(this)) {
+            boolean isSkip = false;
+            for (RoundResult roundResult : roundResultList) {
+                //成绩是否存在满分跳过
+                if (isFullSkip(roundResult.getResult(), roundResult.getResultState())) {
+                    isSkip = true;
+                }
+            }
+            if (!isSkip) {
+                return false;
+            }
+        }
+        return true;
+
     }
 
     /**

@@ -153,12 +153,10 @@ public class InteractUtils {
                 case ItemDefault.CODE_YTXS:
                 case ItemDefault.CODE_PQ:
                 case ItemDefault.CODE_FWC:
-                case ItemDefault.CODE_LQYQ:
                     roundResult.setMachineResult(deviceResult.getResult());
                     roundResult.setPenaltyNum(pair.getPenalty());
                     roundResult.setResult(deviceResult.getResult() + pair.getPenalty());
                     break;
-
                 default:
                     throw new IllegalArgumentException("machine code not supported");
             }

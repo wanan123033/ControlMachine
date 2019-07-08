@@ -332,12 +332,12 @@ public class HttpSubscriber {
                                 studentBean.getExamType(), studentBean.getScheduleNo());
                         studentItemList.add(studentItem);
                     } else {
-                        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
-                            StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
-                                    studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
-                                    studentBean.getExamType(), studentBean.getScheduleNo());
-                            studentItemList.add(studentItem);
-                        }
+//                        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+//                            StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
+//                                    studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
+//                                    studentBean.getExamType(), studentBean.getScheduleNo());
+//                            studentItemList.add(studentItem);
+//                        }
                         SettingHelper.getSystemSetting().setTestPattern(SystemSetting.GROUP_PATTERN);
                     }
                 }
@@ -393,9 +393,7 @@ public class HttpSubscriber {
 
                 }
                 DBManager.getInstance().insertGroupList(groupList);
-                if (TestConfigs.sCurrentItem.getMachineCode() != ItemDefault.CODE_ZCP) {
-                    DBManager.getInstance().insertGroupItemList(groupItemList);
-                }
+                DBManager.getInstance().insertGroupItemList(groupItemList);
 
                 if (onRequestEndListener != null)
                     onRequestEndListener.onSuccess(GROUP_BIZ);
