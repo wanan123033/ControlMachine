@@ -217,7 +217,15 @@ public class TestConfigs {
             Logger.i("sCurrentItem:" + sCurrentItem.toString());
             return INIT_SUCCESS;
         }
-
+        if (machineCode == ItemDefault.CODE_ZCP) {
+            sCurrentItem = itemList.get(0);
+            newItemCode = itemList.get(0).getItemCode();
+            MachineItemCodeUtil.fillDefaultItemCode(studentItems, roundResults, newItemCode);
+            SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, machineCode);
+            SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, newItemCode);
+            Logger.i("sCurrentItem:" + sCurrentItem.toString());
+            return INIT_SUCCESS;
+        }
         sCurrentItem = null;
         // 不止一个,弹框让用户选择
         new ItemDecideDialogBuilder(context, itemList, "请选择测试项目(该项会被应用至当前机器所有已测成绩)", new DialogInterface.OnClickListener() {

@@ -7,6 +7,7 @@ import com.feipulai.common.exl.ExlListener;
 import com.feipulai.common.exl.ExlReader;
 import com.feipulai.common.utils.ExlPostfixUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
@@ -95,7 +96,8 @@ public class GroupStuItemExLReader extends ExlReader {
             return;
         }
 
-        boolean success = insertIntoDB(result);
+        boolean success = TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP ? insertZCPIntoDB(result) : insertIntoDB(result);
+
         if (success) {
             SettingHelper.getSystemSetting().setTestPattern(SystemSetting.GROUP_PATTERN);
             SettingHelper.updateSettingCache(SettingHelper.getSystemSetting());
@@ -103,10 +105,78 @@ public class GroupStuItemExLReader extends ExlReader {
         }
     }
 
+    private boolean insertZCPIntoDB(List<ExelGroupReadBean> result) {
+        String itemCode = TestConfigs.sCurrentItem.getItemCode();
+        // 项目代码还是默认的,需要更新当前的项目的项目代码,并且将之前有的 报名信息 和 成绩 的项目代码更改
+        Item nameItem = DBManager.getInstance().queryItemByName(mItemName);
+
+        if (itemCode == null) {
+            try {
+                Logger.i(mItemCode + " :  " + mItemName);
+                if (nameItem == null) {
+                    TestConfigs.sCurrentItem.setItemCode(mItemCode);
+                    TestConfigs.sCurrentItem.setItemName(mItemName);
+                    DBManager.getInstance().updateItem(TestConfigs.sCurrentItem);// 更新项目表中信息
+                } else {
+                    if (TestConfigs.sCurrentItem.getMachineCode() == nameItem.getMachineCode()) {
+                        TestConfigs.sCurrentItem.setItemCode(mItemCode);
+                        TestConfigs.sCurrentItem.setItemName(mItemName);
+                        DBManager.getInstance().updateItem(TestConfigs.sCurrentItem);// 更新项目表中信息
+                    } else {
+                        listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel导入失败,导入项目名已存在,拒绝导入");
+                        Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel导入失败,导入项目名已存在,拒绝导入");
+                        return false;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel导入失败,导入项目代码已存在,拒绝导入");
+                Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel导入失败,拒绝导入" + e.getMessage());
+                return false;
+            }
+        } else if (TextUtils.equals(itemCode, mItemCode)) {
+            if (nameItem == null) {
+                TestConfigs.sCurrentItem.setItemName(mItemName);
+                DBManager.getInstance().updateItem(TestConfigs.sCurrentItem);// 更新项目表中信息(这里实际只更新了一个项目名)
+            } else if (nameItem.getMachineCode() == TestConfigs.sCurrentItem.getMachineCode() &&
+                    TextUtils.equals(itemCode, nameItem.getItemCode())) {
+                TestConfigs.sCurrentItem.setItemName(mItemName);
+                DBManager.getInstance().updateItem(TestConfigs.sCurrentItem);// 更新项目表中信息(这里实际只更新了一个项目名)
+            } else {
+                listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel导入失败,导入项目名已存在,拒绝导入");
+                Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel导入失败,导入项目名已存在,拒绝导入");
+                return false;
+            }
+
+        } else if (nameItem == null) {
+            DBManager.getInstance().insertItem(ItemDefault.CODE_ZCP, mItemCode
+                    , mItemName, "分'秒");
+        } else {
+            //当前项目代码不为空，名称项目不为空，两个项目代码不一至 ，机器码一至
+            if (nameItem.getMachineCode() == TestConfigs.sCurrentItem.getMachineCode()) {
+                if (nameItem.getItemCode() == null) {
+                    nameItem.setItemCode(mItemCode);
+                    DBManager.getInstance().updateItem(nameItem);// 更新项目表中信息(这里实际只更新了一个项目名)
+                } else if (!TextUtils.equals(nameItem.getItemCode(), mItemCode)) {
+                    mItemCode = nameItem.getItemCode();
+                }
+
+            } else {
+                listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel导入失败,导入项目名已存在,拒绝导入");
+                Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel导入失败,导入项目名已存在,拒绝导入");
+                return false;
+            }
+
+        }
+        insertDB(result);
+        return true;
+    }
+
     private boolean insertIntoDB(List<ExelGroupReadBean> result) {
         String itemCode = TestConfigs.sCurrentItem.getItemCode();
         // 项目代码还是默认的,需要更新当前的项目的项目代码,并且将之前有的 报名信息 和 成绩 的项目代码更改
         Item nameItem = DBManager.getInstance().queryItemByName(mItemName);
+
         if (itemCode == null) {
             try {
                 Logger.i(mItemCode + " :  " + mItemName);
@@ -159,6 +229,7 @@ public class GroupStuItemExLReader extends ExlReader {
                 return false;
             }
         } else if (!mItemName.equals(TestConfigs.sCurrentItem.getItemName())) {
+
             if (nameItem == null) {
                 TestConfigs.sCurrentItem.setItemName(mItemName);
                 DBManager.getInstance().updateItem(TestConfigs.sCurrentItem);// 更新项目表中信息(这里实际只更新了一个项目名)
@@ -174,6 +245,12 @@ public class GroupStuItemExLReader extends ExlReader {
 
 
         }
+        insertDB(result);
+
+        return true;
+    }
+
+    private void insertDB(List<ExelGroupReadBean> result) {
         // 现在就可以确定新项目代码了
         List<Student> studentList = new ArrayList<>();
 //        List<StudentItem> studentItemList = new ArrayList<>();
@@ -210,7 +287,7 @@ public class GroupStuItemExLReader extends ExlReader {
 
             ItemSchedule itemSchedule = new ItemSchedule();
             itemSchedule.setScheduleNo(bean.getSessionNo());
-            itemSchedule.setItemCode(TestConfigs.getCurrentItemCode());
+            itemSchedule.setItemCode(mItemCode);
             itemScheduleList.add(itemSchedule);
 
             Group group = new Group();
@@ -226,7 +303,7 @@ public class GroupStuItemExLReader extends ExlReader {
             }
             group.setExamType(examType);
             group.setIsTestComplete(0);
-            group.setItemCode(TestConfigs.getCurrentItemCode());
+            group.setItemCode(mItemCode);
 //            DBManager.getInstance().insertGroup(group);
             groupList.add(group);
 
@@ -235,7 +312,7 @@ public class GroupStuItemExLReader extends ExlReader {
             groupItem.setTrackNo(bean.getTrackNo());
             groupItem.setIdentityMark(0);
             groupItem.setScheduleNo(bean.getSessionNo());
-            groupItem.setItemCode(TestConfigs.getCurrentItemCode());
+            groupItem.setItemCode(mItemCode);
             groupItem.setGroupType(bean.getGroupSex());
             groupItem.setSortName(bean.getTranches());
             groupItem.setGroupNo(bean.getGroupNo());
@@ -255,8 +332,6 @@ public class GroupStuItemExLReader extends ExlReader {
         DBManager.getInstance().insertGroupList(groupList);
         // 插入分组学生项目信息
         DBManager.getInstance().insertGroupItemList(groupItemList);
-
-        return true;
     }
 
     /**

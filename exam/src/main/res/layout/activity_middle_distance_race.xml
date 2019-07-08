@@ -19,7 +19,7 @@
 
     <LinearLayout
         android:id="@+id/ll_show_item"
-        android:layout_width="400dp"
+        android:layout_width="380dp"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
@@ -27,15 +27,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
             android:background="@drawable/bg_edittext"
             android:padding="10dp">
 
             <TextView
                 android:id="@+id/tv1"
                 style="@style/style_setting_tv_title"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
                 android:text="日程:" />
 
             <Spinner
@@ -51,8 +52,8 @@
                 android:id="@+id/tv2"
                 style="@style/style_setting_tv_title"
                 android:layout_below="@+id/tv1"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="25dp"
                 android:text="项目:" />
 
             <Spinner
@@ -78,13 +79,9 @@
                 android:layout_alignTop="@+id/tv3"
                 android:layout_marginLeft="10dp"
                 android:layout_toEndOf="@+id/tv3"
-                android:background="@drawable/icon_spinner_bg" />
+                android:background="@drawable/icon_spinner_bg"
+                android:entries="@array/item_group_style" />
         </RelativeLayout>
-        <!--<View-->
-        <!--android:id="@+id/view_style"-->
-        <!--android:layout_width="30dp"-->
-        <!--android:layout_height="30dp"-->
-        <!--android:background="@drawable/red_circle" />-->
 
         <include layout="@layout/item_race_student_group" />
 
@@ -99,21 +96,11 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_race_group"
-        android:layout_width="350dp"
+        android:layout_width="380dp"
         android:layout_height="match_parent"
         android:layout_margin="5dp"
         android:background="@color/background_color"
         android:overScrollMode="never" />
-
-    <!--<android.support.v7.widget.RecyclerView-->
-    <!--android:id="@+id/rv_race_result"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:layout_margin="5dp"-->
-    <!--android:background="@color/white"-->
-    <!--android:overScrollMode="never"-->
-    <!--android:visibility="gone" />-->
-
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -136,24 +123,26 @@
             app:fab_addButtonColorPressed="@color/grey"
             fab:fab_addButtonColorNormal="@color/Red"
             fab:fab_addButtonPlusIconColor="@color/half_black"
-            fab:fab_labelStyle="@style/menu_labels_style"
-            >
+            fab:fab_labelStyle="@style/menu_labels_style">
 
             <com.feipulai.floatingactionbutton.FloatingActionButton
                 android:id="@+id/float_button_show"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                fab:fab_colorNormal="@color/blue"
+                fab:fab_colorNormal="@color/LightPink"
                 fab:fab_colorPressed="@color/grey"
+                fab:fab_icon="@drawable/sign_out"
                 fab:fab_title="隐藏项目组" />
 
             <com.feipulai.floatingactionbutton.FloatingActionButton
                 android:id="@+id/float_button_connect"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                fab:fab_colorNormal="@color/hostStyle"
+                fab:fab_colorNormal="@color/LightSeaGreen"
                 fab:fab_colorPressed="@color/grey"
+                fab:fab_icon="@drawable/feed"
                 fab:fab_title="连接设备" />
+
             <com.feipulai.floatingactionbutton.FloatingActionButton
                 android:id="@+id/float_button_item_set"
                 android:layout_width="wrap_content"

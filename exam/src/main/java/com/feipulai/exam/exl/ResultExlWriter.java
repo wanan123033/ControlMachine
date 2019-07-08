@@ -7,10 +7,12 @@ import com.feipulai.common.dbutils.UsbFileAdapter;
 import com.feipulai.common.exl.ExlListener;
 import com.feipulai.common.exl.ExlWriter;
 import com.feipulai.common.utils.DateUtil;
+import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.Item;
 import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.utils.ResultDisplayUtils;
@@ -84,10 +86,22 @@ public class ResultExlWriter extends ExlWriter {
         // 这里以报名信息开始,因为报名信息是每个报名信息 学生 机器码 项目代码 的组合是唯一的
 //        List<StudentItem> studentItems = DBManager.getInstance()
 //                .querystuItemsByMachineItemCode(TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.getCurrentItemCode());
-        List<Student> studentList = DBManager.getInstance().getItemStudent(TestConfigs.getCurrentItemCode(), -1, 0);
-        rowIndex = 1;
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+            List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
+            for (Item item : itemList) {
+                List<Student> studentList = DBManager.getInstance().getItemStudent
+                        (item.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : item.getItemCode(), -1, 0);
+                rowIndex = 1;
 
-        generateRows(studentList, sheet);
+                generateRows(item.getItemName(), studentList, sheet);
+            }
+        } else {
+            List<Student> studentList = DBManager.getInstance().getItemStudent(TestConfigs.getCurrentItemCode(), -1, 0);
+            rowIndex = 1;
+
+            generateRows(TestConfigs.sCurrentItem.getItemName(), studentList, sheet);
+        }
+
 
 //        // 身高体重,还需要生成体重成绩
 //        if (TestConfigs.HEIGHT_ITEM_CODE.equals(TestConfigs.sCurrentItem.getItemCode())) {
@@ -124,8 +138,8 @@ public class ResultExlWriter extends ExlWriter {
 
     }
 
-    private void generateRows(List<Student> studentList, HSSFSheet sheet) {
-        String itemName = TestConfigs.sCurrentItem.getItemName();
+    private void generateRows(String itemName, List<Student> studentList, HSSFSheet sheet) {
+
         List<Map<String, Object>> resultsList = DBManager.getInstance().getResultsByStu(studentList);
         int number = 1;
         for (int i = 0; i < resultsList.size(); i++) {

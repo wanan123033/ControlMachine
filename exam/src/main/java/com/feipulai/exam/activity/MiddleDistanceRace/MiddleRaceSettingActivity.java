@@ -12,8 +12,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
-import com.feipulai.device.tcp.NettyClient;
-import com.feipulai.device.tcp.NettyListener;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 
@@ -23,7 +21,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MiddleRaceSettingActivity extends BaseTitleActivity{
+public class MiddleRaceSettingActivity extends BaseTitleActivity {
 
     @BindView(R.id.vp_middle_race_setting)
     ViewPager vpMiddleRaceSetting;
@@ -47,15 +45,36 @@ public class MiddleRaceSettingActivity extends BaseTitleActivity{
         initListener();
     }
 
+    public boolean isChange = false;
+
+    public boolean isChange() {
+        return isChange;
+    }
+
+    public void setChange(boolean change) {
+        isChange = change;
+    }
+
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
         return builder.setTitle("设置").addLeftText("返回", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.putExtra("isChange", isChange);
+                setResult(2, intent);
                 finish();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        intent.putExtra("isChange", isChange);
+        setResult(2, intent);
+        finish();
     }
 
     @Override
@@ -73,7 +92,6 @@ public class MiddleRaceSettingActivity extends BaseTitleActivity{
                     //加载滑动
                     vpMiddleRaceSetting.setCurrentItem(i);
                 }
-
             }
         });
         //ViewPager的点击事件 vp-rg互相监听：vp

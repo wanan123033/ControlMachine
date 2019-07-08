@@ -42,6 +42,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.feipulai.exam.activity.MiddleDistanceRace.TimingBean.GROUP_FINISH;
+
 /**
  * 作者 王伟
  * 公司 深圳菲普莱体育
@@ -822,7 +824,7 @@ public class DBManager {
         itemDao.insert(item);
     }
 
-    private void insertItem(int machineCode, String itemCode, String itemName, String unit) {
+    public void insertItem(int machineCode, String itemCode, String itemName, String unit) {
         Item item = new Item();
         item.setMachineCode(machineCode);
         item.setItemCode(itemCode);
@@ -1154,6 +1156,10 @@ public class DBManager {
         roundResultDao.insert(roundResult);
     }
 
+    public void insertRoundResults(List<RoundResult> roundResults) {
+        roundResultDao.insertInTx(roundResults);
+    }
+
     /**
      * 查询对应考生当前项目最好成绩(个人)
      *
@@ -1358,6 +1364,7 @@ public class DBManager {
                 .where(RoundResultDao.Properties.TestNo.eq(testNo))
                 .unique();
     }
+
 
     /**
      * 获取学生最好的成绩
@@ -1833,12 +1840,22 @@ public class DBManager {
                 .list();
     }
 
-    public List<Group> getGroupByScheduleNoAndItem(String scheduleNo, String itemCode) {
-        return groupDao.queryBuilder()
-                .where(GroupDao.Properties.ScheduleNo.eq(scheduleNo))
-                .where(GroupDao.Properties.ItemCode.eq(itemCode))
-                .orderAsc(GroupDao.Properties.GroupNo)
-                .list();
+    public List<Group> getGroupByScheduleNoAndItem(String scheduleNo, String itemCode, int position) {
+        if (position == 0) {
+            return groupDao.queryBuilder()
+                    .where(GroupDao.Properties.ScheduleNo.eq(scheduleNo))
+                    .where(GroupDao.Properties.ItemCode.eq(itemCode))
+                    .where(GroupDao.Properties.IsTestComplete.notEq(GROUP_FINISH))
+                    .orderAsc(GroupDao.Properties.GroupNo)
+                    .list();
+        } else {
+            return groupDao.queryBuilder()
+                    .where(GroupDao.Properties.ScheduleNo.eq(scheduleNo))
+                    .where(GroupDao.Properties.ItemCode.eq(itemCode))
+                    .where(GroupDao.Properties.IsTestComplete.eq(GROUP_FINISH))
+                    .orderAsc(GroupDao.Properties.GroupNo)
+                    .list();
+        }
     }
 
 
@@ -1884,7 +1901,7 @@ public class DBManager {
                         sqlBuf.append(GroupDao.Properties.Remark3.columnName + " ) ");
                         sqlBuf.append(" VALUES (?,?,?,?,?,?,?,?,?,?)");
                         daoSession.getDatabase().execSQL(sqlBuf.toString(), new String[]{group.getGroupType() + "", group.getSortName(), group.getGroupNo() + "",
-                                group.getScheduleNo() + "", group.getExamType() + "", group.getIsTestComplete() + "", group.getItemCode(), group.getRemark1(), group.getRemark2(), group.getRemark3()});
+                                group.getScheduleNo() + "", group.getExamType() + "", group.getIsTestComplete() + "", group.getItemCode(), group.getColorGroupName(), group.getColorId(), group.getRemark3()});
                     } catch (Exception e) {
                         e.printStackTrace();
                         Logger.e("insertGroupList", "execSQL");
@@ -1920,6 +1937,10 @@ public class DBManager {
 
     public List<Group> loadAllGroup() {
         return groupDao.loadAll();
+    }
+
+    public List<Group> queryGroupIsFinish() {
+        return groupDao.queryBuilder().where(GroupDao.Properties.IsTestComplete.notEq(GROUP_FINISH)).list();
     }
 
     /**
@@ -1978,8 +1999,20 @@ public class DBManager {
                 .where(MachineResultDao.Properties.RoundNo.eq(roundNo)).list();
     }
 
+    public List<MachineResult> getItemGroupFRoundMachineResult(String stuCode, long groupId, int roundNo) {
+        return machineResultDao.queryBuilder().where(MachineResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(MachineResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(MachineResultDao.Properties.StudentCode.eq(stuCode))
+                .where(MachineResultDao.Properties.GroupId.eq(groupId))
+                .where(MachineResultDao.Properties.RoundNo.eq(roundNo)).list();
+    }
+
     public void insterMachineResult(MachineResult machineResult) {
         machineResultDao.insert(machineResult);
+    }
+
+    public void insterMachineResults(List<MachineResult> machineResults) {
+        machineResultDao.insertInTx(machineResults);
     }
     /********************************************多表操作**********************************************************************/
 

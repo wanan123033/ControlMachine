@@ -197,7 +197,7 @@
                 <LinearLayout
                     android:id="@+id/view_list_head"
                     android:layout_width="620dp"
-                    android:layout_height="30dp"
+                    android:layout_height="35dp"
                     android:background="@color/grey_A8"
                     android:orientation="horizontal">
 
@@ -205,33 +205,38 @@
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="轮次" />
+                        android:text="轮次"
+                        android:textSize="@dimen/sp_16" />
 
                     <TextView
                         android:layout_width="200dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="机器成绩" />
+                        android:text="机器成绩"
+                        android:textSize="@dimen/sp_16" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="实际成绩" />
+                        android:text="实际成绩"
+                        android:textSize="@dimen/sp_16" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="违例数" />
+                        android:text="违例数"
+                        android:textSize="@dimen/sp_16" />
 
                     <TextView
                         android:layout_width="100dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="状态" />
+                        android:text="状态"
+                        android:textSize="@dimen/sp_16" />
                 </LinearLayout>
 
                 <android.support.v7.widget.RecyclerView

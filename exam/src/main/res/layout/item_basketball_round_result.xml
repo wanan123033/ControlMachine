@@ -2,13 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/view_content"
     android:layout_width="match_parent"
-    android:layout_height="40dp"
+    android:layout_height="42dp"
     android:background="@color/grey_F7">
 
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="42dp"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -16,9 +16,10 @@
         <TextView
             android:id="@+id/item_txt_round"
             android:layout_width="70dp"
-            android:layout_height="40dp"
+            android:layout_height="42dp"
             android:gravity="center"
-            android:text="轮次" />
+            android:text="轮次"
+            android:textSize="@dimen/sp_16" />
 
         <com.feipulai.exam.view.MySpinner
             android:id="@+id/item_sp_round_result"
@@ -33,7 +34,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="实际成绩" />
+            android:text="实际成绩"
+            android:textSize="@dimen/sp_16" />
 
         <TextView
             android:id="@+id/item_txt_penalize_num"
@@ -41,14 +43,16 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="违例数" />
+            android:text="违例数"
+            android:textSize="@dimen/sp_16" />
 
         <TextView
             android:id="@+id/item_txt_result_status"
             android:layout_width="100dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="状态" />
+            android:text="状态"
+            android:textSize="@dimen/sp_16" />
     </LinearLayout>
 
     <View

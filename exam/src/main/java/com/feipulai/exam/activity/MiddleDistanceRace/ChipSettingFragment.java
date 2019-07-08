@@ -79,6 +79,7 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
     private int chipNo;
     private String machine_ip;
     private String machine_port;
+    private boolean isFlag;
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag_chip_setting, container, false);
@@ -86,8 +87,12 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
         mContext = getActivity();
         machine_ip = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MACHINE_IP, "");
         machine_port = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MACHINE_PORT, "0");
+
+        isFlag = getActivity().getIntent().getBooleanExtra("isFlag", false);
         initEvent();
-        initSocket();
+        if (isFlag) {
+            initSocket();
+        }
         return view;
     }
 
@@ -282,6 +287,10 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (!isFlag) {
+            ToastUtils.showShort("请先连接设备");
+            return;
+        }
         isSelect = isChecked;
         if (isChecked) {
             nettyClient.sendMsgToServer(TcpConfig.getCmdStartTiming(), null);

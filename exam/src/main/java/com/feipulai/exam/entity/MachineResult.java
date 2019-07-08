@@ -30,10 +30,12 @@ public class MachineResult implements Serializable {
     @NotNull
     private int machineCode;//机器代码   一个机器码可能对应多个项目代码,所以机器码不能为唯一字段  每种机器的机器码参考{@link ItemDefault}
     @NotNull
-    private int result;////成绩      单位为"毫米(mm)"、"毫秒(ms)"、"克(g)"、"次","毫升"
-    @Generated(hash = 1794894491)
+    private int result;////成绩      单位为"毫米(mm)"、"毫秒(ms)"、"克(g)"、"次","毫升"（中长跑最终成绩）
+    private long groupId;
+
+    @Generated(hash = 2124802525)
     public MachineResult(Long id, @NotNull String studentCode, int roundNo, int testNo,
-            @NotNull String itemCode, int machineCode, int result) {
+            @NotNull String itemCode, int machineCode, int result, long groupId) {
         this.id = id;
         this.studentCode = studentCode;
         this.roundNo = roundNo;
@@ -41,6 +43,7 @@ public class MachineResult implements Serializable {
         this.itemCode = itemCode;
         this.machineCode = machineCode;
         this.result = result;
+        this.groupId = groupId;
     }
     @Generated(hash = 1551746015)
     public MachineResult() {
@@ -88,4 +91,11 @@ public class MachineResult implements Serializable {
         this.result = result;
     }
 
+    public long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(long groupId) {
+        this.groupId = groupId;
+    }
 }

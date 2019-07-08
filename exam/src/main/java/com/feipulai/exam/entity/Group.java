@@ -42,30 +42,12 @@ public class Group {
     @NotNull
     private String itemCode;//项目代码
 
-    private String remark1;//备注1字段---颜色组名
-    private String remark2;//备注2字段---颜色
+    private String colorGroupName;//中长跑专用---颜色组名
+    private String colorId;//中长跑专用---颜色
+    private String remark1;
+    private String remark2;
     private String remark3;
 
-
-    @Generated(hash = 681271684)
-    public Group(Long id, int groupType, @NotNull String sortName, int groupNo, @NotNull String scheduleNo, int examType,
-                 int isTestComplete, @NotNull String itemCode, String remark1, String remark2, String remark3) {
-        this.id = id;
-        this.groupType = groupType;
-        this.sortName = sortName;
-        this.groupNo = groupNo;
-        this.scheduleNo = scheduleNo;
-        this.examType = examType;
-        this.isTestComplete = isTestComplete;
-        this.itemCode = itemCode;
-        this.remark1 = remark1;
-        this.remark2 = remark2;
-        this.remark3 = remark3;
-    }
-
-    @Generated(hash = 117982048)
-    public Group() {
-    }
 
     public Group(int groupType, String sortName, int groupNo, String scheduleNo, String itemCode, int examType, int isTestComplete) {
         this.groupType = groupType;
@@ -77,109 +59,160 @@ public class Group {
         this.itemCode = itemCode;
     }
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-
-    public int getGroupType() {
-        return groupType;
-    }
-
-    public void setGroupType(int groupType) {
-        this.groupType = groupType;
-    }
-
-    public String getSortName() {
-        return sortName;
-    }
-
-    public void setSortName(String sortName) {
-        this.sortName = sortName;
-    }
-
-    public int getGroupNo() {
-        return groupNo;
-    }
-
-    public void setGroupNo(int groupNo) {
-        this.groupNo = groupNo;
-    }
+@Generated(hash = 849544309)
+public Group(Long id, int groupType, @NotNull String sortName, int groupNo, @NotNull String scheduleNo, int examType,
+        int isTestComplete, @NotNull String itemCode, String colorGroupName, String colorId, String remark1, String remark2,
+        String remark3) {
+    this.id = id;
+    this.groupType = groupType;
+    this.sortName = sortName;
+    this.groupNo = groupNo;
+    this.scheduleNo = scheduleNo;
+    this.examType = examType;
+    this.isTestComplete = isTestComplete;
+    this.itemCode = itemCode;
+    this.colorGroupName = colorGroupName;
+    this.colorId = colorId;
+    this.remark1 = remark1;
+    this.remark2 = remark2;
+    this.remark3 = remark3;
+}
 
 
-    public String getRemark1() {
-        return remark1;
-    }
+@Generated(hash = 117982048)
+public Group() {
+}
 
-    public void setRemark1(String remark1) {
-        this.remark1 = remark1;
-    }
 
-    public String getRemark2() {
-        return remark2;
-    }
+public Long getId() {
+    return this.id;
+}
 
-    public void setRemark2(String remark2) {
-        this.remark2 = remark2;
-    }
 
-    public String getRemark3() {
-        return remark3;
-    }
+public void setId(Long id) {
+    this.id = id;
+}
 
-    public void setRemark3(String remark3) {
-        this.remark3 = remark3;
-    }
 
-    public int getIsTestComplete() {
-        return this.isTestComplete;
-    }
+public int getGroupType() {
+    return this.groupType;
+}
 
-    public void setIsTestComplete(int isTestComplete) {
-        this.isTestComplete = isTestComplete;
-    }
 
-    public String getScheduleNo() {
-        return scheduleNo;
-    }
+public void setGroupType(int groupType) {
+    this.groupType = groupType;
+}
 
-    public void setScheduleNo(String scheduleNo) {
-        this.scheduleNo = scheduleNo;
-    }
 
-    public int getExamType() {
-        return examType;
-    }
+public String getSortName() {
+    return this.sortName;
+}
 
-    public void setExamType(int examType) {
-        this.examType = examType;
-    }
 
-    @Override
-    public String toString() {
-        return "Group{" +
-                "id=" + id +
-                ", groupType=" + groupType +
-                ", sortName='" + sortName + '\'' +
-                ", groupNo=" + groupNo +
-                ", scheduleNo='" + scheduleNo + '\'' +
-                ", examType=" + examType +
-                ", isTestComplete=" + isTestComplete +
-                ", remark1='" + remark1 + '\'' +
-                ", remark2='" + remark2 + '\'' +
-                ", remark3='" + remark3 + '\'' +
-                '}';
-    }
+public void setSortName(String sortName) {
+    this.sortName = sortName;
+}
 
-    public String getItemCode() {
-        return this.itemCode;
-    }
 
-    public void setItemCode(String itemCode) {
-        this.itemCode = itemCode;
-    }
+public int getGroupNo() {
+    return this.groupNo;
+}
+
+
+public void setGroupNo(int groupNo) {
+    this.groupNo = groupNo;
+}
+
+
+public String getScheduleNo() {
+    return this.scheduleNo;
+}
+
+
+public void setScheduleNo(String scheduleNo) {
+    this.scheduleNo = scheduleNo;
+}
+
+
+public int getExamType() {
+    return this.examType;
+}
+
+
+public void setExamType(int examType) {
+    this.examType = examType;
+}
+
+
+public int getIsTestComplete() {
+    return this.isTestComplete;
+}
+
+
+public void setIsTestComplete(int isTestComplete) {
+    this.isTestComplete = isTestComplete;
+}
+
+
+public String getItemCode() {
+    return this.itemCode;
+}
+
+
+public void setItemCode(String itemCode) {
+    this.itemCode = itemCode;
+}
+
+
+public String getColorGroupName() {
+    return this.colorGroupName;
+}
+
+
+public void setColorGroupName(String colorGroupName) {
+    this.colorGroupName = colorGroupName;
+}
+
+
+public String getColorId() {
+    return this.colorId;
+}
+
+
+public void setColorId(String colorId) {
+    this.colorId = colorId;
+}
+
+
+public String getRemark1() {
+    return this.remark1;
+}
+
+
+public void setRemark1(String remark1) {
+    this.remark1 = remark1;
+}
+
+
+public String getRemark2() {
+    return this.remark2;
+}
+
+
+public void setRemark2(String remark2) {
+    this.remark2 = remark2;
+}
+
+
+public String getRemark3() {
+    return this.remark3;
+}
+
+
+public void setRemark3(String remark3) {
+    this.remark3 = remark3;
+}
+
+
 }
