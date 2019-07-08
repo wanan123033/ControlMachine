@@ -824,7 +824,7 @@ public class DBManager {
         itemDao.insert(item);
     }
 
-    private void insertItem(int machineCode, String itemCode, String itemName, String unit) {
+    public void insertItem(int machineCode, String itemCode, String itemName, String unit) {
         Item item = new Item();
         item.setMachineCode(machineCode);
         item.setItemCode(itemCode);
@@ -1373,6 +1373,7 @@ public class DBManager {
                 .unique();
     }
 
+
     /**
      * 获取学生最好的成绩
      *
@@ -1418,7 +1419,7 @@ public class DBManager {
      *
      * @return
      */
-    public List<UploadResults> getUploadResultsAll() {
+    public List<UploadResults> getUploadResultsAll(String itemCode) {
 
         //查成绩表去重学生号  条件当前项目未上传成绩
         //获取根据考生号 获取考生当前项目未上传生所有成绩
@@ -1430,7 +1431,7 @@ public class DBManager {
         sqlBuf1.append(" WHERE " + RoundResultDao.Properties.UpdateState.columnName + " = ? AND ");
         sqlBuf1.append(RoundResultDao.Properties.ItemCode.columnName + " =  ?  AND ");
         sqlBuf1.append(RoundResultDao.Properties.MachineCode.columnName + " = ? ");
-        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf1.toString(), new String[]{"0", TestConfigs.getCurrentItemCode(), TestConfigs.sCurrentItem.getMachineCode() + ""});
+        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf1.toString(), new String[]{"0", itemCode, TestConfigs.sCurrentItem.getMachineCode() + ""});
         while (c.moveToNext()) {
             stuCodeList.add(c.getString(0));
         }
@@ -1440,7 +1441,7 @@ public class DBManager {
             //获取学生未上传成绩
             List<RoundResult> stuResult = roundResultDao.queryBuilder().where(RoundResultDao.Properties.StudentCode.eq(stuCode))
                     .where(RoundResultDao.Properties.UpdateState.eq(0))
-                    .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                    .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
                     .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                     .list();
             Map<Long, List<RoundResult>> groupResult = new HashMap<>();
@@ -1492,7 +1493,7 @@ public class DBManager {
 
                         UploadResults uploadResults = new UploadResults(
                                 TextUtils.equals(testEntity.getValue().get(0).getScheduleNo(), "-1") ? "" : testEntity.getValue().get(0).getScheduleNo(),
-                                TestConfigs.getCurrentItemCode(), testEntity.getValue().get(0).getStudentCode(), testEntity.getKey() + "",
+                                itemCode, testEntity.getValue().get(0).getStudentCode(), testEntity.getKey() + "",
                                 null, RoundResultBean.beanCope(entity.getValue()));
                         uploadResultsList.add(uploadResults);
                     }
@@ -1505,7 +1506,7 @@ public class DBManager {
                 if (group != null) {
                     List<RoundResult> saveResult = entity.getValue();
                     UploadResults uploadResults = new UploadResults(group.getScheduleNo(),
-                            TestConfigs.getCurrentItemCode(), saveResult.get(0).getStudentCode(), "1",
+                            itemCode, saveResult.get(0).getStudentCode(), "1",
                             group.getGroupNo() + "", RoundResultBean.beanCope(saveResult));
                     uploadResultsList.add(uploadResults);
                 }
@@ -1520,7 +1521,7 @@ public class DBManager {
      *
      * @return
      */
-    public List<UploadResults> getUploadResultsByStuCode(List<String> stuCodeList) {
+    public List<UploadResults> getUploadResultsByStuCode(String itemCode, List<String> stuCodeList) {
 
         //查成绩表去重学生号  条件当前项目未上传成绩
         //获取根据考生号 获取考生当前项目未上传生所有成绩
@@ -1533,7 +1534,7 @@ public class DBManager {
             //获取学生未上传成绩
             List<RoundResult> stuResult = roundResultDao.queryBuilder().where(RoundResultDao.Properties.StudentCode.eq(stuCode))
 //                    .where(RoundResultDao.Properties.UpdateState.eq(0))
-                    .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                    .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
                     .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                     .list();
             Map<Long, List<RoundResult>> groupResult = new HashMap<>();
@@ -1585,7 +1586,7 @@ public class DBManager {
 
                         UploadResults uploadResults = new UploadResults(
                                 TextUtils.equals(testEntity.getValue().get(0).getScheduleNo(), "-1") ? "" : testEntity.getValue().get(0).getScheduleNo(),
-                                TestConfigs.getCurrentItemCode(), testEntity.getValue().get(0).getStudentCode(), testEntity.getKey() + "",
+                                itemCode, testEntity.getValue().get(0).getStudentCode(), testEntity.getKey() + "",
                                 "", RoundResultBean.beanCope(entity.getValue()));
                         uploadResultsList.add(uploadResults);
                     }
@@ -1599,7 +1600,7 @@ public class DBManager {
                     List<RoundResult> saveResult = entity.getValue();
 
                     UploadResults uploadResults = new UploadResults(group.getScheduleNo(),
-                            TestConfigs.getCurrentItemCode(), saveResult.get(0).getStudentCode(), "1",
+                            itemCode, saveResult.get(0).getStudentCode(), "1",
                             group.getGroupNo() + "", RoundResultBean.beanCope(saveResult));
                     uploadResultsList.add(uploadResults);
                 }
@@ -2003,6 +2004,14 @@ public class DBManager {
                 .where(MachineResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(MachineResultDao.Properties.StudentCode.eq(stuCode))
                 .where(MachineResultDao.Properties.TestNo.eq(testNo))
+                .where(MachineResultDao.Properties.RoundNo.eq(roundNo)).list();
+    }
+
+    public List<MachineResult> getItemGroupFRoundMachineResult(String stuCode, long groupId, int roundNo) {
+        return machineResultDao.queryBuilder().where(MachineResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(MachineResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(MachineResultDao.Properties.StudentCode.eq(stuCode))
+                .where(MachineResultDao.Properties.GroupId.eq(groupId))
                 .where(MachineResultDao.Properties.RoundNo.eq(roundNo)).list();
     }
 

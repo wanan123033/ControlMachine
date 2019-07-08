@@ -281,7 +281,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
                     ToastUtils.showShort("未选中数据上传");
                 } else {
 
-                    ServerMessage.uploadResult(this, DBManager.getInstance().getUploadResultsByStuCode(studentCode));
+                    ServerMessage.uploadResult(this, DBManager.getInstance().getUploadResultsByStuCode(mCurrentItem.getItemCode(), studentCode));
                 }
                 break;
 //            case R.id.btn_print:

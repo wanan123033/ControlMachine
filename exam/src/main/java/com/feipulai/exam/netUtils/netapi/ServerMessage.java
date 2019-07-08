@@ -51,7 +51,7 @@ public class ServerMessage {
                             for (int i = 0; i < itemList.size(); i++) {
                                 if (!TextUtils.isEmpty(itemList.get(i).getItemCode())) {
                                     subscriber.getItemStudent(itemList.get(i).getItemCode());
-                                    position = i+1;
+                                    position = i + 1;
                                     return;
                                 }
                             }
@@ -70,12 +70,32 @@ public class ServerMessage {
                             }
                         }
                         if (ScheduleBean.SITE_EXAMTYPE == 1) {
-                            subscriber.getItemGroupAll();
+                            if (itemList != null) {
+                                for (int i = 0; i < itemList.size(); i++) {
+                                    if (!TextUtils.isEmpty(itemList.get(i).getItemCode())) {
+                                        subscriber.getItemGroupAll(itemList.get(i).getItemCode());
+                                        position = i + 1;
+                                        return;
+                                    }
+                                }
+
+                            } else {
+                                subscriber.getItemGroupAll(TestConfigs.getCurrentItemCode());
+                            }
+
+
                         } else {
                             EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_SUCCEED));
                         }
                         break;
                     case HttpSubscriber.GROUP_BIZ://分组
+                        if (itemList != null) {
+                            if (position < itemList.size()) {
+                                subscriber.getItemGroupAll(itemList.get(position).getItemCode());
+                                position++;
+                                return;
+                            }
+                        }
                         EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_SUCCEED));
                         break;
                 }
