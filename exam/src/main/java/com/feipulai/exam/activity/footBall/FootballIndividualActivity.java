@@ -244,7 +244,38 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
     }
 
     @Override
-    public void triggerStart(BasketballResult basketballResult) {
+    public void triggerStart(BasketballResult result) {
+        Log.i(TAG,"triggerStart:"+result.toString());
+//        switch (useMode){
+//            case 0://单拦截
+//                doTriggerStart();
+//                break;
+//            case 1://"2:起点1:终点"
+//            case 4://2:起终点1:折返点
+//                if (result.gettNum() == 1){ //起点触发
+//                    doTriggerStart();
+//                }else {
+//                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
+//                }
+//
+//                break;
+//            case 2://2:终点1:起点
+//            case 3://2:折返点1:起终点
+//                if (result.gettNum() == 2){ //起点触发
+//                    doTriggerStart();
+//                }else {
+//                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
+//                }
+//                break;
+//
+//        }
+        doTriggerStart();
+    }
+
+    /**
+     * 开始
+     */
+    private void doTriggerStart() {
         state = TESTING;
         txtDeviceStatus.setText("计时");
         testDate = System.currentTimeMillis() + "";
