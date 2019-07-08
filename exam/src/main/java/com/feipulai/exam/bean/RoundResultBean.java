@@ -91,7 +91,7 @@ public class RoundResultBean implements Serializable {
                     , roundResult.getRoundNo(), roundResult.getTestNo(), roundResult.getMachineResult(),
                     roundResult.getPenalty(), roundResult.getResult(), roundResult.getIsFoul()
                     , roundResult.getResultType(), roundResult.getExamState(), roundResult.getTestTime(), roundResult.getPrintTime()
-                    , roundResult.getStumbleCount(), roundResult.getUpdateState(), roundResult.getGroupId(), roundResult.getScheduleNo(),
+                    , roundResult.getStumbleCount(), roundResult.getUpdateState(), null, roundResult.getGroupId(), roundResult.getScheduleNo(),
                     roundResult.getRemark1(), roundResult.getRemark2(), roundResult.getRemark3()));
         }
         return roundResults;

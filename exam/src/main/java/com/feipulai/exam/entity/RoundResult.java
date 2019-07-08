@@ -55,6 +55,7 @@ public class RoundResult implements Serializable {
 	private int stumbleCount;// 绊绳次数
     @NotNull
     private int updateState;//上传状态 0未上传 1上传
+    private byte[] cycleResult;//中长跑每一圈成绩
     private Long groupId = DEAFULT_GROUP_ID;//分组id
     private String scheduleNo;  //日程编号
     private String remark1;
@@ -63,12 +64,12 @@ public class RoundResult implements Serializable {
 
     public final static String BEAN_KEY = "ROUNDRESULT_KEY";
 
-    @Generated(hash = 1362353708)
+    @Generated(hash = 1013509578)
     public RoundResult(Long id, @NotNull String studentCode, @NotNull String itemCode, int machineCode,
             int roundNo, int testNo, int machineResult, int penaltyNum, int result, int resultState,
             int isLastResult, int examType, @NotNull String testTime, String printTime,
-            int stumbleCount, int updateState, Long groupId, String scheduleNo, String remark1,
-            String remark2, String remark3) {
+            int stumbleCount, int updateState, byte[] cycleResult, Long groupId, String scheduleNo,
+            String remark1, String remark2, String remark3) {
         this.id = id;
         this.studentCode = studentCode;
         this.itemCode = itemCode;
@@ -85,6 +86,7 @@ public class RoundResult implements Serializable {
         this.printTime = printTime;
         this.stumbleCount = stumbleCount;
         this.updateState = updateState;
+        this.cycleResult = cycleResult;
         this.groupId = groupId;
         this.scheduleNo = scheduleNo;
         this.remark1 = remark1;
@@ -95,33 +97,6 @@ public class RoundResult implements Serializable {
     @Generated(hash = 1393632943)
     public RoundResult() {
     }
-
-	@Override
-	public String toString(){
-		return "RoundResult{" +
-				"id=" + id +
-				", studentCode='" + studentCode + '\'' +
-				", itemCode='" + itemCode + '\'' +
-				", machineCode=" + machineCode +
-				", roundNo=" + roundNo +
-				", testNo=" + testNo +
-				", machineResult=" + machineResult +
-				", penaltyNum=" + penaltyNum +
-				", result=" + result +
-				", resultState=" + resultState +
-				", isLastResult=" + isLastResult +
-				", examType=" + examType +
-				", testTime='" + testTime + '\'' +
-				", printTime='" + printTime + '\'' +
-				", stumbleCount=" + stumbleCount +
-				", updateState=" + updateState +
-				", groupId=" + groupId +
-				", scheduleNo='" + scheduleNo + '\'' +
-				", remark1='" + remark1 + '\'' +
-				", remark2='" + remark2 + '\'' +
-				", remark3='" + remark3 + '\'' +
-				'}';
-	}
 
     public Long getId() {
         return this.id;
@@ -251,6 +226,14 @@ public class RoundResult implements Serializable {
         this.updateState = updateState;
     }
 
+    public byte[] getCycleResult() {
+        return this.cycleResult;
+    }
+
+    public void setCycleResult(byte[] cycleResult) {
+        this.cycleResult = cycleResult;
+    }
+
     public Long getGroupId() {
         return this.groupId;
     }
@@ -290,4 +273,6 @@ public class RoundResult implements Serializable {
     public void setRemark3(String remark3) {
         this.remark3 = remark3;
     }
+
+
 }

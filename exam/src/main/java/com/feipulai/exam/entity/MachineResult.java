@@ -30,7 +30,7 @@ public class MachineResult implements Serializable {
     @NotNull
     private int machineCode;//机器代码   一个机器码可能对应多个项目代码,所以机器码不能为唯一字段  每种机器的机器码参考{@link ItemDefault}
     @NotNull
-    private int result;////成绩      单位为"毫米(mm)"、"毫秒(ms)"、"克(g)"、"次","毫升"
+    private int result;////成绩      单位为"毫米(mm)"、"毫秒(ms)"、"克(g)"、"次","毫升"  （中长跑最终成绩）
     @Generated(hash = 1794894491)
     public MachineResult(Long id, @NotNull String studentCode, int roundNo, int testNo,
             @NotNull String itemCode, int machineCode, int result) {
@@ -87,5 +87,4 @@ public class MachineResult implements Serializable {
     public void setResult(int result) {
         this.result = result;
     }
-
 }

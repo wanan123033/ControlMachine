@@ -76,6 +76,32 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
     private EditText etGroupNo;
     private Button btnCancel;
     private Button btnSure;
+    private final int[] colorIds = {R.color.swipe_color_1,
+            R.color.blue,
+            R.color.hostStyle,
+            R.color.Crimson,
+            R.color.result_points,
+            R.color.sbc_header_text,
+            R.color.possible_result_points,
+            R.color.Pink,
+            R.color.Blue,
+            R.color.blue_sky,
+            R.color.LightSalmon,
+            R.color.SandyBrown,
+            R.color.Yellow,
+            R.color.Lime,
+            R.color.MediumVioletRed,
+            R.color.Sienna,
+            R.color.viewfinder_laser,
+            R.color.SeaGreen,
+            R.color.MediumTurquoise,
+            R.color.CadetBlue,
+            R.color.RoyalBlue,
+            R.color.BlueViolet,
+            R.color.Magenta,
+            R.color.black_T20,
+            R.color.half_black
+    };
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.frag_other_setting, container, false);
@@ -103,26 +129,12 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
         int height = DisplayUtil.getScreenHightPx(mContext);
         int width = DisplayUtil.getScreenWidthPx(mContext);
         colors = new ArrayList<>();
-
-        ColorSelectBean colorSelectBean = new ColorSelectBean(R.color.swipe_color_1, false);
-        ColorSelectBean colorSelectBean2 = new ColorSelectBean(R.color.blue, false);
-        ColorSelectBean colorSelectBean3 = new ColorSelectBean(R.color.background_color, false);
-        ColorSelectBean colorSelectBean4 = new ColorSelectBean(R.color.colorAccent, false);
-        ColorSelectBean colorSelectBean5 = new ColorSelectBean(R.color.test_first_color, false);
-        ColorSelectBean colorSelectBean6 = new ColorSelectBean(R.color.viewfinder_frame, false);
-        ColorSelectBean colorSelectBean7 = new ColorSelectBean(R.color.viewfinder_laser, false);
-        ColorSelectBean colorSelectBean8 = new ColorSelectBean(R.color.blue_25, false);
-        ColorSelectBean colorSelectBean9 = new ColorSelectBean(R.color.green_yellow, false);
-
-        colors.add(colorSelectBean);
-        colors.add(colorSelectBean2);
-        colors.add(colorSelectBean3);
-        colors.add(colorSelectBean4);
-        colors.add(colorSelectBean5);
-        colors.add(colorSelectBean6);
-        colors.add(colorSelectBean7);
-        colors.add(colorSelectBean8);
-        colors.add(colorSelectBean9);
+        ColorSelectBean colorSelectBean;
+        for (int id : colorIds
+                ) {
+            colorSelectBean = new ColorSelectBean(id, false);
+            colors.add(colorSelectBean);
+        }
         colorAdapter = new GridViewColorAdapter(mContext, colors);
 
         spVestChipNo.setOnItemSelectedListener(this);
@@ -173,6 +185,8 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
                 DialogUtil.showCommonDialog(mContext, "是否清空芯片及颜色组所有信息", new DialogUtil.DialogListener() {
                     @Override
                     public void onPositiveClick() {
+                        ((MiddleRaceSettingActivity) getActivity()).setChange(true);
+
                         DBManager.getInstance().deleteAllChip();
                         colorGroups.clear();
                         colorGroupAdapter.notifyDataSetChanged();
@@ -181,9 +195,9 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
                         List<Group> groups = DBManager.getInstance().loadAllGroup();
                         for (Group group : groups
                                 ) {
-                            if (!TextUtils.isEmpty(group.getRemark1())) {
-                                group.setRemark1("");
-                                group.setRemark2("");
+                            if (!TextUtils.isEmpty(group.getColorGroupName())) {
+                                group.setColorGroupName("");
+                                group.setColorId("");
                                 group.setIsTestComplete(0);
                             }
                         }
@@ -306,6 +320,8 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
         DialogUtil.showCommonDialog(mContext, text, new DialogUtil.DialogListener() {
             @Override
             public void onPositiveClick() {
+                ((MiddleRaceSettingActivity) getActivity()).setChange(true);
+
                 DBManager.getInstance().deleteChipGroup(colorGroups.get(position));
                 Iterator<ChipGroup> it = colorGroups.iterator();
                 while (it.hasNext()) {
@@ -321,9 +337,9 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
                 List<Group> groups = DBManager.getInstance().queryGroupByColorName(groupName);
                 for (Group group : groups
                         ) {
-                    if (!TextUtils.isEmpty(group.getRemark1())) {
-                        group.setRemark1("");
-                        group.setRemark2("");
+                    if (!TextUtils.isEmpty(group.getColorGroupName())) {
+                        group.setColorGroupName("");
+                        group.setColorId("");
                         group.setIsTestComplete(0);
                     }
                 }

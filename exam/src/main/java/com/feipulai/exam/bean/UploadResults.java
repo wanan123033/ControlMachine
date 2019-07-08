@@ -25,6 +25,9 @@ public class UploadResults implements Serializable {
     private List<RoundResultBean> roundResultList;
     public final static String BEAN_KEY = "UploadResults_KEY";
 
+    public UploadResults() {
+    }
+
     public UploadResults(String siteScheduleNo, String itemCode, String studentCode, String testNum, String groupNo, List<RoundResultBean> roundResultList) {
         this.siteScheduleNo = siteScheduleNo;
         this.examItemCode = itemCode;

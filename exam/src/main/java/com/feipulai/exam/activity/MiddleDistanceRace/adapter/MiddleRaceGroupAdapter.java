@@ -2,7 +2,6 @@ package com.feipulai.exam.activity.MiddleDistanceRace.adapter;
 
 import android.annotation.SuppressLint;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,11 +91,11 @@ public class MiddleRaceGroupAdapter extends RecyclerView.Adapter<MiddleRaceGroup
                 break;
             case 3:
                 holder.tvItemRaceState.setText("空闲");
-                holder.tvItemRaceNo.setBackgroundResource(Integer.parseInt(mDatas.get(position).getRemark2()));
+                holder.tvItemRaceNo.setBackgroundResource(Integer.parseInt(mDatas.get(position).getColorId()));
                 break;
             case 4:
                 holder.tvItemRaceState.setText("关联");
-                holder.tvItemRaceNo.setBackgroundResource(Integer.parseInt(mDatas.get(position).getRemark2()));
+                holder.tvItemRaceNo.setBackgroundResource(Integer.parseInt(mDatas.get(position).getColorId()));
                 break;
             case 5:
                 holder.tvItemRaceState.setText("已完成");
