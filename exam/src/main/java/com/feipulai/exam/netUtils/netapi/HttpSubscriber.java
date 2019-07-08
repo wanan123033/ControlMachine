@@ -362,9 +362,9 @@ public class HttpSubscriber {
     /**
      * 获取分组信息
      */
-    public void getItemGroupAll() {
+    public void getItemGroupAll(final String itemCode) {
         Map<String, Object> parameData = new HashMap<>();
-        parameData.put("examItemCode", TestConfigs.getCurrentItemCode());
+        parameData.put("examItemCode", itemCode);
         Observable<HttpResult<List<GroupBean>>> observable = HttpManager.getInstance().getHttpApi().getGroupAll("bearer " + MyApplication.TOKEN,
                 CommonUtils.encryptQuery(GROUP_BIZ + "", parameData));
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<List<GroupBean>>(new OnResultListener<List<GroupBean>>() {
@@ -379,13 +379,13 @@ public class HttpSubscriber {
                 for (GroupBean groupBean : result) {
                     //int groupType, String sortName, int groupNo, String scheduleNo,String itemCode, int examType, int isTestComplete
                     Group group = new Group(groupBean.getGroupType(), groupBean.getSortName(), groupBean.getGroupNo()
-                            , groupBean.getScheduleNo(), TestConfigs.getCurrentItemCode(), groupBean.getExamType(), 0);
+                            , groupBean.getScheduleNo(), itemCode, groupBean.getExamType(), 0);
                     groupList.add(group);
 
                     if (groupBean.getStudentCodeList() != null) {
                         for (StudentBean student : groupBean.getStudentCodeList()) {
                             //String itemCode, int groupType, String sortName, int groupNo, String scheduleNo, String studentCode, int trackNo, int identityMark
-                            GroupItem groupItem = new GroupItem(TestConfigs.getCurrentItemCode(), groupBean.getGroupType(), groupBean.getSortName(), groupBean.getGroupNo()
+                            GroupItem groupItem = new GroupItem(itemCode, groupBean.getGroupType(), groupBean.getSortName(), groupBean.getGroupNo()
                                     , groupBean.getScheduleNo(), student.getStudentCode(), student.getTrackNo(), 0);
                             groupItemList.add(groupItem);
                         }
@@ -413,7 +413,7 @@ public class HttpSubscriber {
     /**
      * 获取分组信息
      */
-    public void getItemGroupInFo(String itemCode, String scheduleNo, String sortName, String groupNo, String groupType) {
+    public void getItemGroupInFo(final String itemCode, String scheduleNo, String sortName, String groupNo, String groupType) {
         Map<String, Object> parameData = new HashMap<>();
         parameData.put("examItemCode", itemCode);
         parameData.put("scheduleNo", scheduleNo);
@@ -433,7 +433,7 @@ public class HttpSubscriber {
                     if (groupBean.getStudentCodeList() != null) {
                         for (StudentBean student : groupBean.getStudentCodeList()) {
                             //String itemCode, int groupType, String sortName, int groupNo, String scheduleNo, String studentCode, int trackNo, int identityMark
-                            GroupItem groupItem = new GroupItem(TestConfigs.getCurrentItemCode(), groupBean.getGroupType(), groupBean.getSortName(), groupBean.getGroupNo()
+                            GroupItem groupItem = new GroupItem(itemCode, groupBean.getGroupType(), groupBean.getSortName(), groupBean.getGroupNo()
                                     , groupBean.getScheduleNo(), student.getStudentCode(), student.getTrackNo(), 0);
                             groupItemList.add(groupItem);
                         }

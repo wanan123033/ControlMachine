@@ -23,6 +23,7 @@ import com.feipulai.common.exl.ExlListener;
 import com.feipulai.common.utils.FileUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LoginActivity;
@@ -30,11 +31,13 @@ import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.adapter.IndexTypeAdapter;
 import com.feipulai.exam.bean.TypeListBean;
+import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.Item;
 import com.feipulai.exam.exl.GroupStuItemExLReader;
 import com.feipulai.exam.exl.ResultExlWriter;
 import com.feipulai.exam.exl.StuItemExLReader;
@@ -223,7 +226,20 @@ public class DataManageActivity
                         break;
 
                     case 10://成绩上传
-                        ServerMessage.uploadResult(DataManageActivity.this, DBManager.getInstance().getUploadResultsAll());
+                        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+                            List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
+                            List<UploadResults> uploadResultsList = new ArrayList<>();
+                            for (Item item : itemList) {
+                                List<UploadResults> dbResultsList = DBManager.getInstance().getUploadResultsAll(item.getItemCode());
+                                if (dbResultsList != null && dbResultsList.size() > 0)
+                                    uploadResultsList.addAll(dbResultsList);
+                            }
+                            ServerMessage.uploadResult(DataManageActivity.this, uploadResultsList);
+
+                        } else {
+                            ServerMessage.uploadResult(DataManageActivity.this, DBManager.getInstance().getUploadResultsAll(TestConfigs.getCurrentItemCode()));
+                        }
+
                         break;
 
                     case 11://数据导出
