@@ -822,7 +822,7 @@ public class DBManager {
         itemDao.insert(item);
     }
 
-    private void insertItem(int machineCode, String itemCode, String itemName, String unit) {
+    public void insertItem(int machineCode, String itemCode, String itemName, String unit) {
         Item item = new Item();
         item.setMachineCode(machineCode);
         item.setItemCode(itemCode);
@@ -1358,6 +1358,7 @@ public class DBManager {
                 .where(RoundResultDao.Properties.TestNo.eq(testNo))
                 .unique();
     }
+
 
     /**
      * 获取学生最好的成绩
@@ -1975,6 +1976,14 @@ public class DBManager {
                 .where(MachineResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(MachineResultDao.Properties.StudentCode.eq(stuCode))
                 .where(MachineResultDao.Properties.TestNo.eq(testNo))
+                .where(MachineResultDao.Properties.RoundNo.eq(roundNo)).list();
+    }
+
+    public List<MachineResult> getItemGroupFRoundMachineResult(String stuCode, long groupId, int roundNo) {
+        return machineResultDao.queryBuilder().where(MachineResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(MachineResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(MachineResultDao.Properties.StudentCode.eq(stuCode))
+                .where(MachineResultDao.Properties.GroupId.eq(groupId))
                 .where(MachineResultDao.Properties.RoundNo.eq(roundNo)).list();
     }
 
