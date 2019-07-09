@@ -624,6 +624,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             }
 
         }
+        showLedConfirmedResult();
         if (updateResult.size() > 0) {
             DBManager.getInstance().updateRoundResult(updateResult);
         }
@@ -650,6 +651,25 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         }
         uploadResults();
         nextTest();
+    }
+
+    private void showLedConfirmedResult() {
+        BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
+        switch (testResult.getResultState()) {
+            case RoundResult.RESULT_STATE_NORMAL:
+                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2, UdpLEDUtil.getLedByte(ResultDisplayUtils.getStrResultForDisplay(testResult.getResult()), testResult.getPenalizeNum() + "", Paint.Align.CENTER)));
+                break;
+            case RoundResult.RESULT_STATE_FOUL:
+                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2, UdpLEDUtil.getLedByte("犯规", testResult.getPenalizeNum() + "", Paint.Align.CENTER)));
+                break;
+            case RoundResult.RESULT_STATE_BACK:
+                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2, UdpLEDUtil.getLedByte("中退", testResult.getPenalizeNum() + "", Paint.Align.CENTER)));
+                break;
+            case RoundResult.RESULT_STATE_WAIVE:
+                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2, UdpLEDUtil.getLedByte("弃权", testResult.getPenalizeNum() + "", Paint.Align.CENTER)));
+                break;
+
+        }
     }
 
     /**

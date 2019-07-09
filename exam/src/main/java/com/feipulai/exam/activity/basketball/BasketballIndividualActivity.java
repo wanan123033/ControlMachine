@@ -127,9 +127,10 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         resultAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                if (!isConfigurableNow()) {
+                if (!isConfigurableNow() || state == WAIT_STOP) {
                     resultAdapter.setSelectPosition(position);
                     resultAdapter.notifyDataSetChanged();
+
                 }
             }
         });
@@ -161,6 +162,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
     @Override
     public void onIndividualCheckIn(Student student, StudentItem studentItem, List<RoundResult> results) {
         if (state == WAIT_FREE || state == WAIT_CHECK_IN) {
+
             pairs.get(0).setStudent(student);
 
             for (RoundResult result : results) {
@@ -205,6 +207,8 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
 
             prepareForBegin();
             UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(1, UdpLEDUtil.getLedByte(student.getStudentName(), Paint.Align.CENTER)));
+            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2, UdpLEDUtil.getLedByte("", Paint.Align.CENTER)));
+
         } else {
             toastSpeak("当前考生还未完成测试,拒绝检录");
         }
@@ -274,7 +278,6 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         List<MachineResult> machineResultList = DBManager.getInstance().getItemRoundMachineResult(student.getStudentCode()
                 , testNo,
                 roundNo);
-
         MachineResult machineResult = new MachineResult();
         machineResult.setItemCode(TestConfigs.getCurrentItemCode());
         machineResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
@@ -346,7 +349,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             setOperationUI();
             tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()));
             UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
-                    UdpLEDUtil.getLedByte(ResultDisplayUtils.getStrResultForDisplay(result.getResult()), Paint.Align.RIGHT)));
+                    UdpLEDUtil.getLedByte(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()), Paint.Align.RIGHT)));
         }
 
 
@@ -677,6 +680,8 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             }
 
         }
+        showLedConfirmedResult();
+
         //更新修改成绩
         if (updateResult.size() > 0) {
             DBManager.getInstance().updateRoundResult(updateResult);
@@ -704,6 +709,8 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         uploadResult(pair.getStudent());
 
         showStuInfoResult();
+
+
         // 是否需要进行下一次测试
         if (shouldContinue(result)) {
             prepareForBegin();
@@ -712,6 +719,25 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         }
 
 
+    }
+
+    private void showLedConfirmedResult() {
+        BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
+        switch (testResult.getResultState()) {
+            case RoundResult.RESULT_STATE_NORMAL:
+                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2, UdpLEDUtil.getLedByte(ResultDisplayUtils.getStrResultForDisplay(testResult.getResult()), testResult.getPenalizeNum() + "", Paint.Align.CENTER)));
+                break;
+            case RoundResult.RESULT_STATE_FOUL:
+                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2, UdpLEDUtil.getLedByte("犯规", testResult.getPenalizeNum() + "", Paint.Align.CENTER)));
+                break;
+            case RoundResult.RESULT_STATE_BACK:
+                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2, UdpLEDUtil.getLedByte("中退", testResult.getPenalizeNum() + "", Paint.Align.CENTER)));
+                break;
+            case RoundResult.RESULT_STATE_WAIVE:
+                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2, UdpLEDUtil.getLedByte("弃权", testResult.getPenalizeNum() + "", Paint.Align.CENTER)));
+                break;
+
+        }
     }
 
     /**
