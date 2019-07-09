@@ -101,7 +101,7 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
         nettyClient = new NettyClient(machine_ip, Integer.parseInt(machine_port));
         if (!nettyClient.getConnectStatus()) {
             nettyClient.setListener(this);
-            nettyClient.connect();
+            nettyClient.connect(false);
         }
     }
 

@@ -39,6 +39,7 @@ public class NettyClient {
 
     public String host;//ip
     public int tcp_port;//端口
+    public boolean isFirst;//是否第一次连接
 
     /*
     构造 传入 ip和端口
@@ -51,11 +52,11 @@ public class NettyClient {
     /*
     连接方法
      */
-    public void connect() {
-
+    public synchronized void connect(boolean isFirst) {
         if (isConnecting) {
             return;
         }
+        this.isFirst = isFirst;
         //起个线程
         Thread clientThread = new Thread("client-Netty") {
             @Override
@@ -99,6 +100,7 @@ public class NettyClient {
                         public void operationComplete(ChannelFuture channelFuture) throws Exception {
                             if (channelFuture.isSuccess()) {
                                 Log.e(TAG, "连接成功");
+                                isFirst = false;
                                 isConnect = true;
                                 channel = channelFuture.channel();
                             } else {
@@ -123,7 +125,8 @@ public class NettyClient {
                         }
                     }
                     group.shutdownGracefully();
-                    reconnect();//重新连接
+                    if (!isFirst)
+                        reconnect();//重新连接
                 }
             }
         }

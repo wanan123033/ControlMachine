@@ -40,7 +40,6 @@ public class RoundResultBean implements Serializable {
     private String remark2;
     private String remark3;
 
-
     public RoundResultBean(Long id, String studentCode, String itemCode, int machineCode, int roundNo,
                            int testNo, int machineResult, int penalty, int result, int isFoul, int resultType,
                            int examState, String testTime, String printTime, int stumbleCount, int updateState, Long groupId,
@@ -81,6 +80,20 @@ public class RoundResultBean implements Serializable {
                     , roundResult.getStumbleCount(), roundResult.getUpdateState(), roundResult.getGroupId(), roundResult.getScheduleNo(),
                     roundResult.getRemark1(), roundResult.getRemark2(), roundResult.getRemark3()));
         }
+        return roundResultBeans;
+    }
+
+    public static List<RoundResultBean> beanCope2(RoundResult roundResult) {
+        if (roundResult == null) {
+            return null;
+        }
+        List<RoundResultBean> roundResultBeans = new ArrayList<>();
+        roundResultBeans.add(new RoundResultBean(roundResult.getId(), roundResult.getStudentCode(), roundResult.getItemCode(), roundResult.getMachineCode()
+                , roundResult.getRoundNo(), roundResult.getTestNo(), roundResult.getMachineResult(),
+                roundResult.getPenaltyNum(), roundResult.getResult(), roundResult.getResultState()
+                , roundResult.getIsLastResult(), roundResult.getExamType(), roundResult.getTestTime(), roundResult.getPrintTime()
+                , roundResult.getStumbleCount(), roundResult.getUpdateState(), roundResult.getGroupId(), roundResult.getScheduleNo(),
+                roundResult.getRemark1(), roundResult.getRemark2(), roundResult.getRemark3()));
         return roundResultBeans;
     }
 

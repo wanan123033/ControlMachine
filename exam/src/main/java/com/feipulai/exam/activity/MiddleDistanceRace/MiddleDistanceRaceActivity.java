@@ -11,10 +11,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,9 +42,12 @@ import com.feipulai.exam.activity.MiddleDistanceRace.adapter.ColorSelectAdapter;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.MiddleRaceGroupAdapter;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.RaceTimingAdapter;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.ResultShowAdapter;
+import com.feipulai.exam.activity.MiddleDistanceRace.bean.GroupItemBean;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.adapter.ScheduleAdapter;
+import com.feipulai.exam.bean.RoundResultBean;
+import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.ChipGroup;
@@ -52,9 +58,14 @@ import com.feipulai.exam.entity.Item;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.netUtils.netapi.ServerMessage;
+import com.feipulai.exam.utils.db.DataBaseExecutor;
+import com.feipulai.exam.utils.db.DataBaseRespon;
+import com.feipulai.exam.utils.db.DataBaseTask;
 import com.feipulai.exam.view.MiddleRace.ScrollablePanel;
 import com.feipulai.floatingactionbutton.FloatingActionButton;
 import com.feipulai.floatingactionbutton.FloatingActionsMenu;
+import com.orhanobut.logger.Logger;
 import com.zyyoona7.popup.EasyPopup;
 
 import java.util.ArrayList;
@@ -85,7 +96,7 @@ import static com.feipulai.exam.config.SharedPrefsConfigs.MIDDLE_RACE_TIME_FIRST
 import static com.feipulai.exam.config.SharedPrefsConfigs.MIDDLE_RACE_TIME_SPAN;
 import static com.feipulai.exam.config.SharedPrefsConfigs.SPAN_TIME;
 
-public class MiddleDistanceRaceActivity extends BaseTitleActivity implements UdpClient.UDPChannelListerner, NettyListener, RaceTimingAdapter.MyClickListener, ChannelFutureListener, MiddleRaceGroupAdapter.OnItemClickListener, ColorSelectAdapter.OnItemClickListener {
+public class MiddleDistanceRaceActivity extends BaseTitleActivity implements UdpClient.UDPChannelListerner, NettyListener, RaceTimingAdapter.MyClickListener, ChannelFutureListener, MiddleRaceGroupAdapter.OnItemClickListener, ColorSelectAdapter.OnItemClickListener, AdapterView.OnItemSelectedListener {
 
     @BindView(R.id.btn_udp_send)
     Button btnUdpSend;
@@ -113,9 +124,14 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
     FloatingActionButton floatButtonConnect;
     @BindView(R.id.float_button_item_set)
     FloatingActionButton floatButtonItemSet;
+    @BindView(R.id.btn_find)
+    Button btnFind;
     private String TAG = "MiddleDistanceRaceActivity";
     private final int MESSAGE_A = 1;
     private boolean isFlag = true;
+    private int mItemPosition = 0;
+    private int groupStatePosition = 0;
+    private boolean isAutoSelect = true;//spinner初始化标识，用以禁止重复多次执行
 
     private Handler mHander = new Handler(new Handler.Callback() {
         @Override
@@ -187,9 +203,10 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
 
 
     private List<Schedule> scheduleList = new ArrayList<>();
-    private List<Group> groupList = new ArrayList<>();
+    //    private List<Group> groupList = new ArrayList<>();
     private List<TimingBean> timingLists = new ArrayList<>();
     private List<RaceResultBean2> resultDataList;
+    private List<GroupItemBean> groupItemBeans = new ArrayList<>();
 
     @Override
     protected void initData() {
@@ -197,15 +214,23 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         initPopup();
 
         getItems();
-
         itemAdapter = new ArrayAdapter<>(this, android.R.layout.simple_expandable_list_item_1, items);
         spRaceItem.setAdapter(itemAdapter);
+        spRaceItem.setSelection(0, false);
+        spRaceItem.setOnItemSelectedListener(this);
+
 
         scheduleAdapter = new ScheduleAdapter(this, scheduleList);
         spRaceSchedule.setAdapter(scheduleAdapter);
+        spRaceSchedule.setSelection(0, false);
+        spRaceSchedule.setOnItemSelectedListener(this);
+
+        spRaceState.setSelection(0, false);
+        spRaceState.setOnItemSelectedListener(this);
+
 
         //所有组信息recycleView
-        groupAdapter = new MiddleRaceGroupAdapter(groupList);
+        groupAdapter = new MiddleRaceGroupAdapter(groupItemBeans);
         rvRaceStudentGroup.setLayoutManager(new LinearLayoutManager(this));
         rvRaceStudentGroup.setAdapter(groupAdapter);
 
@@ -248,7 +273,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
 
         updateSchedules();
 
-//        getGroupList();
+        getGroupList();
 
         initConnectPop();
 //        initTiming();
@@ -311,17 +336,60 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
 //        raceTimingAdapter.notifyDataSetChanged();
 //    }
 
+
     /**
      * 获取日程分组
      */
     private void getGroupList() {
-        groupList.clear();
+        groupItemBeans.clear();
         if (scheduleNo == null || scheduleNo.isEmpty()) {
             return;
         }
-        List<Group> dbGroupList = DBManager.getInstance().getGroupByScheduleNoAndItem(scheduleNo, itemList.get(mItemPosition).getItemCode(), groupStatePosition);
-        groupList.addAll(dbGroupList);
-        groupAdapter.notifyDataSetChanged();
+
+        final String itemCode = itemList.get(mItemPosition).getItemCode();
+        if (TextUtils.isEmpty(itemCode)) {
+            ToastUtils.showShort("项目代码为空");
+            groupItemBeans.clear();
+            groupAdapter.notifyDataSetChanged();
+        } else {
+            DataBaseExecutor.addTask(new DataBaseTask(this, getString(R.string.loading_hint), true) {
+                @Override
+                public DataBaseRespon executeOper() {
+                    List<Group> dbGroupList = DBManager.getInstance().getGroupByScheduleNoAndItem(scheduleNo, itemCode, groupStatePosition);
+                    for (Group group : dbGroupList
+                            ) {
+                        String sex = "";
+                        switch (group.getGroupType()) {
+                            case 0:
+                                sex = "男子";
+                                break;
+                            case 1:
+                                sex = "女子";
+                                break;
+                            case 2:
+                                sex = "混合";
+                                break;
+                            default:
+                                break;
+                        }
+                        String itemGroupName = sex + itemList.get(mItemPosition).getItemName() + "第" + group.getGroupNo() + "组";
+                        List<GroupItem> groupItems = DBManager.getInstance().queryGroupItem(group.getScheduleNo(), group.getItemCode(), group.getGroupNo(), group.getGroupType());
+                        groupItemBeans.add(new GroupItemBean(group, groupItems.size(), itemGroupName));
+                    }
+                    return new DataBaseRespon(true, "", null);
+                }
+
+                @Override
+                public void onExecuteSuccess(DataBaseRespon respon) {
+                    groupAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onExecuteFail(DataBaseRespon respon) {
+
+                }
+            });
+        }
     }
 
     @Nullable
@@ -434,10 +502,11 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        Log.i("onActivityResult", "-----------");
         if (resultCode == 2 && requestCode == 1) {
             boolean isChange = data.getBooleanExtra("isChange", false);
             if (isChange) {
+                isAutoSelect = true;
                 recreate();
             }
         }
@@ -453,7 +522,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         nettyClient = new NettyClient(ip, port);
         if (!nettyClient.getConnectStatus()) {
             nettyClient.setListener(this);
-            nettyClient.connect();
+            nettyClient.connect(isFirst);
             mHander.sendEmptyMessageDelayed(2, 400);
         } else {
             mHander.sendEmptyMessageDelayed(2, 200);
@@ -479,13 +548,11 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
 
         getItems();
 
-        getGroupList();
-
         colorGroups.clear();
         colorGroups.addAll(DBManager.getInstance().queryAllChipGroup());
 
         if (nettyClient != null && !nettyClient.getConnectStatus()) {
-            nettyClient.connect();
+            nettyClient.connect(isFirst);
             mHander.sendEmptyMessageDelayed(2, 300);
         }
 
@@ -506,7 +573,6 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                 timingLists.add(timingBean);
             }
             resultDataList.clear();
-            scrollablePanel.notifyDataSetChanged();
 
             //添加标题栏
             RaceResultBean2 raceResultBean = new RaceResultBean2();
@@ -524,7 +590,17 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
             raceResultBean.setItemCode(itemList.get(mItemPosition).getItemCode());
             resultDataList.add(0, raceResultBean);
             raceTimingAdapter.notifyDataSetChanged();
+            scrollablePanel.notifyDataSetChanged();
+
+            for (GroupItemBean bean : groupItemBeans
+                    ) {
+                if (bean.getGroup().getIsTestComplete() == TimingBean.GROUP_3) {
+                    bean.getGroup().setIsTestComplete(GROUP_4);
+                }
+            }
+            groupAdapter.notifyDataSetChanged();
         }
+        timers = SharedPrefsUtil.getValue(this, MIDDLE_RACE, MIDDLE_RACE_NUMBER, 3);
     }
 
 
@@ -546,7 +622,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         if (nettyClient != null)
             nettyClient.disconnect();
 
-        groupList.clear();
+        List<Group> groupList = new ArrayList<>();
         for (Item item : itemList
                 ) {
             if (item.getItemCode() != null) {
@@ -693,34 +769,16 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         });
     }
 
-    private int mItemPosition = 0;
-    private int groupStatePosition = 0;
-
-    @OnItemSelected({R.id.sp_race_schedule, R.id.sp_race_item, R.id.sp_race_state})
-    public void spinnerItemSelected(Spinner spinner, int position) {
-        switch (spinner.getId()) {
-            case R.id.sp_race_schedule:
-                scheduleNo = scheduleList.get(position).getScheduleNo();
-                break;
-            case R.id.sp_race_item:
-                mItemPosition = position;
-                break;
-            case R.id.sp_race_state:
-                groupStatePosition = position;
-                break;
-        }
-        getGroupList();
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     private boolean isShow = true;
 
-    @OnClick({R.id.btn_udp_send, R.id.float_button_show, R.id.float_button_connect, R.id.float_button_item_set})
+    @OnClick({R.id.btn_udp_send, R.id.float_button_show, R.id.float_button_connect, R.id.float_button_item_set, R.id.btn_find})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_udp_send:
@@ -744,12 +802,77 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                 floatMenu.collapse();
                 break;
             case R.id.float_button_item_set:
+                for (TimingBean timingBean : timingLists
+                        ) {
+                    if (timingBean.getState() != 0) {
+                        ToastUtils.showShort("考试中，请勿跳转其它界面");
+                        toastSpeak("考试中，请勿跳转其它界面");
+                        return;
+                    }
+                }
+
                 startProjectSetting();
                 floatMenu.collapse();
                 break;
+            case R.id.btn_find:
+                showInput();
+                break;
+
         }
     }
 
+    private void showInput() {
+        final EditText editText = new EditText(this);
+        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this).setTitle("输入需要定位的小组组号").setView(editText)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String number = editText.getText().toString();
+                        if (TextUtils.isEmpty(number)) {
+                            ToastUtils.showShort("查询为空");
+                            return;
+                        }
+                        for (int j = 0; j < groupItemBeans.size(); j++) {
+                            if (number.equals(groupItemBeans.get(j).getGroup().getGroupNo() + "")) {
+                                smoothMoveToPosition(rvRaceStudentGroup, j);
+                                break;
+                            } else {
+                                if (j == groupItemBeans.size() - 1) {
+                                    ToastUtils.showShort("查无此组");
+                                }
+                            }
+                        }
+                    }
+                });
+        builder.create().show();
+    }
+
+    /**
+     * 滑动到指定位置
+     */
+    private void smoothMoveToPosition(RecyclerView mRecyclerView, final int position) {
+        // 第一个可见位置
+        int firstItem = mRecyclerView.getChildLayoutPosition(mRecyclerView.getChildAt(0));
+        // 最后一个可见位置
+        int lastItem = mRecyclerView.getChildLayoutPosition(mRecyclerView.getChildAt(mRecyclerView.getChildCount() - 1));
+        if (position < firstItem) {
+            // 第一种可能:跳转位置在第一个可见位置之前，使用smoothScrollToPosition
+            mRecyclerView.smoothScrollToPosition(position);
+        } else if (position <= lastItem) {
+            // 第二种可能:跳转位置在第一个可见位置之后，最后一个可见项之前
+            int movePosition = position - firstItem;
+            if (movePosition >= 0 && movePosition < mRecyclerView.getChildCount()) {
+                int top = mRecyclerView.getChildAt(movePosition).getTop();
+                // smoothScrollToPosition 不会有效果，此时调用smoothScrollBy来滑动到指定位置
+                mRecyclerView.smoothScrollBy(0, top);
+            }
+        } else {
+            // 第三种可能:跳转位置在最后可见项之后，则先调用smoothScrollToPosition将要跳转的位置滚动到可见位置
+            // 再通过onScrollStateChanged控制再次调用smoothMoveToPosition，执行上一个判断中的方法
+            mRecyclerView.smoothScrollToPosition(position);
+        }
+    }
 
     /**
      * 点击“等待发令”按钮回调
@@ -824,58 +947,72 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                 raceTimingAdapter.notifyBackGround(holder, TimingBean.TIMING_STATE_COMPLETE);
                 raceTimingAdapter.notifyDataSetChanged();
 
-                String scheduleNo = "";
+                List<UploadResults> uploadResults = new ArrayList<>();
+
                 //更新项目组状态
-                for (Group group : groupList
+                for (GroupItemBean groupItemBean : groupItemBeans
                         ) {
-                    if (!TextUtils.isEmpty(group.getColorId()) && timingLists.get(position).getColor() == Integer.parseInt(group.getColorId())) {
-                        group.setIsTestComplete(GROUP_FINISH);
-                        DBManager.getInstance().updateGroup(group);
+                    if (!TextUtils.isEmpty(groupItemBean.getGroup().getColorId()) && timingLists.get(position).getColor() == Integer.parseInt(groupItemBean.getGroup().getColorId())) {
+                        groupItemBean.getGroup().setIsTestComplete(GROUP_FINISH);
+                        DBManager.getInstance().updateGroup(groupItemBean.getGroup());
                         groupAdapter.notifyDataSetChanged();
-                        scheduleNo = group.getScheduleNo();
+
+                        RoundResult roundResult;
+                        UploadResults uploadResult;
+                        for (RaceResultBean2 resultBean2 : resultDataList
+                                ) {
+                            if (resultBean2.getColor() == timingLists.get(position).getColor()) {
+                                //初始化开始时间
+                                resultBean2.setStartTime(0);
+
+                                int[] resultInts = new int[resultBean2.getCycle()];
+                                String[] result = resultBean2.getResults();
+                                for (int i = 3; i < result.length; i++) {
+                                    if (TextUtils.isEmpty(result[i])) {
+                                        break;
+                                    } else {
+                                        resultInts[i - 3] = Integer.parseInt(result[i]);
+                                    }
+                                }
+                                int lastResult = Integer.parseInt(TextUtils.isEmpty(result[2]) ? "0" : result[2]);
+                                // TODO: 2019/7/5 成绩保存及上传
+                                roundResult = new RoundResult();//保存到数据库的成绩对象
+
+                                roundResult.setItemCode(resultBean2.getItemCode());
+                                roundResult.setMachineCode(machineCode);
+                                roundResult.setResult(lastResult);
+                                roundResult.setRoundNo(1);
+                                roundResult.setStudentCode(resultBean2.getStudentCode());
+                                roundResult.setTestNo(1);
+                                roundResult.setIsLastResult(1);
+                                roundResult.setMachineResult(lastResult);
+                                roundResult.setScheduleNo(groupItemBean.getGroup().getScheduleNo());
+                                roundResult.setResultState(1);
+                                roundResult.setExamType(0);
+                                roundResult.setTestTime(System.currentTimeMillis() + "");
+
+                                byte[] cycleResult = DataUtil.byteArray2RgbArray(resultInts);
+                                roundResult.setCycleResult(cycleResult);
+
+                                roundResult = DBManager.getInstance().insertRoundResult2(roundResult);
+
+                                uploadResult = new UploadResults();//需要上传的成绩对象
+                                uploadResult.setGroupNo(groupItemBean.getGroup().getGroupNo() + "");
+                                uploadResult.setSiteScheduleNo(groupItemBean.getGroup().getScheduleNo());
+                                uploadResult.setRoundResultList(RoundResultBean.beanCope2(roundResult));
+                                uploadResult.setStudentCode(resultBean2.getStudentCode());
+                                uploadResult.setTestNum("1");
+                                uploadResult.setExamItemCode(resultBean2.getItemCode());
+                                uploadResults.add(uploadResult);
+                            }
+                        }
                         break;
                     }
                 }
-
-                List<RoundResult> roundResults = new ArrayList<>();
-                RoundResult roundResult;
-
-                for (RaceResultBean2 resultBean2 : resultDataList
-                        ) {
-                    if (resultBean2.getColor() == timingLists.get(position).getColor()) {
-                        //初始化开始时间
-                        resultBean2.setStartTime(0);
-
-                        int[] resultInts = new int[resultBean2.getCycle()];
-                        String[] result = resultBean2.getResults();
-                        for (int i = 3; i < result.length; i++) {
-                            if (TextUtils.isEmpty(result[i])) {
-                                break;
-                            } else {
-                                resultInts[i - 3] = Integer.parseInt(result[i]);
-                            }
-                        }
-                        int lastResult = Integer.parseInt(TextUtils.isEmpty(result[2]) ? "0" : result[2]);
-                        // TODO: 2019/7/5 成绩保存及上传
-                        roundResult = new RoundResult();
-                        roundResult.setItemCode(resultBean2.getItemCode());
-                        roundResult.setMachineCode(machineCode);
-                        roundResult.setResult(lastResult);
-                        roundResult.setRoundNo(1);
-                        roundResult.setStudentCode(resultBean2.getStudentCode());
-                        roundResult.setTestNo(1);
-                        roundResult.setIsLastResult(1);
-                        roundResult.setMachineResult(lastResult);
-                        roundResult.setScheduleNo(scheduleNo);
-                        roundResult.setResultState(1);
-
-                        byte[] cycleResult = DataUtil.byteArray2RgbArray(resultInts);
-                        roundResult.setCycleResult(cycleResult);
-                        roundResults.add(roundResult);
-                    }
+                if (SettingHelper.getSystemSetting().isRtUpload()) {
+                    Logger.i("自动上传成绩:" + uploadResults.toString());
+                    ServerMessage.uploadResult(uploadResults);
                 }
-                DBManager.getInstance().insertRoundResults(roundResults);
-
             }
 
             @Override
@@ -924,11 +1061,13 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
 
                 scrollablePanel.notifyDataSetChanged();
 
-                for (int i = 0; i < groupList.size(); i++) {
+                for (int i = 0; i < groupItemBeans.size(); i++) {
                     if (i + 1 == timingLists.get(position).getNo()) {
-                        groupList.get(i).setIsTestComplete(TimingBean.GROUP_4);
-                        groupAdapter.notifyDataSetChanged();
-                        break;
+                        if (timingLists.get(position).getState() != TimingBean.TIMING_STATE_COMPLETE) {
+                            groupItemBeans.get(i).getGroup().setIsTestComplete(TimingBean.GROUP_4);
+                            groupAdapter.notifyDataSetChanged();
+                            break;
+                        }
                     }
                 }
 
@@ -983,8 +1122,14 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         btnAddColor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                groupList.get(groupPosition).setColorGroupName(colorGroups.get(mColorGroupPosition).getColorGroupName());//备注1字段---颜色组名
-                groupList.get(groupPosition).setColorId(String.valueOf(colorGroups.get(mColorGroupPosition).getColor()));//备注2字段---颜色
+                if (colorGroups.isEmpty()) {
+                    ToastUtils.showShort("请先设置颜色组");
+                    mCirclePop.dismiss();
+                    return;
+                }
+
+                groupItemBeans.get(groupPosition).getGroup().setColorGroupName(colorGroups.get(mColorGroupPosition).getColorGroupName());//备注1字段---颜色组名
+                groupItemBeans.get(groupPosition).getGroup().setColorId(String.valueOf(colorGroups.get(mColorGroupPosition).getColor()));//备注2字段---颜色
                 groupAdapter.notifyDataSetChanged();
 
                 addToTiming();
@@ -995,12 +1140,17 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         btnSelectColor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                groupList.get(groupPosition).setIsTestComplete(TimingBean.GROUP_4);//关联状态
-                groupList.get(groupPosition).setColorGroupName(colorGroups.get(mColorGroupPosition).getColorGroupName());//备注1字段---颜色组名
-                groupList.get(groupPosition).setColorId(String.valueOf(colorGroups.get(mColorGroupPosition).getColor()));//备注2字段---颜色
+                if (colorGroups.isEmpty()) {
+                    ToastUtils.showShort("请先设置颜色组");
+                    mCirclePop.dismiss();
+                    return;
+                }
+                groupItemBeans.get(groupPosition).getGroup().setIsTestComplete(TimingBean.GROUP_4);//关联状态
+                groupItemBeans.get(groupPosition).getGroup().setColorGroupName(colorGroups.get(mColorGroupPosition).getColorGroupName());//备注1字段---颜色组名
+                groupItemBeans.get(groupPosition).getGroup().setColorId(String.valueOf(colorGroups.get(mColorGroupPosition).getColor()));//备注2字段---颜色
                 groupAdapter.notifyDataSetChanged();
 
-                DBManager.getInstance().updateGroup(groupList.get(groupPosition));
+                DBManager.getInstance().updateGroup(groupItemBeans.get(groupPosition).getGroup());
                 mCirclePop.dismiss();
             }
         });
@@ -1010,13 +1160,13 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
      * 长按组别item弹出下列选项
      */
     private void showListDialog() {
-        final String[] items = {"关联颜色", "取消关联", "选入比赛", "取消选入"};
+        final String[] items = {"关联颜色", "取消关联", "选入比赛", "取消选入", "打印成绩"};
         final AlertDialog.Builder listDialog = new AlertDialog.Builder(this);
         listDialog.setTitle(groupName);
         listDialog.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                int testComplete = groupList.get(groupPosition).getIsTestComplete();
+                int testComplete = groupItemBeans.get(groupPosition).getGroup().getIsTestComplete();
                 switch (which) {
                     case 0:
                         if (testComplete == GROUP_3) {
@@ -1038,11 +1188,11 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                             ToastUtils.showShort("该组已完成");
                             break;
                         }
-                        groupList.get(groupPosition).setIsTestComplete(0);
-                        groupList.get(groupPosition).setColorGroupName("");//备注1字段---颜色组名
-                        groupList.get(groupPosition).setColorId("");//备注2字段---颜色
+                        groupItemBeans.get(groupPosition).getGroup().setIsTestComplete(0);
+                        groupItemBeans.get(groupPosition).getGroup().setColorGroupName("");//备注1字段---颜色组名
+                        groupItemBeans.get(groupPosition).getGroup().setColorId("");//备注2字段---颜色
                         groupAdapter.notifyDataSetChanged();
-                        DBManager.getInstance().updateGroup(groupList.get(groupPosition));
+                        DBManager.getInstance().updateGroup(groupItemBeans.get(groupPosition).getGroup());
                         break;
                     case 2:
                         if (testComplete == GROUP_3) {
@@ -1071,6 +1221,14 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                             }
                         }
                         break;
+                    case 4:
+                        if (testComplete == GROUP_FINISH) {
+
+                        } else {
+                            ToastUtils.showShort("该组还未完成考试");
+                            toastSpeak("该组还未完成考试");
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -1097,7 +1255,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
      */
     private void getGroupName() {
         String sex = "";
-        switch (groupList.get(groupPosition).getGroupType()) {
+        switch (groupItemBeans.get(groupPosition).getGroup().getGroupType()) {
             case 0:
                 sex = "男子";
                 break;
@@ -1110,7 +1268,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
             default:
                 break;
         }
-        groupName = sex + items[mItemPosition] + "第" + groupList.get(groupPosition).getGroupNo() + "组";
+        groupName = sex + items[mItemPosition] + "第" + groupItemBeans.get(groupPosition).getGroup().getGroupNo() + "组";
     }
 
     /**
@@ -1119,7 +1277,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
     private void addToTiming() {
         for (TimingBean timing : timingLists
                 ) {
-            if (timing.getColor() == Integer.parseInt(groupList.get(groupPosition).getColorId())) {
+            if (timing.getColor() == Integer.parseInt(groupItemBeans.get(groupPosition).getGroup().getColorId())) {
                 ToastUtils.showShort("当前颜色组已存在");
                 return;
             }
@@ -1133,22 +1291,22 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                 timingLists.get(i).setNo(groupPosition + 1);//分配组的序号
                 timingLists.get(i).setItemGroupName(groupName);//组名
                 timingLists.get(i).setItemCode(itemList.get(mItemPosition).getItemCode());
-                timingLists.get(i).setColor(Integer.parseInt(groupList.get(groupPosition).getColorId()));
+                timingLists.get(i).setColor(Integer.parseInt(groupItemBeans.get(groupPosition).getGroup().getColorId()));
                 break;
             }
         }
         raceTimingAdapter.notifyDataSetChanged();
 
-        groupList.get(groupPosition).setIsTestComplete(TimingBean.GROUP_3);
+        groupItemBeans.get(groupPosition).getGroup().setIsTestComplete(TimingBean.GROUP_3);
         groupAdapter.notifyDataSetChanged();
-        DBManager.getInstance().updateGroup(groupList.get(groupPosition));
+        DBManager.getInstance().updateGroup(groupItemBeans.get(groupPosition).getGroup());
     }
 
     /**
      * 添加已选入比赛组的所有人到成绩显示列表
      */
     private void addResultList() {
-        List<GroupItem> groupItems = DBManager.getInstance().queryGroupItem(groupList.get(groupPosition).getItemCode(), groupList.get(groupPosition).getGroupNo(), groupList.get(groupPosition).getGroupType());
+        List<GroupItem> groupItems = DBManager.getInstance().queryGroupItem(scheduleNo, groupItemBeans.get(groupPosition).getGroup().getItemCode(), groupItemBeans.get(groupPosition).getGroup().getGroupNo(), groupItemBeans.get(groupPosition).getGroup().getGroupType());
         String[] strings2;
         RaceResultBean2 raceResultBean;
         for (int i = 0; i < groupItems.size(); i++) {
@@ -1162,7 +1320,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
             raceResultBean.setVestNo(i + 1);
             raceResultBean.setStudentCode(student.getStudentCode());
             raceResultBean.setStudentName(student.getStudentName());
-            raceResultBean.setColor(Integer.parseInt(groupList.get(groupPosition).getColorId()));
+            raceResultBean.setColor(Integer.parseInt(groupItemBeans.get(groupPosition).getGroup().getColorId()));
             raceResultBean.setCycle(itemList.get(mItemPosition).getCycleNo());
             raceResultBean.setItemCode(itemList.get(mItemPosition).getItemCode());
             resultDataList.add(raceResultBean);
@@ -1178,5 +1336,32 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         mColorGroupPosition = position;
         colorGroupAdapter.changeBackGround(position);
         colorGroupAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        switch (parent.getId()) {
+            case R.id.sp_race_schedule:
+                scheduleNo = scheduleList.get(position).getScheduleNo();
+                break;
+            case R.id.sp_race_item:
+                mItemPosition = position;
+                break;
+            case R.id.sp_race_state:
+                groupStatePosition = position;
+                break;
+        }
+        if (isAutoSelect) {
+            Log.i("spinnerItemSelected", "-----------true");
+            isAutoSelect = false;
+            return;
+        }
+        Log.i("spinnerItemSelected", "-----------false");
+        getGroupList();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }

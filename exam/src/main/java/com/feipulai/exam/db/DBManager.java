@@ -1156,6 +1156,11 @@ public class DBManager {
         roundResultDao.insert(roundResult);
     }
 
+    public RoundResult insertRoundResult2(RoundResult roundResult) {
+        long id = roundResultDao.insert(roundResult);
+        return roundResultDao.queryBuilder().where(RoundResultDao.Properties.Id.eq(id)).unique();
+    }
+
     public void insertRoundResults(List<RoundResult> roundResults) {
         roundResultDao.insertInTx(roundResults);
     }
@@ -1202,14 +1207,17 @@ public class DBManager {
     /**
      * 查询某个项目某个性别某个组次的所有人
      *
+     *
+     * @param scheduleNo
      * @param itemCode
      * @param sort
      * @param sex
      * @return
      */
-    public List<GroupItem> queryGroupItem(String itemCode, int sort, int sex) {
+    public List<GroupItem> queryGroupItem(String scheduleNo, String itemCode, int sort, int sex) {
         return groupItemDao.queryBuilder().where(GroupItemDao.Properties.GroupNo.eq(sort))
                 .where(GroupItemDao.Properties.ItemCode.eq(itemCode))
+                .where(GroupItemDao.Properties.ScheduleNo.eq(scheduleNo))
                 .where(GroupItemDao.Properties.GroupType.eq(sex)).list();
     }
 

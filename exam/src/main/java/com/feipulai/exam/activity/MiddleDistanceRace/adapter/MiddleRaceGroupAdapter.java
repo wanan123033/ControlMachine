@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.MiddleDistanceRace.bean.GroupItemBean;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.GroupItem;
@@ -23,7 +24,6 @@ import butterknife.ButterKnife;
  * created by ww on 2019/6/12.
  */
 public class MiddleRaceGroupAdapter extends RecyclerView.Adapter<MiddleRaceGroupAdapter.VH> {
-    private List<GroupItem> groupItems;
     private OnItemClickListener onRecyclerViewItemClickListener;
 
     //创建ViewHolder
@@ -45,9 +45,9 @@ public class MiddleRaceGroupAdapter extends RecyclerView.Adapter<MiddleRaceGroup
         }
     }
 
-    private List<Group> mDatas;
+    private List<GroupItemBean> mDatas;
 
-    public MiddleRaceGroupAdapter(List<Group> data) {
+    public MiddleRaceGroupAdapter(List<GroupItemBean> data) {
         this.mDatas = data;
     }
 
@@ -63,39 +63,22 @@ public class MiddleRaceGroupAdapter extends RecyclerView.Adapter<MiddleRaceGroup
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(final VH holder, final int position) {
-        Item item = DBManager.getInstance().queryItemByCode(mDatas.get(position).getItemCode());
-        groupItems = DBManager.getInstance().queryGroupItem(item.getItemCode(), mDatas.get(position).getGroupNo(), mDatas.get(position).getGroupType());
-
         holder.tvItemRaceNo.setText(String.valueOf(position + 1));
-        String sex = "";
-        switch (mDatas.get(position).getGroupType()) {
-            case 0:
-                sex = "男子";
-                break;
-            case 1:
-                sex = "女子";
-                break;
-            case 2:
-                sex = "混合";
-                break;
-            default:
-                break;
-        }
-        holder.tvItemRaceItem.setText(sex + item.getItemName() + "第" + mDatas.get(position).getGroupNo() + "组");
-        holder.tvItemRaceNumber.setText(String.valueOf(groupItems.size()));
+        holder.tvItemRaceItem.setText(mDatas.get(position).getGroupItemName());
+        holder.tvItemRaceNumber.setText(mDatas.get(position).getStudentNumber() + "");
 
-        switch (mDatas.get(position).getIsTestComplete()) {
+        switch (mDatas.get(position).getGroup().getIsTestComplete()) {
             case 0:
                 holder.tvItemRaceState.setText("");
                 holder.tvItemRaceNo.setBackgroundResource(R.color.white);
                 break;
             case 3:
                 holder.tvItemRaceState.setText("空闲");
-                holder.tvItemRaceNo.setBackgroundResource(Integer.parseInt(mDatas.get(position).getColorId()));
+                holder.tvItemRaceNo.setBackgroundResource(Integer.parseInt(mDatas.get(position).getGroup().getColorId()));
                 break;
             case 4:
                 holder.tvItemRaceState.setText("关联");
-                holder.tvItemRaceNo.setBackgroundResource(Integer.parseInt(mDatas.get(position).getColorId()));
+                holder.tvItemRaceNo.setBackgroundResource(Integer.parseInt(mDatas.get(position).getGroup().getColorId()));
                 break;
             case 5:
                 holder.tvItemRaceState.setText("已完成");
