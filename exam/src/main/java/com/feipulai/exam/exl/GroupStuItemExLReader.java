@@ -106,68 +106,45 @@ public class GroupStuItemExLReader extends ExlReader {
     }
 
     private boolean insertZCPIntoDB(List<ExelGroupReadBean> result) {
-        String itemCode = TestConfigs.sCurrentItem.getItemCode();
+//        String itemCode = TestConfigs.sCurrentItem.getItemCode();
         // 项目代码还是默认的,需要更新当前的项目的项目代码,并且将之前有的 报名信息 和 成绩 的项目代码更改
         Item nameItem = DBManager.getInstance().queryItemByName(mItemName);
+        Item codeItem = DBManager.getInstance().queryItemByCode(mItemCode);
 
-        if (itemCode == null) {
-            try {
-                Logger.i(mItemCode + " :  " + mItemName);
-                if (nameItem == null) {
-                    TestConfigs.sCurrentItem.setItemCode(mItemCode);
-                    TestConfigs.sCurrentItem.setItemName(mItemName);
-                    DBManager.getInstance().updateItem(TestConfigs.sCurrentItem);// 更新项目表中信息
-                } else {
-                    if (TestConfigs.sCurrentItem.getMachineCode() == nameItem.getMachineCode()) {
-                        TestConfigs.sCurrentItem.setItemCode(mItemCode);
-                        TestConfigs.sCurrentItem.setItemName(mItemName);
-                        DBManager.getInstance().updateItem(TestConfigs.sCurrentItem);// 更新项目表中信息
-                    } else {
-                        listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel导入失败,导入项目名已存在,拒绝导入");
-                        Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel导入失败,导入项目名已存在,拒绝导入");
-                        return false;
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+        if (codeItem != null && nameItem != null) {
+            if (!TextUtils.equals(codeItem.getItemName(), nameItem.getItemName())) {
                 listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel导入失败,导入项目代码已存在,拒绝导入");
-                Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel导入失败,拒绝导入" + e.getMessage());
+                Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel导入失败,导入项目代码已存在,拒绝导入");
+                return false;
+            } else if (codeItem.getMachineCode() != ItemDefault.CODE_ZCP) {
+                listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel导入失败,导入项目机器码错误,拒绝导入");
+                Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel导入失败,导入项目机器码错误,拒绝导入");
                 return false;
             }
-        } else if (TextUtils.equals(itemCode, mItemCode)) {
-            if (nameItem == null) {
-                TestConfigs.sCurrentItem.setItemName(mItemName);
-                DBManager.getInstance().updateItem(TestConfigs.sCurrentItem);// 更新项目表中信息(这里实际只更新了一个项目名)
-            } else if (nameItem.getMachineCode() == TestConfigs.sCurrentItem.getMachineCode() &&
-                    TextUtils.equals(itemCode, nameItem.getItemCode())) {
-                TestConfigs.sCurrentItem.setItemName(mItemName);
-                DBManager.getInstance().updateItem(TestConfigs.sCurrentItem);// 更新项目表中信息(这里实际只更新了一个项目名)
-            } else {
-                listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel导入失败,导入项目名已存在,拒绝导入");
-                Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel导入失败,导入项目名已存在,拒绝导入");
-                return false;
-            }
-
-        } else if (nameItem == null) {
+        } else if (codeItem == null && nameItem == null) {
             DBManager.getInstance().insertItem(ItemDefault.CODE_ZCP, mItemCode
                     , mItemName, "分'秒");
-        } else {
-            //当前项目代码不为空，名称项目不为空，两个项目代码不一至 ，机器码一至
-            if (nameItem.getMachineCode() == TestConfigs.sCurrentItem.getMachineCode()) {
-                if (nameItem.getItemCode() == null) {
-                    nameItem.setItemCode(mItemCode);
-                    DBManager.getInstance().updateItem(nameItem);// 更新项目表中信息(这里实际只更新了一个项目名)
-                } else if (!TextUtils.equals(nameItem.getItemCode(), mItemCode)) {
-                    mItemCode = nameItem.getItemCode();
-                }
-
+        } else if (codeItem != null && nameItem == null) {
+            if (codeItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+                codeItem.setItemName(mItemName);
+                DBManager.getInstance().updateItem(codeItem);// 更新项目表中信息
             } else {
-                listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel导入失败,导入项目名已存在,拒绝导入");
-                Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel导入失败,导入项目名已存在,拒绝导入");
+                listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel导入失败,导入项目机器码错误,拒绝导入");
+                Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel导入失败,导入项目机器码错误,拒绝导入");
+                return false;
+            }
+        } else if (codeItem == null && nameItem != null) {
+            if (nameItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+                nameItem.setItemCode(mItemCode);
+                DBManager.getInstance().updateItem(nameItem);// 更新项目表中信息
+            } else {
+                listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel导入失败,导入项目机器码错误,拒绝导入");
+                Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel导入失败,导入项目机器码错误,拒绝导入");
                 return false;
             }
 
         }
+
         insertDB(result);
         return true;
     }
@@ -487,7 +464,6 @@ public class GroupStuItemExLReader extends ExlReader {
         Cell stuNameCell = row.getCell(mColNums.get("姓名"));
         Cell itemNameCell = row.getCell(mColNums.get("项目"));
         Cell itemCodeCell = row.getCell(mColNums.get("项目代码"));
-
         Cell sessionNoCell = row.getCell(mColNums.get("场次"));
         Cell groupSexCell = row.getCell(mColNums.get("分组性别"));
         Cell tranchesCell = row.getCell(mColNums.get("组别"));
