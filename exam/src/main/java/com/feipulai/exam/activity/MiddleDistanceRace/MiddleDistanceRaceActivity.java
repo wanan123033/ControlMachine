@@ -76,7 +76,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnItemSelected;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 
@@ -143,7 +142,6 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                 case 2:
                     if (isConnect) {
                         send();
-                        mHander.sendEmptyMessageDelayed(5, 5000);
                     }
                     break;
                 case 3:
@@ -161,7 +159,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                     break;
                 case 5:
                     send2();
-                    mHander.sendEmptyMessageDelayed(5, 5000);
+                    mHander.sendEmptyMessageDelayed(5, 8000);
                     break;
                 default:
                     break;
@@ -203,7 +201,6 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
 
 
     private List<Schedule> scheduleList = new ArrayList<>();
-    //    private List<Group> groupList = new ArrayList<>();
     private List<TimingBean> timingLists = new ArrayList<>();
     private List<RaceResultBean2> resultDataList;
     private List<GroupItemBean> groupItemBeans = new ArrayList<>();
@@ -374,7 +371,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                         }
                         String itemGroupName = sex + itemList.get(mItemPosition).getItemName() + "第" + group.getGroupNo() + "组";
                         List<GroupItem> groupItems = DBManager.getInstance().queryGroupItem(group.getScheduleNo(), group.getItemCode(), group.getGroupNo(), group.getGroupType());
-                        groupItemBeans.add(new GroupItemBean(group, groupItems.size(), itemGroupName));
+                        groupItemBeans.add(new GroupItemBean(group, groupItems, itemGroupName, itemList.get(mItemPosition).getItemName()));
                     }
                     return new DataBaseRespon(true, "", null);
                 }
@@ -382,6 +379,8 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                 @Override
                 public void onExecuteSuccess(DataBaseRespon respon) {
                     groupAdapter.notifyDataSetChanged();
+                    rvRaceStudentGroup.scrollToPosition(0);
+//                    smoothMoveToPosition(rvRaceStudentGroup,0);
                 }
 
                 @Override
@@ -527,6 +526,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         } else {
             mHander.sendEmptyMessageDelayed(2, 200);
         }
+        mHander.sendEmptyMessageDelayed(5, 8000);
     }
 
     //发送连接设备命令
@@ -536,7 +536,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
 
     //随便发送一个东西保持tcp不断
     private void send2() {
-        nettyClient.sendMsgToServer(TcpConfig.CMD_NOTHING, this);
+        nettyClient.sendMsgToServer(TcpConfig.CMD_NOTHING, null);
     }
 
 
@@ -554,6 +554,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         if (nettyClient != null && !nettyClient.getConnectStatus()) {
             nettyClient.connect(isFirst);
             mHander.sendEmptyMessageDelayed(2, 300);
+            mHander.sendEmptyMessageDelayed(5, 8000);
         }
 
         int timers2 = SharedPrefsUtil.getValue(this, MIDDLE_RACE, MIDDLE_RACE_NUMBER, 3);
@@ -664,7 +665,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
     public void onMessageReceive(long time, final String[] cardIds) {
         for (String card : cardIds
                 ) {
-            ChipInfo chipInfo = DBManager.getInstance().queryChipInfo(card);
+            ChipInfo chipInfo = DBManager.getInstance().queryChipInfoByID(card);
             if (chipInfo == null) {
                 continue;
             }
@@ -975,7 +976,6 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                                     }
                                 }
                                 int lastResult = Integer.parseInt(TextUtils.isEmpty(result[2]) ? "0" : result[2]);
-                                // TODO: 2019/7/5 成绩保存及上传
                                 roundResult = new RoundResult();//保存到数据库的成绩对象
 
                                 roundResult.setItemCode(resultBean2.getItemCode());
@@ -1009,10 +1009,14 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                         break;
                     }
                 }
+                //自动上传成绩
                 if (SettingHelper.getSystemSetting().isRtUpload()) {
                     Logger.i("自动上传成绩:" + uploadResults.toString());
                     ServerMessage.uploadResult(uploadResults);
                 }
+                //自动打印
+                MiddlePrintUtil.print(resultDataList);
+
             }
 
             @Override
@@ -1223,7 +1227,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                         break;
                     case 4:
                         if (testComplete == GROUP_FINISH) {
-
+                            MiddlePrintUtil.print2(groupItemBeans.get(groupPosition));
                         } else {
                             ToastUtils.showShort("该组还未完成考试");
                             toastSpeak("该组还未完成考试");
@@ -1323,6 +1327,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
             raceResultBean.setColor(Integer.parseInt(groupItemBeans.get(groupPosition).getGroup().getColorId()));
             raceResultBean.setCycle(itemList.get(mItemPosition).getCycleNo());
             raceResultBean.setItemCode(itemList.get(mItemPosition).getItemCode());
+            raceResultBean.setItemName(itemList.get(mItemPosition).getItemName());
             resultDataList.add(raceResultBean);
         }
 
