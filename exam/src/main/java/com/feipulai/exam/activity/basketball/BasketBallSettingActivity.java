@@ -82,6 +82,10 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
     private static final int MSG_DISCONNECT = 0X101;
     //3秒内检测IP是否可以
     private volatile boolean isDisconnect;
+    /**
+     * 点击是否为连接
+     */
+    private boolean isClickConnect;
 
     @Override
     protected int setLayoutResID() {
@@ -115,9 +119,9 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
         cbFullSkip.setChecked(setting.isFullSkip());
 
         if (setting.getTestPattern() == 0) {//连续测试
-            rgGroupMode.check(R.id.rb_continuous_test);
+            rgGroupMode.check(R.id.rb_continuous);
         } else {
-            rgGroupMode.check(R.id.rb_circulation_test);
+            rgGroupMode.check(R.id.rb_loop);
         }
         if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
             rgGroupMode.setVisibility(View.GONE);
@@ -161,9 +165,9 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
 
     @Override
     public void onDataArrived(UDPResult result) {
+        isDisconnect = false;
         switch (result.getType()) {
             case UDPBasketBallConfig.CMD_GET_STATUS_RESPONSE:
-                isDisconnect = false;
                 setting.setHostIp(etHostIp.getText().toString());
                 setting.setPost(Integer.valueOf(etPort.getText().toString()));
                 ToastUtils.showShort("连接成功");
@@ -283,6 +287,9 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
                 }
                 UdpClient.getInstance().setHostIpPost(setting.getHostIp(), setting.getPost());
                 UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_BLOCKERTIME(Integer.valueOf(etInterceptTime.getText().toString())));
+                isDisconnect = true;
+                isClickConnect = false;
+                mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 2000);
                 break;
             case R.id.tv_sensitivity_use://灵敏度
                 if (TextUtils.isEmpty(etSensitivity.getText().toString())) {
@@ -291,6 +298,9 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
                 }
                 UdpClient.getInstance().setHostIpPost(setting.getHostIp(), setting.getPost());
                 UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_T(Integer.valueOf(etSensitivity.getText().toString())));
+                isDisconnect = true;
+                isClickConnect = false;
+                mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 2000);
                 break;
             case R.id.tv_ip_connect://连接
                 if (TextUtils.isEmpty(etHostIp.getText().toString())) {
@@ -305,7 +315,8 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
                 UdpClient.getInstance().setHostIpPost(etHostIp.getText().toString(), Integer.valueOf(etPort.getText().toString()));
                 UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_GET_STATUS);
                 isDisconnect = true;
-                mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
+                isClickConnect = true;
+                mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 2000);
                 break;
             case R.id.tv_accuracy_use:
                 switch (rgAccuracy.getCheckedRadioButtonId()) {
@@ -316,6 +327,9 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
                         UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(1));
                         break;
                 }
+                isDisconnect = true;
+                isClickConnect = false;
+                mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 2000);
                 break;
         }
     }
@@ -334,7 +348,11 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
             super.handleMessage(msg);
             BasketBallSettingActivity activity = mActivityWeakReference.get();
             if (activity.isDisconnect) {
-                activity.toastSpeak("连接失败");
+                if (activity.isClickConnect) {
+                    activity.toastSpeak("连接失败");
+                } else {
+                    activity.toastSpeak("设备未连接，设置失败");
+                }
             }
         }
     }

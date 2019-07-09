@@ -127,9 +127,10 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         resultAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                if (!isConfigurableNow()) {
+                if (!isConfigurableNow() || state == WAIT_STOP) {
                     resultAdapter.setSelectPosition(position);
                     resultAdapter.notifyDataSetChanged();
+
                 }
             }
         });
@@ -161,6 +162,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
     @Override
     public void onIndividualCheckIn(Student student, StudentItem studentItem, List<RoundResult> results) {
         if (state == WAIT_FREE || state == WAIT_CHECK_IN) {
+
             pairs.get(0).setStudent(student);
 
             for (RoundResult result : results) {
@@ -205,6 +207,8 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
 
             prepareForBegin();
             UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(1, UdpLEDUtil.getLedByte(student.getStudentName(), Paint.Align.CENTER)));
+            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2, UdpLEDUtil.getLedByte("", Paint.Align.CENTER)));
+
         } else {
             toastSpeak("当前考生还未完成测试,拒绝检录");
         }
@@ -235,7 +239,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             case 3:
                 state = TESTING;
                 txtDeviceStatus.setText("计时");
-                testDate = System.currentTimeMillis() + "";
+//                testDate = System.currentTimeMillis() + "";
                 break;
             case 4:
                 state = WAIT_STOP;
@@ -251,16 +255,17 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
 
     @Override
     public void triggerStart(BasketballResult basketballResult) {
+
+        testDate = System.currentTimeMillis() + "";
+        timerUtil.startTime(10);
         state = TESTING;
         txtDeviceStatus.setText("计时");
-        testDate = System.currentTimeMillis() + "";
         setOperationUI();
-        timerUtil.startTime(10);
+
     }
 
     @Override
     public void getResult(BasketballResult result) {
-        timerUtil.stop();
         //非测试不做处理
         if (state == WAIT_FREE || state == WAIT_CHECK_IN) {
             return;
@@ -273,7 +278,6 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         List<MachineResult> machineResultList = DBManager.getInstance().getItemRoundMachineResult(student.getStudentCode()
                 , testNo,
                 roundNo);
-
         MachineResult machineResult = new MachineResult();
         machineResult.setItemCode(TestConfigs.getCurrentItemCode());
         machineResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
@@ -345,7 +349,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             setOperationUI();
             tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()));
             UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
-                    UdpLEDUtil.getLedByte(ResultDisplayUtils.getStrResultForDisplay(result.getResult()), Paint.Align.RIGHT)));
+                    UdpLEDUtil.getLedByte(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()), Paint.Align.RIGHT)));
         }
 
 
@@ -353,7 +357,9 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
 
     @Override
     public void timer(Long time) {
-        tvResult.setText(DateUtil.caculateTime(time * 10, TestConfigs.sCurrentItem.getDigital(), 0));
+        if (state == TESTING) {
+            tvResult.setText(DateUtil.caculateTime(time * 10, TestConfigs.sCurrentItem.getDigital(), 0));
+        }
     }
 
     @Nullable
@@ -476,6 +482,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         switch (view.getId()) {
             case R.id.txt_waiting://等待发令
                 if ((state == WAIT_CHECK_IN || state == WAIT_CONFIRM || state == WAIT_STOP) && isExistTestPlace()) {
+                    timerUtil.stop();
                     UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
                 }
                 break;
@@ -513,11 +520,11 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
 
                 break;
             case R.id.tv_confirm://确定
-
+                timerUtil.stop();
                 if (state == WAIT_CONFIRM) {
                     UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
                 }
-                if (state == WAIT_CHECK_IN || state == WAIT_CONFIRM || (pairs.get(0).getStudent() != null && state == WAIT_FREE)) {
+                if (state != TESTING && pairs.get(0).getStudent() != null) {
                     tvResult.setText("");
                     txtDeviceStatus.setText("空闲");
                     onResultConfirmed();
@@ -527,6 +534,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 if (state == TESTING) {
                     toastSpeak("测试中,不允许跳过本次测试");
                 } else {
+                    timerUtil.stop();
                     resultAdapter.setSelectPosition(-1);
                     prepareForCheckIn();
                     UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
@@ -551,7 +559,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
      * @param punishType 正数 +1 负数 -1
      */
     private void setPunish(int punishType) {
-        if (state == TESTING || state == WAIT_STOP || state == WAIT_BEGIN) {
+        if (state == TESTING || state == WAIT_BEGIN) {
             toastSpeak("测试中,不允许更改考试成绩");
         } else {
             if (resultAdapter.getSelectPosition() == -1)
@@ -583,8 +591,8 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
      * @param resultState
      */
     private void setResultState(int resultState) {
-        //TESTING---->WAIT_STOP
-        if (state == TESTING || state == WAIT_STOP || state == WAIT_BEGIN) {
+        //TESTING ---->WAIT_BEGIN
+        if (state == TESTING || state == WAIT_BEGIN) {
             toastSpeak("测试中,不允许更改考试成绩状态");
         } else {
             if (resultAdapter.getSelectPosition() == -1)
@@ -672,6 +680,8 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             }
 
         }
+        showLedConfirmedResult();
+
         //更新修改成绩
         if (updateResult.size() > 0) {
             DBManager.getInstance().updateRoundResult(updateResult);
@@ -699,6 +709,8 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         uploadResult(pair.getStudent());
 
         showStuInfoResult();
+
+
         // 是否需要进行下一次测试
         if (shouldContinue(result)) {
             prepareForBegin();
@@ -707,6 +719,25 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         }
 
 
+    }
+
+    private void showLedConfirmedResult() {
+        BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
+        switch (testResult.getResultState()) {
+            case RoundResult.RESULT_STATE_NORMAL:
+                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2, UdpLEDUtil.getLedByte(ResultDisplayUtils.getStrResultForDisplay(testResult.getResult()), testResult.getPenalizeNum() + "", Paint.Align.CENTER)));
+                break;
+            case RoundResult.RESULT_STATE_FOUL:
+                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2, UdpLEDUtil.getLedByte("犯规", testResult.getPenalizeNum() + "", Paint.Align.CENTER)));
+                break;
+            case RoundResult.RESULT_STATE_BACK:
+                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2, UdpLEDUtil.getLedByte("中退", testResult.getPenalizeNum() + "", Paint.Align.CENTER)));
+                break;
+            case RoundResult.RESULT_STATE_WAIVE:
+                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2, UdpLEDUtil.getLedByte("弃权", testResult.getPenalizeNum() + "", Paint.Align.CENTER)));
+                break;
+
+        }
     }
 
     /**
@@ -802,6 +833,9 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             String testNo = TestCache.getInstance().getTestNoMap().get(student) + "";
             StudentItem studentItem = TestCache.getInstance().getStudentItemMap().get(student);
             List<RoundResult> roundResultList = TestCache.getInstance().getResults().get(student);
+            if (roundResultList == null || roundResultList.size() == 0) {
+                return;
+            }
             String scheduleNo = studentItem.getScheduleNo();
 
             List<UploadResults> uploadResults = new ArrayList<>();
