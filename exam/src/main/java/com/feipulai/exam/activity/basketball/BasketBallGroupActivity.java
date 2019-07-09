@@ -220,7 +220,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
 
     @Override
     public void getResult(BasketballResult result) {
-        timerUtil.stop();
+//        timerUtil.stop();
         //非测试不做处理
         if (state == WAIT_FREE || state == WAIT_CHECK_IN) {
             return;
@@ -253,7 +253,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             resultList.get(resultAdapter.getSelectPosition()).setResultState(RoundResult.RESULT_STATE_NORMAL);
         } else {
             machineResultList.add(machineResult);
-            RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
+            RoundResult testRoundResult = DBManager.getInstance().queryGroupRoundNoResult(student.getStudentCode(), group.getId() + "", roundNo);
             testRoundResult.setResult(result.getResult());
             //更新成绩，最后一次成绩保存
             DBManager.getInstance().updateRoundResult(testRoundResult);
@@ -265,7 +265,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                 DBManager.getInstance().updateRoundResult(roundResult);
             }
             //获取最小成绩设置为最好成绩
-            RoundResult dbAscResult = DBManager.getInstance().queryOrderAscScore(pairs.get(position()).getStudent().getStudentCode(), 1);
+            RoundResult dbAscResult = DBManager.getInstance().queryGroupOrderAscScore(student.getStudentCode(), group.getId());
             dbAscResult.setIsLastResult(1);
             DBManager.getInstance().updateRoundResult(dbAscResult);
 
@@ -309,7 +309,10 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
 
     @Override
     public void timer(Long time) {
-        tvResult.setText(DateUtil.caculateTime(time * 10, TestConfigs.sCurrentItem.getDigital(), 0));
+        if (state == TESTING) {
+            tvResult.setText(DateUtil.caculateTime(time * 10, TestConfigs.sCurrentItem.getDigital(), 0));
+        }
+
     }
 
     @Override
@@ -339,6 +342,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         switch (view.getId()) {
             case R.id.txt_waiting://等待发令
                 if ((state == WAIT_CHECK_IN || state == WAIT_CONFIRM || state == WAIT_STOP) && isExistTestPlace()) {
+                    timerUtil.stop();
                     UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
                 }
                 break;
@@ -374,10 +378,11 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             case R.id.tv_print://打印
                 break;
             case R.id.tv_confirm://确定
+                timerUtil.stop();
                 if (state == WAIT_CONFIRM) {
                     UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
                 }
-                if (state == WAIT_CHECK_IN || state == WAIT_CONFIRM || state == WAIT_FREE) {
+                if (state != TESTING) {
                     tvResult.setText("");
                     onResultConfirmed();
                 }
@@ -386,6 +391,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                 if (state == TESTING) {
                     toastSpeak("测试中,不允许跳过本次测试");
                 } else {
+                    timerUtil.stop();
                     UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
                     prepareForFinish();
                 }
@@ -451,7 +457,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
      * @param punishType 正数 +1 负数 -1
      */
     private void setPunish(int punishType) {
-        if (state == TESTING || state == WAIT_STOP || state == WAIT_BEGIN) {
+        if (state == TESTING || state == WAIT_BEGIN) {
             toastSpeak("测试中,不允许更改考试成绩");
         } else {
             if (resultAdapter.getSelectPosition() == -1)
@@ -484,7 +490,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
      */
     private void setResultState(int resultState) {
         //TESTING---->WAIT_STOP
-        if (state == TESTING || state == WAIT_STOP) {
+        if (state == TESTING) {
             toastSpeak("测试中,不允许更改考试成绩状态");
         } else {
             if (resultAdapter.getSelectPosition() == -1)
@@ -623,16 +629,14 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         }
 
         List<RoundResult> dbRoundResult = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");
-        if (dbRoundResult != null) {
-            TestCache.getInstance().getResults().put(student, dbRoundResult);
-        }
+
         //获取所有成绩设置为非最好成绩
         for (RoundResult roundResult : dbRoundResult) {
             roundResult.setIsLastResult(0);
             DBManager.getInstance().updateRoundResult(roundResult);
         }
         //获取最小成绩设置为最好成绩
-        RoundResult dbAscResult = DBManager.getInstance().queryOrderAscScore(student.getStudentCode(), 1);
+        RoundResult dbAscResult = DBManager.getInstance().queryGroupOrderAscScore(student.getStudentCode(), group.getId());
         if (dbAscResult != null) {
             dbAscResult.setIsLastResult(1);
             DBManager.getInstance().updateRoundResult(dbAscResult);
@@ -641,7 +645,9 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             DBManager.getInstance().updateRoundResult(dbRoundResult.get(0));
         }
 
-
+        if (dbRoundResult != null) {
+            TestCache.getInstance().getResults().put(student, dbRoundResult);
+        }
         uploadResults();
         nextTest();
     }
@@ -652,14 +658,18 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
     private void uploadResults() {
         if (SettingHelper.getSystemSetting().isRtUpload()) {
             Student student = pairs.get(position()).getStudent();
+            List<RoundResult> roundResultList = TestCache.getInstance().getResults().get(student);
             if (TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
+                return;
+            }
+            if (roundResultList.size() == 0 || roundResultList == null) {
                 return;
             }
             List<UploadResults> uploadResults = new ArrayList<>();
             String groupNo;
             String scheduleNo;
             String testNo;
-            List<RoundResult> roundResultList = TestCache.getInstance().getResults().get(student);
+
             groupNo = group.getGroupNo() + "";
             scheduleNo = group.getScheduleNo();
             testNo = "1";
@@ -691,6 +701,12 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
      * 结束 下一位
      */
     private void prepareForFinish() {
+//        Student student = pairs.get(position()).getStudent();
+//        List<RoundResult> dbRoundResult = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");
+//        if (dbRoundResult != null) {
+//            TestCache.getInstance().getResults().put(student, dbRoundResult);
+//        }
+//        uploadResults();
         state = WAIT_FREE;
         setOperationUI();
 //        nextTest();

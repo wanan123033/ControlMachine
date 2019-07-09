@@ -115,9 +115,9 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
         cbFullSkip.setChecked(setting.isFullSkip());
 
         if (setting.getTestPattern() == 0) {//连续测试
-            rgGroupMode.check(R.id.rb_continuous_test);
+            rgGroupMode.check(R.id.rb_continuous);
         } else {
-            rgGroupMode.check(R.id.rb_circulation_test);
+            rgGroupMode.check(R.id.rb_loop);
         }
         if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
             rgGroupMode.setVisibility(View.GONE);

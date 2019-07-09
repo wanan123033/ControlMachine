@@ -4,6 +4,7 @@ import com.feipulai.device.udp.UDPBasketBallConfig;
 import com.feipulai.device.udp.UdpClient;
 import com.feipulai.device.udp.result.BasketballResult;
 import com.feipulai.device.udp.result.UDPResult;
+import com.orhanobut.logger.Logger;
 
 /**
  * Created by zzs on  2019/6/5
@@ -25,7 +26,7 @@ public class BasketBallListener implements UdpClient.UDPChannelListerner {
     @Override
     public void onDataArrived(UDPResult result) {
         BasketballResult basketballResult = (BasketballResult) result.getResult();
-
+        Logger.d("onDataArrived===>" + basketballResult.toString());
         switch (basketballResult.getType()) {
             case UDPBasketBallConfig.CMD_GET_STATUS_RESPONSE:
             case UDPBasketBallConfig.CMD_SET_STATUS_RESPONSE:
