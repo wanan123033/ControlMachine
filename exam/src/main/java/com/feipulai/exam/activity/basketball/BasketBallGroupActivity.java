@@ -141,6 +141,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                 }
             }
         });
+
         fristCheckTest();
 
 
@@ -862,7 +863,8 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         toastSpeak("分组考生全部测试完成，请选择下一组");
         group.setIsTestComplete(1);
         DBManager.getInstance().updateGroup(group);
-
+        state = WAIT_FREE;
+        setOperationUI();
 
         //        TestCache testCache = TestCache.getInstance();
 //        if (SettingHelper.getSystemSetting().isAutoPrint() && isExistTestPlace()) {

@@ -24,6 +24,7 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
+import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
@@ -52,6 +53,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+
+import static com.feipulai.exam.activity.RadioTimer.RunTimerConstant.ILLEGAL_BACK;
 
 /**
  * 个人测试基类
@@ -91,6 +94,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     LinearLayout viewSkip;
     @BindView(R.id.tv_device_pair)
     public TextView tvDevicePair;
+    @BindView(R.id.txt_stu_fault)
+    TextView txtStuFault;
     //成绩
     private String[] result;
     private List<String> resultList = new ArrayList<>();
@@ -217,6 +222,15 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         tvBaseHeight.setText("原始高度" + ResultDisplayUtils.getStrResultForDisplay(height * 10));
     }
 
+    /**犯规按键是否可见*/
+    public void setFaultVisible(boolean visible){
+        txtStuFault.setVisibility(visible? View.VISIBLE:View.GONE);
+    }
+
+    public void setFaultEnable(boolean enable){
+        txtStuFault.setEnabled(enable);
+    }
+
     /**
      * 发送测试指令 并且此时应将设备状态改变
      */
@@ -299,7 +313,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         addStudent(student);
     }
 
-    @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting})
+    @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting,R.id.txt_stu_fault})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
@@ -318,7 +332,60 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 }
 
                 break;
+            case R.id.txt_stu_fault:
+                showPenalize();
+                break;
         }
+    }
+
+    /**
+     * 展示判罚
+     */
+    private void showPenalize() {
+        new AlertDialog.Builder(this).setMessage("确认违规?")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        penalize();
+                        dialog.dismiss();
+                    }
+                }).setNegativeButton("取消", null).show();
+    }
+
+    private void penalize(){
+        if (pair.getStudent() == null)
+            return;
+        //查询当前成绩
+        RoundResult roundResult = DBManager.getInstance().queryLastScoreByStuCode(pair.getStudent().getStudentCode());
+        //修改成绩
+        roundResult.setResultState(RoundResult.RESULT_STATE_FOUL);
+        //判断最好成绩
+        RoundResult bestResult = DBManager.getInstance().queryBestScore(pair.getStudent().getStudentCode(),testNo);
+        if (bestResult == roundResult){
+            roundResult.setIsLastResult(0);
+            DBManager.getInstance().updateRoundResult(roundResult);//保存
+            RoundResult best = DBManager.getInstance().queryOrderDecScore(pair.getStudent().getStudentCode(), testNo);
+            if (best != null && best.getIsLastResult()==0){
+                best.setIsLastResult(1);
+                DBManager.getInstance().updateRoundResult(best);//保存最好成绩
+            }
+        }else {
+            DBManager.getInstance().updateRoundResult(roundResult);//保存
+        }
+
+        //更新界面成绩
+        pair.setResultState(RoundResult.RESULT_STATE_FOUL);
+        updateResult(pair);
+        //上传成绩
+        DBManager.getInstance().insertRoundResult(roundResult);
+        Logger.i("saveResult==>insertRoundResult->" + roundResult.toString());
+        List<RoundResult> roundResultList = new ArrayList<>();
+        roundResultList.add(roundResult);
+        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(pair.getStudent().getStudentCode());
+
+        UploadResults uploadResults = new UploadResults(studentItem.getScheduleNo(), TestConfigs.getCurrentItemCode(),
+                pair.getStudent().getStudentCode(), testNo + "", "", RoundResultBean.beanCope(roundResultList));
+        uploadResult(uploadResults);
     }
 
     public void toLedSetting() {

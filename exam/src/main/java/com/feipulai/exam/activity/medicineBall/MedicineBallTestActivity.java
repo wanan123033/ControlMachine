@@ -84,10 +84,16 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
             medicineBallSetting = new MedicineBallSetting();
         }
         Logger.i(TAG + ":medicineBallSetting ->" + medicineBallSetting.toString());
+        if (medicineBallSetting.isPenalize()){
+            setFaultVisible(true);
+            setFaultEnable(false);
+        }
+
     }
 
     @Override
     public void sendTestCommand(BaseStuPair baseStuPair) {
+        setFaultEnable(false);
         student = baseStuPair.getStudent();
         if (student == null){
             toastSpeak("请先添加学生");
@@ -266,6 +272,8 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
             mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_STOP));
 
             testState = TestState.UN_STARTED;
+
+            setFaultVisible(true);
         }
     }
 

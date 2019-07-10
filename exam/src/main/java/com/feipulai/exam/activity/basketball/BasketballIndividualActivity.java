@@ -117,7 +117,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         individualCheckFragment.setResultView(lvResults);
         individualCheckFragment.setOnIndividualCheckInListener(this);
         ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), individualCheckFragment, R.id.ll_individual_check);
-        setOperationUI();
+
         UdpClient.getInstance().init(1527);
 
         resultAdapter = new BasketBallResultAdapter(resultList, setting);
@@ -136,8 +136,8 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         });
 
         prepareForCheckIn();
-
-
+        state = WAIT_FREE;
+        setOperationUI();
     }
 
 
@@ -619,7 +619,6 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
      */
     private void prepareForCheckIn() {
         resultList.clear();
-
         resultAdapter.notifyDataSetChanged();
         TestCache.getInstance().clear();
         pairs.get(0).setStudent(null);
@@ -722,6 +721,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
     }
 
     private void showLedConfirmedResult() {
+        //1:正常 2:犯规 3:中退 4:弃权
         BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
         switch (testResult.getResultState()) {
             case RoundResult.RESULT_STATE_NORMAL:
