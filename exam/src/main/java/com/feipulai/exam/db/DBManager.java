@@ -1226,6 +1226,26 @@ public class DBManager {
     }
 
     /**
+     * 降序
+     * @param studentCode
+     * @param testNo
+     * @return
+     */
+    public RoundResult queryOrderDecScore(String studentCode, int testNo) {
+        Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
+                + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\ttestNo:" + testNo);
+        return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(RoundResultDao.Properties.TestNo.eq(testNo))
+                .where(RoundResultDao.Properties.ResultState.eq(RoundResult.RESULT_STATE_NORMAL))
+                .orderAsc(RoundResultDao.Properties.Result)
+                .limit(1)
+                .unique();
+    }
+
+    /**
      * 查询分组对应考生当前项目升序第一条成绩
      *
      * @param studentCode 考号
@@ -1239,6 +1259,24 @@ public class DBManager {
                 .where(RoundResultDao.Properties.GroupId.eq(groupId))
                 .where(RoundResultDao.Properties.ResultState.eq(RoundResult.RESULT_STATE_NORMAL))
                 .orderAsc(RoundResultDao.Properties.Result)
+                .limit(1)
+                .unique();
+    }
+
+    /**
+     * 查询分组对应考生当前项目降序第一条成绩
+     *
+     * @param studentCode 考号
+     * @return 成绩
+     */
+    public RoundResult queryGroupOrderDescScore(String studentCode, long groupId) {
+        return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(RoundResultDao.Properties.GroupId.eq(groupId))
+                .where(RoundResultDao.Properties.ResultState.eq(RoundResult.RESULT_STATE_NORMAL))
+                .orderDesc(RoundResultDao.Properties.Result)
                 .limit(1)
                 .unique();
     }

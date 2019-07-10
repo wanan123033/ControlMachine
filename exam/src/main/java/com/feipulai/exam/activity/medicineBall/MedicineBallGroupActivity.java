@@ -56,7 +56,10 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
         mSerialManager.setRS232ResiltListener(resultImpl);
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
         setTestType(1);
-
+        if (medicineBallSetting.isPenalize()){
+            setFaultVisible(true);
+            setFaultEnable(false);
+        }
         sendCheck();
     }
 
@@ -87,6 +90,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
 
     @Override
     public void startTest(BaseStuPair baseStuPair) {
+        setFaultEnable(false);
         startFlag = true ;
         this.baseStuPair = baseStuPair;
         mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
@@ -239,6 +243,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
             mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_STOP));
 
             testState = TestState.UN_STARTED;
+            setFaultEnable(true);
         }
     }
 
