@@ -24,6 +24,7 @@ public class MedicineBallSetting {
      * 分组测试模式 0 连续 1 循环
      */
     private int testPattern = 0;
+    private boolean isPenalize;
 
     public int getTestPattern() {
         return testPattern;
@@ -71,5 +72,13 @@ public class MedicineBallSetting {
 
     public void setFemaleFull(String femaleFull) {
         this.femaleFull = femaleFull;
+    }
+
+    public boolean isPenalize() {
+        return isPenalize;
+    }
+
+    public void setPenalize(boolean penalize) {
+        isPenalize = penalize;
     }
 }

@@ -1,5 +1,7 @@
 package com.feipulai.exam.activity.person;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -81,6 +83,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     TextView tvBaseHeight;
     @BindView(R.id.txt_stu_skip)
     TextView txtStuSkip;
+    @BindView(R.id.txt_stu_fault)
+    TextView txtStuFault;
     private List<BaseStuPair> stuPairsList;
     private BaseGroupTestStuAdapter stuAdapter;
     private List<String> resultList = new ArrayList<>();
@@ -240,6 +244,15 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         tvStartTest.setText(isBegin == 0 ? "暂停测试" : "开始测试");
     }
 
+    /**犯规按键是否可见*/
+    public void setFaultVisible(boolean visible){
+        txtStuFault.setVisibility(visible? View.VISIBLE:View.GONE);
+    }
+
+    public void setFaultEnable(boolean enable){
+        txtStuFault.setEnabled(enable);
+    }
+
     public abstract void initData();
 
     /**
@@ -324,9 +337,63 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             case R.id.txt_stu_skip:
                 studentSkip();
                 break;
+            case R.id.txt_stu_fault:
+                showPenalize();
+                break;
         }
     }
 
+    /**
+     * 展示判罚
+     */
+    private void showPenalize() {
+        new AlertDialog.Builder(this).setMessage("确认违规?")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        penalize();
+                        dialog.dismiss();
+                    }
+                }).setNegativeButton("取消", null).show();
+    }
+
+    private void penalize(){
+        BaseStuPair pair = stuPairsList.get(stuAdapter.getTestPosition());
+        if (pair.getStudent() == null)
+            return;
+        //查询当前成绩
+        RoundResult roundResult = DBManager.getInstance().queryLastScoreByStuCode(pair.getStudent().getStudentCode());
+        //修改成绩
+        roundResult.setResultState(RoundResult.RESULT_STATE_FOUL);
+        //判断最好成绩
+        RoundResult bestResult = DBManager.getInstance().queryGroupBestScore(pair.getStudent().getStudentCode(), group.getId());
+        if (bestResult == roundResult){
+            roundResult.setIsLastResult(0);
+            DBManager.getInstance().updateRoundResult(roundResult);//保存
+            RoundResult best = DBManager.getInstance().queryGroupOrderDescScore(pair.getStudent().getStudentCode(), group.getId());
+            if (best != null && best.getIsLastResult()==0){
+                best.setIsLastResult(1);
+                DBManager.getInstance().updateRoundResult(best);//保存最好成绩
+            }
+        }else {
+            DBManager.getInstance().updateRoundResult(roundResult);//保存
+        }
+
+        //更新界面成绩
+        pair.setResultState(RoundResult.RESULT_STATE_FOUL);
+        updateTestResult(pair);
+        //上传成绩
+        DBManager.getInstance().insertRoundResult(roundResult);
+        Logger.i("saveResult==>insertRoundResult->" + roundResult.toString());
+
+        List<RoundResult> roundResultList = new ArrayList<>();
+        roundResultList.add(roundResult);
+        UploadResults uploadResults = new UploadResults(group.getScheduleNo()
+                , TestConfigs.getCurrentItemCode(), pair.getStudent().getStudentCode()
+                , "1", group.getGroupNo() + "", RoundResultBean.beanCope(roundResultList));
+
+        uploadResult(uploadResults);
+    }
 
     /**
      * 考生跳过
