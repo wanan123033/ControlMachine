@@ -78,7 +78,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="15dp"
                 android:background="@drawable/btn_background"
-                android:text="设置颜色组"
+                android:text="新增颜色组"
                 android:textColor="@color/white" />
 
             <Button

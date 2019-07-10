@@ -1,6 +1,11 @@
 package com.feipulai.exam.activity.MiddleDistanceRace;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,17 +23,24 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.feipulai.common.dbutils.FileSelectActivity;
+import com.feipulai.common.exl.ExlListener;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.DisplayUtil;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.ColorGroupAdapter;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.GridViewColorAdapter;
+import com.feipulai.exam.activity.data.DataRetrieveActivity;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.ChipGroup;
 import com.feipulai.exam.entity.ChipInfo;
 import com.feipulai.exam.entity.Group;
+import com.feipulai.exam.exl.ColorGroupExLReader;
+import com.feipulai.exam.view.OperateProgressBar;
+import com.orhanobut.logger.Logger;
 import com.zyyoona7.popup.EasyPopup;
 
 import java.util.ArrayList;
@@ -40,13 +52,15 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static com.feipulai.exam.activity.MiddleDistanceRace.bean.MiddleBean.colorIds;
 import static com.feipulai.exam.config.SharedPrefsConfigs.MIDDLE_RACE;
 import static com.feipulai.exam.config.SharedPrefsConfigs.VEST_CHIP_NO;
 
 /**
  * created by ww on 2019/6/24.
  */
-public class OtherSettingFragment extends Fragment implements AdapterView.OnItemSelectedListener, View.OnClickListener, ColorGroupAdapter.OnItemClickListener {
+public class OtherSettingFragment extends Fragment implements AdapterView.OnItemSelectedListener, View.OnClickListener, ColorGroupAdapter.OnItemClickListener, ExlListener {
     @BindView(R.id.rv_color_group)
     RecyclerView rvColorGroup;
     @BindView(R.id.sp_vest_chip_no)
@@ -76,32 +90,8 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
     private EditText etGroupNo;
     private Button btnCancel;
     private Button btnSure;
-    private final int[] colorIds = {R.color.swipe_color_1,
-            R.color.blue,
-            R.color.hostStyle,
-            R.color.Crimson,
-            R.color.result_points,
-            R.color.sbc_header_text,
-            R.color.possible_result_points,
-            R.color.Pink,
-            R.color.Blue,
-            R.color.blue_sky,
-            R.color.LightSalmon,
-            R.color.SandyBrown,
-            R.color.Yellow,
-            R.color.Lime,
-            R.color.MediumVioletRed,
-            R.color.Sienna,
-            R.color.viewfinder_laser,
-            R.color.SeaGreen,
-            R.color.MediumTurquoise,
-            R.color.CadetBlue,
-            R.color.RoyalBlue,
-            R.color.BlueViolet,
-            R.color.Magenta,
-            R.color.black_T20,
-            R.color.half_black
-    };
+    private AlertDialog.Builder builder;
+    private boolean isAddFlag = true;//判断是否是编辑还是新增的标识
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.frag_other_setting, container, false);
@@ -211,13 +201,83 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
                 });
                 break;
             case R.id.btn_color_add:
+                isAddFlag = true;
+                tvGroupColor.setBackgroundColor(Color.TRANSPARENT);
                 mCirclePop.showAtLocation(mView, Gravity.CENTER, 0, 0);
                 break;
             case R.id.btn_import_chip:
+                DialogUtil.showCommonDialog(mContext, "当前所有芯片分组及颜色组将删除", new DialogUtil.DialogListener() {
+                    @Override
+                    public void onPositiveClick() {
+                        DBManager.getInstance().deleteAllChip();
+                        colorGroups.clear();
+                        colorGroupAdapter.notifyDataSetChanged();
+                        Intent intent = new Intent();
+                        intent.setClass(mContext, FileSelectActivity.class);
+                        intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_FILE);
+                        startActivityForResult(intent, 1);
+                    }
+
+                    @Override
+                    public void onNegativeClick() {
+
+                    }
+                });
                 break;
             case R.id.btn_explore_chip:
                 break;
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_CANCELED) {
+            return;
+        }
+        if (requestCode == 1) {
+            OperateProgressBar.showLoadingUi(getActivity(), "正在读取exel文件...");
+            Logger.i(" exel文件导入");
+            Logger.i("保存路径：" + FileSelectActivity.sSelectedFile);
+            new ColorGroupExLReader(this).readExlData(FileSelectActivity.sSelectedFile);
+        }
+    }
+
+    @Override
+    public void onExlResponse(final int responseCode, final String reason) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                switch (responseCode) {
+                    case ExlListener.EXEL_READ_SUCCESS:
+                        OperateProgressBar.removeLoadingUiIfExist(getActivity());
+                        ToastUtils.showShort(reason);
+                        Intent intent = new Intent(DataRetrieveActivity.UPDATE_MESSAGE);
+                        getActivity().sendBroadcast(intent);
+
+                        colorGroups.addAll(DBManager.getInstance().queryAllChipGroup());
+                        colorGroupAdapter.notifyDataSetChanged();
+                        break;
+
+                    case ExlListener.EXEL_READ_FAIL:
+                        OperateProgressBar.removeLoadingUiIfExist(getActivity());
+                        ToastUtils.showShort(reason);
+                        break;
+
+                    case ExlListener.EXEL_WRITE_SUCCESS:
+                        OperateProgressBar.removeLoadingUiIfExist(getActivity());
+                        ToastUtils.showShort(reason);
+                        break;
+
+                    case ExlListener.EXEL_WRITE_FAILED:
+                        OperateProgressBar.removeLoadingUiIfExist(getActivity());
+                        Toast.makeText(mContext, reason, Toast.LENGTH_SHORT).show();
+                        ToastUtils.showShort(reason);
+                        break;
+                }
+            }
+
+        });
     }
 
     @Override
@@ -251,8 +311,6 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
 
     }
 
-    private List<ChipInfo> chipInfos;
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -260,45 +318,12 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
                 mCirclePop.dismiss();
                 break;
             case R.id.btn_color_sure:
-                String groupName = etGroupName.getText().toString();
-                String groupNo = etGroupNo.getText().toString();
-                if (groupColor == 0 || TextUtils.isEmpty(groupName) || TextUtils.isEmpty(groupNo)) {
-                    ToastUtils.showShort("添加内容为空");
-                    break;
+                if (isAddFlag) {
+                    addColorGroup();
+                } else {
+                    editColorGroup();
                 }
 
-                long no1 = DBManager.getInstance().queryChipGroup(groupName);
-                long no2 = DBManager.getInstance().queryChipGroup(groupColor);
-                if (no1 > 0) {
-                    ToastUtils.showShort("该组组名已存在");
-                    break;
-                }
-                if (no2 > 0) {
-                    ToastUtils.showShort("该组颜色已存在");
-                    break;
-                }
-                //保存颜色组到数据库
-                ChipGroup chipGroup = new ChipGroup();
-                chipGroup.setColor(groupColor);
-                chipGroup.setColorGroupName(groupName);
-                chipGroup.setGroupType(groupStyle);
-                chipGroup.setStudentNo(Integer.parseInt(groupNo));
-                DBManager.getInstance().insertChipGroup(chipGroup);
-
-                //保存芯片信息到数据库（颜色组创建后芯片组根据颜色组信息自动创建）
-                chipInfos = new ArrayList<>();
-                ChipInfo chipInfo;
-                for (int i = 0; i < Integer.parseInt(groupNo); i++) {
-                    chipInfo = new ChipInfo();
-                    chipInfo.setColorGroupName(groupName);
-                    chipInfo.setVestNo(i + 1);
-                    chipInfo.setColor(groupColor);
-                    chipInfos.add(chipInfo);
-                }
-                DBManager.getInstance().insertChipInfos(chipInfos);
-
-                colorGroups.add(chipGroup);
-                colorGroupAdapter.notifyDataSetChanged();
                 mCirclePop.dismiss();
                 break;
             default:
@@ -306,11 +331,158 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
         }
     }
 
+    //新增颜色组
+    private void addColorGroup() {
+        String groupName = etGroupName.getText().toString();
+        String groupNo = etGroupNo.getText().toString();
+        if (groupColor == 0 || TextUtils.isEmpty(groupName) || TextUtils.isEmpty(groupNo)) {
+            ToastUtils.showShort("添加内容为空");
+            return;
+        }
+
+        long no1 = DBManager.getInstance().queryChipGroup(groupName);
+        long no2 = DBManager.getInstance().queryChipGroup(groupColor);
+        if (no1 > 0) {
+            ToastUtils.showShort("该组组名已存在");
+            return;
+        }
+        if (no2 > 0) {
+            ToastUtils.showShort("该组颜色已存在");
+            return;
+        }
+        //保存颜色组到数据库
+        ChipGroup chipGroup = new ChipGroup();
+        chipGroup.setColor(groupColor);
+        chipGroup.setColorGroupName(groupName);
+        chipGroup.setGroupType(groupStyle);
+        chipGroup.setStudentNo(Integer.parseInt(groupNo));
+        DBManager.getInstance().insertChipGroup(chipGroup);
+
+        //保存芯片信息到数据库（颜色组创建后芯片组根据颜色组信息自动创建）
+        ArrayList<ChipInfo> chipInfos = new ArrayList<>();
+        ChipInfo chipInfo;
+        for (int i = 0; i < Integer.parseInt(groupNo); i++) {
+            chipInfo = new ChipInfo();
+            chipInfo.setColorGroupName(groupName);
+            chipInfo.setVestNo(i + 1);
+            chipInfo.setColor(groupColor);
+            chipInfos.add(chipInfo);
+        }
+        DBManager.getInstance().insertChipInfos(chipInfos);
+
+        colorGroups.add(chipGroup);
+        colorGroupAdapter.notifyDataSetChanged();
+    }
+
+    //编辑颜色组
+    private void editColorGroup() {
+        String groupName = etGroupName.getText().toString();
+        String groupNo = etGroupNo.getText().toString();
+        if (groupColor == 0 || TextUtils.isEmpty(groupName) || TextUtils.isEmpty(groupNo)) {
+            ToastUtils.showShort("添加内容为空");
+            return;
+        }
+
+        if (groupName.equals(firstColorName) && groupColor == firstColorId && Integer.parseInt(groupNo) == firstNo) {
+            return;
+        }
+
+        long no1 = DBManager.getInstance().queryChipGroup(groupName);
+        long no2 = DBManager.getInstance().queryChipGroup(groupColor);
+        if (no1 > 0 && !groupName.equals(firstColorName)) {
+            ToastUtils.showShort("该组组名已存在");
+            return;
+        }
+        if (no2 > 0 && groupColor != firstColorId) {
+            ToastUtils.showShort("该组颜色已存在");
+            return;
+        }
+
+        colorGroups.get(colorPosition).setColor(groupColor);
+        colorGroups.get(colorPosition).setStudentNo(Integer.parseInt(groupNo));
+        colorGroups.get(colorPosition).setColorGroupName(groupName);
+        colorGroups.get(colorPosition).setGroupType(groupStyle);
+        DBManager.getInstance().updateChipGroup(colorGroups.get(colorPosition));
+
+        //查询所有当前编辑的颜色绑定的芯片信息
+        List<ChipInfo> chipInfos = DBManager.getInstance().queryChipInfoByColor(firstColorName);
+        //替换掉芯片信息表中原来的颜色和颜色组名
+        for (ChipInfo chip : chipInfos
+                ) {
+            chip.setColorGroupName(groupName);
+            chip.setColor(groupColor);
+        }
+
+
+        //当编辑后人数减少，需要删除芯片信息
+        if (firstNo > Integer.parseInt(groupNo)) {
+            DBManager.getInstance().updateChipInfo(chipInfos);
+            DBManager.getInstance().deleteSomeChipInfos(chipInfos.subList(Integer.parseInt(groupNo), firstNo));
+        } else {//当编辑后人数增加，需要增加到芯片信息
+            ChipInfo chipInfo;
+            for (int i = firstNo; i < Integer.parseInt(groupNo); i++) {
+                chipInfo = new ChipInfo();
+                chipInfo.setColorGroupName(groupName);
+                chipInfo.setVestNo(i + 1);
+                chipInfo.setColor(groupColor);
+                chipInfos.add(chipInfo);
+            }
+            DBManager.getInstance().insertChipInfos2(chipInfos);
+        }
+
+        colorGroupAdapter.notifyDataSetChanged();
+    }
+
+    private int colorPosition;
+
     @Override
     public void onColorGroupLongClick(final int position) {
+        colorPosition = position;
+        showListDialog(position);
+    }
+
+    private String firstColorName;//编辑之前的组名
+    private int firstColorId;//编辑之前的颜色
+    private int firstNo;//编辑之前的组人数
+
+    /**
+     * 列表 dialog
+     */
+    private void showListDialog(final int position) {
+        final String[] items = {"编辑", "删除"};
+        builder = new AlertDialog.Builder(mContext)
+                .setTitle("当前组别：" + colorGroups.get(position).getColorGroupName())
+                .setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        switch (i) {
+                            case 0:
+                                firstColorName = colorGroups.get(position).getColorGroupName();
+                                firstColorId = colorGroups.get(position).getColor();
+                                firstNo = colorGroups.get(position).getStudentNo();
+
+                                isAddFlag = false;
+                                mCirclePop.showAtLocation(mView, Gravity.CENTER, 0, 0);
+                                etGroupName.setText(firstColorName);
+                                etGroupNo.setText(firstNo + "");
+
+                                groupColor = firstColorId;
+                                tvGroupColor.setBackgroundResource(groupColor);
+                                break;
+                            case 1:
+                                showDeleteDialog(position);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                });
+        builder.create().show();
+    }
+
+    private void showDeleteDialog(final int position) {
         final String groupName = colorGroups.get(position).getColorGroupName();
-        Log.i("groupName", "---------" + groupName);
-        final List<ChipInfo> chips = DBManager.getInstance().queryChipInfoHasChipID(groupName);
+        List<ChipInfo> chips = DBManager.getInstance().queryChipInfoHasChipID(groupName);
         String text;
         if (chips != null && chips.size() > 0) {
             text = groupName + "组已绑定芯片ID，将会一起清除";
@@ -352,4 +524,5 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
             }
         });
     }
+
 }

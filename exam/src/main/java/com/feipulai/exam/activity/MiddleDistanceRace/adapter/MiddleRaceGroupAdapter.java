@@ -65,7 +65,7 @@ public class MiddleRaceGroupAdapter extends RecyclerView.Adapter<MiddleRaceGroup
     public void onBindViewHolder(final VH holder, final int position) {
         holder.tvItemRaceNo.setText(String.valueOf(position + 1));
         holder.tvItemRaceItem.setText(mDatas.get(position).getGroupItemName());
-        holder.tvItemRaceNumber.setText(mDatas.get(position).getStudentNumber() + "");
+        holder.tvItemRaceNumber.setText(mDatas.get(position).getGroupItems().size() + "");
 
         switch (mDatas.get(position).getGroup().getIsTestComplete()) {
             case 0:

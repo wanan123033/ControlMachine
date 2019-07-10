@@ -67,6 +67,7 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
             listener.onConnected("设备连接成功");
             return;
         }
+        //解析收到的包
         if (response.startsWith("a1") && response.endsWith("fff8") && Integer.parseInt(response2[1] + response2[2], 16) == response2.length) {
             int[] timeByte = new int[7];
             long currentDate;

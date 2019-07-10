@@ -236,6 +236,10 @@ public class DBManager {
         chipGroupDao.insert(chipGroup);
     }
 
+    public void insertChipGroups(List<ChipGroup> chipGroups) {
+        chipGroupDao.insertInTx(chipGroups);
+    }
+
     public long queryChipGroup(int color) {
         return chipGroupDao.queryBuilder().where(ChipGroupDao.Properties.Color.eq(color)).count();
     }
@@ -244,8 +248,17 @@ public class DBManager {
         return chipGroupDao.queryBuilder().where(ChipGroupDao.Properties.ColorGroupName.eq(colorName)).count();
     }
 
-    public ChipInfo queryChipInfo(String chipInfo) {
+
+    public ChipInfo queryChipInfoByID(String chipInfo) {
         return chipInfoDao.queryBuilder().whereOr(ChipInfoDao.Properties.ChipID1.eq(chipInfo), ChipInfoDao.Properties.ChipID2.eq(chipInfo)).unique();
+    }
+
+    public List<ChipInfo> queryChipInfoByColor(String chipColor) {
+        return chipInfoDao.queryBuilder().where(ChipInfoDao.Properties.ColorGroupName.eq(chipColor)).orderAsc(ChipInfoDao.Properties.VestNo).list();
+    }
+
+    public void deleteSomeChipInfos(List<ChipInfo> chipInfos) {
+        chipInfoDao.deleteInTx(chipInfos);
     }
 
     public ChipGroup queryChipGroupUni(String colorName) {
@@ -287,11 +300,15 @@ public class DBManager {
     }
 
     public List<ChipInfo> queryAllChipInfo() {
-        return chipInfoDao.loadAll();
+        return chipInfoDao.queryBuilder().orderAsc(ChipInfoDao.Properties.Color, ChipInfoDao.Properties.VestNo).list();
     }
 
     public void updateChipInfo(ChipInfo chipInfo) {
         chipInfoDao.update(chipInfo);
+    }
+
+    public void updateChipGroup(ChipGroup chipGroup) {
+        chipGroupDao.update(chipGroup);
     }
 
     public void updateChipInfo(List<ChipInfo> chipInfos) {
@@ -316,6 +333,10 @@ public class DBManager {
      */
     public void insertChipInfos(List<ChipInfo> chipInfos) {
         chipInfoDao.insertInTx(chipInfos);
+    }
+
+    public void insertChipInfos2(List<ChipInfo> chipInfos) {
+        chipInfoDao.insertOrReplaceInTx(chipInfos);
     }
 
     public void deleteAllChip() {
@@ -1225,7 +1246,6 @@ public class DBManager {
     /**
      * 查询某个项目某个性别某个组次的所有人
      *
-     *
      * @param scheduleNo
      * @param itemCode
      * @param sort
@@ -1374,6 +1394,16 @@ public class DBManager {
                 .where(RoundResultDao.Properties.RoundNo.eq(roundNo))
                 .list();
     }
+
+    public List<RoundResult> queryResultByStudentCode(String studentCode, String itemCode) {
+        return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .list();
+    }
+
+
 
     /**
      * 查询对应考生当前项目轮次成绩

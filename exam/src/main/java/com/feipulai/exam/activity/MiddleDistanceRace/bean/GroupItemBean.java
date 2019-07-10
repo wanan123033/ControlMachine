@@ -1,19 +1,27 @@
 package com.feipulai.exam.activity.MiddleDistanceRace.bean;
 
 import com.feipulai.exam.entity.Group;
+import com.feipulai.exam.entity.GroupItem;
+
+import java.util.List;
 
 /**
  * created by ww on 2019/7/8.
  */
 public class GroupItemBean {
     private Group group;
-    private int studentNumber;
+    private List<GroupItem> groupItems;
     private String groupItemName;
+    private String itemName;
 
-    public GroupItemBean(Group group, int studentNumber, String groupItemName) {
+    public GroupItemBean() {
+    }
+
+    public GroupItemBean(Group group, List<GroupItem> groupItems, String groupItemName, String itemName) {
         this.group = group;
-        this.studentNumber = studentNumber;
+        this.groupItems = groupItems;
         this.groupItemName = groupItemName;
+        this.itemName = itemName;
     }
 
     public Group getGroup() {
@@ -24,12 +32,12 @@ public class GroupItemBean {
         this.group = group;
     }
 
-    public int getStudentNumber() {
-        return studentNumber;
+    public List<GroupItem> getGroupItems() {
+        return groupItems;
     }
 
-    public void setStudentNumber(int studentNumber) {
-        this.studentNumber = studentNumber;
+    public void setGroupItems(List<GroupItem> groupItems) {
+        this.groupItems = groupItems;
     }
 
     public String getGroupItemName() {
@@ -40,12 +48,21 @@ public class GroupItemBean {
         this.groupItemName = groupItemName;
     }
 
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
     @Override
     public String toString() {
         return "GroupItemBean{" +
                 "group=" + group +
-                ", studentNumber=" + studentNumber +
+                ", groupItems=" + groupItems +
                 ", groupItemName='" + groupItemName + '\'' +
+                ", itemName='" + itemName + '\'' +
                 '}';
     }
 }
