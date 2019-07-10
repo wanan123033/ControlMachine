@@ -1,35 +1,23 @@
 package com.feipulai.exam.activity.MiddleDistanceRace;
 
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * created by ww on 2019/6/24.
  */
 public class RaceResultBean {
     private String no;//组的序号（非组号，与数据库无关）
-    private String track;//道次
-    private String studentName;//考生姓名
-    private String lastResult;//最终成绩
-    private String[] results;//到达每一圈的成绩，圈数可设置
+    private int cycle;//圈数
+    private long startTime;//开始时间
+    private int vestNo;//背心号
+    private String itemCode;//
+    private String itemName;//
+    private String[] results;//{道次,姓名,最终成绩,第一圈,第二圈,第三圈,第四圈...}---成绩时间戳格式
+    private int color;//颜色
+    private String studentName;
+    private String studentCode;
 
     public RaceResultBean() {
-    }
-
-    public String getNo() {
-        return no;
-    }
-
-    public void setNo(String no) {
-        this.no = no;
-    }
-
-    public String getTrack() {
-        return track;
-    }
-
-    public void setTrack(String track) {
-        this.track = track;
     }
 
     public String getStudentName() {
@@ -40,12 +28,60 @@ public class RaceResultBean {
         this.studentName = studentName;
     }
 
-    public String getLastResult() {
-        return lastResult;
+    public String getStudentCode() {
+        return studentCode;
     }
 
-    public void setLastResult(String lastResult) {
-        this.lastResult = lastResult;
+    public void setStudentCode(String studentCode) {
+        this.studentCode = studentCode;
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
+    public int getVestNo() {
+        return vestNo;
+    }
+
+    public void setVestNo(int vestNo) {
+        this.vestNo = vestNo;
+    }
+
+    public String getItemCode() {
+        return itemCode;
+    }
+
+    public void setItemCode(String itemCode) {
+        this.itemCode = itemCode;
+    }
+
+    public int getCycle() {
+        return cycle;
+    }
+
+    public void setCycle(int cycle) {
+        this.cycle = cycle;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
+    public String getNo() {
+        return no;
+    }
+
+    public void setNo(String no) {
+        this.no = no;
     }
 
     public String[] getResults() {
@@ -56,14 +92,27 @@ public class RaceResultBean {
         this.results = results;
     }
 
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
     @Override
     public String toString() {
         return "RaceResultBean{" +
                 "no='" + no + '\'' +
-                ", track='" + track + '\'' +
-                ", studentName='" + studentName + '\'' +
-                ", lastResult='" + lastResult + '\'' +
+                ", cycle=" + cycle +
+                ", startTime=" + startTime +
+                ", vestNo=" + vestNo +
+                ", itemCode='" + itemCode + '\'' +
+                ", itemName='" + itemName + '\'' +
                 ", results=" + Arrays.toString(results) +
+                ", color=" + color +
+                ", studentName='" + studentName + '\'' +
+                ", studentCode='" + studentCode + '\'' +
                 '}';
     }
 }

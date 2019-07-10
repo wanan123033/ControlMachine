@@ -72,4 +72,15 @@ public void setChipID2(String chipID2) {
     this.chipID2 = chipID2;
 }
 
+    @Override
+    public String toString() {
+        return "ChipInfo{" +
+                "id=" + id +
+                ", colorGroupName='" + colorGroupName + '\'' +
+                ", color=" + color +
+                ", vestNo=" + vestNo +
+                ", chipID1='" + chipID1 + '\'' +
+                ", chipID2='" + chipID2 + '\'' +
+                '}';
+    }
 }

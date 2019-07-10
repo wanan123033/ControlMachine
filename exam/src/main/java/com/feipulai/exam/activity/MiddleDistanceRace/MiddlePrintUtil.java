@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class MiddlePrintUtil {
 
-    public static void print(List<RaceResultBean2> raceResultBean2s) {
+    public static void print(List<RaceResultBean> raceResultBean2s) {
         if (!SettingHelper.getSystemSetting().isAutoPrint())
             return;
         for (int i = 1; i < raceResultBean2s.size(); i++) {//第一行为标题，此处从1开始

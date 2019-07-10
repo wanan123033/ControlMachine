@@ -12,6 +12,7 @@ public class TimingBean {
     public static final int TIMING_STATE_BACK = 2;
     public static final int TIMING_STATE_COMPLETE = 3;
     public static final int TIMING_STATE_TIMING = 4;
+    public static final int TIMING_START = 666;//开始计时
 
     public static final int GROUP_3 = 3;//空闲(Group表中字段)
     public static final int GROUP_4 = 4;//关联(Group表中字段)
@@ -22,14 +23,16 @@ public class TimingBean {
     private String itemCode;
     private String itemGroupName;//组名
     private int color;//组颜色
+    private int studentNo;//考生人数
 
-    public TimingBean(int no, int state, long time, String itemCode, String itemGroupName, int color) {
+    public TimingBean(int no, int state, long time, String itemCode, String itemGroupName, int color, int studentNo) {
         this.no = no;
         this.state = state;
         this.time = time;
         this.itemCode = itemCode;
         this.itemGroupName = itemGroupName;
         this.color = color;
+        this.studentNo = studentNo;
     }
 
     public TimingBean() {
@@ -83,6 +86,14 @@ public class TimingBean {
         this.color = color;
     }
 
+    public int getStudentNo() {
+        return studentNo;
+    }
+
+    public void setStudentNo(int studentNo) {
+        this.studentNo = studentNo;
+    }
+
     @Override
     public String toString() {
         return "TimingBean{" +
@@ -92,6 +103,7 @@ public class TimingBean {
                 ", itemCode='" + itemCode + '\'' +
                 ", itemGroupName='" + itemGroupName + '\'' +
                 ", color=" + color +
+                ", studentNo=" + studentNo +
                 '}';
     }
 }

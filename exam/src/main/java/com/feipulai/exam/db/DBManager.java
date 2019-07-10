@@ -2,6 +2,7 @@ package com.feipulai.exam.db;
 
 import android.database.Cursor;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.BuildConfig;
@@ -251,6 +252,12 @@ public class DBManager {
 
     public ChipInfo queryChipInfoByID(String chipInfo) {
         return chipInfoDao.queryBuilder().whereOr(ChipInfoDao.Properties.ChipID1.eq(chipInfo), ChipInfoDao.Properties.ChipID2.eq(chipInfo)).unique();
+    }
+
+    public List<ChipInfo> queryChipInfoByID2(String chipInfo) {
+        List<ChipInfo> chips = chipInfoDao.queryBuilder().whereOr(ChipInfoDao.Properties.ChipID1.eq(chipInfo), ChipInfoDao.Properties.ChipID2.eq(chipInfo)).list();
+        Log.i("chips-----------", chips.toString());
+        return chips;
     }
 
     public List<ChipInfo> queryChipInfoByColor(String chipColor) {
@@ -1402,7 +1409,6 @@ public class DBManager {
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .list();
     }
-
 
 
     /**
