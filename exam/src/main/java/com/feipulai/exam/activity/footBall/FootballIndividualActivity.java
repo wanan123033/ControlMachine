@@ -229,7 +229,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
             case 3:
                 state = TESTING;
                 txtDeviceStatus.setText("计时");
-                testDate = System.currentTimeMillis() + "";
+//                testDate = System.currentTimeMillis() + "";
                 break;
             case 4:
                 state = WAIT_STOP;
@@ -276,11 +276,11 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
      * 开始
      */
     private void doTriggerStart() {
+        testDate = System.currentTimeMillis() + "";
+        timerUtil.startTime(10);
         state = TESTING;
         txtDeviceStatus.setText("计时");
-        testDate = System.currentTimeMillis() + "";
         setOperationUI();
-        timerUtil.startTime(10);
     }
 
     @Override
@@ -406,7 +406,9 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
 
     @Override
     public void timer(Long time) {
-        tvResult.setText(DateUtil.caculateTime(time * 10, TestConfigs.sCurrentItem.getDigital(), 0));
+        if (state == TESTING) {
+            tvResult.setText(DateUtil.caculateTime(time * 10, TestConfigs.sCurrentItem.getDigital(), 0));
+        }
     }
 
     @Nullable
@@ -523,6 +525,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         switch (view.getId()) {
             case R.id.txt_waiting://等待发令
                 if ((state == WAIT_CHECK_IN || state == WAIT_CONFIRM || state == WAIT_STOP) && isExistTestPlace()) {
+                    timerUtil.stop();
                     UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
                 }
                 break;
@@ -556,26 +559,25 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                 setResultState(RoundResult.RESULT_STATE_NORMAL);
                 break;
             case R.id.tv_print://打印
-                if (pairs.get(0).getStudent() != null) {
-                    TestCache testCache = TestCache.getInstance();
-                    InteractUtils.printResults(null, testCache.getAllStudents(), testCache.getResults(),
-                            TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
-                }
+                print();
 
                 break;
             case R.id.tv_confirm://确定
-                tvResult.setText("");
-//                pairs.get(0).getDeviceResult().setResult(pairs.get(0).getDeviceResult().getResult());
-//                InteractUtils.saveResults(pairs, testDate);
+                timerUtil.stop();
                 if (state == WAIT_CONFIRM) {
                     UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
                 }
-                onResultConfirmed();
+                if (state != TESTING && pairs.get(0).getStudent() != null) {
+                    tvResult.setText("");
+                    txtDeviceStatus.setText("空闲");
+                    onResultConfirmed();
+                }
                 break;
             case R.id.txt_finish_test:
                 if (state == TESTING) {
                     toastSpeak("测试中,不允许跳过本次测试");
                 } else {
+                    timerUtil.stop();
                     resultAdapter.setSelectPosition(-1);
                     prepareForCheckIn();
                     UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
@@ -586,13 +588,21 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         }
     }
 
+    private void print() {
+        if (pairs.get(0).getStudent() != null) {
+            TestCache testCache = TestCache.getInstance();
+            InteractUtils.printResults(null, testCache.getAllStudents(), testCache.getResults(),
+                    TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
+        }
+    }
+
     /**
      * 判罚成绩
      *
      * @param punishType 正数 +1 负数 -1
      */
     private void setPunish(int punishType) {
-        if (state == TESTING || state == WAIT_STOP || state == WAIT_BEGIN) {
+        if (state == TESTING ||  state == WAIT_BEGIN) {
             toastSpeak("测试中,不允许更改考试成绩");
         } else {
             if (resultAdapter.getSelectPosition() == -1)
