@@ -27,8 +27,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -102,7 +100,7 @@ public class StuItemExLReader extends ExlReader {
         // 项目代码还是默认的,需要更新当前的项目的项目代码,并且将之前有的 报名信息 和 成绩 的项目代码更改
         Item nameItem = DBManager.getInstance().queryItemByName(mItemName);
         if (itemCode == null) {
-            try{
+            try {
                 Logger.i(mItemCode + " :  " + mItemName);
                 if (nameItem == null) {
                     TestConfigs.sCurrentItem.setItemCode(mItemCode);
@@ -119,7 +117,7 @@ public class StuItemExLReader extends ExlReader {
                         return false;
                     }
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
                 listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel导入失败,导入项目代码已存在,拒绝导入");
                 Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel导入失败,拒绝导入" + e.getMessage());
@@ -232,30 +230,149 @@ public class StuItemExLReader extends ExlReader {
     }
 
     private List<ExelReadBean> readXlsx() {
-        XSSFWorkbook xssfWorkbook;
-        InputStream is = getInputStram();
+        final List<ExelReadBean> result = new ArrayList<>();
+        final XlsxReaderUtil xlsxReader = new XlsxReaderUtil();
+        xlsxReader.setDataListener(new XlsxReaderUtil.GetReaderXlsxDataListener() {
+            @Override
+            public void readerLineData(int rowNum, List<String> data) {
+                if (rowNum == 0) {
+                    if (data.size() != 19) {
+                        listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "EXL文档格式错误");
+                        Logger.i(TestConfigs.df.format(new Date()) + "---> " + "EXL文档格式错误");
+                        xlsxReader.setStop(true);
+                        return;
+                    }
+                    mHasIDCardCol = false;
+                    for (int i = 0; i < data.size(); i++) {
+                        //把需要的数据列的列名和索引记下来
+                        String cellValue = data.get(i);
+                        // 必须有"(*)"号
+                        if (cellValue.contains("*")) {
+                            cellValue = cellValue.substring(0, cellValue.indexOf("*") - 1);
+                        }
+                        mColNums.put(cellValue, i);
+                        if (cellValue.equals("身份证号")) {
+                            mHasIDCardCol = true;
+                        }
+                    }
+
+                    //检查是否有所有需要的索引
+                    for (int i = 0; i < mNecessaryCols.size(); i++) {
+                        if (!mColNums.containsKey(mNecessaryCols.get(i))) {
+                            listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "缺少必要列:" + mNecessaryCols.get(i) + ",excel读取失败");
+                            Logger.i(TestConfigs.df.format(new Date()) + "---> " + "缺少必要列:" + mNecessaryCols.get(i) + ",excel读取失败");
+                            xlsxReader.setStop(true);
+                            return;
+                        }
+                    }
+                    return;
+                }
+                ExelReadBean bean = readXLSXRow(data);
+                if (bean == null) {
+                    listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "Excel读取解析失败,第" + rowNum + 1 + "行读取失败");
+                    Logger.i(TestConfigs.df.format(new Date()) + "---> " + "Excel读取解析失败,第" + rowNum + 1 + "行读取失败");
+                    return;
+                }
+                result.add(bean);
+            }
+        });
         try {
-            xssfWorkbook = new XSSFWorkbook(is);
-        } catch (IOException e) {
-            e.printStackTrace();
-            listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel读取失败,文件读取异常");
-            Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel读取失败,文件读取异常");
+            xlsxReader.read(getInputStram());
+        } catch (Exception e) {
             return null;
         }
 
-        XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);// HSSFSheet 标识某一页
 
-        List<ExelReadBean> result = readRow(xssfSheet);
-
-        try {
-            is.close();
-            xssfWorkbook.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "exel读取失败,文件读取异常");
-            return null;
-        }
+//        XSSFWorkbook xssfWorkbook;
+//        InputStream is = getInputStram();
+//        try {
+//            xssfWorkbook = new XSSFWorkbook(is);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel读取失败,文件读取异常");
+//            Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel读取失败,文件读取异常");
+//            return null;
+//        }
+//
+//        XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);// HSSFSheet 标识某一页
+//
+//        List<ExelReadBean> result = readRow(xssfSheet);
+//
+//        try {
+//            is.close();
+//            xssfWorkbook.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "exel读取失败,文件读取异常");
+//            return null;
+//        }
         return result;
+    }
+
+    private ExelReadBean readXLSXRow(List<String> rowList) {
+        ExelReadBean bean = new ExelReadBean();
+        String stuCode = rowList.get(3);
+        String sex = rowList.get(2);
+        String stuName = rowList.get(4);
+        String itemName = rowList.get(6);
+        String itemCode = rowList.get(17);
+        String examType = rowList.get(18);
+        String sessionNo = rowList.get(8);
+        String idCardNo = rowList.get(14);
+        if (TextUtils.isEmpty(stuCode)) {
+            Logger.i(TestConfigs.df.format(new Date()) + "---> " + "Excel读取失败, 考生未设置考生号");
+            return null;
+        }
+        bean.setStudentCode(stuCode);
+
+        if ("男".equals(sex)) {
+            bean.setSex(Student.MALE);
+        } else if ("女".equals(sex)) {
+            bean.setSex(Student.FEMALE);
+        } else {
+            Logger.i(TestConfigs.df.format(new Date()) + "---> " + "Excel读取失败, 考生未设置性别");
+            // 不男不女
+            return null;
+        }
+
+        if (TextUtils.isEmpty(stuName)) {
+            return null;
+        }
+        bean.setStudentName(stuName);
+
+        if (mItemName == null) {
+            mItemName = itemName;
+        }
+        if (TextUtils.isEmpty(itemName) || !mItemName.equals(itemName)) {
+            // 表里面所有行的项目名必须相同
+            return null;
+        }
+        bean.setItemName(itemName);
+
+        if (mItemCode == null) {
+            mItemCode = itemCode;
+        }
+        if (TextUtils.isEmpty(itemCode) || !mItemCode.equals(itemCode)) {
+            // 表里面所有行的项目代码必须相同
+            return null;
+        }
+        bean.setItemCode(itemCode);
+
+        if (TextUtils.isEmpty(sessionNo)) {
+            return null;
+        }
+        bean.setSessionNo(sessionNo);
+        if (TextUtils.isEmpty(examType)) {
+            return null;
+        }
+        bean.setExamType(examType);
+        if (mHasIDCardCol) {
+
+            if (!TextUtils.isEmpty(idCardNo)) {
+                bean.setIdCardNo(idCardNo);
+            }
+        }
+        return bean;
     }
 
     // 读取exel文档数据
@@ -264,6 +381,7 @@ public class StuItemExLReader extends ExlReader {
         HSSFWorkbook hssfWorkbook = null;
         try {
             hssfWorkbook = new HSSFWorkbook(getInputStram());
+            Logger.i("HSSFWorkbook");
         } catch (IOException e) {
             e.printStackTrace();
             listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel读取失败,文件读取异常");
@@ -284,6 +402,7 @@ public class StuItemExLReader extends ExlReader {
     }
 
     private List<ExelReadBean> readRow(Sheet sheet) {
+        Logger.i("readRow");
         if (sheet == null) {
             listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel读取失败,请检查excel文件格式(Excel第一张表无内容)");
             Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel读取失败,请检查excel文件格式(Excel第一张表无内容)");

@@ -32,8 +32,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -355,31 +353,193 @@ public class GroupStuItemExLReader extends ExlReader {
     }
 
     private List<ExelGroupReadBean> readXlsx() {
-        XSSFWorkbook xssfWorkbook;
-        InputStream is = getInputStram();
+
+
+        final List<ExelGroupReadBean> result = new ArrayList<>();
+        final XlsxReaderUtil xlsxReader = new XlsxReaderUtil();
+        xlsxReader.setDataListener(new XlsxReaderUtil.GetReaderXlsxDataListener() {
+            @Override
+            public void readerLineData(int rowNum, List<String> data) {
+                if (rowNum == 0) {
+                    if (data.size() != 19) {
+                        listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "EXL文档格式错误");
+                        Logger.i(TestConfigs.df.format(new Date()) + "---> " + "EXL文档格式错误");
+                        xlsxReader.setStop(true);
+                        return;
+                    }
+
+
+                    mHasIDCardCol = false;
+                    for (int i = 0; i < data.size(); i++) {
+                        //把需要的数据列的列名和索引记下来
+                        String cellValue = data.get(i);
+                        // 必须有"(*)"号
+                        if (cellValue.contains("*")) {
+                            cellValue = cellValue.substring(0, cellValue.indexOf("*") - 1);
+                        }
+                        mColNums.put(cellValue, i);
+                        if (cellValue.equals("身份证号")) {
+                            mHasIDCardCol = true;
+                        }
+                    }
+
+                    //检查是否有所有需要的索引
+                    for (int i = 0; i < mNecessaryCols.size(); i++) {
+                        if (!mColNums.containsKey(mNecessaryCols.get(i))) {
+                            listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "缺少必要列:" + mNecessaryCols.get(i) + ",excel读取失败");
+                            Logger.i(TestConfigs.df.format(new Date()) + "---> " + "缺少必要列:" + mNecessaryCols.get(i) + ",excel读取失败");
+                            xlsxReader.setStop(true);
+                            return;
+                        }
+                    }
+                    return;
+                }
+                ExelGroupReadBean bean = readXLSXRow(data);
+                if (bean == null) {
+                    listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "Excel读取解析失败,第" + rowNum + 1 + "行读取失败");
+                    Logger.i(TestConfigs.df.format(new Date()) + "---> " + "Excel读取解析失败,第" + rowNum + 1 + "行读取失败");
+                    return;
+                }
+                result.add(bean);
+            }
+        });
         try {
-            xssfWorkbook = new XSSFWorkbook(is);
-        } catch (IOException e) {
-            e.printStackTrace();
-            listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel读取失败,文件读取异常");
-            Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel读取失败,文件读取异常");
+            xlsxReader.read(getInputStram());
+        } catch (Exception e) {
             return null;
         }
 
-        XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);// HSSFSheet 标识某一页
 
-        List<ExelGroupReadBean> result = readRow(xssfSheet);
-
-        try {
-            is.close();
-            xssfWorkbook.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "exel读取失败,文件读取异常");
-            return null;
-        }
+//        XSSFWorkbook xssfWorkbook;
+//        InputStream is = getInputStram();
+//        try {
+//            xssfWorkbook = new XSSFWorkbook(is);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel读取失败,文件读取异常");
+//            Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel读取失败,文件读取异常");
+//            return null;
+//        }
+//
+//        XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);// HSSFSheet 标识某一页
+//
+//        List<ExelGroupReadBean> result = readRow(xssfSheet);
+//
+//        try {
+//            is.close();
+//            xssfWorkbook.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "exel读取失败,文件读取异常");
+//            return null;
+//        }
         return result;
     }
+
+    private ExelGroupReadBean readXLSXRow(List<String> rowList) {
+        ExelGroupReadBean bean = new ExelGroupReadBean();
+        //  "场次", "分组性别", "组别", "分组", "分道", "日程时间", "性别", "准考证号", "姓名", "项目", "项目代码","考试类型"
+        //  0场地	1组别	2性别	3准考证号	4姓名	5单位	6项目	7赛次	8场次	9分组	10道次或序号
+        // 11考试时间	12编号	13小组号	14身份证号	15分组性别	16日程时间	17项目代码	18考试类型
+        String stuCode = rowList.get(3);
+        String sex = rowList.get(2);
+        String stuName = rowList.get(4);
+        String itemName = rowList.get(6);
+        String itemCode = rowList.get(17);
+        String sessionNo = rowList.get(8);
+        String groupSex = rowList.get(15);
+        String tranches = rowList.get(10);
+        String groupNo = rowList.get(9);
+        String scheduleTime = rowList.get(16);
+        String trackNo = rowList.get(10);
+        String examType = rowList.get(18);
+        String idCardNo = rowList.get(14);
+        if (TextUtils.isEmpty(examType)) {
+            return null;
+        }
+        bean.setExamType(examType);
+
+        if (TextUtils.isEmpty(stuCode)) {
+            return null;
+        }
+        bean.setStudentCode(stuCode);
+
+        if ("男".equals(sex)) {
+            bean.setSex(Student.MALE);
+        } else if ("女".equals(sex)) {
+            bean.setSex(Student.FEMALE);
+        } else {
+            // 不男不女
+            return null;
+        }
+
+        if (TextUtils.isEmpty(stuName)) {
+            return null;
+        }
+        bean.setStudentName(stuName);
+
+        if (mItemName == null) {
+            mItemName = itemName;
+        }
+        if (TextUtils.isEmpty(itemName) || !mItemName.equals(itemName)) {
+            // 表里面所有行的项目名必须相同
+            return null;
+        }
+        bean.setItemName(itemName);
+
+        if (mItemCode == null) {
+            mItemCode = itemCode;
+        }
+        if (TextUtils.isEmpty(itemCode) || !mItemCode.equals(itemCode)) {
+            // 表里面所有行的项目代码必须相同
+            return null;
+        }
+        bean.setItemCode(itemCode);
+
+        if (mHasIDCardCol) {
+
+
+            if (!TextUtils.isEmpty(idCardNo)) {
+                bean.setIdCardNo(idCardNo);
+            }
+        }
+
+        if (TextUtils.isEmpty(sessionNo)) {
+            return null;
+        }
+        bean.setSessionNo(sessionNo);
+
+        if ("男子".equals(groupSex)) {
+            bean.setGroupSex(Group.MALE);
+        } else if ("女子".equals(groupSex)) {
+            bean.setGroupSex(Group.FEMALE);
+        } else if ("混合".equals(groupSex)) {
+            //混合
+            bean.setGroupSex(Group.MIXTURE);
+        } else {
+            return null;
+        }
+
+        if (TextUtils.isEmpty(tranches)) {
+            return null;
+        }
+        bean.setTranches(tranches);
+        if (TextUtils.isEmpty(groupNo)) {
+            return null;
+        }
+        bean.setGroupNo(Integer.valueOf(groupNo));
+        if (TextUtils.isEmpty(scheduleTime)) {
+            return null;
+        }
+        bean.setScheduleTime(scheduleTime);
+        if (TextUtils.isEmpty(trackNo)) {
+            return null;
+        }
+        bean.setTrackNo(Integer.valueOf(trackNo));
+
+        return bean;
+    }
+
 
     // 读取exel文档数据
     private List<ExelGroupReadBean> readXls() {
