@@ -1,4 +1,4 @@
-package com.feipulai.exam.activity.MiddleDistanceRace;
+package com.feipulai.exam.activity.MiddleDistanceRace.bean;
 
 import java.util.Arrays;
 
@@ -6,13 +6,13 @@ import java.util.Arrays;
  * created by ww on 2019/6/24.
  */
 public class RaceResultBean {
-    private String no;//组的序号（非组号，与数据库无关）
+    private String no;//组号
     private int cycle;//圈数
     private long startTime;//开始时间
     private int vestNo;//背心号
     private String itemCode;//
     private String itemName;//
-    private String[] results;//{道次,姓名,最终成绩,第一圈,第二圈,第三圈,第四圈...}---成绩时间戳格式
+    private String[] results;//{道次,姓名,最终成绩,第一圈,第二圈,第三圈,第四圈...}---成绩1ms值
     private int color;//颜色
     private String studentName;
     private String studentCode;

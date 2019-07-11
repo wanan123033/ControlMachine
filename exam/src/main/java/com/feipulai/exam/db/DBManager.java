@@ -1234,6 +1234,7 @@ public class DBManager {
 
     /**
      * 降序
+     *
      * @param studentCode
      * @param testNo
      * @return
@@ -1301,7 +1302,7 @@ public class DBManager {
         return groupItemDao.queryBuilder().where(GroupItemDao.Properties.GroupNo.eq(sort))
                 .where(GroupItemDao.Properties.ItemCode.eq(itemCode))
                 .where(GroupItemDao.Properties.ScheduleNo.eq(scheduleNo))
-                .where(GroupItemDao.Properties.GroupType.eq(sex)).list();
+                .where(GroupItemDao.Properties.GroupType.eq(sex)).orderDesc(GroupItemDao.Properties.TrackNo).list();
     }
 
     /**
@@ -1440,12 +1441,12 @@ public class DBManager {
                 .list();
     }
 
-    public List<RoundResult> queryResultByStudentCode(String studentCode, String itemCode) {
+    public RoundResult queryResultByStudentCode(String studentCode, String itemCode) {
         return roundResultDao.queryBuilder()
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
-                .list();
+                .unique();
     }
 
 
@@ -2031,8 +2032,13 @@ public class DBManager {
         return groupDao.queryBuilder().where(GroupDao.Properties.ItemCode.eq(itemCode)).list();
     }
 
+    public Group queryGroup(String itemCode, int groupNo) {
+        return groupDao.queryBuilder().where(GroupDao.Properties.ItemCode.eq(itemCode)).where(GroupDao.Properties.GroupNo.eq(groupNo)).unique();
+    }
+
+
     public List<Group> queryGroupByColorName(String colorName) {
-        return groupDao.queryBuilder().where(GroupDao.Properties.Remark1.eq(colorName)).list();
+        return groupDao.queryBuilder().where(GroupDao.Properties.ColorId.eq(colorName)).list();
     }
 
     public List<Group> loadAllGroup() {
