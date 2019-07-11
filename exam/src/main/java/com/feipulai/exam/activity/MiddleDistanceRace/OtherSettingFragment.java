@@ -17,6 +17,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,17 +34,25 @@ import com.feipulai.common.view.baseToolbar.DisplayUtil;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.ColorGroupAdapter;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.GridViewColorAdapter;
+import com.feipulai.exam.activity.data.DataManageActivity;
 import com.feipulai.exam.activity.data.DataRetrieveActivity;
+import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.ChipGroup;
 import com.feipulai.exam.entity.ChipInfo;
 import com.feipulai.exam.entity.Group;
+import com.feipulai.exam.exl.ChipInfoExlWriter;
 import com.feipulai.exam.exl.ColorGroupExLReader;
+import com.feipulai.exam.exl.ResultExlWriter;
 import com.feipulai.exam.view.OperateProgressBar;
+import com.github.mjdev.libaums.fs.UsbFile;
 import com.orhanobut.logger.Logger;
 import com.zyyoona7.popup.EasyPopup;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -92,6 +101,8 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
     private Button btnSure;
     private AlertDialog.Builder builder;
     private boolean isAddFlag = true;//判断是否是编辑还是新增的标识
+    private EditText mEditText;
+    private AlertDialog nameFileDialog;
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.frag_other_setting, container, false);
@@ -165,11 +176,11 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
-        SharedPrefsUtil.putValue(mContext, MIDDLE_RACE, VEST_CHIP_NO, chipNo);
     }
 
     @OnClick({R.id.btn_clear_chip, R.id.btn_color_add, R.id.btn_import_chip, R.id.btn_explore_chip})
     public void onViewClicked(View view) {
+        final Intent intent = new Intent();
         switch (view.getId()) {
             case R.id.btn_clear_chip:
                 DialogUtil.showCommonDialog(mContext, "是否清空芯片及颜色组所有信息", new DialogUtil.DialogListener() {
@@ -212,7 +223,6 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
                         DBManager.getInstance().deleteAllChip();
                         colorGroups.clear();
                         colorGroupAdapter.notifyDataSetChanged();
-                        Intent intent = new Intent();
                         intent.setClass(mContext, FileSelectActivity.class);
                         intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_FILE);
                         startActivityForResult(intent, 1);
@@ -225,6 +235,10 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
                 });
                 break;
             case R.id.btn_explore_chip:
+                //选择文件夹并命名文件导出文件
+                intent.setClass(mContext, FileSelectActivity.class);
+                intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
+                startActivityForResult(intent, 2);
                 break;
         }
     }
@@ -235,12 +249,58 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
         if (resultCode == RESULT_CANCELED) {
             return;
         }
-        if (requestCode == 1) {
-            OperateProgressBar.showLoadingUi(getActivity(), "正在读取exel文件...");
-            Logger.i(" exel文件导入");
-            Logger.i("保存路径：" + FileSelectActivity.sSelectedFile);
-            new ColorGroupExLReader(this).readExlData(FileSelectActivity.sSelectedFile);
+        switch (requestCode) {
+            case 1:
+                OperateProgressBar.showLoadingUi(getActivity(), "正在读取exel文件...");
+                Logger.i(" exel文件导入");
+                Logger.i("保存路径：" + FileSelectActivity.sSelectedFile);
+                new ColorGroupExLReader(this).readExlData(FileSelectActivity.sSelectedFile);
+                break;
+            case 2:
+                showExportFileNameDialog();
+                break;
+            default:
+                break;
         }
+    }
+
+    private void showExportFileNameDialog() {
+        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                OperateProgressBar.showLoadingUi(getActivity(), "正在导出芯片表...");
+                String text = mEditText.getText().toString().trim();
+                UsbFile targetFile;
+                try {
+                    targetFile = FileSelectActivity.sSelectedFile.createFile(text + ".xls");
+                    //导入学生信息和学生项目信息
+                    new ChipInfoExlWriter(OtherSettingFragment.this).writeExelData(targetFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    OperateProgressBar.removeLoadingUiIfExist(getActivity());
+                    ToastUtils.showShort("文件创建失败,请确保输入文件名合法(中文、字母、数字和下划线),且不存在已有文件");
+                    Logger.i("文件创建失败,Exel导出失败");
+                }
+            }
+        };
+        createFileNameDialog(listener);
+    }
+
+    private void createFileNameDialog(DialogInterface.OnClickListener confirmListener) {
+        mEditText = new EditText(mContext);
+        mEditText.setSingleLine();
+        mEditText.setInputType(EditorInfo.TYPE_TEXT_VARIATION_URI);
+        mEditText.setBackgroundColor(0xffcccccc);
+        mEditText.setText(SettingHelper.getSystemSetting().getHostId() + "号机芯片数据" + TestConfigs.df.format(new Date()));
+        nameFileDialog = new AlertDialog.Builder(mContext)
+                .setCancelable(false)
+                .setTitle("文件名")
+                .setMessage("请输入文件名")
+                .setView(mEditText)
+                .setPositiveButton("确定", confirmListener)
+                .setNegativeButton("取消", null)
+                .create();
+        nameFileDialog.show();
     }
 
     @Override
@@ -297,6 +357,7 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
         switch (parent.getId()) {
             case R.id.sp_vest_chip_no:
                 chipNo = position + 1;
+                SharedPrefsUtil.putValue(mContext, MIDDLE_RACE, VEST_CHIP_NO, chipNo);
                 break;
             case R.id.sp_group_style:
                 groupStyle = position;

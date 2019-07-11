@@ -93,6 +93,11 @@ public class ChipSettingAdapter extends RecyclerView.Adapter<ChipSettingAdapter.
     private int currentposition = -1;
 
 
+    /**
+     * 改变背景色
+     * @param n ID1或者ID2（1---2）
+     * @param position 行数
+     */
     public void changeBackGround(int n, int position) {
         isChangeBackGround = true;
         IDCardNo = n;

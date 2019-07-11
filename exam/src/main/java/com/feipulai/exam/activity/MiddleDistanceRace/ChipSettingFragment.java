@@ -106,6 +106,7 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
     }
 
     private boolean isVisible;//当前fragment是否显示
+    private List<String> cards = new ArrayList<>();
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -116,6 +117,20 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
             chipInfos.clear();
             chipInfos.addAll(DBManager.getInstance().queryAllChipInfo());
             chipAdapter.notifyDataSetChanged();
+
+            cards.clear();
+            for (ChipInfo chip : chipInfos
+                    ) {
+                if (!TextUtils.isEmpty(chip.getChipID1())) {
+                    cards.add(chip.getChipID1());
+                }
+
+                if (!TextUtils.isEmpty(chip.getChipID2())) {
+                    cards.add(chip.getChipID2());
+                }
+//                        if ((chip.getChipID1() != null && chip.getChipID1().equals(cardIds[i])) || (chip.getChipID2() != null && chip.getChipID2().equals(cardIds[i]))) {
+//                        }
+            }
         }
     }
 
@@ -176,70 +191,136 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
             //将芯片id信息按先后顺序并且无重复填充到chipInfos
             if (chipNo == 1) {//如果一个背心对应1个芯片
                 for (int i = 0; i < cardIds.length; i++) {
-                    for (int j = 0; j < chipInfos.size(); j++) {
-                        //填充芯片id到chipInfos
-                        if (TextUtils.isEmpty(chipInfos.get(j).getChipID1())) {
-                            chipInfos.get(j).setChipID1(cardIds[i]);
-                            if (i == cardIds.length - 1) {
-                                chipAdapter.changeBackGround(1, j);
-                            }
-                            mHandler.sendMessage(mHandler.obtainMessage(1, j));
-                            break;
-                        }
-                        //当chipInfos中存在cardIds中的值时不允许填充并退出
-                        if (cardIds[i].equals(chipInfos.get(j).getChipID1())) {
-                            if (i == cardIds.length - 1) {
-                                chipAdapter.changeBackGround(1, j);
-                            }
-                            mHandler.sendMessage(mHandler.obtainMessage(1, j));
-                            break;
-                        }
-                    }
-                }
-            } else {//如果一个背心对应2个芯片，接收到n个cardId
-                for (int i = 0; i < cardIds.length; i++) {
-                    for (int j = 0; j < chipInfos.size(); j++) {
-                        //当chipID1为空填充进chipInfos
-                        if (TextUtils.isEmpty(chipInfos.get(j).getChipID1())) {
-                            chipInfos.get(j).setChipID1(cardIds[i]);
-                            //最后一行背景高亮
-                            if (i == cardIds.length - 1) {
-                                chipAdapter.changeBackGround(1, j);
-                            }
-                            mHandler.sendMessage(mHandler.obtainMessage(1, j));
-                            break;
-                        } else {
-                            //chipID1不为空则要考虑是否和cardIds[i]相同，如果相同则跳出里循环
+                    //先看接收到id在是否已存在
+                    if (cards.contains(cardIds[i])) {
+                        for (int j = 0; j < chipInfos.size(); j++) {
+                            //当chipInfos中存在cardIds中的值时不允许填充并退出
                             if (cardIds[i].equals(chipInfos.get(j).getChipID1())) {
-                                //最后一个行背景高亮
                                 if (i == cardIds.length - 1) {
                                     chipAdapter.changeBackGround(1, j);
                                 }
                                 mHandler.sendMessage(mHandler.obtainMessage(1, j));
                                 break;
-                            } else {
-                                //当chipID1既不为空也不和cardIds[i]相同时就要开始看ChipID2了，接下来逻辑和ChipID1类似
-                                if (TextUtils.isEmpty(chipInfos.get(j).getChipID2())) {
-                                    chipInfos.get(j).setChipID2(cardIds[i]);
-                                    //最后一行背景高亮
-                                    if (i == cardIds.length - 1) {
-                                        chipAdapter.changeBackGround(2, j);
-                                    }
-                                    mHandler.sendMessage(mHandler.obtainMessage(1, j));
-                                    break;
-                                } else {
-                                    if (cardIds[i].equals(chipInfos.get(j).getChipID2())) {
-                                        //最后一行背景高亮
-                                        if (i == cardIds.length - 1) {
-                                            chipAdapter.changeBackGround(2, j);
-                                        }
-                                        mHandler.sendMessage(mHandler.obtainMessage(1, j));
-                                        break;
-                                    }
+                            }
+                        }
+                        continue;
+                    }
+                    if (cards.size() < chipInfos.size()) {
+                        cards.add(cardIds[i]);
+                        for (int j = 0; j < chipInfos.size(); j++) {
+                            //填充芯片id到chipInfos
+                            if (TextUtils.isEmpty(chipInfos.get(j).getChipID1())) {
+                                chipInfos.get(j).setChipID1(cardIds[i]);
+                                if (i == cardIds.length - 1) {
+                                    chipAdapter.changeBackGround(1, j);
                                 }
+                                mHandler.sendMessage(mHandler.obtainMessage(1, j));
+                                break;
+                            }
+//                        //当chipInfos中存在cardIds中的值时不允许填充并退出
+//                        if (cardIds[i].equals(chipInfos.get(j).getChipID1())) {
+//                            if (i == cardIds.length - 1) {
+//                                chipAdapter.changeBackGround(1, j);
+//                            }
+//                            mHandler.sendMessage(mHandler.obtainMessage(1, j));
+//                            break;
+//                        }
+                        }
+                    }
+                }
+            } else {//如果一个背心对应2个芯片，接收到n个cardId
+                for (int i = 0; i < cardIds.length; i++) {
+                    //先看接收到id在是否已存在
+                    if (cards.contains(cardIds[i])) {
+                        for (int j = 0; j < chipInfos.size(); j++) {
+                            //当chipInfos中存在cardIds中的值时不允许填充并退出
+                            if (cardIds[i].equals(chipInfos.get(j).getChipID1())) {
+                                if (i == cardIds.length - 1) {
+                                    chipAdapter.changeBackGround(1, j);
+                                }
+                                mHandler.sendMessage(mHandler.obtainMessage(1, j));
+                                break;
+                            }
+
+                            if (cardIds[i].equals(chipInfos.get(j).getChipID2())) {
+                                if (i == cardIds.length - 1) {
+                                    chipAdapter.changeBackGround(2, j);
+                                }
+                                mHandler.sendMessage(mHandler.obtainMessage(1, j));
+                                break;
+                            }
+
+                        }
+                        continue;
+                    }
+                    if (cards.size() < chipInfos.size()*2) {
+                        cards.add(cardIds[i]);
+
+                        for (int j = 0; j < chipInfos.size(); j++) {
+                            //填充芯片id到chipInfos
+                            if (TextUtils.isEmpty(chipInfos.get(j).getChipID1())) {
+                                chipInfos.get(j).setChipID1(cardIds[i]);
+                                if (i == cardIds.length - 1) {
+                                    chipAdapter.changeBackGround(1, j);
+                                }
+                                mHandler.sendMessage(mHandler.obtainMessage(1, j));
+                                break;
+                            }
+
+                            if (TextUtils.isEmpty(chipInfos.get(j).getChipID2())) {
+                                chipInfos.get(j).setChipID2(cardIds[i]);
+                                if (i == cardIds.length - 1) {
+                                    chipAdapter.changeBackGround(2, j);
+                                }
+                                mHandler.sendMessage(mHandler.obtainMessage(1, j));
+                                break;
                             }
                         }
                     }
+
+
+//                    for (int j = 0; j < chipInfos.size(); j++) {
+//                        //当chipID1为空填充进chipInfos
+//                        if (TextUtils.isEmpty(chipInfos.get(j).getChipID1())) {
+//                            chipInfos.get(j).setChipID1(cardIds[i]);
+//                            //最后一行背景高亮
+//                            if (i == cardIds.length - 1) {
+//                                chipAdapter.changeBackGround(1, j);
+//                            }
+//                            mHandler.sendMessage(mHandler.obtainMessage(1, j));
+//                            break;
+//                        } else {
+//                            //chipID1不为空则要考虑是否和cardIds[i]相同，如果相同则跳出里循环
+//                            if (cardIds[i].equals(chipInfos.get(j).getChipID1())) {
+//                                //最后一个行背景高亮
+//                                if (i == cardIds.length - 1) {
+//                                    chipAdapter.changeBackGround(1, j);
+//                                }
+//                                mHandler.sendMessage(mHandler.obtainMessage(1, j));
+//                                break;
+//                            } else {
+//                                //当chipID1既不为空也不和cardIds[i]相同时就要开始看ChipID2了，接下来逻辑和ChipID1类似
+//                                if (TextUtils.isEmpty(chipInfos.get(j).getChipID2())) {
+//                                    chipInfos.get(j).setChipID2(cardIds[i]);
+//                                    //最后一行背景高亮
+//                                    if (i == cardIds.length - 1) {
+//                                        chipAdapter.changeBackGround(2, j);
+//                                    }
+//                                    mHandler.sendMessage(mHandler.obtainMessage(1, j));
+//                                    break;
+//                                } else {
+//                                    if (cardIds[i].equals(chipInfos.get(j).getChipID2())) {
+//                                        //最后一行背景高亮
+//                                        if (i == cardIds.length - 1) {
+//                                            chipAdapter.changeBackGround(2, j);
+//                                        }
+//                                        mHandler.sendMessage(mHandler.obtainMessage(1, j));
+//                                        break;
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
                 }
             }
         }

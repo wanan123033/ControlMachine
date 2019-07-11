@@ -23,6 +23,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.feipulai.exam.activity.MiddleDistanceRace.TimingBean.TIMING_START;
 import static com.feipulai.exam.activity.MiddleDistanceRace.TimingBean.TIMING_STATE_BACK;
 import static com.feipulai.exam.activity.MiddleDistanceRace.TimingBean.TIMING_STATE_COMPLETE;
 import static com.feipulai.exam.activity.MiddleDistanceRace.TimingBean.TIMING_STATE_NOMAL;
@@ -107,6 +108,37 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
                 holder.btnTimingComplete.setTextColor(Color.GRAY);
                 break;
             case TIMING_STATE_WAITING://等待发令状态(此刻已经开始计时)
+//                holder.timer.setTextColor(Color.GREEN);
+//                //开始计时后完成计时按钮才可点击
+//
+//                holder.btnTimingComplete.setEnabled(true);
+//                holder.btnTimingComplete.setBackgroundResource(R.drawable.btn_background);
+//                holder.btnTimingComplete.setTextColor(Color.WHITE);
+//
+////                startTiming(holder.timer);
+//                holder.tvTimingState.setText("计时");
+//                holder.tvTimingState.setTextColor(Color.WHITE);
+//                holder.tvTimingState.setBackgroundResource(R.color.viewfinder_laser);
+                break;
+            case TIMING_STATE_BACK:
+//                holder.timer.setBase(SystemClock.elapsedRealtime());//计时器清零
+//                holder.timer.setTextColor(Color.WHITE);
+//                holder.timer.stop();
+                holder.tvTimingState.setText("空闲");
+                holder.tvTimingState.setTextColor(Color.BLACK);
+                holder.tvTimingState.setBackgroundResource(R.color.result_points);
+                break;
+            case TIMING_STATE_COMPLETE:
+//                holder.timer.setBase(SystemClock.elapsedRealtime());//计时器清零
+//                holder.timer.setTextColor(Color.WHITE);
+//                holder.timer.stop();
+                holder.tvTimingState.setText("空闲");
+                holder.tvTimingState.setTextColor(Color.BLACK);
+                holder.tvTimingState.setBackgroundResource(R.color.result_points);
+                break;
+            case TIMING_STATE_TIMING://当前正在计时状态（要和等待状态分清楚）
+                break;
+            case TIMING_START:
                 holder.timer.setTextColor(Color.GREEN);
                 //开始计时后完成计时按钮才可点击
 
@@ -119,24 +151,6 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
                 holder.tvTimingState.setTextColor(Color.WHITE);
                 holder.tvTimingState.setBackgroundResource(R.color.viewfinder_laser);
                 break;
-            case TIMING_STATE_BACK:
-                holder.timer.setBase(SystemClock.elapsedRealtime());//计时器清零
-                holder.timer.setTextColor(Color.WHITE);
-                holder.timer.stop();
-                holder.tvTimingState.setText("空闲");
-                holder.tvTimingState.setTextColor(Color.BLACK);
-                holder.tvTimingState.setBackgroundResource(R.color.result_points);
-                break;
-            case TIMING_STATE_COMPLETE:
-                holder.timer.setBase(SystemClock.elapsedRealtime());//计时器清零
-                holder.timer.setTextColor(Color.WHITE);
-                holder.timer.stop();
-                holder.tvTimingState.setText("空闲");
-                holder.tvTimingState.setTextColor(Color.BLACK);
-                holder.tvTimingState.setBackgroundResource(R.color.result_points);
-                break;
-            case TIMING_STATE_TIMING://当前正在计时状态（要和等待状态分清楚）
-                break;
             default:
                 break;
         }
@@ -145,12 +159,7 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
             holder.btnTimingWait.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    if (timingLists.get(position).getNo() != 0) {
                     myClickListener.clickTimingWaitListener(position, holder);
-//                        notifyBackGround(holder, TIMING_STATE_WAITING);
-//                    } else {
-//                        ToastUtils.showShort("请先选入组别");
-//                    }
                 }
             });
             holder.btnTimingBack.setOnClickListener(new View.OnClickListener() {
@@ -193,6 +202,13 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
                 holder.btnTimingComplete.setTextColor(Color.GRAY);
                 break;
             case TIMING_STATE_BACK:
+                holder.timer.setBase(SystemClock.elapsedRealtime());//计时器清零
+                holder.timer.setTextColor(Color.WHITE);
+                holder.timer.stop();
+                holder.tvTimingState.setText("空闲");
+                holder.tvTimingState.setTextColor(Color.BLACK);
+                holder.tvTimingState.setBackgroundResource(R.color.result_points);
+
                 holder.btnTimingWait.setEnabled(true);
                 holder.btnTimingWait.setBackgroundResource(R.drawable.btn_background);
                 holder.btnTimingWait.setTextColor(Color.WHITE);
@@ -206,6 +222,13 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
                 holder.btnTimingComplete.setTextColor(Color.GRAY);
                 break;
             case TIMING_STATE_COMPLETE:
+                holder.timer.setBase(SystemClock.elapsedRealtime());//计时器清零
+                holder.timer.setTextColor(Color.WHITE);
+                holder.timer.stop();
+                holder.tvTimingState.setText("空闲");
+                holder.tvTimingState.setTextColor(Color.BLACK);
+                holder.tvTimingState.setBackgroundResource(R.color.result_points);
+
                 holder.btnTimingWait.setEnabled(true);
                 holder.btnTimingWait.setBackgroundResource(R.drawable.btn_background);
                 holder.btnTimingWait.setTextColor(Color.WHITE);
@@ -218,11 +241,12 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
                 holder.btnTimingComplete.setBackgroundResource(R.color.grey_A8);
                 holder.btnTimingComplete.setTextColor(Color.GRAY);
                 break;
+            case TIMING_START:
+                break;
             default:
                 break;
         }
     }
-
 
     private void startTiming(Chronometer time) {
         time.setBase(SystemClock.elapsedRealtime());//计时器清零

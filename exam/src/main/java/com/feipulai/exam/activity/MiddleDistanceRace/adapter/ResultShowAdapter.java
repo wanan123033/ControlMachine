@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.exam.R;
-import com.feipulai.exam.activity.MiddleDistanceRace.RaceResultBean2;
+import com.feipulai.exam.activity.MiddleDistanceRace.RaceResultBean;
 import com.feipulai.exam.view.MiddleRace.PanelAdapter;
 
 import java.util.List;
@@ -18,9 +18,9 @@ import java.util.List;
  * created by ww on 2019/6/18.
  */
 public class ResultShowAdapter extends PanelAdapter {
-    private List<RaceResultBean2> datas;
+    private List<RaceResultBean> datas;
 
-    public ResultShowAdapter(List<RaceResultBean2> data) {
+    public ResultShowAdapter(List<RaceResultBean> data) {
         this.datas = data;
     }
 
