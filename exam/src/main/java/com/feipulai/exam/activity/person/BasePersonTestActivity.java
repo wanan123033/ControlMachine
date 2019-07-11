@@ -376,6 +376,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         //更新界面成绩
         pair.setResultState(RoundResult.RESULT_STATE_FOUL);
         updateResult(pair);
+        updateLastResultLed(roundResult);
+        adapter.notifyDataSetChanged();
+
         //上传成绩
         DBManager.getInstance().insertRoundResult(roundResult);
         Logger.i("saveResult==>insertRoundResult->" + roundResult.toString());

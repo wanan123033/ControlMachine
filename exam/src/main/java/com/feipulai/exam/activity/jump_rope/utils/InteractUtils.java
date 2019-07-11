@@ -307,9 +307,9 @@ public class InteractUtils {
             } else {
                 for (int j = 0; j < resultList.size(); j++) {
                     RoundResult result = resultList.get(j);
-                    String printResult = "第" + (j + 1) + "次:" + (result.getResultState() == RoundResult.RESULT_STATE_NORMAL
-                            ? ResultDisplayUtils.getStrResultForDisplay(result.getResult(), false) : "X");
-
+//                    String printResult = "第" + (j + 1) + "次:" + (result.getResultState() == RoundResult.RESULT_STATE_NORMAL
+//                            ? ResultDisplayUtils.getStrResultForDisplay(result.getResult(), false) : "X");
+                    String printResult = "第" + (j + 1) + "次:" + getPrintResultState(result);
                     // 跳绳需要打印绊绳次数
                     switch (TestConfigs.sCurrentItem.getMachineCode()) {
                         case ItemDefault.CODE_TS:
@@ -321,19 +321,38 @@ public class InteractUtils {
                         case ItemDefault.CODE_PQ:
                             PrinterManager.getInstance().print(printResult + "(判罚:" + result.getPenaltyNum() + ")");
                             break;
-
+                        case ItemDefault.CODE_LQYQ:
+                        case ItemDefault.CODE_ZQYQ:
+                            PrinterManager.getInstance().print(printResult + "(违例:" + result.getPenaltyNum() + ")");
+                            break;
                         default:
                             PrinterManager.getInstance().print(printResult);
 
                     }
                     result.setPrintTime(printTimeLong);
-                    DBManager.getInstance().updateRoundResult(resultList);
                 }
+                DBManager.getInstance().updateRoundResult(resultList);
             }
             PrinterManager.getInstance().print(printTime + "\n");
         }
         PrinterManager.getInstance().print("\n\n");
         Logger.i("成绩打印完成");
+    }
+
+    private static String getPrintResultState(RoundResult roundResult) {
+
+        switch (roundResult.getResultState()) {
+            case RoundResult.RESULT_STATE_NORMAL:
+                return ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult(), false);
+            case RoundResult.RESULT_STATE_FOUL:
+                return "X";
+            case RoundResult.RESULT_STATE_BACK:
+                return roundResult.getResult() == 0 ? "中退" : ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult(), false) + "[中退]";
+            case RoundResult.RESULT_STATE_WAIVE:
+                return roundResult.getResult() == 0 ? "放弃" : ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult(), false) + "[放弃]";
+            default:
+                return "";
+        }
     }
 
     /**
