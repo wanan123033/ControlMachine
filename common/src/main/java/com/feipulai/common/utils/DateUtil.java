@@ -1,5 +1,7 @@
 package com.feipulai.common.utils;
 
+import android.util.Log;
+
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -24,15 +26,6 @@ public class DateUtil {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         sdf.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
         return sdf.format(new Date(timeMillis));
-    }
-
-    public static String getDeltaT2(long time) {
-//        SimpleDateFormat sf = new SimpleDateFormat("yyyy年MM月dd日 HH时mm分ss秒SSS毫秒");
-//        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd- HH:mm:ss.SSS", Locale.CHINA);
-        SimpleDateFormat sf = new SimpleDateFormat("HH:mm:ss.SSS", Locale.CHINA);
-        Date now = new Date(time);
-        String str = sf.format(now);
-        return str;
     }
 
     /**
@@ -114,6 +107,7 @@ public class DateUtil {
                 carryTime = caculTime;
                 break;
         }
+
         return caculateFormatTime(carryTime, digital);
 //        if (carryTime < 60 * 1000) {
 //            return formatTime(carryTime, "ss." + (digital == 1 ? "S" : "SS"));
@@ -135,17 +129,18 @@ public class DateUtil {
      * <h3>UpdateAuthor</h3>
      * <h3>UpdateInfo</h3> (此处输入修改内容,若无修改可不写.)
      *
-     * @param digital 1 百分位 2 十分位
+     * @param digital 1  十分位 2 百分位
      */
     public static String caculateFormatTime(long caculTime, int digital) {
         if (caculTime < 60 * 1000) {
-            return formatTime(caculTime, "ss." + (digital == 1 ? "S" : "SS"));
+            return formatTime(caculTime, "ss." + (digital == 1 ? "S" : (digital == 2 ? "SS" : "SSS")));
         } else if (caculTime >= 60 * 1000 && caculTime < 60 * 60 * 1000) { // 一小时之内
-            return formatTime(caculTime, "mm:ss." + (digital == 1 ? "S" : "SS"));
+            return formatTime(caculTime, "mm:ss." + (digital == 1 ? "S" : (digital == 2 ? "SS" : "SSS")));
         } else if (caculTime >= 60 * 60 * 1000 && caculTime < 60 * 60 * 24 * 1000) { // 同一天之内
-            return formatTime(caculTime, "HH:mm:ss." + (digital == 1 ? "S" : "SS"));
+            return formatTime(caculTime, "HH:mm:ss." + (digital == 1 ? "S" : (digital == 2 ? "SS" : "SSS")));
         } else {
-            return formatTime(caculTime, "dd HH:mm:ss." + (digital == 1 ? "S" : "SS"));
+            return formatTime(caculTime, "dd HH:mm:ss." + (digital == 1 ? "S" : (digital == 2 ? "SS" : "SSS")));
         }
     }
+
 }

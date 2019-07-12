@@ -97,6 +97,8 @@ import static com.feipulai.exam.config.SharedPrefsConfigs.FIRST_TIME;
 import static com.feipulai.exam.config.SharedPrefsConfigs.MACHINE_IP;
 import static com.feipulai.exam.config.SharedPrefsConfigs.MACHINE_PORT;
 import static com.feipulai.exam.config.SharedPrefsConfigs.MIDDLE_RACE;
+import static com.feipulai.exam.config.SharedPrefsConfigs.MIDDLE_RACE_CARRY;
+import static com.feipulai.exam.config.SharedPrefsConfigs.MIDDLE_RACE_DIGITAL;
 import static com.feipulai.exam.config.SharedPrefsConfigs.MIDDLE_RACE_NUMBER;
 import static com.feipulai.exam.config.SharedPrefsConfigs.MIDDLE_RACE_TIME_FIRST;
 import static com.feipulai.exam.config.SharedPrefsConfigs.MIDDLE_RACE_TIME_SPAN;
@@ -201,6 +203,8 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
     private int height;
     private EasyPopup mSelectPop;
     private ScrollablePanel resultScroll;
+    private int carryMode;
+    private int digital;
 
     @Override
     protected int setLayoutResID() {
@@ -218,6 +222,9 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         mContext = this;
 
         height = DisplayUtil.getScreenHightPx(this);
+
+        carryMode = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MIDDLE_RACE_CARRY, 0);
+        digital = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MIDDLE_RACE_DIGITAL, 2);
 
         initPopup();
 
@@ -1216,11 +1223,11 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                             strings.add(groupItem.getTrackNo() + "");
                             strings.add(student.getStudentCode());
                             strings.add(student.getStudentName());
-                            strings.add(roundResult.getResult() + "");
+                            strings.add(DateUtil.caculateTime(roundResult.getResult(),digital+1,carryMode+1));
 //                            strings.add(student.getSex()==0?"男":"女");
                             for (int result : results
                                     ) {
-                                strings.add(result + "");
+                                strings.add(DateUtil.caculateTime(result,digital+1,carryMode+1));
                             }
                             selectResults.add(strings);
                         }

@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.utils.SharedPrefsUtil;
@@ -70,6 +71,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
             String routeIp = locatIp.substring(0, locatIp.lastIndexOf("."));
             UdpLEDUtil.shellExec("ip route add " + routeIp + ".0/24 dev eth0 proto static scope link table wlan0 \n");
         }
+
     }
 
     @Override

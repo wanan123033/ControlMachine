@@ -353,7 +353,7 @@
 
                 <TextView
                     style="@style/style_setting_tv_title"
-                    android:text="有线网络与wife同时使用：" />
+                    android:text="有线网络与wifi同时使用：" />
 
                 <CheckBox
                     android:id="@+id/cb_route"

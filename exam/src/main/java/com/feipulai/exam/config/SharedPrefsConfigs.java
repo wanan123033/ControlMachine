@@ -92,6 +92,7 @@ public class SharedPrefsConfigs {
     public static final String MIDDLE_RACE_TIME_SPAN = "middle_race_time_span";//最小时间间隔/秒
 
     public static final String MIDDLE_RACE_CARRY = "middle_race_carry";//成绩进位方式
+    public static final String MIDDLE_RACE_DIGITAL = "middle_race_digital";//成绩精确位数
 //    public static final String MIDDLE_RACE_ROUNDING = "middle_race_rounding";//成绩进位方式 四舍五入 0
 //    public static final String MIDDLE_RACE_NON_ZERO_INTEGER = "middle_race_non_zero_integer";//成绩进位方式 非零取整1
 //    public static final String MIDDLE_RACE_NON_ZERO_CARRY = "middle_race_non_zero_carry";//成绩进位方式 非零进位2

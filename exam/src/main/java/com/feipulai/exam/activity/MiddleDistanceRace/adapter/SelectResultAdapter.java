@@ -55,7 +55,8 @@ public class SelectResultAdapter extends PanelAdapter {
             if (column < 3) {
                 titleViewHolder.titleTextView.setText(datas.get(row).get(column));
             } else {
-                titleViewHolder.titleTextView.setText(DateUtil.getDeltaT(Long.parseLong(datas.get(row).get(column))));
+//                titleViewHolder.titleTextView.setText(DateUtil.getDeltaT(Long.parseLong(datas.get(row).get(column))));
+                titleViewHolder.titleTextView.setText(datas.get(row).get(column));
             }
         }
 

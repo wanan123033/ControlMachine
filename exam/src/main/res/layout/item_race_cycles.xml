@@ -3,7 +3,7 @@
     android:id="@+id/ll_race_cycles"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:background="@color/blue"
+    android:background="@color/grey_light"
     android:orientation="horizontal">
 
     <TextView

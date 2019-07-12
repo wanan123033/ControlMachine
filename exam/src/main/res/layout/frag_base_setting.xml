@@ -17,7 +17,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@drawable/bg_edittext"
             android:padding="@dimen/dp_10">
 
             <TextView
@@ -87,34 +86,80 @@
                 android:maxLength="5"
                 android:maxLines="1" />
 
+            <TextView
+                android:id="@+id/tv_carry_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv3"
+                android:layout_marginTop="30dp"
+                android:text="进位方式：" />
+
             <RadioGroup
                 android:id="@+id/rg_carry_mode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tv3"
-                android:layout_marginTop="40dp"
+                android:layout_below="@+id/tv_carry_mode"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal">
 
                 <RadioButton
                     android:id="@+id/rb_carry_mode_1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="110dp"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/dp_10"
+                    android:padding="5dp"
                     android:text="四舍五入" />
 
                 <RadioButton
                     android:id="@+id/rb_carry_mode_2"
-                    android:layout_width="wrap_content"
+                    android:layout_width="110dp"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/dp_10"
+                    android:padding="5dp"
                     android:text="非零取整" />
 
                 <RadioButton
                     android:id="@+id/rb_carry_mode_3"
-                    android:layout_width="wrap_content"
+                    android:layout_width="110dp"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/dp_10"
+                    android:padding="5dp"
                     android:text="非零进位" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/tv_digital"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rg_carry_mode"
+                android:layout_marginTop="10dp"
+                android:text="显示位数：" />
+
+            <RadioGroup
+                android:id="@+id/rg_digital"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_digital"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rb_1"
+                    android:layout_width="110dp"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:text="十分位" />
+
+                <RadioButton
+                    android:id="@+id/rb_2"
+                    android:layout_width="110dp"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:text="百分位" />
+
+                <RadioButton
+                    android:id="@+id/rb_3"
+                    android:layout_width="110dp"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:text="千分位" />
             </RadioGroup>
 
         </RelativeLayout>
@@ -122,7 +167,7 @@
         <LinearLayout
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="30dp"
             android:layout_marginTop="50dp"
             android:orientation="vertical">
 
