@@ -6,11 +6,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
@@ -48,6 +50,7 @@ import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.HWConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.Item;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
@@ -71,6 +74,7 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
 
@@ -310,7 +314,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
     }
 
 
-    @OnClick(R.id.btn_print)
+    @OnClick({R.id.btn_print})
     public void onClickPrint() {
         boolean isCheck = false;
 //        boolean isTest = false;
@@ -391,7 +395,6 @@ public class DataRetrieveActivity extends BaseTitleActivity
                     //查全部
                     setAllList();
                 }
-
                 break;
         }
     }
@@ -401,6 +404,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
             case ItemDefault.CODE_ZCP:
                 txtSpTitle.setVisibility(View.VISIBLE);
                 spSelectItems.setVisibility(View.VISIBLE);
+
                 itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
                 mCurrentItem = itemList.get(0);
                 spSelectItems.setAdapter(new ItemSelectAdapter(this, itemList));
@@ -467,6 +471,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
     private String getItemCode() {
         return mCurrentItem.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : mCurrentItem.getItemCode();
     }
+
 
     /**
      * 查找所有学生信息
@@ -630,7 +635,6 @@ public class DataRetrieveActivity extends BaseTitleActivity
 
 
         switch (buttonView.getId()) {
-
             case R.id.cb_select_all:
                 for (int i = 0; i < mList.size(); i++) {
                     mList.get(i).setChecked(isChecked);
@@ -814,5 +818,12 @@ public class DataRetrieveActivity extends BaseTitleActivity
 
     public final static String UPDATE_MESSAGE = "com.feipulai.host.update_data_message";
 
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
+    }
 
 }

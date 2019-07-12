@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.exam.activity.MiddleDistanceRace.bean.GroupItemBean;
+import com.feipulai.exam.activity.MiddleDistanceRace.bean.RaceResultBean;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
@@ -38,15 +39,15 @@ public class MiddlePrintUtil {
     public static void print2(GroupItemBean groupItemBean) {
         if (!SettingHelper.getSystemSetting().isAutoPrint())
             return;
-        for (GroupItem result : groupItemBean.getGroupItems()
+        for (GroupItem groupItem : groupItemBean.getGroupItems()
                 ) {
-            Student student = DBManager.getInstance().queryStudentByStuCode(result.getStudentCode());
-            List<RoundResult> results = DBManager.getInstance().queryResultByStudentCode(result.getStudentCode(), result.getItemCode());
+            Student student = DBManager.getInstance().queryStudentByStuCode(groupItem.getStudentCode());
+            RoundResult result = DBManager.getInstance().queryResultByStudentCode(groupItem.getStudentCode(), groupItem.getItemCode());
             PrinterManager.getInstance().print(" \n");
             PrinterManager.getInstance().print("考  号: " + result.getStudentCode());
             PrinterManager.getInstance().print("姓  名: " + student.getStudentName());
             PrinterManager.getInstance().print("项  目: " + groupItemBean.getItemName());
-            PrinterManager.getInstance().print("成  绩: " + DateUtil.getDeltaT((results.get(results.size() - 1).getResult())));
+            PrinterManager.getInstance().print("成  绩: " + DateUtil.getDeltaT(result.getResult()));
             PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()));
             PrinterManager.getInstance().print(" \n");
         }

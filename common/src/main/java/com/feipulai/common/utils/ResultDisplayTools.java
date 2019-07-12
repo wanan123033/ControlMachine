@@ -60,7 +60,6 @@ public class ResultDisplayTools {
                     result = "秒";
                 }
                 break;
-
             case ItemDefault.CODE_FHL:
                 result = "毫升";
                 break;
@@ -84,7 +83,13 @@ public class ResultDisplayTools {
                         throw new IllegalArgumentException("height weight with no arg");
                 }
                 break;
-
+            case ItemDefault.CODE_ZCP:
+                if ("分'秒".equals(unit) || "秒".equals(unit)) {
+                    result = unit;
+                } else {
+                    result = "秒";
+                }
+                break;
             default:
                 throw new IllegalArgumentException("wrong machineCode");
 

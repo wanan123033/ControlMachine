@@ -2,6 +2,7 @@ package com.feipulai.exam.activity.MiddleDistanceRace.adapter;
 
 import android.annotation.SuppressLint;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,7 +67,7 @@ public class MiddleRaceGroupAdapter extends RecyclerView.Adapter<MiddleRaceGroup
         holder.tvItemRaceNo.setText(String.valueOf(position + 1));
         holder.tvItemRaceItem.setText(mDatas.get(position).getGroupItemName());
         holder.tvItemRaceNumber.setText(mDatas.get(position).getGroupItems().size() + "");
-
+        String colorId = mDatas.get(position).getGroup().getColorId();
         switch (mDatas.get(position).getGroup().getIsTestComplete()) {
             case 0:
                 holder.tvItemRaceState.setText("");
@@ -74,14 +75,15 @@ public class MiddleRaceGroupAdapter extends RecyclerView.Adapter<MiddleRaceGroup
                 break;
             case 3:
                 holder.tvItemRaceState.setText("空闲");
-                holder.tvItemRaceNo.setBackgroundResource(Integer.parseInt(mDatas.get(position).getGroup().getColorId()));
+                holder.tvItemRaceNo.setBackgroundResource(TextUtils.isEmpty(colorId) ? R.color.white : Integer.parseInt(colorId));
                 break;
             case 4:
                 holder.tvItemRaceState.setText("关联");
-                holder.tvItemRaceNo.setBackgroundResource(Integer.parseInt(mDatas.get(position).getGroup().getColorId()));
+                holder.tvItemRaceNo.setBackgroundResource(TextUtils.isEmpty(colorId) ? R.color.white : Integer.parseInt(colorId));
                 break;
             case 5:
                 holder.tvItemRaceState.setText("已完成");
+                holder.tvItemRaceNo.setBackgroundResource(TextUtils.isEmpty(colorId) ? R.color.white : Integer.parseInt(colorId));
                 break;
             default:
                 break;

@@ -382,6 +382,9 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         //更新界面成绩
         pair.setResultState(RoundResult.RESULT_STATE_FOUL);
         updateTestResult(pair);
+        updateLastResultLed(roundResult);
+        testResultAdapter.notifyDataSetChanged();
+
         //上传成绩
         DBManager.getInstance().insertRoundResult(roundResult);
         Logger.i("saveResult==>insertRoundResult->" + roundResult.toString());

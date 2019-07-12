@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.MiddleDistanceRace.bean.RaceResultBean;
+import com.feipulai.exam.activity.MiddleDistanceRace.bean.SelectResultBean;
 import com.feipulai.exam.view.MiddleRace.PanelAdapter;
 
 import java.util.List;
@@ -17,10 +18,11 @@ import java.util.List;
 /**
  * created by ww on 2019/6/18.
  */
-public class ResultShowAdapter extends PanelAdapter {
-    private List<RaceResultBean> datas;
+public class SelectResultAdapter extends PanelAdapter {
+    private List<List<String>> datas;
+    private String[] title = {"道次", "考号", "姓名", "最终成绩"};
 
-    public ResultShowAdapter(List<RaceResultBean> data) {
+    public SelectResultAdapter(List<List<String>> data) {
         this.datas = data;
     }
 
@@ -31,7 +33,7 @@ public class ResultShowAdapter extends PanelAdapter {
 
     @Override
     public int getColumnCount() {
-        return datas.get(0).getResults().length;
+        return datas.get(0).size();
     }
 
     @Override
@@ -41,30 +43,27 @@ public class ResultShowAdapter extends PanelAdapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int row, int column) {
-        String string = datas.get(row).getResults()[column];
         TitleViewHolder titleViewHolder = (TitleViewHolder) holder;
-        if (column == 0) {
-            titleViewHolder.titleTextView.setBackgroundResource(datas.get(row).getColor());
-        }
 
         if (row == 0) {
-            titleViewHolder.titleTextView.setText(string);
-            return;
-        }
-        if (column > datas.get(row).getCycle() + 2) {
-            titleViewHolder.titleTextView.setText("X");
-        } else {
-            if (column > 1) {
-                titleViewHolder.titleTextView.setText(TextUtils.isEmpty(string) ? "" : DateUtil.getDeltaT(Long.parseLong(string)));
+            if (column < 4) {
+                titleViewHolder.titleTextView.setText(title[column]);
             } else {
-                titleViewHolder.titleTextView.setText(string);
+                titleViewHolder.titleTextView.setText("第" + (column - 3) + "圈");
+            }
+        } else {
+            if (column < 3) {
+                titleViewHolder.titleTextView.setText(datas.get(row).get(column));
+            } else {
+                titleViewHolder.titleTextView.setText(DateUtil.getDeltaT(Long.parseLong(datas.get(row).get(column))));
             }
         }
+
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ResultShowAdapter.TitleViewHolder(LayoutInflater.from(parent.getContext())
+        return new SelectResultAdapter.TitleViewHolder(LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.listitem_title, parent, false));
     }
 
