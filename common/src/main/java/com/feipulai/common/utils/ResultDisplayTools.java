@@ -121,6 +121,10 @@ public class ResultDisplayTools {
 
             case "分'秒":
             case "秒":
+                //TODO 时间显示默认显示百分位
+                if (digital == 0) {
+                    digital = 2;
+                }
                 strResult = DateUtil.caculateTime(dbResult, digital, carryMode);
 //                strResult = analyzeTimeResult(dbResult, unit, digital, carryMode, isReturnUnit);
 //                strResult = getFormatTime(dbResult,digital,carryMode);

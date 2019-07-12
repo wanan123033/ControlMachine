@@ -114,7 +114,7 @@ public class DateUtil {
                 carryTime = caculTime;
                 break;
         }
-        return caculateFormatTime(carryTime,digital);
+        return caculateFormatTime(carryTime, digital);
 //        if (carryTime < 60 * 1000) {
 //            return formatTime(carryTime, "ss." + (digital == 1 ? "S" : "SS"));
 //        } else if (caculTime >= 60 * 1000 && caculTime < 60 * 60 * 1000) { // 一小时之内
