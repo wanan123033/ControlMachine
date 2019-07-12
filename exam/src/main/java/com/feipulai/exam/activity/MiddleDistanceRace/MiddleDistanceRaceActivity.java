@@ -74,6 +74,8 @@ import com.zyyoona7.popup.EasyPopup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -1197,6 +1199,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
 
                         List<GroupItem> groupItems = groupItemBeans.get(groupPosition).getGroupItems();
                         SelectResultBean selectResultBean;
+                        List<String> strings;
                         for (GroupItem groupItem : groupItems
                                 ) {
                             Student student = DBManager.getInstance().queryStudentByStuCode(groupItem.getStudentCode());
@@ -1209,11 +1212,11 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                             RoundResult roundResult = DBManager.getInstance().queryResultByStudentCode(groupItem.getStudentCode(), groupItem.getItemCode());
                             int[] results = DataUtil.byteArray2RgbArray(roundResult.getCycleResult());
 
-                            List<String> strings = new ArrayList<>();
+                            strings = new ArrayList<>();
                             strings.add(groupItem.getTrackNo() + "");
                             strings.add(student.getStudentCode());
                             strings.add(student.getStudentName());
-                            strings.add(DateUtil.getDeltaT(roundResult.getResult()));
+                            strings.add(roundResult.getResult() + "");
 //                            strings.add(student.getSex()==0?"男":"女");
                             for (int result : results
                                     ) {
@@ -1221,6 +1224,14 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                             }
                             selectResults.add(strings);
                         }
+
+                        Collections.sort(selectResults, new Comparator<List<String>>() {
+                            @Override
+                            public int compare(List<String> o1, List<String> o2) {
+                                return Integer.valueOf(o1.get(0)).compareTo(Integer.valueOf(o2.get(0)));//按照道次升序排列
+                            }
+                        });
+                        selectResults.add(0, null);//添加标题栏
                         resultScroll.notifyDataSetChanged();
 
                         mSelectPop.showAtLocation(getWindow().getDecorView(), Gravity.CENTER, 0, 0);

@@ -33,7 +33,7 @@ public class SelectResultAdapter extends PanelAdapter {
 
     @Override
     public int getColumnCount() {
-        return datas.get(0).size();
+        return datas.get(1).size();//0位置为空，为标题栏放在adapter中处理
     }
 
     @Override
