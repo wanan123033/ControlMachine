@@ -111,8 +111,11 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
 
         UdpClient.getInstance().init(1527);
         UdpClient.getInstance().setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(), new BasketBallListener(this));
+        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
+        sleep();
         //设置精度
         UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1));
+        sleep();
         timerUtil = new TimerUtil(this);
         group = (Group) TestConfigs.baseGroupMap.get("group");
         String type = "男女混合";
@@ -150,6 +153,15 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
 
     }
 
+    private void sleep() {
+
+        try {
+            //两个指令相间隔100MS
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void finish() {
@@ -288,7 +300,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         resultAdapter.notifyDataSetChanged();
         DBManager.getInstance().insterMachineResult(machineResult);
         setOperationUI();
-        tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()));
+        tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital()));
     }
 
     @Override
@@ -302,14 +314,14 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         if (state == WAIT_BEGIN) {
             state = WAIT_CHECK_IN;
             setOperationUI();
-            tvResult.setText(DateUtil.caculateFormatTime(0, TestConfigs.sCurrentItem.getDigital()));
+            tvResult.setText(DateUtil.caculateFormatTime(0, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital()));
             UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
                     UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
         } else {
             pairs.get(position()).setDeviceResult(result);
             state = WAIT_STOP;
             setOperationUI();
-            tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()));
+            tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital()));
             UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
                     UdpLEDUtil.getLedByte(ResultDisplayUtils.getStrResultForDisplay(result.getResult()), Paint.Align.RIGHT)));
         }
@@ -320,7 +332,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
     @Override
     public void timer(Long time) {
         if (state == TESTING) {
-            tvResult.setText(DateUtil.caculateTime(time * 10, TestConfigs.sCurrentItem.getDigital(), 0));
+            tvResult.setText(DateUtil.caculateTime(time * 10, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital(), 0));
         }
 
     }
@@ -826,7 +838,6 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             if (isStuAllTest(pairs.get(i).getStudent().getStudentCode())) {
                 return;
             }
-
             stuPairAdapter.setTestPosition(i);
             prepareForBegin();
             presetResult();
@@ -889,8 +900,10 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             Logger.i("addStudent:" + pairs.get(i).getStudent().toString());
             Logger.i("addStudent:当前考生进行第" + 1 + "次的第" + roundNo + "轮测试");
             stuPairAdapter.notifyDataSetChanged();
+
             group.setIsTestComplete(2);
             DBManager.getInstance().updateGroup(group);
+
             return;
         }
 //        if (position() + 1 < pairs.size()) {

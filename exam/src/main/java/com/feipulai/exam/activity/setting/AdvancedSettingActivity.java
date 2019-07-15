@@ -1,6 +1,5 @@
 package com.feipulai.exam.activity.setting;
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -18,11 +17,11 @@ import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.medicineBall.MedicineBallSetting;
 import com.feipulai.exam.activity.pullup.setting.PullUpSetting;
 import com.feipulai.exam.activity.situp.setting.SitUpSetting;
+import com.feipulai.exam.activity.standjump.StandJumpSetting;
 import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnItemSelected;
 
 /**
@@ -44,11 +43,14 @@ public class AdvancedSettingActivity extends BaseTitleActivity
     CheckBox swVolleyball;
     @BindView(R.id.sw_med_ball)
     CheckBox swMedBall;
+    @BindView(R.id.sw_standjump)
+    CheckBox swStandjump;
     private SystemSetting systemSetting;
     private SitUpSetting sitUpSetting;
     private PullUpSetting pullUpSetting;
     private VolleyBallSetting volleyBallSetting;
     private MedicineBallSetting medicineBallSetting;
+    private StandJumpSetting standJumpSetting;
     private static final Integer[] ANGLES = {55, 65, 75};
 
     @Override
@@ -64,6 +66,7 @@ public class AdvancedSettingActivity extends BaseTitleActivity
         pullUpSetting = SharedPrefsUtil.loadFormSource(this, PullUpSetting.class);
         volleyBallSetting = SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class);
         medicineBallSetting = SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class);
+        standJumpSetting = SharedPrefsUtil.loadFormSource(this, StandJumpSetting.class);
         String serverToken = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.DEFAULT_SERVER_TOKEN, "dGVybWluYWw6dGVybWluYWxfc2VjcmV0");
         editAppkey.setText(serverToken);
         swSitup.setOnCheckedChangeListener(this);
@@ -77,6 +80,9 @@ public class AdvancedSettingActivity extends BaseTitleActivity
 
         swMedBall.setOnCheckedChangeListener(this);
         swMedBall.setChecked(medicineBallSetting.isPenalize());
+
+        swStandjump.setOnCheckedChangeListener(this);
+        swStandjump.setChecked(standJumpSetting.isPenalize());
 
         ArrayAdapter angleAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, ANGLES);
         angleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -119,6 +125,7 @@ public class AdvancedSettingActivity extends BaseTitleActivity
         SharedPrefsUtil.save(this, pullUpSetting);
         SharedPrefsUtil.save(this, volleyBallSetting);
         SharedPrefsUtil.save(this, medicineBallSetting);
+        SharedPrefsUtil.save(this, standJumpSetting);
     }
 
     @Override
@@ -139,14 +146,11 @@ public class AdvancedSettingActivity extends BaseTitleActivity
             case R.id.sw_med_ball:
                 medicineBallSetting.setPenalize(isChecked);
                 break;
+            case R.id.sw_standjump:
+                standJumpSetting.setPenalize(isChecked);
+                break;
         }
 
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
-    }
 }

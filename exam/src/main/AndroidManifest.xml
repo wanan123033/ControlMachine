@@ -44,7 +44,6 @@
             android:name=".activity.setting.SettingActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity android:name=".activity.MachineSelectActivity" /> <!-- <activity android:name=".activity.ItemSelectActivity" /> -->
-        <activity android:name=".activity.setting.AdvancedPwdActivity" />
         <activity android:name=".activity.setting.AdvancedSettingActivity" />
         <activity
             android:name=".activity.data.DataRetrieveActivity"

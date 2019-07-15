@@ -119,6 +119,8 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), individualCheckFragment, R.id.ll_individual_check);
 
         UdpClient.getInstance().init(1527);
+        UdpClient.getInstance().setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(), new BasketBallListener(this));
+        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
 
         resultAdapter = new BasketBallResultAdapter(resultList, setting);
         rvTestResult.setLayoutManager(new LinearLayoutManager(this));
@@ -335,7 +337,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         resultAdapter.notifyDataSetChanged();
         DBManager.getInstance().insterMachineResult(machineResult);
         setOperationUI();
-        tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()));
+        tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital()));
 
     }
 
@@ -351,14 +353,14 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         if (state == WAIT_BEGIN) {
             state = WAIT_CHECK_IN;
             setOperationUI();
-            tvResult.setText(DateUtil.caculateFormatTime(0, TestConfigs.sCurrentItem.getDigital()));
+            tvResult.setText(DateUtil.caculateFormatTime(0, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital()));
             UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
                     UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
         } else {
             pairs.get(0).setDeviceResult(result);
             state = WAIT_STOP;
             setOperationUI();
-            tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()));
+            tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital()));
             UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
                     UdpLEDUtil.getLedByte(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()), Paint.Align.RIGHT)));
         }
@@ -369,7 +371,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
     @Override
     public void timer(Long time) {
         if (state == TESTING) {
-            tvResult.setText(DateUtil.caculateTime(time * 10, TestConfigs.sCurrentItem.getDigital(), 0));
+            tvResult.setText(DateUtil.caculateTime(time * 10, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital(), 0));
         }
     }
 

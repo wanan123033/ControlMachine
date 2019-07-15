@@ -296,15 +296,15 @@
                     android:background="@color/white"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="19dp">
+                    android:padding="15dp">
 
                     <TextView
                         android:id="@+id/txt_start_test"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginBottom="6dp"
+                        android:layout_height="0dp"
+                        android:layout_marginBottom="@dimen/sp_12"
                         android:layout_weight="1"
-                        android:background="@drawable/icon_btn_blue_bg"
+                        android:background="@drawable/btn_bg_blue"
                         android:gravity="center"
                         android:text="开始"
                         android:textColor="@color/white"
@@ -314,10 +314,9 @@
                     <TextView
                         android:id="@+id/txt_stu_skip"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="6dp"
+                        android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:background="@drawable/icon_btn_blue_bg"
+                        android:background="@drawable/btn_bg_blue"
                         android:gravity="center"
                         android:text="跳过"
                         android:textColor="@color/white"
@@ -326,15 +325,15 @@
                     <TextView
                         android:id="@+id/txt_stu_fault"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="6dp"
+                        android:layout_height="0dp"
+                        android:layout_marginTop="12dp"
                         android:layout_weight="1"
-                        android:background="@drawable/icon_btn_blue_bg"
+                        android:background="@drawable/btn_bg_blue"
                         android:gravity="center"
                         android:text="犯规"
-                        android:visibility="gone"
                         android:textColor="@color/white"
-                        android:textSize="22sp" />
+                        android:textSize="22sp"
+                        android:visibility="gone" />
                 </LinearLayout>
             </RelativeLayout>
 
