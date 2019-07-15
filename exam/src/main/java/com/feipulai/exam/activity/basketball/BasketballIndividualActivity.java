@@ -306,14 +306,25 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             DBManager.getInstance().updateRoundResult(testRoundResult);
             //获取所有成绩设置为非最好成绩
             List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(mStudentItem);
-            for (RoundResult roundResult : results) {
-                roundResult.setIsLastResult(0);
-                DBManager.getInstance().updateRoundResult(roundResult);
-            }
             //获取最小成绩设置为最好成绩
             RoundResult dbAscResult = DBManager.getInstance().queryOrderAscScore(student.getStudentCode(), testNo);
-            dbAscResult.setIsLastResult(1);
-            DBManager.getInstance().updateRoundResult(dbAscResult);
+            for (RoundResult roundResult : results) {
+                if (roundResult.getResult() == dbAscResult.getResult()) {
+                    roundResult.setIsLastResult(1);
+                } else {
+                    roundResult.setIsLastResult(0);
+                }
+                DBManager.getInstance().updateRoundResult(roundResult);
+            }
+
+//            dbAscResult.setIsLastResult(1);
+//            DBManager.getInstance().updateRoundResult(dbAscResult);
+
+            if (results != null) {
+                TestCache.getInstance().getResults().put(student, results);
+            }
+
+
             showStuInfoResult();
             resultList.get(resultAdapter.getSelectPosition()).setSelectMachineResult(machineResult.getResult());
             resultList.get(resultAdapter.getSelectPosition()).setResult(result.getResult());
@@ -687,23 +698,31 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         }
 
         List<RoundResult> dbRoundResult = DBManager.getInstance().queryResultsByStuItem(mStudentItem);
-        if (dbRoundResult != null) {
-            TestCache.getInstance().getResults().put(pair.getStudent(), dbRoundResult);
-        }
-        //获取所有成绩设置为非最好成绩
-        for (RoundResult roundResult : dbRoundResult) {
-            roundResult.setIsLastResult(0);
-            DBManager.getInstance().updateRoundResult(roundResult);
-        }
+
         //获取最小成绩设置为最好成绩
         RoundResult dbAscResult = DBManager.getInstance().queryOrderAscScore(mStudentItem.getStudentCode(), testNo);
+
         if (dbAscResult != null) {
-            dbAscResult.setIsLastResult(1);
-            DBManager.getInstance().updateRoundResult(dbAscResult);
+            //获取所有成绩设置为非最好成绩
+            for (RoundResult roundResult : dbRoundResult) {
+                if (roundResult.getResult() == dbAscResult.getResult()) {
+                    roundResult.setIsLastResult(1);
+
+                } else {
+                    roundResult.setIsLastResult(0);
+                }
+                DBManager.getInstance().updateRoundResult(roundResult);
+            }
+//            dbAscResult.setIsLastResult(1);
+//            DBManager.getInstance().updateRoundResult(dbAscResult);
         } else if (dbRoundResult != null && dbRoundResult.size() > 0) {
             dbRoundResult.get(0).setIsLastResult(1);
             DBManager.getInstance().updateRoundResult(dbRoundResult.get(0));
         }
+        if (dbRoundResult != null) {
+            TestCache.getInstance().getResults().put(pair.getStudent(), dbRoundResult);
+        }
+
         int result = pair.getDeviceResult().getResult();
         uploadResult(pair.getStudent());
 
@@ -777,7 +796,9 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         }
 
         DBManager.getInstance().insertRoundResult(roundResult);
-
+        //获取所有成绩设置为非最好成绩
+        List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(mStudentItem);
+        TestCache.getInstance().getResults().put(student, results);
         showStuInfoResult();
     }
 

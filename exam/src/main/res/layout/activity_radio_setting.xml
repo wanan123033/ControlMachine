@@ -1,151 +1,157 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:focusableInTouchMode="true"
-              android:orientation="vertical">
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
 
-    <Button
-        android:id="@+id/btn_show_judgements"
-        android:layout_width="120dp"
-        android:layout_height="25dp"
-        android:layout_margin="5dp"
-        android:background="@drawable/circle_corner_button_selector"
-        android:text="查看评分标准"
-        android:textColor="@color/white"
-        />
+    android:background="@mipmap/icon_white_bg">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="600dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:background="@drawable/circle_corner_button_selector"
-            android:text="终端数量:"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            />
-
-        <Spinner
-            android:id="@+id/sp_device_num"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:paddingLeft="5dp"
-            android:gravity="center"
-            android:background="@drawable/icon_spinner_bg"
-            />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:background="@drawable/circle_corner_button_selector"
-            android:text="测试次数:"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            />
-
-        <Spinner
-            android:id="@+id/sp_test_vez"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:paddingLeft="5dp"
-            android:gravity="center"
-            android:background="@drawable/icon_spinner_bg"
-            />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/ll_group_pattern"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_10"
+        android:layout_gravity="center"
+        android:background="@drawable/btn_bg_white"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:paddingBottom="20dp"
+        android:paddingLeft="30dp"
+        android:paddingRight="20dp"
+        android:paddingTop="20dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="分组测试:"/>
+        <Button
+            android:id="@+id/btn_show_judgements"
+            android:layout_width="120dp"
+            android:layout_height="35dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/btn_click_bg"
+            android:text="查看评分标准" />
 
-        <RadioGroup
-            android:id="@+id/rg_model"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <RadioButton
-                android:id="@+id/rb_successive"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:button="@null"
-                android:checked="true"
-                android:drawableRight="@drawable/checkbox_switch_selected"
-                android:text="连续测试:"/>
+                android:layout_margin="5dp"
+                android:text="终端数量:"
+                android:textSize="18sp" />
 
-            <RadioButton
-                android:id="@+id/rb_loop"
+            <Spinner
+                android:id="@+id/sp_device_num"
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:background="@drawable/icon_spinner_bg"
+                android:gravity="center"
+                android:paddingLeft="5dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="60dp"
-                android:button="@null"
-                android:drawableRight="@drawable/checkbox_switch_selected"
-                android:text="循环测试:"/>
-        </RadioGroup>
+                android:layout_margin="5dp"
+                android:text="测试次数:"
+                android:textSize="18sp" />
+
+            <Spinner
+                android:id="@+id/sp_test_vez"
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:background="@drawable/icon_spinner_bg"
+                android:gravity="center"
+                android:paddingLeft="5dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_group_pattern"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="分组测试:"
+                android:textSize="18sp" />
+
+            <RadioGroup
+                android:id="@+id/rg_model"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rb_successive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:button="@null"
+                    android:checked="true"
+                    android:drawablePadding="@dimen/dp_10"
+                    android:drawableRight="@drawable/checkbox_switch_selected"
+                    android:text="连续测试:" />
+
+                <RadioButton
+                    android:id="@+id/rb_loop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="60dp"
+                    android:button="@null"
+                    android:drawablePadding="@dimen/dp_10"
+                    android:drawableRight="@drawable/checkbox_switch_selected"
+                    android:text="循环测试:" />
+            </RadioGroup>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_test_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:text="测试时限:"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/et_test_time"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="4" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:text="秒"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
+        </LinearLayout>
 
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/ll_test_time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:focusableInTouchMode="true"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="5dp"
-            android:background="@drawable/circle_corner_button_selector"
-            android:text="测试时限:"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            />
-
-        <EditText
-            android:id="@+id/et_test_time"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:inputType="number"
-            android:maxLength="4"
-            android:background="@drawable/edit_search_bg"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="5dp"
-            android:text="秒"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            />
-
-    </LinearLayout>
-
-</LinearLayout>
+</android.support.v4.widget.NestedScrollView>

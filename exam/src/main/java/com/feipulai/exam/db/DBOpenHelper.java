@@ -30,7 +30,7 @@ public class DBOpenHelper extends DaoMaster.OpenHelper {
 
         if (oldVersion < newVersion) {
             switch (newVersion) {
-                case 2:
+                case 3:
                     MigrationHelper.migrate(db, MachineResultDao.class);
                     MigrationHelper.migrate(db, ChipInfoDao.class);
                     MigrationHelper.migrate(db, ChipGroupDao.class);

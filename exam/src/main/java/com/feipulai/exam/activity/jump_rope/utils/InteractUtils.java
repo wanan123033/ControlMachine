@@ -309,7 +309,7 @@ public class InteractUtils {
                     RoundResult result = resultList.get(j);
 //                    String printResult = "第" + (j + 1) + "次:" + (result.getResultState() == RoundResult.RESULT_STATE_NORMAL
 //                            ? ResultDisplayUtils.getStrResultForDisplay(result.getResult(), false) : "X");
-                    String printResult = "第" + (j + 1) + "次:" + getPrintResultState(result);
+                    String printResult = "第" + result.getRoundNo() + "次:" + getPrintResultState(result);
                     // 跳绳需要打印绊绳次数
                     switch (TestConfigs.sCurrentItem.getMachineCode()) {
                         case ItemDefault.CODE_TS:

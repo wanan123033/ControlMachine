@@ -1,312 +1,335 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="20dp">
-
-    <TextView
-        android:layout_width="120dp"
-        android:layout_height="45dp"
-        android:layout_centerVertical="true"
-        android:layout_marginBottom="@dimen/dp_10"
-        android:layout_marginRight="20dp"
-        android:layout_toLeftOf="@+id/tv_start_test"
-        android:background="@drawable/selector_blue_grey_press"
-        android:enabled="false"
-        android:gravity="center"
-        android:textColor="@color/white"
-        android:textSize="@dimen/sp_16"
-        android:text="查看标准" />
-
-    <TextView
-        android:id="@+id/btn_self_check"
-        android:layout_width="120dp"
-        android:layout_height="45dp"
-        android:layout_centerVertical="true"
-        android:layout_marginBottom="@dimen/dp_10"
-        android:layout_marginRight="20dp"
-        android:layout_toLeftOf="@+id/tv_start_test"
-        android:background="@drawable/selector_blue_grey_press"
-        android:focusable="true"
-        android:gravity="center"
-        android:textColor="@color/white"
-        android:textSize="@dimen/sp_16"
-        android:text="自检" />
+    android:background="@mipmap/icon_white_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_10"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="测试次数：" />
-
-        <Spinner
-            android:id="@+id/sp_test_times"
-            android:layout_width="100dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="50dp"
-            android:background="@drawable/icon_spinner_bg" />
-
-    </LinearLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_marginRight="5dp">
+            android:layout_width="600dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/btn_bg_white"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:padding="20dp">
 
             <TextView
-                android:id="@+id/radioGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="成绩精度："
-                android:textSize="16sp" />
+                android:layout_width="120dp"
+                android:layout_height="45dp"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="@dimen/dp_10"
+                android:layout_marginRight="20dp"
+                android:layout_toLeftOf="@+id/tv_start_test"
+                android:background="@drawable/selector_blue_grey_press"
+                android:enabled="false"
+                android:gravity="center"
+                android:text="查看标准"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_16" />
 
-            <RadioGroup
-                android:id="@+id/radioGroup_degree"
+            <TextView
+                android:id="@+id/btn_self_check"
+                android:layout_width="120dp"
+                android:layout_height="45dp"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="@dimen/dp_10"
+                android:layout_marginRight="20dp"
+                android:layout_toLeftOf="@+id/tv_start_test"
+                android:background="@drawable/selector_blue_grey_press"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="自检"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_16" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <RadioButton
-                    android:id="@+id/rb_hundred_second"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="测试次数：" />
+
+                <Spinner
+                    android:id="@+id/sp_test_times"
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="50dp"
+                    android:background="@drawable/icon_spinner_bg" />
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginRight="5dp">
+
+                    <TextView
+                        android:id="@+id/radioGroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="成绩精度："
+                        android:textSize="16sp" />
+
+                    <RadioGroup
+                        android:id="@+id/radioGroup_degree"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/rb_hundred_second"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:checked="true"
+                            android:text="百分秒" />
+
+                        <RadioButton
+                            android:id="@+id/rb_ten_second"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="@dimen/dp_10"
+                            android:text="十分秒" />
+                    </RadioGroup>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/dp_40"
+                    android:gravity="left|center_vertical"
+                    android:orientation="horizontal">
+                    <!--<TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="满分设置：" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="男子:"/>
+                    <EditText
+                        android:id="@+id/et_full_male"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textCursorDrawable="@drawable/edit_color"
+                        android:minWidth="@dimen/dp_40"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="秒"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:text="女子:"/>
+                    <EditText
+                        android:id="@+id/et_full_female"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textCursorDrawable="@drawable/edit_color"
+                        android:minWidth="@dimen/dp_40"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="秒"/>
+                    -->
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="成绩进位：" />
+
+                    <Spinner
+                        android:id="@+id/sp_mark_degree"
+                        android:layout_width="100dp"
+                        android:layout_height="30dp"
+                        android:layout_marginLeft="50dp"
+                        android:background="@drawable/icon_spinner_bg" />
+
+                </LinearLayout>
+                <!--<LinearLayout
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/dp_40"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="满分跳过：" />
+
+                    <CheckBox
+                        android:id="@+id/cb_full_return"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="50dp"
+                        android:button="@drawable/checkbox_switch_selected" />
+                </LinearLayout>-->
+            </RelativeLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="开放跑到数量：" />
+
+                <EditText
+                    android:id="@+id/et_run_num"
+                    android:layout_width="60dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="50dp"
+                    android:background="@drawable/black_border"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:text="8" />
+                <!--android:inputType="number"-->
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="拦截方式：" />
+
+                <Spinner
+                    android:id="@+id/sp_intercept_way"
+                    android:layout_width="130dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="50dp"
+                    android:background="@drawable/icon_spinner_bg" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginRight="5dp">
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:checked="true"
-                    android:text="百分秒" />
+                    android:text="拦截点："
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:id="@+id/ll_intercept"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/cb_start"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="起始点" />
+
+                    <CheckBox
+                        android:id="@+id/cb_end"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="@dimen/dp_10"
+                        android:checked="true"
+                        android:text="终点/折返点" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="传感器信道：" />
+
+                <Spinner
+                    android:id="@+id/sp_sensor"
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="50dp"
+                    android:background="@drawable/icon_spinner_bg" />
+
+            </LinearLayout>
+
+            <RadioGroup
+                android:id="@+id/rg_model"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
 
                 <RadioButton
-                    android:id="@+id/rb_ten_second"
+                    android:id="@+id/rb_continue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="@dimen/dp_10"
-                    android:text="十分秒" />
+                    android:button="@null"
+                    android:checked="true"
+                    android:drawableRight="@drawable/checkbox_switch_selected"
+                    android:text="连续测试：" />
+
+                <RadioButton
+                    android:id="@+id/rb_recycle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="60dp"
+                    android:button="@null"
+                    android:drawableRight="@drawable/checkbox_switch_selected"
+                    android:text="循环测试：" />
             </RadioGroup>
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_alignParentRight="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/dp_40"
-            android:gravity="left|center_vertical"
-            android:layout_centerVertical="true"
-            android:orientation="horizontal">
-            <!--<TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="满分设置：" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="男子:"/>
-            <EditText
-                android:id="@+id/et_full_male"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textCursorDrawable="@drawable/edit_color"
-                android:minWidth="@dimen/dp_40"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="秒"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:text="女子:"/>
-            <EditText
-                android:id="@+id/et_full_female"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textCursorDrawable="@drawable/edit_color"
-                android:minWidth="@dimen/dp_40"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="秒"/>
-            -->
-        </LinearLayout>
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_marginTop="@dimen/dp_10"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="成绩进位：" />
-
-            <Spinner
-                android:id="@+id/sp_mark_degree"
-                android:layout_width="100dp"
-                android:layout_height="30dp"
-                android:layout_marginLeft="50dp"
-                android:background="@drawable/icon_spinner_bg" />
-
-        </LinearLayout>
-        <!--<LinearLayout
-            android:layout_alignParentRight="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/dp_40"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="满分跳过：" />
-
-            <CheckBox
-                android:id="@+id/cb_full_return"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
-                android:button="@drawable/checkbox_switch_selected" />
-        </LinearLayout>-->
-    </RelativeLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_10"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="开放跑到数量：" />
-
-        <EditText
-            android:text="8"
-            android:gravity="center"
-            android:id="@+id/et_run_num"
-            android:layout_width="60dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="50dp"
-            android:inputType="number"
-            android:background="@drawable/black_border" />
-        <!--android:inputType="number"-->
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_10"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="拦截方式：" />
-
-        <Spinner
-            android:id="@+id/sp_intercept_way"
-            android:layout_width="130dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="50dp"
-            android:background="@drawable/icon_spinner_bg" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginRight="5dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="拦截点："
-            android:textSize="16sp" />
-
-        <LinearLayout
-            android:id="@+id/ll_intercept"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-            <CheckBox
-                android:id="@+id/cb_start"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="起始点" />
-
-            <CheckBox
-                android:id="@+id/cb_end"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="@dimen/dp_10"
-                android:checked="true"
-                android:text="终点/折返点" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_10"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="传感器信道：" />
-
-        <Spinner
-            android:id="@+id/sp_sensor"
-            android:layout_width="100dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="50dp"
-            android:background="@drawable/icon_spinner_bg" />
-
-    </LinearLayout>
-    <RadioGroup
-        android:id="@+id/rg_model"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-
-        <RadioButton
-            android:id="@+id/rb_continue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:button="@null"
-            android:checked="true"
-            android:drawableRight="@drawable/checkbox_switch_selected"
-            android:text="连续测试：" />
-
-        <RadioButton
-            android:id="@+id/rb_recycle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="60dp"
-            android:button="@null"
-            android:drawableRight="@drawable/checkbox_switch_selected"
-            android:text="循环测试：" />
-    </RadioGroup>
-</LinearLayout>
+</android.support.v4.widget.NestedScrollView>

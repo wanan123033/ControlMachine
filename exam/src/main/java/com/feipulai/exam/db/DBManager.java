@@ -1695,6 +1695,7 @@ public class DBManager {
                     UploadResults uploadResults = new UploadResults(group.getScheduleNo(),
                             itemCode, saveResult.get(0).getStudentCode(), "1",
                             group.getGroupNo() + "", RoundResultBean.beanCope(saveResult));
+                    uploadResults.setGroupId(group.getId());
                     uploadResultsList.add(uploadResults);
                 }
             }
@@ -2047,6 +2048,10 @@ public class DBManager {
 
     public List<Group> queryGroupIsFinish() {
         return groupDao.queryBuilder().where(GroupDao.Properties.IsTestComplete.notEq(GROUP_FINISH)).list();
+    }
+
+    public Group queryGroupById(long groupId) {
+        return groupDao.queryBuilder().where(GroupDao.Properties.Id.eq(groupId)).unique();
     }
 
     /**
