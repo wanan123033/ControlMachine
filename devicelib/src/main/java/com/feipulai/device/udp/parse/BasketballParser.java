@@ -35,7 +35,7 @@ public class BasketballParser extends UDPParser {
             case UDPBasketBallConfig.CMD_SET_BRIGHT_RESPONSE://设置显示内容
                 break;
             case UDPBasketBallConfig.CMD_SET_STATUS_RESPONSE://设置工作状态 0XA6,CMD_SET_STATUS, ucStatus,0XFF
-            case UDPBasketBallConfig.CMD_GET_STATUS_RESPONSE://获取工作状态
+
             case UDPBasketBallConfig.CMD_ASYNTM_PAUSE_RESPONSE://同步时间并暂停显示0XA6(包头) CMD_SET_STATUS (命令), ucStatus(状态),0XFF(包尾)
             case UDPBasketBallConfig.CMD_ASYNTM_NOPAUSE_RESPONSE://同步时间不暂停显示
             case UDPBasketBallConfig.CMD_DISPTM_PAUSE_RESPONSE://显示时间并暂停，不同步时间
@@ -65,6 +65,11 @@ public class BasketballParser extends UDPParser {
                 break;
             case UDPBasketBallConfig.CMD_SET_T_RESPONSE://灵敏度
                 break;
+            case UDPBasketBallConfig.CMD_GET_STATUS_RESPONSE://获取工作状态
+                result.setUcStatus(data[2]);
+                result.settNum(data[6]);
+                break;
+
             default:
                 return null;
         }
