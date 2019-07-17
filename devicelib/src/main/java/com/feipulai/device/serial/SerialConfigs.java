@@ -55,7 +55,7 @@ public class SerialConfigs {
     public static final byte[] CMD_SELF_CHECK_JUMP = {0x54, 0x44, 0x00, 0x0c, 0x01, 0x02, 0x00, 0x07, 0x00, 0x00, 0x27, 0x0d};
     public static final byte[] CMD_GET_JUMP_VERSION = {0x54, 0x44, 0x00, 0x0c, 0x00, 0x02, 0x00, 0x0c, 0x00, 0x00, 0x27, 0x0d};
 
-     //SIT AND REACH
+    //SIT AND REACH
     public static final byte[] CMD_SIT_REACH_EMPTY = {0X54, 0X44, 00, 0X10, 00, 0x04, 00, 00, 00, 00, 00, 00, 00, 0x14, 0x27, 0x0d};
     public static final byte[] CMD_SIT_REACH_START = {0X54, 0X44, 00, 0X10, 00, 0x04, 00, 0x01, 00, 00, 00, 00, 00, 0x15, 0x27, 0x0d};
     public static final byte[] CMD_SIT_REACH_END = {0X54, 0X44, 00, 0X10, 00, 0x04, 00, 0x02, 00, 00, 00, 00, 00, 0x16, 0x27, 0x0d};
@@ -83,10 +83,9 @@ public class SerialConfigs {
         for (int i = 2; i <= 12; i++) {
             sum += data[i] & 0xff;
         }
-        data[13] = (byte)sum;
+        data[13] = (byte) sum;
         return data;
     }
-
 
 
     //MEDICINE BALL
@@ -174,7 +173,7 @@ public class SerialConfigs {
     public static final int VOLLEYBALL_START_RESPONSE = 0x19;
     public static final int VOLLEYBALL_STOP_RESPONSE = 0x1a;
     public static final int VOLLEYBALL_RESULT_RESPONSE = 0x1b;
-
+    public static final int VOLLEYBALL_CHECK_RESPONSE = 0x1c;
     //MEDICINE BALL
     public static final int MEDICINE_BALL_SELF_CHECK_RESPONSE = 0x1c;
     public static final int MEDICINE_BALL_GET_SCORE_RESPONSE = 0x1d;

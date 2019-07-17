@@ -1,7 +1,8 @@
 package com.feipulai.common.utils;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
+import java.math.RoundingMode;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -100,11 +101,18 @@ public class DateUtil {
                 carryTime = bigDecimal.setScale(digital, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(1000d)).longValue();
                 break;
             case 2:
-                String pattern = "#.";
-                for (int i = 0; i < digital; i++) {
-                    pattern += "0";
-                }
-                double formatTime = Double.valueOf(new DecimalFormat(pattern).format(bigTime));
+//                String pattern = "#.";
+//                for (int i = 0; i < digital; i++) {
+//                    pattern += "0";
+//                }
+//                double formatTime = Double.valueOf(new DecimalFormat(pattern).format(bigTime));
+
+                NumberFormat nf = NumberFormat.getNumberInstance();
+                // 保留两位小数
+                nf.setMaximumFractionDigits(digital);
+                // 如果不需要四舍五入，可以使用RoundingMode.DOWN
+                nf.setRoundingMode(RoundingMode.DOWN);
+                double formatTime = Double.valueOf(nf.format(bigTime).replaceAll(",", ""));
                 carryTime = BigDecimal.valueOf(formatTime).multiply(new BigDecimal(1000d)).longValue();
                 break;
             case 3://非0进位
