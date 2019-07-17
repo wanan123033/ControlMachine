@@ -250,7 +250,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
             case R.id.rb_loop://循环测试
                 setting.setTestPattern(1);
                 break;
-            case R.id.rb_successive://连续测试
+            case R.id.rb_continuous://连续测试
                 setting.setTestPattern(0);
                 break;
 //            case R.id.rb_tenths: //十分位

@@ -117,9 +117,9 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
         cbFullSkip.setChecked(setting.isFullSkip());
 
         if (setting.getTestPattern() == 0) {//连续测试
-            rgGroupMode.check(R.id.rb_continuous_test);
+            rgGroupMode.check(R.id.rb_continuous);
         } else {
-            rgGroupMode.check(R.id.rb_circulation_test);
+            rgGroupMode.check(R.id.rb_loop);
         }
         if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
             rgGroupMode.setVisibility(View.GONE);
@@ -239,7 +239,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
             case R.id.rb_loop://循环测试
                 setting.setTestPattern(1);
                 break;
-            case R.id.rb_successive://连续测试
+            case R.id.rb_continuous://连续测试
                 setting.setTestPattern(0);
                 break;
             case R.id.rb_tenths: //十分位

@@ -306,7 +306,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         switch (useMode){
 
             case 1://"2:起点1:终点"
-                if (result.gettNum() == 1){//拦截到了起点，重新计时
+                if (result.gettNum() == 1){//拦截到了起点
                     tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()));
                 }else {//拦截到终点，正常
                     doGetResult(result);
@@ -314,7 +314,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
 
                 break;
             case 2://2:终点1:起点
-                if (result.gettNum() == 2){//拦截到了起点，重新计时
+                if (result.gettNum() == 2){//拦截到了起点
                     tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()));
                 }else {//拦截到终点，正常
                     doGetResult(result);
