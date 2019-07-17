@@ -501,6 +501,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 break;
             case R.id.txt_illegal_return://违例返回
                 UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
+                sleep();
                 UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
                 break;
             case R.id.txt_continue_run://继续运行
@@ -552,9 +553,23 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                     prepareForCheckIn();
                     UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
                     txtDeviceStatus.setText("空闲");
+                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(1,
+                            UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
+                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
+                            UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
                 }
 
                 break;
+        }
+    }
+
+    private void sleep() {
+
+        try {
+            //两个指令相间隔100MS
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -922,8 +937,15 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 txtStopTiming.setEnabled(true);
                 break;
             case TESTING:
+                List<MachineResult> machineResultList = resultList.get(resultAdapter.getSelectPosition()).getMachineResultList();
+                if (machineResultList != null && machineResultList.size() > 0) {
+                    txtIllegalReturn.setEnabled(false);
+                } else {
+                    txtIllegalReturn.setEnabled(true);
+                }
+
                 txtWaiting.setEnabled(false);
-                txtIllegalReturn.setEnabled(true);
+
                 txtContinueRun.setEnabled(false);
                 txtStopTiming.setEnabled(true);
                 break;

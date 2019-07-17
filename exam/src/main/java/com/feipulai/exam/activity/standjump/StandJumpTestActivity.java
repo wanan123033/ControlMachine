@@ -46,6 +46,13 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
         if (jumpSetting == null) {
             jumpSetting = new StandJumpSetting();
         }
+        if (jumpSetting.isPenalize()) {
+            setFaultVisible(true);
+            setFaultEnable(false);
+            setTestType(1);
+        }
+
+
         Logger.i(TAG + ":reachSetting ->" + jumpSetting.toString());
         mHandler = new MyHandler(this);
 //        SerialDeviceManager.getInstance().setRS232ResiltListener(standResiltListener);
@@ -73,6 +80,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
 
     @Override
     public void sendTestCommand(BaseStuPair baseStuPair) {
+        setFaultEnable(false);
         sendCheck();
         standResiltListener.setTestState(StandResiltListener.TestState.START_TEST);
         //开始测试
@@ -204,6 +212,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
 
                     case UPDATE_RESULT:
                         activity.updateResult((BaseStuPair) msg.obj);
+                        activity.setFaultVisible(true);
                         break;
                     case TOAST_SPEAK:
                         activity.toastSpeak("开始测试");

@@ -370,6 +370,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                 break;
             case R.id.txt_illegal_return://违例返回
                 UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
+                sleep();
                 UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
                 break;
             case R.id.txt_continue_run://继续运行
@@ -982,8 +983,14 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                 txtStopTiming.setEnabled(true);
                 break;
             case TESTING:
+                List<MachineResult> machineResultList = resultList.get(resultAdapter.getSelectPosition()).getMachineResultList();
+                if (machineResultList != null && machineResultList.size() > 0) {
+                    txtIllegalReturn.setEnabled(false);
+                } else {
+                    txtIllegalReturn.setEnabled(true);
+                }
                 txtWaiting.setEnabled(false);
-                txtIllegalReturn.setEnabled(true);
+//                txtIllegalReturn.setEnabled(true);
                 txtContinueRun.setEnabled(false);
                 txtStopTiming.setEnabled(true);
                 break;

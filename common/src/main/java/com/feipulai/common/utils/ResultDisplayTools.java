@@ -3,7 +3,8 @@ package com.feipulai.common.utils;
 import com.feipulai.device.ic.utils.ItemDefault;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
+import java.math.RoundingMode;
+import java.text.NumberFormat;
 import java.util.Locale;
 
 /**
@@ -278,11 +279,19 @@ public class ResultDisplayTools {
             case FLSQ:
 //                result = (int) (tmpResult * Math.pow(10, digital));
 //                result /= Math.pow(10, digital);
-                String pattern = "#.";
-                for (int i = 0; i < digital; i++) {
-                    pattern += "0";
-                }
-                result = Double.valueOf(new DecimalFormat(pattern).format(tmpResult));
+//                String pattern = "#.";
+//                for (int i = 0; i < digital; i++) {
+//                    pattern += "0";
+//                }
+
+                NumberFormat nf = NumberFormat.getNumberInstance();
+                // 保留两位小数
+                nf.setMaximumFractionDigits(digital);
+                // 如果不需要四舍五入，可以使用RoundingMode.DOWN
+                nf.setRoundingMode(RoundingMode.DOWN);
+                result = Double.valueOf(nf.format(tmpResult).replaceAll(",", ""));
+
+//                result = Double.valueOf(new DecimalFormat(pattern).format(tmpResult));
 
                 break;
 

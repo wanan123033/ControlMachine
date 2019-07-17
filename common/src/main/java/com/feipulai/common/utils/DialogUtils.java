@@ -59,16 +59,13 @@ public class DialogUtils {
             e.printStackTrace();
         }
     }
+
     /**
      * 创建Dialog
      *
-     * @param c
-     *         上下文环境
-     * @param view
-     *         Dialog视图
-     * @param cancelable
-     *         Dialog是否可以返回取消
-     *
+     * @param c          上下文环境
+     * @param view       Dialog视图
+     * @param cancelable Dialog是否可以返回取消
      * @return Dialog。
      */
     public static Dialog create(Context c, View view, boolean cancelable) {

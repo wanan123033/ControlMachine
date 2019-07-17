@@ -48,4 +48,33 @@
         <item>65度</item>
         <item>75度</item>
     </array>
+    <array name="array_time_out_deal">
+        <item>停止</item>
+        <item>不计数</item>
+    </array>
+
+    <string-array name="base_line_set">
+        <item>55</item>
+        <item>65</item>
+        <item>75</item>
+    </string-array>
+    <string-array name="middle_race_number">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+    <string-array name="vest_chip_no">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="color_group_style">
+        <item>正常组</item>
+        <item>备用组</item>
+    </string-array>
+    <string-array name="item_group_style">
+        <item>未完成</item>
+        <item>已完成</item>
+    </string-array>
 </resources>
