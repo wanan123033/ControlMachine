@@ -1498,6 +1498,22 @@ public class DBManager {
     }
 
     /**
+     * 根据学生考号删除测试次数中的某一轮成绩
+     *
+     * @param studentCode
+     */
+    public void deleteStuResult(String studentCode, int testNo, int rountNo, long groupId) {
+        roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.TestNo.eq(testNo))
+                .where(RoundResultDao.Properties.RoundNo.eq(rountNo))
+                .where(RoundResultDao.Properties.GroupId.eq(groupId))
+                .buildDelete().executeDeleteWithoutDetachingEntities();
+    }
+
+    /**
      * 根据项目删除成绩
      */
     public void deleteItemResult() {
@@ -1695,6 +1711,7 @@ public class DBManager {
                     UploadResults uploadResults = new UploadResults(group.getScheduleNo(),
                             itemCode, saveResult.get(0).getStudentCode(), "1",
                             group.getGroupNo() + "", RoundResultBean.beanCope(saveResult));
+                    uploadResults.setGroupId(group.getId());
                     uploadResultsList.add(uploadResults);
                 }
             }
@@ -2075,6 +2092,10 @@ public class DBManager {
         return groupDao.queryBuilder().where(GroupDao.Properties.IsTestComplete.notEq(GROUP_FINISH)).list();
     }
 
+    public Group queryGroupById(long groupId) {
+        return groupDao.queryBuilder().where(GroupDao.Properties.Id.eq(groupId)).unique();
+    }
+
     /**
      * 批量添加分组学生报名
      *
@@ -2146,6 +2167,18 @@ public class DBManager {
     public void insterMachineResults(List<MachineResult> machineResults) {
         machineResultDao.insertInTx(machineResults);
     }
+
+    public void deleteStuMachineResults(String studentCode, int testNo, int rountNo, long groupId) {
+        machineResultDao.queryBuilder()
+                .where(MachineResultDao.Properties.StudentCode.eq(studentCode))
+                .where(MachineResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(MachineResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(MachineResultDao.Properties.TestNo.eq(testNo))
+                .where(MachineResultDao.Properties.RoundNo.eq(rountNo))
+                .where(MachineResultDao.Properties.GroupId.eq(groupId))
+                .buildDelete().executeDeleteWithoutDetachingEntities();
+    }
+
     /********************************************多表操作**********************************************************************/
 
     /**

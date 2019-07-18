@@ -12,7 +12,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
@@ -50,11 +49,11 @@ import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.HWConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
-import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.Item;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
+import com.feipulai.exam.utils.PrintResultUtil;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.utils.db.DataBaseExecutor;
 import com.feipulai.exam.utils.db.DataBaseRespon;
@@ -124,7 +123,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
     private List<Item> itemList;
     private DataRetrieveAdapter mAdapter;
     private List<DataRetrieveBean> mList;
-    private List<DataRetrieveBean> printList = new ArrayList<>();
+    private List<String> printList = new ArrayList<>();
     private static final int LOAD_ITEMS = 100;
     private int mPageNum;
     public BroadcastReceiver receiver;
@@ -323,7 +322,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
             if (mList.get(i).isChecked()) {
                 isCheck = true;
                 if (mList.get(i).getTestState() == 1) {
-                    printList.add(mList.get(i));
+                    printList.add(mList.get(i).getStudentCode());
                 }
 
             }
@@ -343,20 +342,23 @@ public class DataRetrieveActivity extends BaseTitleActivity
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 ToastUtils.showShort("开始打印");
-                                for (DataRetrieveBean dataRetrieveBean : printList) {
-                                    List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(dataRetrieveBean.getStudentCode());
-                                    printResult(dataRetrieveBean, results);
-                                }
+                                PrintResultUtil.printResult(printList);
+
+//                                for (DataRetrieveBean dataRetrieveBean : printList) {
+//                                    List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(dataRetrieveBean.getStudentCode());
+//                                    printResult(dataRetrieveBean, results);
+//                                }
                             }
                         })
                         .setNegativeButton("否", null)
                         .show();
             } else {
                 ToastUtils.showShort("开始打印");
-                for (DataRetrieveBean dataRetrieveBean : printList) {
-                    List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(dataRetrieveBean.getStudentCode());
-                    printResult(dataRetrieveBean, results);
-                }
+                PrintResultUtil.printResult(printList);
+//                for (DataRetrieveBean dataRetrieveBean : printList) {
+//                    List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(dataRetrieveBean.getStudentCode());
+//                    printResult(dataRetrieveBean, results);
+//                }
             }
 
 

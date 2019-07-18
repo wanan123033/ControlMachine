@@ -1,9 +1,8 @@
 package com.feipulai.common.utils;
 
-import android.util.Log;
-
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
+import java.math.RoundingMode;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -26,6 +25,15 @@ public class DateUtil {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         sdf.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
         return sdf.format(new Date(timeMillis));
+    }
+
+    public static String getDeltaT2(long time) {
+//        SimpleDateFormat sf = new SimpleDateFormat("yyyy年MM月dd日 HH时mm分ss秒SSS毫秒");
+//        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd- HH:mm:ss.SSS", Locale.CHINA);
+        SimpleDateFormat sf = new SimpleDateFormat("HH:mm:ss.SSS", Locale.CHINA);
+        Date now = new Date(time);
+        String str = sf.format(now);
+        return str;
     }
 
     /**
@@ -93,11 +101,18 @@ public class DateUtil {
                 carryTime = bigDecimal.setScale(digital, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(1000d)).longValue();
                 break;
             case 2:
-                String pattern = "#.";
-                for (int i = 0; i < digital; i++) {
-                    pattern += "0";
-                }
-                double formatTime = Double.valueOf(new DecimalFormat(pattern).format(bigTime));
+//                String pattern = "#.";
+//                for (int i = 0; i < digital; i++) {
+//                    pattern += "0";
+//                }
+//                double formatTime = Double.valueOf(new DecimalFormat(pattern).format(bigTime));
+
+                NumberFormat nf = NumberFormat.getNumberInstance();
+                // 保留两位小数
+                nf.setMaximumFractionDigits(digital);
+                // 如果不需要四舍五入，可以使用RoundingMode.DOWN
+                nf.setRoundingMode(RoundingMode.DOWN);
+                double formatTime = Double.valueOf(nf.format(bigTime).replaceAll(",", ""));
                 carryTime = BigDecimal.valueOf(formatTime).multiply(new BigDecimal(1000d)).longValue();
                 break;
             case 3://非0进位
@@ -107,7 +122,6 @@ public class DateUtil {
                 carryTime = caculTime;
                 break;
         }
-
         return caculateFormatTime(carryTime, digital);
 //        if (carryTime < 60 * 1000) {
 //            return formatTime(carryTime, "ss." + (digital == 1 ? "S" : "SS"));
@@ -129,18 +143,32 @@ public class DateUtil {
      * <h3>UpdateAuthor</h3>
      * <h3>UpdateInfo</h3> (此处输入修改内容,若无修改可不写.)
      *
-     * @param digital 1  十分位 2 百分位
+     * @param digital 1 百分位 2 十分位
      */
     public static String caculateFormatTime(long caculTime, int digital) {
+        String hundDigital;
+        switch (digital) {
+            case 1:
+                hundDigital = "S";
+                break;
+            case 2:
+                hundDigital = "SS";
+                break;
+            case 3:
+                hundDigital = "SSS";
+                break;
+            default:
+                hundDigital = "";
+                break;
+        }
         if (caculTime < 60 * 1000) {
-            return formatTime(caculTime, "ss." + (digital == 1 ? "S" : (digital == 2 ? "SS" : "SSS")));
+            return formatTime(caculTime, "ss." + hundDigital);
         } else if (caculTime >= 60 * 1000 && caculTime < 60 * 60 * 1000) { // 一小时之内
-            return formatTime(caculTime, "mm:ss." + (digital == 1 ? "S" : (digital == 2 ? "SS" : "SSS")));
+            return formatTime(caculTime, "mm:ss." + hundDigital);
         } else if (caculTime >= 60 * 60 * 1000 && caculTime < 60 * 60 * 24 * 1000) { // 同一天之内
-            return formatTime(caculTime, "HH:mm:ss." + (digital == 1 ? "S" : (digital == 2 ? "SS" : "SSS")));
+            return formatTime(caculTime, "HH:mm:ss." + hundDigital);
         } else {
-            return formatTime(caculTime, "dd HH:mm:ss." + (digital == 1 ? "S" : (digital == 2 ? "SS" : "SSS")));
+            return formatTime(caculTime, "dd HH:mm:ss." + hundDigital);
         }
     }
-
 }

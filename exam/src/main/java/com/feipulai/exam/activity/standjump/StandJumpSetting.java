@@ -41,6 +41,18 @@ public class StandJumpSetting {
      * 测试范围
      */
     private int pointsScope;
+    /**
+     * 是否开启判罚
+     */
+    private boolean isPenalize;
+
+    public boolean isPenalize() {
+        return isPenalize;
+    }
+
+    public void setPenalize(boolean penalize) {
+        isPenalize = penalize;
+    }
 
     public int getPointsScope() {
         return pointsScope;

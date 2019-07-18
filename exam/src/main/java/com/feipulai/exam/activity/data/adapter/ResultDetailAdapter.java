@@ -3,6 +3,7 @@ package com.feipulai.exam.activity.data.adapter;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -90,7 +91,26 @@ public class ResultDetailAdapter extends BaseQuickAdapter<RoundResult, ResultDet
             MachineResultView resultView = new MachineResultView(mContext);
             resultView.setData(machineResultList);
             DialogUtils.create(mContext, resultView, true).show();
+            //这种设置宽高的方式也是好使的！！！-- show 前调用，show 后调用都可以！！！
+            resultView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                @Override
+                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop,
+                                           int oldRight, int oldBottom) {
+                    int height = v.getHeight();     //此处的view 和v 其实是同一个控件
+
+                    int needHeight = 260;
+
+                    if (height > needHeight) {
+                        //注意：这里的 LayoutParams 必须是 FrameLayout的！！
+                        v.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+                                needHeight));
+                    }
+                }
+            });
+
         }
+
+
     }
 
     private String setResult(int state, String result) {

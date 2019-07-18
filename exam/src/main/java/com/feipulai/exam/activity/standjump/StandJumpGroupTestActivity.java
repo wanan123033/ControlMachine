@@ -46,6 +46,13 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
         if (jumpSetting == null) {
             jumpSetting = new StandJumpSetting();
         }
+
+        if (jumpSetting.isPenalize()) {
+            setTestType(1);
+            setFaultVisible(true);
+            setFaultEnable(false);
+        }
+
         Logger.i(TAG + ":reachSetting ->" + jumpSetting.toString());
         mHandler = new MyHandler(this);
 //        SerialDeviceManager.getInstance().setRS232ResiltListener(standResiltListener);
@@ -95,6 +102,7 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
 
     @Override
     public void startTest(BaseStuPair stuPair) {
+        setFaultEnable(false);
         baseStuPair = stuPair;
 //        sendCheck();
 //        //开始测试
@@ -187,6 +195,7 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
 
                     case UPDATE_RESULT:
                         activity.updateTestResult((BaseStuPair) msg.obj);
+                        activity.setFaultEnable(true);
                         break;
                 }
             }

@@ -323,6 +323,10 @@ public class RS232Result {
                             setType(SerialConfigs.VOLLEYBALL_RESULT_RESPONSE);
                             setResult(new VolleyBallResult(data));
                             break;
+                        case 7:
+                            setType(SerialConfigs.VOLLEYBALL_CHECK_RESPONSE);
+                            setResult(new VolleyBallCheck(data));
+                            break;
                     }
                     break;
 

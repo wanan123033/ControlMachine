@@ -53,7 +53,7 @@ android {
         exclude 'META-INF/INDEX'
     }
     greendao {
-        schemaVersion 2  //数据库版本号，升级数据库需要修改版本号
+        schemaVersion 3  //数据库版本号，升级数据库需要修改版本号
     }
 }
 

@@ -20,10 +20,20 @@ public class UploadResults implements Serializable {
     private String studentCode; //准考证号
     private String testNum;//测试次数
     private String groupNo;  //组号
-    private String hostNumber = SettingHelper.getSystemSetting().getHostId()+"";
-    private String machineCode =TestConfigs.sCurrentItem.getMachineCode()+"";
+    private String hostNumber = SettingHelper.getSystemSetting().getHostId() + "";
+    private String machineCode = TestConfigs.sCurrentItem.getMachineCode() + "";
     private List<RoundResultBean> roundResultList;
     public final static String BEAN_KEY = "UploadResults_KEY";
+    //打印成绩使用
+    private long groupId;
+
+    public long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(long groupId) {
+        this.groupId = groupId;
+    }
 
     public UploadResults() {
     }

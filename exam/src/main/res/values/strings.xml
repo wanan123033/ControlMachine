@@ -1,30 +1,11 @@
 <resources>
-    <string-array name="middle_race_number">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-    </string-array>
-    <string-array name="vest_chip_no">
-        <item>1</item>
-        <item>2</item>
-    </string-array>
-    <string-array name="color_group_style">
-        <item>正常组</item>
-        <item>备用组</item>
-    </string-array>
-    <string-array name="item_group_style">
-        <item>未完成</item>
-        <item>已完成</item>
-    </string-array>
+
     <string name="app_name">智能主机(考试版)</string>
     <string name="host_style">考试版本</string>
     <string name="advanced_setting">高级设置</string>
     <string name="txt_stu_code">考号：%1$s</string>
     <string name="txt_stu_name">姓名：%1$s</string>
     <string name="test_speak_hint">请%1$s第%2$d次准备</string>
-
     <string name="data_txt_stu_code">考号：%1$s</string>
     <string name="data_txt_stu_name">姓名：%1$s</string>
     <string name="data_txt_stu_sex">姓别：%1$s</string>
@@ -47,7 +28,6 @@
     <string name="start">开始</string>
     <string name="stop_using">暂停使用</string>
     <string name="end">结束</string>
-
     <string name="service_bind_fail">aidl service bind failed</string>
     <string name="service_bind_success">aidl service bind success</string>
     <string name="stand_jump">立定跳远</string>
@@ -57,24 +37,10 @@
     <string name="title_activity_system_setting">系统设置</string>
     <string name="title_activity_data_manage">数据管理</string>
     <string name="title_activity_about">关于</string>
-
     <string name="version_info"><b>版本信息:</b></string>
     <string name="title_activity_check">CheckActivity</string>
     <string name="title_activity_splash_screen">控制主机</string>
     <string name="title_activity_data_display">DataDisplayActivity</string>
-
-    <array name="array_time_out_deal">
-        <item>停止</item>
-        <item>不计数</item>
-    </array>
-
-    <string-array name="base_line_set">
-        <item>55</item>
-        <item>65</item>
-        <item>75</item>
-    </string-array>
-
-
     <string name="student_Name">姓名:%1$s</string>
     <string name="student_Gender">性别:%1$s</string>
     <string name="student_Code">学号:%1$s</string>
@@ -85,8 +51,12 @@
     <string name="hint_account">请输入用户名</string>
     <!--密码提示-->
     <string name="hint_pass">请输入密码</string>
-
     <string name="loading_hint">正在处理，请等待...</string>
-
     <string name="speak_result">%1$s成绩%2$s</string>
+
+    <string name="transmitting_terminal">发射端</string>
+    <string name="receiving_terminal">接收端</string>
+    <string name="normal">正常</string>
+    <string name="ununited">未连接</string>
+    <string name="abnormal">异常</string>
 </resources>

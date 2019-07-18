@@ -1,5 +1,6 @@
 package com.feipulai.exam.activity.setting;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.provider.Settings;
@@ -8,8 +9,10 @@ import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.SeekBar;
@@ -17,11 +20,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.feipulai.common.utils.AudioUtil;
+import com.feipulai.common.utils.DialogUtils;
 import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.udp.UdpLEDUtil;
+import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LoginActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
@@ -233,7 +238,8 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                 break;
 
             case R.id.txt_advanced:
-                startActivity(new Intent(this, AdvancedPwdActivity.class));
+//                startActivity(new Intent(this, AdvancedPwdActivity.class));
+                showAdvancedPwdDialog();
                 break;
             case R.id.cb_route:
                 if (TextUtils.isEmpty(NetWorkUtils.getLocalIp())) {
@@ -295,5 +301,33 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         systemSetting.setServerIp(mEtSeverIp.getText().toString().trim());
     }
 
+    public void showAdvancedPwdDialog() {
+
+        View view = LayoutInflater.from(this).inflate(R.layout.view_advanced_pwd, null);
+        final EditText editPwd = view.findViewById(R.id.edit_pwd);
+        Button btnCancel = view.findViewById(R.id.btn_cancel);
+        Button btnConfirm = view.findViewById(R.id.btn_confirm);
+
+        final Dialog dialog = DialogUtils.create(this, view, true);
+        dialog.show();
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+
+            }
+        });
+        btnConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.equals(editPwd.getText().toString(), MyApplication.ADVANCED_PWD)) {
+                    startActivity(new Intent(SettingActivity.this, AdvancedSettingActivity.class));
+                    dialog.dismiss();
+                } else {
+                    ToastUtils.showShort("密码错误");
+                }
+            }
+        });
+    }
 
 }
