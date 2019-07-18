@@ -94,7 +94,7 @@ public class HttpSubscriber {
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<ScheduleBean>(new OnResultListener<ScheduleBean>() {
             @Override
             public void onSuccess(ScheduleBean result) {
-                Logger.i("getScheduleAll====>" + result.toString());
+//                Logger.i("getScheduleAll====>" + result.toString());
                 if (result == null)
                     return;
                 ScheduleBean.SITE_EXAMTYPE = result.getExamType();
@@ -149,7 +149,7 @@ public class HttpSubscriber {
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<List<ItemBean>>(new OnResultListener<List<ItemBean>>() {
             @Override
             public void onSuccess(List<ItemBean> result) {
-                Logger.i("getItemAll====>" + result.toString());
+//                Logger.i("getItemAll====>" + result.toString());
                 if (result == null)
                     return;
                 List<Item> itemList = new ArrayList<>();
@@ -302,7 +302,7 @@ public class HttpSubscriber {
             @Override
             public void onSuccess(List<StudentBean> result) {
                 Set<String> supplements = new HashSet<>();// 补考考生考号集合
-                // Logger.i("getItemStudent" + result.toString());
+                Logger.i("getItemStudent" + result.toString());
                 if (result == null)
                     return;
                 List<Student> studentList = new ArrayList<>();
@@ -316,7 +316,7 @@ public class HttpSubscriber {
                     if (studentBean.getExamType() == 2) {
                         supplements.add(studentBean.getStudentCode());
                     }
-                    Logger.i("getItemStudent" + studentBean.toString());
+//                    Logger.i("getItemStudent" + studentBean.toString());
                     Student student = new Student();
                     student.setSex(studentBean.getGender());
                     student.setSchoolName(studentBean.getSchoolName());
@@ -370,7 +370,7 @@ public class HttpSubscriber {
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<List<GroupBean>>(new OnResultListener<List<GroupBean>>() {
             @Override
             public void onSuccess(List<GroupBean> result) {
-                Logger.i("getItemGroupAll====>" + result.toString());
+//                Logger.i("getItemGroupAll====>" + result.toString());
                 if (result == null)
                     return;
                 List<Group> groupList = new ArrayList<>();
@@ -425,7 +425,7 @@ public class HttpSubscriber {
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<List<GroupBean>>(new OnResultListener<List<GroupBean>>() {
             @Override
             public void onSuccess(List<GroupBean> result) {
-                Logger.i("getItemGroupInFo====>" + result.toString());
+//                Logger.i("getItemGroupInFo====>" + result.toString());
                 if (result == null)
                     return;
                 List<GroupItem> groupItemList = new ArrayList<>();
