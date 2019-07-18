@@ -1,7 +1,6 @@
 package com.feipulai.exam.netUtils;
 
 import com.feipulai.exam.netUtils.netapi.HttpApi;
-import com.orhanobut.logger.Logger;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -68,7 +67,7 @@ public class HttpManager {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override
             public void log(String message) {
-                Logger.d(message);
+//                Logger.d(message);
             }
 
 
