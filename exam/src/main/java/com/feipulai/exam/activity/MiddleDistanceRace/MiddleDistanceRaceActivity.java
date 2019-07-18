@@ -205,6 +205,8 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
     private ScrollablePanel resultScroll;
     private int carryMode;
     private int digital;
+    private boolean isChange = false;
+    public static MiddleDistanceRaceActivity instance;
 
     @Override
     protected int setLayoutResID() {
@@ -220,6 +222,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
     @Override
     protected void initData() {
         mContext = this;
+        instance = this;
 
         height = DisplayUtil.getScreenHightPx(this);
 
@@ -281,7 +284,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         raceResultBean.setItemCode(itemList.get(mItemPosition).getItemCode());
         resultDataList.add(raceResultBean);
 
-        resultAdapter = new ResultShowAdapter(resultDataList);
+        resultAdapter = new ResultShowAdapter(resultDataList, carryMode, digital);
         scrollablePanel.setPanelAdapter(resultAdapter);
 
         groupAdapter.setOnRecyclerViewItemClickListener(this);
@@ -319,7 +322,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
      */
     private void updateSchedules() {
         scheduleList.clear();
-        List<Schedule> dbSchedule = DBManager.getInstance().getAllSchedules();
+        List<Schedule> dbSchedule = DBManager.getInstance().queryCurrentSchedules();
         scheduleList.addAll(dbSchedule);
         scheduleAdapter.notifyDataSetChanged();
         if (scheduleList != null && scheduleList.size() > 0) {
@@ -331,6 +334,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
      * 获取日程分组
      */
     private void getGroupList() {
+        Log.i("spinnerItemSelected", "getGroupList------------");
         groupItemBeans.clear();
         if (scheduleNo == null || scheduleNo.isEmpty()) {
             return;
@@ -373,7 +377,6 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                 public void onExecuteSuccess(DataBaseRespon respon) {
                     groupAdapter.notifyDataSetChanged();
                     rvRaceStudentGroup.scrollToPosition(0);
-//                    smoothMoveToPosition(rvRaceStudentGroup,0);
                 }
 
                 @Override
@@ -515,9 +518,10 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.i("onActivityResult", "-----------");
         if (resultCode == 2 && requestCode == 1) {
-            boolean isChange = data.getBooleanExtra("isChange", false);
+            isChange = data.getBooleanExtra("isChange", false);
             if (isChange) {
                 isAutoSelect = true;
+                groupStatePosition = 0;
                 recreate();
             }
         }
@@ -558,7 +562,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         firstTime = SharedPrefsUtil.getValue(this, MIDDLE_RACE, MIDDLE_RACE_TIME_FIRST, FIRST_TIME);
         spanTime = SharedPrefsUtil.getValue(this, MIDDLE_RACE, MIDDLE_RACE_TIME_SPAN, SPAN_TIME);
 
-        getItems();
+//        getItems();
 
         colorGroups.clear();
         colorGroups.addAll(DBManager.getInstance().queryAllChipGroup());
@@ -804,11 +808,11 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                 isShow = !isShow;
                 if (isShow) {
                     floatButtonShow.setTitle("隐藏项目组");
-                    floatButtonShow.setIcon(R.drawable.sign_out);
+                    floatButtonShow.setIcon(R.mipmap.fullscreen);
                     llShowItem.setVisibility(View.VISIBLE);
                 } else {
                     floatButtonShow.setTitle("显示项目组");
-                    floatButtonShow.setIcon(R.drawable.sign_in);
+                    floatButtonShow.setIcon(R.mipmap.fullscreen_exit);
                     llShowItem.setVisibility(View.GONE);
                 }
                 floatMenu.collapse();
@@ -897,6 +901,11 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
     public void clickTimingWaitListener(int position, final RaceTimingAdapter.VH holder) {
         if (!isConnect) {
             ToastUtils.showShort("请先连接设备");
+            return;
+        }
+
+        if (cycleNo == 0) {
+            ToastUtils.showShort("请先设置圈数");
             return;
         }
 
@@ -1033,6 +1042,11 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                     RaceResultBean raceResultBean2 = it.next();
                     String x = raceResultBean2.getNo();
                     String y = raceResultBean2.getItemCode();
+
+                    if (TextUtils.isEmpty(x) || TextUtils.isEmpty(y)) {
+                        continue;
+                    }
+
                     if (y.equals(timingLists.get(position).getItemCode()) && x.equals(timingLists.get(position).getNo() + "")) {
                         it.remove();
                     }
@@ -1049,6 +1063,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                 timingLists.get(position).setItemCode("");
                 timingLists.get(position).setTime(0);
 
+
 //                timingLists.remove(position);
 //                timingLists.add(new TimingBean(0, TIMING_STATE_NOMAL, 0, "", "", 0));
                 raceTimingAdapter.notifyDataSetChanged();
@@ -1058,6 +1073,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                     Logger.i("自动上传成绩:" + uploadResults.toString());
                     ServerMessage.uploadResult(uploadResults);
                 }
+                Logger.i(TAG, uploadResults.toString());
                 //自动打印
                 MiddlePrintUtil.print(resultDataList);
 
@@ -1095,7 +1111,10 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                     RaceResultBean raceResultBean2 = it.next();
                     String x = raceResultBean2.getNo();
                     String y = raceResultBean2.getItemCode();
-                    if (y.equals(timingLists.get(position).getItemCode()) && x.equals(timingLists.get(position).getNo() + "")) {
+                    if (TextUtils.isEmpty(x) || TextUtils.isEmpty(y)) {
+                        continue;
+                    }
+                    if (x.equals(timingLists.get(position).getNo() + "") && y.equals(timingLists.get(position).getItemCode())) {
                         it.remove();
                     }
                 }
@@ -1223,11 +1242,11 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                             strings.add(groupItem.getTrackNo() + "");
                             strings.add(student.getStudentCode());
                             strings.add(student.getStudentName());
-                            strings.add(DateUtil.caculateTime(roundResult.getResult(),digital+1,carryMode+1));
+                            strings.add(DateUtil.caculateTime(roundResult.getResult(), digital + 1, carryMode + 1));
 //                            strings.add(student.getSex()==0?"男":"女");
                             for (int result : results
                                     ) {
-                                strings.add(DateUtil.caculateTime(result,digital+1,carryMode+1));
+                                strings.add(DateUtil.caculateTime(result, digital + 1, carryMode + 1));
                             }
                             selectResults.add(strings);
                         }
@@ -1410,6 +1429,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                 break;
             }
         }
+
         raceTimingAdapter.notifyDataSetChanged();
 
         addResultList();
@@ -1444,6 +1464,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
             resultDataList.add(addPosition, raceResultBean);
         }
 
+        Log.i(TAG, resultDataList.toString());
         scrollablePanel.notifyDataSetChanged();
     }
 
@@ -1461,12 +1482,15 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         switch (parent.getId()) {
             case R.id.sp_race_schedule:
                 scheduleNo = scheduleList.get(position).getScheduleNo();
+                Log.i("spinnerItemSelected", "-----------sp_race_schedule");
                 break;
             case R.id.sp_race_item:
                 mItemPosition = position;
+                Log.i("spinnerItemSelected", "-----------sp_race_item");
                 break;
             case R.id.sp_race_state:
                 groupStatePosition = position;
+                Log.i("spinnerItemSelected", "-----------sp_race_state");
                 break;
         }
         if (isAutoSelect) {

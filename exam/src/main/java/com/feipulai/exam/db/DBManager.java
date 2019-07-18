@@ -1845,6 +1845,32 @@ public class DBManager {
 //    }
 
     /**
+     * 同机器码多项目查询所有日程
+     *
+     * @return
+     */
+    public List<Schedule> queryCurrentSchedules() {
+        List<Item> items = itemDao.queryBuilder()
+                .where(ItemDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(ItemDao.Properties.ItemCode.isNotNull())
+                .list();
+        Log.i("queryCurrentSchedules",items.toString());
+        List<ItemSchedule> itemSchedules = new ArrayList<>();
+        for (Item item : items
+                ) {
+            itemSchedules.addAll(itemScheduleDao.queryBuilder().where(ItemScheduleDao.Properties.ItemCode.eq(item.getItemCode())).list());
+        }
+
+        List<Schedule> schedules = new ArrayList<>();
+        for (ItemSchedule schedule : itemSchedules
+                ) {
+            schedules.addAll(scheduleDao.queryBuilder().where(ScheduleDao.Properties.ScheduleNo.eq(schedule.getScheduleNo())).list());
+        }
+
+        return schedules;
+    }
+
+    /**
      * 获取日程
      *
      * @return

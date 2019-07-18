@@ -61,9 +61,14 @@ public class MiddleRaceSettingActivity extends BaseTitleActivity {
         return builder.setTitle("设置").addLeftText("返回", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.putExtra("isChange", isChange);
-                setResult(2, intent);
+//                Intent intent = new Intent();
+//                intent.putExtra("isChange", isChange);
+//                setResult(2, intent);
+//                finish();
+                if (isChange) {
+                    MiddleDistanceRaceActivity.instance.finish();
+                    startActivity(new Intent(MiddleRaceSettingActivity.this, MiddleDistanceRaceActivity.class));
+                }
                 finish();
             }
         });
@@ -71,9 +76,14 @@ public class MiddleRaceSettingActivity extends BaseTitleActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent();
-        intent.putExtra("isChange", isChange);
-        setResult(2, intent);
+//        Intent intent = new Intent();
+//        intent.putExtra("isChange", isChange);
+//        setResult(2, intent);
+//        finish();
+        if (isChange) {
+            MiddleDistanceRaceActivity.instance.finish();
+            startActivity(new Intent(MiddleRaceSettingActivity.this, MiddleDistanceRaceActivity.class));
+        }
         finish();
     }
 
