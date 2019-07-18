@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class MiddlePrintUtil {
 
-    public static void print(List<RaceResultBean> raceResultBean2s) {
+    public static void print(List<RaceResultBean> raceResultBean2s, int digital, int carryMode) {
         if (!SettingHelper.getSystemSetting().isAutoPrint())
             return;
         for (int i = 1; i < raceResultBean2s.size(); i++) {//第一行为标题，此处从1开始
@@ -30,13 +30,13 @@ public class MiddlePrintUtil {
             PrinterManager.getInstance().print("姓  名: " + raceResultBean2s.get(i).getStudentName());
             PrinterManager.getInstance().print("项  目: " + raceResultBean2s.get(i).getItemName());
             int lastResult = Integer.parseInt(TextUtils.isEmpty(raceResultBean2s.get(i).getResults()[2]) ? "0" : raceResultBean2s.get(i).getResults()[2]);
-            PrinterManager.getInstance().print("成  绩: " + DateUtil.getDeltaT(lastResult));
+            PrinterManager.getInstance().print("成  绩: " + DateUtil.caculateTime(lastResult, digital + 1, carryMode + 1));
             PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()));
             PrinterManager.getInstance().print(" \n");
         }
     }
 
-    public static void print2(GroupItemBean groupItemBean) {
+    public static void print2(GroupItemBean groupItemBean, int digital, int carryMode) {
         if (!SettingHelper.getSystemSetting().isAutoPrint())
             return;
         for (GroupItem groupItem : groupItemBean.getGroupItems()
@@ -47,7 +47,7 @@ public class MiddlePrintUtil {
             PrinterManager.getInstance().print("考  号: " + result.getStudentCode());
             PrinterManager.getInstance().print("姓  名: " + student.getStudentName());
             PrinterManager.getInstance().print("项  目: " + groupItemBean.getItemName());
-            PrinterManager.getInstance().print("成  绩: " + DateUtil.getDeltaT(result.getResult()));
+            PrinterManager.getInstance().print("成  绩: " + DateUtil.caculateTime(result.getResult(), digital + 1, carryMode + 1));
             PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()));
             PrinterManager.getInstance().print(" \n");
         }

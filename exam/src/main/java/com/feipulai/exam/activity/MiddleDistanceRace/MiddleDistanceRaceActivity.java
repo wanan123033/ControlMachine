@@ -137,6 +137,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
     private boolean isFlag = true;
     private int mItemPosition = 0;
     private int groupStatePosition = 0;
+    private int schedulePosition = 0;
     private boolean isAutoSelect = true;//spinner初始化标识，用以禁止重复多次执行
 
     private Handler mHander = new Handler(new Handler.Callback() {
@@ -207,6 +208,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
     private int digital;
     private boolean isChange = false;
     public static MiddleDistanceRaceActivity instance;
+    private int width;
 
     @Override
     protected int setLayoutResID() {
@@ -225,6 +227,11 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         instance = this;
 
         height = DisplayUtil.getScreenHightPx(this);
+        width = DisplayUtil.getScreenWidthPx(this);
+
+        schedulePosition = getIntent().getIntExtra("schedulePosition", 0);
+        mItemPosition = getIntent().getIntExtra("mItemPosition", 0);
+        groupStatePosition = getIntent().getIntExtra("groupStatePosition", 0);
 
         carryMode = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MIDDLE_RACE_CARRY, 0);
         digital = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MIDDLE_RACE_DIGITAL, 2);
@@ -234,16 +241,16 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
         getItems();
         itemAdapter = new ArrayAdapter<>(this, android.R.layout.simple_expandable_list_item_1, items);
         spRaceItem.setAdapter(itemAdapter);
-        spRaceItem.setSelection(0, false);
+        spRaceItem.setSelection(mItemPosition, false);
         spRaceItem.setOnItemSelectedListener(this);
 
 
         scheduleAdapter = new ScheduleAdapter(this, scheduleList);
         spRaceSchedule.setAdapter(scheduleAdapter);
-        spRaceSchedule.setSelection(0, false);
+        spRaceSchedule.setSelection(schedulePosition, false);
         spRaceSchedule.setOnItemSelectedListener(this);
 
-        spRaceState.setSelection(0, false);
+        spRaceState.setSelection(groupStatePosition, false);
         spRaceState.setOnItemSelectedListener(this);
 
 
@@ -501,6 +508,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                 //是否允许点击PopupWindow之外的地方消失
                 .setFocusAndOutsideEnable(true)
                 .setHeight(height * 2 / 3)
+                .setWidth(width * 3 / 4)
                 .apply();
         resultScroll = mSelectPop.findViewById(R.id.result_scroll);
 
@@ -511,6 +519,9 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
     private void startProjectSetting() {
         Bundle bundle = new Bundle();
         bundle.putBoolean("isFlag", !isFlag);
+        bundle.putInt("schedulePosition", schedulePosition);
+        bundle.putInt("mItemPosition", mItemPosition);
+        bundle.putInt("groupStatePosition", groupStatePosition);
         IntentUtil.gotoActivityForResult(this, MiddleRaceSettingActivity.class, bundle, 1);
     }
 
@@ -1063,9 +1074,6 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                 timingLists.get(position).setItemCode("");
                 timingLists.get(position).setTime(0);
 
-
-//                timingLists.remove(position);
-//                timingLists.add(new TimingBean(0, TIMING_STATE_NOMAL, 0, "", "", 0));
                 raceTimingAdapter.notifyDataSetChanged();
 
                 //自动上传成绩
@@ -1075,7 +1083,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                 }
                 Logger.i(TAG, uploadResults.toString());
                 //自动打印
-                MiddlePrintUtil.print(resultDataList);
+                MiddlePrintUtil.print(resultDataList, digital, carryMode);
 
             }
 
@@ -1263,7 +1271,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
                         mSelectPop.showAtLocation(getWindow().getDecorView(), Gravity.CENTER, 0, 0);
                         break;
                     case 1:
-                        MiddlePrintUtil.print2(groupItemBeans.get(groupPosition));
+                        MiddlePrintUtil.print2(groupItemBeans.get(groupPosition), digital, carryMode);
                         break;
                     default:
                         break;
@@ -1481,6 +1489,7 @@ public class MiddleDistanceRaceActivity extends BaseTitleActivity implements Udp
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         switch (parent.getId()) {
             case R.id.sp_race_schedule:
+                schedulePosition = position;
                 scheduleNo = scheduleList.get(position).getScheduleNo();
                 Log.i("spinnerItemSelected", "-----------sp_race_schedule");
                 break;

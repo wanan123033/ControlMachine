@@ -36,12 +36,20 @@ public class MiddleRaceSettingActivity extends BaseTitleActivity {
 
     private int[] rbs = {R.id.rb_basic, R.id.rb_chip, R.id.rb_other};
     private List<Fragment> mFragments;
+    private int schedulePosition;
+    private int mItemPosition;
+    private int groupStatePosition;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+
+        Intent intent = getIntent();
+        schedulePosition = intent.getIntExtra("schedulePosition", 0);
+        mItemPosition = intent.getIntExtra("mItemPosition", 0);
+        groupStatePosition = intent.getIntExtra("groupStatePosition", 0);
         initListener();
     }
 
@@ -57,7 +65,7 @@ public class MiddleRaceSettingActivity extends BaseTitleActivity {
 
     @Nullable
     @Override
-    protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
+    protected BaseToolbar.Builder setToolbar(@NonNull final BaseToolbar.Builder builder) {
         return builder.setTitle("设置").addLeftText("返回", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,13 +73,23 @@ public class MiddleRaceSettingActivity extends BaseTitleActivity {
 //                intent.putExtra("isChange", isChange);
 //                setResult(2, intent);
 //                finish();
-                if (isChange) {
-                    MiddleDistanceRaceActivity.instance.finish();
-                    startActivity(new Intent(MiddleRaceSettingActivity.this, MiddleDistanceRaceActivity.class));
-                }
-                finish();
+                quiet();
             }
         });
+    }
+
+    private void quiet() {
+        if (isChange) {
+            MiddleDistanceRaceActivity.instance.finish();
+            Bundle bundle = new Bundle();
+            bundle.putInt("schedulePosition", schedulePosition);
+            bundle.putInt("mItemPosition", mItemPosition);
+            bundle.putInt("groupStatePosition", groupStatePosition);
+            Intent intent = new Intent(MiddleRaceSettingActivity.this, MiddleDistanceRaceActivity.class);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
+        finish();
     }
 
     @Override
@@ -80,11 +98,7 @@ public class MiddleRaceSettingActivity extends BaseTitleActivity {
 //        intent.putExtra("isChange", isChange);
 //        setResult(2, intent);
 //        finish();
-        if (isChange) {
-            MiddleDistanceRaceActivity.instance.finish();
-            startActivity(new Intent(MiddleRaceSettingActivity.this, MiddleDistanceRaceActivity.class));
-        }
-        finish();
+        quiet();
     }
 
     @Override
