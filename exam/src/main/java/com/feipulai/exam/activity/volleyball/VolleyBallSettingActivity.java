@@ -10,10 +10,12 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 
+import com.feipulai.common.utils.DialogUtils;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -139,12 +141,15 @@ public class VolleyBallSettingActivity
         }
     }
 
-    @OnClick({R.id.tv_judgement})
+    @OnClick({R.id.tv_judgement, R.id.tv_device_check})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
             case R.id.tv_judgement:
                 ToastUtils.showShort("功能开发中,敬请期待");
+                break;
+            case R.id.tv_device_check:
+                showCheckDiglog();
                 break;
         }
     }
@@ -191,4 +196,28 @@ public class VolleyBallSettingActivity
         }
     }
 
+    private void showCheckDiglog() {
+
+        CheckDeviceView checkDeviceView = new CheckDeviceView(this);
+        checkDeviceView.setUnunitedData();
+        DialogUtils.create(this, checkDeviceView, true).show();
+        //这种设置宽高的方式也是好使的！！！-- show 前调用，show 后调用都可以！！！
+        checkDeviceView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop,
+                                       int oldRight, int oldBottom) {
+                int height = v.getHeight();     //此处的view 和v 其实是同一个控件
+
+                int needHeight = 430;
+
+                if (height > needHeight) {
+                    //注意：这里的 LayoutParams 必须是 FrameLayout的！！
+                    v.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+                            needHeight));
+                }
+            }
+        });
+
+
+    }
 }

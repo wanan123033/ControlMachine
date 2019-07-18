@@ -6,12 +6,12 @@
     android:orientation="horizontal">
 
 
-    <com.baoyachi.stepview.VerticalStepViewIndicator
+    <com.feipulai.exam.activity.volleyball.stepView.VerticalStepViewIndicator
         android:id="@+id/steps_indicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="17dp"
-        android:paddingTop="17dp" />
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp" />
 
 
     <RelativeLayout

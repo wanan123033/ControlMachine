@@ -448,7 +448,7 @@ public class GroupStuItemExLReader extends ExlReader {
         String itemCode = rowList.get(17);
         String sessionNo = rowList.get(8);
         String groupSex = rowList.get(15);
-        String tranches = rowList.get(10);
+        String tranches = rowList.get(1);
         String groupNo = rowList.get(9);
         String scheduleTime = rowList.get(16);
         String trackNo = rowList.get(10);
