@@ -369,9 +369,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                 }
                 break;
             case R.id.txt_illegal_return://违例返回
-                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
-                sleep();
-                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
+                showIllegalReturnDialog();
                 break;
             case R.id.txt_continue_run://继续运行
                 UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(3));
@@ -956,6 +954,36 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         }
         return true;
 
+    }
+
+    private void showIllegalReturnDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("警告")
+                .setMessage("确认是否违规返回？")
+                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
+                        List<MachineResult> machineResultList = testResult.getMachineResultList();
+                        if (machineResultList != null && machineResultList.size() > 0) {
+                            Student student = pairs.get(position()).getStudent();
+                            int testNo = TestCache.getInstance().getTestNoMap().get(student);
+                            DBManager.getInstance().deleteStuResult(student.getStudentCode(), testNo, roundNo, group.getId());
+                            DBManager.getInstance().deleteStuMachineResults(student.getStudentCode(), testNo, roundNo, group.getId());
+                            testResult.setSelectMachineResult(0);
+                            testResult.setResult(-999);
+                            testResult.setResultState(-999);
+                            testResult.setMachineResultList(null);
+                            resultAdapter.notifyDataSetChanged();
+                        }
+                        state = WAIT_CONFIRM;
+                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
+                        sleep();
+                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
+                    }
+                })
+                .setNegativeButton("取消", null)
+                .show();
     }
 
     /**

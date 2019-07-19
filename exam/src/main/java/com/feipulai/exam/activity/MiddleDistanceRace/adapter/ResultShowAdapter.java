@@ -19,9 +19,13 @@ import java.util.List;
  */
 public class ResultShowAdapter extends PanelAdapter {
     private List<RaceResultBean> datas;
+    private int carryMode;
+    private int digital;
 
-    public ResultShowAdapter(List<RaceResultBean> data) {
+    public ResultShowAdapter(List<RaceResultBean> data, int carryMode, int digital) {
         this.datas = data;
+        this.carryMode = carryMode;
+        this.digital = digital;
     }
 
     @Override
@@ -55,7 +59,7 @@ public class ResultShowAdapter extends PanelAdapter {
             titleViewHolder.titleTextView.setText("X");
         } else {
             if (column > 1) {
-                titleViewHolder.titleTextView.setText(TextUtils.isEmpty(string) ? "" : DateUtil.getDeltaT(Long.parseLong(string)));
+                titleViewHolder.titleTextView.setText(TextUtils.isEmpty(string) ? "" : DateUtil.caculateTime(Long.parseLong(string), digital + 1, carryMode + 1));
             } else {
                 titleViewHolder.titleTextView.setText(string);
             }

@@ -3,11 +3,11 @@
     android:shape="oval"
     android:useLevel="false">
 
-    <solid android:color="@color/result_points" />
+    <solid android:color="@color/viewfinder_laser" />
 
 
     <size
-        android:width="9dp"
-        android:height="9dp" />
+        android:width="15dp"
+        android:height="15dp" />
 
 </shape>

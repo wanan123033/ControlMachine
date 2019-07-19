@@ -83,7 +83,6 @@ public class ServerMessage {
                                 subscriber.getItemGroupAll(TestConfigs.getCurrentItemCode());
                             }
 
-
                         } else {
                             EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_SUCCEED));
                         }

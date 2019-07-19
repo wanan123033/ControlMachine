@@ -161,6 +161,15 @@ public class PushUpIndividualActivity extends BaseTitleActivity
             public void onClick(View v) {
                 finish();
             }
+        }).addRightText("外接屏幕", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isConfigurableNow()) {
+                    startActivity(new Intent(PushUpIndividualActivity.this, LEDSettingActivity.class));
+                } else {
+                    toastSpeak("测试中,不能进行外接屏幕设置");
+                }
+            }
         }).addRightText("项目设置", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -170,15 +179,6 @@ public class PushUpIndividualActivity extends BaseTitleActivity
             @Override
             public void onClick(View v) {
                 startProjectSetting();
-            }
-        }).addRightText("外接屏幕", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isConfigurableNow()) {
-                    startActivity(new Intent(PushUpIndividualActivity.this, LEDSettingActivity.class));
-                } else {
-                    toastSpeak("测试中,不能进行外接屏幕设置");
-                }
             }
         });
     }

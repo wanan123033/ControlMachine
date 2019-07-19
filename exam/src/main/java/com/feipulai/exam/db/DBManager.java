@@ -1,6 +1,7 @@
 package com.feipulai.exam.db;
 
 import android.database.Cursor;
+import android.support.v7.util.SortedList;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -39,9 +40,14 @@ import com.orhanobut.logger.Logger;
 import org.greenrobot.greendao.database.Database;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.feipulai.exam.activity.MiddleDistanceRace.TimingBean.GROUP_FINISH;
 
@@ -1498,6 +1504,22 @@ public class DBManager {
     }
 
     /**
+     * 根据学生考号删除测试次数中的某一轮成绩
+     *
+     * @param studentCode
+     */
+    public void deleteStuResult(String studentCode, int testNo, int rountNo, long groupId) {
+        roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.TestNo.eq(testNo))
+                .where(RoundResultDao.Properties.RoundNo.eq(rountNo))
+                .where(RoundResultDao.Properties.GroupId.eq(groupId))
+                .buildDelete().executeDeleteWithoutDetachingEntities();
+    }
+
+    /**
      * 根据项目删除成绩
      */
     public void deleteItemResult() {
@@ -1846,6 +1868,44 @@ public class DBManager {
 //    }
 
     /**
+     * 同机器码多项目查询所有日程
+     *
+     * @return
+     */
+    public List<Schedule> queryCurrentSchedules() {
+        List<Item> items = itemDao.queryBuilder()
+                .where(ItemDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(ItemDao.Properties.ItemCode.isNotNull())
+                .list();
+        Log.i("queryCurrentSchedules", items.toString());
+        List<ItemSchedule> itemSchedules = new ArrayList<>();
+        for (Item item : items
+                ) {
+            itemSchedules.addAll(itemScheduleDao.queryBuilder().where(ItemScheduleDao.Properties.ItemCode.eq(item.getItemCode())).list());
+        }
+
+        List<Schedule> schedules = new ArrayList<>();
+        for (ItemSchedule schedule : itemSchedules
+                ) {
+            schedules.addAll(scheduleDao.queryBuilder().where(ScheduleDao.Properties.ScheduleNo.eq(schedule.getScheduleNo())).list());
+        }
+
+        //去重
+        Set<Schedule> set = new HashSet<>();
+        set.addAll(schedules);
+        schedules.clear();
+        schedules.addAll(set);
+        //排序
+        Collections.sort(schedules, new Comparator<Schedule>() {
+            @Override
+            public int compare(Schedule o1, Schedule o2) {
+                return o1.getScheduleNo().compareTo(o2.getScheduleNo());
+            }
+        });
+        return schedules;
+    }
+
+    /**
      * 获取日程
      *
      * @return
@@ -2125,6 +2185,18 @@ public class DBManager {
     public void insterMachineResults(List<MachineResult> machineResults) {
         machineResultDao.insertInTx(machineResults);
     }
+
+    public void deleteStuMachineResults(String studentCode, int testNo, int rountNo, long groupId) {
+        machineResultDao.queryBuilder()
+                .where(MachineResultDao.Properties.StudentCode.eq(studentCode))
+                .where(MachineResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(MachineResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(MachineResultDao.Properties.TestNo.eq(testNo))
+                .where(MachineResultDao.Properties.RoundNo.eq(rountNo))
+                .where(MachineResultDao.Properties.GroupId.eq(groupId))
+                .buildDelete().executeDeleteWithoutDetachingEntities();
+    }
+
     /********************************************多表操作**********************************************************************/
 
     /**

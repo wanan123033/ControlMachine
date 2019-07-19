@@ -51,10 +51,12 @@
                 android:id="@+id/btn_find"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/sp_race_schedule"
+                android:layout_alignTop="@+id/sp_race_schedule"
                 android:layout_marginLeft="5dp"
                 android:layout_toEndOf="@+id/sp_race_schedule"
                 android:background="@drawable/btn_background"
-                android:text="定位"
+                android:text="查找"
                 android:textColor="@color/white" />
 
 
@@ -132,32 +134,32 @@
             android:layout_marginRight="50dp"
             app:fab_addButtonColorPressed="@color/grey"
             fab:fab_addButtonColorNormal="@color/Red"
-            fab:fab_addButtonPlusIconColor="@color/half_black"
+            fab:fab_addButtonPlusIconColor="@color/white"
             fab:fab_labelStyle="@style/menu_labels_style">
 
             <com.feipulai.floatingactionbutton.FloatingActionButton
                 android:id="@+id/float_button_show"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                fab:fab_colorNormal="@color/LightPink"
+                fab:fab_colorNormal="@color/colorHost"
                 fab:fab_colorPressed="@color/grey"
-                fab:fab_icon="@drawable/sign_out"
+                fab:fab_icon="@mipmap/fullscreen"
                 fab:fab_title="隐藏项目组" />
 
             <com.feipulai.floatingactionbutton.FloatingActionButton
                 android:id="@+id/float_button_connect"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                fab:fab_colorNormal="@color/LightSeaGreen"
+                fab:fab_colorNormal="@color/colorHost"
                 fab:fab_colorPressed="@color/grey"
-                fab:fab_icon="@drawable/feed"
+                fab:fab_icon="@mipmap/rss_alt"
                 fab:fab_title="连接设备" />
 
             <com.feipulai.floatingactionbutton.FloatingActionButton
                 android:id="@+id/float_button_item_set"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                fab:fab_colorNormal="@color/hostStyle"
+                fab:fab_colorNormal="@color/colorHost"
                 fab:fab_colorPressed="@color/grey"
                 fab:fab_icon="@mipmap/icon_setting"
                 fab:fab_title="项目设置" />
