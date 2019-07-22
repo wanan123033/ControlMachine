@@ -47,6 +47,7 @@ public class ServerMessage {
                         if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
                             itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
                         }
+
                         if (itemList != null) {
                             for (int i = 0; i < itemList.size(); i++) {
                                 if (!TextUtils.isEmpty(itemList.get(i).getItemCode())) {
@@ -73,14 +74,14 @@ public class ServerMessage {
                             if (itemList != null) {
                                 for (int i = 0; i < itemList.size(); i++) {
                                     if (!TextUtils.isEmpty(itemList.get(i).getItemCode())) {
-                                        subscriber.getItemGroupAll(itemList.get(i).getItemCode());
+                                        subscriber.getItemGroupAll(itemList.get(i).getItemCode(), "");
                                         position = i + 1;
                                         return;
                                     }
                                 }
 
                             } else {
-                                subscriber.getItemGroupAll(TestConfigs.getCurrentItemCode());
+                                subscriber.getItemGroupAll(TestConfigs.getCurrentItemCode(), "");
                             }
 
                         } else {
@@ -90,7 +91,7 @@ public class ServerMessage {
                     case HttpSubscriber.GROUP_BIZ://分组
                         if (itemList != null) {
                             if (position < itemList.size()) {
-                                subscriber.getItemGroupAll(itemList.get(position).getItemCode());
+                                subscriber.getItemGroupAll(itemList.get(position).getItemCode(), "");
                                 position++;
                                 return;
                             }

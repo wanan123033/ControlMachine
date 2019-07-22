@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.utils.SharedPrefsUtil;
@@ -183,14 +182,15 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                         IntentUtil.gotoActivity(this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode()));
                         return;
                     }
+                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_MG) {
+                        startActivity(new Intent(MainActivity.this, SargentItemSelectActivity.class));
+                        return;
+                    }
+
                     if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
                         startActivity(new Intent(MainActivity.this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
                     } else {
-                        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_MG) {
-                            startActivity(new Intent(MainActivity.this, SargentItemSelectActivity.class));
-                        } else {
-                            startActivity(new Intent(MainActivity.this, BaseGroupActivity.class));
-                        }
+                        startActivity(new Intent(MainActivity.this, BaseGroupActivity.class));
                     }
                 }
                 break;

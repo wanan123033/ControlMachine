@@ -29,7 +29,8 @@
             android:background="@drawable/btn_click_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:text="查看评分标准" />
+            android:text="查看评分标准"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tv_device_check"

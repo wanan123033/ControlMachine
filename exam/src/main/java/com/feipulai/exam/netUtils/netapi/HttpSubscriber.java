@@ -94,7 +94,7 @@ public class HttpSubscriber {
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<ScheduleBean>(new OnResultListener<ScheduleBean>() {
             @Override
             public void onSuccess(ScheduleBean result) {
-//                Logger.i("getScheduleAll====>" + result.toString());
+                Logger.i("getScheduleAll====>" + result.toString());
                 if (result == null)
                     return;
                 ScheduleBean.SITE_EXAMTYPE = result.getExamType();
@@ -149,7 +149,7 @@ public class HttpSubscriber {
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<List<ItemBean>>(new OnResultListener<List<ItemBean>>() {
             @Override
             public void onSuccess(List<ItemBean> result) {
-//                Logger.i("getItemAll====>" + result.toString());
+                Logger.i("getItemAll====>" + result.toString());
                 if (result == null)
                     return;
                 List<Item> itemList = new ArrayList<>();
@@ -163,6 +163,16 @@ public class HttpSubscriber {
                         }
                         return;
                     }
+
+                    if (itemBean.getMachineCode() == 0) {
+                        EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_FAULT));
+                        ToastUtils.showShort("项目机器码不能为空，请联系管理员进行数据更新");
+                        if (onRequestEndListener != null) {
+                            onRequestEndListener.onFault(ITEM_BIZ);
+                        }
+                        return;
+                    }
+
                     Item item = new Item();
                     item.setCarryMode(itemBean.getCarryMode());
                     item.setDigital(itemBean.getDecimalDigits());
@@ -305,8 +315,8 @@ public class HttpSubscriber {
                 Logger.i("getItemStudent" + result.toString());
                 if (result == null)
                     return;
-                List<Student> studentList = new ArrayList<>();
-                List<StudentItem> studentItemList = new ArrayList<>();
+                final List<Student> studentList = new ArrayList<>();
+                final List<StudentItem> studentItemList = new ArrayList<>();
 
                 for (StudentBean studentBean : result) {
                     if (studentBean.getExamType() != 2 && supplements.contains(studentBean.getStudentCode())) {
@@ -332,12 +342,6 @@ public class HttpSubscriber {
                                 studentBean.getExamType(), studentBean.getScheduleNo());
                         studentItemList.add(studentItem);
                     } else {
-//                        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
-//                            StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
-//                                    studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
-//                                    studentBean.getExamType(), studentBean.getScheduleNo());
-//                            studentItemList.add(studentItem);
-//                        }
                         SettingHelper.getSystemSetting().setTestPattern(SystemSetting.GROUP_PATTERN);
                     }
                 }
@@ -350,6 +354,7 @@ public class HttpSubscriber {
 
             @Override
             public void onFault(int code, String errorMsg) {
+                Logger.i("getItemStudent  onFault");
                 EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_FAULT));
                 ToastUtils.showShort(errorMsg);
                 if (onRequestEndListener != null) {
@@ -362,19 +367,20 @@ public class HttpSubscriber {
     /**
      * 获取分组信息
      */
-    public void getItemGroupAll(final String itemCode) {
+    public void getItemGroupAll(final String itemCode, String scheduleNo) {
         Map<String, Object> parameData = new HashMap<>();
         parameData.put("examItemCode", itemCode);
+        parameData.put("scheduleNo", scheduleNo);
         Observable<HttpResult<List<GroupBean>>> observable = HttpManager.getInstance().getHttpApi().getGroupAll("bearer " + MyApplication.TOKEN,
                 CommonUtils.encryptQuery(GROUP_BIZ + "", parameData));
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<List<GroupBean>>(new OnResultListener<List<GroupBean>>() {
             @Override
             public void onSuccess(List<GroupBean> result) {
-//                Logger.i("getItemGroupAll====>" + result.toString());
+                Logger.i("getItemGroupAll====>" + result.toString());
                 if (result == null)
                     return;
-                List<Group> groupList = new ArrayList<>();
-                List<GroupItem> groupItemList = new ArrayList<>();
+                final List<Group> groupList = new ArrayList<>();
+                final List<GroupItem> groupItemList = new ArrayList<>();
 
                 for (GroupBean groupBean : result) {
                     //int groupType, String sortName, int groupNo, String scheduleNo,String itemCode, int examType, int isTestComplete
@@ -392,15 +398,16 @@ public class HttpSubscriber {
                     }
 
                 }
+
                 DBManager.getInstance().insertGroupList(groupList);
                 DBManager.getInstance().insertGroupItemList(groupItemList);
-
                 if (onRequestEndListener != null)
                     onRequestEndListener.onSuccess(GROUP_BIZ);
             }
 
             @Override
             public void onFault(int code, String errorMsg) {
+                Logger.i("getItemGroupAll  onFault");
                 EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_FAULT));
                 ToastUtils.showShort(errorMsg);
                 if (onRequestEndListener != null) {
@@ -413,7 +420,7 @@ public class HttpSubscriber {
     /**
      * 获取分组信息
      */
-    public void getItemGroupInFo(final String itemCode, String scheduleNo, String sortName, String groupNo, String groupType) {
+    public void getItemGroupInfo(final String itemCode, String scheduleNo, String sortName, String groupNo, String groupType) {
         Map<String, Object> parameData = new HashMap<>();
         parameData.put("examItemCode", itemCode);
         parameData.put("scheduleNo", scheduleNo);
@@ -425,7 +432,7 @@ public class HttpSubscriber {
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<List<GroupBean>>(new OnResultListener<List<GroupBean>>() {
             @Override
             public void onSuccess(List<GroupBean> result) {
-//                Logger.i("getItemGroupInFo====>" + result.toString());
+                Logger.i("getItemGroupInfo====>" + result.toString());
                 if (result == null)
                     return;
                 List<GroupItem> groupItemList = new ArrayList<>();
