@@ -155,7 +155,7 @@
 
         <Spinner
             android:id="@+id/sp_select_items"
-            android:layout_width="100dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:background="@drawable/icon_spinner_bg"
             android:visibility="gone" />

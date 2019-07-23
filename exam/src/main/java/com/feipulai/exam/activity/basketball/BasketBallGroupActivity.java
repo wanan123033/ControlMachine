@@ -171,6 +171,10 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         }
         super.finish();
         UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
+        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(1,
+                UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
+        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
+                UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
         timerUtil.stop();
         EventBus.getDefault().post(new BaseEvent(EventConfigs.UPDATE_TEST_RESULT));
     }
@@ -363,9 +367,14 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_waiting://等待发令
-                if ((state == WAIT_CHECK_IN || state == WAIT_CONFIRM || state == WAIT_STOP) && isExistTestPlace()) {
-                    timerUtil.stop();
-                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
+                if ((state == WAIT_CHECK_IN || state == WAIT_CONFIRM || state == WAIT_STOP)) {
+                    if (isExistTestPlace()) {
+                        timerUtil.stop();
+                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
+                    } else {
+                        toastSpeak("该考生已全部测试完成");
+                    }
+
                 }
                 break;
             case R.id.txt_illegal_return://违例返回
@@ -402,7 +411,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                 break;
             case R.id.tv_confirm://确定
                 timerUtil.stop();
-                if (state == WAIT_CONFIRM) {
+                if (state == WAIT_CONFIRM || state == WAIT_BEGIN) {
                     UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
                 }
                 if (state != TESTING) {
@@ -739,13 +748,9 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                 return;
             }
             List<UploadResults> uploadResults = new ArrayList<>();
-            String groupNo;
-            String scheduleNo;
-            String testNo;
-
-            groupNo = group.getGroupNo() + "";
-            scheduleNo = group.getScheduleNo();
-            testNo = "1";
+            String groupNo = group.getGroupNo() + "";
+            String scheduleNo = group.getScheduleNo();
+            String testNo = "1";
             UploadResults uploadResult = new UploadResults(scheduleNo,
                     TestConfigs.getCurrentItemCode(), student.getStudentCode()
                     , testNo, groupNo, RoundResultBean.beanCope(roundResultList));
@@ -910,6 +915,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
 //        }
         fristCheckTest();
     }
+
 
     /**
      * 全部次数测试完

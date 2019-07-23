@@ -8,83 +8,94 @@ import com.feipulai.exam.config.TestConfigs;
  */
 
 public class VolleyBallSetting {
+    public static final int ANTIAIRCRAFT_POLE = 2;
+    public static final int WALL_POLE = 3;
+    public static final int NO_TIME_LIMIT = 0;
+    private int testTime = NO_TIME_LIMIT;// 一轮测试的时间,单位为秒
+    private int testNo = 1;// 允许测试的次数
+    private int groupMode = TestConfigs.GROUP_PATTERN_SUCCESIVE;
+    private boolean fullSkip = false;
+    private int maleFullScore;
+    private int femaleFullScore;
+    private boolean isPenalize;
 
-	public static final int NO_TIME_LIMIT = 0;
-	private int testTime = NO_TIME_LIMIT;// 一轮测试的时间,单位为秒
-	private int testNo = 1;// 允许测试的次数
-	private int groupMode = TestConfigs.GROUP_PATTERN_SUCCESIVE;
-	private boolean fullSkip = false;
-	private int maleFullScore;
-	private int femaleFullScore;
-	private boolean isPenalize;
+    private int testPattern;//0对空 1对墙
 
-	public int getTestTime() {
-		return testTime;
-	}
+    public int getTestPattern() {
+        return testPattern;
+    }
 
-	public void setTestTime(int testTime) {
-		this.testTime = testTime;
-	}
+    public void setTestPattern(int testPattern) {
+        this.testPattern = testPattern;
+    }
 
-	public int getTestNo() {
-		return testNo;
-	}
+    public int getTestTime() {
+        return testTime;
+    }
 
-	public void setTestNo(int testNo) {
-		this.testNo = testNo;
-	}
+    public void setTestTime(int testTime) {
+        this.testTime = testTime;
+    }
 
-	public int getGroupMode() {
-		return groupMode;
-	}
+    public int getTestNo() {
+        return testNo;
+    }
 
-	public void setGroupMode(int groupMode) {
-		this.groupMode = groupMode;
-	}
+    public void setTestNo(int testNo) {
+        this.testNo = testNo;
+    }
 
-	public boolean isFullSkip() {
-		return fullSkip;
-	}
+    public int getGroupMode() {
+        return groupMode;
+    }
 
-	public void setFullSkip(boolean fullSkip) {
-		this.fullSkip = fullSkip;
-	}
+    public void setGroupMode(int groupMode) {
+        this.groupMode = groupMode;
+    }
 
-	public int getMaleFullScore() {
-		return maleFullScore;
-	}
+    public boolean isFullSkip() {
+        return fullSkip;
+    }
 
-	public void setMaleFullScore(int maleFullScore) {
-		this.maleFullScore = maleFullScore;
-	}
+    public void setFullSkip(boolean fullSkip) {
+        this.fullSkip = fullSkip;
+    }
 
-	public int getFemaleFullScore() {
-		return femaleFullScore;
-	}
+    public int getMaleFullScore() {
+        return maleFullScore;
+    }
 
-	public void setFemaleFullScore(int femaleFullScore) {
-		this.femaleFullScore = femaleFullScore;
-	}
+    public void setMaleFullScore(int maleFullScore) {
+        this.maleFullScore = maleFullScore;
+    }
 
-	public boolean isPenalize() {
-		return isPenalize;
-	}
+    public int getFemaleFullScore() {
+        return femaleFullScore;
+    }
 
-	public void setPenalize(boolean penalize) {
-		isPenalize = penalize;
-	}
+    public void setFemaleFullScore(int femaleFullScore) {
+        this.femaleFullScore = femaleFullScore;
+    }
 
-	@Override
-	public String toString() {
-		return "VolleyBallSetting{" +
-				"testTime=" + testTime +
-				", testNo=" + testNo +
-				", groupMode=" + groupMode +
-				", fullSkip=" + fullSkip +
-				", maleFullScore=" + maleFullScore +
-				", femaleFullScore=" + femaleFullScore +
-				", isPenalize=" + isPenalize +
-				'}';
-	}
+    public boolean isPenalize() {
+        return isPenalize;
+    }
+
+    public void setPenalize(boolean penalize) {
+        isPenalize = penalize;
+    }
+
+    @Override
+    public String toString() {
+        return "VolleyBallSetting{" +
+                "testTime=" + testTime +
+                ", testNo=" + testNo +
+                ", groupMode=" + groupMode +
+                ", fullSkip=" + fullSkip +
+                ", maleFullScore=" + maleFullScore +
+                ", femaleFullScore=" + femaleFullScore +
+                ", isPenalize=" + isPenalize +
+                '}';
+    }
 
 }

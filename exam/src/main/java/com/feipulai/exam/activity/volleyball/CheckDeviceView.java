@@ -75,12 +75,7 @@ public class CheckDeviceView extends RelativeLayout {
         for (int i = 0; i < 2; i++) {
             List<StepBean> stepBeanList = new ArrayList<>();
             for (int j = i * 10; j < i * 10 + 10; j++) {
-
-                if (i == 1 && j == 15) {
-                    stepBeanList.add(new StepBean(mContext.getString(R.string.abnormal), 1));
-                } else {
-                    stepBeanList.add(new StepBean("", -1));
-                }
+                stepBeanList.add(new StepBean("", -1));
             }
             checkList.add(stepBeanList);
         }
