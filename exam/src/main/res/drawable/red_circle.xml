@@ -5,7 +5,7 @@
 
     <solid android:color="@color/viewfinder_laser" />
     <stroke
-        android:width="2dip"
+        android:width="1dip"
         android:color="@color/grey" />
 
     <size

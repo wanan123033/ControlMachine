@@ -850,6 +850,10 @@ public class DBManager {
         itemDao.update(item);
     }
 
+    public void updateItems(List<Item> items) {
+        itemDao.updateInTx(items);
+    }
+
     private void insertItem(int machineCode, String itemName, String unit) {
         Item item = new Item();
         item.setMachineCode(machineCode);
@@ -1193,6 +1197,10 @@ public class DBManager {
     public RoundResult insertRoundResult2(RoundResult roundResult) {
         long id = roundResultDao.insert(roundResult);
         return roundResultDao.queryBuilder().where(RoundResultDao.Properties.Id.eq(id)).unique();
+    }
+
+    public void updateRoundResults(List<RoundResult> roundResults) {
+        roundResultDao.updateInTx(roundResults);
     }
 
     public void insertRoundResults(List<RoundResult> roundResults) {

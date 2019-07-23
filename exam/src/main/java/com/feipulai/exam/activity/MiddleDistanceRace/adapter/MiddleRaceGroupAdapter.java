@@ -85,6 +85,14 @@ public class MiddleRaceGroupAdapter extends RecyclerView.Adapter<MiddleRaceGroup
                 holder.tvItemRaceState.setText("已完成");
                 holder.tvItemRaceNo.setBackgroundResource(TextUtils.isEmpty(colorId) ? R.color.white : Integer.parseInt(colorId));
                 break;
+            case 6:
+                holder.tvItemRaceState.setText("等待");
+                holder.tvItemRaceNo.setBackgroundResource(TextUtils.isEmpty(colorId) ? R.color.white : Integer.parseInt(colorId));
+                break;
+            case 7:
+                holder.tvItemRaceState.setText("计时");
+                holder.tvItemRaceNo.setBackgroundResource(TextUtils.isEmpty(colorId) ? R.color.white : Integer.parseInt(colorId));
+                break;
             default:
                 break;
         }

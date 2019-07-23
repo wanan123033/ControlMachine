@@ -68,6 +68,10 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
                     chipAdapter.notifyDataSetChanged();
                     rvChipSetting.getLayoutManager().scrollToPosition((Integer) msg.obj);
                     break;
+                case 2:
+                    send();
+                    mHandler.sendEmptyMessageDelayed(2, 8000);
+                    break;
                 default:
                     break;
             }
@@ -96,6 +100,12 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
         return view;
     }
 
+    //随便发送一个东西保持tcp不断
+    private void send() {
+        nettyClient.sendMsgToServer(TcpConfig.CMD_NOTHING, null);
+    }
+
+
     //    初始化 连接设备
     private void initSocket() {
         nettyClient = new NettyClient(machine_ip, Integer.parseInt(machine_port));
@@ -103,6 +113,7 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
             nettyClient.setListener(this);
             nettyClient.connect(false);
         }
+        mHandler.sendEmptyMessageDelayed(2, 8000);
     }
 
     private boolean isVisible;//当前fragment是否显示
@@ -128,8 +139,6 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
                 if (!TextUtils.isEmpty(chip.getChipID2())) {
                     cards.add(chip.getChipID2());
                 }
-//                        if ((chip.getChipID1() != null && chip.getChipID1().equals(cardIds[i])) || (chip.getChipID2() != null && chip.getChipID2().equals(cardIds[i]))) {
-//                        }
             }
         }
     }
@@ -140,6 +149,7 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
         Log.i("ChipSettingFragment", "--------------onDestroyView");
         unbinder.unbind();
         DBManager.getInstance().updateChipInfo(chipInfos);
+        mHandler.removeMessages(2);
         if (nettyClient != null)
             nettyClient.disconnect();
     }
@@ -253,7 +263,7 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
                         }
                         continue;
                     }
-                    if (cards.size() < chipInfos.size()*2) {
+                    if (cards.size() < chipInfos.size() * 2) {
                         cards.add(cardIds[i]);
 
                         for (int j = 0; j < chipInfos.size(); j++) {
