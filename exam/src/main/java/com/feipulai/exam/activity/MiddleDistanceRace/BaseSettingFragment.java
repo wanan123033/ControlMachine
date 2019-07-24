@@ -20,6 +20,7 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.ItemCycleAdapter;
 import com.feipulai.exam.config.TestConfigs;
@@ -107,7 +108,7 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
         time_first = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MIDDLE_RACE_TIME_FIRST, 10);
         time_span = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MIDDLE_RACE_TIME_SPAN, 10);
         carry_mode = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MIDDLE_RACE_CARRY, 0);
-        digital = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MIDDLE_RACE_DIGITAL, 2);
+        digital = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MIDDLE_RACE_DIGITAL, 1);
 
 
         spBaseNo.setSelection(baseNo - 1);
@@ -150,7 +151,19 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
         SharedPrefsUtil.putValue(mContext, MIDDLE_RACE, MIDDLE_RACE_NUMBER, baseNo);
         SharedPrefsUtil.putValue(mContext, MIDDLE_RACE, MIDDLE_RACE_CARRY, carry_mode);
         SharedPrefsUtil.putValue(mContext, MIDDLE_RACE, MIDDLE_RACE_DIGITAL, digital);
+
+        if (isChange) {
+            List<Item> items = DBManager.getInstance().queryItemsByMachineCode(TestConfigs.sCurrentItem.getMachineCode());
+            for (Item item : items
+                    ) {
+                item.setDigital(digital);
+                item.setCarryMode(carry_mode);
+            }
+            DBManager.getInstance().updateItems(items);
+        }
     }
+
+    private boolean isChange = false;
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -160,6 +173,7 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
                     if (rbCarry[i] == checkedId) {
                         carry_mode = i;
                         ((MiddleRaceSettingActivity) getActivity()).setChange(true);
+                        isChange = true;
                         break;
                     }
                 }
@@ -169,6 +183,7 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
                     if (rbDigital[i] == checkedId) {
                         digital = i;
                         ((MiddleRaceSettingActivity) getActivity()).setChange(true);
+                        isChange = true;
                         break;
                     }
                 }

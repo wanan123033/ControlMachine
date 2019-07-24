@@ -137,16 +137,13 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
         StringBuilder sb = new StringBuilder("智能主机(安卓版V" + SystemBrightUtils.getCurrentVersion(this) + ")");
 
         if (machineCode != SharedPrefsConfigs.DEFAULT_MACHINE_CODE) {
-//			sb.append("-").append(TestConfigs.machineNameMap.get(machineCode))
-//					.append(systemSetting.getHostId()).append("号机");
-            if (TestConfigs.sCurrentItem != null && TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
-                sb.append("-").append(TestConfigs.sCurrentItem.getItemName())
-                        .append(systemSetting.getHostId()).append("号机");
-            } else {
-                sb.append("-").append(TestConfigs.machineNameMap.get(machineCode))
-                        .append(systemSetting.getHostId()).append("号机");
-            }
-
+//            if (TestConfigs.sCurrentItem != null && TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
+//                sb.append("-").append(TestConfigs.sCurrentItem.getItemName())
+//                        .append(systemSetting.getHostId()).append("号机");
+//            } else {
+            sb.append("-").append(TestConfigs.machineNameMap.get(machineCode))
+                    .append(systemSetting.getHostId()).append("号机");
+//            }
         }
         if (!TextUtils.isEmpty(systemSetting.getTestName())) {
             sb.append("-").append(systemSetting.getTestName());

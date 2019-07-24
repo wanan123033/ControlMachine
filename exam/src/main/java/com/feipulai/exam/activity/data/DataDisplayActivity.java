@@ -143,7 +143,6 @@ public class DataDisplayActivity extends BaseTitleActivity {
 
                     case RoundResult.RESULT_STATE_NORMAL:
                         mTvBestResult.setText(ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()));
-
                         break;
 
                     case RoundResult.RESULT_STATE_FOUL:

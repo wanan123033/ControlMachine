@@ -363,7 +363,6 @@ public class DataManageActivity
         }
     }
 
-
     @Override
     public void onBackPressed() {
         if (isProcessingData) {
