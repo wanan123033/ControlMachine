@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="526dp"
     android:layout_height="wrap_content"
     android:background="@drawable/btn_bg_white"
@@ -35,13 +35,15 @@
         android:id="@+id/rv_step"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/view_bottom"
         android:layout_below="@+id/view_terminal" />
 
     <LinearLayout
         android:id="@+id/view_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/rv_step"
+        android:layout_alignParentBottom="true"
+
         android:layout_marginTop="@dimen/dp_10"
         android:gravity="center"
         android:orientation="horizontal">
@@ -70,4 +72,4 @@
             android:drawablePadding="10dp"
             android:text="@string/abnormal" />
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>

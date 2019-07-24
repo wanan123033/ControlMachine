@@ -108,6 +108,7 @@
             android:configChanges="keyboardHidden|keyboard" />
         <activity android:name=".activity.volleyball.VolleyBallSettingActivity" />
         <activity android:name=".activity.volleyball.VolleyBallGroupActivity" />
+        <activity android:name=".activity.volleyball.VolleyballPatternSelectActivity" />
         <activity
             android:name=".activity.sitreach.SitReachGroupTestActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />

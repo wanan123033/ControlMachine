@@ -16,21 +16,39 @@ public class VolleyBallCheck {
     //单机模式为0；可以扩展 一对多同步模式为1，一对多异步模式为2
     private int mode;
     private int type;
+    private int voltameter;
 
     public VolleyBallCheck(byte[] data) {
-        positionList = new ArrayList<>(32);
         type = data[12];
-        deviceId = data[4];
-        mode = data[6];
-        for (int i = 0; i < data.length; i++) {
-            if (i >= 8 && i <= 11) {
-                char[] position = Integer.toBinaryString(data[i]).toCharArray();
-                for (char c : position) {
-                    positionList.add(Integer.valueOf(c));
+        if (type != 0) {
+            positionList = new ArrayList<>(30);
+            deviceId = data[4];
+            mode = data[6];
+            List<Integer> dList = new ArrayList<>();
+            for (int i = 0; i < data.length; i++) {
+                if (i >= 8 && i <= 11) {
+                    char[] position = Integer.toBinaryString(data[i]).toCharArray();
+                    for (char c : position) {
+                        dList.add(Integer.valueOf(c));
+                    }
                 }
+            }
+            System.arraycopy(dList, 0, positionList, 0, positionList.size());
+            voltameter = dList.get(32);
+            if (type == 1) {
+                voltameter = 1;
             }
         }
 
+
+    }
+
+    public int getVoltameter() {
+        return voltameter;
+    }
+
+    public void setVoltameter(int voltameter) {
+        this.voltameter = voltameter;
     }
 
     public List<Integer> getPositionList() {

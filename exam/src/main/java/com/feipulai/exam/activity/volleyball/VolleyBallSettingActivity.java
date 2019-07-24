@@ -1,5 +1,8 @@
 package com.feipulai.exam.activity.volleyball;
 
+import android.app.ProgressDialog;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Editable;
@@ -19,6 +22,10 @@ import com.feipulai.common.utils.DialogUtils;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.manager.VolleyBallManager;
+import com.feipulai.device.serial.SerialConfigs;
+import com.feipulai.device.serial.SerialDeviceManager;
+import com.feipulai.device.serial.beans.VolleyBallCheck;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -26,13 +33,16 @@ import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.TestConfigs;
 import com.orhanobut.logger.Logger;
 
+import java.lang.ref.WeakReference;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
 
 public class VolleyBallSettingActivity
         extends BaseTitleActivity
-        implements CompoundButton.OnCheckedChangeListener, RadioGroup.OnCheckedChangeListener, TextWatcher {
+        implements CompoundButton.OnCheckedChangeListener, RadioGroup.OnCheckedChangeListener, TextWatcher
+        , SerialDeviceManager.RS232ResiltListener {
 
     @BindView(R.id.sp_test_no)
     Spinner spTestNo;
@@ -52,6 +62,12 @@ public class VolleyBallSettingActivity
     private Integer[] testRound = new Integer[]{1, 2, 3};
 
     private VolleyBallSetting setting;
+    private ProgressDialog mProgressDialog;
+    //3秒内检设备是否可用
+    private volatile boolean isDisconnect = true;
+    private static final int MSG_DISCONNECT = 0X101;
+    private SerialHandler mHandler = new SerialHandler(this);
+    private CheckDeviceView checkDeviceView;
 
     @Override
     protected int setLayoutResID() {
@@ -85,6 +101,7 @@ public class VolleyBallSettingActivity
         editMaleFull.addTextChangedListener(this);
         editFemaleFull.addTextChangedListener(this);
         etTestTime.addTextChangedListener(this);
+        SerialDeviceManager.getInstance().setRS232ResiltListener(this);
     }
 
     @Nullable
@@ -150,6 +167,11 @@ public class VolleyBallSettingActivity
                 break;
             case R.id.tv_device_check:
                 showCheckDiglog();
+                isDisconnect = true;
+                mProgressDialog = ProgressDialog.show(this, "", "终端自检中...", true);
+                new VolleyBallManager().checkDevice();
+                //3秒自检
+                mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
                 break;
         }
     }
@@ -196,10 +218,22 @@ public class VolleyBallSettingActivity
         }
     }
 
-    private void showCheckDiglog() {
+    @Override
+    public void onRS232Result(Message msg) {
+        switch (msg.what) {
+            case SerialConfigs.VOLLEYBALL_CHECK_RESPONSE:
+                mProgressDialog.dismiss();
+                VolleyBallCheck volleyBallCheck = (VolleyBallCheck) msg.obj;
+                int length = setting.getTestPattern() == 0 ? VolleyBallSetting.ANTIAIRCRAFT_POLE * 10 : VolleyBallSetting.WALL_POLE * 10;
+                checkDeviceView.setData(length, volleyBallCheck.getPositionList());
 
-        CheckDeviceView checkDeviceView = new CheckDeviceView(this);
-        checkDeviceView.setUnunitedData();
+                break;
+        }
+    }
+
+    private void showCheckDiglog() {
+        checkDeviceView = new CheckDeviceView(this);
+        checkDeviceView.setUnunitedData(setting.getTestPattern() == 0 ? VolleyBallSetting.ANTIAIRCRAFT_POLE : VolleyBallSetting.WALL_POLE);
         DialogUtils.create(this, checkDeviceView, true).show();
         //这种设置宽高的方式也是好使的！！！-- show 前调用，show 后调用都可以！！！
         checkDeviceView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
@@ -217,7 +251,38 @@ public class VolleyBallSettingActivity
                 }
             }
         });
+    }
 
 
+    /**
+     * 回调
+     */
+    private static class SerialHandler extends Handler {
+
+        private WeakReference<VolleyBallSettingActivity> mActivityWeakReference;
+
+        public SerialHandler(VolleyBallSettingActivity activity) {
+            mActivityWeakReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            VolleyBallSettingActivity activity = mActivityWeakReference.get();
+            if (activity != null) {
+                switch (msg.what) {
+                    case MSG_DISCONNECT://连接失败
+                        if (activity.isDisconnect) {
+                            activity.toastSpeak("设备未连接");
+                            //设置当前设置为不可用断开状态
+                            if (activity.mProgressDialog.isShowing()) {
+                                activity.mProgressDialog.dismiss();
+                            }
+                        }
+                        break;
+                }
+            }
+
+        }
     }
 }

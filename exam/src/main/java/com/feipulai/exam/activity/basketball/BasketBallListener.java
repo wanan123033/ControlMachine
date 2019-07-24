@@ -26,7 +26,7 @@ public class BasketBallListener implements UdpClient.UDPChannelListerner {
     @Override
     public void onDataArrived(UDPResult result) {
         BasketballResult basketballResult = (BasketballResult) result.getResult();
-        Logger.d("onDataArrived===>" + basketballResult.toString());
+        Logger.i("onDataArrived===>" + basketballResult.toString());
         switch (basketballResult.getType()) {
             case UDPBasketBallConfig.CMD_GET_STATUS_RESPONSE:
             case UDPBasketBallConfig.CMD_SET_STATUS_RESPONSE:

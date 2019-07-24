@@ -70,9 +70,9 @@ public class CheckDeviceView extends RelativeLayout {
     /**
      * 初始化未连接数据
      */
-    public void setUnunitedData() {
-        checkList = new ArrayList<>(2);
-        for (int i = 0; i < 2; i++) {
+    public void setUnunitedData(int initial) {
+        checkList = new ArrayList<>(initial);
+        for (int i = 0; i < initial; i++) {
             List<StepBean> stepBeanList = new ArrayList<>();
             for (int j = i * 10; j < i * 10 + 10; j++) {
                 stepBeanList.add(new StepBean("", -1));

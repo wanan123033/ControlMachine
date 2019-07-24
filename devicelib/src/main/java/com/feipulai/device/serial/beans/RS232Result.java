@@ -94,24 +94,24 @@ public class RS232Result {
                 setResult(new HeightWeightResult(data));
                 break;
             case ItemDefault.CODE_FWC:
-                if(data.length >= 0x10
+                if (data.length >= 0x10
                         && data[0] == 0x54 && data[1] == 0x55 //[00] [01]：包头高字节0x54   低字节0x55
                         && data[3] == 0x10  //[02] [03]：长度高字节0x00   低字节0x10
                         && data[5] == 0x08//[05]：项目编号   5—仰卧起坐    8—俯卧撑
                         && data[14] == 0x27 && data[15] == 0x0d//[14] [15]：包尾高字节0x27   低字节0x0d
-                        ){
+                        ) {
                     // 仰卧起坐
                     int sum = 0;
                     //0b 命令(获取数据)不需要校验
-                    if(data[7] != 0x0b){
-                        for(int i = 2;i < 13;i++){
+                    if (data[7] != 0x0b) {
+                        for (int i = 2; i < 13; i++) {
                             sum += (data[i] & 0xff);
                         }
-                        if((sum & 0xff) != (data[13] & 0xff)){
+                        if ((sum & 0xff) != (data[13] & 0xff)) {
                             return;
                         }
                     }
-                    switch(data[7]){
+                    switch (data[7]) {
 
                         case 4:
                             setType(SerialConfigs.PUSH_UP_GET_STATE);
@@ -131,11 +131,11 @@ public class RS232Result {
                     }
                 }
                 break;
-                
-                case ItemDefault.CODE_GPS:
-                    setType(SerialConfigs.GPS_TIME_RESPONSE);
-                    setResult(new GPSTimeResult(data));
-                    break;
+
+            case ItemDefault.CODE_GPS:
+                setType(SerialConfigs.GPS_TIME_RESPONSE);
+                setResult(new GPSTimeResult(data));
+                break;
 
         }
     }
@@ -326,6 +326,9 @@ public class RS232Result {
                         case 7:
                             setType(SerialConfigs.VOLLEYBALL_CHECK_RESPONSE);
                             setResult(new VolleyBallCheck(data));
+                            break;
+                        case 0x11:
+                            setType(SerialConfigs.VOLLEYBALL_SET_DEVICE_RESPONSE);
                             break;
                     }
                     break;

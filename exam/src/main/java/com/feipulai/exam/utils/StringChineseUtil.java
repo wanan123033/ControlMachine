@@ -1,5 +1,8 @@
 package com.feipulai.exam.utils;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Created by zzs on  2019/7/2
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
@@ -20,5 +23,18 @@ public class StringChineseUtil {
         }
         return result;
 
+    }
+
+    /**
+     * 验证合法文件名称
+     *
+     * @param name
+     * @return
+     */
+    public static boolean patternFileName(String name) {
+        Pattern p = Pattern
+                .compile("\\w+");
+        Matcher m = p.matcher(name);
+        return m.matches();
     }
 }

@@ -10,7 +10,6 @@ import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.VolleyBallResult;
 import com.feipulai.exam.activity.setting.SettingHelper;
-import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 
 import java.util.concurrent.ExecutorService;
@@ -25,7 +24,6 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
     private TestingCountDownTimer mTestingCountDownTimer;
     private LEDManager ledManager = new LEDManager();
     private Listener listener;
-    private int timeLimit;
     private int hostId;
     // 状态  WAIT_BGIN--->TESTING--->FINISHED---->WAIT_BGIN
     private static final int WAIT_BEGIN = 0x0;// 等待开始测试
@@ -34,10 +32,12 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
     protected volatile int testState = WAIT_BEGIN;
 
     private VolleyBallManager deviceManager = new VolleyBallManager();
+    private VolleyBallSetting setting;
+    private boolean isSetDevice = false;
 
-    public VolleyBallTestFacade(int hostId, int timeLimit, Listener listener) {
+    public VolleyBallTestFacade(int hostId, VolleyBallSetting setting, Listener listener) {
         this.listener = listener;
-        this.timeLimit = timeLimit;
+        this.setting = setting;
         this.hostId = hostId;
         executor = Executors.newCachedThreadPool();
         SerialDeviceManager.getInstance().setRS232ResiltListener(this);
@@ -69,7 +69,7 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
                         tmpResult = null;
                         String displayInLed = "成绩:" + ResultDisplayUtils.getStrResultForDisplay(0);
                         ledManager.showString(SettingHelper.getSystemSetting().getHostId(), displayInLed, 1, 1, false, true);
-                        if (timeLimit != VolleyBallSetting.NO_TIME_LIMIT) {
+                        if (setting.getTestTime() != VolleyBallSetting.NO_TIME_LIMIT) {
                             startTestTimer();
                         }
                     }
@@ -78,7 +78,7 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
 
     private void startTestTimer() {
         mTestingCountDownTimer = new TestingCountDownTimer(
-                timeLimit * 1000, 1000, 0, 10,
+                setting.getTestTime() * 1000, 1000, 0, 10,
                 new TestingCountDownTimer.OnTestingCountDownListener() {
 
                     @Override
@@ -159,6 +159,9 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
                     }
                 }
                 break;
+            case SerialConfigs.VOLLEYBALL_SET_DEVICE_RESPONSE:
+                isSetDevice = true;
+                break;
             // case SerialConfigs.VOLLEYBALL_EMPTY_RESPONSE:
             // case SerialConfigs.VOLLEYBALL_START_RESPONSE:
             // case SerialConfigs.VOLLEYBALL_STOP_RESPONSE:
@@ -169,8 +172,13 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
         listener.onDeviceConnectState(VolleyBallManager.VOLLEY_BALL_CONNECT);
     }
 
-    public void setTimeLimit(int testTime) {
-        this.timeLimit = testTime;
+    //    public void setTimeLimit(int testTime) {
+//        this.timeLimit = testTime;
+//        SerialDeviceManager.getInstance().setRS232ResiltListener(this);
+//    }
+    public void setVolleySetting(VolleyBallSetting setting) {
+        this.setting = setting;
+        SerialDeviceManager.getInstance().setRS232ResiltListener(this);
     }
 
     private class VolleyBallDetector {
@@ -190,6 +198,12 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
                             deviceManager.getScore();
                         } else {
                             deviceManager.emptyCommand();
+                            if (!isSetDevice) {
+                                deviceManager.setDeviceMode(setting.getTestPattern(),
+                                        setting.getTestPattern() == 0 ? VolleyBallSetting.ANTIAIRCRAFT_POLE : VolleyBallSetting.WALL_POLE,
+                                        setting.getTestPattern() == 0 ? 1 : 0);
+                            }
+
                         }
                         int count = missCount.addAndGet(1);
                         if (count >= 10) {

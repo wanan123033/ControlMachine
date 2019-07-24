@@ -29,6 +29,7 @@ import com.feipulai.exam.activity.sargent_jump.SargentItemSelectActivity;
 import com.feipulai.exam.activity.setting.SettingActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.activity.volleyball.VolleyballPatternSelectActivity;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.SharedPrefsConfigs;
@@ -186,7 +187,10 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                         startActivity(new Intent(MainActivity.this, SargentItemSelectActivity.class));
                         return;
                     }
-
+                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_PQ) {
+                        startActivity(new Intent(MainActivity.this, VolleyballPatternSelectActivity.class));
+                        return;
+                    }
                     if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
                         startActivity(new Intent(MainActivity.this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
                     } else {
