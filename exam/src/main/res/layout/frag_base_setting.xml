@@ -114,7 +114,7 @@
                     android:layout_width="110dp"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
-                    android:text="非零取整" />
+                    android:text="非零舍位" />
 
                 <RadioButton
                     android:id="@+id/rb_carry_mode_3"

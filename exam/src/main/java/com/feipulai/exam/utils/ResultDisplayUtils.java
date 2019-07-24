@@ -1,9 +1,9 @@
 package com.feipulai.exam.utils;
 
 import com.feipulai.common.utils.ResultDisplayTools;
+import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.Item;
-import com.feipulai.exam.entity.RoundResult;
 
 
 /**
@@ -26,9 +26,17 @@ public class ResultDisplayUtils {
      */
     public static String getStrResultForDisplay(int dbResult) {
         Item item = TestConfigs.sCurrentItem;
+        int digital = item.getDigital();
+        int carrryMode = item.getCarryMode();
+        //中长跑项目全部加1
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+            digital++;
+            carrryMode++;
+        }
+
         return ResultDisplayTools.getStrResultForDisplay(item.getMachineCode(), dbResult,
-                item.getDigital(),
-                item.getCarryMode(),
+                digital,
+                carrryMode,
                 item.getUnit(), 0,
                 true);
     }
@@ -77,21 +85,5 @@ public class ResultDisplayUtils {
 
     public static String getQualifiedUnit(Item item) {
         return ResultDisplayTools.getQualifiedUnit(item.getMachineCode(), item.getUnit(), 0);
-    }
-
-    public static String setResultState(int state) {
-
-        switch (state) {
-            case RoundResult.RESULT_STATE_NORMAL:
-                return "正常";
-            case RoundResult.RESULT_STATE_FOUL:
-                return "犯规";
-            case RoundResult.RESULT_STATE_BACK:
-                return "中退";
-            case RoundResult.RESULT_STATE_WAIVE:
-                return "放弃";
-            default:
-                return "";
-        }
     }
 }

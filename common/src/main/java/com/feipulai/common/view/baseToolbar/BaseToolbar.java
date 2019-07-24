@@ -487,6 +487,12 @@ public class BaseToolbar extends Toolbar {
             return this;
         }
 
+        public void updateRightImage(int color) {
+            if (rightViewList != null) {
+                rightViewList.get(1).setBackgroundResource(color);
+            }
+        }
+
         /**
          * leftText
          *
