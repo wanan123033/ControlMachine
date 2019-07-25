@@ -42,6 +42,7 @@ import com.feipulai.exam.exl.GroupStuItemExLReader;
 import com.feipulai.exam.exl.ResultExlWriter;
 import com.feipulai.exam.exl.StuItemExLReader;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
+import com.feipulai.exam.utils.StringChineseUtil;
 import com.feipulai.exam.view.OperateProgressBar;
 import com.github.mjdev.libaums.fs.UsbFile;
 import com.orhanobut.logger.Logger;
@@ -58,6 +59,8 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.Common
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -188,7 +191,7 @@ public class DataManageActivity
                 Intent intent = new Intent();
                 switch (position) {
                     case 0://数据导入
-                        if (TestConfigs.sCurrentItem.getMachineCode()==ItemDefault.CODE_ZCP){
+                        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
                             toastSpeak("中长跑不允许进行个人名单导入");
                             return;
                         }
@@ -402,8 +405,9 @@ public class DataManageActivity
         mEditText.setSingleLine();
         mEditText.setInputType(EditorInfo.TYPE_TEXT_VARIATION_URI);
         mEditText.setBackgroundColor(0xffcccccc);
+        DateFormat df = new SimpleDateFormat("yyyy年MM月dd日");
         mEditText.setText(SettingHelper.getSystemSetting().getTestName() +
-                SettingHelper.getSystemSetting().getHostId() + "号机" + TestConfigs.df.format(new Date()));
+                SettingHelper.getSystemSetting().getHostId() + "号机" + df.format(new Date()));
         nameFileDialog = new AlertDialog.Builder(this)
                 .setCancelable(false)
                 .setTitle("文件名")
@@ -421,6 +425,11 @@ public class DataManageActivity
             public void onClick(DialogInterface dialog, int which) {
                 OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在导出学生成绩...");
                 String text = mEditText.getText().toString().trim();
+                if (!StringChineseUtil.patternFileName(text)) {
+                    OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
+                    ToastUtils.showShort("文件创建失败,请确保输入文件名合法(中文、字母、数字和下划线),且不存在已有文件");
+                    return;
+                }
                 UsbFile targetFile;
                 try {
                     targetFile = FileSelectActivity.sSelectedFile.createFile(text + ".xls");

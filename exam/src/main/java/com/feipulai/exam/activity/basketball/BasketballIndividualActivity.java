@@ -300,12 +300,20 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             resultList.get(resultAdapter.getSelectPosition()).setResultState(RoundResult.RESULT_STATE_NORMAL);
         } else {
             machineResultList.add(machineResult);
+            BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
+            int pResult = result.getResult() + (testResult.getPenalizeNum() * setting.getPenaltySecond() * 1000);
+            testResult.setSelectMachineResult(machineResult.getResult());
+            testResult.setResult(pResult);
+            testResult.getMachineResultList().clear();
+            testResult.getMachineResultList().addAll(machineResultList);
+
 //            RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(mStudentItem.getStudentCode());
             RoundResult testRoundResult = DBManager.getInstance().queryRoundByRoundNo(student.getStudentCode(),
                     testNo, roundNo);
-            testRoundResult.setResult(result.getResult());
+            testRoundResult.setPenaltyNum(testResult.getPenalizeNum());
+            testRoundResult.setResult(pResult);
             testRoundResult.setMachineResult(result.getResult());
-
+            Logger.i("拦截更新成绩" + testRoundResult.toString());
             //更新成绩，
             DBManager.getInstance().updateRoundResult(testRoundResult);
             //获取所有成绩设置为非最好成绩
@@ -330,10 +338,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
 
 
             showStuInfoResult();
-            resultList.get(resultAdapter.getSelectPosition()).setSelectMachineResult(machineResult.getResult());
-            resultList.get(resultAdapter.getSelectPosition()).setResult(result.getResult());
-            resultList.get(resultAdapter.getSelectPosition()).getMachineResultList().clear();
-            resultList.get(resultAdapter.getSelectPosition()).getMachineResultList().addAll(machineResultList);
+
         }
 
         resultAdapter.notifyDataSetChanged();
@@ -919,6 +924,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 .setPositiveButton("确认", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        timerUtil.stop();
                         BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
                         List<MachineResult> machineResultList = testResult.getMachineResultList();
                         if (machineResultList != null && machineResultList.size() > 0) {

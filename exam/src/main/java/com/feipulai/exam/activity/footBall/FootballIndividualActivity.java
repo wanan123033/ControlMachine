@@ -1,5 +1,7 @@
 package com.feipulai.exam.activity.footBall;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -567,8 +569,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                 break;
             case R.id.txt_illegal_return://违例返回
                 if (enableIllegal){
-                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
-                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
+                    showIllegalReturnDialog();
                 }else {
                     toastSpeak("成绩已测量，不能违规返回");
                 }
@@ -966,6 +967,46 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
             }
         }
         return false;
+    }
+
+    private void showIllegalReturnDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("警告")
+                .setMessage("确认是否违规返回？")
+                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
+                        List<MachineResult> machineResultList = testResult.getMachineResultList();
+                        if (machineResultList != null && machineResultList.size() > 0) {
+                            Student student = pairs.get(0).getStudent();
+                            int testNo = TestCache.getInstance().getTestNoMap().get(student);
+                            DBManager.getInstance().deleteStuResult(student.getStudentCode(), testNo, roundNo, RoundResult.DEAFULT_GROUP_ID);
+                            DBManager.getInstance().deleteStuMachineResults(student.getStudentCode(), testNo, roundNo, RoundResult.DEAFULT_GROUP_ID);
+                            testResult.setSelectMachineResult(0);
+                            testResult.setResult(-999);
+                            testResult.setResultState(-999);
+                            testResult.setMachineResultList(null);
+                            showStuInfoResult();
+                            resultAdapter.notifyDataSetChanged();
+                        }
+                        state = WAIT_CONFIRM;
+                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
+                        sleep();
+                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
+                    }
+                })
+                .setNegativeButton("取消", null)
+                .show();
+    }
+
+    private void sleep() {
+        try {
+            //两个指令相间隔100MS
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

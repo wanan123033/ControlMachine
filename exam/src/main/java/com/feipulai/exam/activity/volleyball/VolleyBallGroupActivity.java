@@ -138,7 +138,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         stuPairAdapter = new VolleyBallGroupStuAdapter(pairs);
         rvTestingPairs.setAdapter(stuPairAdapter);
 
-        facade = new VolleyBallTestFacade(SettingHelper.getSystemSetting().getHostId(), setting.getTestTime(), this);
+        facade = new VolleyBallTestFacade(SettingHelper.getSystemSetting().getHostId(), setting, this);
         stuPairAdapter.setOnItemClickListener(this);
 
         prepareForBegin();
@@ -147,7 +147,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
     @Override
     protected void onRestart() {
         super.onRestart();
-        facade.setTimeLimit(setting.getTestTime());
+        facade.setVolleySetting(setting);
     }
 
     @OnClick({R.id.tv_start_test, R.id.tv_stop_test, R.id.tv_print, R.id.tv_led_setting, R.id.tv_confirm,

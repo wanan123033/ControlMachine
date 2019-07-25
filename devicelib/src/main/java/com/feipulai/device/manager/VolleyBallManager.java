@@ -39,4 +39,18 @@ public class VolleyBallManager {
     public void checkDevice() {
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_CHECK));
     }
+
+    /**
+     *
+     * @param mode 对空对墙模式，对空0，对墙1
+     * @param poleNum 几米杆，2米为2,  3米为3   默认值：对空3米 对墙2米
+     * @param wiringType 同端异端接线，同端为0，异端为1  默认值  对空 1 对墙 0
+     */
+    public void setDeviceMode(int mode, int poleNum, int wiringType) {
+        byte[] cmd = {0x54, 0x44, 0, 0x10, 0, 0x0a, 0, 0x11, (byte) mode, (byte) poleNum, (byte) wiringType, 0, 0, 0, 0x27, 0x0d};
+        for (int i = 2; i < 13; i++) {
+            cmd[13] += cmd[i] & 0xff;
+        }
+        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd));
+    }
 }

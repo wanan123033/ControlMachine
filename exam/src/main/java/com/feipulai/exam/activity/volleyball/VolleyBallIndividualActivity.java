@@ -128,7 +128,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         individualCheckFragment.setOnIndividualCheckInListener(this);
         ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), individualCheckFragment, R.id.ll_individual_check);
 
-        facade = new VolleyBallTestFacade(SettingHelper.getSystemSetting().getHostId(), setting.getTestTime(), this);
+        facade = new VolleyBallTestFacade(SettingHelper.getSystemSetting().getHostId(), setting, this);
         ledManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
         prepareForCheckIn();
     }
@@ -162,7 +162,8 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
     @Override
     protected void onRestart() {
         super.onRestart();
-        facade.setTimeLimit(setting.getTestTime());
+        facade.setVolleySetting(setting);
+
     }
 
     private void startProjectSetting() {

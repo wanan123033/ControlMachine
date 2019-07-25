@@ -191,7 +191,7 @@ public class ResultExlWriter extends ExlWriter {
                     cell = row.createCell(11 + (k * 5) + 4);
                     cell.setCellValue(roundResultBeans.get(k).getStumbleCount());
                     cell = row.createCell(11 + (k * 5) + 5);
-                    cell.setCellValue(roundResultBeans.get(k).getIsFoul() == 0 ? "正常" : "犯规");
+                    cell.setCellValue(ResultDisplayUtils.setResultState(roundResultBeans.get(k).getIsFoul()));
                 }
                 number++;
             }
