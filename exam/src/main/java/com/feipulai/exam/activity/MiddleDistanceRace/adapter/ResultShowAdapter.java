@@ -59,7 +59,11 @@ public class ResultShowAdapter extends PanelAdapter {
             titleViewHolder.titleTextView.setText("X");
         } else {
             if (column > 1) {
-                titleViewHolder.titleTextView.setText(TextUtils.isEmpty(string) ? "" : DateUtil.caculateTime(Long.parseLong(string), digital + 1, carryMode + 1));
+                if (carryMode == 0) {
+                    titleViewHolder.titleTextView.setText(TextUtils.isEmpty(string) ? "" : DateUtil.caculateTime(Long.parseLong(string), 3, carryMode));
+                } else {
+                    titleViewHolder.titleTextView.setText(TextUtils.isEmpty(string) ? "" : DateUtil.caculateTime(Long.parseLong(string), digital, carryMode));
+                }
             } else {
                 titleViewHolder.titleTextView.setText(string);
             }

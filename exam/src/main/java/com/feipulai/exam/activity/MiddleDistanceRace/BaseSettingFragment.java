@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -101,19 +102,28 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
 
 
     private void initEvent() {
-//        carryMode=TestConfigs.sCurrentItem.getCarryMode();
-//        digital=TestConfigs.sCurrentItem.getDigital();
+        //默认为服务的设置
+        carry_mode = TestConfigs.sCurrentItem.getCarryMode();
+        digital = TestConfigs.sCurrentItem.getDigital()==0?1:TestConfigs.sCurrentItem.getDigital();
 
+        //如果本地修改了设置则本地设置优先
         baseNo = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MIDDLE_RACE_NUMBER, 3);
         time_first = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MIDDLE_RACE_TIME_FIRST, 10);
         time_span = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MIDDLE_RACE_TIME_SPAN, 10);
-        carry_mode = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MIDDLE_RACE_CARRY, 0);
-        digital = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MIDDLE_RACE_DIGITAL, 1);
+        carry_mode = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MIDDLE_RACE_CARRY, carry_mode);
+        digital = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MIDDLE_RACE_DIGITAL, digital);
 
+        //如果从服务器下载的进位方式为0（不取舍），则必为千分位
+        if (carry_mode == 0) {
+            rgDigital.check(rbDigital[2]);
+        } else {
+            rgCarryMode.check(rbCarry[carry_mode - 1]);
+            rgDigital.check(rbDigital[digital - 1]);
+        }
 
         spBaseNo.setSelection(baseNo - 1);
-        rgCarryMode.check(rbCarry[carry_mode]);
-        rgDigital.check(rbDigital[digital]);
+        rgCarryMode.check(rbCarry[carry_mode - 1]);
+        rgDigital.check(rbDigital[digital - 1]);
 
 
         spBaseNo.setOnItemSelectedListener(this);
@@ -144,6 +154,7 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
     @Override
     public void onPause() {
         super.onPause();
+        Log.i("BaseFragment", "onPause----------");
         time_first = TextUtils.isEmpty(etMiddleRaceTimeFirst.getText().toString()) ? FIRST_TIME : Integer.parseInt(etMiddleRaceTimeFirst.getText().toString());
         time_span = TextUtils.isEmpty(etMiddleRaceTime_Span.getText().toString()) ? SPAN_TIME : Integer.parseInt(etMiddleRaceTime_Span.getText().toString());
         SharedPrefsUtil.putValue(mContext, MIDDLE_RACE, MIDDLE_RACE_TIME_FIRST, time_first);
@@ -152,6 +163,7 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
         SharedPrefsUtil.putValue(mContext, MIDDLE_RACE, MIDDLE_RACE_CARRY, carry_mode);
         SharedPrefsUtil.putValue(mContext, MIDDLE_RACE, MIDDLE_RACE_DIGITAL, digital);
 
+        //本地修改了进位及小数位则数据库更新
         if (isChange) {
             List<Item> items = DBManager.getInstance().queryItemsByMachineCode(TestConfigs.sCurrentItem.getMachineCode());
             for (Item item : items
@@ -171,7 +183,7 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
             case R.id.rg_carry_mode:
                 for (int i = 0; i < rbCarry.length; i++) {
                     if (rbCarry[i] == checkedId) {
-                        carry_mode = i;
+                        carry_mode = i + 1;
                         ((MiddleRaceSettingActivity) getActivity()).setChange(true);
                         isChange = true;
                         break;
@@ -181,7 +193,7 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
             case R.id.rg_digital:
                 for (int i = 0; i < rbDigital.length; i++) {
                     if (rbDigital[i] == checkedId) {
-                        digital = i;
+                        digital = i + 1;
                         ((MiddleRaceSettingActivity) getActivity()).setChange(true);
                         isChange = true;
                         break;

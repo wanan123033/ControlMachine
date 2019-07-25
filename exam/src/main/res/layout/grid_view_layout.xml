@@ -12,6 +12,7 @@
         android:layout_width="106dp"
         android:layout_height="106dp"
         android:layout_marginTop="15dp"
+        android:foreground="?android:attr/selectableItemBackground"
         custom:cardBackgroundColor="@color/data_message_item_selector"
         custom:cardCornerRadius="5dp"
         custom:cardElevation="0dp">
