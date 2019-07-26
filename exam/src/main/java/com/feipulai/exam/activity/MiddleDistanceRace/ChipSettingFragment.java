@@ -29,7 +29,6 @@ import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.ChipInfo;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -53,6 +52,8 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
     TextView tvChipID1;
     @BindView(R.id.cb_chip_connect)
     CheckBox cbChipConnect;
+    @BindView(R.id.view_state)
+    View viewState;
     private Context mContext;
     private Unbinder unbinder;
     private NettyClient nettyClient;
@@ -143,11 +144,14 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
         }
     }
 
+    private boolean isFinish = false;
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         Log.i("ChipSettingFragment", "--------------onDestroyView");
         unbinder.unbind();
+        isFinish = true;
         DBManager.getInstance().updateChipInfo(chipInfos);
         mHandler.removeMessages(2);
         if (nettyClient != null)
@@ -196,7 +200,7 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
 
     @Override
     public void onMessageReceive(long time, String[] cardIds) {
-        mHandler.sendMessage(mHandler.obtainMessage(0, Arrays.toString(cardIds)));
+//        mHandler.sendMessage(mHandler.obtainMessage(0, Arrays.toString(cardIds)));
         if (isVisible && isSelect) {
             //将芯片id信息按先后顺序并且无重复填充到chipInfos
             if (chipNo == 1) {//如果一个背心对应1个芯片
@@ -227,14 +231,6 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
                                 mHandler.sendMessage(mHandler.obtainMessage(1, j));
                                 break;
                             }
-//                        //当chipInfos中存在cardIds中的值时不允许填充并退出
-//                        if (cardIds[i].equals(chipInfos.get(j).getChipID1())) {
-//                            if (i == cardIds.length - 1) {
-//                                chipAdapter.changeBackGround(1, j);
-//                            }
-//                            mHandler.sendMessage(mHandler.obtainMessage(1, j));
-//                            break;
-//                        }
                         }
                     }
                 }
@@ -352,8 +348,18 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
     }
 
     @Override
-    public void onServiceStatusConnectChanged(int statusCode) {
-
+    public void onServiceStatusConnectChanged(final int statusCode) {
+        if (!isFinish)
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (statusCode == NettyListener.STATUS_CONNECT_SUCCESS) {
+                        viewState.setBackgroundResource(R.drawable.blue_circle);
+                    } else {
+                        viewState.setBackgroundResource(R.drawable.red_circle);
+                    }
+                }
+            });
     }
 
     @Override

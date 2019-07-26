@@ -7,28 +7,40 @@
     android:orientation="vertical">
 
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:layout_marginTop="30dp"
         android:background="@color/white"
-        android:orientation="horizontal"
         android:padding="10dp">
 
         <TextView
+            android:id="@+id/tv1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="连接设备" />
+            android:layout_centerVertical="true"
+            android:text="检测芯片" />
 
         <CheckBox
             android:id="@+id/cb_chip_connect"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="20dp"
+            android:layout_toEndOf="@+id/tv1"
             android:button="@drawable/checkbox_switch_selected" />
-    </LinearLayout>
+
+        <View
+            android:id="@+id/view_state"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/dp_20"
+            android:background="@drawable/red_circle" />
+    </RelativeLayout>
 
 
     <RelativeLayout

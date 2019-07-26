@@ -13,6 +13,7 @@ import android.widget.RadioGroup;
 
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.MiddleDistanceRace.adapter.PagerSettingAdapter;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 
 import java.util.ArrayList;
@@ -69,10 +70,6 @@ public class MiddleRaceSettingActivity extends BaseTitleActivity {
         return builder.setTitle("设置").addLeftText("返回", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent();
-//                intent.putExtra("isChange", isChange);
-//                setResult(2, intent);
-//                finish();
                 quiet();
             }
         });
@@ -94,10 +91,6 @@ public class MiddleRaceSettingActivity extends BaseTitleActivity {
 
     @Override
     public void onBackPressed() {
-//        Intent intent = new Intent();
-//        intent.putExtra("isChange", isChange);
-//        setResult(2, intent);
-//        finish();
         quiet();
     }
 

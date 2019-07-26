@@ -29,12 +29,6 @@ public class ResultDisplayUtils {
         Item item = TestConfigs.sCurrentItem;
         int digital = item.getDigital();
         int carrryMode = item.getCarryMode();
-        //中长跑项目全部加1
-        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
-            digital++;
-            carrryMode++;
-        }
-
         return ResultDisplayTools.getStrResultForDisplay(item.getMachineCode(), dbResult,
                 digital,
                 carrryMode,

@@ -1,7 +1,6 @@
 package com.feipulai.exam.db;
 
 import android.database.Cursor;
-import android.support.v7.util.SortedList;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -47,7 +46,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.feipulai.exam.activity.MiddleDistanceRace.TimingBean.GROUP_FINISH;
 
@@ -1455,10 +1453,18 @@ public class DBManager {
                 .list();
     }
 
-    public RoundResult queryResultByStudentCode(String studentCode, String itemCode) {
+    /**
+     * 中长跑查询成绩
+     * @param studentCode
+     * @param itemCode
+     * @param groupId
+     * @return
+     */
+    public RoundResult queryResultByStudentCode(String studentCode, String itemCode, Long groupId) {
         return roundResultDao.queryBuilder()
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
+                .where(RoundResultDao.Properties.GroupId.eq(groupId))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .unique();
     }
