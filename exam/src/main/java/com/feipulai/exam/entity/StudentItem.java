@@ -19,7 +19,9 @@ import org.greenrobot.greendao.annotation.NotNull;
         }
 )
 public class StudentItem {
-
+    public static final int EXAM_NORMAL = 0;
+    public static final int EXAM_DELAYED = 1;
+    public static final int EXAM_MAKE = 2;
     @Id(autoincrement = true)
     private Long id;//学生项目ID
     @NotNull
@@ -45,24 +47,24 @@ public class StudentItem {
         this.scheduleNo = scheduleNo;
     }
 
-@Generated(hash = 1667857632)
-public StudentItem(Long id, @NotNull String studentCode, @NotNull String itemCode, int machineCode, int studentType, int examType,
-        String scheduleNo, String remark1, String remark2, String remark3) {
-    this.id = id;
-    this.studentCode = studentCode;
-    this.itemCode = itemCode;
-    this.machineCode = machineCode;
-    this.studentType = studentType;
-    this.examType = examType;
-    this.scheduleNo = scheduleNo;
-    this.remark1 = remark1;
-    this.remark2 = remark2;
-    this.remark3 = remark3;
-}
+    @Generated(hash = 1667857632)
+    public StudentItem(Long id, @NotNull String studentCode, @NotNull String itemCode, int machineCode, int studentType, int examType,
+                       String scheduleNo, String remark1, String remark2, String remark3) {
+        this.id = id;
+        this.studentCode = studentCode;
+        this.itemCode = itemCode;
+        this.machineCode = machineCode;
+        this.studentType = studentType;
+        this.examType = examType;
+        this.scheduleNo = scheduleNo;
+        this.remark1 = remark1;
+        this.remark2 = remark2;
+        this.remark3 = remark3;
+    }
 
-@Generated(hash = 383807586)
-public StudentItem() {
-}
+    @Generated(hash = 383807586)
+    public StudentItem() {
+    }
 
     @Override
     public String toString() {
@@ -80,83 +82,83 @@ public StudentItem() {
                 '}';
     }
 
-public Long getId() {
-    return this.id;
-}
+    public Long getId() {
+        return this.id;
+    }
 
-public void setId(Long id) {
-    this.id = id;
-}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-public String getStudentCode() {
-    return this.studentCode;
-}
+    public String getStudentCode() {
+        return this.studentCode;
+    }
 
-public void setStudentCode(String studentCode) {
-    this.studentCode = studentCode;
-}
+    public void setStudentCode(String studentCode) {
+        this.studentCode = studentCode;
+    }
 
-public String getItemCode() {
-    return this.itemCode;
-}
+    public String getItemCode() {
+        return this.itemCode;
+    }
 
-public void setItemCode(String itemCode) {
-    this.itemCode = itemCode;
-}
+    public void setItemCode(String itemCode) {
+        this.itemCode = itemCode;
+    }
 
-public int getMachineCode() {
-    return this.machineCode;
-}
+    public int getMachineCode() {
+        return this.machineCode;
+    }
 
-public void setMachineCode(int machineCode) {
-    this.machineCode = machineCode;
-}
+    public void setMachineCode(int machineCode) {
+        this.machineCode = machineCode;
+    }
 
-public int getStudentType() {
-    return this.studentType;
-}
+    public int getStudentType() {
+        return this.studentType;
+    }
 
-public void setStudentType(int studentType) {
-    this.studentType = studentType;
-}
+    public void setStudentType(int studentType) {
+        this.studentType = studentType;
+    }
 
-public int getExamType() {
-    return this.examType;
-}
+    public int getExamType() {
+        return this.examType;
+    }
 
-public void setExamType(int examType) {
-    this.examType = examType;
-}
+    public void setExamType(int examType) {
+        this.examType = examType;
+    }
 
-public String getScheduleNo() {
-    return this.scheduleNo;
-}
+    public String getScheduleNo() {
+        return this.scheduleNo;
+    }
 
-public void setScheduleNo(String scheduleNo) {
-    this.scheduleNo = scheduleNo;
-}
+    public void setScheduleNo(String scheduleNo) {
+        this.scheduleNo = scheduleNo;
+    }
 
-public String getRemark1() {
-    return this.remark1;
-}
+    public String getRemark1() {
+        return this.remark1;
+    }
 
-public void setRemark1(String remark1) {
-    this.remark1 = remark1;
-}
+    public void setRemark1(String remark1) {
+        this.remark1 = remark1;
+    }
 
-public String getRemark2() {
-    return this.remark2;
-}
+    public String getRemark2() {
+        return this.remark2;
+    }
 
-public void setRemark2(String remark2) {
-    this.remark2 = remark2;
-}
+    public void setRemark2(String remark2) {
+        this.remark2 = remark2;
+    }
 
-public String getRemark3() {
-    return this.remark3;
-}
+    public String getRemark3() {
+        return this.remark3;
+    }
 
-public void setRemark3(String remark3) {
-    this.remark3 = remark3;
-}
+    public void setRemark3(String remark3) {
+        this.remark3 = remark3;
+    }
 }

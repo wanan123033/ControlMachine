@@ -212,7 +212,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
 
                     case UPDATE_RESULT:
                         activity.updateResult((BaseStuPair) msg.obj);
-                        activity.setFaultVisible(true);
+                        activity.setFaultVisible(activity.jumpSetting.isPenalize());
                         break;
                     case TOAST_SPEAK:
                         activity.toastSpeak("开始测试");
@@ -251,10 +251,21 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
         }
 
         @Override
-        public void CheckDevice(boolean isCheckDevice) {
+        public void CheckDevice(boolean isCheckDevice, int[] brokenLEDs) {
             Log.i("james", "CheckDevice");
             isDisconnect = !isCheckDevice;
+//            if (brokenLEDs != null) {
+//                String ledPostion = "";
+//                for (int brokenLED : brokenLEDs) {
+//                    if (brokenLED != 0) {
+//                        ledPostion += (" " + (brokenLED + 50));
+//                    }
+//                }
+//
+//                ToastUtils.showShort("发现故障点:" + ledPostion);
+//            }
             if (isCheckDevice && standResiltListener.getTestState() == StandResiltListener.TestState.START_TEST) {
+
                 //开始测试
                 SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
             }

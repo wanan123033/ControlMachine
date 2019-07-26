@@ -6,6 +6,7 @@ package com.feipulai.exam.netUtils.netapi;
  */
 
 
+import com.feipulai.exam.bean.BatchBean;
 import com.feipulai.exam.bean.GroupBean;
 import com.feipulai.exam.bean.ItemBean;
 import com.feipulai.exam.bean.ScheduleBean;
@@ -76,11 +77,11 @@ public interface HttpApi {
 
     @POST(GET_STUDENT_ACTION)
     @Headers("Content-Type:application/json;charset=UTF-8")
-    Observable<HttpResult<List<StudentBean>>> getStudent(@Header("Authorization") String token, @Body ResponseParame data);
+    Observable<HttpResult<BatchBean<List<StudentBean>>>> getStudent(@Header("Authorization") String token, @Body ResponseParame data);
 
     @POST(GET_GROUP_ACTION)
     @Headers("Content-Type:application/json;charset=UTF-8")
-    Observable<HttpResult<List<GroupBean>>> getGroupAll(@Header("Authorization") String token, @Body ResponseParame data);
+    Observable<HttpResult<BatchBean<List<GroupBean>>>> getGroupAll(@Header("Authorization") String token, @Body ResponseParame data);
 
     @POST(GET_GROUP_INFO_ACTION)
     @Headers("Content-Type:application/json;charset=UTF-8")

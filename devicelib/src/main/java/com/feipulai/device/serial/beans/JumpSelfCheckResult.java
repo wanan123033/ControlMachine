@@ -45,7 +45,7 @@ public class JumpSelfCheckResult{
 					break;
 				}
 				//每个测量杆的第0个CPU控制34颗LED,每个CPU状态的第1个字节最后2位分别表示第100、99个LED状态
-				if(j == 0){
+					if(j == 0){
 					//第99颗LED被遮挡
 					if((buf[9 + (i * 3 + j) * 5] & 0x01) != 0){
 						//brokenLEDs[b++] = 99;
