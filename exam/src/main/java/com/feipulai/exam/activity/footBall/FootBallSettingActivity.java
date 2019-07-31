@@ -24,7 +24,6 @@ import com.feipulai.device.udp.result.BasketballResult;
 import com.feipulai.device.udp.result.UDPResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
-import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.BaseEvent;
@@ -98,6 +97,12 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
         setting = SharedPrefsUtil.loadFormSource(this, FootBallSetting.class);
         if (setting == null)
             setting = new FootBallSetting();
+
+        ArrayAdapter adapter1 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, useMode);
+        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spTestMode.setAdapter(adapter1);
+        spTestMode.setSelection(setting.getUseMode());
+
         UdpClient.getInstance().setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(), this);
         //设置测试次数
         ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testRound);
@@ -133,7 +138,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spCarryMode.setAdapter(adapter);
         spCarryMode.setSelection(setting.getCarryMode() - 1);
-        viewCarryMode.setVisibility(setting.getResultAccuracy() == 0 ? View.VISIBLE : View.GONE);
+//        viewCarryMode.setVisibility(setting.getResultAccuracy() == 0 ? View.VISIBLE : View.GONE);
 
         etInterceptTime.setText(setting.getInterceptSecond() + "");
         etSensitivity.setText(setting.getSensitivity() + "");
@@ -143,10 +148,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
 
         etPenaltySecond.setText(setting.getPenaltySecond() + "");
 
-        ArrayAdapter adapter1 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, useMode);
-        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spTestMode.setAdapter(adapter1);
-        spTestMode.setSelection(setting.getUseMode());
+
     }
 
     @Override
@@ -244,12 +246,12 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
                 break;
             case R.id.rb_tenths: //十分位
 //                setting.setResultAccuracy(0);
-                viewCarryMode.setVisibility(View.VISIBLE);
+//                viewCarryMode.setVisibility(View.VISIBLE);
 
                 break;
             case R.id.rb_percentile://百分位
 //                setting.setResultAccuracy(1);
-                viewCarryMode.setVisibility(View.GONE);
+//                viewCarryMode.setVisibility(View.GONE);
                 break;
         }
     }

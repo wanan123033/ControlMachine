@@ -27,7 +27,6 @@ import com.feipulai.device.udp.result.BasketballResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.basketball.BasketBallListener;
-import com.feipulai.exam.activity.basketball.BasketBallSettingActivity;
 import com.feipulai.exam.activity.basketball.result.BasketBallTestResult;
 import com.feipulai.exam.activity.basketball.util.TimerUtil;
 import com.feipulai.exam.activity.footBall.adapter.FootBallResultAdapter;
@@ -98,7 +97,6 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
     private int roundNo;
     private TimerUtil timerUtil;
     private int useMode;
-    private boolean enableIllegal;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_individual_basketball;
@@ -125,6 +123,8 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), individualCheckFragment, R.id.ll_individual_check);
 
         UdpClient.getInstance().init(1527);
+        UdpClient.getInstance().setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(), new BasketBallListener(this));
+        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
 
         resultAdapter = new FootBallResultAdapter(resultList, setting);
         rvTestResult.setLayoutManager(new LinearLayoutManager(this));
@@ -262,25 +262,25 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
     @Override
     public void triggerStart(BasketballResult result) {
 
-        Log.i(TAG, "triggerStart:" + result.toString());
-        switch (useMode) {
+        Log.i(TAG,"triggerStart:"+result.toString());
+        switch (useMode){
             case 0://单拦截
                 doTriggerStart();
                 break;
             case 1://"2:起点1:终点"
             case 4://2:起终点1:折返点
-                if (result.gettNum() == 1) { //起点触发
+                if (result.gettNum() == 1){ //起点触发
                     doTriggerStart();
-                } else {
+                }else {
                     UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
                 }
 
                 break;
             case 2://2:终点1:起点
             case 3://2:折返点1:起终点
-                if (result.gettNum() == 2) { //起点触发
+                if (result.gettNum() == 2){ //起点触发
                     doTriggerStart();
-                } else {
+                }else {
                     UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
                 }
                 break;
@@ -302,26 +302,27 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
 
     @Override
     public void getResult(BasketballResult result) {
+        Log.i(TAG,"getResult:"+result.toString());
+
         //非测试不做处理
         if (state == WAIT_FREE || state == WAIT_CHECK_IN) {
             return;
         }
-        switch (useMode) {
+
+        switch (useMode){
 
             case 1://"2:起点1:终点"
-                if (result.gettNum() == 1) {//拦截到了起点
-                    tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ?
-                            2 : TestConfigs.sCurrentItem.getDigital()));
-                } else {//拦截到终点，正常
+                if (result.gettNum() == 1){//拦截到了起点，重新计时
+                    tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()));
+                }else {//拦截到终点，正常
                     doGetResult(result);
                 }
 
                 break;
             case 2://2:终点1:起点
-                if (result.gettNum() == 2) {//拦截到了起点
-                    tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ?
-                            2 : TestConfigs.sCurrentItem.getDigital()));
-                } else {//拦截到终点，正常
+                if (result.gettNum() == 2){//拦截到了起点，重新计时
+                    tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()));
+                }else {//拦截到终点，正常
                     doGetResult(result);
                 }
 
@@ -333,11 +334,12 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                 break;
 
         }
+        tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital()));
+        doGetResult(result);
 
     }
 
     private void doGetResult(BasketballResult result) {
-        enableIllegal = false ;
         pairs.get(0).setDeviceResult(result);
         Student student = pairs.get(0).getStudent();
         int testNo = TestCache.getInstance().getTestNoMap().get(student);
@@ -364,12 +366,20 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
             resultList.get(resultAdapter.getSelectPosition()).setResultState(RoundResult.RESULT_STATE_NORMAL);
         } else {
             machineResultList.add(machineResult);
+            BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
+            int pResult = result.getResult() + (testResult.getPenalizeNum() * setting.getPenaltySecond() * 1000);
+            testResult.setSelectMachineResult(machineResult.getResult());
+            testResult.setResult(pResult);
+            testResult.getMachineResultList().clear();
+            testResult.getMachineResultList().addAll(machineResultList);
+
 //            RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(mStudentItem.getStudentCode());
             RoundResult testRoundResult = DBManager.getInstance().queryRoundByRoundNo(student.getStudentCode(),
                     testNo, roundNo);
-            testRoundResult.setResult(result.getResult());
+            testRoundResult.setPenaltyNum(testResult.getPenalizeNum());
+            testRoundResult.setResult(pResult);
             testRoundResult.setMachineResult(result.getResult());
-
+            Logger.i("拦截更新成绩" + testRoundResult.toString());
             //更新成绩，
             DBManager.getInstance().updateRoundResult(testRoundResult);
             //获取所有成绩设置为非最好成绩
@@ -394,17 +404,12 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
 
 
             showStuInfoResult();
-            resultList.get(resultAdapter.getSelectPosition()).setSelectMachineResult(machineResult.getResult());
-            resultList.get(resultAdapter.getSelectPosition()).setResult(result.getResult());
-            resultList.get(resultAdapter.getSelectPosition()).getMachineResultList().clear();
-            resultList.get(resultAdapter.getSelectPosition()).getMachineResultList().addAll(machineResultList);
+
         }
 
         resultAdapter.notifyDataSetChanged();
         DBManager.getInstance().insterMachineResult(machineResult);
         setOperationUI();
-        tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ?
-                2 : TestConfigs.sCurrentItem.getDigital()));
     }
 
     @Override
@@ -419,14 +424,14 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         if (state == WAIT_BEGIN) {
             state = WAIT_CHECK_IN;
             setOperationUI();
-            tvResult.setText(DateUtil.caculateFormatTime(0, TestConfigs.sCurrentItem.getDigital()));
+            tvResult.setText(DateUtil.caculateFormatTime(0, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital()));
             UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
                     UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
         } else {
             pairs.get(0).setDeviceResult(result);
             state = WAIT_STOP;
             setOperationUI();
-            tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()));
+            tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital()));
             UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
                     UdpLEDUtil.getLedByte(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()), Paint.Align.RIGHT)));
         }
@@ -437,8 +442,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
     @Override
     public void timer(Long time) {
         if (state == TESTING) {
-            tvResult.setText(DateUtil.caculateTime(time * 10, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 :
-                    TestConfigs.sCurrentItem.getDigital(), 0));
+            tvResult.setText(DateUtil.caculateTime(time * 10, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital(), 0));
         }
     }
 
@@ -542,7 +546,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
      */
     private void startProjectSetting() {
         if (!isConfigurableNow()) {
-            IntentUtil.gotoActivityForResult(this, BasketBallSettingActivity.class, 1);
+            IntentUtil.gotoActivityForResult(this, FootBallSettingActivity.class, 1);
         } else {
             toastSpeak("测试中,不允许修改设置");
         }
@@ -564,16 +568,10 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                 if ((state == WAIT_CHECK_IN || state == WAIT_CONFIRM || state == WAIT_STOP) && isExistTestPlace()) {
                     timerUtil.stop();
                     UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
-                    enableIllegal = true ;
                 }
                 break;
             case R.id.txt_illegal_return://违例返回
-                if (enableIllegal){
-                    showIllegalReturnDialog();
-                }else {
-                    toastSpeak("成绩已测量，不能违规返回");
-                }
-
+                showIllegalReturnDialog();
                 break;
             case R.id.txt_continue_run://继续运行
                 UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(3));
@@ -624,9 +622,23 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                     prepareForCheckIn();
                     UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
                     txtDeviceStatus.setText("空闲");
+                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(1,
+                            UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
+                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
+                            UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
                 }
 
                 break;
+        }
+    }
+
+    private void sleep() {
+
+        try {
+            //两个指令相间隔100MS
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -976,6 +988,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                 .setPositiveButton("确认", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        timerUtil.stop();
                         BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
                         List<MachineResult> machineResultList = testResult.getMachineResultList();
                         if (machineResultList != null && machineResultList.size() > 0) {
@@ -998,15 +1011,6 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                 })
                 .setNegativeButton("取消", null)
                 .show();
-    }
-
-    private void sleep() {
-        try {
-            //两个指令相间隔100MS
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -1034,8 +1038,8 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                 txtStopTiming.setEnabled(true);
                 break;
             case TESTING:
-                txtWaiting.setEnabled(false);
                 txtIllegalReturn.setEnabled(true);
+                txtWaiting.setEnabled(false);
                 txtContinueRun.setEnabled(false);
                 txtStopTiming.setEnabled(true);
                 break;
