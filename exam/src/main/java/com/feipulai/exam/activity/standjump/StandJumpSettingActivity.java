@@ -45,7 +45,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
 
-import static com.feipulai.device.serial.beans.JumpSelfCheckResult.NEED_CHANGE;
+import static com.feipulai.device.serial.beans.JumpSelfCheckResult.NORMAL;
 
 
 /**
@@ -432,15 +432,42 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
                     case SerialConfigs.JUMP_SELF_CHECK_RESPONSE://立地跳远自检失败回调
                         JumpSelfCheckResult result = (JumpSelfCheckResult) msg.obj;
                         Log.i("james", "JUMP_SELF_CHECK_RESPONSE");
-                        if (result.getTerminalCondition() == NEED_CHANGE) {
-                            Log.i("james", "JUMP_SELF_CHECK_RESPONSE NEED_CHANGE");
-                            activity.isDisconnect = true;
-                            isDialogShow = true;
-                        } else {
+                        if (result.getTerminalCondition() == NORMAL) {
                             activity.isDisconnect = false;
                             isDialogShow = false;
                             activity.toastSpeak("设备连接成功");
+                        } else {
+                            activity.isDisconnect = false;
+                            isDialogShow = false;
+                            String ledPostion = "";
+                            for (int brokenLED : result.getBrokenLEDs()) {
+                                if (brokenLED != 0) {
+                                    ledPostion += (" " + (brokenLED + 50));
+                                }
+                            }
+                            activity.toastSpeak("发现故障点:" + ledPostion);
                         }
+//                        if (result.getTerminalCondition() == NEED_CHANGE) {
+//                            Log.i("james", "JUMP_SELF_CHECK_RESPONSE NEED_CHANGE");
+//                            activity.isDisconnect = false;
+//                            isDialogShow = false;
+//                            activity.toastSpeak("测量垫已损坏,请更换测量垫");
+//                        } else if (result.getTerminalCondition() == HAS_BROKEN_POINTS) {
+//                            activity.isDisconnect = false;
+//                            isDialogShow = false;
+//                            String ledPostion = "";
+//                            for (int brokenLED : result.getBrokenLEDs()) {
+//                                if (brokenLED != 0) {
+//                                    ledPostion += (" "+(brokenLED + 50) );
+//                                }
+//                            }
+//                            activity.toastSpeak("发现故障点:" + ledPostion);
+//
+//                        } else {
+//                            activity.isDisconnect = false;
+//                            isDialogShow = false;
+//                            activity.toastSpeak("设备连接成功");
+//                        }
                         break;
                     case SerialConfigs.JUMP_SELF_CHECK_RESPONSE_Simple://立地跳远自检成功回调
                         Log.i("james", "JUMP_SELF_CHECK_RESPONSE_Simple");

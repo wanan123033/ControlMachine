@@ -28,13 +28,12 @@ public class StringChineseUtil {
     /**
      * 验证合法文件名称
      *
-     * @param name
+     * @param fileName
      * @return
      */
-    public static boolean patternFileName(String name) {
-        Pattern p = Pattern
-                .compile("\\w+");
-        Matcher m = p.matcher(name);
+    public static boolean patternFileName(String fileName) {
+        Pattern pattern = Pattern.compile("[\\s\\\\/:\\*\\?\\\"<>\\|]");
+        Matcher m = pattern.matcher(fileName);
         return m.matches();
     }
 }

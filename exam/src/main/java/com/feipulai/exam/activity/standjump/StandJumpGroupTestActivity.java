@@ -195,7 +195,7 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
 
                     case UPDATE_RESULT:
                         activity.updateTestResult((BaseStuPair) msg.obj);
-                        activity.setFaultEnable(true);
+                        activity.setFaultVisible(activity.jumpSetting.isPenalize());
                         break;
                 }
             }
@@ -234,8 +234,18 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
         }
 
         @Override
-        public void CheckDevice(boolean isCheckDevice) {
+        public void CheckDevice(boolean isCheckDevice, int[] brokenLEDs) {
             Log.i("james", "CheckDevice");
+//            if (brokenLEDs != null) {
+//                String ledPostion = "";
+//                for (int brokenLED : brokenLEDs) {
+//                    if (brokenLED != 0) {
+//                        ledPostion += (" " + (brokenLED + 50));
+//                    }
+//                }
+//
+//                ToastUtils.showShort("发现故障点:" + ledPostion);
+//            }
             isDisconnect = !isCheckDevice;
             if (isCheckDevice && standResiltListener.getTestState() == StandResiltListener.TestState.START_TEST) {
                 //开始测试

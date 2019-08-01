@@ -19,6 +19,7 @@ import static com.feipulai.device.serial.SerialConfigs.JUMP_SCORE_RESPONSE;
 import static com.feipulai.device.serial.SerialConfigs.JUMP_SELF_CHECK_RESPONSE;
 import static com.feipulai.device.serial.SerialConfigs.JUMP_SELF_CHECK_RESPONSE_Simple;
 import static com.feipulai.device.serial.SerialConfigs.JUMP_START_RESPONSE;
+import static com.feipulai.device.serial.beans.JumpSelfCheckResult.HAS_BROKEN_POINTS;
 import static com.feipulai.device.serial.beans.JumpSelfCheckResult.NEED_CHANGE;
 
 /**
@@ -65,21 +66,29 @@ public class StandResiltListener implements SerialDeviceManager.RS232ResiltListe
                     if (testState != TestState.WAIT_RESULT) {
                         testState = TestState.UN_STARTED;
                     }
-                    //设置当前设置为不可用断开状态
-                    handlerInterface.getDeviceState(new BaseDeviceState(BaseDeviceState.STATE_ERROR, 1));
-                    //测量垫检测失败
-                    handlerInterface.CheckDevice(false);
-                } else {
+//                    //设置当前设置为不可用断开状态
+//                    handlerInterface.getDeviceState(new BaseDeviceState(BaseDeviceState.STATE_ERROR, 1));
+//                    //测量垫检测失败
+//                    handlerInterface.CheckDevice(false, result.getBrokenLEDs());
+
                     //设置当前设置
                     handlerInterface.getDeviceState(new BaseDeviceState(BaseDeviceState.STATE_FREE, 1));
-                    handlerInterface.CheckDevice(true);
+                    handlerInterface.CheckDevice(true, result.getBrokenLEDs());
+                } else if (result.getTerminalCondition() == HAS_BROKEN_POINTS) {
+                    //设置当前设置
+                    handlerInterface.getDeviceState(new BaseDeviceState(BaseDeviceState.STATE_FREE, 1));
+                    handlerInterface.CheckDevice(true, result.getBrokenLEDs());
+                }else{
+                    //测量垫检测通过
+                    handlerInterface.CheckDevice(true, null);
+                    handlerInterface.getDeviceState(new BaseDeviceState(BaseDeviceState.STATE_FREE, 1));
                 }
                 break;
 
             case JUMP_SELF_CHECK_RESPONSE_Simple:
                 Log.i("james", "JUMP_SELF_CHECK_RESPONSE_Simple received");
                 //测量垫检测通过
-                handlerInterface.CheckDevice(true);
+                handlerInterface.CheckDevice(true, null);
                 //设置当前设置
                 handlerInterface.getDeviceState(new BaseDeviceState(BaseDeviceState.STATE_FREE, 1));
                 break;
@@ -178,7 +187,7 @@ public class StandResiltListener implements SerialDeviceManager.RS232ResiltListe
          * 检测设备 true 正常 false 故障
          */
 
-        void CheckDevice(boolean isCheckDevice);
+        void CheckDevice(boolean isCheckDevice, int[] brokenLEDs);
 
         /**
          * 开始测试

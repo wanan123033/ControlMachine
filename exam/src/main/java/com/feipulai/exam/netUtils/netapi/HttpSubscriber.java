@@ -10,6 +10,7 @@ import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.bean.BatchBean;
 import com.feipulai.exam.bean.GroupBean;
 import com.feipulai.exam.bean.ItemBean;
 import com.feipulai.exam.bean.RoundResultBean;
@@ -302,23 +303,29 @@ public class HttpSubscriber {
 
     /**
      * 获取当前项目考生
+     *
+     * @param itemCode
+     * @param batch
+     * @param examType
      */
-    public void getItemStudent(String itemCode) {
+    public void getItemStudent(final String itemCode, int batch, final int examType) {
         Map<String, Object> parameData = new HashMap<>();
         parameData.put("examItemCode", itemCode);
-        Observable<HttpResult<List<StudentBean>>> observable = HttpManager.getInstance().getHttpApi().getStudent("bearer " + MyApplication.TOKEN,
+        parameData.put("batch", batch);
+        parameData.put("examType", examType);
+        Observable<HttpResult<BatchBean<List<StudentBean>>>> observable = HttpManager.getInstance().getHttpApi().getStudent("bearer " + MyApplication.TOKEN,
                 CommonUtils.encryptQuery(STUDENT_BIZ + "", parameData));
-        HttpManager.getInstance().toSubscribe(observable, new RequestSub<List<StudentBean>>(new OnResultListener<List<StudentBean>>() {
+        HttpManager.getInstance().toSubscribe(observable, new RequestSub<BatchBean<List<StudentBean>>>(new OnResultListener<BatchBean<List<StudentBean>>>() {
             @Override
-            public void onSuccess(List<StudentBean> result) {
+            public void onSuccess(BatchBean<List<StudentBean>> result) {
                 Set<String> supplements = new HashSet<>();// 补考考生考号集合
                 Logger.i("getItemStudent" + result.toString());
-                if (result == null)
+                if (result == null || result.getDataInfo() == null)
                     return;
                 final List<Student> studentList = new ArrayList<>();
                 final List<StudentItem> studentItemList = new ArrayList<>();
 
-                for (StudentBean studentBean : result) {
+                for (StudentBean studentBean : result.getDataInfo()) {
                     if (studentBean.getExamType() != 2 && supplements.contains(studentBean.getStudentCode())) {
                         // 已经是补考的数据,有新的相同的数据过来,但是不是补考状态,不处理
                         continue;
@@ -348,8 +355,15 @@ public class HttpSubscriber {
                 SettingHelper.updateSettingCache(SettingHelper.getSystemSetting());
                 DBManager.getInstance().insertStudentList(studentList);
                 DBManager.getInstance().insertStuItemList(studentItemList);
-                if (onRequestEndListener != null)
-                    onRequestEndListener.onSuccess(STUDENT_BIZ);
+
+                if (result.getBatch() < result.getBatchTotal()) {
+                    getItemStudent(itemCode, result.getBatch() + 1, examType);
+                } else {
+                    if (onRequestEndListener != null)
+                        onRequestEndListener.onSuccess(STUDENT_BIZ);
+                }
+
+
             }
 
             @Override
@@ -367,22 +381,24 @@ public class HttpSubscriber {
     /**
      * 获取分组信息
      */
-    public void getItemGroupAll(final String itemCode, String scheduleNo) {
+    public void getItemGroupAll(final String itemCode, final String scheduleNo, int batch, final int examType) {
         Map<String, Object> parameData = new HashMap<>();
         parameData.put("examItemCode", itemCode);
         parameData.put("scheduleNo", scheduleNo);
-        Observable<HttpResult<List<GroupBean>>> observable = HttpManager.getInstance().getHttpApi().getGroupAll("bearer " + MyApplication.TOKEN,
+        parameData.put("batch", batch);
+        parameData.put("examType", examType);
+        Observable<HttpResult<BatchBean<List<GroupBean>>>> observable = HttpManager.getInstance().getHttpApi().getGroupAll("bearer " + MyApplication.TOKEN,
                 CommonUtils.encryptQuery(GROUP_BIZ + "", parameData));
-        HttpManager.getInstance().toSubscribe(observable, new RequestSub<List<GroupBean>>(new OnResultListener<List<GroupBean>>() {
+        HttpManager.getInstance().toSubscribe(observable, new RequestSub<BatchBean<List<GroupBean>>>(new OnResultListener<BatchBean<List<GroupBean>>>() {
             @Override
-            public void onSuccess(List<GroupBean> result) {
+            public void onSuccess(BatchBean<List<GroupBean>> result) {
                 Logger.i("getItemGroupAll====>" + result.toString());
-                if (result == null)
+                if (result == null || result.getDataInfo() == null)
                     return;
                 final List<Group> groupList = new ArrayList<>();
                 final List<GroupItem> groupItemList = new ArrayList<>();
 
-                for (GroupBean groupBean : result) {
+                for (GroupBean groupBean : result.getDataInfo()) {
                     //int groupType, String sortName, int groupNo, String scheduleNo,String itemCode, int examType, int isTestComplete
                     Group group = new Group(groupBean.getGroupType(), groupBean.getSortName(), groupBean.getGroupNo()
                             , groupBean.getScheduleNo(), itemCode, groupBean.getExamType(), 0);
@@ -401,8 +417,14 @@ public class HttpSubscriber {
 
                 DBManager.getInstance().insertGroupList(groupList);
                 DBManager.getInstance().insertGroupItemList(groupItemList);
-                if (onRequestEndListener != null)
-                    onRequestEndListener.onSuccess(GROUP_BIZ);
+                if (result.getBatch() < result.getBatchTotal()) {
+                    getItemGroupAll(itemCode, scheduleNo, result.getBatch() + 1, examType);
+                } else {
+                    if (onRequestEndListener != null)
+                        onRequestEndListener.onSuccess(GROUP_BIZ);
+                }
+
+
             }
 
             @Override

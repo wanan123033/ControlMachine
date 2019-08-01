@@ -33,7 +33,7 @@ public class ServerMessage {
      *
      * @param context
      */
-    public static void downloadData(final Context context) {
+    public static void downloadData(final Context context, final int examType) {
         itemList = null;
         final HttpSubscriber subscriber = new HttpSubscriber();
         subscriber.setOnRequestEndListener(new HttpSubscriber.OnRequestEndListener() {
@@ -51,21 +51,21 @@ public class ServerMessage {
                         if (itemList != null) {
                             for (int i = 0; i < itemList.size(); i++) {
                                 if (!TextUtils.isEmpty(itemList.get(i).getItemCode())) {
-                                    subscriber.getItemStudent(itemList.get(i).getItemCode());
+                                    subscriber.getItemStudent(itemList.get(i).getItemCode(), 1, examType);
                                     position = i + 1;
                                     return;
                                 }
                             }
 
                         } else {
-                            subscriber.getItemStudent(TestConfigs.getCurrentItemCode());
+                            subscriber.getItemStudent(TestConfigs.getCurrentItemCode(),1, examType);
                         }
 
                         break;
                     case HttpSubscriber.STUDENT_BIZ://学生
                         if (itemList != null) {
                             if (position < itemList.size()) {
-                                subscriber.getItemStudent(itemList.get(position).getItemCode());
+                                subscriber.getItemStudent(itemList.get(position).getItemCode(),1, examType);
                                 position++;
                                 return;
                             }
@@ -74,14 +74,14 @@ public class ServerMessage {
                             if (itemList != null) {
                                 for (int i = 0; i < itemList.size(); i++) {
                                     if (!TextUtils.isEmpty(itemList.get(i).getItemCode())) {
-                                        subscriber.getItemGroupAll(itemList.get(i).getItemCode(), "");
+                                        subscriber.getItemGroupAll(itemList.get(i).getItemCode(), "", 1, examType);
                                         position = i + 1;
                                         return;
                                     }
                                 }
 
                             } else {
-                                subscriber.getItemGroupAll(TestConfigs.getCurrentItemCode(), "");
+                                subscriber.getItemGroupAll(TestConfigs.getCurrentItemCode(), "", 1, examType);
                             }
 
                         } else {
@@ -91,7 +91,7 @@ public class ServerMessage {
                     case HttpSubscriber.GROUP_BIZ://分组
                         if (itemList != null) {
                             if (position < itemList.size()) {
-                                subscriber.getItemGroupAll(itemList.get(position).getItemCode(), "");
+                                subscriber.getItemGroupAll(itemList.get(position).getItemCode(), "", 1, examType);
                                 position++;
                                 return;
                             }

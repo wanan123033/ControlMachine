@@ -38,6 +38,7 @@ import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Item;
+import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.exl.GroupStuItemExLReader;
 import com.feipulai.exam.exl.ResultExlWriter;
 import com.feipulai.exam.exl.StuItemExLReader;
@@ -381,12 +382,21 @@ public class DataManageActivity
                 .setItems(exemType, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        int examType = StudentItem.EXAM_NORMAL;
                         switch (which) {
                             case 0:
-                                OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在下载最新数据...");
-                                ServerMessage.downloadData(DataManageActivity.this);
+                                examType = StudentItem.EXAM_NORMAL;
+                                break;
+                            case 1:
+                                examType = StudentItem.EXAM_MAKE;
+                                break;
+                            case 2:
+                                examType = StudentItem.EXAM_DELAYED;
                                 break;
                         }
+
+                        OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在下载最新数据...");
+                        ServerMessage.downloadData(DataManageActivity.this, examType);
                     }
                 }).create().show();
     }
@@ -425,7 +435,7 @@ public class DataManageActivity
             public void onClick(DialogInterface dialog, int which) {
                 OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在导出学生成绩...");
                 String text = mEditText.getText().toString().trim();
-                if (!StringChineseUtil.patternFileName(text)) {
+                if (StringChineseUtil.patternFileName(text)) {
                     OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
                     ToastUtils.showShort("文件创建失败,请确保输入文件名合法(中文、字母、数字和下划线),且不存在已有文件");
                     return;
