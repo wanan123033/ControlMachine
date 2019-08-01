@@ -103,4 +103,5 @@ public class SharedPrefsConfigs {
 
     public static final String MACHINE_IP = "machine_ip";//连接设备ip
     public static final String MACHINE_PORT = "machine_port";//连接设备端口
+    public static final String MACHINE_SERVER_PORT = "machine_server_port";//本机作为服务器的端口
 }

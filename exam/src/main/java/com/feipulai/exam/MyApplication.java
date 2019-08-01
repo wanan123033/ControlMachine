@@ -8,6 +8,9 @@ import com.feipulai.common.CrashHandler;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.SharedPrefsConfigs;
+import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.LeakReference;
+import com.squareup.leakcanary.LeakTraceElement;
 
 
 public class MyApplication extends MultiDexApplication {
@@ -36,13 +39,14 @@ public class MyApplication extends MultiDexApplication {
         TOKEN = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.TOKEN, "");
 
 
+
         // 初始化工作已经移至mainactivity中,保证尽快进入界面,减少白屏时间
-        // if (LeakCanary.isInAnalyzerProcess(this)) {
-        //     // This process is dedicated to LeakCanary for heap analysis.
-        //     // You should not init your app in this process.
-        //     return;
-        // }
-        // LeakCanary.install(this);
+         if (LeakCanary.isInAnalyzerProcess(this)) {
+             // This process is dedicated to LeakCanary for heap analysis.
+             // You should not init your app in this process.
+             return;
+         }
+         LeakCanary.install(this);
         // Normal app init code...
     }
 

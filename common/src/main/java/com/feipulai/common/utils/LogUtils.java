@@ -40,10 +40,10 @@ public class LogUtils{
 		String encryptLogFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/fair/play/" + logFileName;
 		Logger.addLogAdapter(new EncryptDiskLogAdapter(encryptLogFilePath,TtsConstants.LOG_ENCRYPT_KEY));
 		
-		String rawLogFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/raw_log/" + logFileName;
-		if(logToRaw){
-			Logger.rawLogToFile(rawLogFilePath);
-		}
+//		String rawLogFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/raw_log/" + logFileName;
+//		if(logToRaw){
+//			Logger.rawLogToFile(rawLogFilePath);
+//		}
 	}
 	
 }

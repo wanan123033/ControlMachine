@@ -35,12 +35,10 @@ public abstract class MiddleBaseTitleActivity extends BaseActivity {
         int LayoutID = setLayoutResID();
         initBundle(getIntent().getExtras());
         if (NO_LAYOUT_CONTENT != LayoutID) {
-//            initContentView();
             setTransparent(this);
             setContentView(setLayoutResID());
             ButterKnife.bind(this);
             initViews();
-//            setSystemBarColor();
 
         }
         initData();

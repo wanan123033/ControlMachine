@@ -170,7 +170,7 @@ public class ResultExlWriter extends ExlWriter {
                 } else {
                     Schedule schedule = DBManager.getInstance().getSchedulesByNo(uploadResults.get(j).getSiteScheduleNo());
                     cell = row.createCell(7);
-                    cell.setCellValue(DateUtil.formatTime(Long.valueOf(schedule.getBeginTime()), "yyyy-MM-dd HH:mm:ss"));
+                    cell.setCellValue(DateUtil.formatTime2(Long.valueOf(schedule.getBeginTime()), "yyyy-MM-dd HH:mm:ss"));
                     cell = row.createCell(8);
                     cell.setCellValue(uploadResults.get(j).getGroupNo());
                 }
@@ -187,7 +187,7 @@ public class ResultExlWriter extends ExlWriter {
                     cell = row.createCell(11 + (k * 5) + 2);
                     cell.setCellValue(roundResultBeans.get(k).getPenalty());
                     cell = row.createCell(11 + (k * 5) + 3);
-                    cell.setCellValue(DateUtil.formatTime(Long.valueOf(roundResultBeans.get(k).getTestTime()), "yyyy-MM-dd HH:mm:ss"));
+                    cell.setCellValue(DateUtil.formatTime2(Long.valueOf(roundResultBeans.get(k).getTestTime()), "yyyy-MM-dd HH:mm:ss"));
                     cell = row.createCell(11 + (k * 5) + 4);
                     cell.setCellValue(roundResultBeans.get(k).getStumbleCount());
                     cell = row.createCell(11 + (k * 5) + 5);
