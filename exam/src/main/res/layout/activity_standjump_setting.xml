@@ -17,17 +17,31 @@
         android:paddingRight="20dp"
         android:paddingTop="20dp">
 
-        <TextView
-            android:id="@+id/tv_device_check"
-            android:layout_width="120dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="20dp"
-            android:layout_toLeftOf="@+id/tv_start_test"
-            android:background="@drawable/btn_click_bg"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="终端自检" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_device_check"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:layout_toLeftOf="@+id/tv_start_test"
+                android:background="@drawable/btn_click_bg"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="终端自检" />
+
+            <TextView
+                android:id="@+id/tv_check_data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/tv_scoring"

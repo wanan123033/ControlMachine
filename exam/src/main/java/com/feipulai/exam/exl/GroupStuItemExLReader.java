@@ -133,6 +133,7 @@ public class GroupStuItemExLReader extends ExlReader {
             }
         } else if (codeItem == null && nameItem != null) {
             if (nameItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+                TestConfigs.updateItemFillAll(nameItem, mItemCode);
                 nameItem.setItemCode(mItemCode);
                 DBManager.getInstance().updateItem(nameItem);// 更新项目表中信息
             } else {

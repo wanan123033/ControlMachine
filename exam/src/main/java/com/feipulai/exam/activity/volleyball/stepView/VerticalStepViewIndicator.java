@@ -260,7 +260,7 @@ public class VerticalStepViewIndicator extends View {
     public void setStepList(List<StepBean> stepsBeanList) {
         this.stepBeanList = stepsBeanList;
         mStepNum = stepBeanList.size();
-
+        mCircleCenterPointPositionList = new ArrayList<>();//初始化
         if (stepBeanList != null && stepBeanList.size() > 0) {
             for (int i = 0; i < mStepNum; i++) {
                 StepBean stepsBean = stepBeanList.get(i);

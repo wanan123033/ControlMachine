@@ -2,8 +2,10 @@ package com.feipulai.exam.config;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.text.TextUtils;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceActivity;
@@ -53,7 +55,10 @@ import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
 import com.feipulai.exam.activity.volleyball.VolleyBallSettingActivity;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.db.MachineItemCodeUtil;
+import com.feipulai.exam.entity.Group;
+import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.Item;
+import com.feipulai.exam.entity.MachineResult;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.view.ItemDecideDialogBuilder;
@@ -61,6 +66,7 @@ import com.orhanobut.logger.Logger;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -244,6 +250,96 @@ public class TestConfigs {
             }
         }).show();
         return INIT_MULTI_ITEM_CODE;
+    }
+
+    public static boolean initZCP(List<Item> itemList) {
+        for (Item item : itemList) {
+            if (item.getMachineCode() != ItemDefault.CODE_ZCP) {
+                continue;
+            }
+            Item codeItem = DBManager.getInstance().queryItemByCode(item.getItemCode());
+            Item nameItem = DBManager.getInstance().queryItemByName(item.getItemName());
+
+            if (codeItem != null && nameItem != null) {
+                if (!TextUtils.equals(codeItem.getItemName(), nameItem.getItemName())) {
+                    ToastUtils.showShort("导入失败,导入项目代码已存在,拒绝导入");
+                    Logger.i(TestConfigs.df.format(new Date()) + "---> " + " 导入失败,导入项目代码已存在,拒绝导入");
+                    return false;
+                } else if (codeItem.getMachineCode() != ItemDefault.CODE_ZCP || nameItem.getMachineCode() != ItemDefault.CODE_ZCP) {
+                    Logger.i(TestConfigs.df.format(new Date()) + "---> " + " 导入失败,导入项目机器码错误,拒绝导入");
+                    ToastUtils.showShort("导入失败,导入项目机器码错误,拒绝导入");
+                    return false;
+                }
+            } else if (codeItem == null && nameItem == null) {
+                DBManager.getInstance().insertItem(ItemDefault.CODE_ZCP, item.getItemCode()
+                        , item.getItemName(), "分'秒");
+            } else if (codeItem != null && nameItem == null) {
+                if (codeItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+                    codeItem.setItemName(item.getItemName());
+                    DBManager.getInstance().updateItem(codeItem);// 更新项目表中信息
+                } else {
+                    Logger.i(TestConfigs.df.format(new Date()) + "---> " + " 导入失败,导入项目机器码错误,拒绝导入");
+                    ToastUtils.showShort("导入失败,导入项目机器码错误,拒绝导入");
+                    return false;
+                }
+            } else if (codeItem == null && nameItem != null) {
+                if (nameItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+                    updateItemFillAll(nameItem, item.getItemCode());
+                    nameItem.setItemCode(item.getItemCode());
+                    DBManager.getInstance().updateItem(nameItem);// 更新项目表中信息
+                } else {
+                    ToastUtils.showShort("导入失败,导入项目机器码错误,拒绝导入");
+                    Logger.i(TestConfigs.df.format(new Date()) + "---> " + " 导入失败,导入项目机器码错误,拒绝导入");
+                    return false;
+                }
+
+            }
+
+
+        }
+        return true;
+    }
+
+    public static void updateItemFillAll(Item item, String updateItemCode) {
+        List<RoundResult> roundResults = DBManager.getInstance().queryResultsByItemCode(item.getItemCode());
+        List<StudentItem> studentItems = DBManager.getInstance().querystuItemsByMachineItemCode(item.getMachineCode(), item.getItemCode());
+        List<GroupItem> groupItemList = DBManager.getInstance().queryGroupItemByItemCode(item.getItemCode());
+        List<Group> groupList = DBManager.getInstance().queryGroupByItemCode(item.getItemCode());
+        List<MachineResult> machineResultList = DBManager.getInstance().getMachineResultByItemCode(item.getItemCode());
+
+        if (roundResults != null && roundResults.size() > 0) {
+            for (RoundResult roundResult : roundResults) {
+                roundResult.setItemCode(updateItemCode);
+            }
+            DBManager.getInstance().updateRoundResult(roundResults);
+        }
+        if (studentItems != null && studentItems.size() > 0) {
+            for (StudentItem studentItem : studentItems) {
+                studentItem.setItemCode(updateItemCode);
+            }
+            DBManager.getInstance().updateStudentItem(studentItems);
+        }
+
+        if (groupItemList != null && groupItemList.size() > 0) {
+            for (GroupItem groupItem : groupItemList) {
+                groupItem.setItemCode(updateItemCode);
+            }
+            DBManager.getInstance().updateStudentGroupItems(groupItemList);
+        }
+
+        if (groupList != null && groupList.size() > 0) {
+            for (Group group : groupList) {
+                group.setItemCode(updateItemCode);
+            }
+            DBManager.getInstance().updateGroups(groupList);
+        }
+
+        if (machineResultList != null && machineResultList.size() > 0) {
+            for (MachineResult machineResult : machineResultList) {
+                machineResult.setItemCode(updateItemCode);
+            }
+            DBManager.getInstance().updateMachineResults(machineResultList);
+        }
     }
 
     static {
