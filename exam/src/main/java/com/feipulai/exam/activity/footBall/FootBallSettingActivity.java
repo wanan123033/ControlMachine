@@ -1,6 +1,5 @@
 package com.feipulai.exam.activity.footBall;
 
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -29,6 +28,7 @@ import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.db.DBManager;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
@@ -36,7 +36,6 @@ import org.greenrobot.eventbus.EventBus;
 import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
 
@@ -84,7 +83,10 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
     private static final int MSG_DISCONNECT = 0X101;
     //3秒内检测IP是否可以
     private volatile boolean isDisconnect;
-
+    /**
+     * 点击是否为连接
+     */
+    private boolean isClickConnect;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_basketball_setting;
@@ -104,6 +106,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
         spTestMode.setSelection(setting.getUseMode());
 
         UdpClient.getInstance().setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(), this);
+
         //设置测试次数
         ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testRound);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -137,18 +140,27 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, carryMode);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spCarryMode.setAdapter(adapter);
-        spCarryMode.setSelection(setting.getCarryMode() - 1);
-//        viewCarryMode.setVisibility(setting.getResultAccuracy() == 0 ? View.VISIBLE : View.GONE);
+        spCarryMode.setSelection(TestConfigs.sCurrentItem.getCarryMode() > 0 ? TestConfigs.sCurrentItem.getCarryMode() - 1 : 0);
+//        viewCarryMode.setVisibility(getAccuracy() == 1 ? View.VISIBLE : View.GONE);
 
         etInterceptTime.setText(setting.getInterceptSecond() + "");
         etSensitivity.setText(setting.getSensitivity() + "");
         etHostIp.setText(setting.getHostIp());
         etPort.setText(setting.getPost() + "");
-        rgAccuracy.check(setting.getResultAccuracy() == 0 ? R.id.rb_tenths : R.id.rb_percentile);
+        rgAccuracy.check(getAccuracy() == 1 ? R.id.rb_tenths : R.id.rb_percentile);
 
         etPenaltySecond.setText(setting.getPenaltySecond() + "");
 
+    }
 
+    private int getAccuracy() {
+        switch (TestConfigs.sCurrentItem.getDigital()) {
+            case 1:
+            case 2:
+                return TestConfigs.sCurrentItem.getDigital();
+            default:
+                return 2;
+        }
     }
 
     @Override
@@ -158,9 +170,9 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
 
     @Override
     public void onDataArrived(UDPResult result) {
+        isDisconnect = false;
         switch (result.getType()) {
             case UDPBasketBallConfig.CMD_GET_STATUS_RESPONSE:
-                isDisconnect = false;
                 setting.setHostIp(etHostIp.getText().toString());
                 setting.setPost(Integer.valueOf(etPort.getText().toString()));
                 ToastUtils.showShort("连接成功");
@@ -172,7 +184,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
             case UDPBasketBallConfig.CMD_SET_PRECISION_RESPONSE:
                 ToastUtils.showShort("设置成功");
                 BasketballResult basketballResult = (BasketballResult) result.getResult();
-                setting.setResultAccuracy(basketballResult.getuPrecision());
+                TestConfigs.sCurrentItem.setDigital(basketballResult.getuPrecision() == 0 ? 1 : 2);
                 break;
             case UDPBasketBallConfig.CMD_SET_BLOCKERTIME_RESPONSE:
                 ToastUtils.showShort("设置成功");
@@ -189,7 +201,9 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
             setting.setPenaltySecond(Integer.valueOf(etPenaltySecond.getText().toString()));
         EventBus.getDefault().post(new BaseEvent(EventConfigs.ITEM_SETTING_UPDATE));
         SharedPrefsUtil.save(this, setting);
+        DBManager.getInstance().updateItem(TestConfigs.sCurrentItem);
         Logger.i("保存设置:" + setting.toString());
+        EventBus.getDefault().post(new BaseEvent(EventConfigs.UPDATE_TEST_RESULT));
         super.finish();
     }
 
@@ -244,15 +258,15 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
             case R.id.rb_continuous://连续测试
                 setting.setTestPattern(0);
                 break;
-            case R.id.rb_tenths: //十分位
+//            case R.id.rb_tenths: //十分位
 //                setting.setResultAccuracy(0);
 //                viewCarryMode.setVisibility(View.VISIBLE);
-
-                break;
-            case R.id.rb_percentile://百分位
+//
+//                break;
+//            case R.id.rb_percentile://百分位
 //                setting.setResultAccuracy(1);
 //                viewCarryMode.setVisibility(View.GONE);
-                break;
+//                break;
         }
     }
 
@@ -286,6 +300,9 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
                 }
                 UdpClient.getInstance().setHostIpPost(setting.getHostIp(), setting.getPost());
                 UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_T(Integer.valueOf(etSensitivity.getText().toString())));
+                isDisconnect = true;
+                isClickConnect = false;
+                mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 2000);
                 break;
             case R.id.tv_ip_connect://连接
                 if (TextUtils.isEmpty(etHostIp.getText().toString())) {
@@ -300,7 +317,8 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
                 UdpClient.getInstance().setHostIpPost(etHostIp.getText().toString(), Integer.valueOf(etPort.getText().toString()));
                 UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_GET_STATUS);
                 isDisconnect = true;
-                mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
+                isClickConnect = true;
+                mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 2000);
                 break;
             case R.id.tv_accuracy_use:
                 switch (rgAccuracy.getCheckedRadioButtonId()) {
@@ -311,15 +329,11 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
                         UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(1));
                         break;
                 }
+                isDisconnect = true;
+                isClickConnect = false;
+                mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 2000);
                 break;
         }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
     }
 
 
@@ -336,7 +350,11 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
             super.handleMessage(msg);
             FootBallSettingActivity activity = mActivityWeakReference.get();
             if (activity.isDisconnect) {
-                activity.toastSpeak("连接失败");
+                if (activity.isClickConnect) {
+                    activity.toastSpeak("连接失败");
+                } else {
+                    activity.toastSpeak("设备未连接，设置失败");
+                }
             }
         }
     }
