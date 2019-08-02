@@ -103,7 +103,7 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
 
     private void initEvent() {
         //默认为服务的设置
-        carry_mode = TestConfigs.sCurrentItem.getCarryMode();
+        carry_mode = TestConfigs.sCurrentItem.getCarryMode()==0?1:TestConfigs.sCurrentItem.getCarryMode();
         digital = TestConfigs.sCurrentItem.getDigital()==0?1:TestConfigs.sCurrentItem.getDigital();
 
         //如果本地修改了设置则本地设置优先

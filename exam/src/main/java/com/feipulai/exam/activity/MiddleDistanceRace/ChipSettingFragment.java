@@ -152,6 +152,8 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
         Log.i("ChipSettingFragment", "--------------onDestroyView");
         unbinder.unbind();
         isFinish = true;
+        //停止计时命令
+        nettyClient.sendMsgToServer(TcpConfig.getCmdEndTiming(), null);
         DBManager.getInstance().updateChipInfo(chipInfos);
         mHandler.removeMessages(2);
         if (nettyClient != null)

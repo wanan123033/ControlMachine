@@ -60,7 +60,7 @@ public class ScheduleAdapter extends BaseAdapter {
         if (TextUtils.equals(schedule.getScheduleNo(), "-1")) {
             holder.txtSchedule.setText("未分配(请选择正确日程)");
         } else {
-            holder.txtSchedule.setText("第" + schedule.getScheduleNo() + "场  " + DateUtil.formatTime(Long.valueOf(schedule.getBeginTime()), "yyyy-MM-dd HH:mm:ss"));
+            holder.txtSchedule.setText("第" + schedule.getScheduleNo() + "场  " + DateUtil.formatTime2(Long.valueOf(schedule.getBeginTime()), "yyyy-MM-dd HH:mm:ss"));
         }
 
 

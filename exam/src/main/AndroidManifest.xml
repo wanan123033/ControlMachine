@@ -24,7 +24,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.footBall.FootBallGroupActivity"></activity>
+        <activity android:name=".activity.sargent_jump.SargentJumpMoreActivity"></activity>
+        <activity android:name=".activity.footBall.FootBallGroupActivity" />
         <activity android:name=".activity.sargent_jump.SargentItemSelectActivity" />
         <activity
             android:name=".activity.SplashScreenActivity"

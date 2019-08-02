@@ -169,8 +169,10 @@ public class DBManager {
                     insertItem(machineCode, "足球运球", "分'秒");
                     break;
                 case ItemDefault.CODE_ZCP:
-                    insertItem(machineCode, "800米", "分'秒");
-                    insertItem(machineCode, "1000米", "分'秒");
+//                    insertItem(machineCode, "800米", "分'秒");
+//                    insertItem(machineCode, "1000米", "分'秒");
+                    insertMiddleRaceItem(machineCode, "800米", "分'秒");
+                    insertMiddleRaceItem(machineCode, "1000米", "分'秒");
                     break;
 
             }
@@ -857,6 +859,16 @@ public class DBManager {
         item.setMachineCode(machineCode);
         item.setItemName(itemName);
         item.setUnit(unit);
+        itemDao.insert(item);
+    }
+
+    private void insertMiddleRaceItem(int machineCode, String itemName, String unit) {
+        Item item = new Item();
+        item.setMachineCode(machineCode);
+        item.setItemName(itemName);
+        item.setUnit(unit);
+        item.setCarryMode(1);
+        item.setDigital(2);
         itemDao.insert(item);
     }
 
@@ -1970,11 +1982,16 @@ public class DBManager {
         return scheduleDao.insertOrReplace(schedule);
     }
 
+    public Schedule insertSchedule(Schedule schedule) {
+        long id = scheduleDao.insertOrReplace(schedule);
+        return scheduleDao.queryBuilder().where(ScheduleDao.Properties.Id.eq(id)).unique();
+    }
+
     public void insertSchedulesList(List<Schedule> scheduleList) {
         scheduleDao.insertOrReplaceInTx(scheduleList);
     }
 
-    private void insertItemSchedule(ItemSchedule itemSchedule) {
+    public void insertItemSchedule(ItemSchedule itemSchedule) {
         itemScheduleDao.insertOrReplace(itemSchedule);
     }
 
