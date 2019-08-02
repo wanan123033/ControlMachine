@@ -96,9 +96,10 @@ dependencies {
     }//popupwindow
 
 //    compile 'com.github.hackware1993:MagicIndicator:1.5.0'
-//    compile 'com.squareup.leakcanary:leakcanary-android:1.6.3'
-//    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.3'
-//    // Optional, if you use support library fragments:
+    debugCompile "com.squareup.leakcanary:leakcanary-android:1.6.3"
+    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.6.3"
+    testCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.6.3"
+    // Optional, if you use support library fragments:
 //    compile 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.3'
 //    compile 'com.kelin.scrollablepanel:library:1.2.0'
 

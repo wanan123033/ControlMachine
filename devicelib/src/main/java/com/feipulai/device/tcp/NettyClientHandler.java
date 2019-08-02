@@ -23,7 +23,7 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
         this.listener = listener;
     }
 
-    //每次给服务端发送的东西， 让服务端知道我们在连接中哎
+    //每次给服务端发送的东西， 让服务端知道我们在连接中
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent) {

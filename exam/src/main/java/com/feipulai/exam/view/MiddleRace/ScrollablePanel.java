@@ -64,9 +64,14 @@ public class ScrollablePanel extends FrameLayout {
 
     public void notifyDataSetChanged() {
         if (panelLineAdapter != null) {
-            setUpFirstItemView(panelAdapter);
+//            setUpFirstItemView(panelAdapter);
             panelLineAdapter.notifyDataChanged();
         }
+    }
+
+
+    public void notifyDataSetchanged(int position) {
+        panelLineAdapter.notifyItemChanged(position);
     }
 
     /**
@@ -88,7 +93,7 @@ public class ScrollablePanel extends FrameLayout {
     /**
      * Adapter used to bind dataSet to cell View that are displayed within every row of .
      */
-    private static class PanelLineItemAdapter extends RecyclerView.Adapter {
+    private class PanelLineItemAdapter extends RecyclerView.Adapter {
 
         private PanelAdapter panelAdapter;
         private int row;
@@ -129,7 +134,7 @@ public class ScrollablePanel extends FrameLayout {
     /**
      * Adapter used to bind dataSet to views that are displayed within.
      */
-    private static class PanelLineAdapter extends RecyclerView.Adapter<PanelLineAdapter.ViewHolder> {
+    private class PanelLineAdapter extends RecyclerView.Adapter<PanelLineAdapter.ViewHolder> {
 
         private PanelAdapter panelAdapter;
         private RecyclerView headerRecyclerView;
@@ -137,6 +142,7 @@ public class ScrollablePanel extends FrameLayout {
         private HashSet<RecyclerView> observerList = new HashSet<>();
         private int firstPos = -1;
         private int firstOffset = -1;
+        private PanelLineItemAdapter lineItemAdapter;
 
 
         public PanelLineAdapter(PanelAdapter panelAdapter, RecyclerView contentRV, RecyclerView headerRecyclerView) {
@@ -173,7 +179,7 @@ public class ScrollablePanel extends FrameLayout {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            PanelLineItemAdapter lineItemAdapter = (PanelLineItemAdapter) holder.recyclerView.getAdapter();
+            lineItemAdapter = (PanelLineItemAdapter) holder.recyclerView.getAdapter();
             if (lineItemAdapter == null) {
                 lineItemAdapter = new PanelLineItemAdapter(position + 1, panelAdapter);
                 holder.recyclerView.setAdapter(lineItemAdapter);
@@ -194,7 +200,7 @@ public class ScrollablePanel extends FrameLayout {
 
 
         public void notifyDataChanged() {
-            setUpHeaderRecyclerView();
+//            setUpHeaderRecyclerView();
             notifyDataSetChanged();
         }
 
@@ -259,18 +265,18 @@ public class ScrollablePanel extends FrameLayout {
             });
         }
 
-        private HashSet<RecyclerView> getRecyclerViews() {
-            HashSet<RecyclerView> recyclerViewHashSet = new HashSet<>();
-            recyclerViewHashSet.add(headerRecyclerView);
+//        private HashSet<RecyclerView> getRecyclerViews() {
+//            HashSet<RecyclerView> recyclerViewHashSet = new HashSet<>();
+//            recyclerViewHashSet.add(headerRecyclerView);
+//
+//            for (int i = 0; i < contentRV.getChildCount(); i++) {
+//                recyclerViewHashSet.add((RecyclerView) contentRV.getChildAt(i).findViewById(R.id.recycler_line_list));
+//            }
+//            return recyclerViewHashSet;
+//        }
 
-            for (int i = 0; i < contentRV.getChildCount(); i++) {
-                recyclerViewHashSet.add((RecyclerView) contentRV.getChildAt(i).findViewById(R.id.recycler_line_list));
-            }
-            return recyclerViewHashSet;
-        }
 
-
-        static class ViewHolder extends RecyclerView.ViewHolder {
+        public class ViewHolder extends RecyclerView.ViewHolder {
             public RecyclerView recyclerView;
             public FrameLayout firstColumnItemView;
             public RecyclerView.ViewHolder firstColumnItemVH;

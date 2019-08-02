@@ -23,17 +23,14 @@ public class DateUtil {
      */
     public static String formatTime(long timeMillis, String pattern) {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-        sdf.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));//计时时间换算不需要加8
         return sdf.format(new Date(timeMillis));
     }
 
-    public static String getDeltaT2(long time) {
-//        SimpleDateFormat sf = new SimpleDateFormat("yyyy年MM月dd日 HH时mm分ss秒SSS毫秒");
-//        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd- HH:mm:ss.SSS", Locale.CHINA);
-        SimpleDateFormat sf = new SimpleDateFormat("HH:mm:ss.SSS", Locale.CHINA);
-        Date now = new Date(time);
-        String str = sf.format(now);
-        return str;
+    public static String formatTime2(long timeMillis, String pattern) {
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));//时钟时间换算需要加8
+        return sdf.format(new Date(timeMillis));
     }
 
     /**

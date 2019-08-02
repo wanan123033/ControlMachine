@@ -18,7 +18,11 @@ import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.MiddleDistanceRace.TimingBean;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,7 +56,7 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
 
         void clickTimingCompleteListener(int position, VH holder);
 
-        void clickTimingDelete(int position);
+        void clickTimingDelete(int position,VH holder);
     }
 
     //创建ViewHolder
@@ -87,8 +91,21 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
     @Override
     public void onBindViewHolder(final VH holder, final int position) {
         holder.tvTimingGroup.setText(timingLists.get(position).getItemGroupName());
-        holder.tvTimingTime.setText(timingLists.get(position).getTime() == 0 ? "发令时刻：" : "发令时刻：" + DateUtil.formatTime(timingLists.get(position).getTime(), "yyyy-MM-dd HH:mm:ss.SSS"));
+        holder.tvTimingTime.setText(timingLists.get(position).getTime() == 0 ? "发令时刻：" : "发令时刻：" + DateUtil.formatTime2(timingLists.get(position).getTime(), "yyyy-MM-dd HH:mm:ss.SSS"));
         holder.llItem.setBackgroundResource(timingLists.get(position).getColor());
+
+        holder.timer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+            @Override
+            public void onChronometerTick(Chronometer chronometer) {
+                long time = SystemClock.elapsedRealtime() - chronometer.getBase();
+                Date d = new Date(time);
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.CHINA);
+                sdf.setTimeZone(TimeZone.getTimeZone("GMT+:00:00"));
+                holder.timer.setText(sdf.format(d));
+            }
+        });
+//        holder.timer.setBase(System.currentTimeMillis());
+
         switch (timingLists.get(position).getState()) {
             case TIMING_STATE_NOMAL://初始化状态
                 holder.tvTimingState.setText("空闲");
@@ -150,6 +167,14 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
                 holder.tvTimingState.setText("计时");
                 holder.tvTimingState.setTextColor(Color.WHITE);
                 holder.tvTimingState.setBackgroundResource(R.color.viewfinder_laser);
+
+                holder.btnTimingBack.setEnabled(true);
+                holder.btnTimingBack.setBackgroundResource(R.drawable.btn_background);
+                holder.btnTimingBack.setTextColor(Color.WHITE);
+
+                holder.btnTimingWait.setEnabled(false);
+                holder.btnTimingWait.setBackgroundResource(R.color.grey_A8);
+                holder.btnTimingWait.setTextColor(Color.GRAY);
                 break;
             default:
                 break;
@@ -179,7 +204,7 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
             holder.ivDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    myClickListener.clickTimingDelete(position);
+                    myClickListener.clickTimingDelete(position,holder);
                 }
             });
         }
@@ -187,6 +212,23 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
 
     public void notifyBackGround(VH holder, int flag) {
         switch (flag) {
+            case TIMING_STATE_NOMAL://初始化状态
+                holder.tvTimingState.setText("空闲");
+                holder.tvTimingState.setTextColor(Color.BLACK);
+                holder.tvTimingState.setBackgroundResource(R.color.result_points);
+
+                holder.btnTimingWait.setEnabled(true);
+                holder.btnTimingWait.setBackgroundResource(R.drawable.btn_background);
+                holder.btnTimingWait.setTextColor(Color.WHITE);
+
+                holder.btnTimingBack.setEnabled(false);
+                holder.btnTimingBack.setBackgroundResource(R.color.grey_A8);
+                holder.btnTimingBack.setTextColor(Color.GRAY);
+
+                holder.btnTimingComplete.setEnabled(false);
+                holder.btnTimingComplete.setBackgroundResource(R.color.grey_A8);
+                holder.btnTimingComplete.setTextColor(Color.GRAY);
+                break;
             case TIMING_STATE_WAITING:
                 holder.tvTimingState.setText("等待");
                 holder.btnTimingWait.setEnabled(false);
@@ -242,6 +284,17 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
                 holder.btnTimingComplete.setTextColor(Color.GRAY);
                 break;
             case TIMING_START:
+//                holder.timer.setTextColor(Color.GREEN);
+//                //开始计时后完成计时按钮才可点击
+//
+//                holder.btnTimingComplete.setEnabled(true);
+//                holder.btnTimingComplete.setBackgroundResource(R.drawable.btn_background);
+//                holder.btnTimingComplete.setTextColor(Color.WHITE);
+//
+//                startTiming(holder.timer);
+//                holder.tvTimingState.setText("计时");
+//                holder.tvTimingState.setTextColor(Color.WHITE);
+//                holder.tvTimingState.setBackgroundResource(R.color.viewfinder_laser);
                 break;
             default:
                 break;
@@ -250,8 +303,8 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
 
     private void startTiming(Chronometer time) {
         time.setBase(SystemClock.elapsedRealtime());//计时器清零
-        int hour = (int) ((SystemClock.elapsedRealtime() - time.getBase()) / 1000 / 60);
-        time.setFormat("0" + String.valueOf(hour) + ":%s");
+//        int hour = (int) ((SystemClock.elapsedRealtime() - time.getBase()) / 1000 / 60);
+//        time.setFormat("0" + String.valueOf(hour) + ":%s");
         time.start();
     }
 
