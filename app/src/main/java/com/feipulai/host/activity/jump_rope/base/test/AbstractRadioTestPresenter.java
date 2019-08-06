@@ -15,10 +15,9 @@ import com.feipulai.host.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.host.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.host.activity.jump_rope.bean.TestCache;
 import com.feipulai.host.activity.jump_rope.check.CheckUtils;
-import com.feipulai.host.config.SharedPrefsConfigs;
+import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.entity.Student;
-import com.feipulai.host.utils.SharedPrefsUtil;
 import com.orhanobut.logger.Logger;
 
 import java.util.Arrays;
@@ -60,7 +59,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
 	protected AbstractRadioTestPresenter(Context context, RadioTestContract.View<Setting> view) {
 		this.context = context;
 		this.view = view;
-		hostId = SharedPrefsUtil.getValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.HOST_ID, 1);
+		hostId = SettingHelper.getSystemSetting().getHostId();
 	}
 	
 	@Override

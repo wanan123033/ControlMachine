@@ -6,9 +6,8 @@ import android.view.View;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseActivity;
-import com.feipulai.host.config.SharedPrefsConfigs;
+import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.TestConfigs;
-import com.feipulai.host.utils.SharedPrefsUtil;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -28,7 +27,7 @@ public class LEDSettingActivity extends BaseActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_led_setting);
         ButterKnife.bind(this);
-        hostId = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.HOST_ID, 1);
+        hostId = SettingHelper.getSystemSetting().getHostId();
         mLEDManager = new LEDManager();
     }
 

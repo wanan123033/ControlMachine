@@ -47,7 +47,7 @@
         <activity android:name=".activity.MainActivity"/>
         <activity android:name=".activity.MachineSelectActivity"/>
         <!--<activity android:name=".activity.ItemSelectActivity"/>-->
-        <activity android:name=".activity.SettingActivity"/>
+        <activity android:name=".activity.setting.SettingActivity"/>
         <activity android:name=".activity.LEDSettingActivity"/>
 
         <!--data related-->

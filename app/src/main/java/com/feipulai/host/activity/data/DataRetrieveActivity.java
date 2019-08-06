@@ -380,8 +380,8 @@ public class DataRetrieveActivity extends BaseCheckActivity
 		unregisterReceiver(receiver);
 	}
 	
-	@Override
-	public void onWrongLength(int length, int expectLength) {
-	
-	}
+//	@Override
+//	public void onWrongLength(int length, int expectLength) {
+//
+//	}
 }

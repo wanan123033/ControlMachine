@@ -12,6 +12,7 @@ import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BasePersonFaceIDActivity;
 import com.feipulai.host.activity.base.BaseStuPair;
+import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.activity.vccheck.TestState;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.utils.SharedPrefsUtil;
@@ -150,10 +151,10 @@ public class MedicineBallFaceIDActivity extends BasePersonFaceIDActivity {
 
             //显示结果
             if (fault) {
-                mLEDManager.showString(hostId, "犯规", 5, 1, true, true);
+                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "犯规", 5, 1, true, true);
             } else {
                 String text = result + "cm";
-                mLEDManager.showString(hostId, text, 5, 1, true, true);
+                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), text, 5, 1, true, true);
 
             }
 

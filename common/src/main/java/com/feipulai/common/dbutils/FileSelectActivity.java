@@ -345,7 +345,7 @@ public class FileSelectActivity extends Activity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ActivityCollector.removeActivity(this);
+        ActivityCollector.getInstance().onDestroy(this);
         unregisterReceiver(receiver);
     }
 

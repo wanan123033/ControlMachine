@@ -3,20 +3,28 @@ package com.feipulai.host.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.feipulai.common.utils.SystemBrightUtils;
+import com.feipulai.common.view.baseToolbar.StatusBarUtil;
+import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseActivity;
 import com.feipulai.host.activity.data.DataManageActivity;
 import com.feipulai.host.activity.data.DataRetrieveActivity;
+import com.feipulai.host.activity.setting.SettingActivity;
+import com.feipulai.host.activity.setting.SettingHelper;
+import com.feipulai.host.activity.setting.SystemSetting;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.config.TestConfigs;
-import com.feipulai.host.utils.FileUtil;
-import com.feipulai.host.utils.SharedPrefsUtil;
-import com.feipulai.host.view.CircleMenuLayout;
-import com.github.lzyzsd.circleprogress.DonutProgress;
+import com.feipulai.host.netUtils.CommonUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,22 +36,15 @@ import butterknife.OnClick;
  */
 public class MainActivity extends BaseActivity{
 
-	@BindView(R.id.id_menu_layout)
-	CircleMenuLayout menuLayout;
-	@BindView(R.id.donut_progress)
-	DonutProgress donutProgress;
+	@BindView(R.id.img_code)
+	ImageView imgCode;
+	@BindView(R.id.txt_main_title)
+	TextView txtMainTitle;
+	@BindView(R.id.txt_deviceid)
+	TextView txtDeviceId;
+	private boolean mIsExiting;
+	private Intent serverIntent;
 
-	private int hostId;
-	private String itemCode;
-	// private boolean mIsExiting;
-
-	private int[] mItemImgs = new int[]{
-			R.drawable.circle_menu_bg_lin_green,
-			R.drawable.circle_menu_bg_lin_oceanblue,
-			R.drawable.circle_menu_bg_lin_blue,
-			R.drawable.circle_menu_bg_lin_violet,
-			R.drawable.circle_menu_bg_lin_organge,
-			/*R.drawable.circle_menu_bg_lin_yellow*/};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
@@ -51,47 +52,8 @@ public class MainActivity extends BaseActivity{
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
 		RadioManager.getInstance().init();
-		String[] mItemTexts = getResources().getStringArray(R.array.main_function);
-		menuLayout.setMenuItemBgAndTexts(mItemImgs,mItemTexts);
-		menuLayout.setmStartAngle(55);
-		menuLayout.setOnMenuItemClickListener(new CircleMenuLayout.OnMenuItemClickListener(){
-			@Override
-			public void itemClick(View view, int pos) {
-				if (!isSettingFinished()) {
-					return;
-				}
-				
-				switch (pos) {
-					case 0:
-						// 显示屏
-						startActivity(new Intent(MainActivity.this, LEDSettingActivity.class));
-						break;
-					case 1:
-						// 系统
-						startActivity(new Intent(Settings.ACTION_SETTINGS));
-						break;
-					case 2:
-						// 数据管理
-						startActivity(new Intent(MainActivity.this, DataManageActivity.class));
-						break;
-					case 3:
-						// 数据查询
-						startActivity(new Intent(MainActivity.this, DataRetrieveActivity.class));
-						break;
-					case 4:
-						// 设置
-						startActivity(new Intent(MainActivity.this, SettingActivity.class));
-						break;
-				}
-			}
+		StatusBarUtil.setImmersiveTransparentStatusBar(this);//设置沉浸式透明状态栏 配合使用
 
-			@Override
-			public void itemCenterClick(View view){
-				if(isSettingFinished()){
-					startActivity(new Intent(MainActivity.this,TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
-				}
-			}
-		});
 	}
 
 	private boolean isSettingFinished(){
@@ -102,52 +64,113 @@ public class MainActivity extends BaseActivity{
 		}
 		return true;
 	}
+	@Override
+	protected void onResume() {
+		super.onResume();
+		machineCode = com.feipulai.common.utils.SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, SharedPrefsConfigs
+				.DEFAULT_MACHINE_CODE);
+		String itemCode = com.feipulai.common.utils.SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
+		// Logger.i("machineCode:" + machineCode);
+		int initState = TestConfigs.init(this, machineCode, itemCode, null);
+		showTestName();
+		if (initState != TestConfigs.INIT_NO_MACHINE_CODE) {
+			MachineCode.machineCode = machineCode;
+		}
+	}
+	private void showTestName() {
+		SystemSetting systemSetting = SettingHelper.getSystemSetting();
+		StringBuilder sb = new StringBuilder("智能主机(体测版V" + SystemBrightUtils.getCurrentVersion(this) + ")");
 
-	@OnClick(R.id.btn_machine_select)
-	public void onViewClicked(View view){
-		switch(view.getId()){
+		if (machineCode != SharedPrefsConfigs.DEFAULT_MACHINE_CODE) {
+			sb.append("-").append(TestConfigs.machineNameMap.get(machineCode))
+					.append(systemSetting.getHostId()).append("号机");
+		}
+		if (!TextUtils.isEmpty(systemSetting.getTestName())) {
+			sb.append("-").append(systemSetting.getTestName());
+		}
+		txtMainTitle.setText(sb.toString());
+		txtDeviceId.setText(CommonUtils.getDeviceId(this));
+	}
 
-			// 项目切换
-			case R.id.btn_machine_select:
-				startActivity(new Intent(this,MachineSelectActivity.class));
+
+	@OnClick({R.id.card_test, R.id.card_select, R.id.card_print, R.id.card_parameter_setting, R.id.card_data_admin, R.id.card_system, R.id.card_led, R.id.card_device_cut})
+	public void onViewClicked(View view) {
+		if (!isSettingFinished()) {
+			return;
+		}
+		switch (view.getId()) {
+			case R.id.card_test:
+				if (isSettingFinished()) {
+					startActivity(new Intent(MainActivity.this,TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
+				}
+				break;
+			case R.id.card_select:
+				startActivity(new Intent(MainActivity.this, DataRetrieveActivity.class));
+				break;
+			case R.id.card_print:
+				PrinterManager.getInstance().init();
+				PrinterManager.getInstance().selfCheck();
+				PrinterManager.getInstance().print("\n\n");
+				break;
+			case R.id.card_parameter_setting:
+				startActivity(new Intent(MainActivity.this, SettingActivity.class));
+				break;
+			case R.id.card_data_admin:
+				startActivity(new Intent(MainActivity.this, DataManageActivity.class));
+				break;
+			case R.id.card_system:
+				startActivity(new Intent(Settings.ACTION_SETTINGS));
+				break;
+			case R.id.card_led:
+				startActivity(new Intent(MainActivity.this, LEDSettingActivity.class));
+				break;
+			case R.id.card_device_cut:
+				startActivity(new Intent(this, MachineSelectActivity.class));
 				break;
 
 		}
 	}
 
+	@OnClick(R.id.img_code)
+	public void onCodeClicked(View view) {
+	}
+
 	@Override
-	protected void onResume(){
-		super.onResume();
-		donutProgress.setText(FileUtil.getPercentRemainStorage() + "%");
-		donutProgress.setDonut_progress(FileUtil.getPercentRemainStorage() + "");
-		hostId = SharedPrefsUtil.getValue(this,SharedPrefsConfigs.DEFAULT_PREFS,SharedPrefsConfigs.HOST_ID,1);
-		machineCode = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, SharedPrefsConfigs
-				.DEFAULT_MACHINE_CODE);
-		itemCode = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
-		
-		// Logger.i("machineCode:" + machineCode);
-		int initState = TestConfigs.init(this,machineCode,itemCode,null);
-		
-		if (initState == TestConfigs.INIT_NO_MACHINE_CODE) {
-			setTitle("智能主机[体测版]");
-		}else {
-			MachineCode.machineCode = machineCode;
-			setTitle("智能主机[体测版]-" + TestConfigs.machineNameMap.get(machineCode) + "\t" + hostId + "号机");
+	public void onBackPressed() {
+		exit();
+
+	}
+
+	@Override
+	protected void onDestroy() {
+		RadioManager.getInstance().close();
+		super.onDestroy();
+		if (mIsExiting) {
+			System.exit(0);
 		}
 	}
 
-	// @Override
-	// public void onBackPressed(){
-	// 	super.onBackPressed();
-	// 	mIsExiting = true;
-	// }
-
 	@Override
-	protected void onDestroy(){
-		super.onDestroy();
-		// if(mIsExiting){
-			RadioManager.getInstance().close();
-		// }
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		// 是否触发按键为back键
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			onBackPressed();
+			return true;
+		} else { // 如果不是back键正常响应
+			return super.onKeyDown(keyCode, event);
+		}
+	}
+
+	private long clickTime = 0; // 第一次点击的时间
+
+	private void exit() {
+		if ((System.currentTimeMillis() - clickTime) > 2000) {
+			Toast.makeText(this, "再按一次后退键退出程序", Toast.LENGTH_SHORT).show();
+			clickTime = System.currentTimeMillis();
+		} else {
+			mIsExiting = true;
+			this.finish();
+		}
 	}
 
 }

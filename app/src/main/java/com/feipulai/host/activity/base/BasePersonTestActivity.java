@@ -23,15 +23,14 @@ import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.LEDSettingActivity;
+import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.adapter.Student4JumpAndVitalAdapter;
-import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.netUtils.netapi.ItemSubscriber;
 import com.feipulai.host.utils.ResultDisplayUtils;
-import com.feipulai.host.utils.SharedPrefsUtil;
 import com.feipulai.host.view.StuSearchEditText;
 import com.orhanobut.logger.Logger;
 
@@ -70,13 +69,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 
     private List<BaseStuPair> stuPairList;
     private Student4JumpAndVitalAdapter adapter;
-    //是否自动打印
-    private boolean isAutoPrint;
     //设备故障点击监听
     private OnMalfunctionClickListener listener;
-    //是否自动播报
-    private boolean mNeedBroadcast;
-    private boolean mIsResultUpload;
 
     public LEDManager mLEDManager;
     //清理学生信息
@@ -100,15 +94,11 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     }
 
     private void init() {
-        hostId = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs
-                .HOST_ID, 1);
-        isAutoPrint = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.AUTO_PRINT, false);
-        mNeedBroadcast = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.GRADE_BROADCAST, true);
-        mIsResultUpload = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.REAL_TIME_UPLOAD, true);
+
 
         mLEDManager = new LEDManager();
         //mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), hostId);
-        mLEDManager.resetLEDScreen(hostId,TestConfigs.sCurrentItem.getItemName());
+        mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.sCurrentItem.getItemName());
 
         GridLayoutManager layoutManager = new GridLayoutManager(this, 1);
         rvStudent.setLayoutManager(layoutManager);
@@ -118,7 +108,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         adapter = new Student4JumpAndVitalAdapter(stuPairList);
         //给RecyclerView设置适配器
         rvStudent.setAdapter(adapter);
-        etInputText.setData(rvStudent, lvResults, this);
+//        etInputText.setData(rvStudent, lvResults, this);
 
         adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
@@ -345,7 +335,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
      * @param lastResult  最后成绩
      */
     private void uploadResult(RoundResult roundResult, RoundResult lastResult) {
-        if (!mIsResultUpload) {
+        if (!SettingHelper.getSystemSetting().isRtUpload()) {
             return;
         }
         if (TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
@@ -422,7 +412,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
      * 播报结果
      */
     private void broadResult(@NonNull BaseStuPair baseStuPair) {
-        if (mNeedBroadcast) {
+        if (SettingHelper.getSystemSetting().isAutoBroadcast()) {
             if (baseStuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) {
                 TtsManager.getInstance().speak(baseStuPair.getStudent().getStudentName() + "犯规");
             } else {
@@ -434,11 +424,11 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 
 
     private void printResult(@NonNull BaseStuPair baseStuPair) {
-        if (!isAutoPrint)
+        if (!SettingHelper.getSystemSetting().isAutoPrint())
             return;
         Student student = baseStuPair.getStudent();
         PrinterManager.getInstance().print(" \n");
-        PrinterManager.getInstance().print(TestConfigs.sCurrentItem.getItemName() + hostId + "号机\n");
+        PrinterManager.getInstance().print(TestConfigs.sCurrentItem.getItemName() + SettingHelper.getSystemSetting().getHostId() + "号机\n");
         PrinterManager.getInstance().print("考  号:" + student.getStudentCode() + "\n");
         PrinterManager.getInstance().print("姓  名:" + student.getStudentName() + "\n");
         PrinterManager.getInstance().print("成  绩:" + ((baseStuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "犯规" : ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult())) + "\n");
@@ -454,13 +444,13 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
      * @param stuPair
      */
     private void setShowLed(BaseStuPair stuPair) {
-        mLEDManager.showString(hostId, stuPair.getStudent().getStudentName(), mLEDManager.getX(stuPair.getStudent().getStudentName()), 0, true, false);
+        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), stuPair.getStudent().getStudentName(), mLEDManager.getX(stuPair.getStudent().getStudentName()), 0, true, false);
         if (stuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) {
 
-            mLEDManager.showString(hostId, stuPair.getStudent().getStudentName() + "犯规", mLEDManager.getX(stuPair.getStudent().getStudentName() + "犯规"), 2, false, true);
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), stuPair.getStudent().getStudentName() + "犯规", mLEDManager.getX(stuPair.getStudent().getStudentName() + "犯规"), 2, false, true);
 
         } else {
-            mLEDManager.showString(hostId, ResultDisplayUtils.getStrResultForDisplay(stuPair.getResult()), mLEDManager.getX(ResultDisplayUtils.getStrResultForDisplay(stuPair.getResult())), 2, false, true);
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), ResultDisplayUtils.getStrResultForDisplay(stuPair.getResult()), mLEDManager.getX(ResultDisplayUtils.getStrResultForDisplay(stuPair.getResult())), 2, false, true);
 
         }
 

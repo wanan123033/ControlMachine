@@ -50,7 +50,9 @@ public class TestConfigs{
 	// 身高体重的项目代码是固定的
 	public static final String HEIGHT_ITEM_CODE = "E01";
 	public static final String WEIGHT_ITEM_CODE = "E02";
-	
+	//项目默认取值范围
+	public static final Map<Integer, Integer> itemMinScope = new HashMap<>();
+	public static final Map<Integer, Integer> itemMaxScope = new HashMap<>();
 	static{
 		// 每个项目对应的检录Activity
 		TestConfigs.proActivity.put(ItemDefault.CODE_TS, JumpRopeCheckActivity.class);
@@ -72,6 +74,18 @@ public class TestConfigs{
 		
 		TestConfigs.machineNameMap.put(ItemDefault.CODE_FHL,"肺活量");
 		TestConfigs.machineNameMap.put(ItemDefault.CODE_HWSXQ,"红外实心球");
+
+		// 每个机器码对应的机器名称
+		TestConfigs.itemMinScope.put(ItemDefault.CODE_ZWTQQ, -200);
+		TestConfigs.itemMaxScope.put(ItemDefault.CODE_ZWTQQ, 400);
+		TestConfigs.itemMinScope.put(ItemDefault.CODE_LDTY, 510);
+		TestConfigs.itemMaxScope.put(ItemDefault.CODE_LDTY, 3420);
+		TestConfigs.itemMinScope.put(ItemDefault.CODE_HWSXQ, 0);
+		TestConfigs.itemMaxScope.put(ItemDefault.CODE_HWSXQ, 50000);
+		TestConfigs.itemMinScope.put(ItemDefault.CODE_TS, 0);
+		TestConfigs.itemMaxScope.put(ItemDefault.CODE_TS, 999);
+		TestConfigs.itemMinScope.put(ItemDefault.CODE_YTXS, 0);
+		TestConfigs.itemMaxScope.put(ItemDefault.CODE_YTXS, 999);
 	}
 	
 	public static Item sCurrentItem;

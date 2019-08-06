@@ -102,10 +102,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity{
         return deviceStates;
     }
     
-    @Override
-    public void onWrongLength(int length, int expectLength) {
-    
-    }
+
     
     public static class MedicineBallHandler extends Handler {
         WeakReference<MedicineBallTestActivity> weakReference;

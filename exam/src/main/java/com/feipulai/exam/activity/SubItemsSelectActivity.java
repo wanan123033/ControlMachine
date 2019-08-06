@@ -72,7 +72,7 @@ public class SubItemsSelectActivity extends BaseTitleActivity {
                 SharedPrefsUtil.putValue(SubItemsSelectActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, itemList.get(position).getItemCode());
                 SettingHelper.getSystemSetting().setHostId(1);
                 SettingHelper.updateSettingCache(SettingHelper.getSystemSetting());
-                ActivityCollector.finishAll();
+                ActivityCollector.getInstance().finishAllActivity();
                 startActivity(new Intent(SubItemsSelectActivity.this, MainActivity.class));
                 finish();
             }

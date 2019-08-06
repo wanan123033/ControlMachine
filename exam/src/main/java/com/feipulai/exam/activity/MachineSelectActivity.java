@@ -94,7 +94,7 @@ public class MachineSelectActivity extends BaseTitleActivity
             if (init == TestConfigs.INIT_SUCCESS) {
                 systemSetting.setHostId(1);
                 SharedPrefsUtil.save(MachineSelectActivity.this, systemSetting);
-                ActivityCollector.finishAll();
+                ActivityCollector.getInstance().finishAllActivity();
                 startActivity(new Intent(this, MainActivity.class));
             }
         } else {
@@ -110,7 +110,7 @@ public class MachineSelectActivity extends BaseTitleActivity
     public void onClick(DialogInterface dialog, int which) {
         systemSetting.setHostId(1);
         SharedPrefsUtil.save(MachineSelectActivity.this, systemSetting);
-        ActivityCollector.finishAll();
+        ActivityCollector.getInstance().finishAllActivity();
         startActivity(new Intent(this, MainActivity.class));
     }
 

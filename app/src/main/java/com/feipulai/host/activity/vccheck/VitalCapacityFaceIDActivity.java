@@ -4,18 +4,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.feipulai.device.led.LEDManager;
-import com.feipulai.host.activity.base.BaseDeviceState;
-import com.feipulai.host.activity.base.BasePersonFaceIDActivity;
-import com.feipulai.host.activity.base.BaseStuPair;
-import com.feipulai.host.config.TestConfigs;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.VCResult;
 import com.feipulai.device.serial.command.ConvertCommand;
+import com.feipulai.host.activity.base.BaseDeviceState;
+import com.feipulai.host.activity.base.BasePersonFaceIDActivity;
+import com.feipulai.host.activity.base.BaseStuPair;
+import com.feipulai.host.activity.setting.SettingHelper;
+import com.feipulai.host.config.TestConfigs;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.ExecutorService;
@@ -54,8 +54,8 @@ public class VitalCapacityFaceIDActivity extends BasePersonFaceIDActivity  {
         vcResultImpl.setTestState(TestState.WAIT_RESULT);
         if (mLEDManager == null){
             mLEDManager = new LEDManager();
-            mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), hostId);
-            mLEDManager.resetLEDScreen(hostId,TestConfigs.sCurrentItem.getItemName());
+            mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+            mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(),TestConfigs.sCurrentItem.getItemName());
         }
 
         if (mSerialManager == null){
@@ -63,7 +63,7 @@ public class VitalCapacityFaceIDActivity extends BasePersonFaceIDActivity  {
             mSerialManager.setRS232ResiltListener(vcResultImpl);
 
         }
-        mLEDManager.showString(hostId, "请测试", 5, 1, true, true);
+        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "请测试", 5, 1, true, true);
     }
 
 //    @Override
@@ -160,7 +160,7 @@ public class VitalCapacityFaceIDActivity extends BasePersonFaceIDActivity  {
         updateDevice(device);
 
         String text = result + "ml";
-        mLEDManager.showString(hostId, text, 5, 1, true, true);
+        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), text, 5, 1, true, true);
 
 
     }

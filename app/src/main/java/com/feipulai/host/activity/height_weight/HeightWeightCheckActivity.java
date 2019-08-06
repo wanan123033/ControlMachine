@@ -10,14 +10,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.feipulai.common.tts.TtsManager;
-import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.HeightWeightResult;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseActivity;
 import com.feipulai.host.activity.base.BaseCheckActivity;
-import com.feipulai.host.config.SharedPrefsConfigs;
+import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
@@ -71,9 +70,7 @@ public class HeightWeightCheckActivity
 	
 	// 身高体重LED显示暂时不做
 	//private LEDManager mLEDManager = new LEDManager();
-	private boolean mNeedBroadcast;
-	private boolean isAutoUpdate;
-	private boolean isAutoPrint;
+
 	private Student mStudent;
 	private volatile boolean isTesting;// 是否正在测试中(检录成功了等待测试成绩)
 	private volatile boolean isTestFinished;// 是否已经获得了成绩,测试已经完成,正在展示成绩信息,等待用户点击确认
@@ -96,10 +93,7 @@ public class HeightWeightCheckActivity
 	}
 	
 	private void init(){
-		mNeedBroadcast = SharedPrefsUtil.getValue(this,SharedPrefsConfigs.DEFAULT_PREFS,SharedPrefsConfigs.GRADE_BROADCAST,true);
-		isAutoUpdate = SharedPrefsUtil.getValue(this,SharedPrefsConfigs.DEFAULT_PREFS,SharedPrefsConfigs.REAL_TIME_UPLOAD,true);
-		isAutoPrint = SharedPrefsUtil.getValue(this,SharedPrefsConfigs.DEFAULT_PREFS,SharedPrefsConfigs.AUTO_PRINT,false);
-		if(isAutoUpdate){
+		if(SettingHelper.getSystemSetting().isRtUpload()){
 			itemSubscriber = new ItemSubscriber();
 		}
 		mEtInputText.setData(mLvResults,this);
@@ -169,7 +163,7 @@ public class HeightWeightCheckActivity
 				String displayWeight = ResultDisplayUtils.getStrResultForDisplay(mWeightResult.getResult(),HWConfigs.WEIGHT_ITEM);
 				tvHeightResult.setText(displayHeight);
 				tvWeightResult.setText(displayWeight);
-				if(mNeedBroadcast){
+				if(SettingHelper.getSystemSetting().isAutoBroadcast()){
 					TtsManager.getInstance().speak("身高" + displayHeight + "体重" + displayWeight);
 				}
 				break;
@@ -198,11 +192,11 @@ public class HeightWeightCheckActivity
 				
 				mHandler.sendEmptyMessage(UPDATE_NEW_RESULT);
 				
-				if(isAutoPrint){
+				if(SettingHelper.getSystemSetting().isAutoPrint()){
 					PrinterUtils.printResult(this,mStudent,mHeightResult,mWeightResult);
 				}
 				
-				if(isAutoUpdate){
+				if(SettingHelper.getSystemSetting().isRtUpload()){
 					itemSubscriber.setDataUpLoad(mHeightResult,mHeightResult);
 					itemSubscriber.setDataUpLoad(mWeightResult,mWeightResult);
 				}
@@ -242,10 +236,10 @@ public class HeightWeightCheckActivity
 		prepareForCheckIn();
 	}
 	
-	@Override
-	public void onWrongLength(int length, int expectLength) {
-	
-	}
+//	@Override
+//	public void onWrongLength(int length, int expectLength) {
+//
+//	}
 	//@OnClick({R.id.tv_led_setting})
 	//public void onViewClicked(View view){
 	//	switch(view.getId()){

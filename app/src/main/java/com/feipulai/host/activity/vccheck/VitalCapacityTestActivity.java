@@ -79,11 +79,7 @@ public class VitalCapacityTestActivity extends BasePersonTestActivity {
         }
         return deviceStates;
     }
-    
-    @Override
-    public void onWrongLength(int length, int expectLength) {
-    
-    }
+
     
     private class GetResultRunnable implements Runnable {
 

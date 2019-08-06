@@ -137,10 +137,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity implements Sta
         }
     }
     
-    @Override
-    public void onWrongLength(int length, int expectLength) {
-    
-    }
+
     
     
     private static class MyHandler extends Handler {
@@ -201,7 +198,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity implements Sta
     }
 
     @Override
-    public void CheckDevice(boolean isCheckDevice) {
+    public void CheckDevice(boolean isCheckDevice, int[] brokenLEDs) {
         isDisconnect = !isCheckDevice;
         if (!isCheckDevice) {
             toastSpeak("测量垫已损坏,请更换测量垫");

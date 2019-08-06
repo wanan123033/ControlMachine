@@ -324,6 +324,18 @@ public class RS232Result {
                             setResult(new VolleyBallResult(data));
                             break;
                         case 7:
+                            type = data[12];
+                            if (type == 0) {
+                                break;
+                            }
+                            setType(SerialConfigs.VOLLEYBALL_CHECK_RESPONSE);
+                            setResult(new VolleyBallCheck(data));
+                            break;
+                        case 8:
+                            type = data[8];
+                            if (type == 0) {
+                                break;
+                            }
                             setType(SerialConfigs.VOLLEYBALL_CHECK_RESPONSE);
                             setResult(new VolleyBallCheck(data));
                             break;

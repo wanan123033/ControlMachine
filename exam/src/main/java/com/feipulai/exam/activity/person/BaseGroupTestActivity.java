@@ -244,12 +244,14 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         tvStartTest.setText(isBegin == 0 ? "暂停测试" : "开始测试");
     }
 
-    /**犯规按键是否可见*/
-    public void setFaultVisible(boolean visible){
-        txtStuFault.setVisibility(visible? View.VISIBLE:View.GONE);
+    /**
+     * 犯规按键是否可见
+     */
+    public void setFaultVisible(boolean visible) {
+        txtStuFault.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
-    public void setFaultEnable(boolean enable){
+    public void setFaultEnable(boolean enable) {
         txtStuFault.setEnabled(enable);
     }
 
@@ -357,7 +359,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 }).setNegativeButton("取消", null).show();
     }
 
-    private void penalize(){
+    private void penalize() {
         BaseStuPair pair = stuPairsList.get(stuAdapter.getTestPosition());
         if (pair.getStudent() == null)
             return;
@@ -367,15 +369,15 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         roundResult.setResultState(RoundResult.RESULT_STATE_FOUL);
         //判断最好成绩
         RoundResult bestResult = DBManager.getInstance().queryGroupBestScore(pair.getStudent().getStudentCode(), group.getId());
-        if (bestResult == roundResult){
+        if (bestResult == roundResult) {
             roundResult.setIsLastResult(0);
             DBManager.getInstance().updateRoundResult(roundResult);//保存
             RoundResult best = DBManager.getInstance().queryGroupOrderDescScore(pair.getStudent().getStudentCode(), group.getId());
-            if (best != null && best.getIsLastResult()==0){
+            if (best != null && best.getIsLastResult() == 0) {
                 best.setIsLastResult(1);
                 DBManager.getInstance().updateRoundResult(best);//保存最好成绩
             }
-        }else {
+        } else {
             DBManager.getInstance().updateRoundResult(roundResult);//保存
         }
 

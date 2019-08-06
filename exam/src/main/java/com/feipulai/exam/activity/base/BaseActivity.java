@@ -47,7 +47,7 @@ public class BaseActivity extends FragmentActivity {
         Logger.d(mActivityName + ".onCreateView");
         //未捕获异常处理,重启防止崩溃
         //Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler(this));
-        ActivityCollector.addActivity(this);
+        ActivityCollector.getInstance().onCreate(this);
         //SystemBrightUtils.setBrightness(this, SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS,
         //        SharedPrefsConfigs.BRIGHTNESS, 125));
         machineCode = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, SharedPrefsConfigs
@@ -100,7 +100,7 @@ public class BaseActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ActivityCollector.removeActivity(this);
+        ActivityCollector.getInstance().onDestroy(this);
         EventBus.getDefault().unregister(this);
         Logger.d(mActivityName + ".onDestroy");
     }

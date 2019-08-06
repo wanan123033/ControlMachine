@@ -14,6 +14,7 @@ import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BasePersonFaceIDActivity;
 import com.feipulai.host.activity.base.BaseStuPair;
+import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.TestConfigs;
 
 import java.lang.ref.WeakReference;
@@ -176,7 +177,7 @@ public class StandJumpFaceIDActivity extends BasePersonFaceIDActivity implements
     }
 
     @Override
-    public void CheckDevice(boolean isCheckDevice) {
+    public void CheckDevice(boolean isCheckDevice, int[] brokenLEDs) {
         isDisconnect = !isCheckDevice;
     }
 
@@ -191,7 +192,7 @@ public class StandJumpFaceIDActivity extends BasePersonFaceIDActivity implements
 
     @Override
     public void StartDevice() {
-        mLEDManager.showString(hostId, "请测试", 5, 1, true, true);
+        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "请测试", 5, 1, true, true);
         sendTestCommand(baseStuPair);
     }
 
@@ -199,17 +200,17 @@ public class StandJumpFaceIDActivity extends BasePersonFaceIDActivity implements
     public void EndDevice(boolean isFoul, int result) {
 
         if (null == baseStuPair.getStudent()) {
-            mLEDManager.showString(hostId, "自由测试", mLEDManager.getX("自由测试"), 0, true, false);
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "自由测试", mLEDManager.getX("自由测试"), 0, true, false);
             mHandler.sendEmptyMessageDelayed(INIT_AGAIN, 5000);
         } else {
-            mLEDManager.showString(hostId, baseStuPair.getStudent().getStudentName(), mLEDManager.getX(baseStuPair.getStudent().getStudentName()), 0, true, false);
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), baseStuPair.getStudent().getStudentName(), mLEDManager.getX(baseStuPair.getStudent().getStudentName()), 0, true, false);
 
         }
         if (isFoul) {
-            mLEDManager.showString(hostId, "犯规", mLEDManager.getX("犯规"), 2, false, true);
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "犯规", mLEDManager.getX("犯规"), 2, false, true);
         } else {
             String text = result + setUnit();
-            mLEDManager.showString(hostId, text, mLEDManager.getX(text), 2, false, true);
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), text, mLEDManager.getX(text), 2, false, true);
         }
 
 

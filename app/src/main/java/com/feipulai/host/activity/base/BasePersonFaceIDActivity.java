@@ -12,14 +12,13 @@ import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.host.R;
-import com.feipulai.host.config.SharedPrefsConfigs;
+import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.netUtils.netapi.ItemSubscriber;
 import com.feipulai.host.utils.ResultDisplayUtils;
-import com.feipulai.host.utils.SharedPrefsUtil;
 import com.orhanobut.logger.Logger;
 
 import java.util.Calendar;
@@ -56,23 +55,13 @@ public abstract class BasePersonFaceIDActivity extends BaseActivity {
      */
     private BaseStuPair pair = new BaseStuPair();
     private OnMalfunctionClickListener listener;
-    //是否自动打印
-    private boolean isAutoPrint;
-    public int hostId;
-    //是否自动播报
-    private boolean mNeedBroadcast;
-    //是否自动上传成绩
-    private boolean mIsResultUpload;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base4_faceid);
         ButterKnife.bind(this);
-        mNeedBroadcast = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.GRADE_BROADCAST, true);
-        isAutoPrint = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.AUTO_PRINT, false);
-        mIsResultUpload = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.REAL_TIME_UPLOAD, false);
-        hostId = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.HOST_ID, 1);
+
         ivDeviceState.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -251,7 +240,7 @@ public abstract class BasePersonFaceIDActivity extends BaseActivity {
      * @param lastResult  最后成绩
      */
     private void uploadResult(RoundResult roundResult, RoundResult lastResult) {
-        if (!mIsResultUpload) {
+        if (!SettingHelper.getSystemSetting().isRtUpload()) {
             return;
         }
         if (TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
@@ -268,7 +257,7 @@ public abstract class BasePersonFaceIDActivity extends BaseActivity {
      * 播报结果
      */
     private void broadResult(@NonNull BaseStuPair baseStuPair) {
-        if (mNeedBroadcast) {
+        if (SettingHelper.getSystemSetting().isAutoBroadcast()) {
             //成绩状态是否为犯规
             if (baseStuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) {
                 TtsManager.getInstance().speak((baseStuPair.getStudent() == null ? "" : baseStuPair.getStudent().getStudentName()) + "犯规");
@@ -280,11 +269,11 @@ public abstract class BasePersonFaceIDActivity extends BaseActivity {
     }
 
     private void printResult(@NonNull BaseStuPair baseStuPair) {
-        if (!isAutoPrint)
+        if (!SettingHelper.getSystemSetting().isAutoPrint())
             return;
         Student student = baseStuPair.getStudent();
         PrinterManager.getInstance().print(" \n");
-        PrinterManager.getInstance().print(TestConfigs.sCurrentItem.getItemName() + hostId + "号机\n");
+        PrinterManager.getInstance().print(TestConfigs.sCurrentItem.getItemName() + SettingHelper.getSystemSetting().getHostId() + "号机\n");
         PrinterManager.getInstance().print("考  号:" + student.getStudentCode() + "\n");
         PrinterManager.getInstance().print("姓  名:" + student.getStudentName() + "\n");
         PrinterManager.getInstance().print("成  绩:" + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult()) + "\n");

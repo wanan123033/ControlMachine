@@ -50,7 +50,9 @@ public class BaseDeviceState implements Serializable {
 
     public BaseDeviceState() {
     }
-
+    public BaseDeviceState(int state) {
+        this.state = state;
+    }
     public BaseDeviceState(int state, int deviceId) {
         this.state = state;
         this.deviceId = deviceId;

@@ -2,9 +2,7 @@ package com.feipulai.host.activity.sitreach;
 
 
 import android.os.Message;
-import android.util.Log;
 
-import com.feipulai.common.tts.TtsManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.SitReachResult;
@@ -13,7 +11,6 @@ import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.entity.RoundResult;
 import com.orhanobut.logger.Logger;
-
 
 /**
  * Created by zzs on 2018/8/17
@@ -53,35 +50,35 @@ public class SitReachResiltListener implements SerialDeviceManager.RS232ResiltLi
             case SerialConfigs.SIT_AND_REACH_EMPTY_RESPONSE:
                 //检测设备是否连接成功
                 handlerInterface.checkDevice(1);
-                Log.i("james", "空命令回复:");
+                Logger.i("空命令回复:");
                 break;
 
             case SerialConfigs.SIT_AND_REACH_START_RESPONSE:
                 Logger.i("开始命令回复:");
+//                ToastUtils.showShort("测试开始");
+//                TtsManager.getInstance().speak("测试开始");
                 break;
 
             case SerialConfigs.SIT_AND_REACH_RESULT_RESPONSE://获取设备返回成绩信息
                 SitReachResult result = (SitReachResult) msg.obj;
                 //获取设备状态
-
                 Logger.i("获取设备返回成绩信息:当前测试状态=》" + testState);
                 //根据测试状态获取成绩
                 switch (testState) {
                     case UN_STARTED://未开始
-                        Log.i("james", "未开始:");
                         deviceState.setDeviceId(1);
                         deviceState.setState(BaseDeviceState.STATE_NOT_BEGAIN);
                         handlerInterface.getDeviceState(deviceState);
                         break;
                     case WAIT_RESULT://开始读成绩
-                        Log.i("james", "开始读成绩:");
+
                         //获取设备设置为空闲
                         deviceState.setDeviceId(1);
                         deviceState.setState(BaseDeviceState.STATE_FREE);
                         handlerInterface.getDeviceState(deviceState);
+                        Logger.i("获取设备返回成绩信息:当前测试状态=》WAIT_RESULT" + result.getState());
                         switch (result.getState()) {
                             case 1://就绪
-                                Log.i("james", "开始读成绩:就绪");
                                 testState = TestState.RESULT_UPDATING;
                                 handlerInterface.ready(1);
                                 break;
@@ -116,28 +113,33 @@ public class SitReachResiltListener implements SerialDeviceManager.RS232ResiltLi
 
                                 break;
                             //获取测量结束数据
-                            case 4:
-                                //获取设备设置为结束
+                            case 4:   //获取设备设置为结束
+                                //设置为未测试状态，只取一次结束成绩
+                                testState = TestState.UN_STARTED;
+
                                 deviceState.setDeviceId(1);
                                 deviceState.setState(BaseDeviceState.STATE_END);
                                 stuPair = new BaseStuPair();
                                 stuPair.setResult(result.getScore());
-                                stuPair.setResultState(result.isFoul() == true ?RoundResult.RESULT_STATE_FOUL : RoundResult.RESULT_STATE_NORMAL);
+                                stuPair.setResultState(result.isFoul() == true ? RoundResult.RESULT_STATE_FOUL : RoundResult.RESULT_STATE_NORMAL);
                                 stuPair.setBaseDevice(deviceState);
 
                                 //   成绩数值超出范围
-                                if ((TestConfigs.sCurrentItem.getMinValue() != 0 && result.getScore() < TestConfigs.sCurrentItem.getMinValue())
-                                        || (TestConfigs.sCurrentItem.getMaxValue() != 0 && result.getScore() > TestConfigs.sCurrentItem.getMaxValue())) {
-                                    Logger.i("成绩数值超出范围:最小值->" + TestConfigs.sCurrentItem.getMinValue() + ",最大值->" + TestConfigs.sCurrentItem.getMaxValue() + ",获取的成绩->" + result.getScore());
+                                int minValue = TestConfigs.sCurrentItem.getMinValue() == 0 ? TestConfigs.itemMinScope.get(TestConfigs.sCurrentItem.getMachineCode()) : TestConfigs.sCurrentItem.getMinValue();
+                                int maxValue = TestConfigs.sCurrentItem.getMaxValue() == 0 ? TestConfigs.itemMaxScope.get(TestConfigs.sCurrentItem.getMachineCode()) : TestConfigs.sCurrentItem.getMaxValue();
 
-                                    TtsManager.getInstance().speak(deviceState.getDeviceId() + "号设备错误重测");
+//                                if ((TestConfigs.sCurrentItem.getMinValue() != 0 && result.getResult() < TestConfigs.sCurrentItem.getMinValue() * 10)
+//                                        || (TestConfigs.sCurrentItem.getMaxValue() != 0 && result.getResult() > TestConfigs.sCurrentItem.getMaxValue() * 10)) {
+                                if (result.getScore() < minValue
+                                        || result.getScore() > maxValue) {
+                                    Logger.i("成绩数值超出范围:最小值->" + minValue + ",最大值->" + maxValue + ",获取的成绩->" + result.getScore());
+
                                     testState = TestState.WAIT_RESULT;
                                     //重测设置设备正在使用中
                                     deviceState.setState(BaseDeviceState.STATE_ONUSE);
                                     stuPair.setResult(0);
                                     //更新成绩
                                     handlerInterface.getResult(stuPair);
-
                                     //设置设备状态
                                     handlerInterface.getDeviceState(deviceState);
                                     handlerInterface.AgainTest(deviceState);
@@ -147,8 +149,7 @@ public class SitReachResiltListener implements SerialDeviceManager.RS232ResiltLi
                                 handlerInterface.getResult(stuPair);
                                 //设置设备状态
                                 handlerInterface.getDeviceState(deviceState);
-                                //设置为未测试状态，只取一次结束成绩
-                                testState = TestState.UN_STARTED;
+
                                 //结束设备
                                 handlerInterface.EndDevice(result.isFoul(), result.getScore());
 
@@ -173,6 +174,7 @@ public class SitReachResiltListener implements SerialDeviceManager.RS232ResiltLi
         }
 
     }
+
 
     public interface HandlerInterface {
         /**

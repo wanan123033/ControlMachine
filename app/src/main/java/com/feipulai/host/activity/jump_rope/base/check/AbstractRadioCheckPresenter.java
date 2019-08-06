@@ -14,7 +14,7 @@ import com.feipulai.host.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.host.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.host.activity.jump_rope.bean.TestCache;
 import com.feipulai.host.activity.jump_rope.check.CheckUtils;
-import com.feipulai.host.config.SharedPrefsConfigs;
+import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
@@ -50,8 +50,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
 	public AbstractRadioCheckPresenter(Context context, RadioCheckContract.View<Setting> view) {
 		this.view = view;
 		this.context = context;
-		hostId = com.feipulai.host.utils.SharedPrefsUtil.getValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.HOST_ID, SharedPrefsConfigs
-				.DEFAULT_MACHINE_CODE);
+		hostId = SettingHelper.getSystemSetting().getHostId();
 		TARGET_FREQUENCY = SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode()) + hostId - 1;
 		machineName = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode());
 	}

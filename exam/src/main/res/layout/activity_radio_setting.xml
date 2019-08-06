@@ -25,6 +25,15 @@
             android:background="@drawable/btn_click_bg"
             android:text="查看评分标准" />
 
+        <Button
+            android:id="@+id/btn_matching"
+            android:layout_width="120dp"
+            android:layout_height="35dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/btn_click_bg"
+            android:text="设备匹配"
+            android:visibility="gone" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

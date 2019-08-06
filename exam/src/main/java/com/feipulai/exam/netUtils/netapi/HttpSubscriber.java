@@ -95,7 +95,7 @@ public class HttpSubscriber {
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<ScheduleBean>(new OnResultListener<ScheduleBean>() {
             @Override
             public void onSuccess(ScheduleBean result) {
-                Logger.i("getScheduleAll====>" + result.toString());
+//                Logger.i("getScheduleAll====>" + result.toString());
                 if (result == null)
                     return;
                 ScheduleBean.SITE_EXAMTYPE = result.getExamType();
@@ -150,7 +150,7 @@ public class HttpSubscriber {
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<List<ItemBean>>(new OnResultListener<List<ItemBean>>() {
             @Override
             public void onSuccess(List<ItemBean> result) {
-                Logger.i("getItemAll====>" + result.toString());
+//                Logger.i("getItemAll====>" + result.toString());
                 if (result == null)
                     return;
                 List<Item> itemList = new ArrayList<>();
@@ -326,7 +326,7 @@ public class HttpSubscriber {
             @Override
             public void onSuccess(BatchBean<List<StudentBean>> result) {
                 Set<String> supplements = new HashSet<>();// 补考考生考号集合
-                Logger.i("getItemStudent" + result.toString());
+//                Logger.i("getItemStudent" + result.toString());
                 if (result == null || result.getDataInfo() == null) {
                     if (onRequestEndListener != null)
                         onRequestEndListener.onSuccess(STUDENT_BIZ);
@@ -403,7 +403,7 @@ public class HttpSubscriber {
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<BatchBean<List<GroupBean>>>(new OnResultListener<BatchBean<List<GroupBean>>>() {
             @Override
             public void onSuccess(BatchBean<List<GroupBean>> result) {
-                Logger.i("getItemGroupAll====>" + result.toString());
+//                Logger.i("getItemGroupAll====>" + result.toString());
                 if (result == null || result.getDataInfo() == null) {
                     if (onRequestEndListener != null)
                         onRequestEndListener.onSuccess(STUDENT_BIZ);
@@ -468,7 +468,7 @@ public class HttpSubscriber {
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<List<GroupBean>>(new OnResultListener<List<GroupBean>>() {
             @Override
             public void onSuccess(List<GroupBean> result) {
-                Logger.i("getItemGroupInfo====>" + result.toString());
+//                Logger.i("getItemGroupInfo====>" + result.toString());
                 if (result == null)
                     return;
                 List<GroupItem> groupItemList = new ArrayList<>();

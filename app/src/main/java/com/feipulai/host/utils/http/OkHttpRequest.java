@@ -5,9 +5,8 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.feipulai.host.MyApplication;
-import com.feipulai.host.config.SharedPrefsConfigs;
+import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.utils.HttpUtils;
-import com.feipulai.host.utils.SharedPrefsUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -46,8 +45,7 @@ public class OkHttpRequest {
     }
 
     private boolean getIpLocation() {
-        String ip = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs
-                .IP_ADDRESS, "");
+        String ip = SettingHelper.getSystemSetting().getServerIp();
         if (TextUtils.isEmpty(ip)) {
             Toast.makeText(MyApplication.getInstance(), "服务无法访问，请先在系统设置设置IP地址", Toast.LENGTH_SHORT).show();
             return false;

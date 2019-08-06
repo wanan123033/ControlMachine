@@ -66,4 +66,7 @@
     <string name="student_Code">学号:%1$s</string>
     <string name="student_Result">成绩:%1$s</string>
     <string name="student_Portrait">头像:</string>
+
+    <string name="test_speak_hint">请%1$s第%2$d次准备</string>
+    <string name="speak_result">%1$s成绩%2$s</string>
 </resources>
