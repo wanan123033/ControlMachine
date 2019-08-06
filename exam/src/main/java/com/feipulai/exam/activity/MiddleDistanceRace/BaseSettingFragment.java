@@ -31,6 +31,9 @@ import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.Item;
+import com.feipulai.exam.entity.ItemSchedule;
+import com.feipulai.exam.entity.RoundResult;
+import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.utils.db.DataBaseExecutor;
 import com.feipulai.exam.utils.db.DataBaseRespon;
 import com.feipulai.exam.utils.db.DataBaseTask;
@@ -212,65 +215,86 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
         }
     }
 
-    @Override
-    public void onItemCycleLongClick(final int position) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_item_setting, null);
-        final EditText etCycle = view.findViewById(R.id.et_cycle);
-        final EditText etItemCode = view.findViewById(R.id.et_item_code);
-        etItemCode.setText(itemList.get(position).getItemCode() == null ? "" : itemList.get(position).getItemCode());
-        etCycle.setText(itemList.get(position).getCycleNo());
-        AlertDialog.Builder inputDialog = new AlertDialog.Builder(mContext);
-        inputDialog.setTitle(itemList.get(position).getItemName()).setView(view);
-        inputDialog.setPositiveButton("确定",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ((MiddleRaceSettingActivity) getActivity()).setChange(true);
-
-                        if (!TextUtils.isEmpty(etCycle.getText().toString())) {
-                            itemList.get(position).setCycleNo(Integer.parseInt(etCycle.getText().toString()));
-                        }
-
-                        if (!TextUtils.isEmpty(etItemCode.getText().toString())) {
-                            Item item = DBManager.getInstance().queryItemByCode(etItemCode.getText().toString());
-                            if (item!=null&&!item.getItemName().equals(itemList.get(position).getItemName())) {
-                                ToastUtils.showShort("不能设置相同项目代码");
-                                return;
-                            }
-                            String oldItemCode = itemList.get(position).getItemCode();
-                            itemList.get(position).setItemCode(etItemCode.getText().toString());
-                            itemCycleAdapter.notifyDataSetChanged();
-                            //更新item中的itemCode
-                            DBManager.getInstance().updateItem(itemList.get(position));
-                            updateAllItemCode(oldItemCode,etItemCode.getText().toString());
-                        }
-
-                    }
-                }).show();
-    }
+//    @Override
+//    public void onItemCycleLongClick(final int position) {
+//        View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_item_setting, null);
+//        final EditText etCycle = view.findViewById(R.id.et_cycle);
+//        final EditText etItemCode = view.findViewById(R.id.et_item_code);
+//        etItemCode.setText(itemList.get(position).getItemCode() == null ? "" : itemList.get(position).getItemCode());
+//        etCycle.setText(itemList.get(position).getCycleNo());
+//        AlertDialog.Builder inputDialog = new AlertDialog.Builder(mContext);
+//        inputDialog.setTitle(itemList.get(position).getItemName()).setView(view);
+//        inputDialog.setPositiveButton("确定",
+//                new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        ((MiddleRaceSettingActivity) getActivity()).setChange(true);
+//
+//                        if (!TextUtils.isEmpty(etCycle.getText().toString())) {
+//                            itemList.get(position).setCycleNo(Integer.parseInt(etCycle.getText().toString()));
+//                        }
+//
+//                        if (!TextUtils.isEmpty(etItemCode.getText().toString())) {
+//                            Item item = DBManager.getInstance().queryItemByCode(etItemCode.getText().toString());
+//                            if (item != null) {
+//                                ToastUtils.showShort("不能设置相同项目代码");
+//                                return;
+//                            }
+//                            String oldItemCode = itemList.get(position).getItemCode();
+//                            itemList.get(position).setItemCode(etItemCode.getText().toString());
+//                            itemCycleAdapter.notifyDataSetChanged();
+//                            //更新item中的itemCode
+//                            DBManager.getInstance().updateItem(itemList.get(position));
+//                            updateAllItemCode(oldItemCode, etItemCode.getText().toString());
+//                        }
+//
+//                    }
+//                }).show();
+//    }
 
     private void updateAllItemCode(final String oldItemCode, final String newItemCode) {
         DataBaseExecutor.addTask(new DataBaseTask(mContext, getString(R.string.loading_update), false) {
             @Override
             public DataBaseRespon executeOper() {
-                //更新所有group中的itemCode
+                //更新所有Group中的itemCode
                 List<Group> groups = DBManager.getInstance().queryGroupByItemCode(oldItemCode);
-                for (Group group:groups
-                     ) {
+                for (Group group : groups
+                        ) {
                     group.setItemCode(newItemCode);
                 }
                 DBManager.getInstance().updateGroups(groups);
 
-                //更新所有groupItem中的itemCode
+                //更新所有GroupItem中的itemCode
                 List<GroupItem> groupItems = DBManager.getInstance().queryGroupItemByCode(oldItemCode);
-                for (GroupItem groupItem:groupItems
-                     ) {
+                for (GroupItem groupItem : groupItems
+                        ) {
                     groupItem.setItemCode(newItemCode);
                 }
                 DBManager.getInstance().updateGroupItems(groupItems);
 
-                //
+                //更新所有ItemSchedule中的itemCode
+                List<ItemSchedule> itemSchedules = DBManager.getInstance().queryItemSchedulesByItemCode(oldItemCode);
+                for (ItemSchedule itemSchedule : itemSchedules
+                        ) {
+                    itemSchedule.setItemCode(newItemCode);
+                }
+                DBManager.getInstance().updateItemSchedules(itemSchedules);
 
+                //更新所有RoundResult中的itemCode
+                List<RoundResult> roundResults = DBManager.getInstance().queryResultsByItemCode(oldItemCode);
+                for (RoundResult result : roundResults
+                        ) {
+                    result.setItemCode(newItemCode);
+                }
+                DBManager.getInstance().updateRoundResults(roundResults);
+
+                //更新所有StudentItem中的itemCode
+                List<StudentItem> studentItems = DBManager.getInstance().queryStudentItemByItemCode(oldItemCode);
+                for (StudentItem studentItem : studentItems
+                        ) {
+                    studentItem.setItemCode(newItemCode);
+                }
+                DBManager.getInstance().updateStudentItem(studentItems);
                 return new DataBaseRespon(true, "", null);
             }
 
@@ -284,5 +308,61 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
 
             }
         });
+    }
+
+    private AlertDialog.Builder builder;
+
+    @Override
+    public void onItemClick(final int position, final int flag) {
+        final EditText editText = new EditText(mContext);
+        String title = "";
+        switch (flag) {
+            case ItemCycleAdapter.FLAG_CYCLE://圈数
+                title = itemList.get(position).getItemName() + "设置圈数";
+                editText.setText(itemList.get(position).getCycleNo()+"");
+                break;
+            case ItemCycleAdapter.FLAG_ITEMCODE://项目代码
+                title = itemList.get(position).getItemName() + "设置项目代码";
+                editText.setText(itemList.get(position).getItemCode() == null ? "" : itemList.get(position).getItemCode());
+                break;
+            default:
+                break;
+        }
+        editText.setSelection(editText.getText().toString().length());
+
+        builder = new AlertDialog.Builder(mContext).setTitle(title).setView(editText)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        ((MiddleRaceSettingActivity) getActivity()).setChange(true);
+                        switch (flag) {
+                            case ItemCycleAdapter.FLAG_CYCLE://圈数
+                                if (!TextUtils.isEmpty(editText.getText().toString())) {
+                                    itemList.get(position).setCycleNo(Integer.parseInt(editText.getText().toString()));
+                                    DBManager.getInstance().updateItem(itemList.get(position));
+                                }
+                                break;
+                            case ItemCycleAdapter.FLAG_ITEMCODE://项目代码
+                                if (!TextUtils.isEmpty(editText.getText().toString()) && !TextUtils.isEmpty(itemList.get(position).getItemCode())) {
+                                    Item item = DBManager.getInstance().queryItemByCode(editText.getText().toString());
+                                    if (item != null) {
+                                        ToastUtils.showShort("不能设置相同项目代码");
+                                        return;
+                                    }
+                                    String oldItemCode = itemList.get(position).getItemCode();
+                                    itemList.get(position).setItemCode(editText.getText().toString());
+                                    itemCycleAdapter.notifyDataSetChanged();
+                                    //更新item中的itemCode
+                                    DBManager.getInstance().updateItem(itemList.get(position));
+                                    updateAllItemCode(oldItemCode, editText.getText().toString());
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                        itemCycleAdapter.notifyDataSetChanged();
+                    }
+                });
+        builder.create().show();
     }
 }

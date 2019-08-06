@@ -28,10 +28,12 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.DisplayUtil;
 import com.feipulai.device.tcp.NettyClient;
@@ -239,6 +241,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
     private ArrayList<RaceResultBean> resultDataList;
     private List<GroupItemBean> groupItemBeans = new ArrayList<>();
     private ArrayList<String> titleData = new ArrayList<>();
+    private boolean isBind = false;
 
     @Override
     protected void initData() {
@@ -521,7 +524,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
 
                 startService(bindIntent);
 
-                bindService(bindIntent, serviceConnection, BIND_AUTO_CREATE);
+                isBind = bindService(bindIntent, serviceConnection, BIND_AUTO_CREATE);
 
                 //此处做延时，需要等服务绑定完
                 mHander.postDelayed(new Runnable() {
@@ -570,8 +573,6 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         });
     }
 
-    private boolean isFinish = false;
-
     @Override
     public void onTcpReceiveResult(final Schedule schedule, final String itemName) {
         Log.i("OnResponseListener", "onTcpReceiveResult-----------");
@@ -582,26 +583,8 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                getItems();
                 ToastUtils.showLong("上道终端上传分组数据");
-                for (int i = 0; i < scheduleList.size(); i++) {
-                    if (scheduleList.get(i).getScheduleNo().equals(schedule.getScheduleNo())) {
-                        spRaceSchedule.setSelection(i);
-                        schedulePosition = i;
-                        break;
-                    } else {
-                        if (i == scheduleList.size() - 1) {
-                            updateSchedules();
-                            for (int j = 0; j < scheduleList.size(); j++) {
-                                if (scheduleList.get(i).getScheduleNo().equals(schedule.getScheduleNo())) {
-                                    spRaceSchedule.setSelection(j);
-                                    schedulePosition = j;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-
                 for (int i = 0; i < itemList.size(); i++) {
                     if (itemList.get(i).getItemName().equals(itemName)) {
                         spRaceItem.setSelection(i);
@@ -609,7 +592,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                         break;
                     } else {
                         if (i == itemList.size() - 1) {
-                            getItems();
+//                                getItems();
                             itemAdapter.notifyDataSetChanged();
                             for (int j = 0; j < itemList.size(); i++) {
                                 if (itemList.get(j).getItemName().equals(itemName)) {
@@ -621,6 +604,30 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                         }
                     }
                 }
+
+                if (scheduleList.size() == 0) {
+                    updateSchedules();
+                } else {
+                    for (int i = 0; i < scheduleList.size(); i++) {
+                        if (scheduleList.get(i).getScheduleNo().equals(schedule.getScheduleNo())) {
+                            spRaceSchedule.setSelection(i);
+                            schedulePosition = i;
+                            break;
+                        } else {
+                            if (i == scheduleList.size() - 1) {
+                                updateSchedules();
+                                for (int j = 0; j < scheduleList.size(); j++) {
+                                    if (scheduleList.get(i).getScheduleNo().equals(schedule.getScheduleNo())) {
+                                        spRaceSchedule.setSelection(j);
+                                        schedulePosition = j;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 getGroupList();
             }
         });
@@ -712,7 +719,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
             if (nettyClient != null && !nettyClient.getConnectStatus()) {
                 nettyClient.connect(isFirst);
                 mHander.sendEmptyMessageDelayed(2, 300);//先发送连接设备命令
-                mHander.sendEmptyMessageDelayed(6, 1000);//再发送结束命令
+//                mHander.sendEmptyMessageDelayed(6, 1000);//再发送结束命令
                 mHander.sendEmptyMessageDelayed(5, 8000);
             }
         }
@@ -736,7 +743,6 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
     @Override
     protected void onResume() {
         super.onResume();
-        isFinish = false;
         firstTime = SharedPrefsUtil.getValue(this, MIDDLE_RACE, MIDDLE_RACE_TIME_FIRST, FIRST_TIME);
         spanTime = SharedPrefsUtil.getValue(this, MIDDLE_RACE, MIDDLE_RACE_TIME_SPAN, SPAN_TIME);
 
@@ -811,15 +817,13 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
             nettyClient.disconnect();
         }
 
-        isFinish = true;
-
-
-        if (serviceConnection != null) {
+        if (myBinder != null) {
             myBinder.stopServer();
-            unbindService(serviceConnection);
         }
-        stopService(bindIntent);
-
+        if (isBind) {
+            unbindService(serviceConnection);
+            stopService(bindIntent);
+        }
 
         instance = null;
 
@@ -870,71 +874,56 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
 
     }
 
-//    private List<Integer> needNotifys = new ArrayList<>();
-
     @Override
     public void onMessageReceive(long time, final String[] cardIds) {
-        try {
-            boolean isFind = false;//标记当前一轮芯片是否有效
-//            needNotifys.clear();
-            for (String card : cardIds
-                    ) {
-                Log.i("card", "-------------" + card);
-                ChipInfo chipInfo = DBManager.getInstance().queryChipInfoByID(card);
-                if (chipInfo == null) {
-                    continue;
-                }
-                for (int i = 0; i < resultDataList.size(); i++) {
-                    if (resultDataList.get(i).getColor() == chipInfo.getColor() && resultDataList.get(i).getVestNo() == chipInfo.getVestNo()) {
-                        String[] result = resultDataList.get(i).getResults();
-                        if (resultDataList.get(i).getStartTime() == 0) {
-                            break;
-                        }
-                        String usedTime = String.valueOf(time - resultDataList.get(i).getStartTime());
-                        for (int j = 0; j < resultDataList.get(i).getCycle(); j++) {
-                            if (TextUtils.isEmpty(result[j + 3])) {
-                                if (j == 0) {
-                                    if (Long.parseLong(usedTime) < firstTime * 1000) {
-                                        Log.i("firstTime--------", "usedTime:" + usedTime);
-                                        break;
-                                    }
-                                } else {
-                                    if ((time - resultDataList.get(i).getStartTime() - Long.parseLong(result[j + 2])) < spanTime * 1000) {
-                                        Log.i("spanTime--------", "usedTime:" + (time - Long.parseLong(result[j + 2])));
-                                        break;
-                                    }
-                                }
-                                result[j + 3] = usedTime;
-                                if (j == resultDataList.get(i).getCycle() - 1) {
-                                    result[2] = usedTime;
-                                }
-                                isFind = true;
-//                                needNotifys.add(i);
-//                                final int finalI = i;
-//                                runOnUiThread(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        scrollablePanel.notifyDataSetchanged(finalI);
-//                                    }
-//                                });
-                                break;
-                            }
-                        }
+        boolean isFind = false;//标记当前一轮芯片是否有效
+        for (String card : cardIds
+                ) {
+            Log.i("card", "-------------" + card);
+            ChipInfo chipInfo = DBManager.getInstance().queryChipInfoByID(card);
+            if (chipInfo == null) {
+                continue;
+            }
+            for (int i = 0; i < resultDataList.size(); i++) {
+                if (resultDataList.get(i).getColor() == chipInfo.getColor() && resultDataList.get(i).getVestNo() == chipInfo.getVestNo()) {
+                    String[] result = resultDataList.get(i).getResults();
+                    if (resultDataList.get(i).getStartTime() == 0) {
                         break;
                     }
-                }
-                if (isFind) {//优化，当同时接收到的最后一个芯片并且有效才开始刷新界面
-                    isFind = false;
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            resultShowTable.notifyContent();
+                    String usedTime = String.valueOf(time - resultDataList.get(i).getStartTime());
+                    for (int j = 0; j < resultDataList.get(i).getCycle(); j++) {
+                        if (TextUtils.isEmpty(result[j + 3])) {
+                            if (j == 0) {
+                                if (Long.parseLong(usedTime) < firstTime * 1000) {
+                                    Log.i("firstTime--------", "usedTime:" + usedTime);
+                                    break;
+                                }
+                            } else {
+                                if ((time - resultDataList.get(i).getStartTime() - Long.parseLong(result[j + 2])) < spanTime * 1000) {
+                                    Log.i("spanTime--------", "usedTime:" + (time - Long.parseLong(result[j + 2])));
+                                    break;
+                                }
+                            }
+                            result[j + 3] = usedTime;
+                            if (j == resultDataList.get(i).getCycle() - 1) {
+                                result[2] = usedTime;
+                            }
+                            isFind = true;
+                            break;
                         }
-                    });
+                    }
+                    break;
                 }
             }
-        } catch (Exception e) {
-            Logger.e(TAG, e.getMessage());
+            if (isFind) {//优化，当同时接收到的最后一个芯片并且有效才开始刷新界面
+                isFind = false;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        resultShowTable.notifyContent();
+                    }
+                });
+            }
         }
     }
 
@@ -950,6 +939,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         isFirst = false;
         Log.i("onConnected", "onConnected-----------------------");
         if (isFlag) {
+            TtsManager.getInstance().speak("设备连接成功");
             mHander.sendMessage(mHander.obtainMessage(1, text));
             isFlag = false;
         }
@@ -978,8 +968,8 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                         raceResultBean2.setStartTime(time);
                     }
                 }
+                mHander.sendMessage(mHander.obtainMessage(3, timerNo));
             }
-            mHander.sendMessage(mHander.obtainMessage(3, timerNo));
             timerNo++;
         }
 //        Log.i("timingLists", timingLists.toString());
@@ -1221,7 +1211,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
             @Override
             public void onPositiveClick() {
                 timingLists.get(position).setState(TimingBean.TIMING_STATE_COMPLETE);
-                raceTimingAdapter.notifyBackGround(holder, TimingBean.TIMING_STATE_COMPLETE);
+//                raceTimingAdapter.notifyBackGround(holder, TimingBean.TIMING_STATE_COMPLETE);
 //                raceTimingAdapter.notifyDataSetChanged();
 
                 List<UploadResults> uploadResults = new ArrayList<>();
@@ -1326,8 +1316,9 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                 timingLists.get(position).setItemCode("");
                 timingLists.get(position).setTime(0);
 
-                raceTimingAdapter.notifyDataSetChanged();
-
+//                raceTimingAdapter.notifyDataSetChanged();
+                raceTimingAdapter.notifyItemChanged(position);
+                raceTimingAdapter.notifyBackGround(holder, TimingBean.TIMING_STATE_COMPLETE);
                 //自动上传成绩
                 if (SettingHelper.getSystemSetting().isRtUpload()) {
                     Logger.i("自动上传成绩:" + uploadResults.toString());

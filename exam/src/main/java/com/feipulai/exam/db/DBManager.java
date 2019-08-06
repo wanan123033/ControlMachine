@@ -220,6 +220,10 @@ public class DBManager {
         return student;
     }
 
+    public List<StudentItem>queryStudentItemByItemCode(String itemCode){
+        return studentItemDao.queryBuilder().where(StudentItemDao.Properties.ItemCode.eq(itemCode)).list();
+    }
+
     /**
      * 批量添加学生信息
      *
@@ -852,6 +856,10 @@ public class DBManager {
 
     public void updateItems(List<Item> items) {
         itemDao.updateInTx(items);
+    }
+
+    public void updateItemSchedules(List<ItemSchedule> itemSchedules) {
+        itemScheduleDao.updateInTx(itemSchedules);
     }
 
     private void insertItem(int machineCode, String itemName, String unit) {
@@ -1910,6 +1918,10 @@ public class DBManager {
 
     public Schedule getSchedulesByNo(String scheduleNo) {
         return scheduleDao.queryBuilder().where(ScheduleDao.Properties.ScheduleNo.eq(scheduleNo)).unique();
+    }
+
+    public List<ItemSchedule> queryItemSchedulesByItemCode(String itemCode) {
+        return itemScheduleDao.queryBuilder().where(ItemScheduleDao.Properties.ItemCode.eq(itemCode)).list();
     }
 
 //    public List<Schedule> getSchedulesByItemCode(String itemCode) {

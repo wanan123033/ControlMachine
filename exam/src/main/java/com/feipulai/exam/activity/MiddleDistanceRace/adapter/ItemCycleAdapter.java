@@ -1,6 +1,7 @@
 package com.feipulai.exam.activity.MiddleDistanceRace.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,8 @@ public class ItemCycleAdapter extends RecyclerView.Adapter<ItemCycleAdapter.VH> 
 
     private List<Item> items;
     private OnItemClickListener onRecyclerViewItemClickListener;
+    public static final int FLAG_CYCLE=1;
+    public static final int FLAG_ITEMCODE=2;
 
     //创建ViewHolder
     public static class VH extends RecyclerView.ViewHolder {
@@ -32,6 +35,8 @@ public class ItemCycleAdapter extends RecyclerView.Adapter<ItemCycleAdapter.VH> 
         TextView tvCycleItem;
         @BindView(R.id.tv_cycles)
         TextView tvCycles;
+        @BindView(R.id.tv_item_code)
+        TextView tvItemCode;
         @BindView(R.id.ll_race_cycles)
         LinearLayout llRaceCycles;
 
@@ -47,7 +52,8 @@ public class ItemCycleAdapter extends RecyclerView.Adapter<ItemCycleAdapter.VH> 
     }
 
     public interface OnItemClickListener {
-        void onItemCycleLongClick(int position);
+//        void onItemCycleLongClick(int position);
+        void onItemClick(int position,int flag);
     }
 
     public void setOnRecyclerViewItemClickListener(OnItemClickListener onItemClickListener) {
@@ -60,12 +66,27 @@ public class ItemCycleAdapter extends RecyclerView.Adapter<ItemCycleAdapter.VH> 
         holder.tvCycleItem.setText(items.get(position).getItemName());
         holder.tvCycleNo.setText(position + 1 + "");
         holder.tvCycles.setText(items.get(position).getCycleNo() + "");
+        holder.tvItemCode.setText(TextUtils.isEmpty(items.get(position).getItemCode())?"":items.get(position).getItemCode());
         if (onRecyclerViewItemClickListener != null) {
-            holder.llRaceCycles.setOnLongClickListener(new View.OnLongClickListener() {
+//            holder.llRaceCycles.setOnLongClickListener(new View.OnLongClickListener() {
+//                @Override
+//                public boolean onLongClick(View v) {
+//                    onRecyclerViewItemClickListener.onItemCycleLongClick(position);
+//                    return false;
+//                }
+//            });
+
+            holder.tvCycles.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onLongClick(View v) {
-                    onRecyclerViewItemClickListener.onItemCycleLongClick(position);
-                    return false;
+                public void onClick(View v) {
+                    onRecyclerViewItemClickListener.onItemClick(position,FLAG_CYCLE);
+                }
+            });
+
+            holder.tvItemCode.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onRecyclerViewItemClickListener.onItemClick(position,FLAG_ITEMCODE);
                 }
             });
         }

@@ -5,8 +5,11 @@ package com.feipulai.exam.activity.MiddleDistanceRace.server;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 
+import android.text.TextUtils;
 import android.util.Log;
 
+import com.feipulai.common.utils.DateUtil;
+import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceActivity;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
@@ -37,7 +40,7 @@ public class MySocketServer {
     private final WebConfig webConfig;//配置信息类
     private final ExecutorService threadPool;//线程池
     private ServerSocket socket;
-    public  OnResponseListener listener;
+    public OnResponseListener listener;
     private String m_strEvent;
     private Schedule schedule;
     private byte[] dataByte;
@@ -89,7 +92,7 @@ public class MySocketServer {
                     @Override
                     public void run() {
                         Log.e("tcp", "remotePeer..............." + remotePeer.getRemoteSocketAddress().toString());
-                        Log.e("listener",""+listener.toString());
+                        Log.e("listener", "" + listener.toString());
                         if (listener != null) {
                             listener.OnTcpServerSuccess(true, remotePeer.getRemoteSocketAddress().toString() + "连上本机");
                         }
@@ -173,7 +176,6 @@ public class MySocketServer {
         byte[] time = new byte[10];
         inputStream.read(time);
         String timestr = new String(time, "GB2312");
-        Log.i(TAG, "currentTimeMillis" + System.currentTimeMillis());
         Log.i(TAG, "timestr" + timestr);
 
         byte[] data = new byte[datalen - 58 - 20];
@@ -210,7 +212,7 @@ public class MySocketServer {
 
         if (endStr.substring(1, endStr.length() - 1).equals("FPTCP-PACKAGE-TAIL")) {
             Log.e(TAG, "-----------");
-            Log.e("listener",""+listener.toString());
+            Log.e("listener", "" + listener.toString());
             if (listener != null) {
                 listener.onTcpReceiveResult(schedule, m_strEvent);
             }
@@ -277,6 +279,7 @@ public class MySocketServer {
 
             String m_strBeginTime = result[17];//分组比赛时间
             Log.i("m_strBeginTime", m_strBeginTime);
+            m_strBeginTime=DateUtil.formatTime3(m_strBeginTime);
 
             int m_nCheck = Integer.parseInt(result[18]);//组检录状态
             Log.i("m_nCheck", "-->" + m_nCheck);
@@ -301,15 +304,23 @@ public class MySocketServer {
 
             String itemCode;
             if (item == null) {
-                itemCode = "fpl_"+m_strEvent;//暂时用项目名代替
-                DBManager.getInstance().insertItem(TestConfigs.sCurrentItem.getMachineCode(), null, m_strEvent, "分'秒");
-                ItemSchedule itemSchedule = new ItemSchedule();
-                itemSchedule.setItemCode(null);
-                itemSchedule.setScheduleNo(m_nField + "");
-                DBManager.getInstance().insertItemSchedule(itemSchedule);
+                itemCode = "fpl_" + m_strEvent;//暂时用项目名代替
+                DBManager.getInstance().insertItem(TestConfigs.sCurrentItem.getMachineCode(), itemCode, m_strEvent, "分'秒");
             } else {
-                itemCode = item.getItemCode();
+                if (TextUtils.isEmpty(item.getItemCode())) {
+                    itemCode="fpl_" + m_strEvent;
+                    item.setItemCode(itemCode);
+                    DBManager.getInstance().updateItem(item);
+                }else {
+                    itemCode=item.getItemCode();
+                }
             }
+
+
+            ItemSchedule itemSchedule = new ItemSchedule();
+            itemSchedule.setItemCode(itemCode);
+            itemSchedule.setScheduleNo(m_nField + "");
+            DBManager.getInstance().insertItemSchedule(itemSchedule);
 
             Group group = new Group();
             group.setGroupNo(m_nGrp);
@@ -378,6 +389,7 @@ public class MySocketServer {
                 Log.i(TAG, m_nGenders.toString());
                 Log.i(TAG, m_strStudentCategory.toString());
                 Log.i(TAG, m_nExamStatus.toString());
+
                 Student student;
                 StudentItem studentItem;
                 for (int i = 0; i < studentNo; i++) {
