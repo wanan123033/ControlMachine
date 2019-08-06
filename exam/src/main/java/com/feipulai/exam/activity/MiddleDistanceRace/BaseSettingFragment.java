@@ -21,12 +21,19 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.ItemCycleAdapter;
+import com.feipulai.exam.activity.MiddleDistanceRace.bean.GroupItemBean;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.Group;
+import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.Item;
+import com.feipulai.exam.utils.db.DataBaseExecutor;
+import com.feipulai.exam.utils.db.DataBaseRespon;
+import com.feipulai.exam.utils.db.DataBaseTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,8 +110,8 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
 
     private void initEvent() {
         //默认为服务的设置
-        carry_mode = TestConfigs.sCurrentItem.getCarryMode()==0?1:TestConfigs.sCurrentItem.getCarryMode();
-        digital = TestConfigs.sCurrentItem.getDigital()==0?1:TestConfigs.sCurrentItem.getDigital();
+        carry_mode = TestConfigs.sCurrentItem.getCarryMode() == 0 ? 1 : TestConfigs.sCurrentItem.getCarryMode();
+        digital = TestConfigs.sCurrentItem.getDigital() == 0 ? 1 : TestConfigs.sCurrentItem.getDigital();
 
         //如果本地修改了设置则本地设置优先
         baseNo = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MIDDLE_RACE_NUMBER, 3);
@@ -207,24 +214,75 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
 
     @Override
     public void onItemCycleLongClick(final int position) {
-        final EditText editText = new EditText(mContext);
-        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-        editText.setHint("圈数");
+        View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_item_setting, null);
+        final EditText etCycle = view.findViewById(R.id.et_cycle);
+        final EditText etItemCode = view.findViewById(R.id.et_item_code);
+        etItemCode.setText(itemList.get(position).getItemCode() == null ? "" : itemList.get(position).getItemCode());
+        etCycle.setText(itemList.get(position).getCycleNo());
         AlertDialog.Builder inputDialog = new AlertDialog.Builder(mContext);
-        inputDialog.setTitle(itemList.get(position).getItemName()).setView(editText);
+        inputDialog.setTitle(itemList.get(position).getItemName()).setView(view);
         inputDialog.setPositiveButton("确定",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         ((MiddleRaceSettingActivity) getActivity()).setChange(true);
 
-                        if (TextUtils.isEmpty(editText.getText().toString())) {
-                            return;
+                        if (!TextUtils.isEmpty(etCycle.getText().toString())) {
+                            itemList.get(position).setCycleNo(Integer.parseInt(etCycle.getText().toString()));
                         }
-                        itemList.get(position).setCycleNo(Integer.parseInt(editText.getText().toString()));
-                        itemCycleAdapter.notifyDataSetChanged();
-                        DBManager.getInstance().updateItem(itemList.get(position));
+
+                        if (!TextUtils.isEmpty(etItemCode.getText().toString())) {
+                            Item item = DBManager.getInstance().queryItemByCode(etItemCode.getText().toString());
+                            if (item!=null&&!item.getItemName().equals(itemList.get(position).getItemName())) {
+                                ToastUtils.showShort("不能设置相同项目代码");
+                                return;
+                            }
+                            String oldItemCode = itemList.get(position).getItemCode();
+                            itemList.get(position).setItemCode(etItemCode.getText().toString());
+                            itemCycleAdapter.notifyDataSetChanged();
+                            //更新item中的itemCode
+                            DBManager.getInstance().updateItem(itemList.get(position));
+                            updateAllItemCode(oldItemCode,etItemCode.getText().toString());
+                        }
+
                     }
                 }).show();
+    }
+
+    private void updateAllItemCode(final String oldItemCode, final String newItemCode) {
+        DataBaseExecutor.addTask(new DataBaseTask(mContext, getString(R.string.loading_update), false) {
+            @Override
+            public DataBaseRespon executeOper() {
+                //更新所有group中的itemCode
+                List<Group> groups = DBManager.getInstance().queryGroupByItemCode(oldItemCode);
+                for (Group group:groups
+                     ) {
+                    group.setItemCode(newItemCode);
+                }
+                DBManager.getInstance().updateGroups(groups);
+
+                //更新所有groupItem中的itemCode
+                List<GroupItem> groupItems = DBManager.getInstance().queryGroupItemByCode(oldItemCode);
+                for (GroupItem groupItem:groupItems
+                     ) {
+                    groupItem.setItemCode(newItemCode);
+                }
+                DBManager.getInstance().updateGroupItems(groupItems);
+
+                //
+
+                return new DataBaseRespon(true, "", null);
+            }
+
+            @Override
+            public void onExecuteSuccess(DataBaseRespon respon) {
+                ToastUtils.showShort("数据更新完毕");
+            }
+
+            @Override
+            public void onExecuteFail(DataBaseRespon respon) {
+
+            }
+        });
     }
 }

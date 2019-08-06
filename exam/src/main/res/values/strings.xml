@@ -52,6 +52,7 @@
     <!--密码提示-->
     <string name="hint_pass">请输入密码</string>
     <string name="loading_hint">正在处理，请等待...</string>
+    <string name="loading_update">正在更新所有数据，请等待...</string>
     <string name="speak_result">%1$s成绩%2$s</string>
 
     <string name="transmitting_terminal">发射端</string>

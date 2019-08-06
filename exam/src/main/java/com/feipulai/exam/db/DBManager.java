@@ -1329,6 +1329,10 @@ public class DBManager {
                 .where(GroupItemDao.Properties.GroupType.eq(sex)).orderDesc(GroupItemDao.Properties.TrackNo).list();
     }
 
+    public List<GroupItem> queryGroupItemByCode(String itemCode) {
+        return groupItemDao.queryBuilder().where(GroupItemDao.Properties.ItemCode.eq(itemCode)).list();
+    }
+
     /**
      * 查询对应考生当前项目最好成绩(分组)
      *
@@ -2119,6 +2123,9 @@ public class DBManager {
 
     public void updateGroups(List<Group> groups) {
         groupDao.updateInTx(groups);
+    }
+    public void updateGroupItems(List<GroupItem> groupItems) {
+        groupItemDao.updateInTx(groupItems);
     }
 
     public List<Group> queryGroupByItemCode(String itemCode) {
