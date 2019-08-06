@@ -21,6 +21,7 @@
     <color name="main_background">#1e90ff</color>
     <color name="green">#59BBFF</color>
     <color name="huise">#999999</color>
+    <color name="grey_border">#BFBFBF</color>
 
     <color name="black_semi_transparent">#B2000000</color>
     <color name="half_black">#808080</color>
@@ -54,6 +55,7 @@
     <color name="blue_1e">#1e78fc</color>
     <color name="black_T20">#33000000</color>
     <color name="black_10">#101010</color>
+    <color name="black_11">#313131</color>
     <color name="grey_light">#BFBFBF</color>
 
     <!--LightPink   浅粉红 #FFB6C1 255,182,193-->

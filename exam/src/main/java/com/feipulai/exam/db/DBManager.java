@@ -1035,6 +1035,20 @@ public class DBManager {
      * 成绩表
      **********************************************************************/
     /**
+     * 根据项目代码获取该学生的测试成绩列表
+     *
+     * @param itemCode
+     * @return
+     */
+    public List<RoundResult> queryResultsByItemCode(String itemCode) {
+        return roundResultDao
+                .queryBuilder()
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
+                .list();
+    }
+
+    /**
      * 根据学生号获取该学生的测试成绩列表
      *
      * @param studentCode
@@ -1331,6 +1345,17 @@ public class DBManager {
 
     public List<GroupItem> queryGroupItemByCode(String itemCode) {
         return groupItemDao.queryBuilder().where(GroupItemDao.Properties.ItemCode.eq(itemCode)).list();
+    }
+
+    /**
+     * 查询某个项目某个性别某个组次的所有人
+     *
+     * @param itemCode
+     * @return
+     */
+    public List<GroupItem> queryGroupItemByItemCode(String itemCode) {
+        return groupItemDao.queryBuilder()
+                .where(GroupItemDao.Properties.ItemCode.eq(itemCode)).list();
     }
 
     /**
@@ -2200,7 +2225,22 @@ public class DBManager {
 
     }
 
+    /**
+     * 更新学生分组信息
+     *
+     * @param groupItems
+     */
+    public void updateStudentGroupItems(List<GroupItem> groupItems) {
+        groupItemDao.updateInTx(groupItems);
+
+    }
+
     /******************** 机器成绩表 **************/
+    public List<MachineResult> getMachineResultByItemCode(String itemCode) {
+        return machineResultDao.queryBuilder().where(MachineResultDao.Properties.ItemCode.eq(itemCode))
+                .where(MachineResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode())).list();
+    }
+
     public List<MachineResult> getItemRoundMachineResult(String stuCode, int testNo, int roundNo) {
         return machineResultDao.queryBuilder().where(MachineResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(MachineResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
@@ -2223,6 +2263,10 @@ public class DBManager {
 
     public void insterMachineResults(List<MachineResult> machineResults) {
         machineResultDao.insertInTx(machineResults);
+    }
+
+    public void updateMachineResults(List<MachineResult> machineResults) {
+        machineResultDao.updateInTx(machineResults);
     }
 
     public void deleteStuMachineResults(String studentCode, int testNo, int rountNo, long groupId) {

@@ -188,9 +188,21 @@ public class HttpSubscriber {
                     item.setUnit(itemBean.getResultUnit());
                     itemList.add(item);
                 }
-
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+                    boolean initState = TestConfigs.initZCP(itemList);
+                    if (initState) {
+                        DBManager.getInstance().insertItems(itemList);
+                        if (onRequestEndListener != null) {
+                            onRequestEndListener.onSuccess(ITEM_BIZ);
+                        }
+                    } else {
+                        if (onRequestEndListener != null) {
+                            onRequestEndListener.onFault(ITEM_BIZ);
+                        }
+                    }
+                    return;
+                }
                 DBManager.getInstance().insertItems(itemList);
-
                 List<Item> items = DBManager.getInstance().queryItemsByMachineCode(TestConfigs.sCurrentItem.getMachineCode());
                 //更新当前项目信息
                 if (TestConfigs.sCurrentItem.getItemCode() == null) {
@@ -205,32 +217,27 @@ public class HttpSubscriber {
                             return;
                         }
                     }
-                    if (TestConfigs.sCurrentItem.getMachineCode() != ItemDefault.CODE_ZCP) {
-                        int initState = TestConfigs.init(context, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
-                                    EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_FAULT));
-                                    ToastUtils.showShort("当前考点无此项目，请重新选择项目");
-                                    if (onRequestEndListener != null) {
-                                        onRequestEndListener.onFault(ITEM_BIZ);
-                                    }
-                                    return;
+                    int initState = TestConfigs.init(context, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
+                                EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_FAULT));
+                                ToastUtils.showShort("当前考点无此项目，请重新选择项目");
+                                if (onRequestEndListener != null) {
+                                    onRequestEndListener.onFault(ITEM_BIZ);
                                 }
-                                if (onRequestEndListener != null)
-                                    onRequestEndListener.onSuccess(ITEM_BIZ);
+                                return;
                             }
-                        });
-                        if (onRequestEndListener != null) {
-                            if (initState == TestConfigs.INIT_SUCCESS) {
+                            if (onRequestEndListener != null)
                                 onRequestEndListener.onSuccess(ITEM_BIZ);
-                            } else {
-                                onRequestEndListener.onFault(ITEM_BIZ);
-                            }
                         }
-                    } else {
-                        if (onRequestEndListener != null)
+                    });
+                    if (onRequestEndListener != null) {
+                        if (initState == TestConfigs.INIT_SUCCESS) {
                             onRequestEndListener.onSuccess(ITEM_BIZ);
+                        } else {
+                            onRequestEndListener.onFault(ITEM_BIZ);
+                        }
                     }
 
 
@@ -320,8 +327,12 @@ public class HttpSubscriber {
             public void onSuccess(BatchBean<List<StudentBean>> result) {
                 Set<String> supplements = new HashSet<>();// 补考考生考号集合
                 Logger.i("getItemStudent" + result.toString());
-                if (result == null || result.getDataInfo() == null)
+                if (result == null || result.getDataInfo() == null) {
+                    if (onRequestEndListener != null)
+                        onRequestEndListener.onSuccess(STUDENT_BIZ);
                     return;
+                }
+
                 final List<Student> studentList = new ArrayList<>();
                 final List<StudentItem> studentItemList = new ArrayList<>();
 
@@ -393,8 +404,11 @@ public class HttpSubscriber {
             @Override
             public void onSuccess(BatchBean<List<GroupBean>> result) {
                 Logger.i("getItemGroupAll====>" + result.toString());
-                if (result == null || result.getDataInfo() == null)
+                if (result == null || result.getDataInfo() == null) {
+                    if (onRequestEndListener != null)
+                        onRequestEndListener.onSuccess(STUDENT_BIZ);
                     return;
+                }
                 final List<Group> groupList = new ArrayList<>();
                 final List<GroupItem> groupItemList = new ArrayList<>();
 

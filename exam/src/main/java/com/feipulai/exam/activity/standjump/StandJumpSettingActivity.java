@@ -57,6 +57,8 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
 
     @BindView(R.id.tv_device_check)
     TextView tvDeviceCheck;
+    @BindView(R.id.tv_check_data)
+    TextView tvCheckData;
     @BindView(R.id.sp_device_count)
     Spinner spDeviceCount;
     @BindView(R.id.sp_test_round)
@@ -378,6 +380,7 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
                 SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SELF_CHECK_JUMP));
                 //3秒自检
                 mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
+                tvCheckData.setText("");
                 break;
             case R.id.txt_scope_confirm:
 
@@ -423,6 +426,7 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
                     case MSG_DISCONNECT://连接失败
                         if (activity.isDisconnect) {
                             activity.toastSpeak("设备未连接");
+                            activity.tvCheckData.setText("设备未连接");
                             //设置当前设置为不可用断开状态
                             if (activity.mProgressDialog.isShowing()) {
                                 activity.mProgressDialog.dismiss();
@@ -445,7 +449,7 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
                                     ledPostion += (" " + (brokenLED + 50));
                                 }
                             }
-                            activity.toastSpeak("发现故障点:" + ledPostion);
+                            activity.tvCheckData.setText("发现故障点:" + ledPostion);
                         }
 //                        if (result.getTerminalCondition() == NEED_CHANGE) {
 //                            Log.i("james", "JUMP_SELF_CHECK_RESPONSE NEED_CHANGE");

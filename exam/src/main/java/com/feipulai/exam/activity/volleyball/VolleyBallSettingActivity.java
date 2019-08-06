@@ -19,6 +19,7 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 import com.feipulai.common.utils.DialogUtils;
+import com.feipulai.common.utils.HandlerUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -66,6 +67,7 @@ public class VolleyBallSettingActivity
     //3秒内检设备是否可用
     private volatile boolean isDisconnect = true;
     private static final int MSG_DISCONNECT = 0X101;
+    private static final int MSG_CHECK = 0X102;
     private SerialHandler mHandler = new SerialHandler(this);
     private CheckDeviceView checkDeviceView;
 
@@ -222,10 +224,16 @@ public class VolleyBallSettingActivity
     public void onRS232Result(Message msg) {
         switch (msg.what) {
             case SerialConfigs.VOLLEYBALL_CHECK_RESPONSE:
-                mProgressDialog.dismiss();
-                VolleyBallCheck volleyBallCheck = (VolleyBallCheck) msg.obj;
-                int length = setting.getTestPattern() == 0 ? VolleyBallSetting.ANTIAIRCRAFT_POLE * 10 : VolleyBallSetting.WALL_POLE * 10;
-                checkDeviceView.setData(length, volleyBallCheck.getPositionList());
+                if (checkDeviceView == null) {
+                    return;
+                }
+                if (mProgressDialog != null) {
+                    mProgressDialog.dismiss();
+                }
+
+
+                HandlerUtil.sendMessage(mHandler, MSG_CHECK, msg.obj);
+
 
                 break;
         }
@@ -278,6 +286,15 @@ public class VolleyBallSettingActivity
                             if (activity.mProgressDialog.isShowing()) {
                                 activity.mProgressDialog.dismiss();
                             }
+                        }
+                        break;
+                    case MSG_CHECK:
+                        final VolleyBallCheck volleyBallCheck = (VolleyBallCheck) msg.obj;
+                        if (volleyBallCheck
+                                .getPositionList() == null || volleyBallCheck.getPositionList().size() == 0) {
+                            activity.checkDeviceView.setUnunitedData(activity.setting.getTestPattern() == 0 ? VolleyBallSetting.ANTIAIRCRAFT_POLE : VolleyBallSetting.WALL_POLE);
+                        } else {
+                            activity.checkDeviceView.setData(activity.setting.getTestPattern() == 0 ? VolleyBallSetting.ANTIAIRCRAFT_POLE : VolleyBallSetting.WALL_POLE, volleyBallCheck.getPositionList());
                         }
                         break;
                 }

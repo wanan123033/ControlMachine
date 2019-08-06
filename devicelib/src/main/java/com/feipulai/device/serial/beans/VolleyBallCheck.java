@@ -1,6 +1,7 @@
 package com.feipulai.device.serial.beans;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -21,20 +22,26 @@ public class VolleyBallCheck {
     public VolleyBallCheck(byte[] data) {
         type = data[12];
         if (type != 0) {
-            positionList = new ArrayList<>(30);
             deviceId = data[4];
             mode = data[6];
             List<Integer> dList = new ArrayList<>();
             for (int i = 0; i < data.length; i++) {
                 if (i >= 8 && i <= 11) {
-                    char[] position = Integer.toBinaryString(data[i]).toCharArray();
-                    for (char c : position) {
-                        dList.add(Integer.valueOf(c));
+                    String binaryData = Integer.toBinaryString(data[i] & 0xFF);
+                    for (int j = 0; j < 8; j++) {
+                        if (binaryData.length() - 1 < j) {
+                            dList.add(0);
+                        } else {
+                            dList.add(Integer.valueOf(binaryData.substring(j, j + 1)));
+                        }
                     }
                 }
             }
-            System.arraycopy(dList, 0, positionList, 0, positionList.size());
-            voltameter = dList.get(32);
+
+            Integer positionArray[] = new Integer[30];
+            System.arraycopy(dList.toArray(), 0, positionArray, 0, positionArray.length);
+            positionList = new ArrayList<>(Arrays.asList(positionArray));
+            voltameter = dList.get(31);
             if (type == 1) {
                 voltameter = 1;
             }

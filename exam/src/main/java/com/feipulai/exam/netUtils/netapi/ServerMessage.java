@@ -103,7 +103,6 @@ public class ServerMessage {
 
             @Override
             public void onFault(int bizType) {
-
             }
         });
         subscriber.getScheduleAll();

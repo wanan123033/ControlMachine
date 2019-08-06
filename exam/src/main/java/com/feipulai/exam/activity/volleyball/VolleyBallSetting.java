@@ -8,8 +8,8 @@ import com.feipulai.exam.config.TestConfigs;
  */
 
 public class VolleyBallSetting {
-    public static final int ANTIAIRCRAFT_POLE = 2;
-    public static final int WALL_POLE = 3;
+    public static final int ANTIAIRCRAFT_POLE = 3;
+    public static final int WALL_POLE = 2;
     public static final int NO_TIME_LIMIT = 0;
     private int testTime = NO_TIME_LIMIT;// 一轮测试的时间,单位为秒
     private int testNo = 1;// 允许测试的次数

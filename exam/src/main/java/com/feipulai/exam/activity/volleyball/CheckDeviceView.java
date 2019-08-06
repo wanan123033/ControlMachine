@@ -1,6 +1,7 @@
 package com.feipulai.exam.activity.volleyball;
 
 import android.content.Context;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,6 +30,7 @@ public class CheckDeviceView extends RelativeLayout {
     RecyclerView rvStep;
     private Context mContext;
     private List<List<StepBean>> checkList;
+    private CheckDeviceAdapter adapter;
 
     public CheckDeviceView(Context context) {
         super(context);
@@ -50,7 +52,11 @@ public class CheckDeviceView extends RelativeLayout {
     }
 
     public void setData(int lenght, List<Integer> dataCheck) {
-        checkList = new ArrayList<>(lenght);
+        if (checkList == null) {
+            checkList = new ArrayList<>();
+        } else {
+            checkList.clear();
+        }
         for (int i = 0; i < lenght; i++) {
             List<StepBean> stepBeanList = new ArrayList<>();
             boolean isAddTest = false;
@@ -64,14 +70,29 @@ public class CheckDeviceView extends RelativeLayout {
             }
             checkList.add(stepBeanList);
         }
-        rvStep.setAdapter(new CheckDeviceAdapter(checkList));
+//        rvStep.setAdapter(new CheckDeviceAdapter(checkList));
+        if (adapter == null) {
+            adapter = new CheckDeviceAdapter(checkList);
+            rvStep.setAdapter(adapter);
+        } else {
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    adapter.notifyDataSetChanged();
+                }
+            });
+        }
     }
 
     /**
      * 初始化未连接数据
      */
     public void setUnunitedData(int initial) {
-        checkList = new ArrayList<>(initial);
+        if (checkList == null) {
+            checkList = new ArrayList<>();
+        } else {
+            checkList.clear();
+        }
         for (int i = 0; i < initial; i++) {
             List<StepBean> stepBeanList = new ArrayList<>();
             for (int j = i * 10; j < i * 10 + 10; j++) {
@@ -79,6 +100,18 @@ public class CheckDeviceView extends RelativeLayout {
             }
             checkList.add(stepBeanList);
         }
-        rvStep.setAdapter(new CheckDeviceAdapter(checkList));
+        if (adapter == null) {
+            adapter = new CheckDeviceAdapter(checkList);
+            rvStep.setAdapter(adapter);
+        } else {
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    adapter.notifyDataSetChanged();
+                }
+            });
+        }
+
+
     }
 }
