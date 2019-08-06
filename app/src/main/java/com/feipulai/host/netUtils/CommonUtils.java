@@ -7,9 +7,7 @@ import android.support.annotation.NonNull;
 import android.telephony.TelephonyManager;
 
 import com.feipulai.host.MyApplication;
-import com.feipulai.host.config.SharedPrefsConfigs;
-import com.feipulai.host.config.TestConfigs;
-import com.feipulai.host.utils.SharedPrefsUtil;
+import com.feipulai.host.activity.setting.SettingHelper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -80,8 +78,7 @@ public class CommonUtils {
     }
 
     public static String getIp(Context context) {
-        String ipAddress = SharedPrefsUtil.getValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.IP_ADDRESS,
-                TestConfigs.DEFAULT_IP_ADDRESS) + "/app/";
+        String ipAddress = SettingHelper.getSystemSetting().getServerIp()+ "/app/";
         if (!ipAddress.startsWith("http")) {
             ipAddress = "http://" + ipAddress;
         }

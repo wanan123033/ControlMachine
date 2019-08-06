@@ -1,7 +1,8 @@
 package com.feipulai.exam.activity.jump_rope.pair;
 
-import android.os.Bundle;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -9,9 +10,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Switch;
 
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.exam.R;
-import com.feipulai.exam.activity.base.BaseActivity;
+import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.jump_rope.adapter.DevicePairAdapter;
 import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSetting;
 import com.feipulai.exam.view.DividerItemDecoration;
@@ -19,11 +21,10 @@ import com.feipulai.exam.view.DividerItemDecoration;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
 
-public class JumpRopePairActivity extends BaseActivity
+public class JumpRopePairActivity extends BaseTitleActivity
         implements JumpRopePairContract.View,
         DevicePairAdapter.OnItemClickListener {
 
@@ -43,12 +44,25 @@ public class JumpRopePairActivity extends BaseActivity
     private JumpRopePairPresenter presenter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_radio_pair);
-        ButterKnife.bind(this);
+    protected int setLayoutResID() {
+        return R.layout.activity_radio_pair;
+    }
+
+    @Override
+    protected void initData() {
         presenter = new JumpRopePairPresenter(this, this);
         presenter.start();
+    }
+
+    @Nullable
+    @Override
+    protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
+        return builder.setTitle("手柄匹配").addLeftText("返回", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     @Override

@@ -1,5 +1,8 @@
 package com.feipulai.host.entity;
 
+import android.text.TextUtils;
+
+import com.feipulai.common.utils.StringChineseUtil;
 import com.google.gson.annotations.SerializedName;
 
 import org.greenrobot.greendao.DaoException;
@@ -12,6 +15,7 @@ import org.greenrobot.greendao.annotation.ToMany;
 import org.greenrobot.greendao.annotation.Unique;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
@@ -195,7 +199,25 @@ public class Student implements Serializable {
     public void setRemark3(String remark3) {
         this.remark3 = remark3;
     }
+    public String getSpeakStuName() {
+        return StringChineseUtil.toChinese(studentName);
+    }
+    public String getLEDStuName() {
+        if (!TextUtils.isEmpty(studentName) && studentName.length() > 0) {
+            try {
+                byte[] nameByte = studentName.getBytes("GBK");
+                if (nameByte.length > 8) {
+                    byte[] newName = new byte[8];
+                    System.arraycopy(nameByte, nameByte.length - newName.length, newName, 0, 8);
+                    return new String(newName, "GBK");
+                }
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
 
+        }
+        return studentName;
+    }
     /**
      * To-many relationship, resolved on first access (and after reset).
      * Changes to to-many relations are not persisted, make changes to the target entity.

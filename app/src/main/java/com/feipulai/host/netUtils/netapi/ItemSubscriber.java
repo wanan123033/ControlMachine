@@ -6,6 +6,7 @@ import android.content.Intent;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.activity.data.DataRetrieveActivity;
+import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
@@ -38,8 +39,7 @@ import io.reactivex.observers.DisposableObserver;
 public class ItemSubscriber {
 	
     private int pageNo = 1;
-    private int hostId = SharedPrefsUtil.getValue(MyApplication.getInstance(),
-            SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.HOST_ID, 1);
+    private int hostId = SettingHelper.getSystemSetting().getHostId();
     
     /**
      * 获取全部项目信息

@@ -10,13 +10,10 @@ import android.view.WindowManager;
 
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.ActivityCollector;
-import com.feipulai.common.utils.StatusNavUtils;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.host.config.BaseEvent;
 import com.feipulai.host.config.SharedPrefsConfigs;
-import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.utils.SharedPrefsUtil;
-import com.feipulai.host.utils.SystemBrightUtils;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
@@ -33,27 +30,30 @@ public class BaseActivity extends Activity {
 
     private String mActivityName;
     public int machineCode;
-    public int hostId;
-
+//    public int hostId;
+private long lastBroadcastTime;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
         super.onCreate(savedInstanceState);
-        StatusNavUtils.setNavigationBarColor(this, 0x33000000);
+//        StatusNavUtils.setNavigationBarColor(this, 0x33000000);
         //知晓当前是在哪一个Activity
         mActivityName = getClass().getSimpleName();
         Logger.d(mActivityName + ".onCreate");
         EventBus.getDefault().register(this);
-        ActivityCollector.addActivity(this);
-        SystemBrightUtils.setBrightness(this, SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS,
-                SharedPrefsConfigs.BRIGHTNESS, 125));
+        ActivityCollector.getInstance().onCreate(this);
+//        SystemBrightUtils.setBrightness(this, SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS,
+//                SharedPrefsConfigs.BRIGHTNESS, 125));
 
         machineCode = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, SharedPrefsConfigs
                 .DEFAULT_MACHINE_CODE);
-        hostId = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.HOST_ID, 1);
-        setTitle("智能主机[体测版]-" + TestConfigs.machineNameMap.get(machineCode) + hostId + "号机");
+//        hostId = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.HOST_ID, 1);
+//        setTitle("智能主机[体测版]-" + TestConfigs.machineNameMap.get(machineCode) + hostId + "号机");
     }
 
     @Override
@@ -89,7 +89,7 @@ public class BaseActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ActivityCollector.removeActivity(this);
+        ActivityCollector.getInstance().onDestroy(this);
         Logger.d(mActivityName + ".onDestroy");
     }
 
@@ -97,13 +97,32 @@ public class BaseActivity extends Activity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ToastUtils.showShort(msg);
-                TtsManager.getInstance().speak(msg);
-                Logger.i(msg);
+                // 播报时间间隔必须>500ms
+                long tmp = System.currentTimeMillis();
+                if (tmp - lastBroadcastTime > 500) {
+                    lastBroadcastTime = tmp;
+                    ToastUtils.showShort(msg);
+                    TtsManager.getInstance().speak(msg);
+                    Logger.i(msg);
+                }
             }
         });
     }
-
+    public void toastSpeak(final String speakMsg, final String toastMsg) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // 播报时间间隔必须>500ms
+                long tmp = System.currentTimeMillis();
+                if (tmp - lastBroadcastTime > 500) {
+                    lastBroadcastTime = tmp;
+                    ToastUtils.showShort(toastMsg);
+                    TtsManager.getInstance().speak(speakMsg);
+                    Logger.i(toastMsg.toString());
+                }
+            }
+        });
+    }
     protected static class MyHandler extends Handler {
 
         private WeakReference<BaseActivity> mWeakReference;

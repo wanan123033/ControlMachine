@@ -19,11 +19,11 @@ import static com.feipulai.device.serial.SerialConfigs.JUMP_SCORE_RESPONSE;
 import static com.feipulai.device.serial.SerialConfigs.JUMP_SELF_CHECK_RESPONSE;
 import static com.feipulai.device.serial.SerialConfigs.JUMP_SELF_CHECK_RESPONSE_Simple;
 import static com.feipulai.device.serial.SerialConfigs.JUMP_START_RESPONSE;
+import static com.feipulai.device.serial.beans.JumpSelfCheckResult.HAS_BROKEN_POINTS;
 import static com.feipulai.device.serial.beans.JumpSelfCheckResult.NEED_CHANGE;
 
-
 /**
- * 立地跳远回调
+ * 立定跳远回调
  * Created by zzs on 2018/8/10
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
@@ -54,9 +54,11 @@ public class StandResiltListener implements SerialDeviceManager.RS232ResiltListe
     public void onRS232Result(Message msg) {
 
         switch (msg.what) {
+
             case JUMP_SELF_CHECK_RESPONSE:
                 Log.i("james", "JUMP_SELF_CHECK_RESPONSE received");
                 JumpSelfCheckResult result = (JumpSelfCheckResult) msg.obj;
+                Logger.i("JUMP_SELF_CHECK_RESPONSE:" + result.toString());
                 if (result.getTerminalCondition() == NEED_CHANGE) {
                     Log.i("james", "JUMP_SELF_CHECK_RESPONSE NEED_CHANGE");
 
@@ -64,25 +66,36 @@ public class StandResiltListener implements SerialDeviceManager.RS232ResiltListe
                     if (testState != TestState.WAIT_RESULT) {
                         testState = TestState.UN_STARTED;
                     }
-                    //设置当前设置为不可用断开状态
-                    handlerInterface.getDeviceState(new BaseDeviceState(BaseDeviceState.STATE_ERROR, 1));
-                    //测量垫检测失败
-                    handlerInterface.CheckDevice(false);
+//                    //设置当前设置为不可用断开状态
+//                    handlerInterface.getDeviceState(new BaseDeviceState(BaseDeviceState.STATE_ERROR, 1));
+//                    //测量垫检测失败
+//                    handlerInterface.CheckDevice(false, result.getBrokenLEDs());
+
+                    //设置当前设置
+                    handlerInterface.getDeviceState(new BaseDeviceState(BaseDeviceState.STATE_FREE, 1));
+                    handlerInterface.CheckDevice(true, result.getBrokenLEDs());
+                } else if (result.getTerminalCondition() == HAS_BROKEN_POINTS) {
+                    //设置当前设置
+                    handlerInterface.getDeviceState(new BaseDeviceState(BaseDeviceState.STATE_FREE, 1));
+                    handlerInterface.CheckDevice(true, result.getBrokenLEDs());
                 } else {
-                    handlerInterface.CheckDevice(true);
+                    //测量垫检测通过
+                    handlerInterface.CheckDevice(true, null);
+                    handlerInterface.getDeviceState(new BaseDeviceState(BaseDeviceState.STATE_FREE, 1));
                 }
                 break;
 
             case JUMP_SELF_CHECK_RESPONSE_Simple:
                 Log.i("james", "JUMP_SELF_CHECK_RESPONSE_Simple received");
                 //测量垫检测通过
-                handlerInterface.CheckDevice(true);
+                handlerInterface.CheckDevice(true, null);
+                //设置当前设置
+                handlerInterface.getDeviceState(new BaseDeviceState(BaseDeviceState.STATE_FREE, 1));
                 break;
 
             case JUMP_START_RESPONSE:
                 Log.i("james", "JUMP_START_RESPONSE");
-//                TtsManager.getInstance().speak("测试开始");
-                //测试指令回复，可以开始测试adb connect 192.168.137.139
+                //测试指令回复，可以开始测试
                 handlerInterface.StartDevice();
                 testState = TestState.WAIT_RESULT;
                 //设置当前设置为空闲状态
@@ -91,15 +104,15 @@ public class StandResiltListener implements SerialDeviceManager.RS232ResiltListe
 
             case JUMP_SCORE_RESPONSE:
                 //成绩数据回复
-                Log.i("james", "JUMP_SCORE_RESPONSE====>");
+
                 //设置当前设备为正在使用状态
                 BaseDeviceState deviceState = new BaseDeviceState(BaseDeviceState.STATE_ONUSE, 1);
                 handlerInterface.getDeviceState(deviceState);
                 // 立定跳远机器成绩获取
                 if (testState == TestState.WAIT_RESULT) {
                     JumpScore jumpScore = (JumpScore) msg.obj;
-                    Log.i("james", "JUMP_SCORE_RESPONSE====>" + jumpScore.getScore());
                     Logger.i("TestState" + testState + "=>JUMP_SCORE_RESPONSE====>" + jumpScore.getScore());
+
                     BaseStuPair stuPair = new BaseStuPair();
                     //设置获取成绩机器
                     stuPair.setBaseDevice(deviceState);
@@ -113,20 +126,25 @@ public class StandResiltListener implements SerialDeviceManager.RS232ResiltListe
                         stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
                         stuPair.setResult(jumpScore.getScore() * 10);
                         //   成绩数值超出范围
-                        if ((TestConfigs.sCurrentItem.getMinValue() != 0 && jumpScore.getScore() < TestConfigs.sCurrentItem.getMinValue())
-                                || (TestConfigs.sCurrentItem.getMaxValue() != 0 && jumpScore.getScore() > TestConfigs.sCurrentItem.getMaxValue())) {
-                            Logger.i("成绩数值超出范围:最小值->" + TestConfigs.sCurrentItem.getMinValue() + ",最大值->" + TestConfigs.sCurrentItem.getMaxValue() + ",获取的成绩->" + jumpScore.getScore());
+                        int minValue = TestConfigs.sCurrentItem.getMinValue() == 0 ? TestConfigs.itemMinScope.get(TestConfigs.sCurrentItem.getMachineCode()) : TestConfigs.sCurrentItem.getMinValue();
+                        int maxValue = TestConfigs.sCurrentItem.getMaxValue() == 0 ? TestConfigs.itemMaxScope.get(TestConfigs.sCurrentItem.getMachineCode()) : TestConfigs.sCurrentItem.getMaxValue();
 
-                            TtsManager.getInstance().speak(deviceState.getDeviceId() + "号设备错误重测");
+//                        if ((TestConfigs.sCurrentItem.getMinValue() != 0 && (jumpScore.getResult() * 10) < TestConfigs.sCurrentItem.getMinValue())
+//                                || (TestConfigs.sCurrentItem.getMaxValue() != 0 && (jumpScore.getResult() * 10) > TestConfigs.sCurrentItem.getMaxValue())) {
+//                            Logger.i("成绩数值超出范围:最小值->" + TestConfigs.sCurrentItem.getMinValue() + ",最大值->" + TestConfigs.sCurrentItem.getMaxValue() + ",获取的成绩->" + jumpScore.getResult());
+                        if (jumpScore.getScore() * 10 < minValue
+                                || jumpScore.getScore() * 10 > maxValue) {
+                            Logger.i("成绩数值超出范围:最小值->" + minValue + ",最大值->" + maxValue + ",获取的成绩->" + jumpScore.getScore());
+
+                            TtsManager.getInstance().speak("设备错误，考生请重测");
                             testState = TestState.WAIT_RESULT;
                             //重测设置设备正在使用中
                             deviceState.setState(BaseDeviceState.STATE_ONUSE);
                             stuPair.setResult(0);
-                            //更新成绩
-                            handlerInterface.getResult(stuPair);
-
                             //设置设备状态
                             handlerInterface.getDeviceState(deviceState);
+                            //更新成绩
+                            handlerInterface.getResult(stuPair);
                             handlerInterface.AgainTest(deviceState);
                             break;
                         }
@@ -169,7 +187,7 @@ public class StandResiltListener implements SerialDeviceManager.RS232ResiltListe
          * 检测设备 true 正常 false 故障
          */
 
-        void CheckDevice(boolean isCheckDevice);
+        void CheckDevice(boolean isCheckDevice, int[] brokenLEDs);
 
         /**
          * 开始测试

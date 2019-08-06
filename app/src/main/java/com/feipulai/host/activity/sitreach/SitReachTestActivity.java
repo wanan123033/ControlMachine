@@ -1,6 +1,5 @@
 package com.feipulai.host.activity.sitreach;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -10,15 +9,9 @@ import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.host.activity.base.BaseDeviceState;
-import com.feipulai.host.activity.base.BasePersonTestActivity;
 import com.feipulai.host.activity.base.BaseStuPair;
-import com.feipulai.host.config.SharedPrefsConfigs;
-
-import com.feipulai.host.utils.SharedPrefsUtil;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -27,7 +20,7 @@ import java.util.concurrent.Executors;
  * Created by zzs on 2018/7/2
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
-public class SitReachTestActivity extends BasePersonTestActivity {
+public class SitReachTestActivity extends com.feipulai.host.activity.person.BasePersonTestActivity {
     //最大使用设备数量
     private int maxDivice;
     private GetResultRunnable resultRunnable = new GetResultRunnable();
@@ -69,12 +62,12 @@ public class SitReachTestActivity extends BasePersonTestActivity {
 
     }
 
-    @Override
-    public void switchToFreeTest() {
-        super.switchToFreeTest();
-        startActivity(new Intent(this, SitReachFaceIDActivity.class));
-        finish();
-    }
+//    @Override
+//    public void switchToFreeTest() {
+//        super.switchToFreeTest();
+//        startActivity(new Intent(this, SitReachFaceIDActivity.class));
+//        finish();
+//    }
 
 //    /**
 //     * 发送检测设备指令
@@ -93,6 +86,16 @@ public class SitReachTestActivity extends BasePersonTestActivity {
 
 
     @Override
+    public void gotoItemSetting() {
+
+    }
+
+    @Override
+    public void stuSkip() {
+
+    }
+
+    @Override
     public void sendTestCommand(BaseStuPair baseStuPair) {
 //        sendCheck();
         sitReachResiltListener.setTestState(SitReachResiltListener.TestState.WAIT_RESULT);
@@ -106,15 +109,15 @@ public class SitReachTestActivity extends BasePersonTestActivity {
         }
     }
 
-    @Override
-    public List<BaseDeviceState> findDevice() {
-        maxDivice = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.SIT_REACH_TEST_NUMBER, 1);
-        List<BaseDeviceState> deviceStates = new ArrayList<>();
-        for (int i = 0; i < maxDivice; i++) {
-            deviceStates.add(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, i + 1));
-        }
-        return deviceStates;
-    }
+//    @Override
+//    public List<BaseDeviceState> findDevice() {
+//        maxDivice = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.SIT_REACH_TEST_NUMBER, 1);
+//        List<BaseDeviceState> deviceStates = new ArrayList<>();
+//        for (int i = 0; i < maxDivice; i++) {
+//            deviceStates.add(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, i + 1));
+//        }
+//        return deviceStates;
+//    }
 
 
 //    @Override
@@ -200,11 +203,8 @@ public class SitReachTestActivity extends BasePersonTestActivity {
             toastSpeak("开始测试");
         }
     });
-    
-    @Override
-    public void onWrongLength(int length, int expectLength) {
-    
-    }
+
+
     
     
     private static class MyHandler extends Handler {

@@ -9,10 +9,6 @@ public class SharedPrefsConfigs {
 
     public static final String DEFAULT_PREFS = "host_prefs";
 
-    public static final String HOST_ID = "host_id";
-    public static final String REAL_TIME_UPLOAD = "real_time_upload";
-    public static final String GRADE_BROADCAST = "grade_broadcast";
-    public static final String AUTO_PRINT = "auto_print";
     public static final String MACHINE_CODE = "machine_code";
     public static final String BRIGHTNESS = "brightness";
     public static final String JUMP_ROPE_AUTO_PAIR = "JUMP_ROPE_AUTO_PAIR";
@@ -25,7 +21,7 @@ public class SharedPrefsConfigs {
     public static final String JUMP_ROPE_TEST_NUMBER = "JUMP_ROPE_TEST_NUMBER";
     public static final String JUMP_ROPE_TEST_TIME = "JUMP_ROPE_TEST_TIME";
     public static final String JUMP_ROPE_CURRENT_GROUP = "JUMP_ROPE_CURRENT_GROUP";
-    public static final String IP_ADDRESS = "IP_ADDRESS";
+//    public static final String IP_ADDRESS = "IP_ADDRESS";
     public static final String TOKEN = "TOKEN";
     public static final String SIT_UP_TEST_NUMBER = "SIT_UP_TEST_NUMBER";
     public static final String SIT_UP_TEST_TIME = "SIT_UP_TEST_TIME";
@@ -37,8 +33,6 @@ public class SharedPrefsConfigs {
     public static final String PULL_UP_TEST_NUMBER = "PULL_UP_TEST_NUMBER";
     public static final String PULL_UP_TEST_TIME = "PULL_UP_TEST_TIME";
 
-    public static final String TEST_NAME = "TEST_NAME";
-    public static final String TEST_SITE = "TEST_SITE";
     //立地跳远设备设置数量
     public static final String STAND_JUMP_TEST_NUMBER = "STAND_JUMP_TEST_NUMBER";
     //立地跳远设备设置数量

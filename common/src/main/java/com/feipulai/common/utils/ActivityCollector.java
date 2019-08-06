@@ -2,35 +2,188 @@ package com.feipulai.common.utils;
 
 import android.app.Activity;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
+import java.util.Stack;
 
 /**
  * Created by James on 2017/11/22.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 public class ActivityCollector{
-	
-	private static List<Activity> mActivityList = new ArrayList<>();
-	
-	public static void addActivity(Activity activity){
-		mActivityList.add(activity);
+
+	/**
+	 * 管理类对象
+	 */
+	private static ActivityCollector mActivityCollector;
+	/**
+	 * 打开的activity
+	 **/
+	private static Stack<Activity> mStackActivity;
+
+
+	public ActivityCollector(){
+		mStackActivity = new Stack<>();
 	}
-	
-	public static void removeActivity(Activity actuvity){
-		mActivityList.remove(actuvity);
-	}
-	
-	public static void finishAll(){
-		for(Activity activity : mActivityList){
-			if(!activity.isFinishing()){
-				// activity.finish方法调用时,只是将activity移出栈,至于何时activity回收,由系统决定
-				// 所以不能调用activity.finish方法后立即调用System.exit(0)，否则activity生命周期不会走完
-				activity.finish();
+
+
+	public static ActivityCollector getInstance()
+	{
+		if (mActivityCollector == null)
+		{
+			synchronized (ActivityCollector.class)
+			{
+				if (mActivityCollector == null)
+				{
+					mActivityCollector = new ActivityCollector();
+				}
 			}
 		}
-		//Logger.d("application exiting");
-		//System.exit(0);
+		return mActivityCollector;
+	}
+
+
+	public void onCreate(Activity activity)
+	{
+		addActivity(activity);
+	}
+
+	public void onResume(Activity activity)
+	{
+		addActivity(activity);
+	}
+
+	public void onDestroy(Activity activity)
+	{
+		removeActivity(activity);
+	}
+
+	/**
+	 * 新建了一个activity
+	 * @param activity
+	 */
+	private void addActivity(Activity activity)
+	{
+		if (!mStackActivity.contains(activity))
+		{
+			mStackActivity.add(activity);
+		}
+	}
+
+	private void removeActivity(Activity activity)
+	{
+		if (activity != null&& mStackActivity.contains(activity))
+		{
+			mStackActivity.remove(activity);
+		}
+	}
+
+	public Activity getLastActivity()
+	{
+		Activity activity = null;
+		try
+		{
+			activity = mStackActivity.lastElement();
+		} catch (Exception e)
+		{
+		}
+		return activity;
+	}
+
+	public boolean isLastActivity(Activity activity)
+	{
+		if (activity != null)
+		{
+			return getLastActivity() == activity;
+		} else
+		{
+			return false;
+		}
+	}
+
+	public boolean isLastActivity(Class<?> cls)
+	{
+		if (cls != null)
+		{
+			return getLastActivity().getClass() == cls;
+		} else
+		{
+			return false;
+		}
+	}
+
+	public boolean isEmpty()
+	{
+		return mStackActivity.isEmpty();
+	}
+
+	/**
+	 * 结束指定类名的Activity
+	 */
+	public void finishActivity(Class<?> cls)
+	{
+		Iterator<Activity> it = mStackActivity.iterator();
+		while (it.hasNext())
+		{
+			Activity act = it.next();
+			if (act.getClass() == cls)
+			{
+				it.remove();
+				act.finish();
+			}
+		}
+	}
+
+	public void finishAllClassActivityExcept(Activity activity)
+	{
+		Iterator<Activity> it = mStackActivity.iterator();
+		while (it.hasNext())
+		{
+			Activity act = it.next();
+			if (act.getClass() == activity.getClass() && act != activity)
+			{
+				it.remove();
+				act.finish();
+			}
+		}
+	}
+
+	public void finishAllActivity()
+	{
+		Iterator<Activity> it = mStackActivity.iterator();
+		while (it.hasNext())
+		{
+			Activity act = it.next();
+			it.remove();
+			act.finish();
+		}
+	}
+
+	public void finishAllActivityExcept(Class<?> cls)
+	{
+		Iterator<Activity> it = mStackActivity.iterator();
+		while (it.hasNext())
+		{
+			Activity act = it.next();
+			if (act.getClass() != cls)
+			{
+				it.remove();
+				act.finish();
+			}
+		}
+	}
+
+	public void finishAllActivityExcept(Activity activity)
+	{
+		Iterator<Activity> it = mStackActivity.iterator();
+		while (it.hasNext())
+		{
+			Activity act = it.next();
+			if (act != activity)
+			{
+				it.remove();
+				act.finish();
+			}
+		}
 	}
 	
 }

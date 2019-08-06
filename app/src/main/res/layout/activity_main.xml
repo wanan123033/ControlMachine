@@ -2,88 +2,298 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <Button
-        android:id="@+id/btn_machine_select"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/btn_circle_bg"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
-        android:text="设备切换"
-        android:textSize="16sp" />
-
-    <com.github.lzyzsd.circleprogress.DonutProgress
-        android:id="@+id/donut_progress"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginEnd="15dp"
-        custom:donut_finished_color="@color/colorHost"
-        custom:donut_finished_stroke_width="3dp"
-        custom:donut_max="100"
-        custom:donut_progress="30"
-        custom:donut_text="30%"
-        custom:donut_text_color="@color/black"
-        custom:donut_text_size="12sp"
-        custom:donut_unfinished_stroke_width="3dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/donut_progress"
-        android:layout_below="@+id/donut_progress"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="10dp"
-        android:text="存储"
-        android:textColor="@color/black" />
-
-    <com.feipulai.host.view.CircleMenuLayout
-        android:id="@+id/id_menu_layout"
-        android:layout_width="wrap_content"
-
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true">
-
-        <RelativeLayout
-            android:id="@id/id_circle_menu_item_center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="2dp">
-
-            <TextView
-                android:id="@id/id_circle_menu_item_text"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_centerInParent="true"
-                android:background="@drawable/circle_menu_bg_lin_red"
-                android:gravity="center"
-                android:text="测试"
-                android:textColor="@android:color/black"
-                android:textSize="25sp" />
-        </RelativeLayout>
-
-    </com.feipulai.host.view.CircleMenuLayout>
+    android:layout_height="match_parent"
+    android:background="@mipmap/icon_main_bg">
 
     <RelativeLayout
-        android:id="@+id/view_bottom"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:layout_centerHorizontal="true">
 
         <ImageView
+            android:id="@+id/img_logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/ic_launcher" />
+            android:layout_marginTop="40dp"
+            android:scaleType="fitXY"
+            android:src="@mipmap/icon_logo" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:src="@mipmap/ic_launcher" />
+        <android.support.v7.widget.CardView
+            android:id="@+id/card_test"
+            android:layout_width="157dp"
+            android:layout_height="321dp"
+            android:layout_below="@+id/img_logo"
+            android:layout_marginTop="22dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            custom:cardBackgroundColor="#A3E000"
+            custom:cardCornerRadius="3dp"
+            custom:cardElevation="0dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@mipmap/icon_test" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="14dp"
+                android:text="测试"
+                android:textColor="@android:color/white"
+                android:textSize="20sp" />
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/card_select"
+            android:layout_width="157dp"
+            android:layout_height="321dp"
+            android:layout_alignTop="@+id/card_test"
+            android:layout_marginLeft="13dp"
+            android:layout_toRightOf="@+id/card_test"
+            android:foreground="?android:attr/selectableItemBackground"
+            custom:cardBackgroundColor="#00E8CB"
+            custom:cardCornerRadius="5dp"
+            custom:cardElevation="0dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@mipmap/icon_select" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="14dp"
+                android:text="查询"
+                android:textColor="@android:color/white"
+                android:textSize="20sp" />
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/card_print"
+            android:layout_width="155dp"
+            android:layout_height="155dp"
+            android:layout_alignTop="@+id/card_test"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:layout_marginLeft="13dp"
+            android:layout_toRightOf="@+id/card_select"
+            custom:cardBackgroundColor="#FFB80D"
+            custom:cardCornerRadius="5dp"
+            custom:cardElevation="0dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="21dp"
+                android:src="@mipmap/icon_print" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="7dp"
+                android:text="打印测试"
+                android:textColor="@android:color/white"
+                android:textSize="20sp" />
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/card_parameter_setting"
+            android:layout_width="155dp"
+            android:layout_height="155dp"
+            android:layout_below="@+id/card_print"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:layout_marginLeft="13dp"
+            android:layout_marginTop="13dp"
+            android:layout_toRightOf="@+id/card_select"
+            custom:cardBackgroundColor="#186FFF"
+            custom:cardCornerRadius="5dp"
+            custom:cardElevation="0dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="27dp"
+                android:src="@mipmap/icon_parame_setting" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="14dp"
+                android:text="参数设置"
+                android:textColor="@android:color/white"
+                android:textSize="20sp" />
+
+        </android.support.v7.widget.CardView>
+
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/card_data_admin"
+            android:layout_width="155dp"
+            android:layout_height="155dp"
+            android:layout_alignTop="@+id/card_test"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:layout_marginLeft="13dp"
+            android:layout_toRightOf="@+id/card_print"
+            custom:cardBackgroundColor="#0BF4FF"
+            custom:cardCornerRadius="5dp"
+            custom:cardElevation="0dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="31dp"
+                android:src="@mipmap/icon_data_select" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="7dp"
+                android:text="数据管理"
+                android:textColor="@android:color/white"
+                android:textSize="20sp" />
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/card_system"
+            android:layout_width="155dp"
+            android:layout_height="155dp"
+            android:layout_below="@+id/card_data_admin"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:layout_marginLeft="13dp"
+            android:layout_marginTop="13dp"
+            android:layout_toRightOf="@+id/card_print"
+            custom:cardBackgroundColor="#FF7849"
+            custom:cardCornerRadius="5dp"
+            custom:cardElevation="0dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="19dp"
+                android:src="@mipmap/icon_system" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="14dp"
+                android:text="系统"
+                android:textColor="@android:color/white"
+                android:textSize="20sp" />
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/card_led"
+            android:layout_width="155dp"
+            android:layout_height="155dp"
+            android:layout_alignTop="@+id/card_test"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:layout_marginLeft="13dp"
+            android:layout_toRightOf="@+id/card_data_admin"
+            custom:cardBackgroundColor="#78F375"
+            custom:cardCornerRadius="5dp"
+            custom:cardElevation="0dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="30dp"
+                android:src="@mipmap/icon_led" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="7dp"
+                android:text="LED显示屏"
+                android:textColor="@android:color/white"
+                android:textSize="20sp" />
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/card_device_cut"
+            android:layout_width="155dp"
+            android:layout_height="155dp"
+            android:layout_below="@+id/card_data_admin"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:layout_marginLeft="13dp"
+            android:layout_marginTop="13dp"
+            android:layout_toRightOf="@+id/card_data_admin"
+            custom:cardBackgroundColor="#9352FF"
+            custom:cardCornerRadius="5dp"
+            custom:cardElevation="0dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="17dp"
+                android:src="@mipmap/icon_device_cut" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="14dp"
+                android:text="设备切换"
+                android:textColor="@android:color/white"
+                android:textSize="20sp" />
+
+        </android.support.v7.widget.CardView>
+
     </RelativeLayout>
+
+
+    <ImageView
+        android:id="@+id/img_code"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="6dp"
+        android:layout_marginLeft="12dp"
+        android:src="@mipmap/icon_code" />
+
+    <TextView
+        android:id="@+id/txt_main_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/img_portrait"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="6dp"
+        android:layout_marginLeft="23dp"
+        android:layout_toRightOf="@+id/img_code"
+        android:text="智能主机（安卓版）"
+        android:textColor="@color/white"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/txt_deviceid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/img_portrait"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="6dp"
+        android:layout_marginRight="@dimen/dp_10"
+        android:text="智能主机（安卓版）"
+        android:textColor="@color/white"
+        android:textSize="20sp" />
 </RelativeLayout>

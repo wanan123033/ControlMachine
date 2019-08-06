@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.printer.PrinterManager;
-import com.feipulai.host.config.SharedPrefsConfigs;
+import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
@@ -39,7 +39,7 @@ public class PrinterUtils{
 		}
 		
 		String printTime = TestConfigs.df.format(Calendar.getInstance().getTime());
-		int hostId = SharedPrefsUtil.getValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.HOST_ID, 1);
+		int hostId = SettingHelper.getSystemSetting().getHostId();
 		
 		PrinterManager.getInstance().print(" \n");
 		PrinterManager.getInstance().print(TestConfigs.machineNameMap.get(machineCode) + hostId + "号机\n");

@@ -1,10 +1,13 @@
 package com.feipulai.host.adapter;
 
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.feipulai.host.R;
+import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.entity.Tuple;
 
 import java.util.List;
@@ -23,6 +26,13 @@ public class TupleAdapter extends BaseQuickAdapter<Tuple,BaseViewHolder> {
 
     @Override
     protected void convert(BaseViewHolder helper, Tuple item) {
-        helper.setText(R.id.tv_item,item.getMachineName());
+        helper.setText(R.id.tv_item, item.getMachineName());
+        helper.setImageResource(R.id.img_item_price, item.getImgRes());
+        CardView cardView = helper.getView(R.id.item_view_card);
+        if (TestConfigs.sCurrentItem != null && TestConfigs.sCurrentItem.getMachineCode() == item.getMachineCode()) {
+            cardView.setCardBackgroundColor(ContextCompat.getColor(mContext, R.color.blue_8A));
+        } else {
+            cardView.setCardBackgroundColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
+        }
     }
 }

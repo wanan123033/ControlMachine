@@ -14,6 +14,7 @@ import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BasePersonFaceIDActivity;
 import com.feipulai.host.activity.base.BaseStuPair;
+import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.utils.ResultDisplayUtils;
 
 import java.lang.ref.WeakReference;
@@ -133,16 +134,16 @@ public class SitReachFaceIDActivity extends BasePersonFaceIDActivity {
             resultRunnable.setTestState(sitReachResiltListener.getTestState());
             statesRunnable.setTestState(sitReachResiltListener.getTestState());
             if (null == baseStuPair.getStudent()) {
-                mLEDManager.showString(hostId, "自由测试", mLEDManager.getX("自由测试"), 0, true, false);
+                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "自由测试", mLEDManager.getX("自由测试"), 0, true, false);
             } else {
-                mLEDManager.showString(hostId, baseStuPair.getStudent().getStudentName(), mLEDManager.getX(baseStuPair.getStudent().getStudentName()), 0, true, false);
+                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), baseStuPair.getStudent().getStudentName(), mLEDManager.getX(baseStuPair.getStudent().getStudentName()), 0, true, false);
 
             }
             if (isFoul) {
-                mLEDManager.showString(hostId, "犯规", mLEDManager.getX("犯规"), 2, false, true);
+                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "犯规", mLEDManager.getX("犯规"), 2, false, true);
             } else {
 //                String text = result + setUnit();
-                mLEDManager.showString(hostId, ResultDisplayUtils.getStrResultForDisplay(result), mLEDManager.getX(ResultDisplayUtils.getStrResultForDisplay(result)), 2, false, true);
+                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), ResultDisplayUtils.getStrResultForDisplay(result), mLEDManager.getX(ResultDisplayUtils.getStrResultForDisplay(result)), 2, false, true);
 
             }
             mHandler.sendEmptyMessageDelayed(MSG_START_TEST, 5000);
@@ -191,7 +192,7 @@ public class SitReachFaceIDActivity extends BasePersonFaceIDActivity {
         if (SerialDeviceManager.getInstance() != null) {
             //开始测试
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_START));
-            mLEDManager.showString(hostId, "请测试", 5, 1, true, true);
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "请测试", 5, 1, true, true);
             //获取数据
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_GET_SCORE));
         }

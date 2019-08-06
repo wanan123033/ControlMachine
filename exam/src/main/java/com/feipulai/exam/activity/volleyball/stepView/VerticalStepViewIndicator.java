@@ -241,6 +241,9 @@ public class VerticalStepViewIndicator extends View {
             } else if (stepsBean.getState() == StepBean.STEP_COMPLETED) {
                 mCompleteIcon.setBounds(mRect);
                 mCompleteIcon.draw(canvas);
+            }else{
+                mDefaultIcon.setBounds(mRect);
+                mDefaultIcon.draw(canvas);
             }
         }
         //-----------------------画图标-----draw icon-----------------------------------------------

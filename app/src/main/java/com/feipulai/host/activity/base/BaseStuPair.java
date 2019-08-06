@@ -18,6 +18,8 @@ public class BaseStuPair implements Serializable {
     private Student student;
     //设备
     private BaseDeviceState baseDevice;
+    //轮次成绩
+    private String[] timeResult;
 
     public BaseStuPair(int result, int resultState, Student student, BaseDeviceState baseDevice) {
         this.result = result;
@@ -63,5 +65,11 @@ public class BaseStuPair implements Serializable {
 
     public static final String HAND_BASE_PAIRS = "HAND_BASE_PAIRS";
 
+    public String[] getTimeResult() {
+        return timeResult;
+    }
 
+    public void setTimeResult(String[] timeResult) {
+        this.timeResult = timeResult;
+    }
 }

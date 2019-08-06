@@ -24,6 +24,7 @@ import com.feipulai.host.activity.base.BaseActivity;
 import com.feipulai.host.activity.base.BaseCheckPairAdapter;
 import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BaseStuPair;
+import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.utils.SharedPrefsUtil;
 
@@ -65,7 +66,7 @@ public class SitUpPairActivity extends BaseActivity implements BaseQuickAdapter.
 	}
 	
 	private void initView(){
-		hostId = SharedPrefsUtil.getValue(this,SharedPrefsConfigs.DEFAULT_PREFS,SharedPrefsConfigs.HOST_ID,1);
+		hostId = SettingHelper.getSystemSetting().getHostId();
 		mTargetFrequency = SerialConfigs.sProChannels.get(ItemDefault.CODE_YWQZ) + hostId - 1;
 		
 		boolean isAutoPair = SharedPrefsUtil.getValue(this,SharedPrefsConfigs.DEFAULT_PREFS,SharedPrefsConfigs.SIT_UP_AUTO_PAIR,true);

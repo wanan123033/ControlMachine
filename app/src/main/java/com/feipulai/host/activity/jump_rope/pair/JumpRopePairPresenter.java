@@ -13,7 +13,7 @@ import com.feipulai.host.activity.jump_rope.bean.JumpDeviceState;
 import com.feipulai.host.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.host.activity.jump_rope.check.CheckUtils;
 import com.feipulai.host.activity.jump_rope.setting.JumpRopeSetting;
-import com.feipulai.host.config.SharedPrefsConfigs;
+import com.feipulai.host.activity.setting.SettingHelper;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -43,7 +43,7 @@ public class JumpRopePairPresenter
 		this.context = context;
 		setting = SharedPrefsUtil.loadFormSource(context, JumpRopeSetting.class);
 		this.view = view;
-		hostId = SharedPrefsUtil.getValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.HOST_ID,1);
+		hostId = SettingHelper.getSystemSetting().getHostId();
 	}
 	
 	@Override

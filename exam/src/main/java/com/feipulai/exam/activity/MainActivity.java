@@ -46,6 +46,7 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.CommonUtils;
 import com.feipulai.exam.service.UploadService;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -235,6 +236,13 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
 
     @OnClick(R.id.img_code)
     public void onCodeClicked(View view) {
+        Logger.i("imgH===>" + imgCode.getHeight());
+        if (imgCode.getHeight() <= 55) {
+            imgCode.setImageResource(R.mipmap.icon_code_big);
+        } else {
+            imgCode.setImageResource(R.mipmap.icon_code);
+        }
+
     }
 
     @Override

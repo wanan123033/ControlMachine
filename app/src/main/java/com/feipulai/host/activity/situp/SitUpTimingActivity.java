@@ -27,6 +27,7 @@ import com.feipulai.host.activity.base.BaseActivity;
 import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.jump_rope.adapter.RTResultAdapter;
+import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.utils.SharedPrefsUtil;
 
@@ -95,8 +96,7 @@ public class SitUpTimingActivity extends BaseActivity implements BaseQuickAdapte
 	
 	private void init(){
 		
-		hostId = SharedPrefsUtil.getValue(this,SharedPrefsConfigs.DEFAULT_PREFS,SharedPrefsConfigs
-				.HOST_ID,1);
+		hostId = SettingHelper.getSystemSetting().getHostId();
 		mTestTime = SharedPrefsUtil.getValue(this,SharedPrefsConfigs.DEFAULT_PREFS,SharedPrefsConfigs.SIT_UP_TEST_TIME,30);
 		
 		Intent intent = getIntent();

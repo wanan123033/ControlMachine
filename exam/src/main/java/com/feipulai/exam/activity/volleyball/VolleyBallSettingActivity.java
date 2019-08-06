@@ -222,6 +222,7 @@ public class VolleyBallSettingActivity
 
     @Override
     public void onRS232Result(Message msg) {
+        isDisconnect = false;
         switch (msg.what) {
             case SerialConfigs.VOLLEYBALL_CHECK_RESPONSE:
                 if (checkDeviceView == null) {
@@ -230,12 +231,9 @@ public class VolleyBallSettingActivity
                 if (mProgressDialog != null) {
                     mProgressDialog.dismiss();
                 }
-
-
                 HandlerUtil.sendMessage(mHandler, MSG_CHECK, msg.obj);
-
-
                 break;
+
         }
     }
 
@@ -290,12 +288,24 @@ public class VolleyBallSettingActivity
                         break;
                     case MSG_CHECK:
                         final VolleyBallCheck volleyBallCheck = (VolleyBallCheck) msg.obj;
-                        if (volleyBallCheck
-                                .getPositionList() == null || volleyBallCheck.getPositionList().size() == 0) {
-                            activity.checkDeviceView.setUnunitedData(activity.setting.getTestPattern() == 0 ? VolleyBallSetting.ANTIAIRCRAFT_POLE : VolleyBallSetting.WALL_POLE);
+
+                        if (volleyBallCheck.getCheckType() == 8) {
+                            if (volleyBallCheck.getDeviceType() == activity.setting.getTestPattern()) {
+                                int itemPole = volleyBallCheck.getDeviceType() == 0 ? VolleyBallSetting.ANTIAIRCRAFT_POLE : VolleyBallSetting.WALL_POLE;
+                                if (volleyBallCheck.getPoleNum() == itemPole) {
+                                    activity.checkDeviceView.setData(volleyBallCheck.getPoleNum(), volleyBallCheck.getPositionList());
+                                }else{
+                                    activity.checkDeviceView.setData(itemPole, volleyBallCheck.getPositionList());
+                                }
+
+                            } else {
+                                activity.toastSpeak("当前项目使用设备错误，请更换");
+                            }
                         } else {
                             activity.checkDeviceView.setData(activity.setting.getTestPattern() == 0 ? VolleyBallSetting.ANTIAIRCRAFT_POLE : VolleyBallSetting.WALL_POLE, volleyBallCheck.getPositionList());
                         }
+
+
                         break;
                 }
             }

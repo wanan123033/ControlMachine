@@ -2,27 +2,20 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@mipmap/icon_white_bg">
+
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_item"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/dp_10"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_below="@+id/view_battery"
-        android:layout_above="@+id/textView" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
+        android:layout_width="691dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="20dp"
-        android:layout_marginEnd="20dp"
-        android:background="@color/hostStyle"
-        android:padding="8dp"
-        android:text="@string/host_style" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="13dp"
+        android:background="@drawable/btn_bg_white"
+        android:overScrollMode="never"
+        android:paddingBottom="37dp"
+        android:paddingLeft="73dp"
+        android:paddingRight="73dp" />
+
 
 </RelativeLayout>
