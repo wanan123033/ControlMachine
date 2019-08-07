@@ -274,7 +274,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
     public void spinnerItemSelected(Spinner spinner, int position) {
         switch (spinner.getId()) {
             case R.id.sp_carryMode:
-                setting.setCarryMode(position + 1);
+                TestConfigs.sCurrentItem.setCarryMode(position + 1);
                 break;
             case R.id.sp_test_mode:
                 setting.setUseMode(position);

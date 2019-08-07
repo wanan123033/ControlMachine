@@ -1,5 +1,6 @@
 package com.feipulai.exam.bean;
 
+import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.entity.RoundResult;
 
@@ -8,6 +9,10 @@ import com.feipulai.exam.entity.RoundResult;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 public class DeviceDetail {
+    public DeviceDetail(){
+        BaseStuPair baseStuPair = new BaseStuPair();
+        baseStuPair.setBaseDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE));
+    }
     private BaseStuPair baseStuPair;
     private RoundResult roundResult;
     private boolean isDeviceOpen;
