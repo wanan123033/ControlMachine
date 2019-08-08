@@ -616,7 +616,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         }
         //状态为测试已结束
         if (deviceState.getState() == BaseDeviceState.STATE_END) {
-            if (isFault){
+            if (isFault && pair.getResultState() != RoundResult.RESULT_STATE_FOUL){
                 showPenalize(deviceState ,pair);
             }else {
                 doTestEnd(deviceState, pair);
