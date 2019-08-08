@@ -48,9 +48,7 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
         }
 
         if (jumpSetting.isPenalize()) {
-            setTestType(1);
-            setFaultVisible(true);
-            setFaultEnable(false);
+            setFaultEnable(true);
         }
 
         Logger.i(TAG + ":reachSetting ->" + jumpSetting.toString());
@@ -102,7 +100,6 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
 
     @Override
     public void startTest(BaseStuPair stuPair) {
-        setFaultEnable(false);
         baseStuPair = stuPair;
 //        sendCheck();
 //        //开始测试
@@ -195,7 +192,6 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
 
                     case UPDATE_RESULT:
                         activity.updateTestResult((BaseStuPair) msg.obj);
-                        activity.setFaultVisible(activity.jumpSetting.isPenalize());
                         break;
                 }
             }

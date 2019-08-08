@@ -24,7 +24,6 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
-import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
@@ -53,8 +52,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-
-import static com.feipulai.exam.activity.RadioTimer.RunTimerConstant.ILLEGAL_BACK;
 
 /**
  * 个人测试基类
@@ -94,8 +91,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     LinearLayout viewSkip;
     @BindView(R.id.tv_device_pair)
     public TextView tvDevicePair;
-    @BindView(R.id.txt_stu_fault)
-    TextView txtStuFault;
+    //    @BindView(R.id.txt_stu_fault)
+//    TextView txtStuFault;
     //成绩
     private String[] result;
     private List<String> resultList = new ArrayList<>();
@@ -115,6 +112,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     private LedHandler ledHandler = new LedHandler(this);
     private Intent serverIntent;
     private int testType = 0;//0自动 1手动
+    private boolean isFault;
 
     @Override
     protected int setLayoutResID() {
@@ -222,13 +220,14 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         tvBaseHeight.setText("原始高度" + ResultDisplayUtils.getStrResultForDisplay(height * 10));
     }
 
-    /**犯规按键是否可见*/
-    public void setFaultVisible(boolean visible){
-        txtStuFault.setVisibility(visible? View.VISIBLE:View.GONE);
-    }
-
-    public void setFaultEnable(boolean enable){
-        txtStuFault.setEnabled(enable);
+    /**
+     * 犯规按键是否可见
+     */
+//    public void setFaultVisible(boolean visible){
+//        txtStuFault.setVisibility(visible? View.VISIBLE:View.GONE);
+//    }
+    public void setFaultEnable(boolean enable) {
+        isFault = enable;
     }
 
     /**
@@ -313,7 +312,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         addStudent(student);
     }
 
-    @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting,R.id.txt_stu_fault})
+    @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting})//R.id.txt_stu_fault
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
@@ -332,64 +331,51 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 }
 
                 break;
-            case R.id.txt_stu_fault:
-                showPenalize();
-                break;
+//            case R.id.txt_stu_fault:
+//                showPenalize();
+//                break;
         }
     }
 
-    /**
-     * 展示判罚
-     */
-    private void showPenalize() {
-        new AlertDialog.Builder(this).setMessage("确认违规?")
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        penalize();
-                        dialog.dismiss();
-                    }
-                }).setNegativeButton("取消", null).show();
-    }
 
-    private void penalize(){
-        if (pair.getStudent() == null)
-            return;
-        //查询当前成绩
-        RoundResult roundResult = DBManager.getInstance().queryLastScoreByStuCode(pair.getStudent().getStudentCode());
-        //修改成绩
-        roundResult.setResultState(RoundResult.RESULT_STATE_FOUL);
-        //判断最好成绩
-        RoundResult bestResult = DBManager.getInstance().queryBestScore(pair.getStudent().getStudentCode(),testNo);
-        if (bestResult == roundResult){
-            roundResult.setIsLastResult(0);
-            DBManager.getInstance().updateRoundResult(roundResult);//保存
-            RoundResult best = DBManager.getInstance().queryOrderDecScore(pair.getStudent().getStudentCode(), testNo);
-            if (best != null && best.getIsLastResult()==0){
-                best.setIsLastResult(1);
-                DBManager.getInstance().updateRoundResult(best);//保存最好成绩
-            }
-        }else {
-            DBManager.getInstance().updateRoundResult(roundResult);//保存
-        }
-
-        //更新界面成绩
-        pair.setResultState(RoundResult.RESULT_STATE_FOUL);
-        updateResult(pair);
-        updateLastResultLed(roundResult);
-        adapter.notifyDataSetChanged();
-
-        //上传成绩
-        DBManager.getInstance().insertRoundResult(roundResult);
-        Logger.i("saveResult==>insertRoundResult->" + roundResult.toString());
-        List<RoundResult> roundResultList = new ArrayList<>();
-        roundResultList.add(roundResult);
-        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(pair.getStudent().getStudentCode());
-
-        UploadResults uploadResults = new UploadResults(studentItem.getScheduleNo(), TestConfigs.getCurrentItemCode(),
-                pair.getStudent().getStudentCode(), testNo + "", "", RoundResultBean.beanCope(roundResultList));
-        uploadResult(uploadResults);
-    }
+//    private void penalize(){
+//        if (pair.getStudent() == null)
+//            return;
+//        //查询当前成绩
+//        RoundResult roundResult = DBManager.getInstance().queryLastScoreByStuCode(pair.getStudent().getStudentCode());
+//        //修改成绩
+//        roundResult.setResultState(RoundResult.RESULT_STATE_FOUL);
+//        //判断最好成绩
+//        RoundResult bestResult = DBManager.getInstance().queryBestScore(pair.getStudent().getStudentCode(),testNo);
+//        if (bestResult == roundResult){
+//            roundResult.setIsLastResult(0);
+//            DBManager.getInstance().updateRoundResult(roundResult);//保存
+//            RoundResult best = DBManager.getInstance().queryOrderDecScore(pair.getStudent().getStudentCode(), testNo);
+//            if (best != null && best.getIsLastResult()==0){
+//                best.setIsLastResult(1);
+//                DBManager.getInstance().updateRoundResult(best);//保存最好成绩
+//            }
+//        }else {
+//            DBManager.getInstance().updateRoundResult(roundResult);//保存
+//        }
+//
+//        //更新界面成绩
+//        pair.setResultState(RoundResult.RESULT_STATE_FOUL);
+//        updateResult(pair);
+//        updateLastResultLed(roundResult);
+//        adapter.notifyDataSetChanged();
+//
+//        //上传成绩
+//        DBManager.getInstance().insertRoundResult(roundResult);
+//        Logger.i("saveResult==>insertRoundResult->" + roundResult.toString());
+//        List<RoundResult> roundResultList = new ArrayList<>();
+//        roundResultList.add(roundResult);
+//        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(pair.getStudent().getStudentCode());
+//
+//        UploadResults uploadResults = new UploadResults(studentItem.getScheduleNo(), TestConfigs.getCurrentItemCode(),
+//                pair.getStudent().getStudentCode(), testNo + "", "", RoundResultBean.beanCope(roundResultList));
+//        uploadResult(uploadResults);
+//    }
 
     public void toLedSetting() {
         if (pair.getBaseDevice().getState() != BaseDeviceState.STATE_NOT_BEGAIN && pair.getBaseDevice().getState() != BaseDeviceState.STATE_FREE) {
@@ -513,47 +499,11 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                     Logger.i("考生" + pair.getStudent().toString());
                 }
                 Logger.i("设备成绩信息STATE_END==>" + deviceState.toString());
-                //ResultDisplayUtils.getStrResultForDisplay(pair.getResult())
-                result[roundNo - 1] = ((pair.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(pair.getResult()));
-                resultList.clear();
-                resultList.addAll(Arrays.asList(result));
-                adapter.notifyDataSetChanged();
-                pair.setTimeResult(result);
-                //保存成绩
-                saveResult(pair);
-                printResult(pair);
-                broadResult(pair);
-
-                //当前的测试次数是否在项目设置的轮次中，是否满分跳过考生测试，满分由子类处理，基类只做界面展示
-                if (roundNo < setTestCount()) {
-                    if (pair.getResultState() == RoundResult.RESULT_STATE_NORMAL && pair.isFullMark()) {
-                        //测试结束学生清除 ，设备设置空闲状态
-                        roundNo = 1;
-                        //4秒后清理学生信息
-                        clearHandler.sendEmptyMessageDelayed(0, 4000);
-                        return;
-                    }
-                    roundNo++;
-                    txtStuResult.setText("");
-                    toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), roundNo)
-                            , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), roundNo));
-                    Message msg = new Message();
-                    msg.obj = pair;
-                    ledHandler.sendMessageDelayed(msg, 2000);
-                    pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
-                    if (testType != 1) {
-                        sendTestCommand(pair);
-                    }
-
+                if (isFault && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
+                    showPenalize();
                 } else {
-                    setBaseHeight(0);
-                    //测试结束学生清除 ，设备设置空闲状态
-                    roundNo = 1;
-                    //4秒后清理学生信息
-                    clearHandler.sendEmptyMessageDelayed(0, 4000);
-
+                    if (doResult()) return;
                 }
-
 
             }
         }
@@ -561,6 +511,73 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 
     }
 
+    private boolean doResult() {
+        //ResultDisplayUtils.getStrResultForDisplay(pair.getResult())
+        result[roundNo - 1] = ((pair.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(pair.getResult()));
+        resultList.clear();
+        resultList.addAll(Arrays.asList(result));
+        adapter.notifyDataSetChanged();
+        pair.setTimeResult(result);
+        //保存成绩
+        saveResult(pair);
+        printResult(pair);
+        broadResult(pair);
+
+        //当前的测试次数是否在项目设置的轮次中，是否满分跳过考生测试，满分由子类处理，基类只做界面展示
+        if (roundNo < setTestCount()) {
+            if (pair.getResultState() == RoundResult.RESULT_STATE_NORMAL && pair.isFullMark()) {
+                //测试结束学生清除 ，设备设置空闲状态
+                roundNo = 1;
+                //4秒后清理学生信息
+                clearHandler.sendEmptyMessageDelayed(0, 4000);
+                return true;
+            }
+            roundNo++;
+            txtStuResult.setText("");
+            toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), roundNo)
+                    , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), roundNo));
+            Message msg = new Message();
+            msg.obj = pair;
+            ledHandler.sendMessageDelayed(msg, 2000);
+            pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
+            if (testType != 1) {
+                sendTestCommand(pair);
+            }
+
+        } else {
+            setBaseHeight(0);
+            //测试结束学生清除 ，设备设置空闲状态
+            roundNo = 1;
+            //4秒后清理学生信息
+            clearHandler.sendEmptyMessageDelayed(0, 4000);
+
+        }
+        return false;
+    }
+
+    /**
+     * 展示判罚
+     */
+    private void showPenalize() {
+        new AlertDialog.Builder(this).setMessage("确认成绩")
+                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        if (doResult()) return;
+
+                    }
+                }).setNegativeButton("犯规", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                pair.setResultState(RoundResult.RESULT_STATE_FOUL);
+                updateResult(pair);
+                if (doResult()) return;
+
+            }
+        }).show();
+    }
 
     /**
      * 保存测试成绩

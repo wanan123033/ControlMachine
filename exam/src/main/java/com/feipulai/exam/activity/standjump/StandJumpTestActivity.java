@@ -47,9 +47,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
             jumpSetting = new StandJumpSetting();
         }
         if (jumpSetting.isPenalize()) {
-            setFaultVisible(true);
-            setFaultEnable(false);
-            setTestType(1);
+            setFaultEnable(true);
         }
 
 
@@ -80,7 +78,6 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
 
     @Override
     public void sendTestCommand(BaseStuPair baseStuPair) {
-        setFaultEnable(false);
         sendCheck();
         standResiltListener.setTestState(StandResiltListener.TestState.START_TEST);
         //开始测试
@@ -212,7 +209,6 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
 
                     case UPDATE_RESULT:
                         activity.updateResult((BaseStuPair) msg.obj);
-                        activity.setFaultVisible(activity.jumpSetting.isPenalize());
                         break;
                     case TOAST_SPEAK:
                         activity.toastSpeak("开始测试");

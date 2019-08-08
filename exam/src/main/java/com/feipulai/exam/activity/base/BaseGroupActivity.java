@@ -26,9 +26,11 @@ import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.pushUp.PushUpGroupActivity;
 import com.feipulai.exam.activity.pushUp.PushUpSetting;
+import com.feipulai.exam.activity.sargent_jump.SargentSetting;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.sitreach.SitReachSetting;
 import com.feipulai.exam.activity.standjump.StandJumpSetting;
+import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
 import com.feipulai.exam.adapter.BaseGroupAdapter;
 import com.feipulai.exam.adapter.GroupAdapter;
 import com.feipulai.exam.adapter.ResultsAdapter;
@@ -385,6 +387,26 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     }
                 }
                 break;
+            case ItemDefault.CODE_MG:
+                SargentSetting sargentSetting = SharedPrefsUtil.loadFormSource(this, SargentSetting.class);
+                if (sargentSetting.isFullReturn()) {
+                    full = new int[2];
+                    if (!TextUtils.isEmpty(sargentSetting.getMaleFull())) {
+                        full[0] = Integer.parseInt(sargentSetting.getMaleFull()) * 10;
+                    }
+                    if (!TextUtils.isEmpty(sargentSetting.getFemaleFull())) {
+                        full[1] = Integer.parseInt(sargentSetting.getFemaleFull()) * 10;
+                    }
+                }
+                break;
+            case ItemDefault.CODE_PQ:
+                VolleyBallSetting volleyBallSetting = SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class);
+                if (volleyBallSetting.isFullSkip()) {
+                    full = new int[2];
+                    full[0] = volleyBallSetting.getMaleFullScore();
+                    full[1] = volleyBallSetting.getFemaleFullScore();
+                }
+                break;
         }
         return full;
     }
@@ -585,6 +607,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 }
             }
         }
+
     }
 
     protected void onPause() {

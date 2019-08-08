@@ -85,15 +85,14 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
         }
         Logger.i(TAG + ":medicineBallSetting ->" + medicineBallSetting.toString());
         if (medicineBallSetting.isPenalize()){
-            setFaultVisible(true);
-            setFaultEnable(false);
+
+            setFaultEnable(true);
         }
 
     }
 
     @Override
     public void sendTestCommand(BaseStuPair baseStuPair) {
-        setFaultEnable(false);
         student = baseStuPair.getStudent();
         if (student == null){
             toastSpeak("请先添加学生");
@@ -273,7 +272,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
 
             testState = TestState.UN_STARTED;
 
-            setFaultVisible(true);
+
         }
     }
 
