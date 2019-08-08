@@ -1,11 +1,7 @@
 package com.feipulai.exam.activity;
 
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -14,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.feipulai.common.tts.TtsConstants;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.utils.SharedPrefsUtil;
@@ -27,7 +22,7 @@ import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.udp.UdpLEDUtil;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceActivity;
-import com.feipulai.exam.activity.MiddleDistanceRace.TcpService;
+import com.feipulai.exam.activity.MiddleDistanceRace.MyTcpService;
 import com.feipulai.exam.activity.base.BaseActivity;
 import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.data.DataManageActivity;
@@ -54,9 +49,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
-import static com.feipulai.exam.config.SharedPrefsConfigs.MACHINE_SERVER_PORT;
-import static com.feipulai.exam.config.SharedPrefsConfigs.MIDDLE_RACE;
 
 public class MainActivity extends BaseActivity/* implements DialogInterface.OnClickListener */ {
     @BindView(R.id.img_code)
@@ -257,6 +249,8 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
         super.onDestroy();
         if (mIsExiting) {
             System.exit(0);
+            Intent tcpServiceIntent = new Intent(this, MyTcpService.class);
+            stopService(tcpServiceIntent);
         }
     }
 

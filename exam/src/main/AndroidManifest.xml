@@ -126,7 +126,10 @@
         <service
             android:name=".service.UploadService"
             android:exported="false" />
-        <service android:name=".activity.MiddleDistanceRace.TcpService" />
+        <service
+            android:name=".activity.MiddleDistanceRace.MyTcpService"
+            android:enabled="true"
+            android:exported="true" />
 
         <activity android:name=".activity.sargent_jump.SargentTestActivity" />
         <activity android:name=".activity.sargent_jump.SargentGroupActivity" />

@@ -9,8 +9,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.feipulai.common.utils.DateUtil;
-import com.feipulai.device.ic.utils.ItemDefault;
-import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceActivity;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
@@ -44,13 +42,12 @@ public class MySocketServer {
     private String m_strEvent;
     private Schedule schedule;
     private byte[] dataByte;
-//    private Context mContext;
+    private InetSocketAddress socketAddress;
 
     public MySocketServer(WebConfig webConfig, OnResponseListener listener) {
         this.webConfig = webConfig;
         threadPool = Executors.newCachedThreadPool();
         this.listener = listener;
-//        mContext=context;
     }
 
     /**
@@ -73,18 +70,18 @@ public class MySocketServer {
         if (!isEnable) {
             return;
         }
-        isEnable = false;
+        isEnable = true;
         socket.close();
         socket = null;
     }
 
     private void doProcSync() {
         try {
-            InetSocketAddress socketAddress = new InetSocketAddress(webConfig.getPort());
+            socketAddress = new InetSocketAddress(webConfig.getPort());
             socket = new ServerSocket();
             socket.bind(socketAddress);
             if (listener != null) {
-                listener.OnTcpServerSuccess(true, "服务器开启成功");
+                listener.OnTcpServerSuccess(true, "起点上道服务器开启成功");
             }
             while (isEnable) {
                 final Socket remotePeer = socket.accept();
@@ -279,7 +276,7 @@ public class MySocketServer {
 
             String m_strBeginTime = result[17];//分组比赛时间
             Log.i("m_strBeginTime", m_strBeginTime);
-            m_strBeginTime=DateUtil.formatTime3(m_strBeginTime);
+            m_strBeginTime = DateUtil.formatTime3(m_strBeginTime);
 
             int m_nCheck = Integer.parseInt(result[18]);//组检录状态
             Log.i("m_nCheck", "-->" + m_nCheck);
@@ -308,11 +305,11 @@ public class MySocketServer {
                 DBManager.getInstance().insertItem(TestConfigs.sCurrentItem.getMachineCode(), itemCode, m_strEvent, "分'秒");
             } else {
                 if (TextUtils.isEmpty(item.getItemCode())) {
-                    itemCode="fpl_" + m_strEvent;
+                    itemCode = "fpl_" + m_strEvent;
                     item.setItemCode(itemCode);
                     DBManager.getInstance().updateItem(item);
-                }else {
-                    itemCode=item.getItemCode();
+                } else {
+                    itemCode = item.getItemCode();
                 }
             }
 

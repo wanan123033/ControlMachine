@@ -1,5 +1,6 @@
 package com.feipulai.exam.activity.MiddleDistanceRace;
 
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -33,14 +34,11 @@ import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.utils.SharedPrefsUtil;
-import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.DisplayUtil;
 import com.feipulai.device.tcp.NettyClient;
 import com.feipulai.device.tcp.NettyListener;
 import com.feipulai.device.tcp.TcpConfig;
-import com.feipulai.exam.activity.MiddleDistanceRace.server.MySocketServer;
-import com.feipulai.exam.activity.MiddleDistanceRace.server.OnResponseListener;
 import com.feipulai.device.udp.UdpClient;
 import com.feipulai.device.udp.result.UDPResult;
 import com.feipulai.exam.R;
@@ -51,7 +49,7 @@ import com.feipulai.exam.activity.MiddleDistanceRace.adapter.SelectResultAdapter
 import com.feipulai.exam.activity.MiddleDistanceRace.bean.GroupItemBean;
 import com.feipulai.exam.activity.MiddleDistanceRace.bean.RaceResultBean;
 import com.feipulai.exam.activity.MiddleDistanceRace.bean.SelectResultBean;
-import com.feipulai.exam.activity.MiddleDistanceRace.server.WebConfig;
+import com.feipulai.exam.activity.MiddleDistanceRace.bean.ServiceTcpBean;
 import com.feipulai.exam.activity.MiddleDistanceRace.vhtableview.VHTableAdapter;
 import com.feipulai.exam.activity.MiddleDistanceRace.vhtableview.VHTableView;
 import com.feipulai.exam.activity.base.MiddleBaseTitleActivity;
@@ -77,7 +75,6 @@ import com.feipulai.exam.view.MiddleRace.ScrollablePanel;
 import com.orhanobut.logger.Logger;
 import com.zyyoona7.popup.EasyPopup;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -112,7 +109,7 @@ import static com.feipulai.exam.config.SharedPrefsConfigs.MIDDLE_RACE_TIME_FIRST
 import static com.feipulai.exam.config.SharedPrefsConfigs.MIDDLE_RACE_TIME_SPAN;
 import static com.feipulai.exam.config.SharedPrefsConfigs.SPAN_TIME;
 
-public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implements UdpClient.UDPChannelListerner, NettyListener, RaceTimingAdapter.MyClickListener, ChannelFutureListener, MiddleRaceGroupAdapter.OnItemClickListener, ColorSelectAdapter.OnItemClickListener, AdapterView.OnItemSelectedListener, OnResponseListener {
+public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implements UdpClient.UDPChannelListerner, NettyListener, RaceTimingAdapter.MyClickListener, ChannelFutureListener, MiddleRaceGroupAdapter.OnItemClickListener, ColorSelectAdapter.OnItemClickListener, AdapterView.OnItemSelectedListener {
 
     @BindView(R.id.sp_race_item)
     Spinner spRaceItem;
@@ -225,10 +222,9 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
     private int width;
     private String machine_ip;
     private String machine_port;
-    private MySocketServer mySocketServer;
-    private VHTableAdapter tableShowAdapter;
     private String server_Port;
     private Intent bindIntent;
+    private long lastServiceTime;
 
     @Override
     protected int setLayoutResID() {
@@ -277,7 +273,6 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         spRaceItem.setSelection(mItemPosition, false);
         spRaceItem.setOnItemSelectedListener(this);
 
-
         scheduleAdapter = new ScheduleAdapter(this, scheduleList);
         spRaceSchedule.setAdapter(scheduleAdapter);
         spRaceSchedule.setSelection(schedulePosition, false);
@@ -289,6 +284,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         machine_ip = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MACHINE_IP, "");
         machine_port = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MACHINE_PORT, "1401");
         server_Port = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MACHINE_SERVER_PORT, "4040");
+        lastServiceTime = SharedPrefsUtil.getValue(mContext, MyTcpService.SERVICE_CONNECT, MyTcpService.SERVICE_CONNECT, 0L);
         //所有组信息recycleView
         groupAdapter = new MiddleRaceGroupAdapter(groupItemBeans);
         rvRaceStudentGroup.setLayoutManager(new LinearLayoutManager(this));
@@ -318,7 +314,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
             titleData.add("第" + (i - 2) + "圈");
         }
 
-        tableShowAdapter = new VHTableAdapter(this, titleData, resultDataList, carryMode, digital);
+        VHTableAdapter tableShowAdapter = new VHTableAdapter(this, titleData, resultDataList, carryMode, digital);
         resultShowTable.setAdapter(tableShowAdapter);
 
         groupAdapter.setOnRecyclerViewItemClickListener(this);
@@ -332,25 +328,11 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
 
         initSelectPop();
 
-//        WebConfig webConfig = new WebConfig();
-//        webConfig.setPort(Integer.parseInt(server_Port));
-//        webConfig.setMaxParallels(10);
-//        mySocketServer = new MySocketServer(webConfig, MiddleDistanceRaceActivity.this);
-
-//        bindIntent = new Intent(mContext, TcpService.class);
-//
-//        startService(bindIntent);
-//
-//        bindService(bindIntent, serviceConnection, BIND_AUTO_CREATE);
-
-        //此处做延时，需要等服务绑定完
-//        mHander.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                myBinder.startServer(Integer.parseInt(server_Port),
-//                        MiddleDistanceRaceActivity.this);
-//            }
-//        }, 1500);
+        //当上一次服务开启时间小于12小时，每次进入自动开启服务
+        if (!TextUtils.isEmpty(server_Port) && lastServiceTime != 0 && (System.currentTimeMillis() - lastServiceTime) < 12 * 60 * 60 * 1000) {
+            currentPort = Integer.parseInt(server_Port);
+            bindTcpService();
+        }
     }
 
     private int cycleNo = 0;//当前项目圈数
@@ -468,18 +450,97 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         });
     }
 
-    private TcpService.MyBinder myBinder;
-
+    private MyTcpService.Work myBinder;
+    private MyTcpService myTcpService;
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            myBinder = (TcpService.MyBinder) service;
+            myBinder = (MyTcpService.Work) service;
+            myTcpService = myBinder.getMyService();
+
+            myTcpService.registerCallBack(callBack);
+
+            if (myBinder != null && !myTcpService.isWork) {
+                myBinder.startWork(currentPort);
+            }
+
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            if (myTcpService != null) {
+                myTcpService.unRegisterCallBack(callBack);
+            }
         }
     };
+
+    private MyTcpService.CallBack callBack = new MyTcpService.CallBack() {
+        @Override
+        public void postMessage(final ServiceTcpBean message) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    getItems();
+                    ToastUtils.showLong("上道终端上传分组数据");
+                    for (int i = 0; i < itemList.size(); i++) {
+                        if (itemList.get(i).getItemName().equals(message.getItemName())) {
+                            spRaceItem.setSelection(i);
+                            mItemPosition = i;
+                            break;
+                        } else {
+                            if (i == itemList.size() - 1) {
+                                itemAdapter.notifyDataSetChanged();
+                                for (int j = 0; j < itemList.size(); i++) {
+                                    if (itemList.get(j).getItemName().equals(message.getItemName())) {
+                                        mItemPosition = j;
+                                        spRaceItem.setSelection(j);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (scheduleList.size() == 0) {
+                        updateSchedules();
+                    } else {
+                        for (int i = 0; i < scheduleList.size(); i++) {
+                            if (scheduleList.get(i).getScheduleNo().equals(message.getSchedule().getScheduleNo())) {
+                                spRaceSchedule.setSelection(i);
+                                schedulePosition = i;
+                                break;
+                            } else {
+                                if (i == scheduleList.size() - 1) {
+                                    updateSchedules();
+                                    for (int j = 0; j < scheduleList.size(); j++) {
+                                        if (scheduleList.get(i).getScheduleNo().equals(message.getSchedule().getScheduleNo())) {
+                                            spRaceSchedule.setSelection(j);
+                                            schedulePosition = j;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    getGroupList();
+                }
+            });
+        }
+
+        @Override
+        public void postConnectMessage(final String info) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ToastUtils.showShort(info);
+                }
+            });
+        }
+    };
+
+    private int currentPort;
 
     /**
      * 连接设备
@@ -515,25 +576,15 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                     ToastUtils.showShort("请先设置端口");
                     return;
                 }
-                WebConfig webConfig = new WebConfig();
-                webConfig.setPort(Integer.parseInt(server_Port));
-                webConfig.setMaxParallels(10);
-                mySocketServer = new MySocketServer(webConfig, MiddleDistanceRaceActivity.this);
-
-                bindIntent = new Intent(mContext, TcpService.class);
-
-                startService(bindIntent);
-
-                isBind = bindService(bindIntent, serviceConnection, BIND_AUTO_CREATE);
-
-                //此处做延时，需要等服务绑定完
-                mHander.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        myBinder.startServer(Integer.parseInt(server_Port),
-                                MiddleDistanceRaceActivity.this);
-                    }
-                }, 1500);
+                currentPort = Integer.parseInt(serverPort.getText().toString());
+                //当端口改变重启服务端
+                if (!server_Port.equals(serverPort.getText().toString())) {
+                    myBinder.stopWork();
+                    myBinder.startWork(currentPort);
+                }
+                bindTcpService();
+                //存储当前开启服务的时间，间隔12小时每次进入当前activity自动打开服务，超过之后需要点击按钮开启服务
+                SharedPrefsUtil.putValue(mContext, MyTcpService.SERVICE_CONNECT, MyTcpService.SERVICE_CONNECT, System.currentTimeMillis());
             }
         });
         btnConnect.setOnClickListener(new View.OnClickListener() {
@@ -573,78 +624,38 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         });
     }
 
-    @Override
-    public void onTcpReceiveResult(final Schedule schedule, final String itemName) {
-        Log.i("OnResponseListener", "onTcpReceiveResult-----------");
-//        if (instance == null) {
-//            Log.i("OnResponseListener", "isFinishing-----------");
-//            return;
-//        }
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                getItems();
-                ToastUtils.showLong("上道终端上传分组数据");
-                for (int i = 0; i < itemList.size(); i++) {
-                    if (itemList.get(i).getItemName().equals(itemName)) {
-                        spRaceItem.setSelection(i);
-                        mItemPosition = i;
-                        break;
-                    } else {
-                        if (i == itemList.size() - 1) {
-//                                getItems();
-                            itemAdapter.notifyDataSetChanged();
-                            for (int j = 0; j < itemList.size(); i++) {
-                                if (itemList.get(j).getItemName().equals(itemName)) {
-                                    mItemPosition = j;
-                                    spRaceItem.setSelection(j);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
+    private void bindTcpService() {
+        bindIntent = new Intent(mContext, MyTcpService.class);
 
-                if (scheduleList.size() == 0) {
-                    updateSchedules();
-                } else {
-                    for (int i = 0; i < scheduleList.size(); i++) {
-                        if (scheduleList.get(i).getScheduleNo().equals(schedule.getScheduleNo())) {
-                            spRaceSchedule.setSelection(i);
-                            schedulePosition = i;
-                            break;
-                        } else {
-                            if (i == scheduleList.size() - 1) {
-                                updateSchedules();
-                                for (int j = 0; j < scheduleList.size(); j++) {
-                                    if (scheduleList.get(i).getScheduleNo().equals(schedule.getScheduleNo())) {
-                                        spRaceSchedule.setSelection(j);
-                                        schedulePosition = j;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                getGroupList();
-            }
-        });
+//        if (!isWorked())
+        startService(bindIntent);
+        isBind = bindService(bindIntent, serviceConnection, BIND_AUTO_CREATE);
     }
 
-    @Override
-    public void OnTcpServerSuccess(boolean bool, final String info) {
-        Log.i("OnResponseListener", "OnTcpServerSuccess-----------");
-//        if (instance == null) {
-//            return;
-//        }
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ToastUtils.showShort(info);
+    /**
+     * 判断服务是否已启动
+     *
+     * @return
+     */
+    private boolean isWorked() {
+        ActivityManager myManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+        ArrayList<ActivityManager.RunningServiceInfo> runningService = (ArrayList<ActivityManager.RunningServiceInfo>) myManager.getRunningServices(30);
+        for (int i = 0; i < runningService.size(); i++) {
+            if (runningService.get(i).service.getClassName().equals("com.feipulai.exam.activity.MiddleDistanceRace.MyTcpService")) {
+                return true;
             }
-        });
+        }
+        return false;
+    }
+
+    public void unBindService() {
+        if (isBind && serviceConnection != null) {
+            unbindService(serviceConnection);
+            myTcpService.unRegisterCallBack(callBack);
+            if (myBinder != null && (System.currentTimeMillis() - lastServiceTime) > 12 * 60 * 60 * 1000) {
+                myBinder.stopWork();
+            }
+        }
     }
 
     private List<List<String>> selectResults;
@@ -817,14 +828,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
             nettyClient.disconnect();
         }
 
-        if (myBinder != null) {
-            myBinder.stopServer();
-        }
-        if (isBind) {
-            unbindService(serviceConnection);
-            stopService(bindIntent);
-        }
-
+        unBindService();
         instance = null;
 
         List<Group> groupList = new ArrayList<>();
