@@ -220,6 +220,10 @@ public class DBManager {
         return student;
     }
 
+    public List<StudentItem>queryStudentItemByItemCode(String itemCode){
+        return studentItemDao.queryBuilder().where(StudentItemDao.Properties.ItemCode.eq(itemCode)).list();
+    }
+
     /**
      * 批量添加学生信息
      *
@@ -854,6 +858,10 @@ public class DBManager {
         itemDao.updateInTx(items);
     }
 
+    public void updateItemSchedules(List<ItemSchedule> itemSchedules) {
+        itemScheduleDao.updateInTx(itemSchedules);
+    }
+
     private void insertItem(int machineCode, String itemName, String unit) {
         Item item = new Item();
         item.setMachineCode(machineCode);
@@ -1341,6 +1349,10 @@ public class DBManager {
                 .where(GroupItemDao.Properties.ItemCode.eq(itemCode))
                 .where(GroupItemDao.Properties.ScheduleNo.eq(scheduleNo))
                 .where(GroupItemDao.Properties.GroupType.eq(sex)).orderDesc(GroupItemDao.Properties.TrackNo).list();
+    }
+
+    public List<GroupItem> queryGroupItemByCode(String itemCode) {
+        return groupItemDao.queryBuilder().where(GroupItemDao.Properties.ItemCode.eq(itemCode)).list();
     }
 
     /**
@@ -1908,6 +1920,10 @@ public class DBManager {
         return scheduleDao.queryBuilder().where(ScheduleDao.Properties.ScheduleNo.eq(scheduleNo)).unique();
     }
 
+    public List<ItemSchedule> queryItemSchedulesByItemCode(String itemCode) {
+        return itemScheduleDao.queryBuilder().where(ItemScheduleDao.Properties.ItemCode.eq(itemCode)).list();
+    }
+
 //    public List<Schedule> getSchedulesByItemCode(String itemCode) {
 //        List<ItemSchedule> itemSchedules = itemScheduleDao.queryBuilder().where(ItemScheduleDao.Properties.ItemCode.eq(itemCode)).list();
 //        if (itemSchedules != null && itemSchedules.size() > 0) {
@@ -2144,6 +2160,9 @@ public class DBManager {
 
     public void updateGroups(List<Group> groups) {
         groupDao.updateInTx(groups);
+    }
+    public void updateGroupItems(List<GroupItem> groupItems) {
+        groupItemDao.updateInTx(groupItems);
     }
 
     public List<Group> queryGroupByItemCode(String itemCode) {

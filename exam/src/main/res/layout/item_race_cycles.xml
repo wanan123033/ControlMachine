@@ -41,5 +41,16 @@
         android:lines="1"
         android:text="圈数"
         android:textSize="20sp" />
+    <TextView
+        android:id="@+id/tv_item_code"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_margin="1dp"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:gravity="center"
+        android:lines="1"
+        android:text="项目代码"
+        android:textSize="20sp" />
 
 </LinearLayout>

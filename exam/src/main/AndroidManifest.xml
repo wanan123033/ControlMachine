@@ -34,9 +34,10 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.DEFAULT" />
+                <!--<category android:name="android.intent.category.DEFAULT" />-->
                 <category android:name="android.intent.category.LAUNCHER" />
-                <!-- <category android:name="android.intent.category.HOME" /> -->
+                <!--<category android:name="android.intent.category.HOME" />-->
+
             </intent-filter>
         </activity>
         <activity android:name=".activity.MainActivity" />
@@ -125,6 +126,7 @@
         <service
             android:name=".service.UploadService"
             android:exported="false" />
+        <service android:name=".activity.MiddleDistanceRace.TcpService" />
 
         <activity android:name=".activity.sargent_jump.SargentTestActivity" />
         <activity android:name=".activity.sargent_jump.SargentGroupActivity" />
