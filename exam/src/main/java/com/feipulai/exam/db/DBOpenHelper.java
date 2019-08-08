@@ -5,8 +5,10 @@ import android.content.Context;
 import com.feipulai.exam.entity.ChipGroupDao;
 import com.feipulai.exam.entity.ChipInfoDao;
 import com.feipulai.exam.entity.DaoMaster;
+import com.feipulai.exam.entity.GroupDao;
 import com.feipulai.exam.entity.ItemDao;
 import com.feipulai.exam.entity.MachineResultDao;
+import com.feipulai.exam.entity.RoundResultDao;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.greendao.database.Database;
@@ -30,11 +32,13 @@ public class DBOpenHelper extends DaoMaster.OpenHelper {
 
         if (oldVersion < newVersion) {
             switch (newVersion) {
-                case 3:
+                case 4:
                     MigrationHelper.migrate(db, MachineResultDao.class);
                     MigrationHelper.migrate(db, ChipInfoDao.class);
                     MigrationHelper.migrate(db, ChipGroupDao.class);
                     MigrationHelper.migrate(db, ItemDao.class);
+                    MigrationHelper.migrate(db, RoundResultDao.class);
+                    MigrationHelper.migrate(db, GroupDao.class);
                     break;
 
             }

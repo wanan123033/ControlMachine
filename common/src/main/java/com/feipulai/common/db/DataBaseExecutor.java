@@ -1,4 +1,4 @@
-package com.feipulai.exam.utils.db;
+package com.feipulai.common.db;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

@@ -174,7 +174,8 @@ public class SerialConfigs {
     public static final int VOLLEYBALL_STOP_RESPONSE = 0x1a;
     public static final int VOLLEYBALL_RESULT_RESPONSE = 0x1b;
     public static final int VOLLEYBALL_CHECK_RESPONSE = 0x1c;
-    public static final int VOLLEYBALL_SET_DEVICE_RESPONSE = 0x1D;
+    public static final int VOLLEYBALL_LOSE_DOT_RESPONSE = 0x1d;
+    public static final int VOLLEYBALL_VERSION_RESPONSE = 0x1e;
     //MEDICINE BALL
     public static final int MEDICINE_BALL_SELF_CHECK_RESPONSE = 0x1c;
     public static final int MEDICINE_BALL_GET_SCORE_RESPONSE = 0x1d;

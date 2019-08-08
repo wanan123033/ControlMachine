@@ -60,4 +60,6 @@
     <string name="normal">正常</string>
     <string name="ununited">未连接</string>
     <string name="abnormal">异常</string>
+
+    <string name="device_versions">硬件版本号:V%1$s</string>
 </resources>

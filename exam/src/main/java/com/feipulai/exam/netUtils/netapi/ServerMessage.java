@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.common.view.LoadingDialog;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.bean.ScheduleBean;
 import com.feipulai.exam.bean.UploadResults;
@@ -12,7 +13,6 @@ import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Item;
-import com.feipulai.exam.view.LoadingDialog;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;

@@ -1,4 +1,4 @@
-package com.feipulai.exam.utils.db;
+package com.feipulai.common.db;
 
 /**
  * 数据库操作返回

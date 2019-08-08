@@ -1,4 +1,4 @@
-package com.feipulai.exam.utils.db;
+package com.feipulai.common.db;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -7,7 +7,7 @@ import android.os.Message;
 import android.text.TextUtils;
 
 import com.feipulai.common.utils.HandlerUtil;
-import com.feipulai.exam.view.LoadingDialog;
+import com.feipulai.common.view.LoadingDialog;
 
 /**
  * 纯数据库操作事务

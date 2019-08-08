@@ -35,9 +35,9 @@ import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.fragment.IndividualCheckFragment;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
+import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
-import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.TestConfigs;
@@ -235,6 +235,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
 
             case R.id.tv_start_test:
                 prepareForTesting();
+//                facade.checkDevice();
                 break;
 
             case R.id.tv_stop_test:
@@ -503,9 +504,26 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         handler.sendMessage(msg);
     }
 
+//    @Override
+//    public void checkDevice(VolleyBallCheck check) {
+//        if (check.getDeviceType() == setting.getTestPattern()) {
+//            if (check.getPoleNum() == 0) {
+//                toastSpeak("请连接测试杆");
+//            } else {
+//                Integer poleArray[] = new Integer[check.getPoleNum() / 2 * 10];
+//                System.arraycopy(check.getPositionList().toArray(), 0, poleArray, 0, poleArray.length);
+//
+//                prepareForTesting();
+//            }
+//        } else {
+//            toastSpeak("当前项目使用设备错误，请更换");
+//        }
+//    }
+
     private boolean isConfigurableNow() {
         return state == WAIT_CHECK_IN || state == WAIT_BEGIN;
     }
+
 
     private void setAdapter() {
         int maxTestNo = TestConfigs.getMaxTestCount(this);

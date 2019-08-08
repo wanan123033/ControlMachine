@@ -5,7 +5,7 @@
     <color name="colorPrimaryDark">#FF258EFF</color>
     <color name="colorAccent">#FF258EFF</color>
     <color name="colorHost">#25b1bf</color>
-    <color name="white">#ffffff</color>
+    <color name="white">#FFFFFFFF</color>
     <color name="rice_white">#feeeee</color>
     <color name="black">#000000</color>
     <color name="hostStyle">#e47f33</color>

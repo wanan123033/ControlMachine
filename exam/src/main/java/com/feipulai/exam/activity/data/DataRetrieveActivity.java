@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,6 +24,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.db.DataBaseExecutor;
+import com.feipulai.common.db.DataBaseRespon;
+import com.feipulai.common.db.DataBaseTask;
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.PullToRefreshView;
@@ -55,9 +57,6 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.PrintResultUtil;
 import com.feipulai.exam.utils.ResultDisplayUtils;
-import com.feipulai.exam.utils.db.DataBaseExecutor;
-import com.feipulai.exam.utils.db.DataBaseRespon;
-import com.feipulai.exam.utils.db.DataBaseTask;
 import com.feipulai.exam.view.StuSearchEditText;
 import com.orhanobut.logger.Logger;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -73,7 +72,6 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
 
@@ -145,19 +143,21 @@ public class DataRetrieveActivity extends BaseTitleActivity
         cbUnUpload.setOnCheckedChangeListener(this);
         cbUnTested.setOnCheckedChangeListener(this);
         cbTested.setOnCheckedChangeListener(this);
-        mRbAll.setOnClickListener(new View.OnClickListener() {
+        mRbAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                if (mRbAll.isChecked()) {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
                     cbUploaded.setChecked(false);
                     cbUnUpload.setChecked(false);
                     cbTested.setChecked(false);
                     cbUnTested.setChecked(false);
+                    mPageNum = 0;
                     //查全部
                     setAllList();
                 }
             }
         });
+
 
         mEtInputText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -634,8 +634,6 @@ public class DataRetrieveActivity extends BaseTitleActivity
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-
         switch (buttonView.getId()) {
             case R.id.cb_select_all:
                 for (int i = 0; i < mList.size(); i++) {
@@ -650,21 +648,21 @@ public class DataRetrieveActivity extends BaseTitleActivity
                     cbTested.setChecked(true);
                     mRbAll.setChecked(false);
                     cbUnTested.setChecked(false);
-                }
+                } selectChoose(isChecked);
                 break;
             case R.id.cb_un_tested://未测
                 if (isChecked) {
                     cbUnTested.setChecked(true);
                     mRbAll.setChecked(false);
                     cbTested.setChecked(false);
-                }
+                } selectChoose(isChecked);
                 break;
             case R.id.cb_uploaded://已上传
                 if (isChecked) {
                     cbUploaded.setChecked(true);
                     mRbAll.setChecked(false);
                     cbUnUpload.setChecked(false);
-                }
+                } selectChoose(isChecked);
                 break;
             case R.id.cb_un_upload://未上传
                 if (isChecked) {
@@ -672,29 +670,37 @@ public class DataRetrieveActivity extends BaseTitleActivity
                     mRbAll.setChecked(false);
                     cbUploaded.setChecked(false);
                 }
+                selectChoose(isChecked);
                 break;
 
         }
+
+    }
+    public void selectChoose(boolean isChecked) {
         //非选择全部的复选框
-        if (buttonView.getId() != R.id.cb_select_all) {
-            mPageNum = 0;
-            //刷选条件必须至少有一个
-            if (cbUploaded.isChecked() || cbUnUpload.isChecked() || cbTested.isChecked() || cbUnTested.isChecked()) {
-                //选择未测，证明没有成绩，所有选择已上传与未上传都是空列表
-                if (cbUnTested.isChecked() && (cbUploaded.isChecked() || cbUnUpload.isChecked())) {
-                    mList.clear();
-                } else {
-                    chooseStudent();
-                }
-            } else {
-                mRbAll.setChecked(true);
-                //查全部
-                setAllList();
+
+        mPageNum = 0;
+        mList.clear();
+        //刷选条件必须至少有一个
+        if (cbUploaded.isChecked() || cbUnUpload.isChecked() || cbTested.isChecked() || cbUnTested.isChecked()) {
+            Logger.i("cbUploaded===>" + cbUploaded.isChecked());
+            Logger.i("cbUnUpload===>" + cbUnUpload.isChecked());
+            Logger.i("cbTested===>" + cbTested.isChecked());
+            Logger.i("cbUnTested===>" + cbUnTested.isChecked());
+            if (isChecked) {
+                chooseStudent();
             }
 
+        } else {
+            Logger.i("mRbAll===>" + mRbAll.isChecked());
+            mPageNum = 0;
+            if (!mRbAll.isChecked()) {
+                mRbAll.setChecked(true);
+//                //查全部
+//                setAllList();
+            }
         }
     }
-
 
     private void chooseStudent() {
         DataBaseExecutor.addTask(new DataBaseTask(this, getString(R.string.loading_hint), true) {
@@ -821,11 +827,5 @@ public class DataRetrieveActivity extends BaseTitleActivity
     public final static String UPDATE_MESSAGE = "com.feipulai.host.update_data_message";
 
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
-    }
 
 }

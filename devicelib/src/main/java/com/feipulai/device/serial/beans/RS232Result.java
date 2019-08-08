@@ -323,6 +323,10 @@ public class RS232Result {
                             setType(SerialConfigs.VOLLEYBALL_RESULT_RESPONSE);
                             setResult(new VolleyBallResult(data));
                             break;
+                        case 6:
+                            setType(SerialConfigs.VOLLEYBALL_LOSE_DOT_RESPONSE);
+                            setResult(data[8]);
+                            break;
                         case 7:
                             type = data[12];
                             if (type == 0) {
@@ -339,8 +343,10 @@ public class RS232Result {
                             setType(SerialConfigs.VOLLEYBALL_CHECK_RESPONSE);
                             setResult(new VolleyBallCheck(data));
                             break;
-                        case 0x11:
-                            setType(SerialConfigs.VOLLEYBALL_SET_DEVICE_RESPONSE);
+                        case 12:
+                            String version = (data[8] >>> 4) + "." + (data[8] & 0x0f) + "." + (data[9] & 0xff);
+                            setType(SerialConfigs.VOLLEYBALL_VERSION_RESPONSE);
+                            setResult(version);
                             break;
                     }
                     break;

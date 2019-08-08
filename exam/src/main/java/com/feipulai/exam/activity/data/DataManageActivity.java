@@ -466,6 +466,8 @@ public class DataManageActivity
                 try {
                     targetFile = FileSelectActivity.sSelectedFile.createFile(text + ".db");
                     boolean backupSuccess = backupManager.backup(targetFile);
+                    UsbFile deleteFile = FileSelectActivity.sSelectedFile.createFile("." + text + "delete.db");
+                    deleteFile.delete();
                     ToastUtils.showShort(backupSuccess ? "数据库备份成功" : "数据库备份失败");
                     Logger.i(backupSuccess ? ("数据库备份成功,备份文件名:" +
                             FileSelectActivity.sSelectedFile.getName() + "/" + targetFile.getName())

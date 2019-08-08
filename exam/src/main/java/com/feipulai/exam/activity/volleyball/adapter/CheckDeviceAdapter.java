@@ -27,6 +27,7 @@ public class CheckDeviceAdapter extends BaseQuickAdapter<List<StepBean>, BaseVie
         VerticalStepView stepRight = helper.getView(R.id.item_step_right);
         stepLeft.setShowTextView(false);
         stepLeft.setStepViewTexts(item)
+                .reverseDraw(false)
                 .setLinePaddingProportion(0.06f)//设置indicator线与线间距的比例系数
                 .setCircleRadius(5)
                 .setDefaultStepIndicatorNum(mContext.getResources().getDimensionPixelOffset(R.dimen.dp_20))
@@ -34,6 +35,7 @@ public class CheckDeviceAdapter extends BaseQuickAdapter<List<StepBean>, BaseVie
                 .setStepsViewIndicatorUnCompletedLineColor(ContextCompat.getColor(mContext, android.R.color.transparent))//设置StepsViewIndicator未完成线的颜色
                 .setStepViewComplectedTextColor(ContextCompat.getColor(mContext, R.color.viewfinder_laser));//设置StepsView text完成线的颜色
         stepRight.setStepViewTexts(item)
+                .reverseDraw(false)
                 .setLinePaddingProportion(0.06f)//设置indicator线与线间距的比例系数
                 .setCircleRadius(5)
                 .setDefaultStepIndicatorNum(mContext.getResources().getDimensionPixelOffset(R.dimen.dp_20))
