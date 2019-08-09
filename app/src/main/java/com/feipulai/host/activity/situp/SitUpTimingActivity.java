@@ -17,6 +17,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.jump_rope.facade.CountTimingTestFacade;
 import com.feipulai.common.jump_rope.task.GetDeviceStatesTask;
 import com.feipulai.common.jump_rope.task.LEDContentGenerator;
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.DividerItemDecoration;
 import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.device.serial.RadioManager;
@@ -29,7 +30,6 @@ import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.jump_rope.adapter.RTResultAdapter;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.SharedPrefsConfigs;
-import com.feipulai.host.utils.SharedPrefsUtil;
 
 import java.io.Serializable;
 import java.lang.ref.WeakReference;

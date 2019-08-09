@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SystemBrightUtils;
 import com.feipulai.common.view.baseToolbar.StatusBarUtil;
 import com.feipulai.device.printer.PrinterManager;
@@ -67,9 +68,9 @@ public class MainActivity extends BaseActivity{
 	@Override
 	protected void onResume() {
 		super.onResume();
-		machineCode = com.feipulai.common.utils.SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, SharedPrefsConfigs
+		machineCode = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, SharedPrefsConfigs
 				.DEFAULT_MACHINE_CODE);
-		String itemCode = com.feipulai.common.utils.SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
+		String itemCode = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
 		// Logger.i("machineCode:" + machineCode);
 		int initState = TestConfigs.init(this, machineCode, itemCode, null);
 		showTestName();
@@ -133,6 +134,12 @@ public class MainActivity extends BaseActivity{
 
 	@OnClick(R.id.img_code)
 	public void onCodeClicked(View view) {
+		if (imgCode.getHeight() <= 55) {
+			imgCode.setImageResource(R.mipmap.icon_code_big);
+		} else {
+			imgCode.setImageResource(R.mipmap.icon_code);
+		}
+
 	}
 
 	@Override

@@ -98,7 +98,7 @@ public class StuSearchEditText extends RelativeLayout {
         } else {
             ToastUtils.showShort("请输入正常学生考号");
         }
-        if (mStudentList.size() == 0 && SettingHelper.getSystemSetting().isTemporaryAddStu()) {
+        if (mStudentList.size() == 0 ) {
             Student student = new Student();
             student.setStudentCode(etInputText.getText().toString());
             showAddHint(student);
@@ -117,8 +117,7 @@ public class StuSearchEditText extends RelativeLayout {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_GO
                         || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    if (!TextUtils.isEmpty(etInputText.getText().toString())
-                            ) {
+                    if (!TextUtils.isEmpty(etInputText.getText().toString())) {
                         search();
                     }
                     return true;

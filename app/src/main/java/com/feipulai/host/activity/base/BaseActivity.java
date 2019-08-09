@@ -10,10 +10,10 @@ import android.view.WindowManager;
 
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.ActivityCollector;
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.host.config.BaseEvent;
 import com.feipulai.host.config.SharedPrefsConfigs;
-import com.feipulai.host.utils.SharedPrefsUtil;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;

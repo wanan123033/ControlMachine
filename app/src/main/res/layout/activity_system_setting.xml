@@ -1,208 +1,258 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@mipmap/icon_white_bg"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="5dp"
-        android:text="@string/system_setting"
-        android:textColor="@color/black"
-        android:textSize="18sp" />
-
-    <!--<android.support.v4.widget.NestedScrollView-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent">-->
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:focusableInTouchMode="true">
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="right"
-            android:orientation="vertical">
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="34dp"
+            android:layout_marginTop="26dp"
+            android:background="@drawable/btn_bg_white"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingLeft="31dp"
+            android:paddingRight="25dp"
+            android:paddingTop="42dp">
 
-            <!--android:paddingLeft="50dp"-->
-            <!--android:paddingTop="30dp"-->
-
-            <!--<TextView-->
-            <!--style="@style/style_setting_tv_title"-->
-            <!--android:text="测试机器:"-->
-            <!--/>-->
-
-            <!--<TextView-->
-            <!--style="@style/style_setting_tv_title"-->
-            <!--android:text="测试项目:"-->
-            <!--/>-->
-
-            <TextView
-                style="@style/style_setting_tv_title"
-                android:text="测试名称:" />
-
-            <TextView
-                style="@style/style_setting_tv_title"
-                android:text="测试地点:" />
-
-            <TextView
-                style="@style/style_setting_tv_title"
-                android:text="服务器地址:" />
-
-            <TextView
-                style="@style/style_setting_tv_title"
-                android:text="主机号:" />
-
-            <TextView
-                style="@style/style_setting_tv_title"
-                android:text="成绩播报:" />
-
-            <TextView
-                style="@style/style_setting_tv_title"
-                android:text="实时上传:" />
-
-            <TextView
-                style="@style/style_setting_tv_title"
-                android:text="自动打印:" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="4"
-            android:orientation="vertical">
-
-            <!--<Spinner-->
-            <!--android:id="@+id/sp_machine_name"-->
-            <!--style="@style/style_setting_tv_title"-->
-            <!--android:layout_width="150dp"-->
-            <!--android:gravity="center"-->
-            <!--/>-->
-
-            <!--<Spinner-->
-            <!--android:id="@+id/sp_item_name"-->
-            <!--style="@style/style_setting_tv_title"-->
-            <!--android:layout_width="150dp"-->
-            <!--android:gravity="center"-->
-            <!--/>-->
-
-            <EditText
-                android:id="@+id/et_test_name"
-                style="@style/style_setting_tv_title"
-                android:layout_width="150dp"
-                android:background="@drawable/edittext_bg"
-                android:gravity="center"
-                android:maxLines="1" />
-            <!--android:padding="5dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginLeft="20dp"-->
-            <!--android:layout_marginLeft="20dp"-->
-
-            <EditText
-                android:id="@+id/et_test_site"
-                style="@style/style_setting_tv_title"
-                android:layout_width="150dp"
-                android:background="@drawable/edittext_bg"
-                android:gravity="center"
-                android:maxLines="1" />
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/style_setting_tv_title"
+                    android:text="测试名称:" />
+
+                <EditText
+                    android:id="@+id/et_test_name"
+                    android:layout_width="400dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="30dp"
+                    android:background="@drawable/edit_search_bg"
+                    android:gravity="center"
+                    android:imeOptions="actionGo"
+                    android:inputType="text"
+                    android:maxLines="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="21dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/style_setting_tv_title"
+                    android:text="测试地点:" />
+
+                <EditText
+                    android:id="@+id/et_test_site"
+                    android:layout_width="400dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="30dp"
+                    android:background="@drawable/edit_search_bg"
+                    android:gravity="center"
+                    android:imeOptions="actionGo"
+                    android:inputType="text"
+                    android:maxLines="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="21dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/style_setting_tv_title"
+                    android:text="服务器地址:" />
 
                 <EditText
                     android:id="@+id/et_sever_ip"
-                    style="@style/style_setting_tv_title"
-                    android:layout_width="300dp"
-                    android:background="@drawable/edittext_bg"
+                    android:layout_width="242dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="10dp"
+                    android:background="@drawable/edit_search_bg"
                     android:gravity="center"
+                    android:imeOptions="actionDone"
                     android:inputType="textUri"
                     android:maxLines="1" />
+                <!--android:lines="1"-->
 
-                <TextView
-                    android:id="@+id/btn_bind"
-                    style="@style/style_setting_tv_title"
-                    android:layout_marginLeft="15dp"
-                    android:background="@drawable/edittext_bg"
-                    android:gravity="center"
-                    android:maxLines="1"
-                    android:text="绑定" />
-                <!--android:layout_width="80dp"-->
-                <!--android:layout_height="30dp"-->
 
                 <TextView
                     android:id="@+id/btn_default"
-                    style="@style/style_setting_tv_title"
-                    android:layout_marginLeft="15dp"
-                    android:background="@drawable/edittext_bg"
+                    android:layout_width="73dp"
+                    android:layout_height="35dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toLeftOf="@+id/tv_start_test"
+                    android:background="@drawable/btn_click_bg_unselected"
                     android:gravity="center"
-                    android:maxLines="1"
-                    android:text="默认" />
-                <!--android:layout_width="80dp"-->
-                <!--android:layout_height="30dp"-->
-
-            </LinearLayout>
-
-            <Spinner
-                android:id="@+id/sp_host_id"
-                style="@style/style_setting_tv_title"
-                android:layout_width="100dp" />
-
-
-            <Switch
-                android:id="@+id/sw_auto_broadcast"
-                style="@style/style_setting_tv_title" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <Switch
-                    android:id="@+id/sw_rt_upload"
-                    style="@style/style_setting_tv_title" />
+                    android:padding="8dp"
+                    android:text="默认"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_16" />
 
                 <TextView
-                    android:id="@+id/btn_net_setting"
-                    style="@style/style_setting_tv_title"
-                    android:layout_marginLeft="15dp"
-                    android:background="@drawable/edittext_bg"
+                    android:id="@+id/btn_bind"
+                    android:layout_width="73dp"
+                    android:layout_height="35dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toLeftOf="@+id/tv_start_test"
+                    android:background="@drawable/btn_click_bg_selected"
                     android:gravity="center"
-                    android:maxLines="1"
-                    android:padding="1dp"
-                    android:text="网络设置" />
+                    android:padding="8dp"
+                    android:text="绑定"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_16" />
 
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="21dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/style_setting_tv_title"
+                    android:layout_marginLeft="20dp"
+                    android:text="主机号:" />
+
+                <Spinner
+                    android:id="@+id/sp_host_id"
+                    android:layout_width="400dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="30dp"
+                    android:background="@drawable/icon_spinner_bg" />
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="21dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-                <Switch
-                    android:id="@+id/sw_auto_print"
-                    style="@style/style_setting_tv_title" />
+                <TextView
+                    style="@style/style_setting_tv_title"
+                    android:text="检录工具:" />
 
-                <!--<TextView-->
-                <!--android:id="@+id/btn_print_setting"-->
-                <!--style="@style/style_setting_tv_title"-->
-                <!--android:layout_marginLeft="15dp"-->
-                <!--android:background="@drawable/edittext_bg"-->
-                <!--android:gravity="center"-->
-                <!--android:padding="1dp"-->
-                <!--android:maxLines="1"-->
-                <!--android:text="打印设置"-->
-                <!--/>-->
+                <Spinner
+                    android:id="@+id/sp_check_tool"
+                    android:layout_width="400dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="30dp"
+                    android:background="@drawable/icon_spinner_bg" />
             </LinearLayout>
 
+
+            <LinearLayout
+                android:layout_width="520dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_40"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/style_setting_tv_title"
+                    android:text="实时上传:" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:gravity="right|center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="1dp">
+
+                    <TextView
+                        android:id="@+id/btn_net_setting"
+                        style="@style/style_setting_tv_title"
+                        android:layout_width="100dp"
+                        android:layout_marginLeft="15dp"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:padding="1dp"
+                        android:text="网络设置"
+                        android:textColor="@color/colorPrimaryDark" />
+
+                    <CheckBox
+                        android:id="@+id/sw_rt_upload"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="40dp"
+                        android:button="@drawable/checkbox_switch_selected" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <View
+                style="@style/divider_gray_horizontal_style"
+                android:layout_marginTop="8dp" />
+
+
+            <RelativeLayout
+                android:layout_width="520dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:padding="1dp">
+
+                <TextView
+                    style="@style/style_setting_tv_title"
+                    android:text="自动打印:" />
+
+                <CheckBox
+                    android:id="@+id/sw_auto_print"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:button="@drawable/checkbox_switch_selected" />
+            </RelativeLayout>
+
+            <View
+                style="@style/divider_gray_horizontal_style"
+                android:layout_marginTop="8dp" />
+
+            <RelativeLayout
+                android:layout_width="520dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="30dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:padding="1dp">
+
+                <TextView
+                    style="@style/style_setting_tv_title"
+                    android:text="成绩播报:" />
+
+                <CheckBox
+                    android:id="@+id/sw_auto_broadcast"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:button="@drawable/checkbox_switch_selected" />
+            </RelativeLayout>
+
+
         </LinearLayout>
-
     </LinearLayout>
-
-    <!--</android.support.v4.widget.NestedScrollView>-->
-
-</LinearLayout>
+</android.support.v4.widget.NestedScrollView>

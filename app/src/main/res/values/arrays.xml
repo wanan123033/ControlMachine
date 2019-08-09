@@ -19,4 +19,25 @@
         <item>设置</item>
         <item>打印</item>
     </array>
+
+    <array name="check_tool">
+        <item>条形码/二维码</item>
+        <item>身份证</item>
+        <item>IC卡</item>
+        <item>外接扫描枪</item>
+    </array>
+
+
+    <array name="data_admin">
+        <item>名单导入</item>
+        <item>名单下载</item>
+        <item>数据备份</item>
+        <item>数据还原</item>
+        <item>数据查看</item>
+        <item>数据清空</item>
+        <item>成绩上传</item>
+        <item>成绩导出</item>
+        <!--<item>成绩删除</item>-->
+
+    </array>
 </resources>

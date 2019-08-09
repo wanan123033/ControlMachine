@@ -41,10 +41,10 @@ public class RTResultAdapter
 	public RTResultAdapter(Context context, List<StuDevicePair> stuPairs){
 		//mContext = context;
 		this.stuPairs = stuPairs;
-		disconBackground = context.getResources().getDrawable(R.drawable.shape_round_textview_red);
-		lowBatBackground = context.getResources().getDrawable(R.drawable.shape_round_textview_yellow);
-		stopUseBackground = context.getResources().getDrawable(R.drawable.shape_round_textview_grey);
-		defaultBackground = context.getResources().getDrawable(R.drawable.shape_round_textview);
+		disconBackground = context.getResources().getDrawable(R.drawable.shape_state_red);
+		lowBatBackground = context.getResources().getDrawable(R.drawable.shape_state_yellow);
+		stopUseBackground = context.getResources().getDrawable(R.drawable.shape_state_grey);
+		defaultBackground = context.getResources().getDrawable(R.drawable.shape_state_default);
 	}
 	
 	public void setSelected(int selectedPosition){

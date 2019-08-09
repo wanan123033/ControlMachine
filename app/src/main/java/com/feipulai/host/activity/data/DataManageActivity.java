@@ -1,48 +1,67 @@
 package com.feipulai.host.activity.data;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.feipulai.common.db.ClearDataProcess;
 import com.feipulai.common.dbutils.BackupManager;
 import com.feipulai.common.dbutils.FileSelectActivity;
 import com.feipulai.common.exl.ExlListener;
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
-import com.feipulai.host.activity.base.BaseActivity;
+import com.feipulai.host.activity.base.BaseTitleActivity;
+import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
+import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.exl.ResultExlWriter;
 import com.feipulai.host.exl.StuItemExLReader;
 import com.feipulai.host.netUtils.netapi.ItemSubscriber;
-import com.feipulai.host.utils.FileUtil;
-import com.feipulai.host.utils.SharedPrefsUtil;
 import com.feipulai.host.view.DBDataCleaner;
 import com.feipulai.host.view.OperateProgressBar;
-import com.github.lzyzsd.circleprogress.DonutProgress;
 import com.github.mjdev.libaums.fs.UsbFile;
 import com.orhanobut.logger.Logger;
+import com.yhy.gvp.listener.OnItemClickListener;
+import com.yhy.gvp.widget.GridViewPager;
 
+import net.lucode.hackware.magicindicator.MagicIndicator;
+import net.lucode.hackware.magicindicator.ViewPagerHelper;
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator;
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter;
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator;
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView;
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.CommonPagerTitleView;
+
+import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * 数据管理
  */
-public class DataManageActivity extends BaseActivity implements ExlListener, ClearDataProcess.OnProcessFinishedListener {
+public class DataManageActivity extends BaseTitleActivity implements ExlListener, ClearDataProcess.OnProcessFinishedListener {
 
     private static final int REQUEST_CODE_RESTORE = 1;
     private static final int REQUEST_CODE_BACKUP = 2;
@@ -50,110 +69,177 @@ public class DataManageActivity extends BaseActivity implements ExlListener, Cle
 
     private static final int REQUEST_CODE_EXPORT = 4;
 
-    @BindView(R.id.btn_data_retrieve)
-    Button mBtnDataRetrieve;
-    @BindView(R.id.btn_data_download)
-    Button mBtnDataDownload;
-    @BindView(R.id.btn_data_clear)
-    Button mBtnDataClear;
-    @BindView(R.id.btn_data_import)
-    Button mBtnDataImport;
-    @BindView(R.id.btn_data_export)
-    Button mBtnDataExport;
-    @BindView(R.id.btn_data_backup)
-    Button mBtnDataBackup;
-    @BindView(R.id.btn_data_restore)
-    Button mBtnDataRestore;
-    @BindView(R.id.donut_progress)
-    DonutProgress donutProgress;
+    @BindView(R.id.grid_viewpager)
+    GridViewPager gridViewpager;
+    @BindView(R.id.indicator_container)
+    MagicIndicator indicatorContainer;
+    @BindView(R.id.progress_storage)
+    ProgressBar progressStorage;
+    @BindView(R.id.txt_storage_info)
+    TextView txtStorageInfo;
 
     public BackupManager backupManager;
     private AlertDialog nameFileDialog;
     private EditText mEditText;
     private boolean isProcessingData;
+    private List<TypeListBean> typeDatas;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_data_manage);
-        ButterKnife.bind(this);
-        String machineName = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode());
-        setTitle("数据管理 - " + machineName);
-        ActionBar actionBar = getActionBar();
-        if (actionBar != null)
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        donutProgress.setText(FileUtil.getPercentRemainStorage() + "%");
-        donutProgress.setDonut_progress(FileUtil.getPercentRemainStorage() + "");
-
-        backupManager = new BackupManager(this, DBManager.DB_NAME, BackupManager.TYPE_BODY_TEST);
-
-        // if (TextUtils.isEmpty(MyApplication.TOKEN)) {
-        //     UserSubscriber subscriber = new UserSubscriber();
-        //     subscriber.takeBind(hostId, this);
-        // }
+    protected int setLayoutResID() {
+        return R.layout.activity_data_manage;
     }
 
-    @OnClick({R.id.btn_data_retrieve, R.id.btn_data_download, R.id.btn_result_delete, R.id.btn_data_clear, R.id.btn_data_import,
-            R.id.btn_data_export, R.id.btn_data_backup, R.id.btn_data_restore, R.id.btn_portrait_delete, R.id.btn_portrait_download,
-            R.id.btn_portrait_import, R.id.btn_scoring_import, R.id.btn_scoring_delete, R.id.btn_scoring_retrieve})
-    public void onViewClicked(View view) {
-        Intent intent = new Intent();
-        switch (view.getId()) {
+    @Override
+    protected void initData() {
+        backupManager = new BackupManager(this, DBManager.DB_NAME, BackupManager.TYPE_EXAM);
 
-            case R.id.btn_data_download: //名单下载
-                showDownLoadDialog();
-                break;
+        File file = Environment.getExternalStorageDirectory();
+        long freeSpace = file.getFreeSpace();
+        long totalSpace = file.getTotalSpace();
+        txtStorageInfo.setText("总容量" + com.feipulai.common.utils.FileUtil.formatFileSize(totalSpace, true) + "剩余" + com.feipulai.common.utils.FileUtil.formatFileSize(freeSpace, true));
+        progressStorage.setProgress(com.feipulai.common.utils.FileUtil.getPercentRemainStorage());
 
-            case R.id.btn_data_import: //数据导入
-                //选择文件,增量导入学生和项目信息
-                intent.setClass(this, FileSelectActivity.class);
-                intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_FILE);
-                startActivityForResult(intent, REQUEST_CODE_IMPORT);
-                break;
+        initGridView();
+    }
 
-            case R.id.btn_data_export://数据导出
-                //选择文件夹并命名文件导出文件
-                intent.setClass(this, FileSelectActivity.class);
-                intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
-                startActivityForResult(intent, REQUEST_CODE_EXPORT);
-                break;
+    @Nullable
+    @Override
+    protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
+        return builder.setTitle("数据管理").addLeftText("返回", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
 
-            case R.id.btn_data_backup: //数据库备份
-                //选择备份到的文件夹
-                intent.setClass(this, FileSelectActivity.class);
-                intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
-                ToastUtils.showShort("请长按选择需备份文件的文件夹");
-                startActivityForResult(intent, REQUEST_CODE_BACKUP);
-                break;
-
-            case R.id.btn_data_restore://数据恢复
-                new DBDataCleaner(this, ClearDataProcess.CLEAR_FOR_RESTORE, this).process();
-                break;
-
-            case R.id.btn_data_retrieve: //数据查询
-                intent.setClass(this, DataRetrieveActivity.class);
-                startActivity(intent);
-                break;
-
-            // case R.id.btn_result_delete://删除成绩
-            //     new DBDataCleaner(this, ClearDataProcess.CLEAR_RESULTS, this).process();
-            //     break;
-
-            case R.id.btn_data_clear: //数据清空
-                new DBDataCleaner(this, ClearDataProcess.CLEAR_DATABASE, this).process();
-                break;
-
-            // 功能暂未实现
-            case R.id.btn_portrait_delete://删除头像
-            case R.id.btn_portrait_download://头像下载
-            case R.id.btn_portrait_import://头像导入
-            case R.id.btn_scoring_import://导入评分标准
-            case R.id.btn_scoring_delete://评分标准删除
-            case R.id.btn_scoring_retrieve://评分标准查看
-                ToastUtils.showShort("功能未开放，敬请期待");
-                break;
-
+    private void initGridView() {
+        typeDatas = new ArrayList<>();
+        String[] typeName = getResources().getStringArray(R.array.data_admin);
+        int[] typeRes = new int[]{R.mipmap.icon_data_import, R.mipmap.icon_data_down
+                , R.mipmap.icon_data_backup, R.mipmap.icon_data_restore, R.mipmap.icon_data_look, R.mipmap.icon_data_clear, R.mipmap.icon_result_upload,
+                R.mipmap.icon_result_import};
+        for (int i = 0; i < typeName.length; i++) {
+            TypeListBean bean = new TypeListBean();
+            bean.setName(typeName[i]);
+            bean.setImageRes(typeRes[i]);
+            typeDatas.add(bean);
         }
+        IndexTypeAdapter indexTypeAdapter = new IndexTypeAdapter(this, typeDatas);//页面内容适配器
+        gridViewpager.setGVPAdapter(indexTypeAdapter);
+        CommonNavigator commonNavigator = new CommonNavigator(this);//指示器
+        commonNavigator.setAdapter(new CommonNavigatorAdapter() {
+            @Override
+            public int getCount() {
+                int num = typeDatas.size() / 6;
+                if (typeDatas.size() % 6 > 0) {
+                    num++;
+                }
+                return typeDatas == null ? 0 : num;
+            }
+
+            @Override
+            public IPagerTitleView getTitleView(Context mContext, final int i) {
+                CommonPagerTitleView commonPagerTitleView = new CommonPagerTitleView(DataManageActivity.this);
+                View view = View.inflate(DataManageActivity.this, R.layout.single_image_layout, null);
+                final ImageView iv_image = view.findViewById(R.id.iv_image);
+                commonPagerTitleView.setContentView(view);//指示器引入外部布局，可知指示器内容可根据需求设置，多样化
+                commonPagerTitleView.setOnPagerTitleChangeListener(new CommonPagerTitleView.OnPagerTitleChangeListener() {
+                    @Override
+                    public void onSelected(int i, int i1) {
+                        iv_image.setImageResource(R.mipmap.icon_point_selected);
+                    }
+
+                    @Override
+                    public void onDeselected(int i, int i1) {
+                        iv_image.setImageResource(R.mipmap.icon_point_unselected);
+                    }
+
+                    @Override
+                    public void onLeave(int i, int i1, float v, boolean b) {
+                    }
+
+                    @Override
+                    public void onEnter(int i, int i1, float v, boolean b) {
+                    }
+                });
+                return commonPagerTitleView;
+            }
+
+            @Override
+            public IPagerIndicator getIndicator(Context context) {
+                return null;
+            }
+        });
+        indicatorContainer.setNavigator(commonNavigator);
+        ViewPagerHelper.bind(indicatorContainer, gridViewpager);//页面内容与指示器关联
+
+        indexTypeAdapter.setOnItemClickListener(new OnItemClickListener<TypeListBean>() {
+            @Override
+            public void onItemClick(View view, int position, TypeListBean data) {
+                Intent intent = new Intent();
+                switch (position) {
+                    case 0://数据导入
+                        //选择文件,增量导入学生和项目信息
+                        intent.setClass(DataManageActivity.this, FileSelectActivity.class);
+                        intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_FILE);
+                        startActivityForResult(intent, REQUEST_CODE_IMPORT);
+                        break;
+
+
+                    case 1: //名单下载
+                        showDownLoadDialog();
+                        break;
+
+                    case 2: //数据库备份
+                        //选择备份到的文件夹
+                        intent.setClass(DataManageActivity.this, FileSelectActivity.class);
+                        intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
+                        startActivityForResult(intent, REQUEST_CODE_BACKUP);
+
+                        break;
+
+                    case 3://数据恢复
+                        new DBDataCleaner(DataManageActivity.this, ClearDataProcess.CLEAR_FOR_RESTORE, DataManageActivity.this).process();
+                        break;
+                    case 4: //数据查询
+                        intent.setClass(DataManageActivity.this, DataRetrieveActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 5: //数据清空
+                        new DBDataCleaner(DataManageActivity.this, ClearDataProcess.CLEAR_DATABASE, DataManageActivity.this).process();
+                        break;
+
+                    case 6://成绩上传
+                        List<RoundResult> resultList = DBManager.getInstance().getUploadResultsAll(false);
+                        if (resultList.size() == 0) {
+                            ToastUtils.showShort("当前项目成绩已全部上传");
+                        } else {
+                            //上传数据前先进行项目信息校验
+                            ItemSubscriber subscriber = new ItemSubscriber();
+                            subscriber.getItemAll(MyApplication.TOKEN, DataManageActivity.this, null, resultList);
+                        }
+                        break;
+
+                    case 7://数据导出
+                        //选择文件夹并命名文件导出文件
+                        intent.setClass(DataManageActivity.this, FileSelectActivity.class);
+                        intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
+                        startActivityForResult(intent, REQUEST_CODE_EXPORT);
+
+                        break;
+
+//                    case 4://头像下载
+//                    case 3://头像导入
+//                    case 5://删除头像
+                        //TODO 测试使用
+//                        DBManager.getInstance().roundResultClear();
+//                        ToastUtils.showShort("功能未开放，敬请期待");
+//                        break;
+
+                }
+            }
+        });
     }
 
     private void showDownLoadDialog() {
@@ -281,7 +367,9 @@ public class DataManageActivity extends BaseActivity implements ExlListener, Cle
         mEditText = new EditText(this);
         mEditText.setSingleLine();
         mEditText.setBackgroundColor(0xffcccccc);
-        mEditText.setText("");
+        DateFormat df = new SimpleDateFormat("yyyy年MM月dd日");
+        mEditText.setText(SettingHelper.getSystemSetting().getTestName() +
+                SettingHelper.getSystemSetting().getHostId() + "号机" + df.format(new Date()));
         nameFileDialog = new AlertDialog.Builder(this)
                 .setTitle("文件名")
                 .setMessage("请输入文件名")

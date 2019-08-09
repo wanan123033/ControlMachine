@@ -6,15 +6,15 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.serial.SerialConfigs;
+import com.feipulai.device.serial.SerialDeviceManager;
+import com.feipulai.device.serial.beans.VCResult;
+import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BasePersonTestActivity;
 import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.config.SharedPrefsConfigs;
-import com.feipulai.device.serial.SerialDeviceManager;
-import com.feipulai.device.serial.beans.VCResult;
-import com.feipulai.device.serial.command.ConvertCommand;
-import com.feipulai.host.utils.SharedPrefsUtil;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

@@ -3,6 +3,7 @@ package com.feipulai.host.netUtils.netapi;
 import android.content.Context;
 import android.content.Intent;
 
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.activity.data.DataRetrieveActivity;
@@ -19,7 +20,6 @@ import com.feipulai.host.netUtils.HttpManager;
 import com.feipulai.host.netUtils.HttpResult;
 import com.feipulai.host.netUtils.OnResultListener;
 import com.feipulai.host.netUtils.RequestSub;
-import com.feipulai.host.utils.SharedPrefsUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.orhanobut.logger.Logger;

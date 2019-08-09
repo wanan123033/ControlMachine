@@ -27,6 +27,7 @@ import com.feipulai.host.R;
 import com.feipulai.host.activity.LEDSettingActivity;
 import com.feipulai.host.activity.base.BaseCheckActivity;
 import com.feipulai.host.activity.base.BaseDeviceState;
+import com.feipulai.host.activity.base.BaseItemSettingActivity;
 import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.person.adapter.BasePersonTestResultAdapter;
 import com.feipulai.host.activity.setting.SettingHelper;
@@ -103,8 +104,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     private LEDManager mLEDManager;
     //清理学生信息
     private ClearHandler clearHandler = new ClearHandler(this);
-    private LedHandler ledHandler = new LedHandler(this);
-    private Intent serverIntent;
+//    private LedHandler ledHandler = new LedHandler(this);
     private int testType = 0;//0自动 1手动
 
     @Override
@@ -139,12 +139,14 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         }).addRightText("项目设置", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gotoItemSetting();
+//                gotoItemSetting();
+                startActivity(new Intent(BasePersonTestActivity.this, BaseItemSettingActivity.class));
             }
         }).addRightImage(R.mipmap.icon_setting, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gotoItemSetting();
+//                gotoItemSetting();
+                startActivity(new Intent(BasePersonTestActivity.this, BaseItemSettingActivity.class));
             }
         });
     }
@@ -165,8 +167,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         adapter = new BasePersonTestResultAdapter(resultList);
         //给RecyclerView设置适配器
         rvTestResult.setAdapter(adapter);
-        //TODO
-//        etInputText.setData(lvResults, this);
+        etInputText.setData(lvResults, this);
 
         pair.setBaseDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE));
         refreshDevice();
@@ -195,18 +196,17 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     }
 
 
-
-
     /**
      * 发送测试指令 并且此时应将设备状态改变
      */
     public abstract void sendTestCommand(BaseStuPair baseStuPair);
 
 
-    /**
-     * 跳转项目设置页面
-     */
-    public abstract void gotoItemSetting();
+//    /**
+//     * 跳转项目设置页面
+//     */
+//    public abstract void gotoItemSetting();
+//
 
     /**
      * 跳过

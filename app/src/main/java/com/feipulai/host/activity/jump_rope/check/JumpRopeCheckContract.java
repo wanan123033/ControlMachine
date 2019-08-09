@@ -13,6 +13,7 @@ public interface JumpRopeCheckContract{
 	interface Presenter extends RadioCheckContract.Presenter{
 		void changeDeviceGroup();
         void dealConflict();
+		void killAllDevices();
         // void lockFactoryId(int factoryId);
 	}
 	

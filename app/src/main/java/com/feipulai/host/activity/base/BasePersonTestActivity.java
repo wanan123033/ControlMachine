@@ -108,7 +108,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         adapter = new Student4JumpAndVitalAdapter(stuPairList);
         //给RecyclerView设置适配器
         rvStudent.setAdapter(adapter);
-//        etInputText.setData(rvStudent, lvResults, this);
+        etInputText.setData(rvStudent, lvResults, this);
 
         adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override

@@ -11,9 +11,9 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.host.R;
 import com.feipulai.host.config.SharedPrefsConfigs;
-import com.feipulai.host.utils.SharedPrefsUtil;
 import com.feipulai.host.utils.SystemBrightUtils;
 
 import butterknife.BindView;

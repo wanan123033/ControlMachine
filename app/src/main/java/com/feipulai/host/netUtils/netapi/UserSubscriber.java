@@ -2,6 +2,7 @@ package com.feipulai.host.netUtils.netapi;
 
 import android.content.Context;
 
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.config.SharedPrefsConfigs;
@@ -11,7 +12,6 @@ import com.feipulai.host.netUtils.HttpManager;
 import com.feipulai.host.netUtils.HttpResult;
 import com.feipulai.host.netUtils.OnResultListener;
 import com.feipulai.host.netUtils.RequestSub;
-import com.feipulai.host.utils.SharedPrefsUtil;
 
 import java.util.HashMap;
 

@@ -10,21 +10,35 @@
         android:id="@+id/tv_stuCode"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:padding="5dp" />
+        android:layout_weight="0.6"
+        android:gravity="left"
+        android:padding="5dp"
+        android:textSize="@dimen/sp_16" />
 
     <com.feipulai.host.view.IDTextView
         android:id="@+id/tvidcard_numCode"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:padding="5dp" />
+        android:padding="5dp"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/tv_stuName"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:padding="5dp" />
+        android:layout_marginLeft="5dp"
+        android:layout_weight="0.5"
+        android:padding="5dp"
+        android:textSize="@dimen/sp_16" />
+
+    <TextView
+        android:id="@+id/tv_stuSex"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="right"
+        android:layout_weight="0.2"
+        android:padding="5dp"
+        android:textSize="@dimen/sp_16" />
 
 </LinearLayout>
