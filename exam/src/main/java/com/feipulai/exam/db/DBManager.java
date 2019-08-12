@@ -1071,6 +1071,15 @@ public class DBManager {
                 .list();
     }
 
+    public List<RoundResult> queryResultsByStudentCode(String itemCode,String studentCode) {
+        return roundResultDao
+                .queryBuilder()
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
+                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .list();
+    }
+
     public List<Student> getStudentsByGroup(Group group) {
         List<GroupItem> groupItems = groupItemDao
                 .queryBuilder()
@@ -1543,11 +1552,11 @@ public class DBManager {
      * @param studentCode
      * @return
      */
-    public RoundResult queryResultsByStudentCodeIsLastResult(String studentCode) {
+    public RoundResult queryResultsByStudentCodeIsLastResult(String itemCode,String studentCode) {
         return roundResultDao
                 .queryBuilder()
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
-                .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.IsLastResult.eq("1"))
                 .limit(1)

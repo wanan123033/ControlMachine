@@ -49,6 +49,7 @@ public class DataDisplayActivity extends BaseTitleActivity {
             return lhs.getTestTime().compareTo(rhs.getTestTime());
         }
     });
+    private String itemCode;
 
     @Override
     protected int setLayoutResID() {
@@ -58,6 +59,7 @@ public class DataDisplayActivity extends BaseTitleActivity {
     @Override
     protected void initData() {
         mDataRetrieveBean = (DataRetrieveBean) getIntent().getSerializableExtra(DataRetrieveActivity.DATA_EXTRA);
+        itemCode = getIntent().getStringExtra(DataRetrieveActivity.DATA_ITEM_CODE);
         mTvStuCode.setText(mDataRetrieveBean.getStudentCode());
         mTvStuName.setText(mDataRetrieveBean.getStudentName());
         mTvSex.setText(mDataRetrieveBean.getSex() == 0 ? "男" : "女");
@@ -130,7 +132,7 @@ public class DataDisplayActivity extends BaseTitleActivity {
 
     private void normalDisplay() {
         //如果测试过,显示成绩
-        List<RoundResult> roundResults = DBManager.getInstance().queryResultsByStudentCode(mDataRetrieveBean.getStudentCode());
+        List<RoundResult> roundResults = DBManager.getInstance().queryResultsByStudentCode(itemCode, mDataRetrieveBean.getStudentCode());
 
         Collections.sort(roundResults, roundResultComparator);
 

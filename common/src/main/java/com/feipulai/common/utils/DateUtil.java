@@ -96,12 +96,13 @@ public class DateUtil {
      * <h3>UpdateAuthor</h3>
      * <h3>UpdateInfo</h3> (此处输入修改内容,若无修改可不写.)
      *
-     * @param digital   1 百分位 2 十分位
+     * @param digital   1 十分位 2 百分位
      * @param carryMode 0
      */
     public static String caculateTime(long caculTime, int digital, int carryMode) {
         double bigTime = Double.valueOf(caculTime) / 1000;
-        BigDecimal bigDecimal = new BigDecimal(String.valueOf(bigTime));
+        //需要先舍掉小数位数后一位之后的所有，再进行进位
+        BigDecimal bigDecimal = new BigDecimal(String.valueOf(bigTime)).setScale(digital+1, BigDecimal.ROUND_DOWN);
         long carryTime;
         switch (carryMode) {
             case 0://不去舍

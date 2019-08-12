@@ -84,6 +84,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
         OnRefreshLoadmoreListener, CheckDeviceOpener.OnCheckDeviceArrived {
 
     public static final String DATA_EXTRA = "data_extra";
+    public static final String DATA_ITEM_CODE = "itemCode";
     @BindView(R.id.rb_all)
     RadioButton mRbAll;
     @BindView(R.id.et_input_text)
@@ -283,7 +284,6 @@ public class DataRetrieveActivity extends BaseTitleActivity
 //                    mProgressDialog.dismiss();
                     ToastUtils.showShort("未选中数据上传");
                 } else {
-
                     ServerMessage.uploadResult(this, DBManager.getInstance().getUploadResultsByStuCode(mCurrentItem.getItemCode(), studentCode));
                 }
                 break;
@@ -541,7 +541,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
             }
             return "-1000";
         } else {
-            RoundResult result = DBManager.getInstance().queryResultsByStudentCodeIsLastResult(studentCode);
+            RoundResult result = DBManager.getInstance().queryResultsByStudentCodeIsLastResult(getItemCode(),studentCode);
             return result != null ? (result.getResultState() == RoundResult.RESULT_STATE_FOUL ? "X" : result.getResult()) + "" : "-1000";
         }
 
@@ -624,6 +624,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Intent intent = new Intent(DataRetrieveActivity.this, DataDisplayActivity.class);
                 intent.putExtra(DATA_EXTRA, mList.get(position));
+                intent.putExtra(DATA_ITEM_CODE, mCurrentItem.getItemCode());
                 startActivity(intent);
                 Logger.i("onItemClick:" + position);
             }
