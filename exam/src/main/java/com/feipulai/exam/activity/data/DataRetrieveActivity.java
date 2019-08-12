@@ -84,6 +84,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
         OnRefreshLoadmoreListener, CheckDeviceOpener.OnCheckDeviceArrived {
 
     public static final String DATA_EXTRA = "data_extra";
+    public static final String DATA_ITEM_CODE = "itemCode";
     @BindView(R.id.rb_all)
     RadioButton mRbAll;
     @BindView(R.id.et_input_text)
@@ -545,7 +546,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
             }
             return "-1000";
         } else {
-            RoundResult result = DBManager.getInstance().queryResultsByStudentCodeIsLastResult(studentCode);
+            RoundResult result = DBManager.getInstance().queryResultsByStudentCodeIsLastResult(getItemCode(),studentCode);
             return result != null ? (result.getResultState() == RoundResult.RESULT_STATE_FOUL ? "X" : result.getResult()) + "" : "-1000";
         }
 
@@ -628,6 +629,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Intent intent = new Intent(DataRetrieveActivity.this, DataDisplayActivity.class);
                 intent.putExtra(DATA_EXTRA, mList.get(position));
+                intent.putExtra(DATA_ITEM_CODE, mCurrentItem.getItemCode());
                 startActivity(intent);
                 Logger.i("onItemClick:" + position);
             }
@@ -652,24 +654,21 @@ public class DataRetrieveActivity extends BaseTitleActivity
                     cbTested.setChecked(true);
                     mRbAll.setChecked(false);
                     cbUnTested.setChecked(false);
-                }
-                selectChoose(isChecked);
+                } selectChoose(isChecked);
                 break;
             case R.id.cb_un_tested://未测
                 if (isChecked) {
                     cbUnTested.setChecked(true);
                     mRbAll.setChecked(false);
                     cbTested.setChecked(false);
-                }
-                selectChoose(isChecked);
+                } selectChoose(isChecked);
                 break;
             case R.id.cb_uploaded://已上传
                 if (isChecked) {
                     cbUploaded.setChecked(true);
                     mRbAll.setChecked(false);
                     cbUnUpload.setChecked(false);
-                }
-                selectChoose(isChecked);
+                } selectChoose(isChecked);
                 break;
             case R.id.cb_un_upload://未上传
                 if (isChecked) {
@@ -683,7 +682,6 @@ public class DataRetrieveActivity extends BaseTitleActivity
         }
 
     }
-
     public void selectChoose(boolean isChecked) {
         //非选择全部的复选框
 
@@ -833,6 +831,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
     }
 
     public final static String UPDATE_MESSAGE = "com.feipulai.host.update_data_message";
+
 
 
 }
