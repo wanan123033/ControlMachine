@@ -2102,6 +2102,25 @@ public class DBManager {
         }
     }
 
+    public Group getGroupByNo(String itemCode,int groupNo,int color) {
+            return groupDao.queryBuilder()
+                    .where(GroupDao.Properties.ItemCode.eq(itemCode))
+                    .where(GroupDao.Properties.IsTestComplete.notEq(GROUP_FINISH))
+                    .where(GroupDao.Properties.GroupNo.eq(groupNo))
+                    .where(GroupDao.Properties.ColorId.eq(color))
+                    .unique();
+    }
+
+    public GroupItem getGroupItemByNo(String itemCode, int groupNo, int groupType, String scheduleNo) {
+            return groupItemDao.queryBuilder()
+                    .where(GroupItemDao.Properties.ItemCode.eq(itemCode))
+                    .where(GroupItemDao.Properties.GroupNo.eq(groupNo))
+                    .where(GroupItemDao.Properties.GroupType.eq(groupType))
+                    .where(GroupItemDao.Properties.ScheduleNo.eq(scheduleNo))
+                    .unique();
+    }
+
+
 
     /**
      * 添加分组

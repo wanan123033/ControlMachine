@@ -1220,73 +1220,83 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
 
                 List<UploadResults> uploadResults = new ArrayList<>();
                 List<RoundResult> roundResults = new ArrayList<>();
-                //更新项目组状态
-                for (GroupItemBean groupItemBean : groupItemBeans
+
+                Group dbGroupList = null;
+                if (timingLists.get(position).getItemCode().equals(itemList.get(mItemPosition).getItemCode())) {
+                    //更新项目组状态
+                    for (GroupItemBean groupItemBean : groupItemBeans
+                            ) {
+                        if (timingLists.get(position).getItemGroupName().equals(groupItemBean.getGroupItemName())) {
+                            //当前组完成之后更新状态并移除
+                            groupItemBean.getGroup().setIsTestComplete(GROUP_FINISH);
+                            DBManager.getInstance().updateGroup(groupItemBean.getGroup());
+                            groupItemBeans.remove(groupItemBean);
+                            groupAdapter.notifyDataSetChanged();
+                            dbGroupList=groupItemBean.getGroup();
+                            break;
+                        }
+                    }
+                } else {
+                    Log.i("dbGroupList", "----" + timingLists.get(position).getItemCode());
+                    Log.i("dbGroupList", "----" + timingLists.get(position).getNo());
+                    Log.i("dbGroupList", "----" + timingLists.get(position).getColor());
+                    dbGroupList = DBManager.getInstance().getGroupByNo(timingLists.get(position).getItemCode(), timingLists.get(position).getNo(), timingLists.get(position).getColor());
+
+                    dbGroupList.setIsTestComplete(GROUP_FINISH);
+                    DBManager.getInstance().updateGroup(dbGroupList);
+                    Log.i("dbGroupList", "----" + dbGroupList.toString());
+                }
+
+                //更新组别
+                RoundResult roundResult;
+                UploadResults uploadResult;
+                for (RaceResultBean resultBean2 : resultDataList
                         ) {
-                    if (timingLists.get(position).getItemGroupName().equals(groupItemBean.getGroupItemName())) {
-                        //当前组完成之后更新状态并移除
-                        groupItemBean.getGroup().setIsTestComplete(GROUP_FINISH);
-                        DBManager.getInstance().updateGroup(groupItemBean.getGroup());
-                        groupItemBeans.remove(groupItemBean);
-                        groupAdapter.notifyDataSetChanged();
+                    if (resultBean2.getColor() == timingLists.get(position).getColor()) {
+                        //初始化开始时间
+                        resultBean2.setStartTime(0);
 
-                        RoundResult roundResult;
-                        UploadResults uploadResult;
-//                        Map<Student, List<RoundResult>> results;//需要打印的成绩
-                        for (RaceResultBean resultBean2 : resultDataList
-                                ) {
-                            if (resultBean2.getColor() == timingLists.get(position).getColor()) {
-                                //初始化开始时间
-                                resultBean2.setStartTime(0);
-
-                                int[] resultInts = new int[resultBean2.getCycle()];
-                                String[] result = resultBean2.getResults();
-                                for (int i = 3; i < result.length; i++) {
-                                    if (TextUtils.isEmpty(result[i])) {
-                                        break;
-                                    } else {
-                                        resultInts[i - 3] = Integer.parseInt(result[i]);
-                                    }
-                                }
-                                int lastResult = Integer.parseInt(TextUtils.isEmpty(result[2]) ? "0" : result[2]);
-                                roundResult = new RoundResult();//保存到数据库的成绩对象
-
-                                roundResult.setItemCode(resultBean2.getItemCode());
-                                roundResult.setMachineCode(machineCode);
-                                roundResult.setResult(lastResult);
-                                roundResult.setRoundNo(1);
-                                roundResult.setStudentCode(resultBean2.getStudentCode());
-                                roundResult.setTestNo(1);
-                                roundResult.setIsLastResult(1);
-                                roundResult.setMachineResult(lastResult);
-                                roundResult.setScheduleNo(groupItemBean.getGroup().getScheduleNo());
-                                roundResult.setResultState(1);
-                                roundResult.setExamType(groupItemBean.getGroup().getExamType());
-                                roundResult.setTestTime(System.currentTimeMillis() + "");
-                                roundResult.setGroupId(groupItemBean.getGroup().getId());
-
-                                byte[] cycleResult = DataUtil.byteArray2RgbArray(resultInts);
-                                roundResult.setCycleResult(cycleResult);
-
-                                roundResult = DBManager.getInstance().insertRoundResult2(roundResult);
-
-                                //提供打印
-//                                Student student = DBManager.getInstance().queryStudentByStuCode(resultBean2.getStudentCode());
-//                                roundResults=new ArrayList<>();
-                                roundResults.add(roundResult);
-//                                results.put(student,roundResults);
-
-                                uploadResult = new UploadResults();//需要上传的成绩对象
-                                uploadResult.setGroupNo(groupItemBean.getGroup().getGroupNo() + "");
-                                uploadResult.setSiteScheduleNo(groupItemBean.getGroup().getScheduleNo());
-                                uploadResult.setRoundResultList(RoundResultBean.beanCope2(roundResult));
-                                uploadResult.setStudentCode(resultBean2.getStudentCode());
-                                uploadResult.setTestNum("1");
-                                uploadResult.setExamItemCode(resultBean2.getItemCode());
-                                uploadResults.add(uploadResult);
+                        int[] resultInts = new int[resultBean2.getCycle()];
+                        String[] result = resultBean2.getResults();
+                        for (int i = 3; i < result.length; i++) {
+                            if (TextUtils.isEmpty(result[i])) {
+                                break;
+                            } else {
+                                resultInts[i - 3] = Integer.parseInt(result[i]);
                             }
                         }
-                        break;
+                        int lastResult = Integer.parseInt(TextUtils.isEmpty(result[2]) ? "0" : result[2]);
+                        roundResult = new RoundResult();//保存到数据库的成绩对象
+
+                        roundResult.setItemCode(resultBean2.getItemCode());
+                        roundResult.setMachineCode(machineCode);
+                        roundResult.setResult(lastResult);
+                        roundResult.setRoundNo(1);
+                        roundResult.setStudentCode(resultBean2.getStudentCode());
+                        roundResult.setTestNo(1);
+                        roundResult.setIsLastResult(1);
+                        roundResult.setMachineResult(lastResult);
+                        roundResult.setScheduleNo(dbGroupList.getScheduleNo());
+                        roundResult.setResultState(1);
+                        roundResult.setExamType(dbGroupList.getExamType());
+                        roundResult.setTestTime(System.currentTimeMillis() + "");
+                        roundResult.setGroupId(dbGroupList.getId());
+
+                        byte[] cycleResult = DataUtil.byteArray2RgbArray(resultInts);
+                        roundResult.setCycleResult(cycleResult);
+
+                        roundResult = DBManager.getInstance().insertRoundResult2(roundResult);
+
+                        roundResults.add(roundResult);
+
+                        uploadResult = new UploadResults();//需要上传的成绩对象
+                        uploadResult.setGroupNo(resultBean2.getNo());
+                        uploadResult.setSiteScheduleNo(dbGroupList.getScheduleNo());
+                        uploadResult.setRoundResultList(RoundResultBean.beanCope2(roundResult));
+                        uploadResult.setStudentCode(resultBean2.getStudentCode());
+                        uploadResult.setTestNum("1");
+                        uploadResult.setExamItemCode(resultBean2.getItemCode());
+                        uploadResults.add(uploadResult);
                     }
                 }
 
