@@ -283,8 +283,12 @@ public class DataRetrieveActivity extends BaseTitleActivity
 //                    mProgressDialog.dismiss();
                     ToastUtils.showShort("未选中数据上传");
                 } else {
+                    if (mCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+                        ServerMessage.uploadZCPResult(this, mCurrentItem.getItemCode(), DBManager.getInstance().getUploadResultsByStuCode(mCurrentItem.getItemCode(), studentCode));
+                    } else {
+                        ServerMessage.uploadResult(this, DBManager.getInstance().getUploadResultsByStuCode(mCurrentItem.getItemCode(), studentCode));
+                    }
 
-                    ServerMessage.uploadResult(this, DBManager.getInstance().getUploadResultsByStuCode(mCurrentItem.getItemCode(), studentCode));
                 }
                 break;
 //            case R.id.btn_print:
@@ -648,21 +652,24 @@ public class DataRetrieveActivity extends BaseTitleActivity
                     cbTested.setChecked(true);
                     mRbAll.setChecked(false);
                     cbUnTested.setChecked(false);
-                } selectChoose(isChecked);
+                }
+                selectChoose(isChecked);
                 break;
             case R.id.cb_un_tested://未测
                 if (isChecked) {
                     cbUnTested.setChecked(true);
                     mRbAll.setChecked(false);
                     cbTested.setChecked(false);
-                } selectChoose(isChecked);
+                }
+                selectChoose(isChecked);
                 break;
             case R.id.cb_uploaded://已上传
                 if (isChecked) {
                     cbUploaded.setChecked(true);
                     mRbAll.setChecked(false);
                     cbUnUpload.setChecked(false);
-                } selectChoose(isChecked);
+                }
+                selectChoose(isChecked);
                 break;
             case R.id.cb_un_upload://未上传
                 if (isChecked) {
@@ -676,6 +683,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
         }
 
     }
+
     public void selectChoose(boolean isChecked) {
         //非选择全部的复选框
 
@@ -825,7 +833,6 @@ public class DataRetrieveActivity extends BaseTitleActivity
     }
 
     public final static String UPDATE_MESSAGE = "com.feipulai.host.update_data_message";
-
 
 
 }

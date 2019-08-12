@@ -58,14 +58,14 @@ public class ServerMessage {
                             }
 
                         } else {
-                            subscriber.getItemStudent(TestConfigs.getCurrentItemCode(),1, examType);
+                            subscriber.getItemStudent(TestConfigs.getCurrentItemCode(), 1, examType);
                         }
 
                         break;
                     case HttpSubscriber.STUDENT_BIZ://学生
                         if (itemList != null) {
                             if (position < itemList.size()) {
-                                subscriber.getItemStudent(itemList.get(position).getItemCode(),1, examType);
+                                subscriber.getItemStudent(itemList.get(position).getItemCode(), 1, examType);
                                 position++;
                                 return;
                             }
@@ -139,6 +139,59 @@ public class ServerMessage {
                         //更新项目代码
                         for (UploadResults uploadResults : uploadResultsList) {
                             uploadResults.setExamItemCode(TestConfigs.getCurrentItemCode());
+                        }
+                        subscriber.uploadResult(uploadResultsList);
+                        break;
+                    case HttpSubscriber.UPLOAD_BIZ://上传成绩
+                        if (loadingDialog != null && loadingDialog.isShow()) {
+                            loadingDialog.dismissDialog();
+                        }
+                        break;
+                }
+            }
+
+            @Override
+            public void onFault(int bizType) {
+                if (loadingDialog != null && loadingDialog.isShow()) {
+                    loadingDialog.dismissDialog();
+                }
+            }
+        });
+        subscriber.getScheduleAll();
+    }
+
+    /**
+     * 上传成绩
+     *
+     * @param context
+     * @param uploadResultsList
+     */
+    public static void uploadZCPResult(final Context context, final String itemName, final List<UploadResults> uploadResultsList) {
+        Logger.i("uploadResult==>" + uploadResultsList.toString());
+        if (uploadResultsList == null || uploadResultsList.size() == 0) {
+            ToastUtils.showShort("没有需要上传的成绩");
+            return;
+        }
+        final LoadingDialog loadingDialog;
+        if (context != null) {
+            loadingDialog = new LoadingDialog(context);
+            loadingDialog.showDialog("成绩上传中，请稍后...", true);
+        } else {
+            loadingDialog = null;
+        }
+        final HttpSubscriber subscriber = new HttpSubscriber();
+        subscriber.setOnRequestEndListener(new HttpSubscriber.OnRequestEndListener() {
+            @Override
+            public void onSuccess(int bizType) {
+                switch (bizType) {
+                    case HttpSubscriber.SCHEDULE_BIZ://日程
+                        subscriber.getItemAll(context);
+                        break;
+                    case HttpSubscriber.ITEM_BIZ://项目
+                        Item item = DBManager.getInstance().queryItemByName(itemName);
+                        //更新项目代码
+                        for (UploadResults uploadResults : uploadResultsList) {
+                            uploadResults.setExamItemCode(item.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : item.getItemCode());
                         }
                         subscriber.uploadResult(uploadResultsList);
                         break;

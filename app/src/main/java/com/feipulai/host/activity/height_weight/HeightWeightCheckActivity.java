@@ -1,12 +1,16 @@
 package com.feipulai.host.activity.height_weight;
 
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.feipulai.common.tts.TtsManager;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.HeightWeightResult;
@@ -14,6 +18,7 @@ import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseActivity;
 import com.feipulai.host.activity.base.BaseCheckActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
+import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
@@ -24,7 +29,6 @@ import com.feipulai.host.utils.ResultUtils;
 import com.feipulai.host.view.StuSearchEditText;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
@@ -68,12 +72,34 @@ public class HeightWeightCheckActivity
     private ItemSubscriber itemSubscriber;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_height_weight_check);
-        ButterKnife.bind(this);
+    protected int setLayoutResID() {
+        return R.layout.activity_height_weight_check;
+    }
+
+    @Override
+    protected void initData() {
+        super.initData();
         init();
         prepareForCheckIn();
+    }
+
+
+    @Nullable
+    @Override
+    protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
+        String title;
+        if (TextUtils.isEmpty(SettingHelper.getSystemSetting().getTestName())) {
+            title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机";
+        } else {
+            title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机-" + SettingHelper.getSystemSetting().getTestName();
+        }
+
+        return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     private void init() {
@@ -207,7 +233,8 @@ public class HeightWeightCheckActivity
 
     @OnClick(R.id.txt_skip)
     public void onViewClicked() {
-        mHandler.sendEmptyMessage(CLEAR_DATA);
+        if (!isTestFinished)
+            mHandler.sendEmptyMessage(CLEAR_DATA);
     }
 
     //@OnClick({R.id.tv_led_setting})

@@ -6,7 +6,6 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -110,7 +109,7 @@ public class DateUtil {
             case 1://四舍五入
                 carryTime = bigDecimal.setScale(digital, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(1000d)).longValue();
                 break;
-            case 2:
+            case 2: //舍位
 //                String pattern = "#.";
 //                for (int i = 0; i < digital; i++) {
 //                    pattern += "0";
