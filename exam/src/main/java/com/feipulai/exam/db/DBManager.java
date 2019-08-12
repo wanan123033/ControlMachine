@@ -169,10 +169,10 @@ public class DBManager {
                     insertItem(machineCode, "足球运球", "分'秒");
                     break;
                 case ItemDefault.CODE_ZCP:
-//                    insertItem(machineCode, "800米", "分'秒");
-//                    insertItem(machineCode, "1000米", "分'秒");
-                    insertMiddleRaceItem(machineCode, "800米", "分'秒");
-                    insertMiddleRaceItem(machineCode, "1000米", "分'秒");
+                    insertItem(machineCode, "fpl_800", "800米", "分'秒");
+                    insertItem(machineCode, "fpl_1000", "1000米", "分'秒");
+//                    insertMiddleRaceItem(machineCode, "800米", "分'秒");
+//                    insertMiddleRaceItem(machineCode, "1000米", "分'秒");
                     break;
 
             }
@@ -220,7 +220,7 @@ public class DBManager {
         return student;
     }
 
-    public List<StudentItem>queryStudentItemByItemCode(String itemCode){
+    public List<StudentItem> queryStudentItemByItemCode(String itemCode) {
         return studentItemDao.queryBuilder().where(StudentItemDao.Properties.ItemCode.eq(itemCode)).list();
     }
 
@@ -2161,6 +2161,7 @@ public class DBManager {
     public void updateGroups(List<Group> groups) {
         groupDao.updateInTx(groups);
     }
+
     public void updateGroupItems(List<GroupItem> groupItems) {
         groupItemDao.updateInTx(groupItems);
     }

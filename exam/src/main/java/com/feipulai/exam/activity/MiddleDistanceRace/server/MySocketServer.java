@@ -321,10 +321,11 @@ public class MySocketServer {
 
             Group group = new Group();
             group.setGroupNo(m_nGrp);
-            group.setGroupType(m_nGroupType);
+            group.setGroupType(m_nSex);
             group.setItemCode(itemCode);
             group.setScheduleNo(schedule.getScheduleNo());
             group.setSortName(m_strSort);
+            group.setExamType(m_nGroupType);
             DBManager.getInstance().insertGroup(group);
 
             if (result.length > 23) {
@@ -416,7 +417,7 @@ public class MySocketServer {
 
                     GroupItem groupItem = new GroupItem();
                     groupItem.setGroupNo(m_nGrp);
-                    groupItem.setGroupType(m_nGroupType);
+                    groupItem.setGroupType(m_nSex);
                     groupItem.setItemCode(itemCode);
                     groupItem.setScheduleNo(m_nField + "");
                     groupItem.setSortName(m_strSort);
