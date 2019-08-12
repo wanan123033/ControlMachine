@@ -8,58 +8,100 @@
         android:id="@+id/view_choose"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="2dp"
-        android:layout_marginTop="2dp"
+        android:layout_marginBottom="25dp"
+        android:layout_marginTop="25dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="成绩状态:"
-            android:textSize="18sp" />
-
-        <RadioGroup
-            android:id="@+id/rg_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:orientation="horizontal">
-            <!--android:checked="true"-->
-
-        </RadioGroup>
 
         <RadioButton
             android:id="@+id/rb_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="所有" />
+            android:layout_marginLeft="16dp"
+            android:button="@null"
+            android:drawableLeft="@drawable/checkbox_selected"
+            android:drawablePadding="@dimen/dp_10"
+            android:text="所有"
+            android:textSize="20sp" />
 
         <CheckBox
             android:id="@+id/cb_un_upload"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="未上传" />
+            android:layout_marginLeft="@dimen/dp_10"
+            android:button="@null"
+            android:drawableLeft="@drawable/checkbox_selected"
+            android:drawablePadding="@dimen/dp_10"
+            android:text="未上传"
+            android:textSize="20sp" />
 
         <CheckBox
             android:id="@+id/cb_uploaded"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="已上传" />
+            android:layout_marginLeft="@dimen/dp_10"
+            android:button="@null"
+            android:drawableLeft="@drawable/checkbox_selected"
+            android:drawablePadding="@dimen/dp_10"
+            android:text="已上传"
+            android:textSize="20sp" />
 
         <CheckBox
             android:id="@+id/cb_tested"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="已测" />
+            android:layout_marginLeft="@dimen/dp_10"
+            android:button="@null"
+            android:drawableLeft="@drawable/checkbox_selected"
+            android:drawablePadding="@dimen/dp_10"
+            android:text="已测"
+            android:textSize="20sp" />
 
         <CheckBox
             android:id="@+id/cb_un_tested"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="未测" />
+            android:layout_marginLeft="@dimen/dp_10"
+            android:button="@null"
+            android:drawableLeft="@drawable/checkbox_selected"
+            android:drawablePadding="@dimen/dp_10"
+            android:text="未测"
+            android:textSize="20sp" />
 
+        <EditText
+            android:id="@+id/et_input_text"
+            android:layout_width="231dp"
+            android:layout_height="35dp"
+            android:layout_marginLeft="14dp"
+            android:background="@drawable/edit_search_bg"
+            android:gravity="left|center_vertical"
+            android:imeOptions="actionGo"
+            android:maxLines="1"
+            android:paddingLeft="10dp"
+            android:singleLine="true" />
+
+        <Button
+            android:id="@+id/btn_query"
+            android:layout_width="91dp"
+            android:layout_height="35dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/btn_click_bg_selected"
+            android:text="检索"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/btn_upload"
+            android:layout_width="91dp"
+            android:layout_height="35dp"
+            android:layout_marginLeft="27dp"
+            android:background="@drawable/btn_click_bg_unselected"
+            android:drawableLeft="@mipmap/icon_data_upload"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="上传"
+            android:textSize="20sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -71,175 +113,165 @@
         android:paddingLeft="20dp"
         android:paddingRight="20dp">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#ffffff" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_height="35dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:focusableInTouchMode="true">
+            android:visibility="gone">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:text="学号："
-                android:textSize="18sp" />
 
-            <EditText
-                android:id="@+id/et_input_text"
-                android:layout_width="0dp"
-                android:layout_height="32dp"
-                android:layout_weight="2"
-                android:background="@drawable/edit_search_white_bg"
-                android:inputType="number"
-                android:maxLines="1"
-                android:paddingLeft="5dp"
-                android:textSize="16sp" />
-                <!--android:minEms="6"-->
-
-            <Button
-                android:id="@+id/btn_query"
-                android:layout_width="80dp"
-                android:layout_height="30dp"
-                android:layout_marginLeft="20dp"
-                android:background="@drawable/btn_click_bg_selected"
-                android:text="检索"
-                android:textSize="15sp" />
-
-            <!--<ImageButton-->
-                <!--android:id="@+id/imgbtn_scan"-->
-                <!--android:layout_width="30dp"-->
-                <!--android:layout_height="30dp"-->
-                <!--android:layout_marginLeft="30dp"-->
-                <!--android:layout_marginRight="5dp"-->
-                <!--android:adjustViewBounds="true"-->
-                <!--android:background="@drawable/scan"-->
-                <!--android:scaleType="centerCrop" />-->
-
-            <Button
-                android:id="@+id/btn_upload"
-                android:layout_width="80dp"
+            <ImageButton
+                android:id="@+id/imgbtn_scan"
+                android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:background="@drawable/btn_click_bg_unselected"
-                android:text="上传"
-                android:textSize="15sp" />
-
+                android:layout_marginRight="5dp"
+                android:adjustViewBounds="true"
+                android:background="@drawable/scan"
+                android:scaleType="centerCrop" />
         </LinearLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="5dp"
-            android:background="#cdcdcd" />
     </LinearLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/view_bottom"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:gravity="right|center_vertical"
+        android:orientation="horizontal">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
 
-            android:background="@color/black" />
+        <TextView
+            style="@style/style_setting_tv_title"
+            android:layout_marginLeft="20dp"
+            android:text="总数："
+            android:textSize="@dimen/sp_16" />
 
         <TextView
             android:id="@+id/txt_stu_sumNumber"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="50dp"
-            android:text="总数：" />
+            android:layout_width="@dimen/dp_72"
+            android:layout_height="22dp"
+            android:background="@drawable/edit_search_bg"
+            android:gravity="center_vertical"
+            android:paddingLeft="5dp"
+            android:textColor="#909399" />
+
+        <TextView
+            style="@style/style_setting_tv_title"
+            android:layout_marginLeft="21dp"
+            android:text="男："
+            android:textSize="@dimen/sp_16" />
 
         <TextView
             android:id="@+id/txt_stu_manNumber"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="50dp"
-            android:layout_toRightOf="@+id/txt_stu_sumNumber"
-            android:text="男:" />
+            android:layout_width="@dimen/dp_72"
+            android:layout_height="22dp"
+            android:background="@drawable/edit_search_bg"
+            android:gravity="center_vertical"
+            android:paddingLeft="5dp"
+            android:textColor="#909399" />
+
+
+        <TextView
+            style="@style/style_setting_tv_title"
+            android:layout_marginLeft="21dp"
+            android:text="女："
+            android:textSize="@dimen/sp_16" />
 
         <TextView
             android:id="@+id/txt_stu_womemNumber"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="50dp"
-            android:layout_toRightOf="@+id/txt_stu_manNumber"
-            android:text="女:" />
+            android:layout_width="@dimen/dp_72"
+            android:layout_height="22dp"
+            android:layout_marginRight="@dimen/dp_40"
+            android:background="@drawable/edit_search_bg"
+            android:gravity="center_vertical"
+            android:paddingLeft="5dp"
+            android:textColor="#909399" />
 
-        <Button
-            android:layout_width="80dp"
-            android:layout_height="30dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="50dp"
-            android:background="@drawable/btn_click_bg_unselected"
-            android:text="打印"
-            android:textSize="14sp"
-            android:visibility="gone" />
-    </RelativeLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/view_data_head"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="35dp"
         android:layout_below="@+id/view_seach"
-        android:background="#cdcdcd"
+        android:background="#E6E6E6"
         android:orientation="horizontal"
-        android:paddingBottom="1dp">
+        android:padding="1dp">
 
 
         <TextView
+            style="@style/style_txt_white_title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5"
+            android:background="#AAD3FF"
+            android:gravity="center"
+            android:text="学号"
+            android:textColor="@color/white" />
+
+        <TextView
+            style="@style/style_txt_white_title"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="1dp"
-            android:layout_weight="1.5"
-            android:background="#ffffff"
+            android:layout_weight="1.2"
+            android:background="#AAD3FF"
             android:gravity="center"
-            android:text="学号" />
+            android:text="姓名"
+            android:textColor="@color/white" />
+
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="1dp"
-            android:layout_weight="1.5"
-            android:background="#ffffff"
-            android:gravity="center"
-            android:text="姓名" />
-
-        <TextView
+            style="@style/style_txt_white_title"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="1dp"
             android:layout_weight="1"
-            android:background="#ffffff"
+            android:background="#AAD3FF"
             android:gravity="center"
-            android:text="性别" />
+            android:text="性别"
+            android:textColor="@color/white" />
 
         <TextView
+            style="@style/style_txt_white_title"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="1dp"
             android:layout_weight="1"
-            android:background="#ffffff"
+            android:background="#AAD3FF"
             android:gravity="center"
-            android:text="测试状态" />
+            android:text="测试状态"
+            android:textColor="@color/white" />
+
+        <TextView
+            style="@style/style_txt_white_title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="1dp"
+            android:layout_weight="1"
+            android:background="#AAD3FF"
+            android:gravity="center"
+            android:text="成绩"
+            android:textColor="@color/white" />
 
         <CheckBox
             android:id="@+id/cb_select_all"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            style="@style/style_txt_white_title"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="1dp"
+            android:background="#AAD3FF"
+            android:button="@color/transparent"
+            android:gravity="center"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:text="全选"
+            android:textColor="@color/white" />
         <!--<TextView-->
         <!--android:layout_width="0dp"-->
         <!--android:layout_height="match_parent"-->
@@ -250,20 +282,22 @@
         <!--android:text="成绩"/>-->
     </LinearLayout>
 
-    <com.feipulai.common.view.SwipeRefreshView
-        android:id="@+id/swiperefresh"
+    <com.feipulai.common.view.PullToRefreshView
+        android:id="@+id/refreshview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_above="@+id/view_bottom"
         android:layout_below="@+id/view_data_head">
 
-        <ListView
-            android:id="@+id/lv_results"
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_results"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/background_color" />
+        <!--android:fadeScrollbars="false"-->
 
-        </ListView>
+    </com.feipulai.common.view.PullToRefreshView>
 
-    </com.feipulai.common.view.SwipeRefreshView>
 
 </RelativeLayout>

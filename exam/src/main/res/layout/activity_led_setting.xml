@@ -49,7 +49,7 @@
             <TextView
                 style="@style/style_setting_tv_title"
                 android:layout_centerVertical="true"
-                android:text="外界显示屏亮度" />
+                android:text="外接显示屏亮度" />
 
             <ImageView
                 android:id="@+id/img_led_luminance_add"

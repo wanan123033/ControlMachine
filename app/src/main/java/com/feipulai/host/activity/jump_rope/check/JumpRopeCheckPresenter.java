@@ -15,6 +15,7 @@ import com.feipulai.host.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.host.activity.jump_rope.bean.JumpDeviceState;
 import com.feipulai.host.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.host.activity.jump_rope.setting.JumpRopeSetting;
+import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
@@ -71,6 +72,20 @@ public class JumpRopeCheckPresenter
         view.showChangeBadDialog();
     }
 
+    @Override
+    public void killAllDevices() {
+        facade.pause();
+        mJumpRopeManager.kill(SettingHelper.getSystemSetting().getHostId(), 0, setting.getDeviceGroup() + 1, 0);
+        JumpDeviceState deviceState;
+        for (StuDevicePair pair : pairs) {
+            deviceState = (JumpDeviceState) pair.getBaseDevice();
+            deviceState.setState(BaseDeviceState.STATE_DISCONNECT);
+            deviceState.setFactoryId(-1);
+        }
+        facade.resume();
+        view.updateAllItems();
+    }
+
     class LinkTask implements Runnable {
         @Override
         public void run() {
@@ -110,7 +125,7 @@ public class JumpRopeCheckPresenter
         StuDevicePair stuPair = pairs.get(position);
         BaseDeviceState jumpRopState = stuPair.getBaseDevice();
         String studentName = InteractUtils.getStrWithLength(stuPair.getStudent().getStudentName(), 6);
-        return String.format(Locale.CHINA,"%-1s%-3d", SerialConfigs.GROUP_NAME[setting.getDeviceGroup()],jumpRopState.getDeviceId())
+        return String.format(Locale.CHINA, "%-1s%-3d", SerialConfigs.GROUP_NAME[setting.getDeviceGroup()], jumpRopState.getDeviceId())
                 + studentName;
     }
 
@@ -140,20 +155,20 @@ public class JumpRopeCheckPresenter
         JumpDeviceState deviceState = (JumpDeviceState) pairs.get(focusPosition).getBaseDevice();
         deviceState.setFactoryId(JumpDeviceState.INVALID_FACTORY_ID);
         deviceState.setState(BaseDeviceState.STATE_DISCONNECT);
-        mJumpRopeManager.kill(hostId, deviceState.getDeviceId(), setting.getDeviceGroup() + 1,0);
+        mJumpRopeManager.kill(hostId, deviceState.getDeviceId(), setting.getDeviceGroup() + 1, 0);
     }
 
     @Override
     public void onGettingState(int position) {
         mJumpRopeManager.getJumpRopeState(hostId, position + 1, setting.getDeviceGroup() + 1);
     }
-    
+
     @Override
     protected void onDeviceDisconnect(int position) {
         JumpDeviceState deviceState = (JumpDeviceState) pairs.get(position).getBaseDevice();
         deviceState.setFactoryId(JumpDeviceState.INVALID_FACTORY_ID);
     }
-    
+
     @Override
     public void onRadioArrived(Message msg) {
         switch (msg.what) {
@@ -179,8 +194,7 @@ public class JumpRopeCheckPresenter
         }
     }
 
-    
-    
+
     public void setDeviceState(JumpRopeResult result) {
         // 1.记录连接成功的手柄ID,并更新配对情况状态
         // 如果收到的是正在测试范围内的手柄,显示即可
@@ -206,7 +220,7 @@ public class JumpRopeCheckPresenter
 
         int factoryId = result.getFactoryId();
         // Log.i("james", "deviceId:" + deviceId + "\tfactoryId:" + factoryId + "\tisBinded:" + originState.isBinded());
-        
+
         int newState = BaseDeviceState.STATE_FREE;
         boolean lowBattery = result.getBatteryLeftPercent() <= 10;
 

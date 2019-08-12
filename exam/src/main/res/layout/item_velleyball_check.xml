@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="horizontal"
-        android:paddingLeft="70dp">
+        android:paddingLeft="80dp">
 
         <com.feipulai.exam.activity.volleyball.stepView.VerticalStepView
             android:id="@+id/item_step_left"

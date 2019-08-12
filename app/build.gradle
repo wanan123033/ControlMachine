@@ -107,4 +107,6 @@ dependencies {
     compile 'com.android.support:multidex:1.0.1'
     compile project(':devicelib')
     compile project(':common')
+    compile project(':magicindicator')
+    compile 'com.yhy:gvp:1.1.0'
 }

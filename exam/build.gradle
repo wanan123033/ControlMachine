@@ -14,8 +14,8 @@ android {
         applicationId "com.feipulai.exam"
         minSdkVersion 17
         targetSdkVersion 26
-        versionCode 3
-        versionName "1.0.3"
+        versionCode 4
+        versionName "1.0.4"
         multiDexEnabled true
         ndk {
             abiFilters "armeabi-v7a"
@@ -38,7 +38,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.releaseConfig
         }
-
+        ruiLiHeng {
+            initWith(buildTypes.debug)
+            applicationIdSuffix ".ruiliheng"
+            // 修改马甲包的applicationId，即在原来的applicationId后加上配置内容
+//            manifestPlaceholders = [APP_NAME: '第一个马甲包'] // 配置马甲包的应用名称
+        }
     }
 
     configurations.all {
@@ -53,7 +58,8 @@ android {
         exclude 'META-INF/INDEX'
     }
     greendao {
-        schemaVersion 3  //数据库版本号，升级数据库需要修改版本号
+        //上个版本为3
+        schemaVersion 4  //数据库版本号，升级数据库需要修改版本号
     }
 }
 
@@ -99,6 +105,7 @@ dependencies {
 //    debugCompile "com.squareup.leakcanary:leakcanary-android:1.6.3"
 //    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.6.3"
 //    testCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.6.3"
+//    majiabaoOneCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.6.3"
     // Optional, if you use support library fragments:
 //    compile 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.3'
 //    compile 'com.kelin.scrollablepanel:library:1.2.0'

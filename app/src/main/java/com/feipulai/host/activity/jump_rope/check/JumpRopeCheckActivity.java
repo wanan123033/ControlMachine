@@ -3,7 +3,6 @@ package com.feipulai.host.activity.jump_rope.check;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -88,6 +87,10 @@ public class JumpRopeCheckActivity
     StuSearchEditText etSelect;
     @BindView(R.id.lv_results)
     ListView lvResults;
+    @BindView(R.id.ll_device_group)
+    LinearLayout llDeviceGroup;
+    @BindView(R.id.tv_conflict)
+    TextView tvConflict;
 
     private WaitDialog changBadDialog;
     private Handler mHandler = new BaseActivity.MyHandler(this);
@@ -100,13 +103,14 @@ public class JumpRopeCheckActivity
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_jump_rope_check);
-//        ButterKnife.bind(this);
+    protected void initData() {
+        super.initData();
         presenter = new JumpRopeCheckPresenter(this, this);
         presenter.start();
+        tvConflict.setVisibility(View.VISIBLE);
+        llDeviceGroup.setVisibility(View.VISIBLE);
     }
+
 
     @Nullable
     @Override
@@ -182,7 +186,7 @@ public class JumpRopeCheckActivity
     }
 
     @OnClick({R.id.btn_device_pair, R.id.btn_change_hand_group, R.id.btn_change_bad, R.id.btn_start_test,
-            R.id.btn_stop_use, R.id.btn_led_setting, R.id.btn_delete_student, R.id.btn_del_all})
+            R.id.btn_stop_use, R.id.btn_led_setting, R.id.btn_delete_student, R.id.btn_del_all, R.id.btn_kill_devices})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
@@ -223,6 +227,9 @@ public class JumpRopeCheckActivity
 
             case R.id.btn_del_all:
                 presenter.deleteAll();
+                break;
+            case R.id.btn_kill_devices:
+                presenter.killAllDevices();
                 break;
 
 //            case R.id.tv_project_setting:

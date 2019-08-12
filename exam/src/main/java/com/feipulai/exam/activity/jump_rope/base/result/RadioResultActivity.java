@@ -1,6 +1,7 @@
 package com.feipulai.exam.activity.jump_rope.base.result;
 
-import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -12,8 +13,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.R;
-import com.feipulai.exam.activity.base.BaseActivity;
+import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.jump_rope.adapter.ResultDisplayAdapter;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
@@ -36,11 +38,10 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class RadioResultActivity
-		extends BaseActivity {
+		extends BaseTitleActivity {
 	
 	public static final int BACK_TO_CHECK = 0x02;
 	
@@ -58,15 +59,19 @@ public class RadioResultActivity
 	private boolean needPrint;
 	private Map<Student, List<RoundResult>> results;
 
+
+	@Nullable
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_radio_result);
-		ButterKnife.bind(this);
-		init();
+	protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
+		return builder.setTitle("成绩确认");
 	}
-	
-	private void init() {
+	@Override
+	protected int setLayoutResID() {
+		return R.layout.activity_radio_result;
+	}
+
+	@Override
+	protected void initData() {
 		
 		systemSetting = SettingHelper.getSystemSetting();
 		

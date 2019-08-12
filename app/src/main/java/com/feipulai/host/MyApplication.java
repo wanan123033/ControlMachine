@@ -5,9 +5,9 @@ import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 
 import com.feipulai.common.CrashHandler;
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.SharedPrefsConfigs;
-import com.feipulai.host.utils.SharedPrefsUtil;
 
 public class    MyApplication extends MultiDexApplication {
 

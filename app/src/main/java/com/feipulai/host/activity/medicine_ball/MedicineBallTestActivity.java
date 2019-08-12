@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.MedicineBallResult;
@@ -16,7 +17,6 @@ import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.vccheck.TestState;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.entity.RoundResult;
-import com.feipulai.host.utils.SharedPrefsUtil;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

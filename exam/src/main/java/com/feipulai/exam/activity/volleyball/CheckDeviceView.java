@@ -1,7 +1,6 @@
 package com.feipulai.exam.activity.volleyball;
 
 import android.content.Context;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.feipulai.device.manager.VolleyBallManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.volleyball.adapter.CheckDeviceAdapter;
 import com.feipulai.exam.activity.volleyball.stepView.StepBean;
@@ -19,6 +19,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by zzs on  2019/7/16
@@ -31,6 +32,7 @@ public class CheckDeviceView extends RelativeLayout {
     private Context mContext;
     private List<List<StepBean>> checkList;
     private CheckDeviceAdapter adapter;
+    private VolleyBallManager manager = new VolleyBallManager();
 
     public CheckDeviceView(Context context) {
         super(context);
@@ -70,18 +72,18 @@ public class CheckDeviceView extends RelativeLayout {
             }
             checkList.add(stepBeanList);
         }
-//        rvStep.setAdapter(new CheckDeviceAdapter(checkList));
-        if (adapter == null) {
-            adapter = new CheckDeviceAdapter(checkList);
-            rvStep.setAdapter(adapter);
-        } else {
-            new Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    adapter.notifyDataSetChanged();
-                }
-            });
-        }
+        rvStep.setAdapter(new CheckDeviceAdapter(checkList));
+//        if (adapter == null) {
+//            adapter = new CheckDeviceAdapter(checkList);
+//            rvStep.setAdapter(adapter);
+//        } else {
+//            new Handler().post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    adapter.notifyDataSetChanged();
+//                }
+//            });
+//        }
     }
 
     /**
@@ -100,18 +102,32 @@ public class CheckDeviceView extends RelativeLayout {
             }
             checkList.add(stepBeanList);
         }
-        if (adapter == null) {
-            adapter = new CheckDeviceAdapter(checkList);
-            rvStep.setAdapter(adapter);
-        } else {
-            new Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    adapter.notifyDataSetChanged();
-                }
-            });
+        adapter = new CheckDeviceAdapter(checkList);
+        rvStep.setAdapter(adapter);
+//        if (adapter == null) {
+//            adapter = new CheckDeviceAdapter(checkList);
+//            rvStep.setAdapter(adapter);
+//        } else {
+//            new Handler().post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    adapter.notifyDataSetChanged();
+//                }
+//            });
+//        }
+
+
+    }
+
+    @OnClick({R.id.tv_lose_dot, R.id.tv_cancel_lose_dot})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.tv_lose_dot:
+                manager.loseDot();
+                break;
+            case R.id.tv_cancel_lose_dot:
+                manager.cancelLoseDot();
+                break;
         }
-
-
     }
 }

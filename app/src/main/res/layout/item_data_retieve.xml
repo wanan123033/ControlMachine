@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="#cdcdcd"
-              android:descendantFocusability="afterDescendants"
-              android:orientation="horizontal"
-              android:paddingBottom="1dp">
+    android:layout_width="match_parent"
+    android:layout_height="35dp"
+    android:background="#E6E6E6"
+    android:orientation="horizontal"
+    android:paddingBottom="1dp">
+    <!--android:descendantFocusability="afterDescendants"-->
     <!-- android:descendantFocusability="afterDescendants"
     设置ViewGroup和子View之间的焦点处理方式,不然setOnItemClickListener不管用
     -->
@@ -13,25 +13,26 @@
 
     <!--android:focusable="false"这里必须设置为false,不然setOnItemClickListener不管用-->
 
+
     <TextView
         android:id="@+id/tv_stuCode"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginLeft="1dp"
         android:layout_weight="1.5"
-        android:background="#ffffff"
+        android:background="@drawable/data_retieve_selector"
         android:gravity="center"
-        android:textSize="18sp"/>
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/tv_stuName"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginLeft="1dp"
-        android:layout_weight="1.5"
-        android:background="#ffffff"
+        android:layout_weight="1.2"
+        android:background="@drawable/data_retieve_selector"
         android:gravity="center"
-        android:textSize="18sp"/>
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/tv_sex"
@@ -39,9 +40,10 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="1dp"
         android:layout_weight="1"
-        android:background="#ffffff"
+
+        android:background="@drawable/data_retieve_selector"
         android:gravity="center"
-        android:textSize="18sp"/>
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/tv_testState"
@@ -49,22 +51,39 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="1dp"
         android:layout_weight="1"
-        android:background="#ffffff"
-        android:gravity="center"
-        android:textSize="18sp"/>
 
-    <!--<TextView-->
-    <!--android:id="@+id/tv_score"-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:layout_marginLeft="1dp"-->
-    <!--android:layout_weight="1"-->
-    <!--android:background="#ffffff"-->
-    <!--android:gravity="center"-->
-    <!--android:textSize="18sp"/>-->
-    <CheckBox
-        android:id="@+id/cb_select"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:focusable="false"/>
+        android:background="@drawable/data_retieve_selector"
+        android:gravity="center"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/tv_score"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="1dp"
+        android:layout_weight="1"
+        android:background="@drawable/data_retieve_selector"
+        android:gravity="center"
+        android:textSize="18sp" />
+
+    <RelativeLayout
+        android:id="@+id/view_cb_content"
+        android:layout_width="80dp"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="1dp"
+        android:background="@drawable/data_retieve_selector">
+
+        <CheckBox
+            android:id="@+id/cb_select"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:button="@null"
+            android:paddingLeft="30dp"
+            android:drawableLeft="@drawable/checkbox_selected"
+            android:gravity="center" />
+
+    </RelativeLayout>
+
 </LinearLayout>

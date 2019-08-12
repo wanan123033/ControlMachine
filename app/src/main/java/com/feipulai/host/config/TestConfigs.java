@@ -3,6 +3,7 @@ package com.feipulai.host.config;
 import android.content.Context;
 import android.content.DialogInterface;
 
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.host.activity.height_weight.HeightWeightCheckActivity;
 import com.feipulai.host.activity.jump_rope.check.JumpRopeCheckActivity;
@@ -16,7 +17,6 @@ import com.feipulai.host.db.MachineItemCodeUtil;
 import com.feipulai.host.entity.Item;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.StudentItem;
-import com.feipulai.host.utils.SharedPrefsUtil;
 import com.feipulai.host.view.ItemDecideDialogBuilder;
 import com.orhanobut.logger.Logger;
 

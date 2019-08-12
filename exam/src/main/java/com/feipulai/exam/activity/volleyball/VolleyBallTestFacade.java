@@ -33,7 +33,6 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
 
     private VolleyBallManager deviceManager = new VolleyBallManager();
     private VolleyBallSetting setting;
-    private boolean isSetDevice = false;
 
     public VolleyBallTestFacade(int hostId, VolleyBallSetting setting, Listener listener) {
         this.listener = listener;
@@ -43,6 +42,10 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
         SerialDeviceManager.getInstance().setRS232ResiltListener(this);
         deviceDetector = new VolleyBallDetector();
         deviceDetector.startDetect();
+    }
+
+    public void checkDevice() {
+        deviceManager.checkDevice();
     }
 
     // 重置任务
@@ -147,7 +150,9 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
     @Override
     public void onRS232Result(final Message msg) {
         switch (msg.what) {
-
+//            case SerialConfigs.VOLLEYBALL_CHECK_RESPONSE:
+//                listener.checkDevice((VolleyBallCheck) msg.obj);
+//                break;
             case SerialConfigs.VOLLEYBALL_RESULT_RESPONSE:
                 if (testState == TESTING || testState == FINISHED) {
                     VolleyBallResult result = (VolleyBallResult) msg.obj;
@@ -158,9 +163,6 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
                         tmpResult = result;
                     }
                 }
-                break;
-            case SerialConfigs.VOLLEYBALL_SET_DEVICE_RESPONSE:
-                isSetDevice = true;
                 break;
             // case SerialConfigs.VOLLEYBALL_EMPTY_RESPONSE:
             // case SerialConfigs.VOLLEYBALL_START_RESPONSE:
@@ -198,11 +200,7 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
                             deviceManager.getScore();
                         } else {
                             deviceManager.emptyCommand();
-                            if (!isSetDevice) {
-                                deviceManager.setDeviceMode(setting.getTestPattern(),
-                                        setting.getTestPattern() == 0 ? VolleyBallSetting.ANTIAIRCRAFT_POLE : VolleyBallSetting.WALL_POLE,
-                                        setting.getTestPattern() == 0 ? 1 : 0);
-                            }
+
 
                         }
                         int count = missCount.addAndGet(1);
@@ -240,6 +238,8 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
         void onTestingTimerFinish();
 
         void onScoreArrived(VolleyBallResult result);
+
+//        void checkDevice(VolleyBallCheck check);
     }
 
 }

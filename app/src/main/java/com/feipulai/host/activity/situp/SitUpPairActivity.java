@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Switch;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.DividerItemDecoration;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.manager.SitPushUpManager;
@@ -26,7 +27,6 @@ import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.SharedPrefsConfigs;
-import com.feipulai.host.utils.SharedPrefsUtil;
 
 import java.lang.ref.WeakReference;
 import java.util.List;

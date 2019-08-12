@@ -1,6 +1,8 @@
 package com.feipulai.exam.activity.volleyball;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -17,6 +19,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.feipulai.common.utils.DialogUtils;
 import com.feipulai.common.utils.HandlerUtil;
@@ -37,6 +40,7 @@ import com.orhanobut.logger.Logger;
 import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
 
@@ -59,6 +63,8 @@ public class VolleyBallSettingActivity
     RadioGroup rgGroupMode;
     @BindView(R.id.et_test_time)
     EditText etTestTime;
+    @BindView(R.id.txt_device_versions)
+    TextView txtDeviceVersions;
 
     private Integer[] testRound = new Integer[]{1, 2, 3};
 
@@ -70,6 +76,8 @@ public class VolleyBallSettingActivity
     private static final int MSG_CHECK = 0X102;
     private SerialHandler mHandler = new SerialHandler(this);
     private CheckDeviceView checkDeviceView;
+    private VolleyBallManager volleyBallManager = new VolleyBallManager();
+    private Dialog checkDialog;
 
     @Override
     protected int setLayoutResID() {
@@ -104,6 +112,7 @@ public class VolleyBallSettingActivity
         editFemaleFull.addTextChangedListener(this);
         etTestTime.addTextChangedListener(this);
         SerialDeviceManager.getInstance().setRS232ResiltListener(this);
+        volleyBallManager.getVersions();
     }
 
     @Nullable
@@ -168,12 +177,45 @@ public class VolleyBallSettingActivity
                 ToastUtils.showShort("功能开发中,敬请期待");
                 break;
             case R.id.tv_device_check:
+                if (volleyBallManager == null) {
+                    volleyBallManager = new VolleyBallManager();
+                }
                 showCheckDiglog();
+                volleyBallManager.checkDevice();
                 isDisconnect = true;
                 mProgressDialog = ProgressDialog.show(this, "", "终端自检中...", true);
-                new VolleyBallManager().checkDevice();
                 //3秒自检
-                mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
+                mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 5000);
+                break;
+        }
+    }
+
+    @Override
+    public void onRS232Result(final Message msg) {
+
+        switch (msg.what) {
+            case SerialConfigs.VOLLEYBALL_CHECK_RESPONSE:
+                isDisconnect = false;
+                if (checkDeviceView == null) {
+                    return;
+                }
+                if (mProgressDialog != null) {
+                    mProgressDialog.dismiss();
+                }
+                HandlerUtil.sendMessage(mHandler, MSG_CHECK, msg.obj);
+                break;
+            case SerialConfigs.VOLLEYBALL_LOSE_DOT_RESPONSE:
+                toastSpeak("设置成功");
+                break;
+            case SerialConfigs.VOLLEYBALL_VERSION_RESPONSE:
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        txtDeviceVersions.setVisibility(View.VISIBLE);
+                        txtDeviceVersions.setText(String.format(getString(R.string.device_versions), msg.obj.toString()));
+                    }
+                });
+
                 break;
         }
     }
@@ -220,27 +262,13 @@ public class VolleyBallSettingActivity
         }
     }
 
-    @Override
-    public void onRS232Result(Message msg) {
-        isDisconnect = false;
-        switch (msg.what) {
-            case SerialConfigs.VOLLEYBALL_CHECK_RESPONSE:
-                if (checkDeviceView == null) {
-                    return;
-                }
-                if (mProgressDialog != null) {
-                    mProgressDialog.dismiss();
-                }
-                HandlerUtil.sendMessage(mHandler, MSG_CHECK, msg.obj);
-                break;
-
-        }
-    }
 
     private void showCheckDiglog() {
         checkDeviceView = new CheckDeviceView(this);
+
         checkDeviceView.setUnunitedData(setting.getTestPattern() == 0 ? VolleyBallSetting.ANTIAIRCRAFT_POLE : VolleyBallSetting.WALL_POLE);
-        DialogUtils.create(this, checkDeviceView, true).show();
+        checkDialog = DialogUtils.create(this, checkDeviceView, true);
+        checkDialog.show();
         //这种设置宽高的方式也是好使的！！！-- show 前调用，show 后调用都可以！！！
         checkDeviceView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
@@ -257,6 +285,13 @@ public class VolleyBallSettingActivity
                 }
             }
         });
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
     }
 
 
@@ -291,20 +326,28 @@ public class VolleyBallSettingActivity
 
                         if (volleyBallCheck.getCheckType() == 8) {
                             if (volleyBallCheck.getDeviceType() == activity.setting.getTestPattern()) {
-                                int itemPole = volleyBallCheck.getDeviceType() == 0 ? VolleyBallSetting.ANTIAIRCRAFT_POLE : VolleyBallSetting.WALL_POLE;
-                                if (volleyBallCheck.getPoleNum() == itemPole) {
-                                    activity.checkDeviceView.setData(volleyBallCheck.getPoleNum(), volleyBallCheck.getPositionList());
-                                }else{
-                                    activity.checkDeviceView.setData(itemPole, volleyBallCheck.getPositionList());
-                                }
-
+//                                int itemPole = volleyBallCheck.getDeviceType() == 0 ? VolleyBallSetting.ANTIAIRCRAFT_POLE : VolleyBallSetting.WALL_POLE;
+//                                if (volleyBallCheck.getPoleNum() == itemPole) {
+//                                    activity.checkDeviceView.setData(volleyBallCheck.getPoleNum(), volleyBallCheck.getPositionList());
+//                                }else{
+//                                    activity.checkDeviceView.setData(itemPole, volleyBallCheck.getPositionList());
+//                                }
+                                activity.checkDeviceView.setData(volleyBallCheck.getPoleNum() / 2, volleyBallCheck.getPositionList());
                             } else {
                                 activity.toastSpeak("当前项目使用设备错误，请更换");
                             }
                         } else {
                             activity.checkDeviceView.setData(activity.setting.getTestPattern() == 0 ? VolleyBallSetting.ANTIAIRCRAFT_POLE : VolleyBallSetting.WALL_POLE, volleyBallCheck.getPositionList());
                         }
+                        try {
+                            Thread.sleep(100);
+                            if (activity.checkDialog.isShowing()) {
+                                activity.volleyBallManager.checkDevice();
+                            }
 
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
 
                         break;
                 }

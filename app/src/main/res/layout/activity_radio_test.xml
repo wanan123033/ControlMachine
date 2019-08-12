@@ -4,7 +4,34 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <RelativeLayout
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="0dp"-->
+    <!--android:layout_weight="1">-->
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_pairs"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="5dp"
+        android:layout_weight="1" />
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--</LinearLayout>-->
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black" />
+
+    <include layout="@layout/ll_device_state_illustrate" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -13,115 +40,14 @@
             android:id="@+id/tv_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_gravity="center_vertical"
             android:layout_margin="5dp"
+            android:background="@mipmap/bg_count_text"
+            android:gravity="center"
             android:padding="5dp"
             android:text="5"
             android:textSize="40sp" />
 
-    </RelativeLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@+id/tv_jump_current_time"
-        android:layout_marginTop="10dp"
-        android:background="@color/black" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_pairs"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="5dp" />
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/black" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:gravity="center_vertical"
-        android:paddingLeft="5dp">
-
-        <LinearLayout
-            android:id="@+id/ll_device_group"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:paddingLeft="5dp"
-            android:visibility="gone">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="手柄状态:" />
-
-            <TextView
-                android:id="@+id/tv_group"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:text="A组" />
-
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:drawableLeft="@drawable/shape_round_textview_green"
-            android:drawablePadding="10dp"
-            android:gravity="center_vertical"
-            android:text="正常" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:drawableLeft="@drawable/shape_round_textview_red"
-            android:drawablePadding="10dp"
-            android:gravity="center_vertical"
-            android:text="中断" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:drawableLeft="@drawable/shape_round_textview_yellow"
-            android:drawablePadding="10dp"
-            android:gravity="center_vertical"
-            android:text="电量低" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:drawableLeft="@drawable/shape_round_textview_grey"
-            android:drawablePadding="10dp"
-            android:gravity="center_vertical"
-            android:text="暂停使用" />
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/black" />
-
-    <!--android:id="@+id/rl_timing_button"-->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
 
         <View
             android:layout_width="0dp"
@@ -131,115 +57,59 @@
 
         <Button
             android:id="@+id/btn_change_bad"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_margin="10dp"
-            android:layout_marginBottom="5dp"
-            android:background="@drawable/circle_corner_button_selector"
+            style="@style/style_rectangle_btn"
+            android:drawableTop="@drawable/change_bad"
             android:text="故障更换"
-            android:textColor="#ffffff"
-            android:textSize="20sp"
-            android:visibility="gone" />
-
-        <!--<Button-->
-            <!--android:id="@+id/btn_penalize"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="30dp"-->
-            <!--android:layout_margin="10dp"-->
-            <!--android:layout_marginBottom="5dp"-->
-            <!--android:background="@drawable/circle_corner_button_selector"-->
-            <!--android:text="判罚"-->
-            <!--android:textColor="#ffffff"-->
-            <!--android:textSize="20sp"-->
-            <!--android:visibility="gone" />-->
-
-        <!--<Button-->
-            <!--android:id="@+id/btn_get_devicce_state"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="30dp"-->
-            <!--android:layout_margin="10dp"-->
-            <!--android:layout_marginBottom="5dp"-->
-            <!--android:background="@drawable/circle_corner_button_selector"-->
-            <!--android:text="重新获取成绩"-->
-            <!--android:textColor="#ffffff"-->
-            <!--android:textSize="20sp"-->
-            <!--android:visibility="gone" />-->
-
-        <Button
-            android:id="@+id/btn_confirm"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_margin="10dp"
-            android:layout_marginBottom="5dp"
-            android:background="@drawable/circle_corner_button_selector"
-            android:text="确认成绩"
-            android:textColor="#ffffff"
-            android:textSize="20sp"
             android:visibility="gone" />
 
         <Button
+            android:id="@+id/btn_penalize"
+            style="@style/style_rectangle_btn"
+            android:background="#FFD28B"
+            android:drawableTop="@mipmap/drawable_punish"
+            android:text="判罚"
+            android:visibility="gone" />
+
+        <com.feipulai.common.view.StopUseButton
             android:id="@+id/btn_stop_using"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_margin="10dp"
-            android:layout_marginBottom="5dp"
-            android:background="@drawable/circle_corner_button_selector"
-            android:text="暂停使用"
-            android:textColor="#ffffff"
-            android:textSize="20sp" />
+            style="@style/style_rectangle_btn"
+            android:drawableTop="@drawable/pause"
+            android:text="暂停使用" />
 
         <Button
             android:id="@+id/btn_restart"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_margin="10dp"
-            android:layout_marginBottom="5dp"
-            android:background="@drawable/circle_corner_button_selector"
-            android:text="重新开始"
-            android:textColor="#ffffff"
-            android:textSize="20sp" />
+            style="@style/style_rectangle_btn"
+            android:drawableTop="@mipmap/drawable_restart"
+            android:text="重新开始" />
 
         <Button
             android:id="@+id/btn_quit_test"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_margin="10dp"
-            android:layout_marginBottom="5dp"
-            android:background="@drawable/circle_corner_button_selector"
-            android:text="退出测试"
-            android:textColor="#ffffff"
-            android:textSize="20sp" />
+            style="@style/style_rectangle_btn"
+            android:background="@drawable/red_border"
+            android:drawableTop="@mipmap/drawable_stop_test"
+            android:text="停止测试" />
 
-        <!--<Button-->
-            <!--android:id="@+id/btn_start_test"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="30dp"-->
-            <!--android:layout_margin="10dp"-->
-            <!--android:background="@drawable/circle_corner_button_selector"-->
-            <!--android:text="开始测试"-->
-            <!--android:textColor="#ffffff"-->
-            <!--android:textSize="20sp" />-->
+        <Button
+            android:id="@+id/btn_start_test"
+            style="@style/style_rectangle_btn"
+            android:drawableTop="@drawable/resume"
+            android:text="开始测试"
+            android:visibility="gone" />
 
-        <!--<Button-->
-            <!--android:id="@+id/btn_confirm_results"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="30dp"-->
-            <!--android:layout_margin="10dp"-->
-            <!--android:background="@drawable/circle_corner_button_selector"-->
-            <!--android:text="确认成绩"-->
-            <!--android:textColor="#ffffff"-->
-            <!--android:textSize="20sp" />-->
+        <Button
+            android:id="@+id/btn_confirm_results"
+            style="@style/style_rectangle_btn"
+            android:background="#62FFA4"
+            android:drawableTop="@mipmap/drawable_confirm_results"
+            android:text="确认成绩"
+            android:visibility="gone" />
 
-        <!--<Button-->
-            <!--android:id="@+id/btn_finish_test"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="30dp"-->
-            <!--android:layout_margin="10dp"-->
-            <!--android:background="@drawable/circle_corner_button_selector"-->
-            <!--android:text="测试完成"-->
-            <!--android:textColor="#ffffff"-->
-            <!--android:textSize="20sp"-->
-            <!--android:visibility="visible" />-->
+        <Button
+            android:id="@+id/btn_finish_test"
+            style="@style/style_rectangle_btn"
+            android:drawableTop="@mipmap/drawable_conplete_test"
+            android:text="测试完成"
+            android:visibility="gone" />
 
     </LinearLayout>
 

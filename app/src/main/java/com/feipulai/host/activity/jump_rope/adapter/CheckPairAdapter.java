@@ -36,11 +36,11 @@ public class CheckPairAdapter
 	
 	public CheckPairAdapter(Context context, List<StuDevicePair> stuPairs){
 		this.stuPairs = stuPairs;
-		disconBackground = context.getResources().getDrawable(R.drawable.shape_round_textview_red);
-		lowBatBackground = context.getResources().getDrawable(R.drawable.shape_round_textview_yellow);
-		stopUseBackground = context.getResources().getDrawable(R.drawable.shape_round_textview_grey);
-		conflictBackground = context.getResources().getDrawable(R.drawable.shape_round_textview_conflict);
-		defaultBackground = context.getResources().getDrawable(R.drawable.shape_round_textview);
+		disconBackground = context.getResources().getDrawable(R.drawable.shape_state_red);
+		lowBatBackground = context.getResources().getDrawable(R.drawable.shape_state_yellow);
+		stopUseBackground = context.getResources().getDrawable(R.drawable.shape_state_grey);
+		conflictBackground = context.getResources().getDrawable(R.drawable.shape_state_conflict);
+		defaultBackground = context.getResources().getDrawable(R.drawable.shape_state_default);
 	}
 	
 	public void setSelected(int selectedPosition){

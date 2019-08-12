@@ -1,7 +1,6 @@
 package com.feipulai.host.activity.person.adapter;
 
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -32,24 +31,24 @@ public class BasePersonTestResultAdapter extends BaseQuickAdapter<String, BaseVi
         } else {
             holder.setText(R.id.item_txt_test_result, "");
         }
-        switch (holder.getLayoutPosition()) {
-            case 0:
-                holder.setText(R.id.item_txt_test_time, "第一次成绩");
-                holder.setBackgroundColor(R.id.view_content, ContextCompat.getColor(mContext, R.color.test_first_color));
-                break;
-            case 1:
-                holder.setText(R.id.item_txt_test_time, "第二次成绩");
-                holder.setBackgroundColor(R.id.view_content, ContextCompat.getColor(mContext, R.color.test_second_color));
-                break;
-            case 2:
-                holder.setText(R.id.item_txt_test_time, "第三次成绩");
-                holder.setBackgroundColor(R.id.view_content, ContextCompat.getColor(mContext, R.color.test_thirdly_color));
-                break;
-            default:
-                holder.setText(R.id.item_txt_test_time, String.format("第%1$d次成绩", holder.getLayoutPosition() + 1));
-                holder.setBackgroundColor(R.id.view_content, ContextCompat.getColor(mContext, R.color.test_first_color));
-                break;
-        }
+//        switch (holder.getLayoutPosition()) {
+//            case 0:
+//                holder.setText(R.id.item_txt_test_time, "第一次成绩");
+//                holder.setBackgroundColor(R.id.view_content, ContextCompat.getColor(mContext, R.color.test_first_color));
+//                break;
+//            case 1:
+//                holder.setText(R.id.item_txt_test_time, "第二次成绩");
+//                holder.setBackgroundColor(R.id.view_content, ContextCompat.getColor(mContext, R.color.test_second_color));
+//                break;
+//            case 2:
+//                holder.setText(R.id.item_txt_test_time, "第三次成绩");
+//                holder.setBackgroundColor(R.id.view_content, ContextCompat.getColor(mContext, R.color.test_thirdly_color));
+//                break;
+//            default:
+//                holder.setText(R.id.item_txt_test_time, String.format("第%1$d次成绩", holder.getLayoutPosition() + 1));
+//                holder.setBackgroundColor(R.id.view_content, ContextCompat.getColor(mContext, R.color.test_first_color));
+//                break;
+//        }
 
     }
 }

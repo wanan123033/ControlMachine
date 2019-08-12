@@ -3,8 +3,8 @@
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:id="@+id/view_content"
     android:layout_width="193dp"
-    android:layout_height="179dp"
-    android:background="#1C1C1C"
+    android:layout_height="170dp"
+    android:background="@color/test_first_color"
     android:orientation="vertical"
     android:padding="5dp">
 
@@ -22,7 +22,7 @@
     <TextView
         android:id="@+id/item_txt_test_time"
         style="@style/style_setting_tv_title"
-        android:text="第三次成绩"
+        android:text="测试成绩"
         android:textColor="@color/white" />
 </LinearLayout>
 

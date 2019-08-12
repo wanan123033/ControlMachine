@@ -1,4 +1,4 @@
-package com.feipulai.exam.view;
+package com.feipulai.common.view;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 
-import com.feipulai.exam.R;
+import com.feipulai.common.R;
 
 
 /**

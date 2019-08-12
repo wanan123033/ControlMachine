@@ -3,6 +3,7 @@ package com.feipulai.host.activity.medicine_ball;
 import android.os.Handler;
 import android.os.Message;
 
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
@@ -15,7 +16,6 @@ import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.activity.vccheck.TestState;
 import com.feipulai.host.entity.RoundResult;
-import com.feipulai.host.utils.SharedPrefsUtil;
 
 import org.greenrobot.greendao.annotation.NotNull;
 

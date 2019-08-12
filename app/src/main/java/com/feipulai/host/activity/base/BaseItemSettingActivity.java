@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
@@ -23,7 +24,6 @@ import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.host.R;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.config.TestConfigs;
-import com.feipulai.host.utils.SharedPrefsUtil;
 import com.feipulai.host.view.NumPickerView;
 
 import java.lang.ref.WeakReference;

@@ -102,8 +102,8 @@ public class AddStudentDialog {
 
     private void addStudent() {
         Student student = new Student();
-        student.setStudentCode(editStuCode.getText().toString());
-        student.setStudentName(editStuName.getText().toString());
+        student.setStudentCode(editStuCode.getText().toString().trim());
+        student.setStudentName(editStuName.getText().toString().trim());
         student.setSex(sex);
         // 插入学生信息
         DBManager.getInstance().insertStudent(student);

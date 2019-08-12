@@ -1,33 +1,35 @@
 package com.feipulai.host.activity.setting;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Switch;
 
 import com.feipulai.common.utils.NetWorkUtils;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.host.R;
-import com.feipulai.host.activity.base.BaseActivity;
+import com.feipulai.host.activity.base.BaseTitleActivity;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.netUtils.HttpManager;
 import com.feipulai.host.netUtils.netapi.UserSubscriber;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
 
-public class SettingActivity extends BaseActivity implements TextWatcher {
+public class SettingActivity extends BaseTitleActivity implements TextWatcher {
 
     @BindView(R.id.et_test_name)
     EditText mEtTestName;
@@ -38,20 +40,23 @@ public class SettingActivity extends BaseActivity implements TextWatcher {
     @BindView(R.id.sp_host_id)
     Spinner mSpHostId;
     @BindView(R.id.sw_auto_broadcast)
-    Switch mSwAutoBroadcast;
+    CheckBox mSwAutoBroadcast;
     @BindView(R.id.sw_rt_upload)
-    Switch mSwRtUpload;
+    CheckBox mSwRtUpload;
     @BindView(R.id.sw_auto_print)
-    Switch mSwAutoPrint;
-
+    CheckBox mSwAutoPrint;
+    @BindView(R.id.sp_check_tool)
+    Spinner spCheckTool;
     private List<Integer> hostIdList;
     private SystemSetting setting;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_system_setting);
-        ButterKnife.bind(this);
+    protected int setLayoutResID() {
+        return R.layout.activity_system_setting;
+    }
+
+    @Override
+    protected void initData() {
         setting = SettingHelper.getSystemSetting();
 
         mEtTestName.setText(setting.getTestName());
@@ -68,22 +73,43 @@ public class SettingActivity extends BaseActivity implements TextWatcher {
             hostIdList.add(i);
         }
 
-        mSpHostId.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, hostIdList));
-        mSpHostId.setSelection(SettingHelper.getSystemSetting().getHostId() - 1);
+        ArrayAdapter mSpHostIdAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, hostIdList);
+        mSpHostIdAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpHostId.setAdapter(mSpHostIdAdapter);
 
         mSwAutoBroadcast.setChecked(setting.isAutoBroadcast());
         mSwRtUpload.setChecked(setting.isRtUpload());
         mSwAutoPrint.setChecked(setting.isAutoPrint());
+
+
+        ArrayAdapter spCheckToolAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, Arrays.asList(getResources().getStringArray(R.array.check_tool)));
+        spCheckToolAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spCheckTool.setAdapter(spCheckToolAdapter);
+
+        spCheckTool.setSelection(setting.getCheckTool());
     }
 
-    @OnItemSelected({R.id.sp_host_id})
+    @Nullable
+    @Override
+    protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
+        return builder.setTitle("设置").addLeftText("返回", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
+
+    @OnItemSelected({R.id.sp_host_id, R.id.sp_check_tool})
     public void spinnerItemSelected(Spinner spinner, int position) {
         switch (spinner.getId()) {
 
             case R.id.sp_host_id:
                 setting.setHostId(position + 1);
                 break;
-
+            case R.id.sp_check_tool:
+                setting.setCheckTool(position);
+                break;
         }
     }
 

@@ -85,10 +85,10 @@ public class SitReachTestActivity extends com.feipulai.host.activity.person.Base
 //    }
 
 
-    @Override
-    public void gotoItemSetting() {
-
-    }
+//    @Override
+//    public void gotoItemSetting() {
+//
+//    }
 
     @Override
     public void stuSkip() {

@@ -8,10 +8,10 @@ import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
 
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseActivity;
 import com.feipulai.host.config.SharedPrefsConfigs;
-import com.feipulai.host.utils.SharedPrefsUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
