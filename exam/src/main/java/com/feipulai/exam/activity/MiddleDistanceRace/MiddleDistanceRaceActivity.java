@@ -810,7 +810,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         //当前界面隐藏后台不断开连接，跳转其它界面时断开连接
         if (isIntentFlag && nettyClient != null) {
             //停止计时命令
-            nettyClient.sendMsgToServer(TcpConfig.getCmdEndTiming(), this);
+//            nettyClient.sendMsgToServer(TcpConfig.getCmdEndTiming(), this);
             mHander.removeMessages(5);
             isFlag = true;
             nettyClient.disconnect();
@@ -1237,9 +1237,9 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                         }
                     }
                 } else {
-                    Log.i("dbGroupList", "----" + timingLists.get(position).getItemCode());
-                    Log.i("dbGroupList", "----" + timingLists.get(position).getNo());
-                    Log.i("dbGroupList", "----" + timingLists.get(position).getColor());
+//                    Log.i("dbGroupList", "----" + timingLists.get(position).getItemCode());
+//                    Log.i("dbGroupList", "----" + timingLists.get(position).getNo());
+//                    Log.i("dbGroupList", "----" + timingLists.get(position).getColor());
                     dbGroupList = DBManager.getInstance().getGroupByNo(timingLists.get(position).getItemCode(), timingLists.get(position).getNo(), timingLists.get(position).getColor());
 
                     dbGroupList.setIsTestComplete(GROUP_FINISH);

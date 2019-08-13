@@ -29,6 +29,7 @@ import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.ChipInfo;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -158,6 +159,7 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
 //        }
         DBManager.getInstance().updateChipInfo(chipInfos);
         mHandler.removeMessages(2);
+        mHandler.removeMessages(1);
         if (nettyClient != null)
             nettyClient.disconnect();
     }
@@ -174,7 +176,7 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
         tvChipID1.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                DialogUtil.showCommonDialog(mContext, "是否清楚全部芯片ID1", new DialogUtil.DialogListener() {
+                DialogUtil.showCommonDialog(mContext, "是否清楚全部芯片ID", new DialogUtil.DialogListener() {
                     @Override
                     public void onPositiveClick() {
                         for (ChipInfo chip : chipInfos
@@ -182,6 +184,7 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
                             chip.setChipID1("");
                             chip.setChipID2("");
                         }
+                        cards.clear();
                         chipAdapter.notifyDataSetChanged();
                         DBManager.getInstance().updateChipInfo(chipInfos);
                     }
@@ -205,6 +208,7 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
     @Override
     public void onMessageReceive(long time, String[] cardIds) {
 //        mHandler.sendMessage(mHandler.obtainMessage(0, Arrays.toString(cardIds)));
+        Log.i("onMessageReceive", "" + isVisible + "----" + isSelect);
         if (isVisible && isSelect) {
             //将芯片id信息按先后顺序并且无重复填充到chipInfos
             if (chipNo == 1) {//如果一个背心对应1个芯片
@@ -374,6 +378,13 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
                 chipInfos.get(position).setChipID1("");
                 chipInfos.get(position).setChipID2("");
                 DBManager.getInstance().updateChipInfo(chipInfos.get(position));
+                Iterator<String> iterator = cards.iterator();
+                while (iterator.hasNext()) {
+                    String value = iterator.next();
+                    if (chipInfos.get(position).getChipID1().equals(value) || chipInfos.get(position).getChipID2().equals(value)) {
+                        iterator.remove();
+                    }
+                }
                 chipAdapter.notifyDataSetChanged();
             }
 
