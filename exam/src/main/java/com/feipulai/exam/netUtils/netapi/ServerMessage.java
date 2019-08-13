@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.LoadingDialog;
 import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.ScheduleBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.BaseEvent;
@@ -192,6 +193,9 @@ public class ServerMessage {
                         //更新项目代码
                         for (UploadResults uploadResults : uploadResultsList) {
                             uploadResults.setExamItemCode(item.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : item.getItemCode());
+                            for (RoundResultBean resultBean : uploadResults.getRoundResultList()) {
+                                resultBean.setItemCode(item.getItemCode());
+                            }
                         }
                         subscriber.uploadResult(uploadResultsList);
                         break;

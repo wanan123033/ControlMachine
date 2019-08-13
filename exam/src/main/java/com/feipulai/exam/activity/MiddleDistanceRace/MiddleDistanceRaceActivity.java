@@ -225,6 +225,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
     private String server_Port;
     private Intent bindIntent;
     private long lastServiceTime;
+    private Button btndisConnect;
 
     @Override
     protected int setLayoutResID() {
@@ -557,6 +558,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         etIP = mMachinePop.findViewById(R.id.et_machine_ip);
         etPort = mMachinePop.findViewById(R.id.et_machine_port);
         btnConnect = mMachinePop.findViewById(R.id.btn_connect_machine);
+        btndisConnect = mMachinePop.findViewById(R.id.btn_disconnect_machine);
         btnSyncTime = mMachinePop.findViewById(R.id.btn_sync_time);
         Button btnStart = mMachinePop.findViewById(R.id.btn_start_server);
         rgVersion = mMachinePop.findViewById(R.id.rg_machine_version);
@@ -585,6 +587,18 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                 bindTcpService();
                 //存储当前开启服务的时间，间隔12小时每次进入当前activity自动打开服务，超过之后需要点击按钮开启服务
                 SharedPrefsUtil.putValue(mContext, MyTcpService.SERVICE_CONNECT, MyTcpService.SERVICE_CONNECT, System.currentTimeMillis());
+            }
+        });
+
+        btndisConnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isConnect) {
+                    if (nettyClient != null) {
+                        mHander.removeMessages(5);
+                        nettyClient.disconnect();
+                    }
+                }
             }
         });
         btnConnect.setOnClickListener(new View.OnClickListener() {
@@ -807,13 +821,18 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
     @Override
     protected void onPause() {
         super.onPause();
+        DialogUtil.dismiss();
         //当前界面隐藏后台不断开连接，跳转其它界面时断开连接
         if (isIntentFlag && nettyClient != null) {
             //停止计时命令
 //            nettyClient.sendMsgToServer(TcpConfig.getCmdEndTiming(), this);
             mHander.removeMessages(5);
             isFlag = true;
-            nettyClient.disconnect();
+            try {
+                nettyClient.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             isIntentFlag = false;
         }
     }
@@ -1232,7 +1251,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                             DBManager.getInstance().updateGroup(groupItemBean.getGroup());
                             groupItemBeans.remove(groupItemBean);
                             groupAdapter.notifyDataSetChanged();
-                            dbGroupList=groupItemBean.getGroup();
+                            dbGroupList = groupItemBean.getGroup();
                             break;
                         }
                     }
@@ -1250,11 +1269,13 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                 //更新组别
                 RoundResult roundResult;
                 UploadResults uploadResult;
+                String itemName = null;
                 for (RaceResultBean resultBean2 : resultDataList
                         ) {
                     if (resultBean2.getColor() == timingLists.get(position).getColor()) {
                         //初始化开始时间
                         resultBean2.setStartTime(0);
+                        itemName = resultBean2.getItemName();
 
                         int[] resultInts = new int[resultBean2.getCycle()];
                         String[] result = resultBean2.getResults();
@@ -1335,10 +1356,13 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                 raceTimingAdapter.notifyBackGround(holder, TimingBean.TIMING_STATE_COMPLETE);
                 //自动上传成绩
                 if (SettingHelper.getSystemSetting().isRtUpload()) {
-                    Logger.i("自动上传成绩:" + uploadResults.toString());
-                    ServerMessage.uploadResult(uploadResults);
+//                    Logger.i("自动上传成绩:" + uploadResults.toString());
+//                    ServerMessage.uploadResult(uploadResults);
+                    if (itemName != null) {
+                        ServerMessage.uploadZCPResult(mContext, itemName, uploadResults);
+                    }
                 }
-                Logger.i(TAG, uploadResults.toString());
+                Logger.i(TAG+"成绩", uploadResults.toString());
                 //自动打印
                 MiddlePrintUtil.print(roundResults, completeBeans, digital, carryMode);
 

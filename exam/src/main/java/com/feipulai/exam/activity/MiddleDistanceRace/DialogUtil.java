@@ -8,6 +8,9 @@ import android.content.DialogInterface;
  * created by ww on 2019/6/21.
  */
 public class DialogUtil {
+
+    private static AlertDialog dialog;
+
     public interface DialogListener {
         void onPositiveClick();
 
@@ -29,6 +32,14 @@ public class DialogUtil {
                         dialogInterface.dismiss();
                     }
                 });
-        builder.create().show();
+        dialog = builder.create();
+        dialog.show();
+    }
+
+    public static void dismiss() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+            dialog = null;
+        }
     }
 }

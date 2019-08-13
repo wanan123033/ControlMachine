@@ -109,7 +109,17 @@
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_background"
-            android:text="连接"
+            android:text="连接设备"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btn_disconnect_machine"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/btn_background"
+            android:text="断开设备"
             android:textColor="@color/white"
             android:textSize="16sp" />
 
