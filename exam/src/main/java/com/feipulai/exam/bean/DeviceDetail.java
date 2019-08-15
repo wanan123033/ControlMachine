@@ -16,7 +16,7 @@ public class DeviceDetail {
     private BaseStuPair baseStuPair;
     private RoundResult roundResult;
     private boolean isDeviceOpen;
-
+    private int round;
     public BaseStuPair getStuDevicePair() {
         return baseStuPair;
     }
@@ -42,4 +42,11 @@ public class DeviceDetail {
     }
 
 
+    public int getRound() {
+        return round;
+    }
+
+    public void setRound(int round) {
+        this.round = round;
+    }
 }

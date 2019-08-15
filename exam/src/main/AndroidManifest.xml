@@ -24,7 +24,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.sargent_jump.SargentJumpMoreActivity"></activity>
+        <activity android:name=".activity.sargent_jump.more_device.GroupMoreActivity"></activity>
+        <activity android:name=".activity.sargent_jump.pair.SargentPairActivity" />
+        <activity android:name=".activity.sargent_jump.more_device.SargentJumpMoreActivity" />
         <activity android:name=".activity.footBall.FootBallGroupActivity" />
         <activity android:name=".activity.sargent_jump.SargentItemSelectActivity" />
         <activity
@@ -34,9 +36,9 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <!--<category android:name="android.intent.category.DEFAULT" />-->
+                <!-- <category android:name="android.intent.category.DEFAULT" /> -->
                 <category android:name="android.intent.category.LAUNCHER" />
-                <!--<category android:name="android.intent.category.HOME" />-->
+                <!-- <category android:name="android.intent.category.HOME" /> -->
 
             </intent-filter>
         </activity>
