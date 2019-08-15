@@ -254,8 +254,8 @@ public class VolleyBallSettingActivity
         text = etTestTime.getText().toString();
         if (!TextUtils.isEmpty(text)) {
             value = Integer.parseInt(text);
-            if (value > 1000) {
-                ToastUtils.showShort("满分最大值不能超过1000");
+            if (value > 3600) {
+                ToastUtils.showShort("最大值不能超过3600");
             } else {
                 setting.setTestTime(value);
             }

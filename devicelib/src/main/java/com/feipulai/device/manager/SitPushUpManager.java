@@ -21,6 +21,7 @@ public class SitPushUpManager {
 
     public static final int PROJECT_CODE_SIT_UP = 5;// 5—仰卧起坐
     public static final int PROJECT_CODE_PUSH_UP = 8;// 8—俯卧撑
+    public static final int PROJECT_CODE_SARGENT = 1;// 摸高
 
     public static final int DEFAULT_COUNT_DOWN_TIME = 5;
 

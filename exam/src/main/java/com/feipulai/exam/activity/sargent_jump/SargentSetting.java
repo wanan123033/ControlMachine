@@ -9,6 +9,7 @@ public class SargentSetting {
 
     //1无线 0有线（初始化有线）
     private int type = 0 ;
+    private boolean isAutoPair;
     /**
      * 助跑 0原地起跳 1助跑（初始化助跑）
      */
@@ -104,5 +105,13 @@ public class SargentSetting {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public boolean isAutoPair() {
+        return isAutoPair;
+    }
+
+    public void setAutoPair(boolean autoPair) {
+        isAutoPair = autoPair;
     }
 }

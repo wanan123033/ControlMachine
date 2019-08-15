@@ -10,6 +10,7 @@ import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.PullUpSetFrequencyResult;
+import com.feipulai.device.serial.beans.SargentJumpResult;
 import com.feipulai.device.serial.beans.SitPushUpSetFrequencyResult;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
@@ -75,6 +76,10 @@ public class SitPullLinker implements Handler.Callback {
             Log.i("james", pushUpSetFrequencyResult.toString());
             checkDevice(pushUpSetFrequencyResult);
             return true;
+        }else if (machineCode == ItemDefault.CODE_MG && what == SerialConfigs.SARGENT_JUMP_GET_SCORE_RESPONSE){
+            SargentJumpResult sargentJumpResult = (SargentJumpResult) msg.obj;
+            checkDevice(sargentJumpResult);
+            return true;
         }
         return false;
     }
@@ -87,6 +92,10 @@ public class SitPullLinker implements Handler.Callback {
     }
 
     private void checkDevice(PullUpSetFrequencyResult result) {
+        checkDevice(result.getDeviceId(), result.getFrequency());
+    }
+
+    private void checkDevice(SargentJumpResult result) {
         checkDevice(result.getDeviceId(), result.getFrequency());
     }
 

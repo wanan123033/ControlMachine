@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.ActivityUtils;
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -473,7 +474,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
 
     @Override
     public void onTestingTimerTick(long tick) {
-        tickInUI(tick + "");
+        tickInUI(DateUtil.caculateFormatTime(tick * 1000, 0));
     }
 
     @Override

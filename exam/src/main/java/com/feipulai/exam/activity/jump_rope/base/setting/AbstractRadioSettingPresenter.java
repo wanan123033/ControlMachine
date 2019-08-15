@@ -80,8 +80,8 @@ public abstract class AbstractRadioSettingPresenter implements RadioSettingContr
     public void updateTestTime(int testTime) {
         if (testTime < 10){
             view.showToast("测试时长不能小于10秒");
-        }else if(testTime > 1000){
-            view.showToast("测试时长不能大于1000秒");
+        }else if(testTime > 3600){
+            view.showToast("测试时长不能大于3600秒");
         }else {
             setTestTime(testTime);
         }

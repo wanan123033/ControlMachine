@@ -10,13 +10,13 @@ import com.feipulai.exam.entity.RoundResult;
  */
 public class DeviceDetail {
     public DeviceDetail(){
-        BaseStuPair baseStuPair = new BaseStuPair();
+        baseStuPair = new BaseStuPair();
         baseStuPair.setBaseDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE));
     }
     private BaseStuPair baseStuPair;
     private RoundResult roundResult;
     private boolean isDeviceOpen;
-
+    private int round;
     public BaseStuPair getStuDevicePair() {
         return baseStuPair;
     }
@@ -42,4 +42,11 @@ public class DeviceDetail {
     }
 
 
+    public int getRound() {
+        return round;
+    }
+
+    public void setRound(int round) {
+        this.round = round;
+    }
 }

@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.feipulai.exam">
-
     <!-- 集成百度TTS时需要下列权限 -->
     <!-- 测试完成后，您自己的apAPP_KEYpSECRET_KEYtKey 请在 SynthActivity 和 MiniActivity 中修改 -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -14,7 +13,6 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name=".MyApplication"
@@ -26,7 +24,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.sargent_jump.SargentJumpMoreActivity" />
+        <activity android:name=".activity.sargent_jump.SargentJumpMoreActivity"></activity>
         <activity android:name=".activity.footBall.FootBallGroupActivity" />
         <activity android:name=".activity.sargent_jump.SargentItemSelectActivity" />
         <activity
@@ -36,9 +34,9 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <!-- <category android:name="android.intent.category.DEFAULT" /> -->
+                <!--<category android:name="android.intent.category.DEFAULT" />-->
                 <category android:name="android.intent.category.LAUNCHER" />
-                <!-- <category android:name="android.intent.category.HOME" /> -->
+                <!--<category android:name="android.intent.category.HOME" />-->
 
             </intent-filter>
         </activity>
@@ -179,7 +177,6 @@
         <activity
             android:name=".activity.MiddleDistanceRace.MiddleRaceSettingActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity android:name=".activity.UVCCameraActivity"></activity>
     </application>
 
 </manifest>

@@ -9,6 +9,7 @@ import android.os.Message;
 import com.feipulai.common.jump_rope.facade.CountTimingTestFacade;
 import com.feipulai.common.jump_rope.task.GetDeviceStatesTask;
 import com.feipulai.common.jump_rope.task.LEDContentGenerator;
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.host.activity.jump_rope.base.InteractUtils;
 import com.feipulai.host.activity.jump_rope.bean.BaseDeviceState;
@@ -32,18 +33,18 @@ public abstract class AbstractRadioTestPresenter<Setting>
 		CountTimingTestFacade.Listener,
 		LEDContentGenerator,
 		Handler.Callback {
-	
+
 	private static final int FINAL_RESULT_GOT = 0x5;
 	protected static final int INVALID_PIV = -100;
 	protected CountTimingTestFacade facade;
-	
+
 	// 状态  WAIT_BGIN--->TESTING--->WAIT_MACHINE_RESULTS--->WAIT_CONFIRM_RESULTS---->WAIT_BGIN
 	protected static final int WAIT_BGIN = 0x0;// 等待开始测试
 	protected static final int TESTING = 0x1;// 测试过程中
 	protected static final int WAIT_MACHINE_RESULTS = 0x2;// 测试结束,等待获取机器成绩
 	protected static final int WAIT_CONFIRM_RESULTS = 0x3;
 	protected volatile int testState = WAIT_BGIN;
-	
+
 	protected volatile int[] currentConnect;
 	private String testDate;
 	protected List<StuDevicePair> pairs;
@@ -55,13 +56,13 @@ public abstract class AbstractRadioTestPresenter<Setting>
 	protected int focusPosition;
 	protected Handler handler;
 	private HandlerThread handlerThread;
-	
+
 	protected AbstractRadioTestPresenter(Context context, RadioTestContract.View<Setting> view) {
 		this.context = context;
 		this.view = view;
 		hostId = SettingHelper.getSystemSetting().getHostId();
 	}
-	
+
 	@Override
 	public void start() {
 		pairs = TestCache.getInstance().getTestingPairs();
@@ -77,13 +78,13 @@ public abstract class AbstractRadioTestPresenter<Setting>
 			deviceIdPIV[pair.getBaseDevice().getDeviceId()] = piv;
 			piv++;
 		}
-		
+
 		handlerThread = new HandlerThread("handlerThread");
 		handlerThread.start();
 		handler = new Handler(handlerThread.getLooper(), this);
-		
+
 		view.initView(pairs, setting);
-		
+
 		CountTimingTestFacade.Builder builder = new CountTimingTestFacade.Builder();
 		facade = builder.countStartTime(getCountStartTime())
 				.countFinishTime(getCountFinishTime())
@@ -97,19 +98,19 @@ public abstract class AbstractRadioTestPresenter<Setting>
 		startTest();
 		RadioManager.getInstance().setOnRadioArrived(this);
 	}
-	
+
 	protected abstract int getCountFinishTime();
-	
+
 	protected abstract int getCountStartTime();
-	
+
 	protected abstract Setting getSetting();
-	
+
 	protected abstract int getTestTimeFromSetting();
-	
+
 	protected abstract void resetDevices();
-	
+
 	protected abstract void testCountDown(long tick);
-	
+
 	@Override
 	public void startTest() {
 		Logger.i("开始测试,测试考生设备信息:" + pairs.toString());
@@ -119,26 +120,26 @@ public abstract class AbstractRadioTestPresenter<Setting>
 		facade.start();
 		testState = TESTING;
 	}
-	
+
 	@Override
 	public void stopNow() {
 		facade.stopTotally();
 	}
-	
+
 	@Override
 	public void quitTest() {
 		stopNow();
 		resetDevices();
 		view.quitTest();
 	}
-	
+
 	@Override
 	public void restartTest() {
 		facade.stop();
 		testState = WAIT_BGIN;
 		startTest();
 	}
-	
+
 	private boolean checkFinalResults() {
 		for (StuDevicePair pair : pairs) {
 			Student student = pair.getStudent();
@@ -150,21 +151,21 @@ public abstract class AbstractRadioTestPresenter<Setting>
 		}
 		return true;
 	}
-	
+
 	private void saveResults() {
 		InteractUtils.saveResults(pairs, testDate);
 	}
-	
+
 	@Override
 	public int stateOfPosition(int position) {
 		return pairs.get(position).getBaseDevice().getState();
 	}
-	
+
 	@Override
 	public void setFocusPosition(int position) {
 		focusPosition = position;
 	}
-	
+
 	@Override
 	public void onStateRefreshed() {
 		int oldState;
@@ -182,46 +183,46 @@ public abstract class AbstractRadioTestPresenter<Setting>
 		int length = currentConnect.length;// 必须是这个长度
 		currentConnect = new int[length];
 	}
-	
+
 	@Override
 	public int getDeviceCount() {
 		return pairs.size();
 	}
-	
+
 	@Override
 	public void stopUse() {
 		CheckUtils.stopUse(pairs, focusPosition);
 		view.updateSpecificItem(focusPosition);
 	}
-	
+
 	@Override
 	public void resumeUse() {
 		CheckUtils.resumeUse(pairs, focusPosition);
 		view.updateSpecificItem(focusPosition);
 	}
-	
+
 	@Override
 	public void onGetReadyTimerTick(long tick) {
 		view.tickInUI(tick + "");
 		testCountDown(tick);
 	}
-	
+
 	@Override
 	public void onGetReadyTimerFinish() {
 		view.enableStopUse(true);
 		view.tickInUI("开始");
 	}
-	
+
 	@Override
 	public void onTestingTimerTick(final long tick) {
-		view.tickInUI(tick + "");
+		view.tickInUI(DateUtil.caculateFormatTime(tick * 1000, 0));
 		if (tick <= 5) {
 			view.enableStopRestartTest(false);
 		} else {
 			view.enableStopRestartTest(true);
 		}
 	}
-	
+
 	@Override
 	public void onTestingTimerFinish() {
 		view.tickInUI("结束");
@@ -229,14 +230,14 @@ public abstract class AbstractRadioTestPresenter<Setting>
 		view.showWaitFinalResultDialog(true);
 		handler.sendEmptyMessageDelayed(FINAL_RESULT_GOT, 2000);
 	}
-	
+
 	@Override
 	public void finishTest(){
 		facade.pauseGettingState();
 		saveResults();
 		view.finishTest();
 	}
-	
+
 	@Override
 	public void confirmResults() {
 		for (StuDevicePair pair : pairs) {
@@ -247,11 +248,11 @@ public abstract class AbstractRadioTestPresenter<Setting>
 		}
 		finishTest();
 	}
-	
+
 	@Override
 	public boolean handleMessage(Message msg) {
 		switch (msg.what) {
-			
+
 			case FINAL_RESULT_GOT:
 				if (checkFinalResults()) {
 					Logger.i("获取到设备最终成绩,考生设备信息:" + pairs.toString());
@@ -266,5 +267,5 @@ public abstract class AbstractRadioTestPresenter<Setting>
 		}
 		return false;
 	}
-	
+
 }

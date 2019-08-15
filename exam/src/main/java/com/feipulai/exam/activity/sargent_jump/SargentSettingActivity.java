@@ -178,6 +178,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
         cbRunUp.setOnCheckedChangeListener(this);
         // 1无线 0有线
         cbWireless.setChecked(sargentSetting.getType() == 1);
+        cbWireless.setVisibility(sargentSetting.getType() == 1 ? View.VISIBLE:View.GONE);
         cbWireless.setOnCheckedChangeListener(this);
         radioManager = RadioManager.getInstance();
         radioManager.init();
@@ -281,15 +282,15 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_match:
-//                if (sargentSetting.getType() == 1) {
-//                    radioManager.sendCommand(new ConvertCommand(new RadioChannelCommand(0)));
-//                    if (mProgressDialog == null || !mProgressDialog.isShowing()){
-//                        match = 0 ;
-//                        mProgressDialog = ProgressDialog.show(this, "", "终端匹配中...", true);
-//                        mHandler.sendEmptyMessageDelayed(3,10*1000);
-//                    }
-//
-//                }
+                if (sargentSetting.getType() == 1) {
+                    radioManager.sendCommand(new ConvertCommand(new RadioChannelCommand(0)));
+                    if (mProgressDialog == null || !mProgressDialog.isShowing()){
+                        match = 0 ;
+                        mProgressDialog = ProgressDialog.show(this, "", "终端匹配中...", true);
+                        mHandler.sendEmptyMessageDelayed(3,10*1000);
+                    }
+
+                }
                 break;
 
         }
