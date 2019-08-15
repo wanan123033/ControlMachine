@@ -21,56 +21,40 @@ import org.greenrobot.greendao.annotation.Generated;
 public class ItemSchedule {
 	
     @Id(autoincrement = true)
-    private long id;
+    private Long id;
     @NotNull
     private String itemCode;
     @NotNull
     private String scheduleNo;
-
-    @Keep
-    @Generated(hash = 1847413446)
-    public ItemSchedule(long id, @NotNull String itemCode,
+    @Generated(hash = 831422966)
+    public ItemSchedule(Long id, @NotNull String itemCode,
             @NotNull String scheduleNo) {
         this.id = id;
         this.itemCode = itemCode;
         this.scheduleNo = scheduleNo;
     }
-    @Keep
     @Generated(hash = 1344254478)
     public ItemSchedule() {
     }
-
-    public long getId() {
-        return id;
+    public Long getId() {
+        return this.id;
     }
-
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
-
     public String getItemCode() {
-        return itemCode;
+        return this.itemCode;
     }
-
     public void setItemCode(String itemCode) {
         this.itemCode = itemCode;
     }
-
     public String getScheduleNo() {
-        return scheduleNo;
+        return this.scheduleNo;
     }
-
     public void setScheduleNo(String scheduleNo) {
         this.scheduleNo = scheduleNo;
     }
 
-    @Override
-    public String toString() {
-        return "ItemSchedule{" +
-                "id=" + id +
-                ", itemCode='" + itemCode + '\'' +
-                ", scheduleNo='" + scheduleNo + '\'' +
-                '}';
-    }
+   
     
 }

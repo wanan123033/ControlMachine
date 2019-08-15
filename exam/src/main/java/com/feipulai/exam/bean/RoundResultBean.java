@@ -40,6 +40,10 @@ public class RoundResultBean implements Serializable {
     private String remark2;
     private String remark3;
 
+    public void setItemCode(String itemCode) {
+        this.itemCode = itemCode;
+    }
+
     public RoundResultBean(Long id, String studentCode, String itemCode, int machineCode, int roundNo,
                            int testNo, int machineResult, int penalty, int result, int isFoul, int resultType,
                            int examState, String testTime, String printTime, int stumbleCount, int updateState, Long groupId,

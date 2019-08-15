@@ -862,6 +862,10 @@ public class DBManager {
         itemScheduleDao.updateInTx(itemSchedules);
     }
 
+    public void deleteSchedules(List<ItemSchedule> itemSchedules) {
+        itemScheduleDao.deleteInTx(itemSchedules);
+    }
+
     private void insertItem(int machineCode, String itemName, String unit) {
         Item item = new Item();
         item.setMachineCode(machineCode);

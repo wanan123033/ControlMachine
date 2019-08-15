@@ -58,6 +58,7 @@ import com.feipulai.exam.db.MachineItemCodeUtil;
 import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.Item;
+import com.feipulai.exam.entity.ItemSchedule;
 import com.feipulai.exam.entity.MachineResult;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.StudentItem;
@@ -294,8 +295,6 @@ public class TestConfigs {
                 }
 
             }
-
-
         }
         return true;
     }
@@ -306,6 +305,16 @@ public class TestConfigs {
         List<GroupItem> groupItemList = DBManager.getInstance().queryGroupItemByItemCode(item.getItemCode());
         List<Group> groupList = DBManager.getInstance().queryGroupByItemCode(item.getItemCode());
         List<MachineResult> machineResultList = DBManager.getInstance().getMachineResultByItemCode(item.getItemCode());
+        List<ItemSchedule>itemSchedules=DBManager.getInstance().queryItemSchedulesByItemCode(item.getItemCode());
+
+        if(itemSchedules!=null&&itemSchedules.size()>0){
+            for (ItemSchedule itemSchedule:itemSchedules
+                 ) {
+                itemSchedule.setItemCode(updateItemCode);
+            }
+            DBManager.getInstance().deleteSchedules(itemSchedules);
+            DBManager.getInstance().insertItemSchedulesList(itemSchedules);
+        }
 
         if (roundResults != null && roundResults.size() > 0) {
             for (RoundResult roundResult : roundResults) {
