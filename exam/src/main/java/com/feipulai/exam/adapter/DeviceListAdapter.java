@@ -42,6 +42,7 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
         if (item.isDeviceOpen()) {
             helper.swDeviceClose.setChecked(item.isDeviceOpen());
         }
+        helper.cbDeviceState.setText(String.format("%d号设备状态", helper.getLayoutPosition() + 1));
         if (item.getStuDevicePair() != null) {
             if (item.getStuDevicePair().getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
                 helper.cbDeviceState.setChecked(false);

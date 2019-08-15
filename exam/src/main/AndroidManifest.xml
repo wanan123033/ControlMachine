@@ -24,9 +24,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.sargent_jump.more_device.GroupMoreActivity"></activity>
+        <activity android:name=".activity.sargent_jump.more_device.SargentGroupMoreTestActivity"></activity>
+        <activity android:name=".activity.sargent_jump.more_device.SargentMoreTestActivity" />
         <activity android:name=".activity.sargent_jump.pair.SargentPairActivity" />
-        <activity android:name=".activity.sargent_jump.more_device.SargentJumpMoreActivity" />
         <activity android:name=".activity.footBall.FootBallGroupActivity" />
         <activity android:name=".activity.sargent_jump.SargentItemSelectActivity" />
         <activity

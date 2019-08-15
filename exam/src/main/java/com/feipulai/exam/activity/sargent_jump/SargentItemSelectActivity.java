@@ -14,6 +14,7 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.sargent_jump.more_device.SargentMoreTestActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.adapter.SubItemsSelectAdapter;
@@ -45,6 +46,7 @@ public class SargentItemSelectActivity extends BaseTitleActivity {
         itemList = new ArrayList<>();
         itemList.add(new Item("有线模式"));
         itemList.add(new Item("无线模式"));
+        itemList.add(new Item("无线模式(新)"));
         rvSubitems.setLayoutManager(new LinearLayoutManager(this));
         adapter = new SubItemsSelectAdapter(itemList);
         rvSubitems.setAdapter(adapter);
@@ -54,7 +56,7 @@ public class SargentItemSelectActivity extends BaseTitleActivity {
                 SargentSetting setting = SharedPrefsUtil.loadFormSource(mContext, SargentSetting.class);
                 setting.setType(position);
                 if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
-                    startActivity(new Intent(mContext, SargentTestActivity.class));
+                    startActivity(new Intent(mContext, position == 2? SargentMoreTestActivity.class :SargentTestActivity.class));
 
                 } else {
                     startActivity(new Intent(mContext, BaseGroupActivity.class));

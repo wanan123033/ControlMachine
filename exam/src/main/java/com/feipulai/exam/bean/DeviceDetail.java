@@ -10,7 +10,7 @@ import com.feipulai.exam.entity.RoundResult;
  */
 public class DeviceDetail {
     public DeviceDetail(){
-        BaseStuPair baseStuPair = new BaseStuPair();
+        baseStuPair = new BaseStuPair();
         baseStuPair.setBaseDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE));
     }
     private BaseStuPair baseStuPair;
