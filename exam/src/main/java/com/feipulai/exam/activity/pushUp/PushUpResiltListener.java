@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.feipulai.common.jump_rope.task.GetReadyCountDownTimer;
 import com.feipulai.common.jump_rope.task.TestingCountDownTimer;
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.manager.SitPushUpManager;
@@ -16,6 +17,7 @@ import com.feipulai.device.sitpullup.SitPullLinker;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -106,10 +108,18 @@ public class PushUpResiltListener implements SerialDeviceManager.RS232ResiltList
                         if (tick == 0) {
                             listener.onTestingTimerFinish();
                             stopTest();
-                            ledManager.showString(SettingHelper.getSystemSetting().getHostId(), "结束", 12, 1, false, true);
+                            ledManager.showString(SettingHelper.getSystemSetting().getHostId(), "结束 ", 10, 3, false, true);
                         } else {
                             listener.onTestingTimerTick(tick);
-                            ledManager.showString(SettingHelper.getSystemSetting().getHostId(), String.format("%3d", tick), 12, 1, false, true);
+                            byte[] data = new byte[16];
+                            try {
+                                byte[] resultData = DateUtil.formatTime(tick * 1000, "mm:ss").getBytes("GB2312");
+//                                int srcX = LEDManager.isInt(DateUtil.formatTime(tick * 1000, "mm:ss")) ? 12 : 10;
+                                System.arraycopy(resultData, 0, data, 10, resultData.length);
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                            ledManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 3, false, true);
                         }
                     }
                 });

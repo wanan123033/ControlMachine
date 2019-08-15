@@ -36,4 +36,10 @@ public class StringChineseUtil {
         Matcher m = pattern.matcher(fileName);
         return m.matches();
     }
+
+
+    private static final Pattern PATTERN = Pattern.compile("0|([-]?[1-9][0-9]*)");
+    private static boolean isInt(String str) {
+        return PATTERN.matcher(str).matches();
+    }
 }

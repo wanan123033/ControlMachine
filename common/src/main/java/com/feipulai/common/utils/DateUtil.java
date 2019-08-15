@@ -101,7 +101,7 @@ public class DateUtil {
     public static String caculateTime(long caculTime, int digital, int carryMode) {
         double bigTime = Double.valueOf(caculTime) / 1000;
         //需要先舍掉小数位数后一位之后的所有，再进行进位
-        BigDecimal bigDecimal = new BigDecimal(String.valueOf(bigTime)).setScale(digital+1, BigDecimal.ROUND_DOWN);
+        BigDecimal bigDecimal = new BigDecimal(String.valueOf(bigTime)).setScale(digital + 1, BigDecimal.ROUND_DOWN);
         long carryTime;
         switch (carryMode) {
             case 0://不去舍
@@ -159,26 +159,26 @@ public class DateUtil {
         String hundDigital;
         switch (digital) {
             case 1:
-                hundDigital = "S";
+                hundDigital = ".S";
                 break;
             case 2:
-                hundDigital = "SS";
+                hundDigital = ".SS";
                 break;
             case 3:
-                hundDigital = "SSS";
+                hundDigital = ".SSS";
                 break;
             default:
                 hundDigital = "";
                 break;
         }
         if (caculTime < 60 * 1000) {
-            return formatTime(caculTime, "ss." + hundDigital);
+            return formatTime(caculTime, "ss" + hundDigital);
         } else if (caculTime >= 60 * 1000 && caculTime < 60 * 60 * 1000) { // 一小时之内
-            return formatTime(caculTime, "mm:ss." + hundDigital);
+            return formatTime(caculTime, "mm:ss" + hundDigital);
         } else if (caculTime >= 60 * 60 * 1000 && caculTime < 60 * 60 * 24 * 1000) { // 同一天之内
-            return formatTime(caculTime, "HH:mm:ss." + hundDigital);
+            return formatTime(caculTime, "HH:mm:ss" + hundDigital);
         } else {
-            return formatTime(caculTime, "dd HH:mm:ss." + hundDigital);
+            return formatTime(caculTime, "dd HH:mm:ss" + hundDigital);
         }
     }
 }
