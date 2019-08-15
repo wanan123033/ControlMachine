@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name=".MyApplication"
@@ -24,9 +25,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.sargent_jump.SargentJumpMoreActivity"></activity>
+        <activity android:name=".activity.sargent_jump.more_device.SargentGroupMoreTestActivity"></activity>
+        <activity android:name=".activity.sargent_jump.more_device.SargentMoreTestActivity" />
+        <activity android:name=".activity.sargent_jump.pair.SargentPairActivity" />
         <activity android:name=".activity.footBall.FootBallGroupActivity" />
         <activity android:name=".activity.sargent_jump.SargentItemSelectActivity" />
+
         <activity
             android:name=".activity.SplashScreenActivity"
             android:screenOrientation="landscape"
@@ -176,6 +180,9 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.MiddleDistanceRace.MiddleRaceSettingActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.UVCCameraActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
     </application>
 
