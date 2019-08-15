@@ -220,6 +220,18 @@ public class DBManager {
         return student;
     }
 
+    public Student queryStudentByCode(String code) {
+        Student student = studentDao.queryBuilder()
+                .where(StudentDao.Properties.StudentCode.eq(code))
+                .unique();
+        if (student == null) {
+            student = studentDao.queryBuilder()
+                    .where(StudentDao.Properties.IdCardNo.eq(code))
+                    .unique();
+        }
+        return student;
+    }
+
     public List<StudentItem> queryStudentItemByItemCode(String itemCode) {
         return studentItemDao.queryBuilder().where(StudentItemDao.Properties.ItemCode.eq(itemCode)).list();
     }
@@ -1075,7 +1087,7 @@ public class DBManager {
                 .list();
     }
 
-    public List<RoundResult> queryResultsByStudentCode(String itemCode,String studentCode) {
+    public List<RoundResult> queryResultsByStudentCode(String itemCode, String studentCode) {
         return roundResultDao
                 .queryBuilder()
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
@@ -1556,7 +1568,7 @@ public class DBManager {
      * @param studentCode
      * @return
      */
-    public RoundResult queryResultsByStudentCodeIsLastResult(String itemCode,String studentCode) {
+    public RoundResult queryResultsByStudentCodeIsLastResult(String itemCode, String studentCode) {
         return roundResultDao
                 .queryBuilder()
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
@@ -2106,24 +2118,23 @@ public class DBManager {
         }
     }
 
-    public Group getGroupByNo(String itemCode,int groupNo,int color) {
-            return groupDao.queryBuilder()
-                    .where(GroupDao.Properties.ItemCode.eq(itemCode))
-                    .where(GroupDao.Properties.IsTestComplete.notEq(GROUP_FINISH))
-                    .where(GroupDao.Properties.GroupNo.eq(groupNo))
-                    .where(GroupDao.Properties.ColorId.eq(color))
-                    .unique();
+    public Group getGroupByNo(String itemCode, int groupNo, int color) {
+        return groupDao.queryBuilder()
+                .where(GroupDao.Properties.ItemCode.eq(itemCode))
+                .where(GroupDao.Properties.IsTestComplete.notEq(GROUP_FINISH))
+                .where(GroupDao.Properties.GroupNo.eq(groupNo))
+                .where(GroupDao.Properties.ColorId.eq(color))
+                .unique();
     }
 
     public GroupItem getGroupItemByNo(String itemCode, int groupNo, int groupType, String scheduleNo) {
-            return groupItemDao.queryBuilder()
-                    .where(GroupItemDao.Properties.ItemCode.eq(itemCode))
-                    .where(GroupItemDao.Properties.GroupNo.eq(groupNo))
-                    .where(GroupItemDao.Properties.GroupType.eq(groupType))
-                    .where(GroupItemDao.Properties.ScheduleNo.eq(scheduleNo))
-                    .unique();
+        return groupItemDao.queryBuilder()
+                .where(GroupItemDao.Properties.ItemCode.eq(itemCode))
+                .where(GroupItemDao.Properties.GroupNo.eq(groupNo))
+                .where(GroupItemDao.Properties.GroupType.eq(groupType))
+                .where(GroupItemDao.Properties.ScheduleNo.eq(scheduleNo))
+                .unique();
     }
-
 
 
     /**

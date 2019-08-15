@@ -4,9 +4,13 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -16,6 +20,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.arcsoft.face.FaceEngine;
+import com.arcsoft.face.util.ImageUtils;
 import com.feipulai.common.db.ClearDataProcess;
 import com.feipulai.common.dbutils.BackupManager;
 import com.feipulai.common.dbutils.FileSelectActivity;
@@ -47,6 +53,8 @@ import com.feipulai.exam.utils.StringChineseUtil;
 import com.feipulai.exam.view.OperateProgressBar;
 import com.github.mjdev.libaums.fs.UsbFile;
 import com.orhanobut.logger.Logger;
+import com.ww.fpl.libarcface.faceserver.FaceServer;
+import com.ww.fpl.libarcface.widget.ProgressDialog;
 import com.yhy.gvp.listener.OnItemClickListener;
 import com.yhy.gvp.widget.GridViewPager;
 
@@ -59,12 +67,15 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTit
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.CommonPagerTitleView;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import butterknife.BindView;
 
@@ -77,6 +88,7 @@ public class DataManageActivity
     private static final int REQUEST_CODE_BACKUP = 2;
     private static final int REQUEST_CODE_IMPORT = 3;
     private static final int REQUEST_CODE_EXPORT = 4;
+    private static final int REQUEST_CODE_PHOTO = 5;
 
     @BindView(R.id.grid_viewpager)
     GridViewPager gridViewpager;
@@ -95,6 +107,7 @@ public class DataManageActivity
     private EditText mEditText;
     private List<TypeListBean> typeDatas;
     public BackupManager backupManager;
+    private ProgressDialog progressDialog;
 
     @Override
     protected int setLayoutResID() {
@@ -111,6 +124,8 @@ public class DataManageActivity
         txtStorageInfo.setText("总容量" + FileUtil.formatFileSize(totalSpace, true) + "剩余" + FileUtil.formatFileSize(freeSpace, true));
         progressStorage.setProgress(FileUtil.getPercentRemainStorage());
 
+        FaceServer.getInstance().init(this);
+        progressDialog = new ProgressDialog(this);
         initGridView();
     }
 
@@ -259,6 +274,9 @@ public class DataManageActivity
 
                     case 4://头像下载
                     case 3://头像导入
+                        intent.setClass(DataManageActivity.this, FileSelectActivity.class);
+                        intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
+                        startActivityForResult(intent, REQUEST_CODE_PHOTO);
                     case 5://删除头像
                         //TODO 测试使用
 //                        DBManager.getInstance().roundResultClear();
@@ -363,8 +381,109 @@ public class DataManageActivity
             case REQUEST_CODE_EXPORT:
                 showExportFileNameDialog();
                 break;
-
+            case REQUEST_CODE_PHOTO:
+                doRegister(FileSelectActivity.sSelectedFile.getAbsolutePath());
+                break;
         }
+    }
+
+    private ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+    private void doRegister(final String file) {
+        File dir = new File(file);
+        if (!dir.exists()) {
+            ToastUtils.showShort("path \n" + file + "\n is not exists");
+            return;
+        }
+        if (!dir.isDirectory()) {
+            ToastUtils.showShort("path \n" + file + "\n is not a directory");
+            return;
+        }
+        final File[] jpgFiles = dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(FaceServer.IMG_SUFFIX) || name.endsWith(FaceServer.IMG_SUFFIX2)
+                        || name.endsWith(FaceServer.IMG_SUFFIX.toUpperCase()) || name.endsWith(FaceServer.IMG_SUFFIX2.toUpperCase());
+            }
+        });
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                final int totalCount = jpgFiles.length;
+
+                int successCount = 0;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.setMaxProgress(totalCount);
+                        progressDialog.show();
+                    }
+                });
+                for (int i = 0; i < totalCount; i++) {
+                    final int finalI = i;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (progressDialog != null) {
+                                progressDialog.refreshProgress(finalI);
+                            }
+                        }
+                    });
+                    final File jpgFile = jpgFiles[i];
+                    Bitmap bitmap = BitmapFactory.decodeFile(jpgFile.getAbsolutePath());
+                    if (bitmap == null) {
+//                        File failedFile = new File(file + File.separator + jpgFile.getName());
+//                        if (!failedFile.getParentFile().exists()) {
+//                            failedFile.getParentFile().mkdirs();
+//                        }
+//                        jpgFile.renameTo(failedFile);
+                        continue;
+                    }
+                    bitmap = ImageUtils.alignBitmapForBgr24(bitmap);
+                    if (bitmap == null) {
+//                        File failedFile = new File(file + File.separator + jpgFile.getName());
+//                        if (!failedFile.getParentFile().exists()) {
+//                            failedFile.getParentFile().mkdirs();
+//                        }
+//                        jpgFile.renameTo(failedFile);
+                        continue;
+                    }
+                    byte[] bgr24 = ImageUtils.bitmapToBgr24(bitmap);
+                    boolean success = FaceServer.getInstance().registerBgr24(DataManageActivity.this, bgr24, bitmap.getWidth(), bitmap.getHeight(),
+                            jpgFile.getName().substring(0, jpgFile.getName().lastIndexOf(".")));
+                    if (!success) {
+                        Log.e("faceRegister","人脸注册失败"+jpgFile.getName().substring(0, jpgFile.getName().lastIndexOf(".")));
+//                        File failedFile = new File(file + File.separator + jpgFile.getName());
+//                        if (!failedFile.getParentFile().exists()) {
+//                            failedFile.getParentFile().mkdirs();
+//                        }
+//                        jpgFile.renameTo(failedFile);
+                    } else {
+                        successCount++;
+                    }
+                }
+                final int finalSuccessCount = successCount;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.dismiss();
+                    }
+                });
+                Log.i("DataManageActivity", "run: " + executorService.isShutdown());
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (executorService != null && !executorService.isShutdown()) {
+            executorService.shutdownNow();
+        }
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+        FaceServer.getInstance().unInit();
     }
 
     @Override

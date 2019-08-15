@@ -177,7 +177,6 @@
                     android:textSize="20dp"
                     android:visibility="gone" />
 
-
                 <TextView
                     android:id="@+id/txt_led_setting"
                     android:layout_width="wrap_content"

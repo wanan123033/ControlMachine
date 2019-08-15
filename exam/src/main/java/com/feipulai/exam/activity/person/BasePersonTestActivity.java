@@ -26,6 +26,7 @@ import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
+import com.feipulai.exam.activity.UVCCameraActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -146,6 +147,11 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             public void onClick(View v) {
                 finish();
             }
+        }).addRightText("人脸识别", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gotoUVCFaceCamera();
+            }
         }).addRightText("项目设置", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -157,6 +163,20 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 gotoItemSetting();
             }
         });
+    }
+
+    private void gotoUVCFaceCamera() {
+        startActivityForResult(new Intent(this, UVCCameraActivity.class), 101);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 101 && resultCode == 1) {
+            String userNo = data.getStringExtra("UserName");
+            Student student = DBManager.getInstance().queryStudentByCode(userNo);
+            onCheckIn(student);
+        }
     }
 
     private void init() {
