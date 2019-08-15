@@ -584,6 +584,11 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                     myBinder.stopWork();
                     myBinder.startWork(currentPort);
                 }
+
+                if (myTcpService != null && myTcpService.isWork) {
+                    ToastUtils.showShort("当前服务已开启");
+                    return;
+                }
                 bindTcpService();
                 //存储当前开启服务的时间，间隔12小时每次进入当前activity自动打开服务，超过之后需要点击按钮开启服务
                 SharedPrefsUtil.putValue(mContext, MyTcpService.SERVICE_CONNECT, MyTcpService.SERVICE_CONNECT, System.currentTimeMillis());
@@ -708,15 +713,6 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.i("onActivityResult", "-----------");
-//        if (resultCode == 2 && requestCode == 1) {
-//            isChange = data.getBooleanExtra("isChange", false);
-//            if (isChange) {
-//                isAutoSelect = true;
-//                groupStatePosition = 0;
-//                recreate();
-//            }
-//        }
-
     }
 
     private boolean isConnect = false;//设备是否连接成功
@@ -741,7 +737,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                 }
             }, 2000);
         } else {
-            if (nettyClient != null && !nettyClient.getConnectStatus()) {
+            if (!nettyClient.getConnectStatus()) {
                 nettyClient.connect(isFirst);
                 mHander.sendEmptyMessageDelayed(2, 300);//先发送连接设备命令
 //                mHander.sendEmptyMessageDelayed(6, 1000);//再发送结束命令
@@ -1362,7 +1358,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                         ServerMessage.uploadZCPResult(mContext, itemName, uploadResults);
                     }
                 }
-                Logger.i(TAG+"成绩", uploadResults.toString());
+                Logger.i(TAG + "成绩", uploadResults.toString());
                 //自动打印
                 MiddlePrintUtil.print(roundResults, completeBeans, digital, carryMode);
 
