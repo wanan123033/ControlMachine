@@ -4,10 +4,14 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +39,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -53,11 +58,29 @@ public class UVCCameraActivity extends AppCompatActivity implements PreviewCallb
     TextView tvName2;
 
     private static final String TAG = "UVCCameraActivity";
+    @BindView(R.id.btn_restart)
+    Button btnRestart;
+    //    @BindView(R.id.surface)
+//    SurfaceView surface;
     private UVCCameraProxy mUVCCamera;
-    private int mWidth=640;
-    private int mHeight=480;
+    private int mWidth = 640;
+    private int mHeight = 480;
     private DrawHelper drawHelper;
     private FaceEngine faceEngine;
+    private int afCode;
+
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case 1:
+                    mUVCCamera.startPreview();
+                    break;
+            }
+            return false;
+        }
+    });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +105,7 @@ public class UVCCameraActivity extends AppCompatActivity implements PreviewCallb
      */
     private void initEngine() {
         faceEngine = new FaceEngine();
-        int afCode = faceEngine.init(this, FaceEngine.ASF_DETECT_MODE_VIDEO, FaceEngine.ASF_OP_0_HIGHER_EXT,
+        afCode = faceEngine.init(this, FaceEngine.ASF_DETECT_MODE_VIDEO, FaceEngine.ASF_OP_0_HIGHER_EXT,
                 16, 1, FaceEngine.ASF_FACE_RECOGNITION | FaceEngine.ASF_FACE_DETECT | FaceEngine.ASF_LIVENESS);
         VersionInfo versionInfo = new VersionInfo();
         faceEngine.getVersion(versionInfo);
@@ -104,6 +127,7 @@ public class UVCCameraActivity extends AppCompatActivity implements PreviewCallb
 //                .setProductId(0)
 //                .setVendorId(0);
         mUVCCamera.setPreviewTexture(textureView2);
+//        mUVCCamera.setPreviewSurface(surface);
 
         mUVCCamera.setConnectCallback(new ConnectCallback() {
             @Override
@@ -126,7 +150,7 @@ public class UVCCameraActivity extends AppCompatActivity implements PreviewCallb
             @Override
             public void onCameraOpened() {
                 mUVCCamera.setPreviewSize(640, 480);
-                mUVCCamera.startPreview();
+                mHandler.sendEmptyMessageDelayed(1, 500);
             }
 
             @Override
@@ -141,11 +165,33 @@ public class UVCCameraActivity extends AppCompatActivity implements PreviewCallb
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unInitEngine();
         FaceServer.getInstance().unInit();
+        faceInfoList = null;
+        facePreviewInfoList = null;
+        faceRectView2 = null;
+        faceFeature = null;
+        faceEngine = null;
+        drawHelper = null;
+        mUVCCamera = null;
     }
+
+
+    /**
+     * 销毁引擎
+     */
+    private void unInitEngine() {
+        if (afCode == ErrorInfo.MOK) {
+            afCode = faceEngine.unInit();
+            Log.i(TAG, "unInitEngine: " + afCode);
+        }
+    }
+
 
     private List<FaceInfo> faceInfoList = new ArrayList<>();
     private List<FacePreviewInfo> facePreviewInfoList = new ArrayList<>();
+    private FaceFeature faceFeature;
+
     @Override
     public void onPreviewFrame(byte[] yuv) {
         if (faceRectView2 != null) {
@@ -166,8 +212,7 @@ public class UVCCameraActivity extends AppCompatActivity implements PreviewCallb
                 drawPreviewInfo(facePreviewInfoList);
             }
 
-
-            FaceFeature faceFeature = new FaceFeature();
+            faceFeature = new FaceFeature();
             //特征提取
             code = faceEngine.extractFaceFeature(yuv, mWidth, mHeight, FaceEngine.CP_PAF_NV21, faceInfoList.get(0), faceFeature);
             Log.i("extractFaceFeature", "---" + code);
@@ -187,6 +232,7 @@ public class UVCCameraActivity extends AppCompatActivity implements PreviewCallb
 
     /**
      * 画人脸框
+     *
      * @param facePreviewInfoList
      */
     private void drawPreviewInfo(List<FacePreviewInfo> facePreviewInfoList) {
@@ -203,6 +249,7 @@ public class UVCCameraActivity extends AppCompatActivity implements PreviewCallb
 
     /**
      * 人脸库中比对
+     *
      * @param faceFeature
      */
     private void searchFace(final FaceFeature faceFeature) {
@@ -240,9 +287,9 @@ public class UVCCameraActivity extends AppCompatActivity implements PreviewCallb
                                 }
                             });
 
-                            Intent intent=new Intent();
-                            intent.putExtra("UserName",compareResult.getUserName());
-                            setResult(1,intent);
+                            Intent intent = new Intent();
+                            intent.putExtra("UserName", compareResult.getUserName());
+                            setResult(1, intent);
                             finish();
                         } else {
                             runOnUiThread(new Runnable() {
@@ -270,4 +317,9 @@ public class UVCCameraActivity extends AppCompatActivity implements PreviewCallb
 
     }
 
+    @OnClick(R.id.btn_restart)
+    public void onViewClicked() {
+        mUVCCamera.stopPreview();
+        mHandler.sendEmptyMessageDelayed(1, 1000);
+    }
 }
