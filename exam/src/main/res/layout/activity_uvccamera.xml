@@ -11,6 +11,12 @@
         android:layout_gravity="center"
         android:layout_height="480px" />
 
+    <!--<SurfaceView-->
+        <!--android:id="@+id/surface"-->
+        <!--android:layout_width="640px"-->
+        <!--android:layout_height="480px"-->
+        <!--android:layout_gravity="center"/>-->
+
     <com.ww.fpl.libarcface.widget.FaceRectView
         android:id="@+id/face_rect_view2"
         android:layout_width="640px"
@@ -24,4 +30,11 @@
         android:textSize="18sp"
         android:textColor="@color/green_yellow"
         />
+
+    <Button
+        android:id="@+id/btn_restart"
+        android:layout_width="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:text="重启预览"
+        android:layout_height="wrap_content" />
 </FrameLayout>

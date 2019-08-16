@@ -183,6 +183,7 @@
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.UVCCameraActivity"
+            android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustPan|stateHidden" />
     </application>
 
