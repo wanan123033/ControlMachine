@@ -474,7 +474,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
 
     @Override
     public void onTestingTimerTick(long tick) {
-        tickInUI(DateUtil.caculateFormatTime(tick * 1000, 0));
+        tickInUI(DateUtil.formatTime(tick * 1000, "mm:ss"));
     }
 
     @Override

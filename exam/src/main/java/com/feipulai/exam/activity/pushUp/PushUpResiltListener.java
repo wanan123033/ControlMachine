@@ -50,7 +50,7 @@ public class PushUpResiltListener implements SerialDeviceManager.RS232ResiltList
         this.timeLimit = setting.getTestTime();
         this.hostId = hostId;
         this.setting = setting;
-        executor = Executors.newFixedThreadPool(3);
+        executor = Executors.newCachedThreadPool();
         deviceManager = new SitPushUpManager(SitPushUpManager.PROJECT_CODE_PUSH_UP, setting.getTestType());
         if (setting.getTestType() == PushUpSetting.WIRED_TYPE) {
             SerialDeviceManager.getInstance().setRS232ResiltListener(this);
