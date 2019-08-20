@@ -145,13 +145,31 @@ public class LEDManager {
      * @param hostId      主机号
      */
     public void clearScreen(int machineCode, int hostId) {
+//        if (machineCodesForLed.get(machineCode) == null) {
+//            return;
+//        }
+//        byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xa5, 0x01, (byte)
+//                0x00, 0x00, 0x00};
+//        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+        clearScreen(machineCode, hostId, 1);
+    }
+
+    /**
+     * 清空LED显示屏
+     *
+     * @param machineCode 测试项目机器码
+     * @param hostId      主机号
+     */
+    public void clearScreen(int machineCode, int hostId, int ledId) {
         if (machineCodesForLed.get(machineCode) == null) {
             return;
         }
         byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xa5, 0x01, (byte)
                 0x00, 0x00, 0x00};
+        cmd[4] = (byte) (ledId & 0xff);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
+
 
     public void showString(int hostId, String str, int y, boolean clearScreen, boolean update, int align) {
         showString(MachineCode.machineCode, hostId, 1, str, y, clearScreen, update, align);
@@ -312,11 +330,28 @@ public class LEDManager {
      * @param hostId      主机号
      */
     public void increaseLightness(int machineCode, int hostId) {
+//        if (machineCodesForLed.get(machineCode) == null) {
+//            return;
+//        }
+//        byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xa4, (byte) 0xbb,
+//                (byte) 0x0d};
+//        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+        increaseLightness(machineCode, hostId, 1);
+    }
+
+    /**
+     * 增加亮度
+     *
+     * @param machineCode 测试项目机器码
+     * @param hostId      主机号
+     */
+    public void increaseLightness(int machineCode, int hostId, int ledId) {
         if (machineCodesForLed.get(machineCode) == null) {
             return;
         }
         byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xa4, (byte) 0xbb,
                 (byte) 0x0d};
+        cmd[4] = (byte) (ledId & 0xff);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -327,11 +362,28 @@ public class LEDManager {
      * @param hostId      主机号
      */
     public void decreaseLightness(int machineCode, int hostId) {
+//        if (machineCodesForLed.get(machineCode) == null) {
+//            return;
+//        }
+//        byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xa4, (byte) 0xaa,
+//                (byte) 0x0d};
+//        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+        decreaseLightness(machineCode, hostId, 1);
+    }
+
+    /**
+     * 减少亮度
+     *
+     * @param machineCode 测试项目
+     * @param hostId      主机号
+     */
+    public void decreaseLightness(int machineCode, int hostId, int ledId) {
         if (machineCodesForLed.get(machineCode) == null) {
             return;
         }
         byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xa4, (byte) 0xaa,
                 (byte) 0x0d};
+        cmd[4] = (byte) (ledId & 0xff);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 

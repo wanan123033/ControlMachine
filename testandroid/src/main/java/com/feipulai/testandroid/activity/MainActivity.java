@@ -7,13 +7,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -195,7 +193,6 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     mediaPlayer.pause();
                 }
-
                 break;
             case R.id.btn_volAdd:
                 audioMngHelper.addVoiceSystem();

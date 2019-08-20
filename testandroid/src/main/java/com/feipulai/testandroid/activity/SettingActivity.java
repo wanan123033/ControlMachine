@@ -26,7 +26,7 @@ public class SettingActivity extends AppCompatActivity implements RadioManager.O
     private RadioManager radioManager;
     private String versionCode = "";
     private LEDManager mLEDManager;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +38,7 @@ public class SettingActivity extends AppCompatActivity implements RadioManager.O
         version = findViewById(R.id.tv_version);
         frequency = findViewById(R.id.tv_frequency);
         TextView content = findViewById(R.id.tv_content);
-        
+
         mLEDManager = new LEDManager();
         MachineCode.machineCode = 8 ;
     }
