@@ -3,6 +3,7 @@ package com.feipulai.exam.activity.person;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,13 +12,26 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.TextureView;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.arcsoft.face.AgeInfo;
+import com.arcsoft.face.ErrorInfo;
+import com.arcsoft.face.FaceEngine;
+import com.arcsoft.face.FaceFeature;
+import com.arcsoft.face.FaceInfo;
+import com.arcsoft.face.GenderInfo;
+import com.arcsoft.face.LivenessInfo;
+import com.arcsoft.face.VersionInfo;
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -42,7 +56,16 @@ import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.service.UploadService;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.StuSearchEditText;
+import com.lgh.uvccamera.UVCCameraProxy;
+import com.lgh.uvccamera.callback.ConnectCallback;
+import com.lgh.uvccamera.callback.PreviewCallback;
 import com.orhanobut.logger.Logger;
+import com.ww.fpl.libarcface.faceserver.CompareResult;
+import com.ww.fpl.libarcface.faceserver.FaceServer;
+import com.ww.fpl.libarcface.model.DrawInfo;
+import com.ww.fpl.libarcface.model.FacePreviewInfo;
+import com.ww.fpl.libarcface.util.DrawHelper;
+import com.ww.fpl.libarcface.widget.FaceRectView;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
@@ -53,11 +76,19 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * 个人测试基类
  */
-public abstract class BasePersonTestActivity extends BaseCheckActivity {
+public abstract class BasePersonTestActivity extends BaseCheckActivity implements PreviewCallback {
+    private static final String TAG = "BasePersonTestActivity";
     @BindView(R.id.et_input_text)
     StuSearchEditText etInputText;
     @BindView(R.id.btn_scan)
@@ -92,6 +123,14 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     LinearLayout viewSkip;
     @BindView(R.id.tv_device_pair)
     public TextView tvDevicePair;
+    @BindView(R.id.textureView2)
+    TextureView textureView2;
+    @BindView(R.id.face_rect_view2)
+    FaceRectView faceRectView2;
+    @BindView(R.id.frame_camera)
+    FrameLayout frameCamera;
+    @BindView(R.id.rl)
+    RelativeLayout rl;
     //    @BindView(R.id.txt_stu_fault)
 //    TextView txtStuFault;
     //成绩
@@ -115,6 +154,13 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     private int testType = 0;//0自动 1手动
     private boolean isFault;
 
+    private UVCCameraProxy mUVCCamera;
+    private int mWidth = 640;
+    private int mHeight = 480;
+    private DrawHelper drawHelper;
+    private FaceEngine faceEngine;
+    private int afCode;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_base_person_test;
@@ -130,7 +176,207 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             startService(serverIntent);
         }
 
+        initUVCCamera();
+
+        //本地人脸库初始化
+        FaceServer.getInstance().init(this);
+
+        drawHelper = new DrawHelper(mWidth, mHeight, mWidth, mHeight, 0
+                , 1, true, false, false);
+        initEngine();
     }
+
+    /**
+     * 初始化引擎
+     */
+    private void initEngine() {
+        faceEngine = new FaceEngine();
+        afCode = faceEngine.init(this, FaceEngine.ASF_DETECT_MODE_VIDEO, FaceEngine.ASF_OP_0_HIGHER_EXT,
+                16, 1, FaceEngine.ASF_FACE_RECOGNITION | FaceEngine.ASF_FACE_DETECT | FaceEngine.ASF_LIVENESS);
+        VersionInfo versionInfo = new VersionInfo();
+        faceEngine.getVersion(versionInfo);
+
+        if (afCode != ErrorInfo.MOK) {
+            Toast.makeText(this, getString(R.string.init_failed, afCode), Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private boolean isCamera=false;
+    private void initUVCCamera() {
+        mUVCCamera = new UVCCameraProxy(this);
+        // 已有默认配置，不需要可以不设置
+//        mUVCCamera.getConfig()
+//                .isDebug(true)
+//                .setPicturePath(PicturePath.APPCACHE)
+//                .setDirName("uvccamera")
+//                .setProductId(0)
+//                .setVendorId(0);
+        mUVCCamera.setPreviewTexture(textureView2);
+//        mUVCCamera.setPreviewSurface(surface);
+
+        mUVCCamera.setConnectCallback(new ConnectCallback() {
+            @Override
+            public void onAttached(UsbDevice usbDevice) {
+                mUVCCamera.requestPermission(usbDevice);
+            }
+
+            @Override
+            public void onGranted(UsbDevice usbDevice, boolean granted) {
+                if (granted) {
+                    Log.i(TAG,"-------------onGranted");
+                    mUVCCamera.connectDevice(usbDevice);
+                }
+            }
+
+            @Override
+            public void onConnected(UsbDevice usbDevice) {
+                Log.i(TAG,"----------------onConnected");
+                mUVCCamera.openCamera();
+                isCamera=true;
+            }
+
+            @Override
+            public void onCameraOpened() {
+                Log.i(TAG,"-----------------onCameraOpened");
+                mUVCCamera.setPreviewSize(640, 480);
+            }
+
+            @Override
+            public void onDetached(UsbDevice usbDevice) {
+                Log.i(TAG,"-----------------onDetached");
+                mUVCCamera.closeCamera();
+            }
+        });
+
+        mUVCCamera.setPreviewCallback(this);
+    }
+
+    private List<FaceInfo> faceInfoList = new ArrayList<>();
+    private List<FacePreviewInfo> facePreviewInfoList = new ArrayList<>();
+    private FaceFeature faceFeature;
+
+    @Override
+    public void onPreviewFrame(byte[] yuv) {
+        if (faceRectView2 != null) {
+            faceRectView2.clearFaceInfo();
+        }
+        Log.d(TAG, "onPreviewResult---------: " + yuv.length);
+        faceInfoList.clear();
+        int code = faceEngine.detectFaces(yuv, mWidth, mHeight, FaceEngine.CP_PAF_NV21, faceInfoList);
+        Log.i("faceInfoList", faceInfoList.toString());
+
+        if (code == ErrorInfo.MOK && faceInfoList.size() > 0) {
+            facePreviewInfoList.clear();
+            for (int i = 0; i < faceInfoList.size(); i++) {
+                facePreviewInfoList.add(new FacePreviewInfo(faceInfoList.get(i), null, 1));
+            }
+
+            if (facePreviewInfoList != null && faceRectView2 != null && drawHelper != null) {
+                drawPreviewInfo(facePreviewInfoList);
+            }
+
+            faceFeature = new FaceFeature();
+            //特征提取
+            code = faceEngine.extractFaceFeature(yuv, mWidth, mHeight, FaceEngine.CP_PAF_NV21, faceInfoList.get(0), faceFeature);
+            Log.i("extractFaceFeature", "---" + code);
+            if (code == ErrorInfo.MOK) {
+                searchFace(faceFeature);
+            }
+        } else {
+            Log.i("detectFaces", "检测人脸失败");
+        }
+    }
+
+    /**
+     * 画人脸框
+     *
+     * @param facePreviewInfoList
+     */
+    private void drawPreviewInfo(List<FacePreviewInfo> facePreviewInfoList) {
+        List<DrawInfo> drawInfoList = new ArrayList<>();
+        for (int i = 0; i < facePreviewInfoList.size(); i++) {
+            drawInfoList.add(new DrawInfo(drawHelper.adjustRect(facePreviewInfoList.get(i).getFaceInfo().getRect()), GenderInfo.UNKNOWN, AgeInfo.UNKNOWN_AGE,
+                    LivenessInfo.UNKNOWN,
+                    "1"));
+        }
+        drawHelper.draw(faceRectView2, drawInfoList);
+    }
+
+    private float SIMILAR_THRESHOLD = 0.82f;
+
+    /**
+     * 人脸库中比对
+     *
+     * @param faceFeature
+     */
+    private void searchFace(final FaceFeature faceFeature) {
+        Observable
+                .create(new ObservableOnSubscribe<CompareResult>() {
+                    @Override
+                    public void subscribe(ObservableEmitter<CompareResult> emitter) {
+                        CompareResult compareResult = FaceServer.getInstance().getTopOfFaceLib(faceFeature);
+                        if (compareResult == null) {
+                            emitter.onError(null);
+                        } else {
+                            emitter.onNext(compareResult);
+                        }
+                    }
+                })
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<CompareResult>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(final CompareResult compareResult) {
+                        if (compareResult == null || compareResult.getUserName() == null) {
+                            return;
+                        }
+                        drawHelper.draw(null, null);
+                        mUVCCamera.stopPreview();
+                        if (compareResult.getSimilar() > SIMILAR_THRESHOLD) {
+                            Student student = DBManager.getInstance().queryStudentByCode(compareResult.getUserName());
+                            onCheckIn(student);
+                            Log.e("compareResult", "++++++++++++" + compareResult.getUserName() + "-" + compareResult.getSimilar());
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    frameCamera.setVisibility(View.GONE);
+                                    rl.setVisibility(View.VISIBLE);
+                                }
+                            });
+                        } else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ToastUtils.showShort("查无此人");
+                                    frameCamera.setVisibility(View.GONE);
+                                    rl.setVisibility(View.VISIBLE);
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
+    }
+
 
     @Nullable
     @Override
@@ -166,7 +412,14 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     }
 
     private void gotoUVCFaceCamera() {
-        startActivityForResult(new Intent(this, UVCCameraActivity.class), 101);
+//        startActivityForResult(new Intent(this, UVCCameraActivity.class), 101);
+//        if (isCamera) {
+            frameCamera.setVisibility(View.VISIBLE);
+            rl.setVisibility(View.GONE);
+            mUVCCamera.startPreview();
+//        } else {
+//            ToastUtils.showShort("摄像头未开启");
+//        }
     }
 
     @Override
@@ -419,8 +672,25 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "菲普莱体育", 3, 3, false, true);
             mLEDManager = null;
         }
+        unInitEngine();
+        FaceServer.getInstance().unInit();
+        faceInfoList = null;
+        facePreviewInfoList = null;
+        faceRectView2 = null;
+        faceFeature = null;
+        faceEngine = null;
+        drawHelper = null;
+        mUVCCamera = null;
+    }
 
 
+    /**
+     * 销毁引擎
+     */
+    private void unInitEngine() {
+        if (afCode == ErrorInfo.MOK) {
+            afCode = faceEngine.unInit();
+        }
     }
 
     /**
@@ -802,7 +1072,6 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         PrinterManager.getInstance().print("\n");
 
     }
-
 
     private static class LedHandler extends Handler {
 
