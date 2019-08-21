@@ -526,7 +526,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
 
     @Override
     public void onTestingTimerTick(long tick) {
-        tickInUI(DateUtil.caculateFormatTime(tick * 1000, 0));
+        tickInUI(DateUtil.formatTime(tick * 1000, "mm:ss"));
     }
 
     @Override
@@ -610,13 +610,17 @@ public class PushUpIndividualActivity extends BaseTitleActivity
         if (linker != null) {
             linker.cancelPair();
         }
+        facade.stopTotally();
         facade = null;
         facade = new PushUpResiltListener(SettingHelper.getSystemSetting().getHostId(), setting, this);
+
     }
 
     public void changeBadDevice() {
         if (linker == null) {
             linker = new SitPullLinker(TestConfigs.sCurrentItem.getMachineCode(), TARGET_FREQUENCY, this);
+            facade.setLinker(linker);
+        }else{
             facade.setLinker(linker);
         }
         facade.stopTotally();
@@ -636,6 +640,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
         changBadDialog.btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                cancelChangeBad();
                 changBadDialog.dismiss();
             }
         });

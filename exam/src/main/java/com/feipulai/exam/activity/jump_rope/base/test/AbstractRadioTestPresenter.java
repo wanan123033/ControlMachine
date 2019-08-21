@@ -279,7 +279,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
 
     @Override
     public void onTestingTimerTick(final long tick) {
-        view.tickInUI(DateUtil.caculateFormatTime(tick * 1000, 0));
+        view.tickInUI(DateUtil.formatTime(tick * 1000, "mm:ss"));
         if (tick <= 5) {
             view.enableStopRestartTest(false);
         } else {
