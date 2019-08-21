@@ -1,6 +1,5 @@
 package com.feipulai.exam.netUtils;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
 
@@ -15,6 +14,7 @@ import java.net.UnknownHostException;
 
 import javax.net.ssl.SSLHandshakeException;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import io.reactivex.observers.DisposableObserver;
 import retrofit2.HttpException;
 
@@ -33,8 +33,7 @@ public class RequestSub<T> extends DisposableObserver<HttpResult<T>>
     private OnResultListener mOnResultListener;
 
     private Context context;
-    private ProgressDialog progressDialog;
-
+    private SweetAlertDialog alertDialog;
 
     /**
      * @param mOnResultListener 成功回调监听
@@ -51,9 +50,9 @@ public class RequestSub<T> extends DisposableObserver<HttpResult<T>>
     public RequestSub(OnResultListener mOnResultListener, Context context) {
         this.mOnResultListener = mOnResultListener;
         this.context = context;
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("正在加载中，请稍等......");
-        progressDialog.setCanceledOnTouchOutside(false);
+        alertDialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
+        alertDialog.setTitle("正在加载中，请稍等......");
+        alertDialog.setCanceledOnTouchOutside(false);
     }
 
 
@@ -65,22 +64,22 @@ public class RequestSub<T> extends DisposableObserver<HttpResult<T>>
     public RequestSub(OnResultListener mOnResultListener, Context context, boolean showProgress) {
         this.mOnResultListener = mOnResultListener;
         this.context = context;
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setTitle("正在连接中...");
+        alertDialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
+        alertDialog.setTitle("正在连接中...");
         this.showProgress = showProgress;
     }
 
 
     private void showProgressDialog() {
-        if (showProgress && null != progressDialog) {
-            progressDialog.show();
+        if (showProgress && null != alertDialog) {
+            alertDialog.show();
         }
     }
 
 
     private void dismissProgressDialog() {
-        if (showProgress && null != progressDialog) {
-            progressDialog.dismiss();
+        if (showProgress && null != alertDialog) {
+            alertDialog.dismiss();
         }
     }
 
@@ -101,7 +100,7 @@ public class RequestSub<T> extends DisposableObserver<HttpResult<T>>
     @Override
     public void onComplete() {
         dismissProgressDialog();
-        progressDialog = null;
+        alertDialog = null;
     }
 
 
@@ -177,7 +176,7 @@ public class RequestSub<T> extends DisposableObserver<HttpResult<T>>
             Log.e("RequestSub", "error:" + e.getMessage());
 //            mOnResultListener.onFault(404, "error:" + e.getMessage());
             dismissProgressDialog();
-            progressDialog = null;
+            alertDialog = null;
 
         }
 
@@ -216,8 +215,8 @@ public class RequestSub<T> extends DisposableObserver<HttpResult<T>>
      */
     @Override
     public void onCancelProgress() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
+        if (alertDialog != null && alertDialog.isShowing()) {
+            alertDialog.dismiss();
         }
         if (!this.isDisposed()) {
             this.dispose();

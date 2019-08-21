@@ -1,6 +1,5 @@
 package com.feipulai.exam.activity.RadioTimer;
 
-import android.app.ProgressDialog;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -32,6 +31,7 @@ import com.feipulai.exam.config.TestConfigs;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class RunTimerSettingActivity extends BaseTitleActivity implements AdapterView.OnItemSelectedListener, RadioGroup.OnCheckedChangeListener, CompoundButton.OnCheckedChangeListener, TextWatcher, RunTimerImpl.RunTimerListener {
 
@@ -65,7 +65,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     RadioButton rbTenSecond;
     private RunTimerSetting runTimerSetting;
     private int intercept_point;
-    private ProgressDialog mProgressDialog;
+    private SweetAlertDialog alertDialog;
     private SerialDeviceManager deviceManager;
 
     @Override
@@ -316,7 +316,12 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         switch (view.getId()) {
             case R.id.btn_self_check:
                 promote = 0;
-                mProgressDialog = ProgressDialog.show(this, "", "终端自检中...", true);
+//                mProgressDialog = ProgressDialog.show(this, "", "终端自检中...", true);
+                alertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+                alertDialog.setTitleText("终端自检中...");
+                alertDialog.setCancelable(false);
+                alertDialog.show();
+
                 int hostId = SettingHelper.getSystemSetting().getHostId();
                 deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x02, (byte) hostId)));//主机号
                 int runNum = Integer.parseInt(runTimerSetting.getRunNum());
@@ -405,8 +410,8 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
                     if (isDisconnect) {
                         toastSpeak("设备未连接");
                         //设置当前设置为不可用断开状态
-                        if (mProgressDialog.isShowing()) {
-                            mProgressDialog.dismiss();
+                        if (alertDialog.isShowing()) {
+                            alertDialog.dismiss();
                         }
                     }
                     break;
@@ -420,8 +425,8 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
                     }
                     break;
             }
-            if (!isDialogShow && mProgressDialog != null && mProgressDialog.isShowing()) {
-                mProgressDialog.dismiss();
+            if (!isDialogShow && alertDialog != null && alertDialog.isShowing()) {
+                alertDialog.dismiss();
             }
             return false;
         }

@@ -68,6 +68,41 @@
 
 
         </RelativeLayout>
+
+        <!--<Button-->
+            <!--android:id="@+id/btn_led_1"-->
+            <!--android:layout_width="306dp"-->
+            <!--android:layout_height="42dp"-->
+            <!--android:layout_marginTop="@dimen/dp_10"-->
+            <!--android:background="@drawable/btn_click_bg_selected"-->
+            <!--android:paddingLeft="@dimen/dp_10"-->
+            <!--android:paddingRight="@dimen/dp_10"-->
+            <!--android:text="外接屏幕连接"-->
+            <!--android:textColor="@color/white"-->
+            <!--android:textSize="20sp" />-->
+
+        <!--<Button-->
+            <!--android:id="@+id/btn_led_2"-->
+            <!--android:layout_width="306dp"-->
+            <!--android:layout_height="42dp"-->
+            <!--android:layout_marginTop="@dimen/dp_10"-->
+            <!--android:background="@drawable/btn_click_bg_selected"-->
+            <!--android:paddingLeft="@dimen/dp_10"-->
+            <!--android:paddingRight="@dimen/dp_10"-->
+            <!--android:text="外接屏幕连接"-->
+            <!--android:textColor="@color/white"-->
+            <!--android:textSize="20sp" />-->
+        <!--<Button-->
+            <!--android:id="@+id/btn_led_3"-->
+            <!--android:layout_width="306dp"-->
+            <!--android:layout_height="42dp"-->
+            <!--android:layout_marginTop="@dimen/dp_10"-->
+            <!--android:background="@drawable/btn_click_bg_selected"-->
+            <!--android:paddingLeft="@dimen/dp_10"-->
+            <!--android:paddingRight="@dimen/dp_10"-->
+            <!--android:text="外接屏幕清"-->
+            <!--android:textColor="@color/white"-->
+            <!--android:textSize="20sp" />-->
     </LinearLayout>
 
 

@@ -16,7 +16,7 @@ import com.feipulai.exam.config.TestConfigs;
 import butterknife.OnClick;
 
 /**
- *  ledManager
+ * ledManager
  */
 public class LEDSettingActivity extends BaseTitleActivity {
 
@@ -67,7 +67,7 @@ public class LEDSettingActivity extends BaseTitleActivity {
                     runLEDManager.link(hostId);
                     runLEDManager.resetLEDScreen(hostId);
                 } else {
-                    mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), hostId);
+                    mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), hostId, 1);
                     String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
                             + " " + hostId;
                     mLEDManager.showString(hostId, title, 0, true, false, LEDManager.MIDDLE);
@@ -100,6 +100,29 @@ public class LEDSettingActivity extends BaseTitleActivity {
                 break;
         }
     }
+
+//    @OnClick({R.id.btn_led_1, R.id.btn_led_2, R.id.btn_led_3})
+//    public void setLedConnect(View view) {
+//        switch (view.getId()) {
+//            case R.id.btn_led_1:
+//                mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), hostId, 1);
+//                String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
+//                        + " " + hostId;
+//                mLEDManager.showString(hostId, title, 0, true, false, LEDManager.MIDDLE);
+//                mLEDManager.showString(hostId, "菲普莱体育1", 3, 3, false, true);
+//                break;
+//            case R.id.btn_led_2:
+//                mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), hostId, 2);
+//                title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
+//                        + " " + hostId;
+//                mLEDManager.ShowSubsetString(hostId, 2, title, 0, true, false, LEDManager.MIDDLE);
+//                mLEDManager.ShowSubsetString(hostId, 2, "菲普莱体育2", 3, 3, false, true);
+//                break;
+//            case R.id.btn_led_3:
+//                mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), hostId, 2);
+//                break;
+//        }
+//    }
 
     @Override
     protected void onDestroy() {

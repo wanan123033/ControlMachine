@@ -1,7 +1,6 @@
 package com.feipulai.exam.activity.jump_rope.base.test;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,6 +30,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public abstract class AbstractRadioTestActivity<Setting>
         extends BaseTitleActivity
@@ -75,7 +75,7 @@ public abstract class AbstractRadioTestActivity<Setting>
 
     protected AbstractRadioTestPresenter presenter;
     private MyHandler mHandler = new MyHandler(this);
-    private ProgressDialog mProgressDialog;
+    private SweetAlertDialog sweetAlertDialog;
     private RTResultAdapter mAdapter;
 
     @Override
@@ -84,7 +84,7 @@ public abstract class AbstractRadioTestActivity<Setting>
         presenter = getPresenter();
         presenter.start();
     }
-    
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_radio_test;
@@ -100,18 +100,18 @@ public abstract class AbstractRadioTestActivity<Setting>
 
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        String title =  TestConfigs.machineNameMap.get(machineCode)
+        String title = TestConfigs.machineNameMap.get(machineCode)
                 + SettingHelper.getSystemSetting().getHostId()
                 + "号机-"
                 + SettingHelper.getSystemSetting().getTestName();
         return builder;
     }
-    
+
     @Override
     protected void initData() {
         ButterKnife.bind(this);
     }
-    
+
     protected abstract AbstractRadioTestPresenter<Setting> getPresenter();
 
     @Override
@@ -258,7 +258,7 @@ public abstract class AbstractRadioTestActivity<Setting>
     public void quitTest() {
         finish();
     }
-    
+
     @Override
     public void finish() {
         RadioManager.getInstance().setOnRadioArrived(null);
@@ -271,7 +271,7 @@ public abstract class AbstractRadioTestActivity<Setting>
         Intent intent = new Intent(this, RadioResultActivity.class);
         startActivityForResult(intent, 1);
     }
-    
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (resultCode) {
@@ -281,7 +281,7 @@ public abstract class AbstractRadioTestActivity<Setting>
                 break;
         }
     }
-    
+
     @Override
     public void tickInUI(String text) {
         Message msg = Message.obtain();
@@ -297,12 +297,12 @@ public abstract class AbstractRadioTestActivity<Setting>
         msg.arg1 = piv;
         mHandler.sendMessage(msg);
     }
-    
+
     @Override
     public void enableFinishTest(boolean enable) {
         btnFinishTest.setVisibility(enable ? View.VISIBLE : View.GONE);
     }
-    
+
     @Override
     protected void handleMessage(Message msg) {
         switch (msg.what) {
@@ -320,17 +320,24 @@ public abstract class AbstractRadioTestActivity<Setting>
                 break;
 
             case SHOW_WAIT_DIALOG:
-                mProgressDialog = new ProgressDialog(this);
-                mProgressDialog.setTitle("获取最终成绩中");
-                mProgressDialog.setCancelable(false);
-                mProgressDialog.setCanceledOnTouchOutside(false);
-                mProgressDialog.setMessage("获取设备成绩中...");
-                mProgressDialog.show();
+//                mProgressDialog = new ProgressDialog(this);
+//                mProgressDialog.setTitle("获取最终成绩中");
+//                mProgressDialog.setCancelable(false);
+//                mProgressDialog.setCanceledOnTouchOutside(false);
+//                mProgressDialog.setMessage("获取设备成绩中...");
+//                mProgressDialog.show();
+
+                sweetAlertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+                sweetAlertDialog.setTitle("获取最终成绩中");
+                sweetAlertDialog.setContentText("获取设备成绩中...");
+                sweetAlertDialog.setCancelable(false);
+                sweetAlertDialog.setCanceledOnTouchOutside(false);
+                sweetAlertDialog.show();
                 break;
 
             case DISMISS_WAIT_DIALOG:
-                if (mProgressDialog != null) {
-                    mProgressDialog.dismiss();
+                if (sweetAlertDialog != null) {
+                    sweetAlertDialog.dismiss();
                 }
                 break;
 
@@ -341,12 +348,12 @@ public abstract class AbstractRadioTestActivity<Setting>
                 break;
         }
     }
-    
+
     @Override
     public void enableChangeBad(boolean enable) {
         btnChangeBad.setVisibility(enable ? View.VISIBLE : View.GONE);
     }
-    
+
     private void setEnableState(boolean confirmResults, boolean finishTest,
                                 boolean changeBad, boolean startTest, boolean stopUsing,
                                 boolean quitTest, boolean restart) {
@@ -358,25 +365,25 @@ public abstract class AbstractRadioTestActivity<Setting>
         btnQuitTest.setVisibility(quitTest ? View.VISIBLE : View.GONE);
         btnRestart.setVisibility(restart ? View.VISIBLE : View.GONE);
     }
-	
-	@Override
-	public void onBackPressed() {
-		toastSpeak("测试中,返回键被禁用");
-	}
-    
-	@Override
-	public void showDisconnectForConfirmResults() {
-		new AlertDialog.Builder(this).setTitle("存在考生设备状态为断开连接,确定保存成绩？")
-				.setIcon(android.R.drawable.ic_dialog_info)
-				.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						presenter.saveResults();
-						presenter.dispatchDevices();
-					}
-				})
-				.setNegativeButton("返回", null).show();
-	}
+
+    @Override
+    public void onBackPressed() {
+        toastSpeak("测试中,返回键被禁用");
+    }
+
+    @Override
+    public void showDisconnectForConfirmResults() {
+        new AlertDialog.Builder(this).setTitle("存在考生设备状态为断开连接,确定保存成绩？")
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.saveResults();
+                        presenter.dispatchDevices();
+                    }
+                })
+                .setNegativeButton("返回", null).show();
+    }
 
     private void showQuitDialog() {
         new AlertDialog.Builder(this).setTitle("确定退出当前测试吗？")

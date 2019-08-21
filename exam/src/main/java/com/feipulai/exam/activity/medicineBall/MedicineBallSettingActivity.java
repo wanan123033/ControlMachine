@@ -1,6 +1,5 @@
 package com.feipulai.exam.activity.medicineBall;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -35,6 +34,7 @@ import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class MedicineBallSettingActivity extends BaseActivity implements AdapterView.OnItemSelectedListener,
         RadioGroup.OnCheckedChangeListener, CompoundButton.OnCheckedChangeListener {
@@ -55,7 +55,7 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
     private MedicineBallSetting medicineBallSetting;
     @BindView(R.id.et_begin_point)
     EditText etBeginPoint;
-    private ProgressDialog mProgressDialog;
+    private SweetAlertDialog alertDialog;
     private SerialHandler mHandler = new SerialHandler(this);
     //3秒内检设备是否可用
     private volatile boolean isDisconnect = true;
@@ -227,7 +227,10 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
 
 
     public void checkDevice(View view) {
-        mProgressDialog = ProgressDialog.show(this, "", "终端自检中...", true);
+        alertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+        alertDialog.setTitleText("终端自检中...");
+        alertDialog.setCancelable(false);
+        alertDialog.show();
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
         //3秒自检
         mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 5000);
@@ -262,8 +265,8 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
                         if (activity.isDisconnect) {
                             activity.toastSpeak("设备未连接");
                             //设置当前设置为不可用断开状态
-                            if (activity.mProgressDialog.isShowing()) {
-                                activity.mProgressDialog.dismiss();
+                            if (activity.alertDialog.isShowing()) {
+                                activity.alertDialog.dismiss();
                             }
                         }
                         break;
@@ -274,8 +277,8 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
                         activity.toastSpeak("设备连接成功");
                         break;
                 }
-                if (!isDialogShow && activity.mProgressDialog != null && activity.mProgressDialog.isShowing()) {
-                    activity.mProgressDialog.dismiss();
+                if (!isDialogShow && activity.alertDialog != null && activity.alertDialog.isShowing()) {
+                    activity.alertDialog.dismiss();
                 }
 
             }

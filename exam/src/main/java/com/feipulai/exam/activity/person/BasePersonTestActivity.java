@@ -40,7 +40,6 @@ import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
-import com.feipulai.exam.activity.UVCCameraActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -76,6 +75,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -202,7 +202,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity implement
 
     }
 
-    private boolean isCamera=false;
+    private boolean isCamera = false;
+
     private void initUVCCamera() {
         mUVCCamera = new UVCCameraProxy(this);
         // 已有默认配置，不需要可以不设置
@@ -224,27 +225,27 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity implement
             @Override
             public void onGranted(UsbDevice usbDevice, boolean granted) {
                 if (granted) {
-                    Log.i(TAG,"-------------onGranted");
+                    Log.i(TAG, "-------------onGranted");
                     mUVCCamera.connectDevice(usbDevice);
                 }
             }
 
             @Override
             public void onConnected(UsbDevice usbDevice) {
-                Log.i(TAG,"----------------onConnected");
+                Log.i(TAG, "----------------onConnected");
                 mUVCCamera.openCamera();
-                isCamera=true;
+                isCamera = true;
             }
 
             @Override
             public void onCameraOpened() {
-                Log.i(TAG,"-----------------onCameraOpened");
+                Log.i(TAG, "-----------------onCameraOpened");
                 mUVCCamera.setPreviewSize(640, 480);
             }
 
             @Override
             public void onDetached(UsbDevice usbDevice) {
-                Log.i(TAG,"-----------------onDetached");
+                Log.i(TAG, "-----------------onDetached");
                 mUVCCamera.closeCamera();
             }
         });
@@ -413,13 +414,13 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity implement
 
     private void gotoUVCFaceCamera() {
 //        startActivityForResult(new Intent(this, UVCCameraActivity.class), 101);
-//        if (isCamera) {
+        if (isCamera) {
             frameCamera.setVisibility(View.VISIBLE);
             rl.setVisibility(View.GONE);
             mUVCCamera.startPreview();
-//        } else {
-//            ToastUtils.showShort("摄像头未开启");
-//        }
+        } else {
+            ToastUtils.showShort("摄像头未开启");
+        }
     }
 
     @Override
@@ -760,18 +761,28 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity implement
     }
 
     private void stuSkipDialog() {
-        new AlertDialog.Builder(this).setMessage("是否跳过" + pair.getStudent().getStudentName() + "考生测试")
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Logger.i("stuSkip:" + pair.getStudent().toString());
-                        //测试结束学生清除 ，设备设置空闲状态
-                        roundNo = 1;
-                        clearHandler.sendEmptyMessageDelayed(0, 0);
-                        stuSkip();
-                        mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
-                    }
-                }).setNegativeButton("取消", null).show();
+        new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
+                .setTitleText("是否跳过" + pair.getStudent().getStudentName() + "考生测试")
+                .setConfirmText("确认").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                Logger.i("stuSkip:" + pair.getStudent().toString());
+                //测试结束学生清除 ，设备设置空闲状态
+                roundNo = 1;
+                clearHandler.sendEmptyMessageDelayed(0, 0);
+                stuSkip();
+                mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
+
+            }
+        }).setCancelText("取消").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+
+            }
+        }).show();
+
     }
 
     /**
@@ -849,24 +860,44 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity implement
      * 展示判罚
      */
     private void showPenalize() {
-        new AlertDialog.Builder(this).setMessage("确认成绩")
-                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        if (doResult()) return;
 
-                    }
-                }).setNegativeButton("犯规", new DialogInterface.OnClickListener() {
+
+        SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
+        alertDialog.setTitleText("确认成绩");
+        alertDialog.setCancelable(false);
+        alertDialog.setConfirmText("确认").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                doResult();
+            }
+        }).setCancelText("犯规").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
                 pair.setResultState(RoundResult.RESULT_STATE_FOUL);
                 updateResult(pair);
-                if (doResult()) return;
-
+                doResult();
             }
         }).show();
+//        new AlertDialog.Builder(this).setMessage("确认成绩")
+//                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.dismiss();
+//                        if (doResult()) return;
+//
+//                    }
+//                }).setNegativeButton("犯规", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.dismiss();
+//                pair.setResultState(RoundResult.RESULT_STATE_FOUL);
+//                updateResult(pair);
+//                if (doResult()) return;
+//
+//            }
+//        }).show();
     }
 
     /**

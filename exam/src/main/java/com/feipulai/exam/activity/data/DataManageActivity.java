@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +19,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.arcsoft.face.FaceEngine;
 import com.arcsoft.face.util.ImageUtils;
 import com.feipulai.common.db.ClearDataProcess;
 import com.feipulai.common.dbutils.BackupManager;
@@ -78,6 +76,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import butterknife.BindView;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class DataManageActivity
         extends BaseTitleActivity
@@ -273,6 +272,8 @@ public class DataManageActivity
                         break;
 
                     case 4://头像下载
+                        ToastUtils.showShort("功能未开放，敬请期待");
+                        break;
                     case 3://头像导入
                         intent.setClass(DataManageActivity.this, FileSelectActivity.class);
                         intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
@@ -280,7 +281,21 @@ public class DataManageActivity
                     case 5://删除头像
                         //TODO 测试使用
 //                        DBManager.getInstance().roundResultClear();
-                        ToastUtils.showShort("功能未开放，敬请期待");
+
+                        new SweetAlertDialog(DataManageActivity.this, SweetAlertDialog.CUSTOM_IMAGE_TYPE).setTitleText("是否进行删除头像")
+                                .setConfirmText("确认").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismissWithAnimation();
+                                FaceServer.getInstance().clearAllFaces(DataManageActivity.this);
+                            }
+                        }).setCancelText("取消").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismissWithAnimation();
+
+                            }
+                        }).show();
                         break;
 
                 }
@@ -452,7 +467,7 @@ public class DataManageActivity
                     boolean success = FaceServer.getInstance().registerBgr24(DataManageActivity.this, bgr24, bitmap.getWidth(), bitmap.getHeight(),
                             jpgFile.getName().substring(0, jpgFile.getName().lastIndexOf(".")));
                     if (!success) {
-                        Log.e("faceRegister","人脸注册失败"+jpgFile.getName().substring(0, jpgFile.getName().lastIndexOf(".")));
+                        Log.e("faceRegister", "人脸注册失败" + jpgFile.getName().substring(0, jpgFile.getName().lastIndexOf(".")));
 //                        File failedFile = new File(file + File.separator + jpgFile.getName());
 //                        if (!failedFile.getParentFile().exists()) {
 //                            failedFile.getParentFile().mkdirs();

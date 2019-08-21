@@ -21,6 +21,7 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.db.MachineItemCodeUtil;
 import com.feipulai.exam.entity.Item;
+import com.feipulai.exam.entity.MachineResult;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.StudentItem;
 
@@ -67,7 +68,8 @@ public class SubItemsSelectActivity extends BaseTitleActivity {
                 TestConfigs.sCurrentItem = itemList.get(position);
                 List<RoundResult> roundResults = DBManager.getInstance().queryResultsByItemCodeDefault(machineCode);
                 List<StudentItem> studentItems = DBManager.getInstance().queryStuItemsByItemCodeDefault(machineCode);
-                MachineItemCodeUtil.fillDefaultItemCode(studentItems, roundResults, itemList.get(position).getItemCode());
+                List<MachineResult> machineResults = DBManager.getInstance().queryMachineResultByItemCodeDefault(machineCode);
+                MachineItemCodeUtil.fillDefaultItemCode(studentItems, roundResults, machineResults, itemList.get(position).getItemCode());
                 SharedPrefsUtil.putValue(SubItemsSelectActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, machineCode);
                 SharedPrefsUtil.putValue(SubItemsSelectActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, itemList.get(position).getItemCode());
                 SettingHelper.getSystemSetting().setHostId(1);

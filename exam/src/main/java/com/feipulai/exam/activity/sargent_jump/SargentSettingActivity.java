@@ -1,6 +1,5 @@
 package com.feipulai.exam.activity.sargent_jump;
 
-import android.app.ProgressDialog;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -43,6 +42,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class SargentSettingActivity extends BaseTitleActivity implements CompoundButton.OnCheckedChangeListener, AdapterView.OnItemSelectedListener, RadioGroup.OnCheckedChangeListener, RadioManager.OnRadioArrivedListener {
     @BindView(R.id.cb_run_up)
@@ -76,7 +76,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
     private RadioManager radioManager;
     private int match;
     private int frequency;
-    private ProgressDialog mProgressDialog;
+    private SweetAlertDialog alertDialog;
 
     @Override
     protected int setLayoutResID() {
@@ -103,6 +103,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
             }
         });
     }
+
     private void init() {
         initSpinners();
         boolean isFullReturn = sargentSetting.isFullReturn();
@@ -178,7 +179,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
         cbRunUp.setOnCheckedChangeListener(this);
         // 1无线 0有线
         cbWireless.setChecked(sargentSetting.getType() == 1);
-        cbWireless.setVisibility(sargentSetting.getType() == 1 ? View.VISIBLE:View.GONE);
+        cbWireless.setVisibility(sargentSetting.getType() == 1 ? View.VISIBLE : View.GONE);
         cbWireless.setOnCheckedChangeListener(this);
         radioManager = RadioManager.getInstance();
         radioManager.init();
@@ -284,10 +285,15 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
             case R.id.tv_match:
                 if (sargentSetting.getType() == 1) {
                     radioManager.sendCommand(new ConvertCommand(new RadioChannelCommand(0)));
-                    if (mProgressDialog == null || !mProgressDialog.isShowing()){
-                        match = 0 ;
-                        mProgressDialog = ProgressDialog.show(this, "", "终端匹配中...", true);
-                        mHandler.sendEmptyMessageDelayed(3,10*1000);
+                    if (alertDialog == null || !alertDialog.isShowing()) {
+                        match = 0;
+//                        mProgressDialog = ProgressDialog.show(this, "", "终端匹配中...", true);
+                        alertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+                        alertDialog.setTitleText("终端匹配中...");
+                        alertDialog.setCancelable(false);
+                        alertDialog.show();
+
+                        mHandler.sendEmptyMessageDelayed(3, 10 * 1000);
                     }
 
                 }
@@ -300,16 +306,16 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
     public void onRadioArrived(Message msg) {
         switch (msg.what) {
             case SerialConfigs.SARGENT_JUMP_SET_MATCH:
-                match ++ ;
+                match++;
                 Log.i("sargent", "sargent_match");
                 SargentJumpResult result = (SargentJumpResult) msg.obj;
                 int fre = result.getFrequency();
                 Log.i("sargent", "frequency:" + fre);
-                if (match == 1){
+                if (match == 1) {
                     radioManager.sendCommand(new ConvertCommand(new RadioChannelCommand(fre)));
                     mHandler.sendEmptyMessageDelayed(1, 600);
                 }
-                if (match == 2){
+                if (match == 2) {
                     mHandler.sendEmptyMessage(2);
                 }
 
@@ -343,13 +349,13 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
 
                     break;
                 case 2:
-                    mProgressDialog.dismiss();
+                    alertDialog.dismiss();
                     ToastUtils.showShort("匹配成功");
                     break;
                 case 3:
-                    if (mProgressDialog != null && mProgressDialog.isShowing()){
+                    if (alertDialog != null && alertDialog.isShowing()) {
                         ToastUtils.showShort("匹配失败");
-                        mProgressDialog.dismiss();
+                        alertDialog.dismiss();
                     }
                     break;
             }

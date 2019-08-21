@@ -1,7 +1,6 @@
 package com.feipulai.exam.activity.volleyball;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -43,6 +42,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class VolleyBallSettingActivity
         extends BaseTitleActivity
@@ -69,7 +69,7 @@ public class VolleyBallSettingActivity
     private Integer[] testRound = new Integer[]{1, 2, 3};
 
     private VolleyBallSetting setting;
-    private ProgressDialog mProgressDialog;
+    private SweetAlertDialog alertDialog;
     //3秒内检设备是否可用
     private volatile boolean isDisconnect = true;
     private static final int MSG_DISCONNECT = 0X101;
@@ -183,7 +183,12 @@ public class VolleyBallSettingActivity
                 showCheckDiglog();
                 volleyBallManager.checkDevice();
                 isDisconnect = true;
-                mProgressDialog = ProgressDialog.show(this, "", "终端自检中...", true);
+//                mProgressDialog = ProgressDialog.show(this, "", "终端自检中...", true);
+                alertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+                alertDialog.setTitleText("终端自检中...");
+                alertDialog.setCancelable(false);
+                alertDialog.show();
+
                 //3秒自检
                 mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 5000);
                 break;
@@ -199,8 +204,8 @@ public class VolleyBallSettingActivity
                 if (checkDeviceView == null) {
                     return;
                 }
-                if (mProgressDialog != null) {
-                    mProgressDialog.dismiss();
+                if (alertDialog != null) {
+                    alertDialog.dismiss();
                 }
                 HandlerUtil.sendMessage(mHandler, MSG_CHECK, msg.obj);
                 break;
@@ -316,8 +321,8 @@ public class VolleyBallSettingActivity
                         if (activity.isDisconnect) {
                             activity.toastSpeak("设备未连接");
                             //设置当前设置为不可用断开状态
-                            if (activity.mProgressDialog.isShowing()) {
-                                activity.mProgressDialog.dismiss();
+                            if (activity.alertDialog.isShowing()) {
+                                activity.alertDialog.dismiss();
                             }
                         }
                         break;

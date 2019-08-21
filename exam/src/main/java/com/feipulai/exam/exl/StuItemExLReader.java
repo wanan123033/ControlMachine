@@ -15,6 +15,7 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.db.MachineItemCodeUtil;
 import com.feipulai.exam.entity.Item;
+import com.feipulai.exam.entity.MachineResult;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
@@ -137,7 +138,8 @@ public class StuItemExLReader extends ExlReader {
 //            }
             List<RoundResult> roundResults = DBManager.getInstance().queryResultsByItemCodeDefault();
             List<StudentItem> studentItems = DBManager.getInstance().queryStuItemsByItemCodeDefault();
-            MachineItemCodeUtil.fillDefaultItemCode(studentItems, roundResults, mItemCode);
+            List<MachineResult> machineResults = DBManager.getInstance().queryMachineResultByItemCodeDefault(TestConfigs.sCurrentItem.getMachineCode());
+            MachineItemCodeUtil.fillDefaultItemCode(studentItems, roundResults,machineResults, mItemCode);
 
             SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, mItemCode);
         } else if (!itemCode.equals(mItemCode)) {

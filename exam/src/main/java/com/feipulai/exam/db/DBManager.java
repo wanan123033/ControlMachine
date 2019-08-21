@@ -2292,6 +2292,14 @@ public class DBManager {
     }
 
     /******************** 机器成绩表 **************/
+    public List<MachineResult> queryMachineResultByItemCodeDefault(int machineCode){
+        return machineResultDao
+                .queryBuilder()
+                .where(MachineResultDao.Properties.MachineCode.eq(machineCode))
+                .where(MachineResultDao.Properties.ItemCode.eq(TestConfigs.DEFAULT_ITEM_CODE))
+                .list();
+    }
+
     public List<MachineResult> getMachineResultByItemCode(String itemCode) {
         return machineResultDao.queryBuilder().where(MachineResultDao.Properties.ItemCode.eq(itemCode))
                 .where(MachineResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode())).list();

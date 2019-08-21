@@ -76,6 +76,11 @@ public class SystemSetting {
      */
     private boolean isAddRoute = false;
 
+
+    private int ledVersion = 0;//0:1.0版本 1：V4.1 以上版本
+    public static final int LED_VERSION_V1 = 0;
+    public static final int LED_VERSION_V4 = 1;
+
     public int getQrLength() {
         return qrLength;
     }
@@ -188,6 +193,13 @@ public class SystemSetting {
         this.checkTool = checkTool;
     }
 
+    public int getLedVersion() {
+        return ledVersion;
+    }
+
+    public void setLedVersion(int ledVersion) {
+        this.ledVersion = ledVersion;
+    }
 
     @Override
     public String toString() {

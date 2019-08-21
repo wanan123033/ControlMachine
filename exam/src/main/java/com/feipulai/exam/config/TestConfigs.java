@@ -187,7 +187,7 @@ public class TestConfigs {
         MachineCode.machineCode = machineCode;
         final List<RoundResult> roundResults = DBManager.getInstance().queryResultsByItemCodeDefault(machineCode);
         final List<StudentItem> studentItems = DBManager.getInstance().queryStuItemsByItemCodeDefault(machineCode);
-
+        final List<MachineResult> machineResults = DBManager.getInstance().queryMachineResultByItemCodeDefault(machineCode);
         if (itemCode != null) {
             Item item = DBManager.getInstance().queryItemByMachineItemCode(machineCode, itemCode);
             if (item == null) {
@@ -196,7 +196,7 @@ public class TestConfigs {
             } else {
                 sCurrentItem = item;
                 // 有项目代码,证明同步过项目信息,这时候要看成绩是否也同步了过来,这种就是之前的某次这样的操作没有完成而已,这里继续完成就是
-                MachineItemCodeUtil.fillDefaultItemCode(studentItems, roundResults, itemCode);
+                MachineItemCodeUtil.fillDefaultItemCode(studentItems, roundResults, machineResults, itemCode);
                 Logger.i("sCurrentItem:" + sCurrentItem.toString());
                 return INIT_SUCCESS;
             }
@@ -217,7 +217,7 @@ public class TestConfigs {
         // 项目代码已更新
         // 如果当前机器码只测一个项目,直接把学生项目报名信息和成绩信息中的itemCode改掉即可
         if (itemList.size() == 1) {
-            MachineItemCodeUtil.fillDefaultItemCode(studentItems, roundResults, newItemCode);
+            MachineItemCodeUtil.fillDefaultItemCode(studentItems, roundResults, machineResults, newItemCode);
             SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, machineCode);
             SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, newItemCode);
             sCurrentItem = itemList.get(0);
@@ -227,7 +227,7 @@ public class TestConfigs {
         if (machineCode == ItemDefault.CODE_ZCP) {
             sCurrentItem = itemList.get(0);
             newItemCode = itemList.get(0).getItemCode();
-            MachineItemCodeUtil.fillDefaultItemCode(studentItems, roundResults, newItemCode);
+            MachineItemCodeUtil.fillDefaultItemCode(studentItems, roundResults, machineResults, newItemCode);
             SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, machineCode);
             SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, newItemCode);
             Logger.i("sCurrentItem:" + sCurrentItem.toString());
@@ -240,7 +240,7 @@ public class TestConfigs {
             public void onClick(DialogInterface dialog, int which) {
                 sCurrentItem = itemList.get(which);
                 String newItemCode = itemList.get(which).getItemCode();
-                MachineItemCodeUtil.fillDefaultItemCode(studentItems, roundResults, newItemCode);
+                MachineItemCodeUtil.fillDefaultItemCode(studentItems, roundResults, machineResults, newItemCode);
                 SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, machineCode);
                 SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, newItemCode);
                 dialog.dismiss();
@@ -305,11 +305,11 @@ public class TestConfigs {
         List<GroupItem> groupItemList = DBManager.getInstance().queryGroupItemByItemCode(item.getItemCode());
         List<Group> groupList = DBManager.getInstance().queryGroupByItemCode(item.getItemCode());
         List<MachineResult> machineResultList = DBManager.getInstance().getMachineResultByItemCode(item.getItemCode());
-        List<ItemSchedule>itemSchedules=DBManager.getInstance().queryItemSchedulesByItemCode(item.getItemCode());
+        List<ItemSchedule> itemSchedules = DBManager.getInstance().queryItemSchedulesByItemCode(item.getItemCode());
 
-        if(itemSchedules!=null&&itemSchedules.size()>0){
-            for (ItemSchedule itemSchedule:itemSchedules
-                 ) {
+        if (itemSchedules != null && itemSchedules.size() > 0) {
+            for (ItemSchedule itemSchedule : itemSchedules
+                    ) {
                 itemSchedule.setItemCode(updateItemCode);
             }
             DBManager.getInstance().deleteSchedules(itemSchedules);

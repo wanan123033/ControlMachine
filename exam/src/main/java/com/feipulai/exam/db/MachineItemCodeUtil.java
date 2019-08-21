@@ -1,5 +1,6 @@
 package com.feipulai.exam.db;
 
+import com.feipulai.exam.entity.MachineResult;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.StudentItem;
 
@@ -22,7 +23,7 @@ public class MachineItemCodeUtil {
      * @param roundResults 需要更改itemCode的成绩信息
      * @param itemCode     指定的itemCode
      */
-    public static void fillDefaultItemCode(List<StudentItem> studentItems, List<RoundResult> roundResults, String itemCode) {
+    public static void fillDefaultItemCode(List<StudentItem> studentItems, List<RoundResult> roundResults, List<MachineResult> machineResults, String itemCode) {
         if (itemCode == null)
             return;
         if (studentItems != null) {
@@ -38,6 +39,13 @@ public class MachineItemCodeUtil {
                 result.setItemCode(itemCode);
             }
             DBManager.getInstance().updateRoundResult(roundResults);
+        }
+        if (machineResults != null) {
+            // 将原来项目代码为default的学生成绩信息更新为选择的项目代码
+            for (MachineResult machineResult : machineResults) {
+                machineResult.setItemCode(itemCode);
+            }
+            DBManager.getInstance().updateMachineResults(machineResults);
         }
     }
 

@@ -1,6 +1,5 @@
 package com.feipulai.exam.activity.sitreach;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
@@ -41,6 +40,7 @@ import java.lang.ref.WeakReference;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * 坐位体前屈项目设置
@@ -73,7 +73,7 @@ public class SitReachSettingActivity extends BaseTitleActivity implements Compou
 
     private SitReachSetting reachSetting;
     private static final int MSG_DISCONNECT = 0X101;
-    private ProgressDialog mProgressDialog;
+    private SweetAlertDialog alertDialog;
     private SerialHandler mHandler = new SerialHandler(this);
     //3秒内检设备是否可用
     private volatile boolean isDisconnect = true;
@@ -292,7 +292,11 @@ public class SitReachSettingActivity extends BaseTitleActivity implements Compou
 
     @OnClick(R.id.tv_device_check)
     public void onViewClicked() {
-        mProgressDialog = ProgressDialog.show(this, "", "终端自检中...", true);
+//        mProgressDialog = ProgressDialog.show(this, "", "终端自检中...", true);
+        alertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+        alertDialog.setTitleText("终端自检中...");
+        alertDialog.setCancelable(false);
+        alertDialog.show();
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_EMPTY));
         //3秒自检
         mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
@@ -328,8 +332,8 @@ public class SitReachSettingActivity extends BaseTitleActivity implements Compou
                         if (activity.isDisconnect) {
                             activity.toastSpeak("设备未连接");
                             //设置当前设置为不可用断开状态
-                            if (activity.mProgressDialog.isShowing()) {
-                                activity.mProgressDialog.dismiss();
+                            if (activity.alertDialog.isShowing()) {
+                                activity.alertDialog.dismiss();
                             }
                         }
                         break;
@@ -341,8 +345,8 @@ public class SitReachSettingActivity extends BaseTitleActivity implements Compou
                         Logger.i("空命令回复:");
                         break;
                 }
-                if (!isDialogShow && activity.mProgressDialog != null && activity.mProgressDialog.isShowing()) {
-                    activity.mProgressDialog.dismiss();
+                if (!isDialogShow && activity.alertDialog != null && activity.alertDialog.isShowing()) {
+                    activity.alertDialog.dismiss();
                 }
 
             }
