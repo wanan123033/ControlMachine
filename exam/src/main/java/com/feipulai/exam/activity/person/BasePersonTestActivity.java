@@ -413,14 +413,22 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity implement
     }
 
     private void gotoUVCFaceCamera() {
-//        startActivityForResult(new Intent(this, UVCCameraActivity.class), 101);
-        if (isCamera) {
-            frameCamera.setVisibility(View.VISIBLE);
-            rl.setVisibility(View.GONE);
-            mUVCCamera.startPreview();
-        } else {
-            ToastUtils.showShort("摄像头未开启");
+        if (FaceServer.faceRegisterInfoList == null || FaceServer.faceRegisterInfoList.size() == 0) {
+            ToastUtils.showShort("本地无头像信息");
+            return;
         }
+//        if (isCamera) {
+        frameCamera.setVisibility(View.VISIBLE);
+        rl.setVisibility(View.GONE);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mUVCCamera.startPreview();
+            }
+        }, 1000);
+//        } else {
+//            ToastUtils.showShort("摄像头未开启");
+//        }
     }
 
     @Override
@@ -535,7 +543,10 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity implement
 
     @Override
     public void onCheckIn(Student student) {
-
+        if (student == null) {
+            ToastUtils.showShort("查无此人");
+            return;
+        }
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
         List<RoundResult> roundResultList = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(student.getStudentCode(), studentItem.getExamType());
         testNo = roundResultList == null || roundResultList.size() == 0 ? 1 : roundResultList.get(0).getTestNo();

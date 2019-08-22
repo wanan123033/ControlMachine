@@ -32,7 +32,7 @@ public class FaceServer {
     public static final String IMG_SUFFIX2 = ".png";
     private static FaceEngine faceEngine = null;
     private static FaceServer faceServer = null;
-    private static List<FaceRegisterInfo> faceRegisterInfoList;
+    public static List<FaceRegisterInfo> faceRegisterInfoList;
     public static String ROOT_PATH;
     public static final String SAVE_IMG_DIR = "register" + File.separator + "imgs";
     private static final String SAVE_FEATURE_DIR = "register" + File.separator + "features";
