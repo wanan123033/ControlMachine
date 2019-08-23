@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                tvIdCard.setText("身份证模块测试通过" + idCardInfo.getId() + idCardInfo.getName());
+                tvIdCard.setText("身份证模块测试通过" + idCardInfo.getId() + idCardInfo.getName() + "-指纹：" + idCardInfo.getFplength() + "民族：" + idCardInfo.getNation());
             }
         });
     }

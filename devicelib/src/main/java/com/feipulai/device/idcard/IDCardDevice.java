@@ -90,7 +90,7 @@ public class IDCardDevice {
 		try {
 			Authenticate();
 			Thread.sleep(50);
-			int retType = idCardReader.readCardEx(0, 0);
+			int retType = idCardReader.readCardEx(0, 1);
 			if (retType == 1) {
 				IDCardInfo idCardInfo = idCardReader.getLastIDCardInfo();
 				Log.i("james", "读取到身份证:" + idCardInfo.getId());
