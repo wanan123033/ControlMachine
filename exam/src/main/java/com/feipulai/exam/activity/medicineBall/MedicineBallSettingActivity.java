@@ -125,8 +125,8 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (etBeginPoint.getText().toString().length()> 0){
                     int number = Integer.valueOf(etBeginPoint.getText().toString());
-                    if ( number > 500) {
-                        ToastUtils.showShort("输入范围超出（0~500）");
+                    if ( number > 5000) {
+                        ToastUtils.showShort("输入范围超出（0~5000）");
                     }else {
                         SharedPrefsUtil.putValue(MedicineBallSettingActivity.this, "SXQ", "beginPoint",
                                 etBeginPoint.getText().toString());
