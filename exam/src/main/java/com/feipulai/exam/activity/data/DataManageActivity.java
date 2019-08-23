@@ -278,6 +278,7 @@ public class DataManageActivity
                         intent.setClass(DataManageActivity.this, FileSelectActivity.class);
                         intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
                         startActivityForResult(intent, REQUEST_CODE_PHOTO);
+                        break;
                     case 5://删除头像
                         //TODO 测试使用
 //                        DBManager.getInstance().roundResultClear();

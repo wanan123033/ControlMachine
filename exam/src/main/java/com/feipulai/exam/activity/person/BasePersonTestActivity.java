@@ -93,6 +93,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity implement
     StuSearchEditText etInputText;
     @BindView(R.id.btn_scan)
     TextView btnScan;
+    @BindView(R.id.img_AFR)
+    ImageView imgAFR;
     @BindView(R.id.lv_results)
     ListView lvResults;
     @BindView(R.id.img_portrait)
@@ -203,6 +205,14 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity implement
     }
 
     private boolean isCamera = false;
+
+    public void setOpenAFR(boolean isOpen) {
+        if (isOpen) {
+            imgAFR.setVisibility(View.VISIBLE);
+        } else {
+            imgAFR.setVisibility(View.GONE);
+        }
+    }
 
     private void initUVCCamera() {
         mUVCCamera = new UVCCameraProxy(this);
@@ -394,23 +404,27 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity implement
             public void onClick(View v) {
                 finish();
             }
-        }).addRightText("人脸识别", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gotoUVCFaceCamera();
-            }
-        }).addRightText("项目设置", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gotoItemSetting();
-            }
-        }).addRightImage(R.mipmap.icon_setting, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gotoItemSetting();
-            }
-        });
+        })
+//                .addRightText("人脸识别", new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                gotoUVCFaceCamera();
+//            }
+//        })
+                .addRightText("项目设置", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        gotoItemSetting();
+                    }
+                }).addRightImage(R.mipmap.icon_setting, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        gotoItemSetting();
+                    }
+                });
     }
+
+    private boolean isOpenCamera = false;
 
     private void gotoUVCFaceCamera() {
         if (FaceServer.faceRegisterInfoList == null || FaceServer.faceRegisterInfoList.size() == 0) {
@@ -597,7 +611,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity implement
         addStudent(student);
     }
 
-    @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting})//R.id.txt_stu_fault
+    @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting, R.id.img_AFR})
+//R.id.txt_stu_fault
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
@@ -619,6 +634,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity implement
 //            case R.id.txt_stu_fault:
 //                showPenalize();
 //                break;
+            case R.id.img_AFR:
+                gotoUVCFaceCamera();
+                break;
         }
     }
 

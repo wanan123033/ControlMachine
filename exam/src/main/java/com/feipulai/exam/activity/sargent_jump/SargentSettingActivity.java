@@ -181,6 +181,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
         cbWireless.setChecked(sargentSetting.getType() == 1);
         cbWireless.setVisibility(sargentSetting.getType() == 1 ? View.VISIBLE : View.GONE);
         cbWireless.setOnCheckedChangeListener(this);
+        tvMatch.setVisibility(sargentSetting.getType() == 1 ? View.VISIBLE:View.GONE);
         radioManager = RadioManager.getInstance();
         radioManager.init();
         radioManager.setOnRadioArrived(this);

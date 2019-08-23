@@ -4,366 +4,238 @@
     android:background="@color/white"
     android:orientation="horizontal">
 
-    <LinearLayout
-        android:layout_width="260dp"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        android:orientation="vertical">
-
-        <ImageView
-            android:id="@+id/img_portrait"
-            android:layout_width="180dp"
-            android:layout_height="253dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="6dp"
-            android:scaleType="fitXY"
-            android:src="@mipmap/icon_head_photo" />
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="学号："
-                android:textColor="@color/grey_A8"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/txt_stu_code"
-                android:layout_width="wrap_content"
-                android:layout_height="27dp"
-                android:background="@drawable/edit_search_bg"
-                android:paddingLeft="5dp"
-                android:textColor="@color/grey_A8"
-                android:textSize="18sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="姓名："
-                android:textColor="@color/grey_A8"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/txt_stu_name"
-                android:layout_width="wrap_content"
-                android:layout_height="27dp"
-                android:background="@drawable/edit_search_bg"
-                android:paddingLeft="5dp"
-                android:textColor="@color/grey_A8"
-                android:textSize="18sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="性别："
-                android:textColor="@color/grey_A8"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/txt_stu_sex"
-                android:layout_width="wrap_content"
-                android:layout_height="27dp"
-                android:background="@drawable/edit_search_bg"
-                android:paddingLeft="5dp"
-                android:textColor="@color/grey_A8"
-                android:textSize="18sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="11dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp"
-            android:visibility="gone">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="成绩："
-                android:textColor="@color/black"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/txt_stu_result"
-                android:layout_width="wrap_content"
-                android:layout_height="27dp"
-                android:background="@drawable/edit_search_bg"
-                android:textColor="@color/black"
-                android:textSize="18sp" />
-
-        </LinearLayout>
-
-    </LinearLayout>
+    <include
+        layout="@layout/stu_info_layout"
+        android:layout_width="250dp"
+        android:layout_height="match_parent" />
 
     <View
         android:layout_width="8dp"
         android:layout_height="match_parent"
         android:background="@color/grey_light" />
 
-    <FrameLayout
-        android:id="@+id/frame_camera"
-        android:visibility="gone"
-        android:background="@color/black"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-        <TextureView
-            android:id="@+id/textureView2"
-            android:layout_width="640px"
-            android:layout_gravity="center"
-            android:layout_height="480px" />
 
-        <com.ww.fpl.libarcface.widget.FaceRectView
-            android:id="@+id/face_rect_view2"
-            android:layout_width="640px"
-            android:layout_gravity="center"
-            android:layout_height="480px" />
-
-    </FrameLayout>
     <RelativeLayout
         android:id="@+id/rl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <LinearLayout
+            android:id="@+id/ll_seach"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white"
-            android:orientation="vertical">
+            android:layout_height="40dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="128dp"
+                android:layout_height="38dp"
+                android:layout_marginLeft="15dp"
+                android:src="@mipmap/icon_test_logo" />
+
+            <com.feipulai.exam.view.StuSearchEditText
+                android:id="@+id/et_input_text"
+                android:layout_width="350dp"
+                android:layout_height="35dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="3dp" />
+
+            <TextView
+                android:id="@+id/btn_scan"
+                android:layout_width="80dp"
+                android:layout_height="35dp"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/tv_start_test"
+                android:background="@color/colorAccent"
+                android:gravity="center"
+                android:text="搜索"
+                android:textColor="@color/white"
+                android:textSize="20dp"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/img_AFR"
+                android:layout_width="60dp"
+                android:layout_height="35dp"
+                android:layout_marginLeft="20dp"
+                android:layout_toLeftOf="@+id/tv_start_test"
+                android:background="@drawable/btn_bg_green"
+                android:gravity="center"
+                android:padding="5dp"
+                android:src="@mipmap/icon_afr"
+                android:textColor="@color/white"
+                android:textSize="20dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/txt_led_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:layout_toLeftOf="@+id/tv_start_test"
+                android:background="@color/colorAccent"
+                android:drawableLeft="@mipmap/icon_led_setting"
+                android:drawablePadding="6dp"
+                android:gravity="center"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:text="外接屏幕"
+                android:textColor="@color/white"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/tv_device_pair"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:background="@color/colorAccent"
+                android:gravity="center"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:text="设备配对"
+                android:textColor="@color/white"
+                android:textSize="20dp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/rl_test_result"
+            android:layout_width="match_parent"
+            android:layout_height="276dp"
+            android:layout_below="@+id/ll_seach"
+            android:background="#313131">
+
+            <TextView
+                android:id="@+id/txt_test_result"
+                android:layout_width="362dp"
+                android:layout_height="154dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="40dp"
+                android:background="@mipmap/icon_test_result_bg"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="61sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="128dp"
-                    android:layout_height="38dp"
-                    android:layout_marginLeft="29dp"
-                    android:src="@mipmap/icon_test_logo" />
-
-                <com.feipulai.exam.view.StuSearchEditText
-                    android:id="@+id/et_input_text"
-                    android:layout_width="360dp"
-                    android:layout_height="35dp"
-                    android:layout_marginLeft="31dp"
-                    android:layout_marginRight="3dp" />
-
-                <TextView
-                    android:id="@+id/btn_scan"
-                    android:layout_width="80dp"
-                    android:layout_height="35dp"
-                    android:layout_centerVertical="true"
-                    android:layout_toLeftOf="@+id/tv_start_test"
-                    android:background="@color/colorAccent"
-                    android:gravity="center"
-                    android:text="搜索"
-                    android:textColor="@color/white"
-                    android:textSize="20dp"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/txt_led_setting"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="21dp"
-                    android:layout_toLeftOf="@+id/tv_start_test"
-                    android:background="@color/colorAccent"
-                    android:drawableLeft="@mipmap/icon_led_setting"
-                    android:drawablePadding="6dp"
-                    android:gravity="center"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="8dp"
-                    android:text="外接屏幕"
-                    android:textColor="@color/white"
-                    android:textSize="20dp" />
-
-                <TextView
-                    android:id="@+id/tv_device_pair"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="10dp"
-                    android:background="@color/colorAccent"
-                    android:gravity="center"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="8dp"
-                    android:text="设备配对"
-                    android:textColor="@color/white"
-                    android:textSize="20dp"
-                    android:visibility="gone" />
-            </LinearLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="276dp"
-                android:background="#313131">
-
-                <TextView
-                    android:id="@+id/txt_test_result"
-                    android:layout_width="362dp"
-                    android:layout_height="154dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="40dp"
-                    android:background="@mipmap/icon_test_result_bg"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:textSize="61sp" />
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:background="@mipmap/icon_device_bg"
+                android:gravity="right">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:id="@+id/ll_state"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:background="@mipmap/icon_device_bg"
-                    android:gravity="right">
+                    android:clickable="true"
+                    android:padding="10dp">
 
-                    <LinearLayout
-                        android:id="@+id/ll_state"
+                    <CheckBox
+                        android:id="@+id/cb_device_state"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:padding="10dp">
-
-                        <CheckBox
-                            android:id="@+id/cb_device_state"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginRight="@dimen/dp_10"
-                            android:button="@null"
-                            android:checked="true"
-                            android:clickable="false"
-                            android:drawableLeft="@drawable/cb_device_state"
-                            android:drawablePadding="10dp"
-                            android:enabled="false"
-                            android:paddingLeft="35dp"
-                            android:text="设备状态"
-                            android:textColor="@color/white"
-                            android:textSize="16sp" />
-                    </LinearLayout>
+                        android:layout_marginRight="@dimen/dp_10"
+                        android:button="@null"
+                        android:checked="true"
+                        android:clickable="false"
+                        android:drawableLeft="@drawable/cb_device_state"
+                        android:drawablePadding="10dp"
+                        android:enabled="false"
+                        android:paddingLeft="35dp"
+                        android:text="设备状态"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
                 </LinearLayout>
+            </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tv_base_height"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="15dp"
-                    android:text="原始高度: 厘米"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:visibility="gone" />
+            <TextView
+                android:id="@+id/tv_base_height"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="15dp"
+                android:text="原始高度: 厘米"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:visibility="gone" />
 
-            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/rl_test_result"
+            android:background="#797979">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_test_result"
+                android:layout_width="579dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:background="@color/white"
+                android:overScrollMode="never" />
 
 
-            <RelativeLayout
+            <LinearLayout
+                android:id="@+id/view_skip"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#797979">
+                android:layout_alignParentBottom="true"
+                android:layout_toRightOf="@+id/rv_test_result"
+                android:layout_weight="1"
+                android:background="@color/white"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="15dp">
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_test_result"
-                    android:layout_width="579dp"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentBottom="true"
-                    android:background="@color/white"
-                    android:overScrollMode="never" />
-
-
-                <LinearLayout
-                    android:id="@+id/view_skip"
+                <TextView
+                    android:id="@+id/txt_start_test"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentBottom="true"
-                    android:layout_toRightOf="@+id/rv_test_result"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="@dimen/sp_12"
                     android:layout_weight="1"
-                    android:background="@color/white"
+                    android:background="@drawable/btn_bg_blue"
                     android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="15dp">
+                    android:text="开始"
+                    android:textColor="@color/white"
+                    android:textSize="22sp"
+                    android:visibility="gone" />
 
-                    <TextView
-                        android:id="@+id/txt_start_test"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_marginBottom="@dimen/sp_12"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_bg_blue"
-                        android:gravity="center"
-                        android:text="开始"
-                        android:textColor="@color/white"
-                        android:textSize="22sp"
-                        android:visibility="gone" />
+                <TextView
+                    android:id="@+id/txt_stu_skip"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_bg_blue"
+                    android:gravity="center"
+                    android:text="跳过"
+                    android:textColor="@color/white"
+                    android:textSize="22sp" />
 
-                    <TextView
-                        android:id="@+id/txt_stu_skip"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_bg_blue"
-                        android:gravity="center"
-                        android:text="跳过"
-                        android:textColor="@color/white"
-                        android:textSize="22sp" />
-
-                    <!--<TextView
-                        android:id="@+id/txt_stu_fault"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_marginTop="12dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_bg_blue"
-                        android:gravity="center"
-                        android:text="犯规"
-                        android:textColor="@color/white"
-                        android:textSize="22sp"
-                        android:visibility="gone" />-->
-                </LinearLayout>
-            </RelativeLayout>
-
-        </LinearLayout>
+                <!--<TextView
+                    android:id="@+id/txt_stu_fault"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_bg_blue"
+                    android:gravity="center"
+                    android:text="犯规"
+                    android:textColor="@color/white"
+                    android:textSize="22sp"
+                    android:visibility="gone" />-->
+            </LinearLayout>
+        </RelativeLayout>
 
 
         <ListView
             android:id="@+id/lv_results"
             android:layout_width="321dp"
             android:layout_height="260dp"
-            android:layout_marginLeft="190dp"
+            android:layout_marginLeft="160dp"
             android:layout_marginTop="40dp"
             android:background="@drawable/btn_bg_white"
             android:divider="@color/sbc_header_text"
@@ -372,7 +244,30 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:paddingTop="@dimen/dp_10"
-            android:visibility="gone" />
+            android:visibility="gone"
+            />
+
+        <FrameLayout
+            android:id="@+id/frame_camera"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/ll_seach"
+            android:background="@color/black"
+            android:visibility="gone">
+
+            <TextureView
+                android:id="@+id/textureView2"
+                android:layout_width="640px"
+                android:layout_height="480px"
+                android:layout_gravity="center" />
+
+            <com.ww.fpl.libarcface.widget.FaceRectView
+                android:id="@+id/face_rect_view2"
+                android:layout_width="640px"
+                android:layout_height="480px"
+                android:layout_gravity="center" />
+
+        </FrameLayout>
     </RelativeLayout>
 
 

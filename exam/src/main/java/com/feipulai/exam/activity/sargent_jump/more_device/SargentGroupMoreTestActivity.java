@@ -12,4 +12,9 @@ public class SargentGroupMoreTestActivity extends SargentGroupMoreActivity {
     public void initData() {
 
     }
+
+    @Override
+    public int setTestPattern() {
+        return 0;
+    }
 }

@@ -25,7 +25,8 @@
             android:hint="请输入考号或者刷身份证/IC卡/条码"
             android:imeOptions="actionGo"
             android:inputType="text"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:textSize="16sp" />
 
         <ImageView
             android:id="@+id/img_delete"
