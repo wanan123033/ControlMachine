@@ -49,7 +49,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
         if (jumpSetting.isPenalize()) {
             setFaultEnable(true);
         }
-
+        setOpenAFR(true);
 
         Logger.i(TAG + ":reachSetting ->" + jumpSetting.toString());
         mHandler = new MyHandler(this);
@@ -80,8 +80,8 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
     public void sendTestCommand(BaseStuPair baseStuPair) {
         sendCheck();
         standResiltListener.setTestState(StandResiltListener.TestState.START_TEST);
-        //开始测试
-        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
+//        //开始测试
+//        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
         //设置当前设置为空闲状态
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE));
 //        isDisconnect = true;
@@ -125,7 +125,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
     protected void onResume() {
         super.onResume();
 
-        updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
+//        updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
         SerialDeviceManager.getInstance().setRS232ResiltListener(standResiltListener);
         sendCheck();
 //        cbDeviceState.setVisibility(View.INVISIBLE);

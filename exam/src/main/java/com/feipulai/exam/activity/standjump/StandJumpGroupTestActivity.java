@@ -82,7 +82,7 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
     protected void onResume() {
         super.onResume();
 
-        updateDevice(new BaseDeviceState(BaseDeviceState.STATE_ERROR, 1));
+//        updateDevice(new BaseDeviceState(BaseDeviceState.STATE_ERROR, 1));
         SerialDeviceManager.getInstance().setRS232ResiltListener(standResiltListener);
         sendCheck();
 //        cbDeviceState.setVisibility(View.INVISIBLE);
@@ -110,8 +110,8 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
 //        mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
         sendCheck();
         standResiltListener.setTestState(StandResiltListener.TestState.START_TEST);
-        //开始测试
-        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
+//        //开始测试
+//        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
         //设置当前设置为空闲状态
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE));
 

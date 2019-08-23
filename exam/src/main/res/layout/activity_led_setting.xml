@@ -13,9 +13,9 @@
         android:layout_marginTop="26dp"
         android:background="@drawable/btn_bg_white"
         android:orientation="vertical"
-        android:paddingBottom="69dp"
         android:paddingLeft="30dp"
         android:paddingRight="30dp"
+        android:paddingBottom="30dp"
         android:paddingTop="33dp">
 
         <Button
