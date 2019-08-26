@@ -1,9 +1,7 @@
 package com.feipulai.exam.view;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -36,6 +34,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * Created by James on 2018/2/8 0008.
@@ -122,19 +121,32 @@ public class StuSearchEditText2 extends RelativeLayout {
     }
 
     private void showAddHint(final Student student) {
-        new AlertDialog.Builder(mActivity)
-                .setCancelable(false)
-                .setTitle("提示")
-                .setMessage("无考生信息，是否新增")
-                .setPositiveButton("是", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        new AddStudentDialog(mActivity).showDialog(student, false);
-                    }
-                })
-                .setNegativeButton("否", null)
-                .show();
-
+//        new AlertDialog.Builder(mActivity)
+//                .setCancelable(false)
+//                .setTitle("提示")
+//                .setMessage("无考生信息，是否新增")
+//                .setPositiveButton("是", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        new AddStudentDialog(mActivity).showDialog(student, false);
+//                    }
+//                })
+//                .setNegativeButton("否", null)
+//                .show();
+        new SweetAlertDialog(mContext).setTitleText(mContext.getString(R.string.addStu_dialog_title))
+                .setContentText(mContext.getString(R.string.addStu_dialog_content))
+                .setConfirmText(mContext.getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                new AddStudentDialog(mContext).showDialog(student, false);
+            }
+        }).setCancelText(mContext.getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+            }
+        }).show();
     }
 
     @Override

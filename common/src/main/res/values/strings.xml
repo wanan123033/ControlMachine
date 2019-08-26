@@ -1,4 +1,13 @@
 <resources>
     <string name="app_name">common</string>
+    <string name="confirm">确定</string>
+    <string name="cancel">取消</string>
     <string name="loading_hint">正在处理，请等待...</string>
+
+    <string name="clear_dialog_title">操作警告</string>
+    <string name="clear_dialog_content">本地有未上传数据,是否确定清空本地数据?</string>
+    <string name="clear_dialog_content2">该操作会清空本地考生信息和成绩信息,是否确定清空这些信息?</string>
+
+    <string name="clear_data_title">清空本地数据</string>
+    <string name="clear_data_content">请输入验证码:%1$s</string>
 </resources>

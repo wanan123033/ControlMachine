@@ -1,9 +1,7 @@
 package com.feipulai.exam.view;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -39,6 +37,7 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * Created by James on 2018/2/8 0008.
@@ -62,7 +61,7 @@ public class StuSearchEditText extends RelativeLayout {
     private BaseCheckActivity mActivity;
     private RecyclerView mRecyclerView;
     private Context mContext;
-    private AlertDialog addDialog;
+    private SweetAlertDialog addDialog;
 
     public StuSearchEditText(Context context) {
         super(context);
@@ -199,17 +198,20 @@ public class StuSearchEditText extends RelativeLayout {
 
     private void showAddHint(final Student student) {
         if (addDialog == null) {
-            addDialog = new AlertDialog.Builder(mActivity)
-                    .setCancelable(false)
-                    .setTitle("提示")
-                    .setMessage("无考生信息，是否新增")
-                    .setPositiveButton("是", new DialogInterface.OnClickListener() {
+            addDialog = new SweetAlertDialog(mContext).setTitleText(mContext.getString(R.string.addStu_dialog_title))
+                    .setContentText(mContext.getString(R.string.addStu_dialog_content))
+                    .setConfirmText(mContext.getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            new AddStudentDialog(mActivity).showDialog(student, false);
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismissWithAnimation();
+                            new AddStudentDialog(mContext).showDialog(student, false);
                         }
-                    })
-                    .setNegativeButton("否", null).create();
+                    }).setCancelText(mContext.getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismissWithAnimation();
+                        }
+                    });
         }
         if (!addDialog.isShowing()) {
             addDialog.show();

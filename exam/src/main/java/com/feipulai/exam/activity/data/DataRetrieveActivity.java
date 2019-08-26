@@ -1,9 +1,7 @@
 package com.feipulai.exam.activity.data;
 
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.annotation.NonNull;
@@ -74,6 +72,7 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * 数据查询
@@ -339,31 +338,25 @@ public class DataRetrieveActivity extends BaseTitleActivity
                 return;
             }
             if (printList.size() > 10) {
-                new AlertDialog.Builder(this)
-                        .setCancelable(false)
-                        .setTitle("提示")
-                        .setMessage("选择打印考生数量过多，确定继续打印？")
-                        .setPositiveButton("是", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                ToastUtils.showShort("开始打印");
-                                PrintResultUtil.printResult(printList);
+                new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.warning))
+                        .setContentText(getString(R.string.print_more_hint))
+                        .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                        ToastUtils.showShort("开始打印");
+                        PrintResultUtil.printResult(printList);
+                    }
+                }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                    }
+                }).show();
 
-//                                for (DataRetrieveBean dataRetrieveBean : printList) {
-//                                    List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(dataRetrieveBean.getStudentCode());
-//                                    printResult(dataRetrieveBean, results);
-//                                }
-                            }
-                        })
-                        .setNegativeButton("否", null)
-                        .show();
             } else {
                 ToastUtils.showShort("开始打印");
                 PrintResultUtil.printResult(printList);
-//                for (DataRetrieveBean dataRetrieveBean : printList) {
-//                    List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(dataRetrieveBean.getStudentCode());
-//                    printResult(dataRetrieveBean, results);
-//                }
             }
 
 
@@ -515,7 +508,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
                     //获取学生信息
                     student = studentList.get(i);
                     String result = displaStuResult(student.getStudentCode());
-                    mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), TextUtils.equals(result, "-1000") ? 0 : 1, result));
+                    mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), TextUtils.equals(result, "-1000") ? 0 : 1, result, mCbSelectAll.isChecked()));
                 }
                 mRefreshView.finishRefreshAndLoad();
                 mAdapter.notifyDataSetChanged();
@@ -546,7 +539,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
             }
             return "-1000";
         } else {
-            RoundResult result = DBManager.getInstance().queryResultsByStudentCodeIsLastResult(getItemCode(),studentCode);
+            RoundResult result = DBManager.getInstance().queryResultsByStudentCodeIsLastResult(getItemCode(), studentCode);
             return result != null ? (result.getResultState() == RoundResult.RESULT_STATE_FOUL ? "X" : result.getResult()) + "" : "-1000";
         }
 
@@ -601,7 +594,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
                 for (int i = 0; i < students.size(); i++) {
                     Student student = students.get(i);
                     String result = displaStuResult(student.getStudentCode());
-                    mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), TextUtils.equals(result, "-1000") ? 0 : 1, result));
+                    mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), TextUtils.equals(result, "-1000") ? 0 : 1, result, mCbSelectAll.isChecked()));
 
                 }
                 mRefreshView.finishRefreshAndLoad();
@@ -654,21 +647,24 @@ public class DataRetrieveActivity extends BaseTitleActivity
                     cbTested.setChecked(true);
                     mRbAll.setChecked(false);
                     cbUnTested.setChecked(false);
-                } selectChoose(isChecked);
+                }
+                selectChoose(isChecked);
                 break;
             case R.id.cb_un_tested://未测
                 if (isChecked) {
                     cbUnTested.setChecked(true);
                     mRbAll.setChecked(false);
                     cbTested.setChecked(false);
-                } selectChoose(isChecked);
+                }
+                selectChoose(isChecked);
                 break;
             case R.id.cb_uploaded://已上传
                 if (isChecked) {
                     cbUploaded.setChecked(true);
                     mRbAll.setChecked(false);
                     cbUnUpload.setChecked(false);
-                } selectChoose(isChecked);
+                }
+                selectChoose(isChecked);
                 break;
             case R.id.cb_un_upload://未上传
                 if (isChecked) {
@@ -682,6 +678,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
         }
 
     }
+
     public void selectChoose(boolean isChecked) {
         //非选择全部的复选框
 
@@ -744,13 +741,13 @@ public class DataRetrieveActivity extends BaseTitleActivity
                     //是否刷选已测或未测
                     if (cbTested.isChecked() || cbUnTested.isChecked()) {
                         if (cbTested.isChecked()) {
-                            mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), 1, displaStuResult(student.getStudentCode())));
+                            mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), 1, displaStuResult(student.getStudentCode()), mCbSelectAll.isChecked()));
                         } else {
-                            mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), 0, "-1000"));
+                            mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), 0, "-1000", mCbSelectAll.isChecked()));
                         }
                     } else if (cbUploaded.isChecked() || cbUnUpload.isChecked()) {
 
-                        mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), 1, displaStuResult(student.getStudentCode())));
+                        mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), 1, displaStuResult(student.getStudentCode()),mCbSelectAll.isChecked()));
                     }
                 }
                 mAdapter.notifyDataSetChanged();
@@ -831,7 +828,6 @@ public class DataRetrieveActivity extends BaseTitleActivity
     }
 
     public final static String UPDATE_MESSAGE = "com.feipulai.host.update_data_message";
-
 
 
 }
