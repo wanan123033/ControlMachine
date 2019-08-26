@@ -1,27 +1,20 @@
 package com.feipulai.host.activity.standjump;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 
-import com.feipulai.common.utils.SharedPrefsUtil;
-import com.feipulai.device.led.LEDManager;
+import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseDeviceState;
-import com.feipulai.host.activity.base.BasePersonTestActivity;
 import com.feipulai.host.activity.base.BaseStuPair;
-import com.feipulai.host.config.SharedPrefsConfigs;
+import com.feipulai.host.activity.person.BasePersonTestActivity;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.feipulai.device.serial.SerialConfigs.CMD_SELF_CHECK_JUMP;
 
 
 /**
@@ -29,8 +22,7 @@ import static com.feipulai.device.serial.SerialConfigs.CMD_SELF_CHECK_JUMP;
  * Created by zzs on 2018/8/7
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
-public class StandJumpTestActivity extends BasePersonTestActivity implements StandResiltListener.HandlerInterface
-        , BasePersonTestActivity.OnMalfunctionClickListener {
+public class StandJumpTestActivity extends BasePersonTestActivity implements StandResiltListener.HandlerInterface {
     private static final int MSG_DISCONNECT = 0X101;
     private static final int INIT_AGAIN = 0X102;
     private static final int UPDATE_DEVICE = 0X103;
@@ -43,11 +35,24 @@ public class StandJumpTestActivity extends BasePersonTestActivity implements Sta
     private StandResiltListener standResiltListener = new StandResiltListener(this);
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void initData() {
+        super.initData();
         mHandler = new MyHandler(this);
-        init();
+        llState.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_ERROR) {
+                    toastSpeak("等待连接");
+                    onResume();
+                    if (pair.getStudent() != null) {
+                        standResiltListener.setTestState(StandResiltListener.TestState.START_TEST);
+                    }
+                }
+
+            }
+        });
     }
+
 
     @Override
     public void onViewClicked(View view) {
@@ -59,62 +64,39 @@ public class StandJumpTestActivity extends BasePersonTestActivity implements Sta
     }
 
     @Override
-    public void sendTestCommand(BaseStuPair stuPair) {
-//        sendCheck();
+    public void gotoItemSetting() {
+        IntentUtil.gotoActivity(this, StandJumpSettingActivity.class);
+    }
 
+    @Override
+    public void stuSkip() {
+
+    }
+
+    @Override
+    public void sendTestCommand(BaseStuPair stuPair) {
+        sendCheck();
+        standResiltListener.setTestState(StandResiltListener.TestState.START_TEST);
         //开始测试
-        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
+//        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
         //设置当前设置为空闲状态
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE, stuPair.getBaseDevice().getDeviceId()));
     }
 
-    @Override
-    public List<BaseDeviceState> findDevice() {
-        maxDivice = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.STAND_JUMP_TEST_NUMBER, 1);
-        List<BaseDeviceState> deviceStates = new ArrayList<>();
-        for (int i = 0; i < maxDivice; i++) {
-            deviceStates.add(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, i + 1));
-        }
-        return deviceStates;
-    }
-
-//    @Override
-//    public String setUnit() {
-//        if (TextUtils.isEmpty(TestConfigs.sCurrentItem.getUnit())) {
-//            return "cm";
-//        }
-//        return TestConfigs.sCurrentItem.getUnit();
-//    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (SerialDeviceManager.getInstance() != null) {
-            SerialDeviceManager.getInstance().setRS232ResiltListener(standResiltListener);
-            mLEDManager = new LEDManager();
-        } else {
-            updateDevice(new BaseDeviceState(BaseDeviceState.STATE_ERROR, 1));
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-//        //结束测试 发送结束指令 不能发送结束与关闭串口，会导致跳转到自由测试不法使用
-//        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_END_JUMP));
-//        SerialDeviceManager.getInstance().close();
-        super.onDestroy();
-    }
-
-    private void init() {
         SerialDeviceManager.getInstance().setRS232ResiltListener(standResiltListener);
         sendCheck();
-        //设置断开故障图标点击事件
-        setOnMalfunctionClickListener(this);
     }
 
     @Override
-    public void malfunctionClickListener(BaseStuPair baseStuPair) {
-        sendCheck();
+    protected void onPause() {
+        super.onPause();
+        //结束测试 发送结束指令
+        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_END_JUMP));
+        SerialDeviceManager.getInstance().close();
     }
 
     /**
@@ -124,7 +106,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity implements Sta
         isDisconnect = true;
         if (SerialDeviceManager.getInstance() != null) {
             //测量垫自检,校验连接是否正常
-            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_SELF_CHECK_JUMP));
+            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SELF_CHECK_JUMP));
             mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
         }
         standResiltListener.setTestState(StandResiltListener.TestState.UN_STARTED);
@@ -136,10 +118,8 @@ public class StandJumpTestActivity extends BasePersonTestActivity implements Sta
             e.printStackTrace();
         }
     }
-    
 
-    
-    
+
     private static class MyHandler extends Handler {
 
         private WeakReference<StandJumpTestActivity> mActivityWeakReference;
@@ -200,13 +180,19 @@ public class StandJumpTestActivity extends BasePersonTestActivity implements Sta
     @Override
     public void CheckDevice(boolean isCheckDevice, int[] brokenLEDs) {
         isDisconnect = !isCheckDevice;
-        if (!isCheckDevice) {
-            toastSpeak("测量垫已损坏,请更换测量垫");
+//        if (!isCheckDevice) {
+//            toastSpeak("测量垫已损坏,请更换测量垫");
+//        }
+        if (isCheckDevice && standResiltListener.getTestState() == StandResiltListener.TestState.START_TEST) {
+
+            //开始测试
+            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
         }
     }
 
     @Override
     public void StartDevice() {
+        isDisconnect = false;
         //检测通过可以发送测试指令
         toastSpeak("测试开始");
     }
@@ -214,17 +200,18 @@ public class StandJumpTestActivity extends BasePersonTestActivity implements Sta
     @Override
     public void AgainTest(BaseDeviceState deviceState) {
 
-        Message msg = mHandler.obtainMessage();
-        msg.what = INIT_AGAIN;
-        mHandler.sendMessage(msg);
-        //开始测试
-        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
-        //设置当前设置为空闲状态
-        updateDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE, 1));
+//        Message msg = mHandler.obtainMessage();
+//        msg.what = INIT_AGAIN;
+//        mHandler.sendMessage(msg);
+//        //开始测试
+//        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
+//        //设置当前设置为空闲状态
+//        updateDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE, 1));
+        sendTestCommand(pair);
     }
 
     @Override
     public void EndDevice(boolean isFoul, int result) {
-        mHandler.sendEmptyMessageDelayed(INIT_AGAIN, 5000);
+//        mHandler.sendEmptyMessageDelayed(INIT_AGAIN, 5000);
     }
 }

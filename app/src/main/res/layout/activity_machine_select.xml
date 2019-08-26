@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="13dp"
-        android:background="@drawable/btn_bg_white"
+        android:background="@drawable/bg_white_radius_10"
         android:overScrollMode="never"
         android:paddingBottom="37dp"
         android:paddingLeft="73dp"

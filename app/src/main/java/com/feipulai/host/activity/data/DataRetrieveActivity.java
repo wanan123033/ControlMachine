@@ -396,6 +396,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
             }
         }
     }
+
     /**
      * 查找所有学生信息
      */
@@ -432,7 +433,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
                     //获取学生信息
                     student = studentList.get(i);
                     String result = displaStuResult(student.getStudentCode());
-                    mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), TextUtils.equals(result, "-1000") ? 0 : 1, result));
+                    mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), TextUtils.equals(result, "-1000") ? 0 : 1, result, mCbSelectAll.isChecked()));
                 }
                 mRefreshView.finishRefreshAndLoad();
                 mAdapter.notifyDataSetChanged();
@@ -485,7 +486,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
                 for (int i = 0; i < students.size(); i++) {
                     Student student = students.get(i);
                     String result = displaStuResult(student.getStudentCode());
-                    mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), TextUtils.equals(result, "-1000") ? 0 : 1, result));
+                    mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), TextUtils.equals(result, "-1000") ? 0 : 1, result, mCbSelectAll.isChecked()));
 
                 }
                 mRefreshView.finishRefreshAndLoad();
@@ -588,13 +589,13 @@ public class DataRetrieveActivity extends BaseTitleActivity
                     //是否刷选已测或未测
                     if (cbTested.isChecked() || cbUnTested.isChecked()) {
                         if (cbTested.isChecked()) {
-                            mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), 1, displaStuResult(student.getStudentCode())));
+                            mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), 1, displaStuResult(student.getStudentCode()), mCbSelectAll.isChecked()));
                         } else {
-                            mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), 0, "-1000"));
+                            mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), 0, "-1000", mCbSelectAll.isChecked()));
                         }
                     } else if (cbUploaded.isChecked() || cbUnUpload.isChecked()) {
 
-                        mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), 1, displaStuResult(student.getStudentCode())));
+                        mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), 1, displaStuResult(student.getStudentCode()), mCbSelectAll.isChecked()));
                     }
                 }
                 mAdapter.notifyDataSetChanged();

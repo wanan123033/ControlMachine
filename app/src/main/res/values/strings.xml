@@ -69,4 +69,7 @@
 
     <string name="test_speak_hint">请%1$s第%2$d次准备</string>
     <string name="speak_result">%1$s成绩%2$s</string>
+
+    <string name="addStu_dialog_title">新增提示</string>
+    <string name="addStu_dialog_content">无考生信息，是否新增</string>
 </resources>

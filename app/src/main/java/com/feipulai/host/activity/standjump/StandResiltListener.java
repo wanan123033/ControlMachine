@@ -78,7 +78,7 @@ public class StandResiltListener implements SerialDeviceManager.RS232ResiltListe
                     //设置当前设置
                     handlerInterface.getDeviceState(new BaseDeviceState(BaseDeviceState.STATE_FREE, 1));
                     handlerInterface.CheckDevice(true, result.getBrokenLEDs());
-                } else {
+                }else{
                     //测量垫检测通过
                     handlerInterface.CheckDevice(true, null);
                     handlerInterface.getDeviceState(new BaseDeviceState(BaseDeviceState.STATE_FREE, 1));
