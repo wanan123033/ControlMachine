@@ -9,6 +9,26 @@ public class ConfigUtil {
     private static final String APP_NAME = "ArcFaceDemo";
     private static final String TRACK_ID = "trackID";
     private static final String FT_ORIENT = "ftOrient";
+    private static final String ENGINE = "engine";
+    private static final String FACETHRESHOLD = "threshold";
+    private static final String APP_NAME2 = "face";
+    public static boolean getISEngine(Context context) {
+        if (context == null) {
+            return false;
+        }
+        SharedPreferences sharedPreferences = context.getSharedPreferences(APP_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean(ENGINE, false);
+    }
+
+    public static void setISEngine(Context context, boolean bool) {
+        if (context == null) {
+            return;
+        }
+        SharedPreferences sharedPreferences = context.getSharedPreferences(APP_NAME, Context.MODE_PRIVATE);
+        sharedPreferences.edit()
+                .putBoolean(ENGINE, bool)
+                .apply();
+    }
 
     public static void setTrackId(Context context, int trackId) {
         if (context == null) {

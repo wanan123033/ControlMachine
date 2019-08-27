@@ -348,6 +348,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity implement
                             return;
                         }
                         drawHelper.draw(null, null);
+                        isOpenCamera=false;
                         mUVCCamera.stopPreview();
                         if (compareResult.getSimilar() > SIMILAR_THRESHOLD) {
                             Student student = DBManager.getInstance().queryStudentByCode(compareResult.getUserName());
