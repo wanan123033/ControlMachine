@@ -18,6 +18,7 @@ import com.feipulai.exam.entity.ItemSchedule;
 import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
+import com.orhanobut.logger.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -110,7 +111,8 @@ public class MySocketServer {
             // 从Socket当中得到InputStream对象
             InputStream inputStream = remotePeer.getInputStream();
             while (receiveData(inputStream)) {
-                Log.i(TAG, new String(dataByte, 0, dataByte.length, "GB2312") + "---" + dataByte.length);
+                Logger.i("中长跑接收上道软件数据："+new String(dataByte, 0, dataByte.length, "GB2312"));
+//                Log.i(TAG, new String(dataByte, 0, dataByte.length, "GB2312") + "---" + dataByte.length);
                 remotePeer.getOutputStream().write(dataByte, 0, dataByte.length);//回客户端消息
                 remotePeer.getOutputStream().flush();
             }
