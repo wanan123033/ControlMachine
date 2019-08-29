@@ -1359,7 +1359,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                         ServerMessage.uploadZCPResult(mContext, itemName, uploadResults);
                     }
                 }
-                Logger.i(TAG + "成绩", uploadResults.toString());
+                Logger.i(TAG + "成绩", roundResults.toString());
                 //自动打印
                 MiddlePrintUtil.print(roundResults, completeBeans, digital, carryMode);
 
