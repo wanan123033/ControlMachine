@@ -62,4 +62,16 @@
     <string name="abnormal">异常</string>
 
     <string name="device_versions">硬件版本号:V%1$s</string>
+    <string name="addStu_dialog_title">新增提示</string>
+    <string name="addStu_dialog_content">无考生信息，是否新增</string>
+    <string name="warning">警告</string>
+    <string name="illegal_return_hint">确认是否违规返回？</string>
+    <string name="print_more_hint">选择打印考生数量过多，确定继续打印？</string>
+    <string name="low_battery_goto_hint">存在低电量手柄,是否进入测试?</string>
+    <string name="restart_confirm_hint">重新开始将取消当前测试,确定重新开始测试吗？</string>
+    <string name="device_disconnect_save_result_hint">存在考生设备状态为断开连接,确定保存成绩？</string>
+    <string name="confirm_exit_test_hint">确定退出当前测试吗？</string>
+    <string name="clear_device_hint">是否清除当前设备?</string>
+    <string name="foul">犯规</string>
+    <string name="confirm_result">确认成绩</string>
 </resources>

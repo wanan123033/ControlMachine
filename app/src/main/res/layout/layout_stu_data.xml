@@ -97,6 +97,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ll_stu_result"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="11dp"
@@ -107,6 +108,7 @@
         android:visibility="gone">
 
         <TextView
+            android:id="@+id/txt_result_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="成绩："
@@ -117,8 +119,8 @@
             android:id="@+id/txt_stu_result"
             android:layout_width="wrap_content"
             android:layout_height="27dp"
+            android:paddingLeft="5dp"
             android:background="@drawable/edit_search_bg"
-            android:textColor="@color/black"
             android:textSize="18sp" />
 
     </LinearLayout>

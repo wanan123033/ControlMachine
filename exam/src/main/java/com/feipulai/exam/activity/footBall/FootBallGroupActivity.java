@@ -22,10 +22,7 @@ import com.feipulai.device.udp.UdpLEDUtil;
 import com.feipulai.device.udp.result.BasketballResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
-import com.feipulai.exam.activity.basketball.BasketBallGroupActivity;
 import com.feipulai.exam.activity.basketball.BasketBallListener;
-import com.feipulai.exam.activity.basketball.BasketBallSetting;
-import com.feipulai.exam.activity.basketball.adapter.BasketBallResultAdapter;
 import com.feipulai.exam.activity.basketball.result.BasketBallTestResult;
 import com.feipulai.exam.activity.basketball.util.TimerUtil;
 import com.feipulai.exam.activity.footBall.adapter.FootBallResultAdapter;
@@ -59,6 +56,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class FootBallGroupActivity extends BaseTitleActivity implements TimerUtil.TimerAccepListener, BasketBallListener.BasketBallResponseListener, BaseQuickAdapter.OnItemClickListener {
     @BindView(R.id.rv_testing_pairs)
@@ -1061,34 +1059,39 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
     }
 
     private void showIllegalReturnDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("警告")
-                .setMessage("确认是否违规返回？")
-                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        timerUtil.stop();
-                        BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
-                        List<MachineResult> machineResultList = testResult.getMachineResultList();
-                        if (machineResultList != null && machineResultList.size() > 0) {
-                            Student student = pairs.get(position()).getStudent();
-                            int testNo = TestCache.getInstance().getTestNoMap().get(student);
-                            DBManager.getInstance().deleteStuResult(student.getStudentCode(), testNo, roundNo, group.getId());
-                            DBManager.getInstance().deleteStuMachineResults(student.getStudentCode(), testNo, roundNo, group.getId());
-                            testResult.setSelectMachineResult(0);
-                            testResult.setResult(-999);
-                            testResult.setResultState(-999);
-                            testResult.setMachineResultList(null);
-                            resultAdapter.notifyDataSetChanged();
-                        }
-                        state = WAIT_CONFIRM;
-                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
-                        sleep();
-                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
-                    }
-                })
-                .setNegativeButton("取消", null)
-                .show();
+
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.warning))
+                .setContentText(getString(R.string.illegal_return_hint))
+                .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                timerUtil.stop();
+                BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
+                List<MachineResult> machineResultList = testResult.getMachineResultList();
+                if (machineResultList != null && machineResultList.size() > 0) {
+                    Student student = pairs.get(position()).getStudent();
+                    int testNo = TestCache.getInstance().getTestNoMap().get(student);
+                    DBManager.getInstance().deleteStuResult(student.getStudentCode(), testNo, roundNo, group.getId());
+                    DBManager.getInstance().deleteStuMachineResults(student.getStudentCode(), testNo, roundNo, group.getId());
+                    testResult.setSelectMachineResult(0);
+                    testResult.setResult(-999);
+                    testResult.setResultState(-999);
+                    testResult.setMachineResultList(null);
+                    resultAdapter.notifyDataSetChanged();
+                }
+                state = WAIT_CONFIRM;
+                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
+                sleep();
+                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
+            }
+        }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+            }
+        }).show();
+
     }
 
     /**

@@ -43,7 +43,14 @@ public class DataRetrieveBean implements Serializable {
         this.testState = testState;
         this.result = result;
     }
-
+    public DataRetrieveBean(String studentCode, String studentName, int sex, int testState, String result, boolean checked) {
+        this.studentCode = studentCode;
+        this.studentName = studentName;
+        this.sex = sex;
+        this.testState = testState;
+        this.result = result;
+        this.isChecked = checked;
+    }
     public String getStudentCode() {
         return studentCode;
     }

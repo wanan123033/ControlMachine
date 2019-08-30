@@ -24,6 +24,7 @@ import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseActivity;
 import com.ww.fpl.libarcface.common.Constants;
+import com.ww.fpl.libarcface.util.ConfigUtil;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -37,13 +38,13 @@ import io.reactivex.schedulers.Schedulers;
  * 现在这完全是一个程序欢迎界面了
  */
 public class SplashScreenActivity extends BaseActivity {
-	
+
     public static final String MACHINE_CODE = "machine_code";
-	public static final String APP_ID = "15431629";
-	public static final String APP_KEY = "ffHKDmoM0Rfwbh96lfIaKkG5";
-	public static final String SECRET_KEY = "8EhfDpV69gVojj8R9jYPU3kGSX1VkWjB";
-	
-	// TtsMode.MIX; 离在线融合，在线优先； TtsMode.ONLINE 纯在线； 没有纯离线
+    public static final String APP_ID = "15431629";
+    public static final String APP_KEY = "ffHKDmoM0Rfwbh96lfIaKkG5";
+    public static final String SECRET_KEY = "8EhfDpV69gVojj8R9jYPU3kGSX1VkWjB";
+
+    // TtsMode.MIX; 离在线融合，在线优先； TtsMode.ONLINE 纯在线； 没有纯离线
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,12 +70,15 @@ public class SplashScreenActivity extends BaseActivity {
     }
 
     private void init() {
-        activeEngine();
+        boolean isEngine = ConfigUtil.getISEngine(this);
+        if (!isEngine) {
+            activeEngine();
+        }
         SoundPlayUtils.init(MyApplication.getInstance());
-	    LogUtils.initLogger(BuildConfig.DEBUG,BuildConfig.DEBUG);
+        LogUtils.initLogger(BuildConfig.DEBUG, BuildConfig.DEBUG);
         ToastUtils.init(getApplicationContext());
         //这里初始化时间很长,大约需要3s左右
-        TtsManager.getInstance().init(this,APP_ID,APP_KEY,SECRET_KEY);
+        TtsManager.getInstance().init(this, APP_ID, APP_KEY, SECRET_KEY);
         // Log.i("james", CommonUtils.getDeviceInfo());
         // AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         // int max = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM);
@@ -86,9 +90,9 @@ public class SplashScreenActivity extends BaseActivity {
             Manifest.permission.READ_PHONE_STATE
     };
     private FaceEngine faceEngine = new FaceEngine();
+
     /**
      * 激活人脸识别引擎
-     *
      */
     public void activeEngine() {
         if (!checkPermissions(NEEDED_PERMISSIONS)) {
@@ -114,6 +118,7 @@ public class SplashScreenActivity extends BaseActivity {
                     public void onNext(Integer activeCode) {
                         if (activeCode == ErrorInfo.MOK) {
                             ToastUtils.showShort(getString(R.string.active_success));
+                            ConfigUtil.setISEngine(SplashScreenActivity.this, true);
                         } else if (activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
                             ToastUtils.showShort(getString(R.string.already_activated));
                         } else {

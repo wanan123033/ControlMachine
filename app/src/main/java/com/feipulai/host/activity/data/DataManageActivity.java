@@ -1,6 +1,7 @@
 package com.feipulai.host.activity.data;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -22,6 +22,7 @@ import com.feipulai.common.exl.ExlListener;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.common.view.dialog.EditDialog;
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseTitleActivity;
@@ -80,7 +81,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
 
     public BackupManager backupManager;
     private AlertDialog nameFileDialog;
-    private EditText mEditText;
+    //    private EditText mEditText;
     private boolean isProcessingData;
     private List<TypeListBean> typeDatas;
 
@@ -232,7 +233,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
 //                    case 4://头像下载
 //                    case 3://头像导入
 //                    case 5://删除头像
-                        //TODO 测试使用
+                    //TODO 测试使用
 //                        DBManager.getInstance().roundResultClear();
 //                        ToastUtils.showShort("功能未开放，敬请期待");
 //                        break;
@@ -279,7 +280,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                 ToastUtils.showShort(restoreSuccess ? "数据库恢复成功" : "数据库恢复失败,请检查文件格式");
                 Logger.i(restoreSuccess ? ("数据库恢复成功,文件路径:" + FileSelectActivity.sSelectedFile.getName())
                         : "数据库恢复失败");
-                com.feipulai.common.utils.SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
+                SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
                 DBManager.getInstance().initDB();
                 TestConfigs.init(this, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), null);
                 break;
@@ -363,28 +364,39 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
 
     }
 
-    private void createFileNameDialog(DialogInterface.OnClickListener confirmListener) {
-        mEditText = new EditText(this);
-        mEditText.setSingleLine();
-        mEditText.setBackgroundColor(0xffcccccc);
+    private void createFileNameDialog(EditDialog.OnConfirmClickListener confirmListener) {
+//        mEditText = new EditText(this);
+//        mEditText.setSingleLine();
+//        mEditText.setBackgroundColor(0xffcccccc);
         DateFormat df = new SimpleDateFormat("yyyy年MM月dd日");
-        mEditText.setText(SettingHelper.getSystemSetting().getTestName() +
-                SettingHelper.getSystemSetting().getHostId() + "号机" + df.format(new Date()));
-        nameFileDialog = new AlertDialog.Builder(this)
-                .setTitle("文件名")
-                .setMessage("请输入文件名")
-                .setView(mEditText)
-                .setPositiveButton("确定", confirmListener)
-                .setNegativeButton("取消", null)
-                .create();
-        nameFileDialog.show();
+//        mEditText.setText(SettingHelper.getSystemSetting().getTestName() +
+//                SettingHelper.getSystemSetting().getHostId() + "号机" + df.format(new Date()));
+//        nameFileDialog = new AlertDialog.Builder(this)
+//                .setTitle("文件名")
+//                .setMessage("请输入文件名")
+//                .setView(mEditText)
+//                .setPositiveButton("确定", confirmListener)
+//                .setNegativeButton("取消", null)
+//                .create();
+//        nameFileDialog.show();
+
+        new EditDialog.Builder(this).setTitle("文件名")
+                .setCanelable(false)
+                .setMessage("输入合法保存文件名")
+                .setEditHint("请输入文件名")
+                .setEditText(SettingHelper.getSystemSetting().getTestName() +
+                        SettingHelper.getSystemSetting().getHostId() + "号机" + df.format(new Date()))
+                .setPositiveButton(confirmListener)
+                .build().show();
+
+
     }
 
     private void showExportFileNameDialog() {
-        createFileNameDialog(new DialogInterface.OnClickListener() {
+        createFileNameDialog(new EditDialog.OnConfirmClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String text = mEditText.getText().toString().trim();
+            public void OnClickListener(Dialog dialog, String content) {
+                String text = content.trim();
                 UsbFile targetFile;
                 try {
                     targetFile = FileSelectActivity.sSelectedFile.createFile(text + ".xls");
@@ -403,10 +415,10 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
     }
 
     private void showBackupFileNameDialog() {
-        createFileNameDialog(new DialogInterface.OnClickListener() {
+        createFileNameDialog(new EditDialog.OnConfirmClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String text = mEditText.getText().toString().trim();
+            public void OnClickListener(Dialog dialog, String content) {
+                String text = content.trim();
                 UsbFile targetFile;
                 try {
                     targetFile = FileSelectActivity.sSelectedFile.createFile(text + ".db");

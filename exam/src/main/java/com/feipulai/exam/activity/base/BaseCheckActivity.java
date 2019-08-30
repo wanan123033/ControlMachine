@@ -1,7 +1,5 @@
 package com.feipulai.exam.activity.base;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -12,6 +10,7 @@ import com.feipulai.device.CheckDeviceOpener;
 import com.feipulai.device.ic.ICCardDealer;
 import com.feipulai.device.ic.NFCDevice;
 import com.feipulai.device.ic.entity.StuInfo;
+import com.feipulai.exam.R;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
@@ -28,6 +27,8 @@ import com.zkteco.android.biometric.module.idcard.meta.IDCardInfo;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * Created by James on 2018/5/24 0024.
@@ -247,18 +248,21 @@ public abstract class BaseCheckActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                new AlertDialog.Builder(BaseCheckActivity.this)
-                        .setCancelable(false)
-                        .setTitle("提示")
-                        .setMessage("无考生信息，是否新增")
-                        .setPositiveButton("是", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                new AddStudentDialog(BaseCheckActivity.this).showDialog(student, false);
-                            }
-                        })
-                        .setNegativeButton("否", null)
-                        .show();
+
+                new SweetAlertDialog(BaseCheckActivity.this).setTitleText(getString(R.string.addStu_dialog_title))
+                        .setContentText(getString(R.string.addStu_dialog_content))
+                        .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                        new AddStudentDialog(BaseCheckActivity.this).showDialog(student, false);
+                    }
+                }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                    }
+                }).show();
             }
         });
     }

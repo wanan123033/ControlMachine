@@ -2,6 +2,8 @@ package com.feipulai.device.tcp;
 
 import android.util.Log;
 
+import com.orhanobut.logger.Logger;
+
 import java.util.Arrays;
 import java.util.Date;
 
@@ -55,18 +57,17 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
     //接收消息的地方，接口调用返回到activity了
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        System.out.println("客户端开始读取服务端过来的信息");
         ByteBuf buf = (ByteBuf) msg;
         byte[] req = new byte[buf.readableBytes()];
         buf.readBytes(req);
         String response = TcpConfig.bytesToHex(req);
         String[] response2 = TcpConfig.bytesToHexStrings(req);
-        Log.i("onMessageResponse", "---" + response);
 
         if (response.equals(TcpConfig.CMD_CONNECT_RECEIVE)) {
             listener.onConnected("设备连接成功");
             return;
         }
+        Logger.i("客户端开始读取服务端过来的信息:"+Arrays.toString(response2));
         //解析收到的包
         if (response.startsWith("a1") && response.endsWith("fff8") && Integer.parseInt(response2[1] + response2[2], 16) == response2.length) {
             int[] timeByte = new int[7];
@@ -101,10 +102,10 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
                 for (int i = 0; i < flagNo; i++) {
                     cardIds[i] = sb.substring(i * 24, i * 24 + 24);
                 }
-                Log.i("cardIds", Arrays.toString(cardIds));
                 listener.onMessageReceive(currentDate, cardIds);
             }
         } else {
+            Logger.e("客户端开始读取服务端过来的信息:非法解析");
             listener.onMessageFailed("非法解析");
         }
     }

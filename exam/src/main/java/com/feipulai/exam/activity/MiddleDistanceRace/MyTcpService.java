@@ -116,7 +116,7 @@ public class MyTcpService extends Service {
                     if (callBacks != null && callBacks.size() > 0) {
                         for (CallBack callBack :
                                 callBacks) {
-                            Log.i("handleMessage", "---------" + message.toString());
+//                            Log.i("handleMessage", "---------" + message.toString());
                             callBack.postMessage(message);
                         }
                     }

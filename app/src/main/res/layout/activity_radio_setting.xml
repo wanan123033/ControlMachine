@@ -9,7 +9,7 @@
         android:layout_width="600dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@drawable/btn_bg_white"
+        android:background="@drawable/bg_white_radius_10"
         android:gravity="center_vertical"
         android:orientation="vertical"
         android:paddingBottom="20dp"

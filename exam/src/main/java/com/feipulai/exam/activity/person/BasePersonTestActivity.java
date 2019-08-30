@@ -348,6 +348,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity implement
                             return;
                         }
                         drawHelper.draw(null, null);
+                        isOpenCamera=false;
                         mUVCCamera.stopPreview();
                         if (compareResult.getSimilar() > SIMILAR_THRESHOLD) {
                             Student student = DBManager.getInstance().queryStudentByCode(compareResult.getUserName());
@@ -432,14 +433,30 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity implement
             return;
         }
 //        if (isCamera) {
-        frameCamera.setVisibility(View.VISIBLE);
-        rl.setVisibility(View.GONE);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mUVCCamera.startPreview();
-            }
-        }, 1000);
+        if (isOpenCamera) {
+            frameCamera.setVisibility(View.GONE);
+//            rl.setVisibility(View.GONE);
+            mUVCCamera.stopPreview();
+            isOpenCamera = false;
+        } else {
+//            frameCamera.setVisibility(View.VISIBLE);
+////            rl.setVisibility(View.GONE);
+//            mUVCCamera.startPreview();
+            isOpenCamera = true;
+
+            frameCamera.setVisibility(View.VISIBLE);
+//            rl.setVisibility(View.GONE);
+            //防止第一次控件未初始化无法启动
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mUVCCamera.startPreview();
+                }
+            }, 1000);
+
+
+        }
+
 //        } else {
 //            ToastUtils.showShort("摄像头未开启");
 //        }
@@ -681,7 +698,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity implement
 //    }
 
     public void toLedSetting() {
-        if (pair.getBaseDevice().getState() != BaseDeviceState.STATE_NOT_BEGAIN && pair.getBaseDevice().getState() != BaseDeviceState.STATE_FREE) {
+        if (pair.getBaseDevice().getState() != BaseDeviceState.STATE_NOT_BEGAIN
+                && pair.getBaseDevice().getState() != BaseDeviceState.STATE_FREE
+                && pair.getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
             toastSpeak("测试中不可使用");
             return;
         }
@@ -889,18 +908,16 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity implement
      * 展示判罚
      */
     private void showPenalize() {
-
-
         SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
-        alertDialog.setTitleText("确认成绩");
+        alertDialog.setTitleText(getString(R.string.confirm_result));
         alertDialog.setCancelable(false);
-        alertDialog.setConfirmText("确认").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+        alertDialog.setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
                 doResult();
             }
-        }).setCancelText("犯规").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+        }).setCancelText(getString(R.string.foul)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
@@ -909,24 +926,6 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity implement
                 doResult();
             }
         }).show();
-//        new AlertDialog.Builder(this).setMessage("确认成绩")
-//                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        dialog.dismiss();
-//                        if (doResult()) return;
-//
-//                    }
-//                }).setNegativeButton("犯规", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                dialog.dismiss();
-//                pair.setResultState(RoundResult.RESULT_STATE_FOUL);
-//                updateResult(pair);
-//                if (doResult()) return;
-//
-//            }
-//        }).show();
     }
 
     /**

@@ -524,7 +524,6 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                             }
                         }
                     }
-
                     getGroupList();
                 }
             });
@@ -956,7 +955,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         });
         isConnect = true;
         isFirst = false;
-        Log.i("onConnected", "onConnected-----------------------");
+//        Log.i("onConnected", "onConnected-----------------------");
         if (isFlag) {
             TtsManager.getInstance().speak("设备连接成功");
             mHander.sendMessage(mHander.obtainMessage(1, text));
@@ -971,7 +970,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
 
     @Override
     public void onStartTiming(long time) {
-        Log.i("onMessageResponse", "开始计时---------" + time);
+//        Log.i("onMessageResponse", "开始计时---------" + time);
 //        Log.i("timingLists", timingLists.toString());
         int timerNo = 0;
         for (TimingBean timing : timingLists
@@ -1029,7 +1028,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                     }
                     isConnect = false;
                     viewConnectState.setBackgroundResource(R.drawable.red_circle);
-                    Log.e(TAG, "onServiceStatusConnectChanged:" + statusCode);
+//                    Log.e(TAG, "onServiceStatusConnectChanged:" + statusCode);
                 }
             }
         });
@@ -1193,6 +1192,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         DialogUtil.showCommonDialog(this, "是否违规返回", new DialogUtil.DialogListener() {
             @Override
             public void onPositiveClick() {
+                Logger.d(TAG+"中长跑点击了违规返回按钮"+timingLists.get(position).toString());
                 raceTimingAdapter.notifyBackGround(holder, TIMING_STATE_BACK);
                 timingLists.get(position).setState(TIMING_STATE_BACK);
 //                raceTimingAdapter.notifyDataSetChanged();
@@ -1229,6 +1229,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         DialogUtil.showCommonDialog(this, "是否完成计时", new DialogUtil.DialogListener() {
             @Override
             public void onPositiveClick() {
+                Logger.d(TAG+"中长跑点击了完成计时按钮"+timingLists.get(position).toString());
                 timingLists.get(position).setState(TimingBean.TIMING_STATE_COMPLETE);
 //                raceTimingAdapter.notifyBackGround(holder, TimingBean.TIMING_STATE_COMPLETE);
 //                raceTimingAdapter.notifyDataSetChanged();
@@ -1259,7 +1260,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
 
                     dbGroupList.setIsTestComplete(GROUP_FINISH);
                     DBManager.getInstance().updateGroup(dbGroupList);
-                    Log.i("dbGroupList", "----" + dbGroupList.toString());
+//                    Log.i("dbGroupList", "----" + dbGroupList.toString());
                 }
 
                 //更新组别
@@ -1358,7 +1359,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                         ServerMessage.uploadZCPResult(mContext, itemName, uploadResults);
                     }
                 }
-                Logger.i(TAG + "成绩", uploadResults.toString());
+                Logger.i(TAG + "成绩", roundResults.toString());
                 //自动打印
                 MiddlePrintUtil.print(roundResults, completeBeans, digital, carryMode);
 
@@ -1390,6 +1391,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         DialogUtil.showCommonDialog(this, "是否删除当前组", new DialogUtil.DialogListener() {
             @Override
             public void onPositiveClick() {
+                Logger.d(TAG+"中长跑点击了删除按钮"+timingLists.get(position).toString());
                 //在成绩显示列删除选中组的所有考生
                 Iterator<RaceResultBean> it = resultDataList.iterator();
                 while (it.hasNext()) {
@@ -1771,7 +1773,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
             resultDataList.add(addPosition, raceResultBean);
         }
 
-        Log.i(TAG, resultDataList.toString());
+//        Log.i(TAG, resultDataList.toString());
         resultShowTable.notifyContent();
     }
 
@@ -1790,23 +1792,18 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
             case R.id.sp_race_schedule:
                 schedulePosition = position;
                 scheduleNo = scheduleList.get(position).getScheduleNo();
-                Log.i("spinnerItemSelected", "-----------sp_race_schedule");
                 break;
             case R.id.sp_race_item:
                 mItemPosition = position;
-                Log.i("spinnerItemSelected", "-----------sp_race_item");
                 break;
             case R.id.sp_race_state:
                 groupStatePosition = position;
-                Log.i("spinnerItemSelected", "-----------sp_race_state");
                 break;
         }
         if (isAutoSelect) {
-            Log.i("spinnerItemSelected", "-----------true");
             isAutoSelect = false;
             return;
         }
-        Log.i("spinnerItemSelected", "-----------false");
         getGroupList();
     }
 

@@ -304,7 +304,7 @@
             android:layout_height="260dp"
             android:layout_marginLeft="190dp"
             android:layout_marginTop="40dp"
-            android:background="@drawable/btn_bg_white"
+            android:background="@drawable/bg_white_radius_10"
             android:divider="@color/sbc_header_text"
             android:dividerHeight="1dp"
             android:paddingBottom="@dimen/dp_10"

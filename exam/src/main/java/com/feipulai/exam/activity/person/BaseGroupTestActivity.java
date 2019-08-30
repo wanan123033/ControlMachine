@@ -1,7 +1,5 @@
 package com.feipulai.exam.activity.person;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,7 +25,6 @@ import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
-import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.person.adapter.BaseGroupTestStuAdapter;
 import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -58,6 +55,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * 分组
@@ -344,27 +342,28 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     /**
      * 展示判罚
      */
-    private void showPenalize(final BaseDeviceState deviceState , final BaseStuPair pair) {
-        new AlertDialog.Builder(this).setMessage("成绩确认")
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        updatePair(deviceState, pair,false);
-                        dialog.dismiss();
-                    }
-                }).
-                setNegativeButton("犯规", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        updatePair(deviceState, pair,true);
-                        dialog.dismiss();
-                    }
-                }).show();
+    private void showPenalize(final BaseDeviceState deviceState, final BaseStuPair pair) {
+        SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
+        alertDialog.setTitleText(getString(R.string.confirm_result));
+        alertDialog.setCancelable(false);
+        alertDialog.setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                updatePair(deviceState, pair, false);
+            }
+        }).setCancelText(getString(R.string.foul)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                updatePair(deviceState, pair, true);
+            }
+        }).show();
 
     }
 
-    public void updatePair(BaseDeviceState deviceState ,  BaseStuPair pair,boolean isFault){
-        if (isFault){
+    public void updatePair(BaseDeviceState deviceState, BaseStuPair pair, boolean isFault) {
+        if (isFault) {
             pair.setResultState(RoundResult.RESULT_STATE_FOUL);
             updateTestResult(pair);
         }
@@ -616,9 +615,9 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         }
         //状态为测试已结束
         if (deviceState.getState() == BaseDeviceState.STATE_END) {
-            if (isFault && pair.getResultState() != RoundResult.RESULT_STATE_FOUL){
-                showPenalize(deviceState ,pair);
-            }else {
+            if (isFault && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
+                showPenalize(deviceState, pair);
+            } else {
                 doTestEnd(deviceState, pair);
             }
         }
@@ -630,6 +629,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 
     /**
      * 处理成绩结果
+     *
      * @param deviceState
      * @param pair
      */

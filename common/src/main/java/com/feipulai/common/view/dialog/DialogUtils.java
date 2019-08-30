@@ -1,4 +1,4 @@
-package com.feipulai.common.utils;
+package com.feipulai.common.view.dialog;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.view.View;
 
 import com.feipulai.common.R;
+import com.feipulai.common.utils.ActivityCollector;
 
 import java.lang.reflect.Field;
 

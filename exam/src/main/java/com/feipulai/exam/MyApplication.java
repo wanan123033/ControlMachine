@@ -8,6 +8,7 @@ import com.feipulai.common.CrashHandler;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.SharedPrefsConfigs;
+import com.feipulai.exam.utils.NetUtil;
 
 
 public class MyApplication extends MultiDexApplication {
@@ -34,7 +35,8 @@ public class MyApplication extends MultiDexApplication {
         CrashHandler.getInstance().init(this);
         SettingHelper.init(this);
         TOKEN = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.TOKEN, "");
-
+        //默认打开WiFi，虹软sdk需要读物唯一标识，某些机器WiFi断开情况下读不到
+        NetUtil.openWifi(this);
 
 
         // 初始化工作已经移至mainactivity中,保证尽快进入界面,减少白屏时间

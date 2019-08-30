@@ -2,6 +2,7 @@ package com.feipulai.host.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
@@ -10,6 +11,7 @@ import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.ActivityCollector;
+import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.host.R;
@@ -18,6 +20,8 @@ import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.activity.setting.SystemSetting;
 import com.feipulai.host.adapter.TupleAdapter;
 import com.feipulai.host.config.TestConfigs;
+import com.feipulai.host.db.DBManager;
+import com.feipulai.host.entity.Item;
 import com.feipulai.host.entity.Tuple;
 
 import java.util.ArrayList;
@@ -81,13 +85,20 @@ public class MachineSelectActivity extends BaseTitleActivity implements DialogIn
 
 
     private void setCurrentItem(int machineCode) {
-        int init = TestConfigs.init(this, machineCode, null, this);
-        if (init == TestConfigs.INIT_SUCCESS) {
-            systemSetting.setHostId(1);
-            SettingHelper.updateSettingCache(systemSetting);
-            // 清除所有已启动的Activity
-            ActivityCollector.getInstance().finishAllActivity();
-            startActivity(new Intent(this, MainActivity.class));
+        List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(machineCode);
+        if (itemList.size() == 1 || machineCode == ItemDefault.CODE_HW) {
+            int init = TestConfigs.init(this, machineCode, null, this);
+            if (init == TestConfigs.INIT_SUCCESS) {
+                systemSetting.setHostId(1);
+                SettingHelper.updateSettingCache(systemSetting);
+                // 清除所有已启动的Activity
+                ActivityCollector.getInstance().finishAllActivity();
+                startActivity(new Intent(this, MainActivity.class));
+            }
+        } else {
+            Bundle bundle = new Bundle();
+            bundle.putInt("machineCode", machineCode);
+            IntentUtil.gotoActivity(this, SubItemsSelectActivity.class, bundle);
         }
     }
 

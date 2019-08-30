@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.feipulai.common.utils.DialogUtils;
+import com.feipulai.common.view.dialog.DialogUtils;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.data.MachineResultView;
 import com.feipulai.exam.config.HWConfigs;

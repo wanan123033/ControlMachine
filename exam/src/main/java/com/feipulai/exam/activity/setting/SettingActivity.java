@@ -20,7 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.feipulai.common.utils.AudioUtil;
-import com.feipulai.common.utils.DialogUtils;
+import com.feipulai.common.view.dialog.DialogUtils;
 import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;

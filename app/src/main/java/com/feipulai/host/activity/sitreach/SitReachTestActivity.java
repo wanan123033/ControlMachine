@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.command.ConvertCommand;
@@ -62,7 +63,12 @@ public class SitReachTestActivity extends com.feipulai.host.activity.person.Base
 
     }
 
-//    @Override
+    @Override
+    public void gotoItemSetting() {
+        IntentUtil.gotoActivity(this, SitReachSettingActivity.class);
+    }
+
+    //    @Override
 //    public void switchToFreeTest() {
 //        super.switchToFreeTest();
 //        startActivity(new Intent(this, SitReachFaceIDActivity.class));
@@ -205,8 +211,6 @@ public class SitReachTestActivity extends com.feipulai.host.activity.person.Base
     });
 
 
-    
-    
     private static class MyHandler extends Handler {
 
         private WeakReference<SitReachTestActivity> mActivityWeakReference;

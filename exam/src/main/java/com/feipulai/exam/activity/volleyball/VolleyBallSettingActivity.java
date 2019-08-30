@@ -20,7 +20,7 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.feipulai.common.utils.DialogUtils;
+import com.feipulai.common.view.dialog.DialogUtils;
 import com.feipulai.common.utils.HandlerUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
