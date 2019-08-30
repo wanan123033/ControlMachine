@@ -32,10 +32,11 @@ public class SargentJumpImpl implements SerialDeviceManager.RS232ResiltListener,
 
     @Override
     public void onRS232Result(Message msg) {
+        SargentJumpResult result = (SargentJumpResult) msg.obj;
         switch (msg.what) {
             case SARGENT_JUMP_EMPTY_RESPONSE:
                 if (jumpListener!= null){
-                    jumpListener.onFree();
+                    jumpListener.onFree(result.getDeviceId());
                 }
 
 
@@ -50,7 +51,6 @@ public class SargentJumpImpl implements SerialDeviceManager.RS232ResiltListener,
                 if (jumpListener== null){
                     return;
                 }
-                SargentJumpResult result = (SargentJumpResult) msg.obj;
                 jumpListener.onResultArrived(result);
 //                temp = result.getScore();
 //                count++;
@@ -71,12 +71,13 @@ public class SargentJumpImpl implements SerialDeviceManager.RS232ResiltListener,
 
     @Override
     public void onRadioArrived(Message msg) {
+        SargentJumpResult result = (SargentJumpResult) msg.obj;
         switch (msg.what) {
             case SARGENT_JUMP_EMPTY_RESPONSE:
                 if (jumpListener== null){
                     return;
                 }
-                jumpListener.onFree();
+                jumpListener.onFree(result.getDeviceId());
 
                 break;
             case SARGENT_JUMP_START_RESPONSE:
@@ -89,7 +90,6 @@ public class SargentJumpImpl implements SerialDeviceManager.RS232ResiltListener,
                 if (jumpListener== null){
                     return;
                 }
-                SargentJumpResult result = (SargentJumpResult) msg.obj;
                 jumpListener.onResultArrived(result);
 //                temp = result.getScore();
 //                count++;
@@ -104,22 +104,21 @@ public class SargentJumpImpl implements SerialDeviceManager.RS232ResiltListener,
                 Logger.i( "=>SargentJumpImpl====>" + result.getScore());
                 break;
             case SARGENT_JUMP_SET_MATCH:
-                SargentJumpResult match = (SargentJumpResult) msg.obj;
                 if (jumpListener!= null){
-                    jumpListener.onMatch(match);
+                    jumpListener.onMatch(result);
                 }
                 break;
         }
     }
 
-    interface SargentJumpListener {
+    public interface SargentJumpListener {
         void onResultArrived(SargentJumpResult result);
 
         void onStopTest();
 
         void onSelfCheck();
 
-        void onFree();
+        void onFree(int deviceId);
 
         void onMatch(SargentJumpResult match);
     }

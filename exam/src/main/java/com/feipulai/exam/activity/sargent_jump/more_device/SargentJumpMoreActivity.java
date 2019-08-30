@@ -4,11 +4,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
@@ -54,7 +54,8 @@ public abstract class SargentJumpMoreActivity extends BaseCheckActivity {
     private int MAX_COUNT = 4;
     private LEDManager mLEDManager;
     private Intent serverIntent;
-
+    private ClearHandler clearHandler = new ClearHandler();
+    private LedHandler ledHandler = new LedHandler();
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_sargent_jump_more;
@@ -139,7 +140,29 @@ public abstract class SargentJumpMoreActivity extends BaseCheckActivity {
         addStudent(student, index);
         deviceDetails.get(index).getStuDevicePair().setTimeResult(result);
         deviceListAdapter.notifyItemChanged(index);
+        deviceListAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int pos) {
+                switch (view.getId()) {
+                    case R.id.txt_skip://跳过
+                        toSkip(pos);
+                        break;
+                    case R.id.txt_start://开始
+                        toStart(pos);
+                        break;
+                }
+            }
+        });
+    }
 
+    public abstract void toStart(int pos);
+
+    private void toSkip(int pos) {
+        if (deviceDetails.get(pos).getStuDevicePair().getStudent() != null) {
+            Logger.i("studentSkip=>跳过考生：" + deviceDetails.get(pos).getStuDevicePair().getStudent().getStudentName());
+            deviceDetails.get(pos).getStuDevicePair().setStudent(null);
+            deviceListAdapter.notifyItemChanged(pos);
+        }
     }
 
     /**
@@ -155,17 +178,17 @@ public abstract class SargentJumpMoreActivity extends BaseCheckActivity {
         int count = timeResult.length;
         toastSpeak(String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1)
                 , String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1));
-        //TODO LED 展示
-        showLed(student);
-        sendTestCommand(deviceDetails.get(index).getStuDevicePair(), index);
+
+        setShowLed(deviceDetail.getStuDevicePair());
+
     }
 
     /**
      * led 显示 TODO
      *
-     * @param student
+     * @param pair
      */
-    private void showLed(Student student) {
+    private void setShowLed(BaseStuPair pair) {
 
     }
 
@@ -174,7 +197,8 @@ public abstract class SargentJumpMoreActivity extends BaseCheckActivity {
     protected void initData() {
         for (int i = 0; i < MAX_COUNT; i++) {
             DeviceDetail detail = new DeviceDetail();
-            detail.getStuDevicePair().getBaseDevice().setDeviceId(i+1);
+            detail.getStuDevicePair().getBaseDevice().setDeviceId(i + 1);
+            detail.setDeviceOpen(true);
             deviceDetails.add(detail);
         }
         initView();
@@ -186,7 +210,7 @@ public abstract class SargentJumpMoreActivity extends BaseCheckActivity {
         GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
         rvDeviceList.setLayoutManager(layoutManager);
         rvDeviceList.setAdapter(deviceListAdapter);
-
+        deviceListAdapter.setTestCount(3);
         deviceListAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int pos) {
@@ -199,7 +223,7 @@ public abstract class SargentJumpMoreActivity extends BaseCheckActivity {
                         break;
                     case R.id.txt_skip:
                         if (pair.getStudent() != null) {
-                            stuSkipDialog(pair.getStudent());
+                            stuSkipDialog(pair.getStudent(),pos);
                         }
                         break;
                     default:
@@ -212,16 +236,14 @@ public abstract class SargentJumpMoreActivity extends BaseCheckActivity {
     }
 
 
-    protected void stuSkipDialog(final Student student) {
+    protected void stuSkipDialog(final Student student, final int pos) {
         new AlertDialog.Builder(this).setMessage("是否跳过" + student.getStudentName() + "考生测试")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Logger.i("stuSkip:" + student.toString());
                         //测试结束学生清除 ，设备设置空闲状态
-
-//                        clearHandler.sendEmptyMessageDelayed(0, 0);
-                        stuSkip();
+                        stuSkip(pos);
                         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
                     }
                 }).setNegativeButton("取消", null).show();
@@ -300,8 +322,34 @@ public abstract class SargentJumpMoreActivity extends BaseCheckActivity {
         //保存成绩
         saveResult(pair);
         printResult(pair);
-        broadResult(pair);
-        //todo
+//        broadResult(pair);
+
+        if (detail.getRound() < setTestCount()) {
+            if (pair.getResultState() == RoundResult.RESULT_STATE_NORMAL && pair.isFullMark()) {
+                //测试结束学生清除 ，设备设置空闲状态
+                detail.setRound(1);
+                //4秒后清理学生信息
+                Message msg = new Message();
+                msg.what = pair.getBaseDevice().getDeviceId();
+                msg.obj = detail;
+                clearHandler.sendMessageDelayed(msg, 4000);
+                return;
+            }
+            detail.setRound(detail.getRound() + 1);
+
+            toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), detail.getRound())
+                    , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), detail.getRound()));
+            Message msg = new Message();
+            msg.obj = pair;
+            ledHandler.sendMessageDelayed(msg, 2000);
+            pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
+        } else {
+            detail.setRound(1);
+            //4秒后清理学生信息
+            Message msg = new Message();
+            msg.obj = detail;
+            clearHandler.sendMessageDelayed(msg, 4000);
+        }
 
 
     }
@@ -452,6 +500,7 @@ public abstract class SargentJumpMoreActivity extends BaseCheckActivity {
             refreshDevice(index);
 
             //TODO LED
+            updateResultLed();
             deviceListAdapter.notifyItemChanged(index);
         }
     }
@@ -459,6 +508,31 @@ public abstract class SargentJumpMoreActivity extends BaseCheckActivity {
     private void refreshDevice(int index) {
         if (deviceDetails.get(index).getStuDevicePair().getBaseDevice() != null) {
             deviceListAdapter.notifyItemChanged(index);
+        }
+    }
+
+    private void updateResultLed() {
+
+    }
+
+    public  class LedHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            setShowLed((BaseStuPair) msg.obj);
+        }
+
+
+    }
+
+    private class ClearHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            DeviceDetail detail = (DeviceDetail) msg.obj;
+            detail.getStuDevicePair().setTimeResult(new String[setTestCount()]);
+            detail.getStuDevicePair().setStudent(null);
+            deviceListAdapter.notifyDataSetChanged();
         }
     }
 
@@ -484,7 +558,12 @@ public abstract class SargentJumpMoreActivity extends BaseCheckActivity {
 
     protected abstract void sendTestCommand(BaseStuPair pair, int index);
 
-    protected abstract void stuSkip();
+    private void stuSkip(int pos){
+        deviceDetails.get(pos).getStuDevicePair().setStudent(null);
+        deviceDetails.get(pos).getStuDevicePair().setTimeResult(new String[setTestCount()]);
+        deviceListAdapter.notifyItemChanged(pos);
+        deviceDetails.get(pos).getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+    }
 
 
 }
