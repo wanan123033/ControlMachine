@@ -384,7 +384,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
         }
 
         @Override
-        public void onFree() {
+        public void onFree(int id) {
             check = 0;
             if (!isConnect) {
                 isConnect = true;

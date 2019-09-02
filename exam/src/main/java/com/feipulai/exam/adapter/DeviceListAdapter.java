@@ -3,6 +3,7 @@ package com.feipulai.exam.adapter;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -37,7 +38,7 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
     }
 
     @Override
-    protected void convert(ViewHolder helper, DeviceDetail item) {
+    protected void convert(final ViewHolder helper, final DeviceDetail item) {
 
         if (item.isDeviceOpen()) {
             helper.swDeviceClose.setChecked(item.isDeviceOpen());
@@ -48,7 +49,7 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
                 helper.cbDeviceState.setChecked(false);
             }
 
-            if (item.getStuDevicePair().getStudent()!= null){
+            if (item.getStuDevicePair().getStudent() != null) {
                 Student student = item.getStuDevicePair().getStudent();
                 helper.txtStuCode.setText(student.getStudentCode());
                 helper.txtStuName.setText(student.getStudentName());
@@ -63,8 +64,14 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
             helper.itemTxtTestResult1.setVisibility(View.VISIBLE);
             helper.itemTxtTestResult2.setVisibility(View.VISIBLE);
         }
-        //成绩使用roundResult 还是用  item.getStuDevicePair().getTimeResult()?
-
+        helper.addOnClickListener(R.id.txt_skip).addOnClickListener(R.id.txt_start);
+        helper.swDeviceClose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                helper.swDeviceClose.setChecked(isChecked);
+                item.setDeviceOpen(isChecked);
+            }
+        });
 
     }
 
@@ -87,6 +94,7 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
         TextView itemTxtTestResult1;
         @BindView(R.id.item_txt_test_result2)
         TextView itemTxtTestResult2;
+
         public ViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
