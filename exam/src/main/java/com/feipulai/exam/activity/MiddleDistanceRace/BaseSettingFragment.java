@@ -26,6 +26,7 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.ItemCycleAdapter;
+import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
@@ -142,7 +143,7 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
 
         itemList = new ArrayList<>();
         itemList.addAll(DBManager.getInstance().queryItemsByMachineCode(TestConfigs.sCurrentItem.getMachineCode()));
-        itemCycleAdapter = new ItemCycleAdapter(itemList);
+        itemCycleAdapter = new ItemCycleAdapter(mContext,itemList);
         rvRaceCycles.setLayoutManager(new LinearLayoutManager(mContext));
         rvRaceCycles.setAdapter(itemCycleAdapter);
         itemCycleAdapter.setOnRecyclerViewItemClickListener(this);
@@ -315,8 +316,10 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
         String title = "";
         switch (flag) {
             case ItemCycleAdapter.FLAG_CYCLE://圈数
+                String cycleNo = SharedPrefsUtil.getValue(mContext, SharedPrefsConfigs.DEFAULT_PREFS, itemList.get(position).getItemName(), "0");
                 title = itemList.get(position).getItemName() + "设置圈数";
-                editText.setText(itemList.get(position).getCycleNo()+"");
+//                editText.setText(itemList.get(position).getCycleNo()+"");
+                editText.setText(cycleNo);
                 break;
             case ItemCycleAdapter.FLAG_ITEMCODE://项目代码
                 title = itemList.get(position).getItemName() + "设置项目代码";
@@ -335,8 +338,9 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
                         switch (flag) {
                             case ItemCycleAdapter.FLAG_CYCLE://圈数
                                 if (!TextUtils.isEmpty(editText.getText().toString())) {
-                                    itemList.get(position).setCycleNo(Integer.parseInt(editText.getText().toString()));
-                                    DBManager.getInstance().updateItem(itemList.get(position));
+                                    SharedPrefsUtil.putValue(mContext, SharedPrefsConfigs.DEFAULT_PREFS,itemList.get(position).getItemName(),editText.getText().toString());
+//                                    itemList.get(position).setCycleNo(Integer.parseInt(editText.getText().toString()));
+//                                    DBManager.getInstance().updateItem(itemList.get(position));
                                 }
                                 break;
                             case ItemCycleAdapter.FLAG_ITEMCODE://项目代码

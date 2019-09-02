@@ -60,6 +60,7 @@ import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.adapter.ScheduleAdapter;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
+import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.ChipGroup;
@@ -343,8 +344,9 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         items = new String[itemList.size()];
 
         for (int i = 0; i < itemList.size(); i++) {
-            if (cycleNo < itemList.get(i).getCycleNo()) {
-                cycleNo = itemList.get(i).getCycleNo();
+            String cycle = SharedPrefsUtil.getValue(mContext, SharedPrefsConfigs.DEFAULT_PREFS, itemList.get(i).getItemName(), "0");
+            if (cycleNo < Integer.parseInt(cycle)) {
+                cycleNo = Integer.parseInt(cycle);
             }
         }
 
@@ -1192,7 +1194,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         DialogUtil.showCommonDialog(this, "是否违规返回", new DialogUtil.DialogListener() {
             @Override
             public void onPositiveClick() {
-                Logger.d(TAG+"中长跑点击了违规返回按钮"+timingLists.get(position).toString());
+                Logger.d(TAG + "中长跑点击了违规返回按钮" + timingLists.get(position).toString());
                 raceTimingAdapter.notifyBackGround(holder, TIMING_STATE_BACK);
                 timingLists.get(position).setState(TIMING_STATE_BACK);
 //                raceTimingAdapter.notifyDataSetChanged();
@@ -1229,7 +1231,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         DialogUtil.showCommonDialog(this, "是否完成计时", new DialogUtil.DialogListener() {
             @Override
             public void onPositiveClick() {
-                Logger.d(TAG+"中长跑点击了完成计时按钮"+timingLists.get(position).toString());
+                Logger.d(TAG + "中长跑点击了完成计时按钮" + timingLists.get(position).toString());
                 timingLists.get(position).setState(TimingBean.TIMING_STATE_COMPLETE);
 //                raceTimingAdapter.notifyBackGround(holder, TimingBean.TIMING_STATE_COMPLETE);
 //                raceTimingAdapter.notifyDataSetChanged();
@@ -1391,7 +1393,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         DialogUtil.showCommonDialog(this, "是否删除当前组", new DialogUtil.DialogListener() {
             @Override
             public void onPositiveClick() {
-                Logger.d(TAG+"中长跑点击了删除按钮"+timingLists.get(position).toString());
+                Logger.d(TAG + "中长跑点击了删除按钮" + timingLists.get(position).toString());
                 //在成绩显示列删除选中组的所有考生
                 Iterator<RaceResultBean> it = resultDataList.iterator();
                 while (it.hasNext()) {
@@ -1767,7 +1769,9 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
             raceResultBean.setStudentCode(student.getStudentCode());
             raceResultBean.setStudentName(student.getStudentName());
             raceResultBean.setColor(Integer.parseInt(groupItemBeans.get(groupPosition).getGroup().getColorId()));
-            raceResultBean.setCycle(itemList.get(mItemPosition).getCycleNo());
+
+            String cycle = SharedPrefsUtil.getValue(mContext, SharedPrefsConfigs.DEFAULT_PREFS, itemList.get(mItemPosition).getItemName(), "0");
+            raceResultBean.setCycle(Integer.parseInt(cycle));
             raceResultBean.setItemCode(itemList.get(mItemPosition).getItemCode());
             raceResultBean.setItemName(itemList.get(mItemPosition).getItemName());
             resultDataList.add(addPosition, raceResultBean);

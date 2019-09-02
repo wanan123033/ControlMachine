@@ -1,5 +1,6 @@
 package com.feipulai.exam.activity.MiddleDistanceRace.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -8,7 +9,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.exam.R;
+import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.entity.ChipGroup;
 import com.feipulai.exam.entity.Item;
 
@@ -26,6 +29,7 @@ public class ItemCycleAdapter extends RecyclerView.Adapter<ItemCycleAdapter.VH> 
     private OnItemClickListener onRecyclerViewItemClickListener;
     public static final int FLAG_CYCLE=1;
     public static final int FLAG_ITEMCODE=2;
+    private Context mContext;
 
     //创建ViewHolder
     public static class VH extends RecyclerView.ViewHolder {
@@ -47,8 +51,9 @@ public class ItemCycleAdapter extends RecyclerView.Adapter<ItemCycleAdapter.VH> 
     }
 
 
-    public ItemCycleAdapter(List<Item> data) {
+    public ItemCycleAdapter(Context mContext, List<Item> data) {
         this.items = data;
+        this.mContext=mContext;
     }
 
     public interface OnItemClickListener {
@@ -65,7 +70,9 @@ public class ItemCycleAdapter extends RecyclerView.Adapter<ItemCycleAdapter.VH> 
     public void onBindViewHolder(final VH holder, final int position) {
         holder.tvCycleItem.setText(items.get(position).getItemName());
         holder.tvCycleNo.setText(position + 1 + "");
-        holder.tvCycles.setText(items.get(position).getCycleNo() + "");
+
+        String cycleNo = SharedPrefsUtil.getValue(mContext, SharedPrefsConfigs.DEFAULT_PREFS, items.get(position).getItemName(), "0");
+        holder.tvCycles.setText(cycleNo);
         holder.tvItemCode.setText(TextUtils.isEmpty(items.get(position).getItemCode())?"":items.get(position).getItemCode());
         if (onRecyclerViewItemClickListener != null) {
 //            holder.llRaceCycles.setOnLongClickListener(new View.OnLongClickListener() {
