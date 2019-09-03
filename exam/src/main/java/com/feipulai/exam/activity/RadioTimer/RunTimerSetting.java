@@ -22,6 +22,8 @@ public class RunTimerSetting {
      * 循环模式 连续测试 循环测试
      */
     private boolean testModel =true;
+    private int startPoint;
+    private int endPoint;
     /**
      * 测试次数
      */
@@ -155,5 +157,21 @@ public class RunTimerSetting {
                 ", maleFull='" + maleFull + '\'' +
                 ", femaleFull='" + femaleFull + '\'' +
                 '}';
+    }
+
+    public int getStartPoint() {
+        return startPoint;
+    }
+
+    public void setStartPoint(int startPoint) {
+        this.startPoint = startPoint;
+    }
+
+    public int getEndPoint() {
+        return endPoint;
+    }
+
+    public void setEndPoint(int endPoint) {
+        this.endPoint = endPoint;
     }
 }
