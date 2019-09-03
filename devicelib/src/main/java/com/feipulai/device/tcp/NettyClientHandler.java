@@ -29,10 +29,10 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent) {
-            IdleStateEvent event = (IdleStateEvent) evt;
-            if (event.state() == IdleState.WRITER_IDLE) {
-                ctx.channel().writeAndFlush("Heartbeat" + System.getProperty("line.separator"));
-            }
+//            IdleStateEvent event = (IdleStateEvent) evt;
+//            if (event.state() == IdleState.WRITER_IDLE) {
+//                ctx.channel().writeAndFlush("Heartbeat" + System.getProperty("line.separator"));
+//            }
         }
     }
 
