@@ -138,8 +138,10 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         switch (intercept_point) {
             case 1:
                 cbStart.setChecked(true);
+                cbEnd.setChecked(false);
                 break;
             case 2:
+                cbStart.setChecked(false);
                 cbEnd.setChecked(true);
                 break;
             case 3:
@@ -153,6 +155,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         }
 
         cbStart.setOnCheckedChangeListener(this);
+        cbEnd.setOnCheckedChangeListener(this);
         //测试模式
         boolean testModel = runTimerSetting.isTestModel();
         rgModel.check(testModel ? R.id.rb_continue : R.id.rb_recycle);
@@ -255,33 +258,12 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         switch (compoundButton.getId()) {
-//            case R.id.cb_full_return:
-//                if (b) {
-//                    if (TextUtils.isEmpty(runTimerSetting.getMaleFull())
-//                            || TextUtils.isEmpty(runTimerSetting.getMaleFull())) {
-//                        ToastUtils.showShort("请先设置满分值");
-//                        cbFullReturn.setChecked(false);
-//                        runTimerSetting.setFullReturn(false);
-//                    } else {
-//                        runTimerSetting.setFullReturn(true);
-//                    }
-//                } else {
-//                    runTimerSetting.setFullReturn(false);
-//                }
-//                break;
             case R.id.cb_start:
-                if (b) {
-                    runTimerSetting.setInterceptPoint(intercept_point + 1);
-                } else {
-                    runTimerSetting.setInterceptPoint(intercept_point - 1);
-                }
+                runTimerSetting.setStartPoint(b? 1: 0);
+
                 break;
             case R.id.cb_end:
-                if (b) {
-                    runTimerSetting.setInterceptPoint(intercept_point + 2);
-                } else {
-                    runTimerSetting.setInterceptPoint(intercept_point - 2);
-                }
+                runTimerSetting.setEndPoint(b?2:0);
                 break;
         }
 
@@ -307,6 +289,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     @Override
     protected void onStop() {
         super.onStop();
+        runTimerSetting.setInterceptPoint(runTimerSetting.getStartPoint()+runTimerSetting.getEndPoint());
         SharedPrefsUtil.save(this, runTimerSetting);
     }
 
@@ -315,6 +298,10 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_self_check:
+                if (runTimerSetting.getStartPoint()+runTimerSetting.getEndPoint() == 0){
+                    toastSpeak("必须设置拦截点");
+                    return;
+                }
                 promote = 0;
 //                mProgressDialog = ProgressDialog.show(this, "", "终端自检中...", true);
                 alertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
@@ -338,7 +325,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
 //                mHandler.sendEmptyMessageDelayed(150,150);
 //                mHandler.sendEmptyMessageDelayed(200,200);
                 //3秒自检
-                mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
+                mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 5000);
                 break;
 
         }
