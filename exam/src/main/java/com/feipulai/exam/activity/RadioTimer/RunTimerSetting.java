@@ -23,7 +23,7 @@ public class RunTimerSetting {
      */
     private boolean testModel =true;
     private int startPoint;
-    private int endPoint;
+    private int endPoint =2;
     /**
      * 测试次数
      */

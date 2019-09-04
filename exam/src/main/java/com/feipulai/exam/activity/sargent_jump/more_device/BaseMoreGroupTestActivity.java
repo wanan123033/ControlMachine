@@ -1,6 +1,5 @@
 package com.feipulai.exam.activity.sargent_jump.more_device;
 
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 
@@ -12,21 +11,21 @@ import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.sargent_jump.SargentJumpImpl;
 import com.feipulai.exam.activity.sargent_jump.SargentSetting;
-import com.feipulai.exam.activity.sargent_jump.SargentSettingActivity;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
+import com.orhanobut.logger.Logger;
 
 import static com.feipulai.exam.activity.sargent_jump.Constants.GET_SCORE_RESPONSE;
 
-/**
- * 一对多个人测试
- */
-public class SargentMoreTestActivity extends BaseMoreActivity {
-    private static final String TAG = "SargentMoreTestActivity";
+public class BaseMoreGroupTestActivity extends BaseMoreGroupMoreActivity {
+    private static final String TAG = "SargentGroupTestActy";
     private SargentSetting sargentSetting;
-
-    private int[] deviceState = new int[4];
+    @Override
+    public int setTestCount() {
+        return sargentSetting.getSpDeviceCount();
+    }
+    private int[] deviceState ;
     //SARGENT JUMP
     public byte[] CMD_SARGENT_JUMP_EMPTY = {0X54, 0X44, 00, 0X10, 01, 0x01, 00, 00, 00, 00, 00, 00, 00, 0x12, 0x27, 0x0d};
     public byte[] CMD_SARGENT_JUMP_START = {0X54, 0X44, 00, 0X10, 01, 0x01, 00, 0x01, 00, 00, 00, 00, 00, 0x13, 0x27, 0x0d};
@@ -35,46 +34,27 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
     private final int SEND_EMPTY = 1;
 
     @Override
-    protected void initData() {
-        super.initData();
+    public void initData() {
         sargentSetting = SharedPrefsUtil.loadFormSource(this, SargentSetting.class);
         if (null == sargentSetting) {
             sargentSetting = new SargentSetting();
         }
-        for (int i = 0; i < deviceState.length; i++) {
-            deviceState[i] = 1;
-        }
-        RadioManager.getInstance().init();
-        RadioManager.getInstance().setOnRadioArrived(resultImpl);
+        Logger.i(TAG + ":sargentSetting ->" + sargentSetting.toString());
         setDeviceCount(sargentSetting.getSpDeviceCount());
+        deviceState = new int[sargentSetting.getSpDeviceCount()];
+        RadioManager.getInstance().setOnRadioArrived(resultImpl);
+
         sendEmpty();
     }
 
     @Override
-    public int setTestCount() {
-        return sargentSetting.getTestTimes();
+    public int setTestPattern() {
+        return sargentSetting.getTestPattern();
     }
 
     @Override
-    public boolean isResultFullReturn(int sex, int result) {
-        if (sargentSetting.isFullReturn()) {
-            if (sex == Student.MALE) {
-                return result >= Integer.valueOf(sargentSetting.getMaleFull()) * 10;
-            } else {
-                return result >= Integer.valueOf(sargentSetting.getFemaleFull()) * 10;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public void gotoItemSetting() {
-        startActivity(new Intent(this, SargentSettingActivity.class));
-    }
-
-    @Override
-    protected void sendTestCommand(BaseStuPair pair, int index) {
-
+    public void toStart(int pos) {
+        BaseStuPair pair = deviceDetails.get(pos).getStuDevicePair();
         pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
         updateDevice(pair.getBaseDevice());
         byte[] cmd = CMD_SARGENT_JUMP_START;
@@ -83,7 +63,6 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                 cmd));
     }
-
 
     public void sendEmpty() {
         for (int i = 0; i < deviceState.length; i++) {
@@ -103,7 +82,6 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
                     cmd));
         }
         mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 3000);
-
 
     }
 
@@ -145,7 +123,6 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
 
         }
     });
-
 
     private Handler mHandler = new Handler(new Handler.Callback() {
 
@@ -189,8 +166,9 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
         }
         stuPair.setResult(result);
         stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
-        updateResult(stuPair);
+        updateTestResult(stuPair);
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, stuPair.getBaseDevice().getDeviceId()));
 
     }
+
 }

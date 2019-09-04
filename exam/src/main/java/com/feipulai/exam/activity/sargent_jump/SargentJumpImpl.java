@@ -32,10 +32,11 @@ public class SargentJumpImpl implements SerialDeviceManager.RS232ResiltListener,
 
     @Override
     public void onRS232Result(Message msg) {
-        SargentJumpResult result = (SargentJumpResult) msg.obj;
+
         switch (msg.what) {
             case SARGENT_JUMP_EMPTY_RESPONSE:
                 if (jumpListener!= null){
+                    SargentJumpResult result = (SargentJumpResult) msg.obj;
                     jumpListener.onFree(result.getDeviceId());
                 }
 
@@ -51,6 +52,7 @@ public class SargentJumpImpl implements SerialDeviceManager.RS232ResiltListener,
                 if (jumpListener== null){
                     return;
                 }
+                SargentJumpResult result = (SargentJumpResult) msg.obj;
                 jumpListener.onResultArrived(result);
 //                temp = result.getScore();
 //                count++;
@@ -71,12 +73,12 @@ public class SargentJumpImpl implements SerialDeviceManager.RS232ResiltListener,
 
     @Override
     public void onRadioArrived(Message msg) {
-        SargentJumpResult result = (SargentJumpResult) msg.obj;
         switch (msg.what) {
             case SARGENT_JUMP_EMPTY_RESPONSE:
                 if (jumpListener== null){
                     return;
                 }
+                SargentJumpResult result = (SargentJumpResult) msg.obj;
                 jumpListener.onFree(result.getDeviceId());
 
                 break;
@@ -90,7 +92,8 @@ public class SargentJumpImpl implements SerialDeviceManager.RS232ResiltListener,
                 if (jumpListener== null){
                     return;
                 }
-                jumpListener.onResultArrived(result);
+                SargentJumpResult res = (SargentJumpResult) msg.obj;
+                jumpListener.onResultArrived(res);
 //                temp = result.getScore();
 //                count++;
 //                if (count == 0 || temp != jump) {//控制只传一次结果
@@ -100,12 +103,12 @@ public class SargentJumpImpl implements SerialDeviceManager.RS232ResiltListener,
 //                if (count == 2) {
 //                    count = 0;
 //                }
-                Log.i(TAG, "result" + result.getScore());
-                Logger.i( "=>SargentJumpImpl====>" + result.getScore());
+                Logger.i( "=>SargentJumpImpl====>" + res.getScore());
                 break;
             case SARGENT_JUMP_SET_MATCH:
                 if (jumpListener!= null){
-                    jumpListener.onMatch(result);
+                    SargentJumpResult r = (SargentJumpResult) msg.obj;
+                    jumpListener.onMatch(r);
                 }
                 break;
         }

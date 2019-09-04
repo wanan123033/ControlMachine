@@ -48,7 +48,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public abstract class SargentGroupMoreActivity extends BaseCheckActivity {
+public abstract class BaseMoreGroupMoreActivity extends BaseCheckActivity {
     @BindView(R.id.txt_group_name)
     TextView txtGroupName;
     @BindView(R.id.rv_device_list)
@@ -61,7 +61,7 @@ public abstract class SargentGroupMoreActivity extends BaseCheckActivity {
     private DeviceListAdapter deviceListAdapter;
     private StuAdapter stuAdapter;
     private int MAX_COUNT = 4;
-    private List<DeviceDetail> deviceDetails = new ArrayList<>();
+    public List<DeviceDetail> deviceDetails = new ArrayList<>();
     private int deviceCount;
     /**
      * 是否停止测试
@@ -109,12 +109,22 @@ public abstract class SargentGroupMoreActivity extends BaseCheckActivity {
         sbName.append(group.getSortName() + String.format("第%1$d组", group.getGroupNo()));
         txtGroupName.setText(sbName);
 
-        for (int i = 0; i < MAX_COUNT; i++) {
+        getTestStudent(group);
+    }
+
+    public void setDeviceCount(int deviceCount) {
+        this.deviceCount = deviceCount;
+        deviceDetails.clear();
+        for (int i = 0; i < deviceCount; i++) {
             DeviceDetail detail = new DeviceDetail();
             detail.getStuDevicePair().getBaseDevice().setDeviceId(i + 1);
             detail.setDeviceOpen(true);
             deviceDetails.add(detail);
         }
+        initView();
+    }
+
+    private void initView() {
         deviceListAdapter = new DeviceListAdapter(deviceDetails);
         deviceListAdapter.setTestCount(3);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
@@ -133,9 +143,6 @@ public abstract class SargentGroupMoreActivity extends BaseCheckActivity {
                 }
             }
         });
-
-
-        getTestStudent(group);
     }
 
     public abstract void toStart(int pos);

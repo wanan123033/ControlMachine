@@ -25,7 +25,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.sargent_jump.more_device.SargentGroupMoreTestActivity"></activity>
+        <activity android:name=".activity.sargent_jump.more_device.BaseMoreGroupTestActivity"></activity>
         <activity android:name=".activity.sargent_jump.more_device.SargentMoreTestActivity" />
         <activity android:name=".activity.sargent_jump.pair.SargentPairActivity" />
         <activity android:name=".activity.footBall.FootBallGroupActivity" />
@@ -135,9 +135,15 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".activity.sargent_jump.SargentTestActivity" />
-        <activity android:name=".activity.sargent_jump.SargentGroupActivity" />
-        <activity android:name=".activity.sargent_jump.SargentSettingActivity" />
+        <activity
+            android:name=".activity.sargent_jump.SargentTestActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.sargent_jump.SargentGroupActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.sargent_jump.SargentSettingActivity"
+            android:windowSoftInputMode="stateHidden" />
         <activity android:name=".activity.SubItemsSelectActivity" />
         <activity
             android:name=".activity.pushUp.PushUpIndividualActivity"

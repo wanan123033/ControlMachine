@@ -27,7 +27,7 @@ import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.pushUp.PushUpGroupActivity;
 import com.feipulai.exam.activity.pushUp.PushUpSetting;
 import com.feipulai.exam.activity.sargent_jump.SargentSetting;
-import com.feipulai.exam.activity.sargent_jump.more_device.SargentGroupMoreTestActivity;
+import com.feipulai.exam.activity.sargent_jump.more_device.BaseMoreGroupTestActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.sitreach.SitReachSetting;
 import com.feipulai.exam.activity.standjump.StandJumpSetting;
@@ -486,7 +486,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 }
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_MG &&
                         SharedPrefsUtil.loadFormSource(this, SargentSetting.class).getType()==2){
-                    startActivity(new Intent(this, SargentGroupMoreTestActivity.class));
+                    startActivity(new Intent(this, BaseMoreGroupTestActivity.class));
                     return;
                 }
                 startActivity(new Intent(this, TestConfigs.groupActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
