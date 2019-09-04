@@ -1,7 +1,6 @@
 package com.feipulai.exam.activity;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -94,8 +93,9 @@ public class MachineSelectActivity extends BaseTitleActivity
             if (init == TestConfigs.INIT_SUCCESS) {
                 systemSetting.setHostId(1);
                 SharedPrefsUtil.save(MachineSelectActivity.this, systemSetting);
-                ActivityCollector.getInstance().finishAllActivity();
-                startActivity(new Intent(this, MainActivity.class));
+                ActivityCollector.getInstance().finishAllActivityExcept(MainActivity.class);
+                finish();
+//                startActivity(new Intent(this, MainActivity.class));
             }
         } else {
             Bundle bundle = new Bundle();
@@ -110,8 +110,8 @@ public class MachineSelectActivity extends BaseTitleActivity
     public void onClick(DialogInterface dialog, int which) {
         systemSetting.setHostId(1);
         SharedPrefsUtil.save(MachineSelectActivity.this, systemSetting);
-        ActivityCollector.getInstance().finishAllActivity();
-        startActivity(new Intent(this, MainActivity.class));
+        ActivityCollector.getInstance().finishAllActivityExcept(MainActivity.class);
+        finish();
     }
 
 }

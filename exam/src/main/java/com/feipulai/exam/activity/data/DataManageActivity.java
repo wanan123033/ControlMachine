@@ -43,7 +43,6 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Item;
 import com.feipulai.exam.entity.StudentItem;
-import com.feipulai.exam.exl.GroupStuItemExLReader;
 import com.feipulai.exam.exl.ResultExlWriter;
 import com.feipulai.exam.exl.StuItemExLReader;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
@@ -388,9 +387,9 @@ public class DataManageActivity
                 Logger.i(" exel文件导入");
                 Logger.i("保存路径：" + FileSelectActivity.sSelectedFile);
                 if (isGroupImport) {
-                    new GroupStuItemExLReader(this).readExlData(FileSelectActivity.sSelectedFile);
+                    new StuItemExLReader(1, this).readExlData(FileSelectActivity.sSelectedFile);
                 } else {
-                    new StuItemExLReader(this).readExlData(FileSelectActivity.sSelectedFile);
+                    new StuItemExLReader(0, this).readExlData(FileSelectActivity.sSelectedFile);
                 }
                 break;
 
@@ -546,22 +545,7 @@ public class DataManageActivity
     }
 
     private void createFileNameDialog(EditDialog.OnConfirmClickListener confirmListener) {
-//        mEditText = new EditText(this);
-//        mEditText.setSingleLine();
-//        mEditText.setInputType(EditorInfo.TYPE_TEXT_VARIATION_URI);
-//        mEditText.setBackgroundColor(0xffcccccc);
         DateFormat df = new SimpleDateFormat("yyyy年MM月dd日");
-//        mEditText.setText(SettingHelper.getSystemSetting().getTestName() +
-//                SettingHelper.getSystemSetting().getHostId() + "号机" + df.format(new Date()));
-//        nameFileDialog = new AlertDialog.Builder(this)
-//                .setCancelable(false)
-//                .setTitle("文件名")
-//                .setMessage("请输入文件名")
-//                .setView(mEditText)
-//                .setPositiveButton("确定", confirmListener)
-//                .setNegativeButton("取消", null)
-//                .create();
-//        nameFileDialog.show();
         new EditDialog.Builder(this).setTitle("文件名")
                 .setCanelable(false)
                 .setMessage("输入合法保存文件名")
@@ -586,14 +570,14 @@ public class DataManageActivity
                 }
                 UsbFile targetFile;
                 try {
-                    targetFile = FileSelectActivity.sSelectedFile.createFile(text + ".xls");
-                    //导入学生信息和学生项目信息
+                    targetFile = FileSelectActivity.sSelectedFile.createFile(text + ".xls"); 
                     new ResultExlWriter(TestConfigs.getMaxTestCount(DataManageActivity.this), DataManageActivity.this)
                             .writeExelData(targetFile);
+
                 } catch (IOException e) {
                     e.printStackTrace();
                     OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
-                    ToastUtils.showShort("文件创建失败,请确保输入文件名合法(中文、字母、数字和下划线),且不存在已有文件");
+                    ToastUtils.showShort("文件创建失败,请确保路径目录不存在已有文件");
                     Logger.i("文件创建失败,Exel导出失败");
                 }
             }
@@ -619,7 +603,7 @@ public class DataManageActivity
                     FileSelectActivity.sSelectedFile = null;
                 } catch (IOException e) {
                     e.printStackTrace();
-                    ToastUtils.showShort("文件创建失败,请确保输入文件名合法(中文、字母、数字和下划线),且不存在已有文件");
+                    ToastUtils.showShort("文件创建失败,请确保路径目录不存在已有文件");
                     Logger.i("文件创建失败,数据库备份失败");
                 }
             }

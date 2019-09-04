@@ -13,7 +13,37 @@ import java.util.TimeZone;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 public class DateUtil {
+    /**
+     * 获取当前时间
+     * <h3>Version</h3> 1.0
+     * <h3>CreateTime</h3> 2017/10/13,14:05
+     * <h3>UpdateTime</h3> 2017/10/13,14:05
+     * <h3>CreateAuthor</h3> zzs
+     * <h3>UpdateAuthor</h3>
+     * <h3>UpdateInfo</h3> (此处输入修改内容,若无修改可不写.)
+     */
+    public static long getCurrentTime() {
+        return System.currentTimeMillis();
+    }
+    /**
+     * 获取指定时间格式的时间戳
+     *
+     * @param time    时间
+     * @param pattern 格式
+     * @return 时间戳
+     */
+    public static long getTimeMillis(String time, String pattern) {
 
+        Date date = null;
+        try {
+            date = new SimpleDateFormat(pattern).parse(time);
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return 0;
+        }
+        return date.getTime();
+    }
     /**
      * 格式化时间
      *

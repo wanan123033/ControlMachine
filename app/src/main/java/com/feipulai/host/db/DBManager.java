@@ -42,7 +42,7 @@ public class DBManager {
     private static RoundResultDao roundResultDao;
     private static Database db;
     private static DaoSession daoSession;
-    public static DaoMaster.DevOpenHelper helper;
+    public static DBOpenHelper helper;
     private DaoMaster daoMaster;
 
     private DBManager() {
@@ -69,7 +69,7 @@ public class DBManager {
         // if (db != null) {
         //     db.close();
         // }
-        helper = new DaoMaster.DevOpenHelper(MyApplication.getInstance(), DB_NAME);
+        helper = new DBOpenHelper(MyApplication.getInstance(), DB_NAME);
         db = BuildConfig.DEBUG ? helper.getWritableDb() : helper.getEncryptedReadableDb(DB_PASSWORD);
         daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();
@@ -856,13 +856,13 @@ public class DBManager {
                 .unique();
     }
 
-    public RoundResult queryBestScore(String studentCode, Item item) {
+    public RoundResult queryBestScore(String studentCode, String itemCode) {
         //Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
         //		+ "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\tIsLastResult:" + 1);
         return roundResultDao.queryBuilder()
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
-                .where(RoundResultDao.Properties.MachineCode.eq(item.getMachineCode()))
-                .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getItemCode(item)))
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
                 .where(RoundResultDao.Properties.IsLastResult.eq(1))
                 .unique();
     }

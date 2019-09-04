@@ -285,7 +285,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         if (systemSetting.isAutoBroadcast()) {
             TtsManager.getInstance().speak(String.format(getString(R.string.speak_result), pair.getStudent().getSpeakStuName(), ResultDisplayUtils.getStrResultForDisplay(result)));
         }
-
+        uploadResult(pair.getStudent());
         // 是否需要进行下一次测试
         if (shouldContinue(result)) {
             prepareForBegin();
@@ -394,6 +394,22 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
             InteractUtils.printResults(null, testCache.getAllStudents(), testCache.getResults(),
                     TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
         }
+//        if (systemSetting.isRtUpload() && !TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
+//            String testNo = TestCache.getInstance().getTestNoMap().get(student) + "";
+//            StudentItem studentItem = TestCache.getInstance().getStudentItemMap().get(student);
+//            List<RoundResult> roundResultList = TestCache.getInstance().getResults().get(student);
+//            String scheduleNo = studentItem.getScheduleNo();
+//
+//            List<UploadResults> uploadResults = new ArrayList<>();
+//            uploadResults.add(new UploadResults(scheduleNo,
+//                    TestConfigs.getCurrentItemCode(), student.getStudentCode()
+//                    , testNo, "", RoundResultBean.beanCope(roundResultList)));
+//            Logger.i("自动上传成绩:" + uploadResults.toString());
+//            ServerMessage.uploadResult(uploadResults);
+//        }
+    }
+
+    private void uploadResult(Student student) {
         if (systemSetting.isRtUpload() && !TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
             String testNo = TestCache.getInstance().getTestNoMap().get(student) + "";
             StudentItem studentItem = TestCache.getInstance().getStudentItemMap().get(student);

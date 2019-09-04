@@ -72,6 +72,7 @@
     <string name="device_disconnect_save_result_hint">存在考生设备状态为断开连接,确定保存成绩？</string>
     <string name="confirm_exit_test_hint">确定退出当前测试吗？</string>
     <string name="clear_device_hint">是否清除当前设备?</string>
+    <string name="clear_all_device_hint">是否清除所有设备?</string>
     <string name="foul">犯规</string>
     <string name="confirm_result">确认成绩</string>
 </resources>

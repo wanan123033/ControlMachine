@@ -21,7 +21,6 @@ import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.udp.UdpLEDUtil;
 import com.feipulai.exam.R;
-import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceActivity;
 import com.feipulai.exam.activity.MiddleDistanceRace.MyTcpService;
 import com.feipulai.exam.activity.base.BaseActivity;
 import com.feipulai.exam.activity.base.BaseGroupActivity;
@@ -32,19 +31,11 @@ import com.feipulai.exam.activity.setting.SettingActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.activity.volleyball.VolleyballPatternSelectActivity;
-import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
-import com.feipulai.exam.db.DBManager;
-import com.feipulai.exam.entity.RoundResult;
-import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.CommonUtils;
-import com.feipulai.exam.service.UploadService;
 import com.orhanobut.logger.Logger;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -92,36 +83,30 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
 //        testUpload();
     }
 
-    private void testUpload() {
-        serverIntent = new Intent(this, UploadService.class);
-        startService(serverIntent);
-        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode("2012000001");
-        for (int i = 0; i < 3; i++) {
-            RoundResult roundResult = new RoundResult();
-            roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
-            roundResult.setStudentCode(studentItem.getStudentCode());
-            roundResult.setItemCode(TestConfigs.getCurrentItemCode());
-            roundResult.setResult(10);
-            roundResult.setMachineResult(10);
-            roundResult.setResultState(i == 0 ? 1 : 0);
-//        roundResult.setTestTime(TestConfigs.df.format(Calendar.getInstance().getTime()));
-            roundResult.setTestTime(System.currentTimeMillis() + "");
-            roundResult.setRoundNo(i + 1);
-            roundResult.setTestNo(1);
-            roundResult.setExamType(studentItem.getExamType());
-            roundResult.setScheduleNo(studentItem.getScheduleNo());
-            roundResult.setUpdateState(0);
-            List<RoundResult> roundResultList = new ArrayList<>();
-            roundResultList.add(roundResult);
-            UploadResults uploadResults = new UploadResults(studentItem.getScheduleNo(), TestConfigs.getCurrentItemCode(),
-                    studentItem.getStudentCode(), "1", "", RoundResultBean.beanCope(roundResultList));
-
-
-            uploadResult(uploadResults);
-        }
-
-
-    }
+//    private void addTestResult() {
+//        List<Student> dbStudentList = DBManager.getInstance().dumpAllStudents();
+//        for (Student student : dbStudentList) {
+//            for (int i = 0; i < 2; i++) {
+//                RoundResult roundResult = new RoundResult();
+//                roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
+//                roundResult.setStudentCode(student.getStudentCode());
+//                String itemCode = TestConfigs.sCurrentItem.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : TestConfigs.sCurrentItem.getItemCode();
+//                roundResult.setItemCode(itemCode);
+//                roundResult.setResult(100 + i);
+//                roundResult.setResultState(0);
+//                roundResult.setTestTime(DateUtil.getCurrentTime() + "");
+//                roundResult.setRoundNo(i);
+//                roundResult.setTestNo(1);
+//                roundResult.setExamType(0);
+//                roundResult.setUpdateState(0);
+////                 roundResult.setScheduleNo("1");
+//                if (i == 1) {
+//                    roundResult.setIsLastResult(1);
+//                }
+//                DBManager.getInstance().insertRoundResult(roundResult);
+//            }
+//        }
+//    }
 
     /**
      * 成绩上传
@@ -205,7 +190,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                 PrinterManager.getInstance().init();
                 PrinterManager.getInstance().selfCheck();
                 PrinterManager.getInstance().print("\n\n");
-//                addTestResult();
+
                 break;
             case R.id.card_parameter_setting:
                 startActivity(new Intent(MainActivity.this, SettingActivity.class));

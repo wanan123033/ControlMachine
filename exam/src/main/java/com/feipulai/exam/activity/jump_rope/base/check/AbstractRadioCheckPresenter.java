@@ -64,7 +64,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         view.initView(systemSetting, setting, pairs);
         // 分组模式检录
         if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN) {
-            CheckUtils.groupCheck(pairs);
+            CheckUtils.groupCheck(pairs, TestConfigs.getMaxTestCount(context), getTestPattern());
             // Student student = pairs.get(0).getStudent();
             // view.showStuInfo(student, TestCache.getInstance().getResults().get(student));
         }
@@ -76,6 +76,9 @@ public abstract class AbstractRadioCheckPresenter<Setting>
 
     protected abstract Setting getSetting();
 
+    //测试模式 0 连续 1 循环
+    protected abstract int getTestPattern();
+
     protected abstract int getDeviceSumFromSetting();
 
     protected abstract void displayCheckedInLED(Student student, int deviceId, RoundResult lastResult);
@@ -83,7 +86,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
     protected abstract String getStringToShow(BaseDeviceState deviceState, int position);
 
     protected abstract void endTest();
-    
+
     @Override
     public void showStuInfo(int position) {
         StuDevicePair pair = pairs.get(position);
@@ -91,17 +94,17 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         List<RoundResult> resultList = TestCache.getInstance().getResults().get(student);
         view.showStuInfo(student, resultList);
     }
-    
+
     @Override
     public void refreshEveryThing() {
         TestCache.getInstance().init();
         focusPosition = 0;
         pairs = CheckUtils.newPairs(getDeviceSumFromSetting());
         view.refreshPairs(pairs);
-        view.showStuInfo( null, null);
+        view.showStuInfo(null, null);
         resetLED();
     }
-    
+
     @Override
     public void stopUse() {
         CheckUtils.stopUse(pairs, focusPosition);
@@ -143,15 +146,15 @@ public abstract class AbstractRadioCheckPresenter<Setting>
             // 这里只需要检查所有的已经匹配的手柄是否均为空闲
             checkBeforeTest(false);
         } else {
-			// 个人模式,通过获取当前界面的所有考生进行测试
-			// 检查所有的已经匹配的手柄是否均为空闲的同时,需要将这些数据都导入到TestCache 中
-			checkBeforeTest(true);
-		}
-		TestCache testCache = TestCache.getInstance();
-		Logger.i("用户点击开始测试,所有考生信息:" + testCache.getAllStudents()
-				+ "\n设备配对信息:" + testCache.getTestingPairs()
-				+ "\n设置项信息:" + setting.toString());
-	}
+            // 个人模式,通过获取当前界面的所有考生进行测试
+            // 检查所有的已经匹配的手柄是否均为空闲的同时,需要将这些数据都导入到TestCache 中
+            checkBeforeTest(true);
+        }
+        TestCache testCache = TestCache.getInstance();
+        Logger.i("用户点击开始测试,所有考生信息:" + testCache.getAllStudents()
+                + "\n设备配对信息:" + testCache.getTestingPairs()
+                + "\n设置项信息:" + setting.toString());
+    }
 
     private void checkBeforeTest(boolean addToCache) {
         List<StuDevicePair> forTestPairs = new ArrayList<>(pairs.size());
@@ -172,7 +175,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
                         students.add(student);
                     }
                     forTestPairs.add(pair);
-                    if (baseDevice.getState() == BaseDeviceState.STATE_LOW_BATTERY){
+                    if (baseDevice.getState() == BaseDeviceState.STATE_LOW_BATTERY) {
                         contaisLowBattery = true;
                     }
                 } else {
@@ -272,23 +275,23 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         focusPosition = (oldPosition != pairs.size() - 1) ? focusPosition + 1 : focusPosition;
         if (focusPosition == oldPosition) {
             view.updateSpecificItem(oldPosition);
-        }else {
+        } else {
             view.select(focusPosition);
         }
 
         RoundResult lastResult = null;
         if (results == null || results.size() == 0) {
-			TestCache.getInstance().getResults().put(student,
-					results != null ? results
-							: new ArrayList<RoundResult>(TestConfigs.getMaxTestCount(context)));
+            TestCache.getInstance().getResults().put(student,
+                    results != null ? results
+                            : new ArrayList<RoundResult>(TestConfigs.getMaxTestCount(context)));
             TestCache.getInstance().getTestNoMap().put(student, 1);
-        }else{
-			lastResult = results.get(results.size() - 1);
-			TestCache.getInstance().getResults().put(student, results);
+        } else {
+            lastResult = results.get(results.size() - 1);
+            TestCache.getInstance().getResults().put(student, results);
             RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
             int testNo = testRoundResult == null ? 1 : testRoundResult.getTestNo() + 1;
             TestCache.getInstance().getTestNoMap().put(student, testNo);
-		}
+        }
         TestCache.getInstance().getStudentItemMap().put(student, studentItem);
         displayCheckedInLED(student, deviceId, lastResult);
 

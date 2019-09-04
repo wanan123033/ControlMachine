@@ -53,8 +53,6 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshLoadmoreListener;
 import com.zkteco.android.biometric.module.idcard.meta.IDCardInfo;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -502,28 +500,17 @@ public class DataRetrieveActivity extends BaseTitleActivity
         });
 
     }
-
-    private Comparator<RoundResult> roundResultComparator = Collections.reverseOrder(new Comparator<RoundResult>() {
-        @Override
-        public int compare(RoundResult lhs, RoundResult rhs) {
-            return lhs.getTestTime().compareTo(rhs.getTestTime());
-        }
-    });
-
     private String displaStuResult(String studentCode) {
         if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_HW) {
-            List<RoundResult> heightResults = DBManager.getInstance().queryResultsByStudentCode(studentCode, HWConfigs
+            RoundResult mLastHeightResult = DBManager.getInstance().queryLastScoreByStuCode(studentCode, HWConfigs
                     .HEIGHT_ITEM);
-            List<RoundResult> weightResults = DBManager.getInstance().queryResultsByStudentCode(studentCode, HWConfigs
-                    .WEIGHT_ITEM);
+            RoundResult mLastWeightResult = DBManager.getInstance().queryLastScoreByStuCode(studentCode, HWConfigs.WEIGHT_ITEM);
 
-            Collections.sort(heightResults, roundResultComparator);
-            Collections.sort(weightResults, roundResultComparator);
-            if (heightResults.size() > 0) {
+            if (mLastHeightResult != null && mLastWeightResult != null) {
                 StringBuilder sb = new StringBuilder();
-                sb.append(ResultDisplayUtils.getStrResultForDisplay(heightResults.get(0).getResult(), HWConfigs.HEIGHT_ITEM));
+                sb.append(ResultDisplayUtils.getStrResultForDisplay(mLastHeightResult.getResult(), HWConfigs.HEIGHT_ITEM));
                 sb.append("/");
-                sb.append(ResultDisplayUtils.getStrResultForDisplay(weightResults.get(0).getResult(), HWConfigs.WEIGHT_ITEM));
+                sb.append(ResultDisplayUtils.getStrResultForDisplay(mLastWeightResult.getResult(), HWConfigs.WEIGHT_ITEM));
                 return sb.toString();
             }
             return "-1000";

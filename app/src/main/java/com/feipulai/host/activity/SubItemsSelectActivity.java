@@ -1,6 +1,5 @@
 package com.feipulai.host.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -72,8 +71,10 @@ public class SubItemsSelectActivity extends BaseTitleActivity {
                 SharedPrefsUtil.putValue(SubItemsSelectActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, itemList.get(position).getItemCode());
                 SettingHelper.getSystemSetting().setHostId(1);
                 SettingHelper.updateSettingCache(SettingHelper.getSystemSetting());
-                ActivityCollector.getInstance().finishAllActivity();
-                startActivity(new Intent(SubItemsSelectActivity.this, MainActivity.class));
+//                ActivityCollector.getInstance().finishAllActivity();
+//                startActivity(new Intent(SubItemsSelectActivity.this, MainActivity.class));
+//                finish();
+                ActivityCollector.getInstance().finishAllActivityExcept(MainActivity.class);
                 finish();
             }
         });
