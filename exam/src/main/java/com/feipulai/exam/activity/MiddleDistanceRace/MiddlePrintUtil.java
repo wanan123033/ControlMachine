@@ -43,16 +43,19 @@ public class MiddlePrintUtil {
     public static void print(List<RoundResult> roundResults, List<RaceResultBean> raceResultBean2s, int digital, int carryMode) {
         if (!SettingHelper.getSystemSetting().isAutoPrint())
             return;
+        if (raceResultBean2s.size() < 1) {
+            return;
+        }
 
         Date date = Calendar.getInstance().getTime();
         String printTime = TestConfigs.df.format(date);
         String printTimeLong = date.getTime() + "";
 
-        String itemName = InteractUtils.getStrWithLength(raceResultBean2s.get(1).getItemName(), 8);
+        String itemName = InteractUtils.getStrWithLength(raceResultBean2s.get(0).getItemName(), 8);
 
         String title = String.format(Locale.CHINA, "%8s%d号机%d组",
                 itemName, SettingHelper.getSystemSetting().getHostId(),
-                Integer.parseInt(raceResultBean2s.get(1).getNo()));
+                Integer.parseInt(raceResultBean2s.get(0).getNo()));
         PrinterManager.getInstance().print(title);
         String header = String.format("%-4s%-10s%-4s", "", "姓名", "成绩(分秒)");
         PrinterManager.getInstance().print(header);
