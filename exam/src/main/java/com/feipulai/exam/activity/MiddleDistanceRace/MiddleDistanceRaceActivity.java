@@ -43,6 +43,7 @@ import com.feipulai.device.tcp.NettyClient;
 import com.feipulai.device.tcp.NettyListener;
 import com.feipulai.device.tcp.TcpConfig;
 import com.feipulai.device.udp.UdpClient;
+import com.feipulai.device.udp.UdpLEDUtil;
 import com.feipulai.device.udp.result.UDPResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.ColorSelectAdapter;
@@ -618,8 +619,19 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                     ToastUtils.showShort("当前已连接");
                     return;
                 }
+                //配置网络
+                if (SettingHelper.getSystemSetting().isAddRoute() && !TextUtils.isEmpty(NetWorkUtils.getLocalIp())) {
+                    String locatIp = NetWorkUtils.getLocalIp();
+                    String routeIp = locatIp.substring(0, locatIp.lastIndexOf("."));
+                    UdpLEDUtil.shellExec("ip route add " + routeIp + ".0/24 dev eth0 proto static scope link table wlan0 \n");
+                }
                 btnConnect.setEnabled(false);
-                initSocket(etIP.getText().toString(), Integer.parseInt(etPort.getText().toString()));
+                mHander.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        initSocket(etIP.getText().toString(), Integer.parseInt(etPort.getText().toString()));
+                    }
+                }, 1000);
             }
         });
 
