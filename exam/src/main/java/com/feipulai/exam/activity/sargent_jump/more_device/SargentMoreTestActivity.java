@@ -26,11 +26,11 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
     private static final String TAG = "SargentMoreTestActivity";
     private SargentSetting sargentSetting;
 
-    private int[] deviceState = new int[4];
+    private int[] deviceState;
     //SARGENT JUMP
     public byte[] CMD_SARGENT_JUMP_EMPTY = {0X54, 0X44, 00, 0X10, 01, 0x01, 00, 00, 00, 00, 00, 00, 00, 0x12, 0x27, 0x0d};
     public byte[] CMD_SARGENT_JUMP_START = {0X54, 0X44, 00, 0X10, 01, 0x01, 00, 0x01, 00, 00, 00, 00, 00, 0x13, 0x27, 0x0d};
-//    public byte[] CMD_SARGENT_JUMP_STOP = {0X54, 0X44, 00, 0X10, 01, 0x01, 00, 0x02, 00, 00, 00, 00, 00, 0x14, 0x27, 0x0d};
+    //    public byte[] CMD_SARGENT_JUMP_STOP = {0X54, 0X44, 00, 0X10, 01, 0x01, 00, 0x02, 00, 00, 00, 00, 00, 0x14, 0x27, 0x0d};
 //    public byte[] CMD_SARGENT_JUMP_GET_SCORE = {0X54, 0X44, 00, 0X10, 01, 0x01, 00, 0x04, 00, 00, 00, 00, 00, 0x16, 0x27, 0x0d};
     private final int SEND_EMPTY = 1;
 
@@ -41,12 +41,14 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
         if (null == sargentSetting) {
             sargentSetting = new SargentSetting();
         }
-        for (int i = 0; i < deviceState.length; i++) {
-            deviceState[i] = 1;
-        }
+
         RadioManager.getInstance().init();
         RadioManager.getInstance().setOnRadioArrived(resultImpl);
         setDeviceCount(sargentSetting.getSpDeviceCount());
+        deviceState = new int[sargentSetting.getSpDeviceCount()];
+        for (int i = 0; i < deviceState.length; i++) {
+            deviceState[i] = 1;
+        }
         sendEmpty();
     }
 
@@ -87,10 +89,20 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
 
     public void sendEmpty() {
         for (int i = 0; i < deviceState.length; i++) {
+            BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
             if (deviceState[i] == 0) {
-                BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
-                baseDevice.setState(BaseDeviceState.STATE_ERROR);
-                updateDevice(baseDevice);
+
+                if (baseDevice.getState() != BaseDeviceState.STATE_ERROR){
+                    baseDevice.setState(BaseDeviceState.STATE_ERROR);
+                    updateDevice(baseDevice);
+                }
+
+            } else {
+                if (baseDevice.getState() == BaseDeviceState.STATE_ERROR) {
+                    baseDevice.setState(BaseDeviceState.STATE_NOT_BEGAIN);
+                    updateDevice(baseDevice);
+                }
+
             }
 
             deviceState[i] = 0;
@@ -102,7 +114,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
             RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                     cmd));
         }
-        mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 3000);
+        mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 4000);
 
 
     }

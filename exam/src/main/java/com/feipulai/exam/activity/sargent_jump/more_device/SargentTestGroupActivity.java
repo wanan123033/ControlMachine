@@ -18,7 +18,7 @@ import com.orhanobut.logger.Logger;
 
 import static com.feipulai.exam.activity.sargent_jump.Constants.GET_SCORE_RESPONSE;
 
-public class BaseMoreGroupTestActivity extends BaseMoreGroupMoreActivity {
+public class SargentTestGroupActivity extends BaseMoreGroupActivity {
     private static final String TAG = "SargentGroupTestActy";
     private SargentSetting sargentSetting;
     @Override
@@ -42,8 +42,10 @@ public class BaseMoreGroupTestActivity extends BaseMoreGroupMoreActivity {
         Logger.i(TAG + ":sargentSetting ->" + sargentSetting.toString());
         setDeviceCount(sargentSetting.getSpDeviceCount());
         deviceState = new int[sargentSetting.getSpDeviceCount()];
+        for (int i = 0; i < deviceState.length; i++) {
+            deviceState[i] = 1;
+        }
         RadioManager.getInstance().setOnRadioArrived(resultImpl);
-
         sendEmpty();
     }
 
@@ -66,10 +68,20 @@ public class BaseMoreGroupTestActivity extends BaseMoreGroupMoreActivity {
 
     public void sendEmpty() {
         for (int i = 0; i < deviceState.length; i++) {
+            BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
             if (deviceState[i] == 0) {
-                BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
-                baseDevice.setState(BaseDeviceState.STATE_ERROR);
-                updateDevice(baseDevice);
+
+                if (baseDevice.getState() != BaseDeviceState.STATE_ERROR){
+                    baseDevice.setState(BaseDeviceState.STATE_ERROR);
+                    updateDevice(baseDevice);
+                }
+
+            } else {
+                if (baseDevice.getState() == BaseDeviceState.STATE_ERROR) {
+                    baseDevice.setState(BaseDeviceState.STATE_NOT_BEGAIN);
+                    updateDevice(baseDevice);
+                }
+
             }
 
             deviceState[i] = 0;

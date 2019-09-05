@@ -104,7 +104,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
         adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTestMode.setAdapter(adapter1);
         spTestMode.setSelection(setting.getUseMode());
-
+        UdpClient.getInstance().init(1527);
         UdpClient.getInstance().setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(), this);
 
         //设置测试次数

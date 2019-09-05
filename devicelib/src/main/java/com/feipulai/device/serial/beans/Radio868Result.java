@@ -143,7 +143,7 @@ public class Radio868Result {
                     }
                 }
                 break;
-            case ItemDefault.CODE_ZFP:
+            case ItemDefault.CODE_ZFP://无效
                 if (data.length == 0x0c) {
                     switch (data[6]) {
                         case (byte) 0xc1://参数设置
