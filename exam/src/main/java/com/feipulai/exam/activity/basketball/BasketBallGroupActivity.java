@@ -522,7 +522,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                 Logger.i("更新成绩:" + bestResult.toString());
             }
         }
-
+        Logger.i("保存成绩:" + roundResult.toString());
         DBManager.getInstance().insertRoundResult(roundResult);
         //获取所有成绩设置为非最好成绩
         List<RoundResult> results = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");

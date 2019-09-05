@@ -507,7 +507,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             return;
         }
 
-        if (setTestPattern() == 0) {
+        if (setTestPattern() == TestConfigs.GROUP_PATTERN_SUCCESIVE) {
             for (int i = 0; i < stuPairsList.size(); i++) {
 
                 //  查询学生成绩 当有成绩则添加数据跳过测试

@@ -3,7 +3,6 @@ package com.feipulai.exam.activity.standjump;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
@@ -41,6 +40,11 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
     private long disconnectTime;
 
     @Override
+    public boolean isShowCamera() {
+        return true;
+    }
+
+    @Override
     public void initData() {
         jumpSetting = SharedPrefsUtil.loadFormSource(this, StandJumpSetting.class);
         if (jumpSetting == null) {
@@ -49,7 +53,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
         if (jumpSetting.isPenalize()) {
             setFaultEnable(true);
         }
-        setOpenAFR(true);
+//        setOpenAFR(true);
 
         Logger.i(TAG + ":reachSetting ->" + jumpSetting.toString());
         mHandler = new MyHandler(this);
@@ -248,7 +252,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
 
         @Override
         public void CheckDevice(boolean isCheckDevice, int[] brokenLEDs) {
-            Log.i("james", "CheckDevice");
+            Logger.i("james", "CheckDevice++++++" + standResiltListener.getTestState());
             isDisconnect = !isCheckDevice;
 //            if (brokenLEDs != null) {
 //                String ledPostion = "";

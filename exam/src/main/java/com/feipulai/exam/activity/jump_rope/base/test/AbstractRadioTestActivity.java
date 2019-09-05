@@ -332,7 +332,7 @@ public abstract class AbstractRadioTestActivity<Setting>
 //                mProgressDialog.show();
 
                 sweetAlertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
-                sweetAlertDialog.setTitle("获取最终成绩中");
+                sweetAlertDialog.setTitleText("获取最终成绩中");
                 sweetAlertDialog.setContentText("获取设备成绩中...");
                 sweetAlertDialog.setCancelable(false);
                 sweetAlertDialog.setCanceledOnTouchOutside(false);

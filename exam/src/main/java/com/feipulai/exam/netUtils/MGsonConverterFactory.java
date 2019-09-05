@@ -8,6 +8,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonWriter;
+import com.orhanobut.logger.Logger;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -137,6 +138,7 @@ public class MGsonConverterFactory extends Converter.Factory {
                     try {
 //                        httpResult.setBody(jsonParser.parse(httpResult.getBody().toString()));
 //                        String json = gson.toJson(httpResult);
+                        Logger.i("httpJson====>" + httpValue);
                         T t = gson.fromJson(httpValue, type);
                         return t;
                     } catch (Exception e) {

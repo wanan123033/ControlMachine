@@ -219,21 +219,21 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
                     String.format(getString(R.string.speak_result), student.getSpeakStuName(), ResultDisplayUtils.getStrResultForDisplay(roundResults.get(roundResults.size() - 1).getResult()))
             );
         }
-
+        uploadResults();
         boolean isAllTest = isAllTest(roundResults, student);
+        dispatch(isAllTest);
         // List<Student> tmpList = new ArrayList<>(1);
         // tmpList.add(student);
         // Map<Student, List<RoundResult>> tmpMap = new HashMap<>(2);
         // tmpMap.put(student, roundResults);
-        if (isAllTest) {
-            uploadResults();
+//        if (isAllTest) {
+//            uploadResults();
             // if (systemSetting.isAutoPrint()) {
             //     InteractUtils.printResults(group, tmpList, tmpMap,
             //             TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
             // }
-        }
+//        }
 
-        dispatch(isAllTest);
     }
 
     private void switchToPosition(int position) {

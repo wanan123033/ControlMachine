@@ -195,6 +195,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
         Logger.i("保存成绩,考生设备信息:" + pairs.toString());
         // 必须在状态切换之前保存成绩
         InteractUtils.saveResults(pairs, testDate);
+        InteractUtils.uploadResults();
         testState = WAIT_BGIN;
         resetDeviceResults();
         view.enableFinishTest(true);

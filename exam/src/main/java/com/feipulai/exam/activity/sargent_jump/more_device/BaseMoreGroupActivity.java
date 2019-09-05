@@ -48,7 +48,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public abstract class SargentGroupMoreActivity extends BaseCheckActivity {
+public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
     @BindView(R.id.txt_group_name)
     TextView txtGroupName;
     @BindView(R.id.rv_device_list)
@@ -61,7 +61,7 @@ public abstract class SargentGroupMoreActivity extends BaseCheckActivity {
     private DeviceListAdapter deviceListAdapter;
     private StuAdapter stuAdapter;
     private int MAX_COUNT = 4;
-    private List<DeviceDetail> deviceDetails = new ArrayList<>();
+    public List<DeviceDetail> deviceDetails = new ArrayList<>();
     private int deviceCount;
     /**
      * 是否停止测试
@@ -109,12 +109,22 @@ public abstract class SargentGroupMoreActivity extends BaseCheckActivity {
         sbName.append(group.getSortName() + String.format("第%1$d组", group.getGroupNo()));
         txtGroupName.setText(sbName);
 
-        for (int i = 0; i < MAX_COUNT; i++) {
+        getTestStudent(group);
+    }
+
+    public void setDeviceCount(int deviceCount) {
+        this.deviceCount = deviceCount;
+        deviceDetails.clear();
+        for (int i = 0; i < deviceCount; i++) {
             DeviceDetail detail = new DeviceDetail();
             detail.getStuDevicePair().getBaseDevice().setDeviceId(i + 1);
             detail.setDeviceOpen(true);
             deviceDetails.add(detail);
         }
+        initView();
+    }
+
+    private void initView() {
         deviceListAdapter = new DeviceListAdapter(deviceDetails);
         deviceListAdapter.setTestCount(3);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
@@ -128,20 +138,19 @@ public abstract class SargentGroupMoreActivity extends BaseCheckActivity {
                         toSkip(pos);
                         break;
                     case R.id.txt_start://开始
-                        toStart(pos);
+                        if (deviceDetails.get(pos).getStuDevicePair().getBaseDevice().getState() != BaseDeviceState.STATE_ERROR)
+                            toStart(pos);
                         break;
                 }
             }
         });
-
-
-        getTestStudent(group);
     }
 
     public abstract void toStart(int pos);
 
     protected void toSkip(int pos) {
         deviceDetails.get(pos).getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+        deviceDetails.get(pos).getStuDevicePair().setCanTest(true);
         if (deviceDetails.get(pos).getStuDevicePair().getStudent() != null) {
             Logger.i("studentSkip=>跳过考生：" + deviceDetails.get(pos).getStuDevicePair().getStudent().getStudentName());
             deviceDetails.get(pos).getStuDevicePair().setStudent(null);
@@ -276,7 +285,8 @@ public abstract class SargentGroupMoreActivity extends BaseCheckActivity {
                             int index = -1;
                             for (DeviceDetail detail : deviceDetails) {
                                 index++;
-                                if (detail.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_FREE && detail.isDeviceOpen()) {
+                                if (detail.getStuDevicePair().isCanTest() && detail.isDeviceOpen()) {
+                                    detail.getStuDevicePair().setCanTest(false);
                                     detail.getStuDevicePair().setStudent(studentList.get(j));
                                     detail.getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
                                     deviceDetails.get(index).getStuDevicePair().setTimeResult(pairList.get(j).getTimeResult());
@@ -303,7 +313,8 @@ public abstract class SargentGroupMoreActivity extends BaseCheckActivity {
         int index = -1;
         for (DeviceDetail detail : deviceDetails) {
             index++;
-            if (detail.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_FREE && detail.isDeviceOpen()) {
+            if (detail.getStuDevicePair().isCanTest() && detail.isDeviceOpen()) {
+                detail.getStuDevicePair().setCanTest(false);
                 detail.getStuDevicePair().setStudent(studentList.get(stuPos));
                 detail.getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
                 setStuPairsData(index, roundResultList);
@@ -384,8 +395,9 @@ public abstract class SargentGroupMoreActivity extends BaseCheckActivity {
     private void gotoTest(Student student) {
         for (int i = 0; i < deviceDetails.size(); i++) {
             BaseStuPair pair = deviceDetails.get(i).getStuDevicePair();
-            if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE
+            if (pair.isCanTest()
                     && pair.getStudent() == null) {
+                pair.setCanTest(false);
                 pair.setStudent(student);
             }
 
@@ -416,7 +428,7 @@ public abstract class SargentGroupMoreActivity extends BaseCheckActivity {
                     Logger.i("考生" + pair.getStudent().toString());
                 }
                 Logger.i("设备成绩信息STATE_END==>" + deviceState.toString());
-
+                pair.setCanTest(true);
                 doResult(pair, index);
             }
         }
@@ -469,6 +481,11 @@ public abstract class SargentGroupMoreActivity extends BaseCheckActivity {
         matchStudent(pair,index);
     }
 
+    /**
+     * 分派考生到机器中
+     * @param pair
+     * @param index
+     */
     private void matchStudent(BaseStuPair pair,int index) {
 
         //非身份验证模式
@@ -491,6 +508,7 @@ public abstract class SargentGroupMoreActivity extends BaseCheckActivity {
                     continuousTestNext(index);
                 }
                 pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
+                pair.setCanTest(false);
 
             } else {
                 //循环是否测试到最后一位

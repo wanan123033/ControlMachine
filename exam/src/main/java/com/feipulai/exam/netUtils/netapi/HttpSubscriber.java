@@ -568,7 +568,7 @@ public class HttpSubscriber {
 
             @Override
             public void onFault(int code, String errorMsg) {
-                ToastUtils.showShort("上传失败");
+                ToastUtils.showShort("上传失败:" + errorMsg);
 
                 if (onRequestEndListener != null) {
                     onRequestEndListener.onFault(UPLOAD_BIZ);

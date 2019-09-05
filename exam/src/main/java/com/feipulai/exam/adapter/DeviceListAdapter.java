@@ -46,6 +46,8 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
         helper.cbDeviceState.setText(String.format("%d号设备状态", helper.getLayoutPosition() + 1));
         if (item.getStuDevicePair() != null) {
             if (item.getStuDevicePair().getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
+                helper.cbDeviceState.setChecked(true);
+            }else {
                 helper.cbDeviceState.setChecked(false);
             }
 
@@ -55,14 +57,19 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
                 helper.txtStuName.setText(student.getStudentName());
             }
         }
+        if (item.getStuDevicePair().getTimeResult()!= null){
+            helper.itemTxtTestResult.setText(item.getStuDevicePair().getTimeResult()[0]);
+        }
 
         if (testCount == 2) {
             helper.itemTxtTestResult1.setVisibility(View.VISIBLE);
             helper.itemTxtTestResult2.setVisibility(View.INVISIBLE);
+            helper.itemTxtTestResult1.setText(item.getStuDevicePair().getTimeResult()[1]);
         }
         if (testCount == 3) {
             helper.itemTxtTestResult1.setVisibility(View.VISIBLE);
             helper.itemTxtTestResult2.setVisibility(View.VISIBLE);
+//            helper.itemTxtTestResult2.setText(item.getStuDevicePair().getTimeResult()[2]);
         }
         helper.addOnClickListener(R.id.txt_skip).addOnClickListener(R.id.txt_start);
         helper.swDeviceClose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

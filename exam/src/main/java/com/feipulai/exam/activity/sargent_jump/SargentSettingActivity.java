@@ -105,7 +105,6 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
     }
 
     private void init() {
-        initSpinners();
         boolean isFullReturn = sargentSetting.isFullReturn();
         cbFullReturn.setChecked(isFullReturn);
         cbFullReturn.setOnCheckedChangeListener(this);
@@ -185,6 +184,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
         radioManager = RadioManager.getInstance();
         radioManager.init();
         radioManager.setOnRadioArrived(this);
+        initSpinners();
     }
 
     private void initSpinners() {
@@ -202,12 +202,13 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
         }
         spTestRound.setSelection(maxTestNo - 1);
 
-        String[] deviceCount = {"1", "2", "3"};
+        String[] deviceCount = {"1", "2", "3","4"};
         ArrayAdapter<String> adapter0 = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, deviceCount);
         spDeviceCount.setAdapter(adapter0);
         spDeviceCount.setOnItemSelectedListener(this);
-        spDeviceCount.setEnabled(false);
+        spDeviceCount.setSelection(sargentSetting.getSpDeviceCount()-1);
+        spDeviceCount.setEnabled(true);
 
         rgModel.setVisibility(SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN ? View.GONE : View.VISIBLE);//个人模式隐藏
         rgModel.setOnCheckedChangeListener(this);
@@ -240,8 +241,8 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
                 }
                 break;
             case R.id.cb_wireless:
-                cbWireless.setChecked(b);
-                sargentSetting.setType(b ? 1 : 0);
+//                cbWireless.setChecked(b);
+//                sargentSetting.setType(b ? 1 : 0);
                 break;
         }
 
@@ -252,6 +253,9 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
         switch (adapterView.getId()) {
             case R.id.sp_test_round:
                 sargentSetting.setTestTimes(position + 1);
+                break;
+            case R.id.sp_device_count:
+                sargentSetting.setSpDeviceCount(position+1);
                 break;
         }
     }

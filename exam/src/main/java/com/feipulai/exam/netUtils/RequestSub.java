@@ -51,7 +51,7 @@ public class RequestSub<T> extends DisposableObserver<HttpResult<T>>
         this.mOnResultListener = mOnResultListener;
         this.context = context;
         alertDialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
-        alertDialog.setTitle("正在加载中，请稍等......");
+        alertDialog.setTitleText("正在加载中，请稍等......");
         alertDialog.setCanceledOnTouchOutside(false);
     }
 
@@ -65,7 +65,7 @@ public class RequestSub<T> extends DisposableObserver<HttpResult<T>>
         this.mOnResultListener = mOnResultListener;
         this.context = context;
         alertDialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
-        alertDialog.setTitle("正在连接中...");
+        alertDialog.setTitleText("正在连接中...");
         this.showProgress = showProgress;
     }
 

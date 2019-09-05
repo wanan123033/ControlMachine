@@ -288,7 +288,7 @@
             android:layout_width="80dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="1dp"
-            android:background="#AAD3FF"
+            android:background="@drawable/cb_bg_selector"
             android:button="@color/transparent"
             android:gravity="center"
             android:paddingLeft="15dp"

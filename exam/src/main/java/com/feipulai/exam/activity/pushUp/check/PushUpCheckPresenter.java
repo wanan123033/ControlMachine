@@ -35,6 +35,10 @@ public class PushUpCheckPresenter extends SitPullUpCheckPresenter<PushUpSetting>
     protected PushUpSetting getSetting() {
         return setting;
     }
+    @Override
+    protected int getTestPattern() {
+        return setting.getGroupMode();
+    }
 
     @Override
     protected int getDeviceSumFromSetting() {

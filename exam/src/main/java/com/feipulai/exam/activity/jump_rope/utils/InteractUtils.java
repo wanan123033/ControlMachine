@@ -1,6 +1,7 @@
 package com.feipulai.exam.activity.jump_rope.utils;
 
 import android.app.Activity;
+import android.text.TextUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -20,12 +21,15 @@ import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSetting;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.bean.RoundResultBean;
+import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
+import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
 
@@ -110,6 +114,39 @@ public class InteractUtils {
 
     public static int getResultInt(StuDevicePair pair) {
         return pair.getDeviceResult() == null ? 0 : pair.getDeviceResult().getResult();
+    }
+
+    public static void uploadResults() {
+        if (SettingHelper.getSystemSetting().isRtUpload()) {
+            if (TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
+                ToastUtils.showShort("自动上传成绩需下载更新项目信息");
+            } else {
+                List<UploadResults> uploadResults = new ArrayList<>();
+                for (Student student : TestCache.getInstance().getAllStudents()) {
+                    String groupNo;
+                    String scheduleNo;
+                    String testNo;
+                    List<RoundResult> roundResultList = TestCache.getInstance().getResults().get(student);
+                    if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN) {
+                        Group group = TestCache.getInstance().getGroup();
+                        groupNo = group.getGroupNo() + "";
+                        scheduleNo = group.getScheduleNo();
+                        testNo = "1";
+                    } else {
+                        StudentItem studentItem = TestCache.getInstance().getStudentItemMap().get(student);
+                        scheduleNo = studentItem.getScheduleNo();
+                        groupNo = "";
+                        testNo = TestCache.getInstance().getTestNoMap().get(student) + "";
+                    }
+                    UploadResults uploadResult = new UploadResults(scheduleNo,
+                            TestConfigs.getCurrentItemCode(), student.getStudentCode()
+                            , testNo, groupNo, RoundResultBean.beanCope(roundResultList));
+                    uploadResults.add(uploadResult);
+                }
+                Logger.i("自动上传成绩:" + uploadResults.toString());
+                ServerMessage.uploadResult(/*null,*/ uploadResults);
+            }
+        }
     }
 
     /**

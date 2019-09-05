@@ -92,8 +92,10 @@ public class MachineSelectActivity extends BaseTitleActivity implements DialogIn
                 systemSetting.setHostId(1);
                 SettingHelper.updateSettingCache(systemSetting);
                 // 清除所有已启动的Activity
-                ActivityCollector.getInstance().finishAllActivity();
-                startActivity(new Intent(this, MainActivity.class));
+//                ActivityCollector.getInstance().finishAllActivity();
+//                startActivity(new Intent(this, MainActivity.class));
+                ActivityCollector.getInstance().finishAllActivityExcept(MainActivity.class);
+                finish();
             }
         } else {
             Bundle bundle = new Bundle();
