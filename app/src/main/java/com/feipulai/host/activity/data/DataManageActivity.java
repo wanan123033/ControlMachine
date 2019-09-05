@@ -20,6 +20,7 @@ import com.feipulai.common.dbutils.BackupManager;
 import com.feipulai.common.dbutils.FileSelectActivity;
 import com.feipulai.common.exl.ExlListener;
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.utils.StringChineseUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.common.view.dialog.EditDialog;
@@ -397,6 +398,11 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
             @Override
             public void OnClickListener(Dialog dialog, String content) {
                 String text = content.trim();
+                if (StringChineseUtil.patternFileName(text)) {
+                    OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
+                    ToastUtils.showShort("文件创建失败,请确保输入文件名合法(中文、字母、数字和下划线),且不存在已有文件");
+                    return;
+                }
                 UsbFile targetFile;
                 try {
                     targetFile = FileSelectActivity.sSelectedFile.createFile(text + ".xls");
@@ -407,7 +413,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
 
                 } catch (IOException e) {
                     e.printStackTrace();
-                    ToastUtils.showShort("文件创建失败,请检查后再试");
+                    ToastUtils.showShort("文件创建失败,请确保路径目录不存在已有文件");
                     Logger.i("文件创建失败,Exel导出失败");
                 }
             }
@@ -419,6 +425,11 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
             @Override
             public void OnClickListener(Dialog dialog, String content) {
                 String text = content.trim();
+                if (StringChineseUtil.patternFileName(text)) {
+                    OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
+                    ToastUtils.showShort("文件创建失败,请确保输入文件名合法(中文、字母、数字和下划线),且不存在已有文件");
+                    return;
+                }
                 UsbFile targetFile;
                 try {
                     targetFile = FileSelectActivity.sSelectedFile.createFile(text + ".db");

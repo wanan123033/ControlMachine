@@ -817,6 +817,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         }
 
         DBManager.getInstance().insertRoundResult(roundResult);
+        Logger.i("保存成绩:" + roundResult.toString());
         //获取所有成绩设置为非最好成绩
         List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(mStudentItem);
         TestCache.getInstance().getResults().put(student, results);

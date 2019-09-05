@@ -10,7 +10,7 @@ public class SystemSetting {
     /**
      * 测试名称
      */
-    private String testName;
+    private String testName = "";
     /**
      * 测试地点
      */

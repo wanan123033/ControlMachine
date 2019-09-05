@@ -4,8 +4,10 @@ import android.text.TextUtils;
 
 import com.feipulai.common.dbutils.UsbFileAdapter;
 import com.feipulai.common.exl.ExlListener;
+import com.feipulai.common.exl.ExlPostfixUtil;
 import com.feipulai.common.exl.ExlReader;
-import com.feipulai.common.utils.ExlPostfixUtil;
+import com.feipulai.common.exl.GetReaderDataListener;
+import com.feipulai.common.exl.XlsxReaderUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.MyApplication;
@@ -51,7 +53,7 @@ import java.util.Map;
  * Created by James on 2018/11/1 0001.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
-
+@Deprecated
 public class GroupStuItemExLReader extends ExlReader {
 
     private List<String> mNecessaryCols;
@@ -360,7 +362,7 @@ public class GroupStuItemExLReader extends ExlReader {
 
         final List<ExelGroupReadBean> result = new ArrayList<>();
         final XlsxReaderUtil xlsxReader = new XlsxReaderUtil();
-        xlsxReader.setDataListener(new XlsxReaderUtil.GetReaderXlsxDataListener() {
+        xlsxReader.setDataListener(new GetReaderDataListener() {
             @Override
             public void readerLineData(int rowNum, List<String> data) {
                 if (rowNum == 0) {
@@ -370,8 +372,6 @@ public class GroupStuItemExLReader extends ExlReader {
                         xlsxReader.setStop(true);
                         return;
                     }
-
-
                     mHasIDCardCol = false;
                     for (int i = 0; i < data.size(); i++) {
                         //把需要的数据列的列名和索引记下来

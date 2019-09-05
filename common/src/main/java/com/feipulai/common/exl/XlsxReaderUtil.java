@@ -1,4 +1,4 @@
-package com.feipulai.exam.exl;
+package com.feipulai.common.exl;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -30,7 +30,7 @@ import javax.xml.parsers.ParserConfigurationException;
  */
 public class XlsxReaderUtil {
     private boolean isStop = false;
-    private GetReaderXlsxDataListener dataListener;
+    private GetReaderDataListener dataListener;
 
     public boolean isStop() {
         return isStop;
@@ -40,11 +40,11 @@ public class XlsxReaderUtil {
         isStop = stop;
     }
 
-    public GetReaderXlsxDataListener getDataListener() {
+    public GetReaderDataListener getDataListener() {
         return dataListener;
     }
 
-    public void setDataListener(GetReaderXlsxDataListener dataListener) {
+    public void setDataListener(GetReaderDataListener dataListener) {
         this.dataListener = dataListener;
     }
 
@@ -145,7 +145,4 @@ public class XlsxReaderUtil {
     }
 
 
-    public interface GetReaderXlsxDataListener {
-        void readerLineData(int rowNum, List<String> data);
-    }
 }

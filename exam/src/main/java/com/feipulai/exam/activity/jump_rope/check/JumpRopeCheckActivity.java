@@ -81,6 +81,7 @@ public class JumpRopeCheckActivity
         mTvGroup.setText(SerialConfigs.GROUP_NAME[setting.getDeviceGroup()] + "组");
         tvConflict.setVisibility(View.VISIBLE);
         llDeviceGroup.setVisibility(View.VISIBLE);
+
     }
 
     // @Override
@@ -202,6 +203,25 @@ public class JumpRopeCheckActivity
 
     }
 
+    public void showkillAllWarning() {
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.warning))
+                .setContentText(getString(R.string.clear_all_device_hint))
+                .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                ((JumpRopeCheckContract.Presenter) presenter).killAllDevices();
+            }
+        }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+
+            }
+        }).show();
+    }
+
+
     @OnClick({R.id.btn_change_hand_group, R.id.btn_kill_devices})
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -211,7 +231,8 @@ public class JumpRopeCheckActivity
                 break;
 
             case R.id.btn_kill_devices:
-                ((JumpRopeCheckContract.Presenter) presenter).killAllDevices();
+//                ((JumpRopeCheckContract.Presenter) presenter).killAllDevices();
+                showkillAllWarning();
                 break;
 
         }

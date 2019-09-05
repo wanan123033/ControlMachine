@@ -162,6 +162,11 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity implement
     private DrawHelper drawHelper;
     private FaceEngine faceEngine;
     private int afCode;
+    private boolean isShowCamera = false;
+
+    public boolean isShowCamera() {
+        return isShowCamera;
+    }
 
     @Override
     protected int setLayoutResID() {
@@ -177,11 +182,14 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity implement
             serverIntent = new Intent(this, UploadService.class);
             startService(serverIntent);
         }
+        if (isShowCamera) {
+            initUVCCamera();
 
-        initUVCCamera();
+            //本地人脸库初始化
+            FaceServer.getInstance().init(this);
+            imgAFR.setVisibility(View.VISIBLE);
+        }
 
-        //本地人脸库初始化
-        FaceServer.getInstance().init(this);
 
         drawHelper = new DrawHelper(mWidth, mHeight, mWidth, mHeight, 0
                 , 1, true, false, false);
@@ -206,13 +214,13 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity implement
 
     private boolean isCamera = false;
 
-    public void setOpenAFR(boolean isOpen) {
-        if (isOpen) {
-            imgAFR.setVisibility(View.VISIBLE);
-        } else {
-            imgAFR.setVisibility(View.GONE);
-        }
-    }
+//    public void setOpenAFR(boolean isOpen) {
+//        if (isOpen) {
+//            imgAFR.setVisibility(View.VISIBLE);
+//        } else {
+//            imgAFR.setVisibility(View.GONE);
+//        }
+//    }
 
     private void initUVCCamera() {
         mUVCCamera = new UVCCameraProxy(this);

@@ -5,7 +5,6 @@ import android.content.Context;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.manager.PullUpManager;
 import com.feipulai.exam.activity.jump_rope.base.check.RadioCheckContract;
-import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.pullup.setting.PullUpSetting;
 import com.feipulai.exam.activity.situp.base_check.SitPullUpCheckPresenter;
 
@@ -23,6 +22,11 @@ public class PullUpCheckPresenter extends SitPullUpCheckPresenter<PullUpSetting>
     @Override
     protected PullUpSetting getSetting() {
         return setting;
+    }
+
+    @Override
+    protected int getTestPattern() {
+        return setting.getGroupMode();
     }
 
     @Override

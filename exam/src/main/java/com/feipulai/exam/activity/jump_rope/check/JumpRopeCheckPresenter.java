@@ -97,6 +97,11 @@ public class JumpRopeCheckPresenter
     }
 
     @Override
+    protected int getTestPattern() {
+        return getSetting().getGroupMode();
+    }
+
+    @Override
     protected int getDeviceSumFromSetting() {
         return setting.getDeviceSum();
     }

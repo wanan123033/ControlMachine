@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
@@ -21,19 +19,13 @@ import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
-import com.feipulai.exam.bean.RoundResultBean;
-import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
-import com.feipulai.exam.entity.StudentItem;
-import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.view.DividerItemDecoration;
-import com.orhanobut.logger.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -102,36 +94,36 @@ public class RadioResultActivity
 		if (systemSetting.isAutoPrint()) {
 			printResult();
 		}
-		if (systemSetting.isRtUpload()) {
-			if (TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
-				ToastUtils.showShort("自动上传成绩需下载更新项目信息");
-			} else {
-				List<UploadResults> uploadResults = new ArrayList<>();
-				for (Student student : TestCache.getInstance().getAllStudents()) {
-					String groupNo;
-					String scheduleNo;
-					String testNo;
-					List<RoundResult> roundResultList = TestCache.getInstance().getResults().get(student);
-					if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN) {
-						Group group = TestCache.getInstance().getGroup();
-						groupNo = group.getGroupNo() + "";
-						scheduleNo = group.getScheduleNo();
-						testNo = "1";
-					} else {
-						StudentItem studentItem = TestCache.getInstance().getStudentItemMap().get(student);
-						scheduleNo = studentItem.getScheduleNo();
-						groupNo = "";
-						testNo = TestCache.getInstance().getTestNoMap().get(student) + "";
-					}
-					UploadResults uploadResult = new UploadResults(scheduleNo,
-							TestConfigs.getCurrentItemCode(), student.getStudentCode()
-							, testNo, groupNo, RoundResultBean.beanCope(roundResultList));
-					uploadResults.add(uploadResult);
-				}
-				Logger.i("自动上传成绩:" + uploadResults.toString());
-				ServerMessage.uploadResult(/*null,*/ uploadResults);
-			}
-		}
+//		if (systemSetting.isRtUpload()) {
+//			if (TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
+//				ToastUtils.showShort("自动上传成绩需下载更新项目信息");
+//			} else {
+//				List<UploadResults> uploadResults = new ArrayList<>();
+//				for (Student student : TestCache.getInstance().getAllStudents()) {
+//					String groupNo;
+//					String scheduleNo;
+//					String testNo;
+//					List<RoundResult> roundResultList = TestCache.getInstance().getResults().get(student);
+//					if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN) {
+//						Group group = TestCache.getInstance().getGroup();
+//						groupNo = group.getGroupNo() + "";
+//						scheduleNo = group.getScheduleNo();
+//						testNo = "1";
+//					} else {
+//						StudentItem studentItem = TestCache.getInstance().getStudentItemMap().get(student);
+//						scheduleNo = studentItem.getScheduleNo();
+//						groupNo = "";
+//						testNo = TestCache.getInstance().getTestNoMap().get(student) + "";
+//					}
+//					UploadResults uploadResult = new UploadResults(scheduleNo,
+//							TestConfigs.getCurrentItemCode(), student.getStudentCode()
+//							, testNo, groupNo, RoundResultBean.beanCope(roundResultList));
+//					uploadResults.add(uploadResult);
+//				}
+//				Logger.i("自动上传成绩:" + uploadResults.toString());
+//				ServerMessage.uploadResult(/*null,*/ uploadResults);
+//			}
+//		}
 	}
 	
 	private void updateGroupState() {
