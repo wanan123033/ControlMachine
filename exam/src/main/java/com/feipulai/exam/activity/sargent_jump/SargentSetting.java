@@ -26,7 +26,7 @@ public class SargentSetting {
     /**
      * 设备数量
      */
-    private int spDeviceCount = 1;
+    private int spDeviceCount = 4;
     /**
      * 分组测试模式 0 连续 1 循环
      */

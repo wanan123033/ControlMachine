@@ -11,6 +11,7 @@ import com.feipulai.exam.entity.RoundResult;
 public class DeviceDetail {
     public DeviceDetail(){
         baseStuPair = new BaseStuPair();
+        baseStuPair.setCanTest(true);
         baseStuPair.setBaseDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE));
     }
     private BaseStuPair baseStuPair;

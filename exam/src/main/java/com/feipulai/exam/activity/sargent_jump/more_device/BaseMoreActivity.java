@@ -12,6 +12,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ListView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.tts.TtsManager;
@@ -20,9 +21,11 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
+import com.feipulai.exam.activity.sargent_jump.pair.SargentPairActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.adapter.DeviceListAdapter;
 import com.feipulai.exam.bean.DeviceDetail;
@@ -35,20 +38,25 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.service.UploadService;
 import com.feipulai.exam.utils.ResultDisplayUtils;
+import com.feipulai.exam.view.StuSearchEditText;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     @BindView(R.id.rv_device_list)
     RecyclerView rvDeviceList;
     public List<DeviceDetail> deviceDetails = new ArrayList<>();
+    @BindView(R.id.et_input_text)
+    StuSearchEditText etInputText;
+    @BindView(R.id.lv_results)
+    ListView lvResults;
     private int deviceCount = 4;
     private int testNo;
     private DeviceListAdapter deviceListAdapter;
@@ -56,6 +64,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     private Intent serverIntent;
     private ClearHandler clearHandler = new ClearHandler();
     private LedHandler ledHandler = new LedHandler();
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_sargent_jump_more;
@@ -69,7 +78,6 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             serverIntent = new Intent(this, UploadService.class);
             startService(serverIntent);
         }
-
     }
 
     private void init() {
@@ -77,6 +85,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
         PrinterManager.getInstance().init();
+        etInputText.setData(lvResults, this);
     }
 
     @Override
@@ -109,8 +118,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         int index = 0;
         boolean canUseDevice = false;
         for (int i = 0; i < deviceCount; i++) {
-            int state = deviceDetails.get(i).getStuDevicePair().getBaseDevice().getState();
-            if (deviceDetails.get(i).isDeviceOpen() && state == BaseDeviceState.STATE_FREE) {
+            if (deviceDetails.get(i).isDeviceOpen() && deviceDetails.get(i).getStuDevicePair().isCanTest()) {
                 index = i;
                 canUseDevice = true;
                 break;
@@ -149,9 +157,14 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     private void addStudent(Student student, int index) {
         DeviceDetail deviceDetail = deviceDetails.get(index);
         deviceDetail.getStuDevicePair().setStudent(student);
-
+        deviceDetail.getStuDevicePair().setCanTest(false);
         String[] timeResult = deviceDetail.getStuDevicePair().getTimeResult();
-        int count = timeResult.length;
+        int count;
+        if (timeResult != null) {
+            count = timeResult.length;
+        } else {
+            count = 0;
+        }
         toastSpeak(String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1)
                 , String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1));
 
@@ -180,7 +193,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 BaseStuPair pair = deviceDetails.get(pos).getStuDevicePair();
                 switch (view.getId()) {
                     case R.id.txt_start:
-                        if (pair.getStudent() != null) {
+                        if (pair.getStudent() != null ) {
                             toastSpeak("当前无学生测试");
                             return;
                         }
@@ -190,7 +203,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                         break;
                     case R.id.txt_skip:
                         if (pair.getStudent() != null) {
-                            stuSkipDialog(pair.getStudent(),pos);
+                            stuSkipDialog(pair.getStudent(), pos);
                         }
                         break;
                     default:
@@ -216,7 +229,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 }).setNegativeButton("取消", null).show();
     }
 
-    private void stuSkip(int pos){
+    private void stuSkip(int pos) {
         deviceDetails.get(pos).getStuDevicePair().setStudent(null);
         deviceDetails.get(pos).getStuDevicePair().setTimeResult(new String[setTestCount()]);
         deviceListAdapter.notifyItemChanged(pos);
@@ -276,6 +289,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 }
                 Logger.i("设备成绩信息STATE_END==>" + deviceState.toString());
                 pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+                pair.setCanTest(true);
                 doResult(pair, index);
             }
         }
@@ -489,7 +503,19 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     }
 
-    public  class LedHandler extends Handler {
+    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.txt_led_setting:
+                startActivity(new Intent(this, LEDSettingActivity.class));
+                break;
+            case R.id.tv_device_pair:
+                startActivity(new Intent(this, SargentPairActivity.class));
+                break;
+        }
+    }
+
+    public class LedHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -536,8 +562,6 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     public abstract void gotoItemSetting();
 
     protected abstract void sendTestCommand(BaseStuPair pair, int index);
-
-
 
 
 }

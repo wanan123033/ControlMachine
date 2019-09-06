@@ -48,7 +48,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public abstract class BaseMoreGroupMoreActivity extends BaseCheckActivity {
+public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
     @BindView(R.id.txt_group_name)
     TextView txtGroupName;
     @BindView(R.id.rv_device_list)
@@ -138,7 +138,8 @@ public abstract class BaseMoreGroupMoreActivity extends BaseCheckActivity {
                         toSkip(pos);
                         break;
                     case R.id.txt_start://开始
-                        toStart(pos);
+                        if (deviceDetails.get(pos).getStuDevicePair().getBaseDevice().getState() != BaseDeviceState.STATE_ERROR)
+                            toStart(pos);
                         break;
                 }
             }
@@ -149,6 +150,7 @@ public abstract class BaseMoreGroupMoreActivity extends BaseCheckActivity {
 
     protected void toSkip(int pos) {
         deviceDetails.get(pos).getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+        deviceDetails.get(pos).getStuDevicePair().setCanTest(true);
         if (deviceDetails.get(pos).getStuDevicePair().getStudent() != null) {
             Logger.i("studentSkip=>跳过考生：" + deviceDetails.get(pos).getStuDevicePair().getStudent().getStudentName());
             deviceDetails.get(pos).getStuDevicePair().setStudent(null);
@@ -283,7 +285,8 @@ public abstract class BaseMoreGroupMoreActivity extends BaseCheckActivity {
                             int index = -1;
                             for (DeviceDetail detail : deviceDetails) {
                                 index++;
-                                if (detail.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_FREE && detail.isDeviceOpen()) {
+                                if (detail.getStuDevicePair().isCanTest() && detail.isDeviceOpen()) {
+                                    detail.getStuDevicePair().setCanTest(false);
                                     detail.getStuDevicePair().setStudent(studentList.get(j));
                                     detail.getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
                                     deviceDetails.get(index).getStuDevicePair().setTimeResult(pairList.get(j).getTimeResult());
@@ -310,7 +313,8 @@ public abstract class BaseMoreGroupMoreActivity extends BaseCheckActivity {
         int index = -1;
         for (DeviceDetail detail : deviceDetails) {
             index++;
-            if (detail.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_FREE && detail.isDeviceOpen()) {
+            if (detail.getStuDevicePair().isCanTest() && detail.isDeviceOpen()) {
+                detail.getStuDevicePair().setCanTest(false);
                 detail.getStuDevicePair().setStudent(studentList.get(stuPos));
                 detail.getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
                 setStuPairsData(index, roundResultList);
@@ -391,8 +395,9 @@ public abstract class BaseMoreGroupMoreActivity extends BaseCheckActivity {
     private void gotoTest(Student student) {
         for (int i = 0; i < deviceDetails.size(); i++) {
             BaseStuPair pair = deviceDetails.get(i).getStuDevicePair();
-            if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE
+            if (pair.isCanTest()
                     && pair.getStudent() == null) {
+                pair.setCanTest(false);
                 pair.setStudent(student);
             }
 
@@ -423,7 +428,7 @@ public abstract class BaseMoreGroupMoreActivity extends BaseCheckActivity {
                     Logger.i("考生" + pair.getStudent().toString());
                 }
                 Logger.i("设备成绩信息STATE_END==>" + deviceState.toString());
-
+                pair.setCanTest(true);
                 doResult(pair, index);
             }
         }
@@ -476,6 +481,11 @@ public abstract class BaseMoreGroupMoreActivity extends BaseCheckActivity {
         matchStudent(pair,index);
     }
 
+    /**
+     * 分派考生到机器中
+     * @param pair
+     * @param index
+     */
     private void matchStudent(BaseStuPair pair,int index) {
 
         //非身份验证模式
@@ -498,6 +508,7 @@ public abstract class BaseMoreGroupMoreActivity extends BaseCheckActivity {
                     continuousTestNext(index);
                 }
                 pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
+                pair.setCanTest(false);
 
             } else {
                 //循环是否测试到最后一位
