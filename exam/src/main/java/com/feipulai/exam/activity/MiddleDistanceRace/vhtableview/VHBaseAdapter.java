@@ -23,4 +23,6 @@ public interface VHBaseAdapter {
 
     //每一行被点击的时候的回调
     void OnClickContentRowItem(int row, View convertView);
+
+    void OnLongClickContentRowItem(int row, View convertView);
 }

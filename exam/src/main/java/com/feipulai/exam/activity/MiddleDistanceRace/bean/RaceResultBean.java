@@ -15,8 +15,15 @@ public class RaceResultBean {
     private String[] results;//不包含标题栏，{道次,姓名,最终成绩,第一圈,第二圈,第三圈,第四圈...}---成绩1ms值（存储数据用）
 //    private String[] resultsString;//包含标题栏，且全部为String,不需要转换（显示数据用）
     private int color;//颜色
+    private int resultState;
     private String studentName;
     private String studentCode;
+    //0:未检录 1:正常 2:犯规 3:中退 4:弃权 5:测试
+    public static int STATE_NORMAL=1;
+    public static int STATE_DQ=2;
+    public static int STATE_DNF=3;
+    public static int STATE_DNS=4;
+    public static int STATE_DT=5;
 
     public RaceResultBean() {
     }
@@ -28,6 +35,7 @@ public class RaceResultBean {
 //    public void setResultsString(String[] resultsString) {
 //        this.resultsString = resultsString;
 //    }
+
 
     public String getStudentName() {
         return studentName;
@@ -109,6 +117,14 @@ public class RaceResultBean {
         this.itemName = itemName;
     }
 
+    public int getResultState() {
+        return resultState;
+    }
+
+    public void setResultState(int resultState) {
+        this.resultState = resultState;
+    }
+
     @Override
     public String toString() {
         return "RaceResultBean{" +
@@ -119,8 +135,8 @@ public class RaceResultBean {
                 ", itemCode='" + itemCode + '\'' +
                 ", itemName='" + itemName + '\'' +
                 ", results=" + Arrays.toString(results) +
-//                ", resultsString=" + Arrays.toString(resultsString) +
                 ", color=" + color +
+                ", resultState=" + resultState +
                 ", studentName='" + studentName + '\'' +
                 ", studentCode='" + studentCode + '\'' +
                 '}';
