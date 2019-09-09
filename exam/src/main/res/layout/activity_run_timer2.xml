@@ -94,7 +94,7 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="@dimen/dp_40"
-        android:visibility="invisible">
+        android:visibility="gone">
 
         <include
             android:id="@+id/tab_title"
@@ -113,6 +113,7 @@
             android:layout_above="@+id/rl_control"
             android:layout_marginLeft="20dp" />
         <RelativeLayout
+            android:id="@+id/rl_state"
             android:layout_width="300dp"
             android:layout_height="91dp"
             android:layout_marginTop="15dp"
@@ -124,7 +125,7 @@
             <TextView
                 android:id="@+id/tv_timer"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="91dp"
                 android:layout_centerVertical="true"
                 android:textColor="@color/black"
                 android:layout_marginLeft="20dp"
@@ -145,11 +146,12 @@
         </RelativeLayout>
         <RelativeLayout
             android:id="@+id/rl_control"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/rl_title"
             android:layout_marginTop="15dp"
-            android:layout_alignParentRight="true"
+            android:layout_marginLeft="@dimen/dp_15"
+            android:layout_toRightOf="@+id/rl_state"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="@dimen/dp_10"
             >
@@ -161,22 +163,21 @@
                 android:paddingTop="15dp"
                 android:drawableTop="@mipmap/wait"
                 android:text="等待发令" />
-
             <TextView
-                android:id="@+id/tv_mark_confirm"
+                android:id="@+id/tv_wait_ready"
+                style="@style/style_run_timer_text"
                 android:layout_marginRight="@dimen/dp_10"
                 android:layout_toRightOf="@+id/tv_wait_start"
-                style="@style/style_run_timer_text"
-                android:drawableTop="@mipmap/confirm"
+                android:background="@drawable/selector_blue_grey"
                 android:paddingTop="15dp"
-                android:background="@drawable/selector_green_grey"
-                android:text="成绩确认" />
+                android:drawableTop="@mipmap/wait"
+                android:text="预备" />
 
             <TextView
                 android:id="@+id/tv_fault_back"
                 style="@style/style_run_timer_text"
                 android:layout_marginRight="@dimen/dp_10"
-                android:layout_toRightOf="@+id/tv_mark_confirm"
+                android:layout_toRightOf="@+id/tv_wait_ready"
                 android:drawableTop="@mipmap/fault"
                 android:paddingTop="15dp"
                 android:background="@drawable/selector_yellow_grey"
@@ -185,13 +186,21 @@
             <TextView
                 android:id="@+id/tv_force_start"
                 style="@style/style_run_timer_text"
-                android:layout_marginLeft="@dimen/dp_10"
                 android:layout_toRightOf="@+id/tv_fault_back"
                 android:drawableTop="@mipmap/force"
                 android:paddingTop="15dp"
                 android:background="@drawable/selector_red_grey"
                 android:text="强制启动" />
-            />
+
+            <TextView
+                android:id="@+id/tv_mark_confirm"
+                android:layout_marginRight="@dimen/dp_10"
+                android:layout_alignParentRight="true"
+                style="@style/style_run_timer_text"
+                android:drawableTop="@mipmap/confirm"
+                android:paddingTop="15dp"
+                android:background="@drawable/selector_green_grey"
+                android:text="成绩确认" />
         </RelativeLayout>
     </RelativeLayout>
 </LinearLayout>

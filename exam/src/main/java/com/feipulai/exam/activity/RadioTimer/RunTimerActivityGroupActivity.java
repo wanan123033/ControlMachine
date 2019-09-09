@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.beans.RunTimerResult;
@@ -59,6 +60,8 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
     TextView tvTimer;
     @BindView(R.id.tv_run_state)
     TextView tvRunState;
+    @BindView(R.id.tv_wait_ready)
+    TextView tvWaitReady;
     private int currentTestTime = 0;
     private List<RunStudent> mList = new ArrayList<>();//测试的
     private RunNumberAdapter2 mAdapter;
@@ -72,7 +75,7 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
     private List<String> marks = new ArrayList<>();
     private int select;
     private List<RunStudent> tempGroup = new ArrayList<>();
-
+    private SoundPlayUtils playUtils;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_group_run_timer2;
@@ -82,6 +85,7 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         initView();
+        playUtils = SoundPlayUtils.init(this);
     }
 
     private void initView() {
@@ -107,7 +111,8 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
                 showPop(position, view);
             }
         });
-        changeState(new boolean[]{true, false, false, false});
+        // 等待 确认 违规 强起 预备
+        changeState(new boolean[]{true, false, false, false, false});
 
         getTestStudent();
         PopAdapter popAdapter = new PopAdapter(marks);
@@ -194,7 +199,7 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
     }
 
     @OnClick({
-            R.id.tv_wait_start, R.id.tv_force_start, R.id.tv_fault_back, R.id.tv_mark_confirm
+            R.id.tv_wait_start, R.id.tv_force_start, R.id.tv_fault_back, R.id.tv_mark_confirm,R.id.tv_wait_ready
     })
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -217,7 +222,6 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
                 startActivity(new Intent(this, LEDSettingActivity.class));
                 break;
             case R.id.tv_wait_start://等待发令
-
                 waitStart();
                 if (currentTestTime >= maxTestTimes) {
                     isOverTimes = true;
@@ -229,9 +233,15 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
                     runStudent.getResultList().clear();
                 }
                 mAdapter.notifyDataSetChanged();
+                playUtils.play(13);//播放各就各位
                 break;
             case R.id.tv_force_start://强制启动
+                playUtils.play(15);//播放枪声
                 forceStart();
+                break;
+            case R.id.tv_wait_ready://预备
+                playUtils.play(14);
+                changeState(new boolean[]{false, true, false, false,false});
                 break;
             case R.id.tv_fault_back://违规返回
                 faultBack();
@@ -265,6 +275,8 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
         }
 
     }
+
+
 
     @Override
     public void illegalBack() {
@@ -496,6 +508,8 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
                 tvMarkConfirm.setEnabled(state[3]);
                 tvMarkConfirm.setSelected(state[3]);
 
+                tvWaitReady.setEnabled(state[4]);
+                tvWaitReady.setSelected(state[4]);
                 tvRunState.setText(state[0] ? "空闲" : state[1] ? "等待" : "计时");
 
             }

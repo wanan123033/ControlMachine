@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.beans.RunTimerResult;
@@ -77,21 +78,25 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     TextView txtStuSex;
     @BindView(R.id.tv_run_state)
     TextView tvRunState;
+    @BindView(R.id.tv_wait_ready)
+    TextView tvWaitReady;
     private int testNo;
     private List<RunStudent> mList = new ArrayList<>();
     private RunNumberAdapter2 mAdapter2;
     private RunNumberAdapter mAdapter;
-    private ResultPopWindow resultPopWindow ;
-//    private ListView lvResults;
+    private ResultPopWindow resultPopWindow;
+    //    private ListView lvResults;
     @BindView(R.id.lv_results)
     ListView lvResults;
-//    private StudentPopWindow studentPopWindow ;
+    //    private StudentPopWindow studentPopWindow ;
     private List<String> marks = new ArrayList<>();
     //更换成绩的序号
-    private int select ;
+    private int select;
     //当前测试次数
     private int currentTestTime = 0;
     private boolean isSetting = true;
+    private SoundPlayUtils playUtils;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_run_timer2;
@@ -103,6 +108,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
 //        setContentView(R.layout.activity_run_timer2);
         ButterKnife.bind(this);
         initView();
+        playUtils = SoundPlayUtils.init(this);
     }
 
     private void initView() {
@@ -124,8 +130,8 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
         rvTimer.setLayoutManager(layoutManager);
         rvTimer.setAdapter(mAdapter);
 
-
-        changeState(new boolean[]{true, false, false, false});
+        // 等待 确认 违规 强起 预备
+        changeState(new boolean[]{true, false, false, false, false});
         mAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
@@ -138,13 +144,13 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
         mAdapter2.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                showPop(position,view);
+                showPop(position, view);
             }
         });
         btnStart.setSelected(true);
         btnLed.setSelected(true);
         PopAdapter popAdapter = new PopAdapter(marks);
-        resultPopWindow = new ResultPopWindow(this,popAdapter);
+        resultPopWindow = new ResultPopWindow(this, popAdapter);
         resultPopWindow.setOnPopItemClickListener(new CommonPopupWindow.OnPopItemClickListener() {
             @Override
             public void itemClick(int position) {
@@ -179,7 +185,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (reLoad){
+        if (reLoad) {
             initView();
         }
     }
@@ -187,18 +193,19 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     private void showPop(int pos, View view) {
         marks.clear();
         RunStudent runStudent = mList.get(pos);
-        if (runStudent.getStudent()!= null){
+        if (runStudent.getStudent() != null) {
             List<RunStudent.WaitResult> hashMap = runStudent.getResultList();
-            for(RunStudent.WaitResult entry : hashMap){
+            for (RunStudent.WaitResult entry : hashMap) {
 //                Log.i("key= "+entry.getKey()," and value= "+entry.getValue());
                 marks.add(entry.getWaitResult());
             }
 
         }
         resultPopWindow.notifyPop();
-        select = pos ;
+        select = pos;
         resultPopWindow.showPopOrDismiss(view);
     }
+
     /**
      * 删除考生
      *
@@ -220,7 +227,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     }
 
     @OnClick({R.id.btn_start, R.id.btn_led, R.id.tv_wait_start, R.id.tv_force_start,
-            R.id.tv_fault_back, R.id.tv_mark_confirm}) //R.id.tv_project_setting,
+            R.id.tv_fault_back, R.id.tv_mark_confirm,R.id.tv_wait_ready}) //R.id.tv_project_setting,
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_start:
@@ -228,7 +235,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
                     ToastUtils.showShort("请先添加学生");
                     return;
                 }
-                isSetting = false ;
+                isSetting = false;
                 llFirst.setVisibility(View.GONE);
                 rlSecond.setVisibility(View.VISIBLE);
                 break;
@@ -242,44 +249,50 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
                 waitStart();
                 if (currentTestTime >= maxTestTimes) {
                     isOverTimes = true;
-                }else {
-                    showReady(mList,true);
+                } else {
+                    showReady(mList, true);
                 }
-                for (RunStudent runStudent :mList){
+                for (RunStudent runStudent : mList) {
                     runStudent.setMark("");
                     runStudent.getResultList().clear();
                 }
                 mAdapter2.notifyDataSetChanged();
                 mAdapter.notifyDataSetChanged();
+                playUtils.play(13);
                 break;
             case R.id.tv_force_start://强制启动
+                playUtils.play(15);
                 forceStart();
                 break;
             case R.id.tv_fault_back://违规返回
                 faultBack();
 
                 break;
+            case R.id.tv_wait_ready:
+                playUtils.play(14);
+                changeState(new boolean[]{false, true, false, false,false});
+                break;
             case R.id.tv_mark_confirm://成绩确认
                 currentTestTime++;
                 markConfirm();
                 for (RunStudent runStudent : mList) {
-                    if (runStudent.getStudent() != null){
-                        disposeManager.saveResult(runStudent.getStudent(), runStudent.getOriginalMark(), currentTestTime,testNo+1);
+                    if (runStudent.getStudent() != null) {
+                        disposeManager.saveResult(runStudent.getStudent(), runStudent.getOriginalMark(), currentTestTime, testNo + 1);
                         List<RoundResult> resultList = DBManager.getInstance().queryResultsByStudentCode(runStudent.getStudent().getStudentCode());
                         List<String> list = new ArrayList<>();
                         for (RoundResult result : resultList) {
                             list.add(getFormatTime(result.getResult()));
                         }
 
-                        disposeManager.printResult(runStudent.getStudent(), list, currentTestTime, maxTestTimes,-1);
+                        disposeManager.printResult(runStudent.getStudent(), list, currentTestTime, maxTestTimes, -1);
                         list.clear();
                     }
                 }
                 disposeManager.setShowLed(mList);
 
-                if (currentTestTime >= maxTestTimes){//回到初始界面
-                    currentTestTime = 0 ;
-                    isSetting = true ;
+                if (currentTestTime >= maxTestTimes) {//回到初始界面
+                    currentTestTime = 0;
+                    isSetting = true;
                     llFirst.setVisibility(View.VISIBLE);
                     rlSecond.setVisibility(View.GONE);
                     mList.clear();
@@ -295,25 +308,27 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
         }
     }
 
+
+
     @Override
     public void illegalBack() {
-        for (RunStudent runStudent :mList){
+        for (RunStudent runStudent : mList) {
             runStudent.setMark("");
             runStudent.getResultList().clear();
         }
         mAdapter2.notifyDataSetChanged();
         mAdapter.notifyDataSetChanged();
-        showReady(mList,false);
+        showReady(mList, false);
     }
 
 
     /**
      * 显示道次准备
      */
-    private void showReady(List<RunStudent> runs,boolean ready) {
+    private void showReady(List<RunStudent> runs, boolean ready) {
         if (runs.size() < 0)
             return;
-        disposeManager.showReady(runs,ready);
+        disposeManager.showReady(runs, ready);
     }
 
     @Override
@@ -337,7 +352,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
             testNo = roundResultList.get(0).getTestNo();
         }
         currentTestTime = roundResultList.size();
-        if (isExistStudent(student)){
+        if (isExistStudent(student)) {
             toastSpeak("该考生已存在");
             return;
         }
@@ -357,7 +372,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
             updateStuInfo(student);
             mAdapter2.notifyDataSetChanged();
             mAdapter.notifyDataSetChanged();
-            showReady(mList,false  );
+            showReady(mList, false);
         } else {
 
             ToastUtils.showShort("设备正在使用中");
@@ -366,22 +381,23 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
 
     /**
      * 判断 学生是否已存在
+     *
      * @param student
      * @return
      */
-    private boolean isExistStudent(Student student){
-        for (RunStudent runStudent :mList){
-           if (runStudent.getStudent() != null && student.getStudentCode().equals(runStudent.getStudent().getStudentCode())){
-                return true ;
+    private boolean isExistStudent(Student student) {
+        for (RunStudent runStudent : mList) {
+            if (runStudent.getStudent() != null && student.getStudentCode().equals(runStudent.getStudent().getStudentCode())) {
+                return true;
             }
         }
-        return false ;
+        return false;
     }
 
     private void updateStuInfo(Student student) {
         txtStuCode.setText(student.getStudentCode());
         txtStuName.setText(student.getStudentName());
-        txtStuSex.setText(student.getSex() == 0 ?"男":"女");
+        txtStuSex.setText(student.getSex() == 0 ? "男" : "女");
     }
 
 //    private void selectTestDialog(final Student student) {
@@ -450,7 +466,11 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
 
                 tvMarkConfirm.setEnabled(state[3]);
                 tvMarkConfirm.setSelected(state[3]);
-                tvRunState.setText(state[0]? "空闲":state[1]?"等待":"计时");
+
+                tvWaitReady.setEnabled(state[4]);
+                tvWaitReady.setSelected(state[4]);
+
+                tvRunState.setText(state[0] ? "空闲" : state[1] ? "等待" : "计时");
             }
         });
 
@@ -468,9 +488,9 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
         return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (llFirst.getVisibility() == View.VISIBLE){
+                if (llFirst.getVisibility() == View.VISIBLE) {
                     finish();
-                }else {
+                } else {
                     llFirst.setVisibility(View.VISIBLE);
                     rlSecond.setVisibility(View.GONE);
                     stopRun();
@@ -496,4 +516,6 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
         }
 
     }
+
+
 }
