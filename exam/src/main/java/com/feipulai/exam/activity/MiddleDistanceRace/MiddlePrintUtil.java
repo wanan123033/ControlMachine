@@ -3,6 +3,7 @@ package com.feipulai.exam.activity.MiddleDistanceRace;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
+import android.widget.TextView;
 
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.device.printer.PrinterManager;
@@ -71,10 +72,26 @@ public class MiddlePrintUtil {
             } else {
                 lastResultText = DateUtil.caculateTime(lastResult, digital, carryMode);
             }
+            switch (resultBean.getResultState()) {
+                case 1:
+                    break;
+                case 2:
+                    lastResultText = "DQ";
+                    break;
+                case 3:
+                    lastResultText = "DNF";
+                    break;
+                case 4:
+                    lastResultText = "DNS";
+                    break;
+                case 5:
+                    lastResultText = "DT";
+                    break;
+            }
             String line = String.format(Locale.CHINA, "%-4d%-10s%-4s", Integer.parseInt(resultBean.getResults()[0]), resultBean.getStudentName(),
                     lastResultText);
             PrinterManager.getInstance().print(line);
-            totalResult.add(new GroupPrintBean(Integer.parseInt(resultBean.getResults()[0]), resultBean.getStudentCode(), resultBean.getStudentName(), lastResultText));
+            totalResult.add(new GroupPrintBean(Integer.parseInt(resultBean.getResults()[0]), resultBean.getStudentCode(), resultBean.getStudentName(), lastResultText, resultBean.getResultState()));
         }
         PrinterManager.getInstance().print(printTime + "\n");
 
@@ -84,7 +101,26 @@ public class MiddlePrintUtil {
             PrinterManager.getInstance().print("道次:" + groupPrintBean.getTrackNo());
             PrinterManager.getInstance().print("考  号: " + groupPrintBean.getStudentCode());
             PrinterManager.getInstance().print("姓  名: " + groupPrintBean.getStudentName());
-            PrinterManager.getInstance().print("成  绩: " + groupPrintBean.getLastResultString());
+
+            String lastResult = "";
+            switch (groupPrintBean.getResultState()) {
+                case 1:
+                    lastResult = groupPrintBean.getLastResultString();
+                    break;
+                case 2:
+                    lastResult = "DQ";
+                    break;
+                case 3:
+                    lastResult = "DNF";
+                    break;
+                case 4:
+                    lastResult = "DNS";
+                    break;
+                case 5:
+                    lastResult = "DT";
+                    break;
+            }
+            PrinterManager.getInstance().print("成  绩: " + lastResult);
             PrinterManager.getInstance().print(printTime + "\n");
         }
         //更新数据库中打印时间
@@ -138,12 +174,28 @@ public class MiddlePrintUtil {
             } else {
                 lastResultText = DateUtil.caculateTime(result.getResult(), digital, carryMode);
             }
+            switch (result.getResultState()) {
+                case 1:
+                    break;
+                case 2:
+                    lastResultText = "DQ";
+                    break;
+                case 3:
+                    lastResultText = "DNF";
+                    break;
+                case 4:
+                    lastResultText = "DNS";
+                    break;
+                case 5:
+                    lastResultText = "DT";
+                    break;
+            }
 //            String lastResultText = DateUtil.caculateTime(result.getResult(), digital, carryMode);
             String line = String.format(Locale.CHINA, "%-4d%-10s%-4s", groupItem.getTrackNo(), student.getStudentName(),
                     lastResultText);
             PrinterManager.getInstance().print(line);
             roundResults.add(result);
-            totalResult.add(new GroupPrintBean(groupItem.getTrackNo(), student.getStudentCode(), student.getStudentName(), lastResultText));
+            totalResult.add(new GroupPrintBean(groupItem.getTrackNo(), student.getStudentCode(), student.getStudentName(), lastResultText, result.getResultState()));
         }
 
         PrinterManager.getInstance().print(printTime + "\n");
@@ -154,7 +206,26 @@ public class MiddlePrintUtil {
             PrinterManager.getInstance().print("道次:" + groupPrintBean.getTrackNo());
             PrinterManager.getInstance().print("考  号: " + groupPrintBean.getStudentCode());
             PrinterManager.getInstance().print("姓  名: " + groupPrintBean.getStudentName());
-            PrinterManager.getInstance().print("成  绩: " + groupPrintBean.getLastResultString());
+//            PrinterManager.getInstance().print("成  绩: " + groupPrintBean.getLastResultString());
+            String lastResult = "";
+            switch (groupPrintBean.getResultState()) {
+                case 1:
+                    lastResult = groupPrintBean.getLastResultString();
+                    break;
+                case 2:
+                    lastResult = "DQ";
+                    break;
+                case 3:
+                    lastResult = "DNF";
+                    break;
+                case 4:
+                    lastResult = "DNS";
+                    break;
+                case 5:
+                    lastResult = "DT";
+                    break;
+            }
+            PrinterManager.getInstance().print("成  绩: " + lastResult);
             PrinterManager.getInstance().print(printTime + "\n");
         }
 

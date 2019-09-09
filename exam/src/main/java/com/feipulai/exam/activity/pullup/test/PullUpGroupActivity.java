@@ -144,7 +144,35 @@ public class PullUpGroupActivity extends BaseTitleActivity
         facade = new PullUpTestFacade(SettingHelper.getSystemSetting().getHostId(), this);
         stuPairAdapter.setOnItemClickListener(this);
 
-        prepareForBegin();
+//        prepareForBegin();
+        locationTestStu();
+    }
+
+
+    private void locationTestStu() {
+        if (setting.getGroupMode() == TestConfigs.GROUP_PATTERN_SUCCESIVE) {//连续
+            for (int i = 0; i < pairs.size(); i++) {
+                StuDevicePair pair = pairs.get(i);
+                List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound
+                        (pair.getStudent().getStudentCode(), group.getId() + "");
+                if ((roundResultList == null || roundResultList.size() == 0 || roundResultList.size() < TestConfigs.getMaxTestCount(this))) {
+                    switchToPosition(i);
+                    return;
+                }
+            }
+        } else {
+            for (int i = 0; i < TestConfigs.getMaxTestCount(this); i++) {
+                for (int j = 0; j < pairs.size(); j++) {
+                    StuDevicePair pair = pairs.get(j);
+                    List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound
+                            (pair.getStudent().getStudentCode(), group.getId() + "");
+                    if ((roundResultList.size() < (i + 1))) {
+                        switchToPosition(j);
+                        return;
+                    }
+                }
+            }
+        }
     }
 
     @OnClick({R.id.tv_start_test, R.id.tv_stop_test, R.id.tv_print, R.id.tv_led_setting, R.id.tv_confirm,

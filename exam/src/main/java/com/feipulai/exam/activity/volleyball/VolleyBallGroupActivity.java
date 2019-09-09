@@ -142,8 +142,12 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         facade = new VolleyBallTestFacade(SettingHelper.getSystemSetting().getHostId(), setting, this);
         stuPairAdapter.setOnItemClickListener(this);
 
-        prepareForBegin();
+//        prepareForBegin();
+        locationTestStu();
     }
+
+
+
 
     @Override
     protected void onRestart() {
@@ -235,7 +239,31 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
 //        }
 
     }
-
+    private void locationTestStu() {
+        if (setting.getGroupMode() == TestConfigs.GROUP_PATTERN_SUCCESIVE) {//连续
+            for (int i = 0; i < pairs.size(); i++) {
+                StuDevicePair pair = pairs.get(i);
+                List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound
+                        (pair.getStudent().getStudentCode(), group.getId() + "");
+                if ((roundResultList == null || roundResultList.size() == 0 || roundResultList.size() < TestConfigs.getMaxTestCount(this))) {
+                    switchToPosition(i);
+                    return;
+                }
+            }
+        } else {
+            for (int i = 0; i < TestConfigs.getMaxTestCount(this); i++) {
+                for (int j = 0; j < pairs.size(); j++) {
+                    StuDevicePair pair = pairs.get(j);
+                    List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound
+                            (pair.getStudent().getStudentCode(), group.getId() + "");
+                    if ((roundResultList.size() < (i + 1))) {
+                        switchToPosition(j);
+                        return;
+                    }
+                }
+            }
+        }
+    }
     private void switchToPosition(int position) {
         int oldPosition = position();
         stuPairAdapter.setTestPosition(position);
