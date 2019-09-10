@@ -158,16 +158,15 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
                 case 1:
                 case 5://违规返回
                 case 6://停止计时
-                    // 0 等待 1 强制 2 违规 3 成绩确认
                     baseTimer = 0;
-                    changeState(new boolean[]{true, false, false, false});
+                    changeState(new boolean[]{true, false, false, false,false});// 0 等待 1 强制 2 违规 3 成绩确认 4 预备
                     break;
                 case 2://等待计时
                     if (isOverTimes) {
                         toastSpeak("已经超过测试次数");
                         deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc5, (byte) 0x00, (byte) 0x00)));
                     }
-                    changeState(new boolean[]{false, true, false, false});
+                    changeState(new boolean[]{false, false, false, false,true});
                     if (baseTimer == 0 && runTimerSetting.getInterceptWay() == 0) {//红外拦截
                         baseTimer = System.currentTimeMillis();
                     }
@@ -175,7 +174,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
                     break;
                 case 3://启动
                     disposeManager.keepTime();
-                    changeState(new boolean[]{false, false, true, false});
+                    changeState(new boolean[]{false, false, true, false,false});
                     keepTime();
                     //算出误差时间
                     if (runTimerSetting.getInterceptWay() == 0) {
@@ -183,7 +182,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
                     }
                     break;
                 case 4://获取到结果
-                    changeState(new boolean[]{false, false, true, true});
+                    changeState(new boolean[]{false, false, true, true,false});
                     break;
 
 

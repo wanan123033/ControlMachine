@@ -23,7 +23,7 @@ public class RoundResultBean implements Serializable {
     private int machineResult;// 获取到的机器成绩
     private int penalty;// 判罚值   判罚值有正负
     private int result;//成绩      单位为"毫米(mm)"、"毫秒(ms)"、"克(g)"、"次","毫升"
-    private int isFoul;//成绩状态 0正常  1犯规    -2中退    -3（放弃 服务器状态）     体侧系统没有中退和放弃,且犯规均为机器判定的犯规
+    private int isFoul;//成绩状态 是否犯规 0:未检录 1:正常 2:犯规 3:中退 4:弃权 5:测试     体侧系统没有中退和放弃,且犯规均为机器判定的犯规
     private int resultType;//是否为最好成绩 0-不是 1-是     身高体重最后成绩即为最好成绩
     private int examState;//考试类型 0.正常 1.补考，(2.缓考,现没有这功能)
     private String testTime;//测试时间  格式:yyyy-MM-dd HH:mm:ss

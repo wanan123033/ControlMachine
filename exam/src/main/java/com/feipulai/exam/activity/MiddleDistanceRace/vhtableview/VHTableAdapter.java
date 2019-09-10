@@ -1,7 +1,10 @@
 package com.feipulai.exam.activity.MiddleDistanceRace.vhtableview;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +12,9 @@ import android.widget.TextView;
 
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.MiddleDistanceRace.DialogUtil;
 import com.feipulai.exam.activity.MiddleDistanceRace.bean.RaceResultBean;
+import com.feipulai.exam.netUtils.MGsonConverterFactory;
 
 import java.util.ArrayList;
 
@@ -19,13 +24,15 @@ public class VHTableAdapter implements VHBaseAdapter {
     private ArrayList<RaceResultBean> dataList;
     private int carryMode;
     private int digital;
+    private OnResultItemLongClick listener;
 
-    public VHTableAdapter(Context context, ArrayList<String> titleData, ArrayList<RaceResultBean> dataList, int carryMode, int digital) {
+    public VHTableAdapter(Context context, ArrayList<String> titleData, ArrayList<RaceResultBean> dataList, int carryMode, int digital, OnResultItemLongClick longClickListener) {
         this.context = context;
         this.titleData = titleData;
         this.dataList = dataList;
         this.carryMode = carryMode;
         this.digital = digital;
+        listener = longClickListener;
     }
 
     //表格内容的行数，不包括标题行
@@ -81,14 +88,36 @@ public class VHTableAdapter implements VHBaseAdapter {
         if (contentColum > dataList.get(contentRow).getCycle() + 2) {
             ((TextView) view).setText("X");
         } else {
-            if (contentColum > 1) {
+            if (contentColum < 2) {
+                ((TextView) view).setText(content);
+            } else if (contentColum == 2) {
+                switch (dataList.get(contentRow).getResultState()) {
+                    case 1:
+                        if (carryMode == 0) {
+                            ((TextView) view).setText(TextUtils.isEmpty(content) ? "" : DateUtil.caculateTime(Long.parseLong(content), 3, carryMode));
+                        } else {
+                            ((TextView) view).setText(TextUtils.isEmpty(content) ? "" : DateUtil.caculateTime(Long.parseLong(content), digital, carryMode));
+                        }
+                        break;
+                    case 2:
+                        ((TextView) view).setText("DQ");
+                        break;
+                    case 3:
+                        ((TextView) view).setText("DNF");
+                        break;
+                    case 4:
+                        ((TextView) view).setText("DNS");
+                        break;
+                    case 5:
+                        ((TextView) view).setText("DT");
+                        break;
+                }
+            } else {
                 if (carryMode == 0) {
                     ((TextView) view).setText(TextUtils.isEmpty(content) ? "" : DateUtil.caculateTime(Long.parseLong(content), 3, carryMode));
                 } else {
                     ((TextView) view).setText(TextUtils.isEmpty(content) ? "" : DateUtil.caculateTime(Long.parseLong(content), digital, carryMode));
                 }
-            } else {
-                ((TextView) view).setText(content);
             }
         }
 
@@ -110,7 +139,38 @@ public class VHTableAdapter implements VHBaseAdapter {
     //每一行被点击的时候的回调
     @Override
     public void OnClickContentRowItem(int row, View convertView) {
+        Log.i("OnClickContentRowItem", "-----------------");
     }
 
+    @Override
+    public void OnLongClickContentRowItem(int row, View convertView) {
+        showSingSelect(row);
+    }
 
+    private int choice = -1;
+
+    /**
+     * 单选 dialog
+     */
+    private void showSingSelect(final int row) {
+        //默认选中第一个
+        final String[] items = {"正常", "DQ（犯规）", "DNF（中退）", "DNS（弃权）", "DT（测试）"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(context).setTitle("成绩状态（" + "姓名：" + dataList.get(row).getStudentName() + ")")
+                .setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        choice = i;
+                    }
+                }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        listener.resultListLongClick(row, choice + 1);
+                    }
+                });
+        builder.create().show();
+    }
+
+    public interface OnResultItemLongClick {
+        void resultListLongClick(int row, int state);
+    }
 }

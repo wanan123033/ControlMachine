@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.beans.RunTimerResult;
@@ -77,6 +78,8 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     TextView txtStuSex;
     @BindView(R.id.tv_run_state)
     TextView tvRunState;
+    @BindView(R.id.tv_wait_ready)
+    TextView tvWaitReady;
     private int testNo;
     private List<RunStudent> mList = new ArrayList<>();
     private RunNumberAdapter2 mAdapter2;
@@ -92,6 +95,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     //当前测试次数
     private int currentTestTime = 0;
     private boolean isSetting = true;
+    private SoundPlayUtils playUtils;
 
     @Override
     protected int setLayoutResID() {
@@ -104,6 +108,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
 //        setContentView(R.layout.activity_run_timer2);
         ButterKnife.bind(this);
         initView();
+        playUtils = SoundPlayUtils.init(this);
     }
 
     private void initView() {
@@ -125,8 +130,8 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
         rvTimer.setLayoutManager(layoutManager);
         rvTimer.setAdapter(mAdapter);
 
-
-        changeState(new boolean[]{true, false, false, false});
+        // 等待 确认 违规 强起 预备
+        changeState(new boolean[]{true, false, false, false, false});
         mAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
@@ -174,22 +179,8 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
 //            }
 //        });
 
-        getToolbar().getLeftView(0).setOnClickListener(backListener);
-        getToolbar().getLeftView(1).setOnClickListener(backListener);
-    }
 
-    View.OnClickListener backListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (llFirst.getVisibility() == View.VISIBLE) {
-                finish();
-            } else {
-                llFirst.setVisibility(View.VISIBLE);
-                rlSecond.setVisibility(View.GONE);
-                stopRun();
-            }
-        }
-    };
+    }
 
     @Override
     protected void onResume() {
@@ -236,7 +227,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     }
 
     @OnClick({R.id.btn_start, R.id.btn_led, R.id.tv_wait_start, R.id.tv_force_start,
-            R.id.tv_fault_back, R.id.tv_mark_confirm}) //R.id.tv_project_setting,
+            R.id.tv_fault_back, R.id.tv_mark_confirm,R.id.tv_wait_ready}) //R.id.tv_project_setting,
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_start:
@@ -267,13 +258,19 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
                 }
                 mAdapter2.notifyDataSetChanged();
                 mAdapter.notifyDataSetChanged();
+                playUtils.play(13);
                 break;
             case R.id.tv_force_start://强制启动
+                playUtils.play(15);
                 forceStart();
                 break;
             case R.id.tv_fault_back://违规返回
                 faultBack();
 
+                break;
+            case R.id.tv_wait_ready:
+                playUtils.play(14);
+                changeState(new boolean[]{false, true, false, false,false});
                 break;
             case R.id.tv_mark_confirm://成绩确认
                 currentTestTime++;
@@ -310,6 +307,8 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
                 break;
         }
     }
+
+
 
     @Override
     public void illegalBack() {
@@ -467,6 +466,10 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
 
                 tvMarkConfirm.setEnabled(state[3]);
                 tvMarkConfirm.setSelected(state[3]);
+
+                tvWaitReady.setEnabled(state[4]);
+                tvWaitReady.setSelected(state[4]);
+
                 tvRunState.setText(state[0] ? "空闲" : state[1] ? "等待" : "计时");
             }
         });
@@ -481,7 +484,20 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
         } else {
             title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机-" + SettingHelper.getSystemSetting().getTestName();
         }
-        return builder.setTitle(title).addRightText("项目设置", new View.OnClickListener() {
+
+        return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (llFirst.getVisibility() == View.VISIBLE) {
+                    finish();
+                } else {
+                    llFirst.setVisibility(View.VISIBLE);
+                    rlSecond.setVisibility(View.GONE);
+                    stopRun();
+                }
+
+            }
+        }).addRightText("项目设置", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 gotoItemSetting();
@@ -500,4 +516,6 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
         }
 
     }
+
+
 }

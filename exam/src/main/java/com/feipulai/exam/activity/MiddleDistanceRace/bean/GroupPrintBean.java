@@ -5,15 +5,17 @@ public class GroupPrintBean {
     private String studentCode;
     private String studentName;
     private String lastResultString;
+    private int resultState;
 
     public GroupPrintBean() {
     }
 
-    public GroupPrintBean(int trackNo, String studentCode, String studentName, String lastResultString) {
+    public GroupPrintBean(int trackNo, String studentCode, String studentName, String lastResultString, int resultState) {
         this.trackNo = trackNo;
         this.studentCode = studentCode;
         this.studentName = studentName;
         this.lastResultString = lastResultString;
+        this.resultState = resultState;
     }
 
     public int getTrackNo() {
@@ -48,6 +50,14 @@ public class GroupPrintBean {
         this.lastResultString = lastResultString;
     }
 
+    public int getResultState() {
+        return resultState;
+    }
+
+    public void setResultState(int resultState) {
+        this.resultState = resultState;
+    }
+
     @Override
     public String toString() {
         return "GroupPrintBean{" +
@@ -55,6 +65,7 @@ public class GroupPrintBean {
                 ", studentCode='" + studentCode + '\'' +
                 ", studentName='" + studentName + '\'' +
                 ", lastResultString='" + lastResultString + '\'' +
+                ", resultState=" + resultState +
                 '}';
     }
 }

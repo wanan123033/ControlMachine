@@ -43,6 +43,9 @@ public class SoundPlayUtils{
 		mSoundPlayer.load(mContext, R.raw.sound10, 1);// "5"             --------10
 		mSoundPlayer.load(mContext, R.raw.soundstart, 1);// "开始"       --------11
 		mSoundPlayer.load(mContext, R.raw.soundend, 1);// "结束"         --------12
+		mSoundPlayer.load(mContext, R.raw.pre_ready, 1);// "各就各位"         --------13
+		mSoundPlayer.load(mContext, R.raw.ready, 1);// "预备"         --------14
+		mSoundPlayer.load(mContext, R.raw.gun, 1);// "枪声"         --------15
 		return soundPlayUtils;
 	}
 

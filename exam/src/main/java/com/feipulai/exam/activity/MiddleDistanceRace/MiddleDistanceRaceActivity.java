@@ -317,7 +317,15 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
             titleData.add("第" + (i - 2) + "圈");
         }
 
-        VHTableAdapter tableShowAdapter = new VHTableAdapter(this, titleData, resultDataList, carryMode, digital);
+        final VHTableAdapter tableShowAdapter = new VHTableAdapter(this, titleData, resultDataList, carryMode, digital, new VHTableAdapter.OnResultItemLongClick() {
+            @Override
+            public void resultListLongClick(int row, int state) {
+                Log.i("resultListLongClick", row + "---" + state);
+                resultDataList.get(row).setResultState(state);
+                resultShowTable.notifyContent();
+            }
+        });
+
         resultShowTable.setAdapter(tableShowAdapter);
 
         groupAdapter.setOnRecyclerViewItemClickListener(this);
@@ -1309,7 +1317,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                         roundResult.setIsLastResult(1);
                         roundResult.setMachineResult(lastResult);
                         roundResult.setScheduleNo(dbGroupList.getScheduleNo());
-                        roundResult.setResultState(1);
+                        roundResult.setResultState(resultBean2.getResultState());
                         roundResult.setExamType(dbGroupList.getExamType());
                         roundResult.setTestTime(System.currentTimeMillis() + "");
                         roundResult.setGroupId(dbGroupList.getId());
@@ -1549,6 +1557,20 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                             } else {
                                 lastResult = DateUtil.caculateTime(roundResult.getResult(), digital, carryMode);
                             }
+                            switch (roundResult.getResultState()) {
+                                case 2:
+                                    lastResult = "DQ";
+                                    break;
+                                case 3:
+                                    lastResult = "DNF";
+                                    break;
+                                case 4:
+                                    lastResult = "DNS";
+                                    break;
+                                case 5:
+                                    lastResult = "DT";
+                                    break;
+                            }
                             strings.add(lastResult);
 //                            strings.add(student.getSex()==0?"男":"女");
                             if (roundResult.getCycleResult() != null) {
@@ -1565,7 +1587,6 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
 //                                    strings.add(DateUtil.caculateTime(result, digital + 1, carryMode + 1));
                                 }
                             }
-
                             selectResults.add(strings);
                         }
 
@@ -1778,6 +1799,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
             raceResultBean.setResults(strings2);
             raceResultBean.setNo(groupItemBeans.get(groupPosition).getGroup().getGroupNo() + "");
             raceResultBean.setVestNo(i + 1);
+            raceResultBean.setResultState(RaceResultBean.STATE_NORMAL);
             raceResultBean.setStudentCode(student.getStudentCode());
             raceResultBean.setStudentName(student.getStudentName());
             raceResultBean.setColor(Integer.parseInt(groupItemBeans.get(groupPosition).getGroup().getColorId()));

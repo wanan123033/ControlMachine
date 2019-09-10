@@ -187,6 +187,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
         spinnerItems = new String[]{"1", "2", "3"};
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, spinnerItems);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTestRound.setAdapter(spinnerAdapter);
         if (maxTestNo != 0) {
             // 数据库中已经指定了测试次数,就不能再设置了
@@ -200,6 +201,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
         String[] deviceCount = {"1", "2", "3","4"};
         ArrayAdapter<String> adapter0 = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, deviceCount);
+        adapter0.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spDeviceCount.setAdapter(adapter0);
         spDeviceCount.setOnItemSelectedListener(this);
         spDeviceCount.setSelection(sargentSetting.getSpDeviceCount()-1);
