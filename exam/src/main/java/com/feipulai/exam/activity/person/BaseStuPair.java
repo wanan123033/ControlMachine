@@ -30,6 +30,7 @@ public class BaseStuPair implements Serializable {
     private boolean canCheck ;
     //是否最好
     private boolean notBest ;
+    private int baseHeight;
     public BaseStuPair(int result, int resultState, Student student, BaseDeviceState baseDevice) {
         this.result = result;
         this.resultState = resultState;
@@ -127,5 +128,13 @@ public class BaseStuPair implements Serializable {
 
     public void setNotBest(boolean notBest) {
         this.notBest = notBest;
+    }
+
+    public int getBaseHeight() {
+        return baseHeight;
+    }
+
+    public void setBaseHeight(int baseHeight) {
+        this.baseHeight = baseHeight;
     }
 }

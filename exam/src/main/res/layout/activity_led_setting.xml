@@ -43,7 +43,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_led"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="110dp"
             android:visibility="visible"/>
         <Button
             android:id="@+id/btn_led_connect"
@@ -60,7 +60,7 @@
             android:id="@+id/btn_led_self"
             android:layout_width="306dp"
             android:layout_height="42dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="30dp"
             android:background="@drawable/btn_click_bg_selected"
             android:paddingLeft="@dimen/dp_10"
             android:paddingRight="@dimen/dp_10"

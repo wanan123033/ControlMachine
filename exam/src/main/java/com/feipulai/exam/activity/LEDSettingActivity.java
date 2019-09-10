@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,7 +19,7 @@ import com.feipulai.device.led.RunLEDManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
-import com.feipulai.exam.adapter.PopAdapter;
+import com.feipulai.exam.adapter.LedMoreAdapter;
 import com.feipulai.exam.config.TestConfigs;
 
 import java.util.Arrays;
@@ -64,7 +63,7 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
         ledMode = SettingHelper.getSystemSetting().getLedMode();
         rvLed.setVisibility(ledMode == 0 ? View.GONE : View.VISIBLE);
         String[] strings = new String[]{"屏幕1连接", "屏幕2连接", "屏幕3连接", "屏幕4连接"};
-        PopAdapter adapter = new PopAdapter(Arrays.asList(strings));
+        LedMoreAdapter adapter = new LedMoreAdapter(Arrays.asList(strings));
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         rvLed.setLayoutManager(layoutManager);
         rvLed.setAdapter(adapter);
@@ -74,8 +73,8 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
                 mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), hostId, i + 1);
                 String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
                         + " " + hostId;
-                mLEDManager.showString(hostId, title, 0, true, false, LEDManager.MIDDLE);
-                mLEDManager.showString(hostId, "菲普莱体育", 3, 3, false, true);
+                mLEDManager.ShowSubsetString(hostId,i+1, title, 0, true, false, LEDManager.MIDDLE);
+                mLEDManager.ShowSubsetString(hostId,i+1, "菲普莱体育", 3, 3, false, true);
             }
         });
         initSp();
