@@ -29,7 +29,7 @@
 
                 <LinearLayout
                     android:id="@+id/ll_individual_check"
-                    android:layout_width="550dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:orientation="horizontal" />
 
@@ -47,7 +47,8 @@
                     android:paddingRight="8dp"
                     android:text="外接屏幕"
                     android:textColor="@color/white"
-                    android:textSize="20dp" />
+                    android:textSize="20dp"
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/tv_pair"
@@ -255,10 +256,10 @@
             android:background="@drawable/bg_white_radius_10"
             android:divider="@color/sbc_header_text"
             android:dividerHeight="1dp"
-            android:paddingLeft="20dp"
-            android:paddingTop="@dimen/dp_10"
-            android:paddingRight="20dp"
             android:paddingBottom="@dimen/dp_10"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="@dimen/dp_10"
             android:visibility="gone" />
 
     </RelativeLayout>

@@ -55,7 +55,12 @@ public abstract class BaseTitleActivity extends BaseActivity {
                 .setBackButton(R.mipmap.icon_white_goback)//统一设置返回键
                 .setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary)).setTitleTextColor
                         (ContextCompat.getColor(this, R.color.white)).setSubTextColor(ContextCompat.getColor(this, R
-                        .color.white));
+                        .color.white)).addLeftText(R.string.go_back, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finish();
+                    }
+                });
         StatusBarUtil.setImmersiveTransparentStatusBar(this);//设置沉浸式透明状态栏 配合使用
         builder = setToolbar(builder);
         if (builder != null) {

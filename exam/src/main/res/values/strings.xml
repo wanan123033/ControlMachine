@@ -2,6 +2,7 @@
 
     <string name="app_name">智能主机(考试版)</string>
     <string name="host_style">考试版本</string>
+    <string name="go_back">返回</string>
     <string name="advanced_setting">高级设置</string>
     <string name="txt_stu_code">考号：%1$s</string>
     <string name="txt_stu_name">姓名：%1$s</string>
@@ -67,7 +68,7 @@
     <string name="warning">警告</string>
     <string name="illegal_return_hint">确认是否违规返回？</string>
     <string name="print_more_hint">选择打印考生数量过多，确定继续打印？</string>
-    <string name="low_battery_goto_hint">存在低电量手柄,是否进入测试?</string>
+    <string name="low_battery_goto_hint">存在低电量设备,是否进入测试?</string>
     <string name="restart_confirm_hint">重新开始将取消当前测试,确定重新开始测试吗？</string>
     <string name="device_disconnect_save_result_hint">存在考生设备状态为断开连接,确定保存成绩？</string>
     <string name="confirm_exit_test_hint">确定退出当前测试吗？</string>

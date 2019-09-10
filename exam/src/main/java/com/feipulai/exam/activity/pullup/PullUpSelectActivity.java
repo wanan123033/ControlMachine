@@ -42,12 +42,7 @@ public class PullUpSelectActivity extends BaseTitleActivity {
                 + SettingHelper.getSystemSetting().getHostId()
                 + "号机-"
                 + SettingHelper.getSystemSetting().getTestName();
-        builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        builder.setTitle(title) ;
         return builder;
     }
 

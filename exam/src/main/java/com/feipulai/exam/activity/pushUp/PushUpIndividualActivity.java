@@ -157,12 +157,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
         title = TestConfigs.machineNameMap.get(machineCode)
                 + SettingHelper.getSystemSetting().getHostId() + "号机"
                 + (isTestNameEmpty ? "" : ("-" + SettingHelper.getSystemSetting().getTestName()));
-        return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        }).addRightText("外接屏幕", new View.OnClickListener() {
+        return builder.setTitle(title).addRightText("外接屏幕", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isConfigurableNow()) {
@@ -620,7 +615,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
         if (linker == null) {
             linker = new SitPullLinker(TestConfigs.sCurrentItem.getMachineCode(), TARGET_FREQUENCY, this);
             facade.setLinker(linker);
-        }else{
+        } else {
             facade.setLinker(linker);
         }
         facade.stopTotally();

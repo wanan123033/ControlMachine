@@ -3,7 +3,6 @@ package com.feipulai.exam.activity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.EditText;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
@@ -47,12 +46,7 @@ public class LoginActivity extends BaseTitleActivity {
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("登录").addLeftText("设置", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        return builder.setTitle("登录") ;
     }
 
     @OnClick(R.id.btn_login)

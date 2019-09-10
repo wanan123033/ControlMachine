@@ -34,15 +34,15 @@ public class ItemDefault {
     public static final int CODE_TJZ = 20;    //踢毽子
     public static final int CODE_YY = 21;        //游泳
     public static final int CODE_GPS = 0xff;
-    
-    
-    public static final char[] keyA = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};//默认密码
+
+
+    public static char[] keyA = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};//默认密码
     public static final byte[] ctrlW = {(byte) 0xff, (byte) 0x07, (byte) 0x80, (byte) 69};//密码控制区
 
     // 每个项目主机号范围
     public static final Map<Integer, Integer> HOST_IDS_MAP = new HashMap<>();
-	
-	static {
+
+    static {
         // 每个项目对应的主机号范围
         HOST_IDS_MAP.put(ItemDefault.CODE_HW, 10);
         HOST_IDS_MAP.put(ItemDefault.CODE_FHL, 15);

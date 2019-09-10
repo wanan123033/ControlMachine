@@ -179,8 +179,22 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
 //            }
 //        });
 
-
+        getToolbar().getLeftView(0).setOnClickListener(backListener);
+        getToolbar().getLeftView(1).setOnClickListener(backListener);
     }
+
+    View.OnClickListener backListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (llFirst.getVisibility() == View.VISIBLE) {
+                finish();
+            } else {
+                llFirst.setVisibility(View.VISIBLE);
+                rlSecond.setVisibility(View.GONE);
+                stopRun();
+            }
+        }
+    };
 
     @Override
     protected void onResume() {
@@ -227,7 +241,8 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     }
 
     @OnClick({R.id.btn_start, R.id.btn_led, R.id.tv_wait_start, R.id.tv_force_start,
-            R.id.tv_fault_back, R.id.tv_mark_confirm,R.id.tv_wait_ready}) //R.id.tv_project_setting,
+            R.id.tv_fault_back, R.id.tv_mark_confirm, R.id.tv_wait_ready})
+    //R.id.tv_project_setting,
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_start:
@@ -270,7 +285,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
                 break;
             case R.id.tv_wait_ready:
                 playUtils.play(14);
-                changeState(new boolean[]{false, true, false, false,false});
+                changeState(new boolean[]{false, true, false, false, false});
                 break;
             case R.id.tv_mark_confirm://成绩确认
                 currentTestTime++;
@@ -307,7 +322,6 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
                 break;
         }
     }
-
 
 
     @Override
@@ -485,19 +499,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
             title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机-" + SettingHelper.getSystemSetting().getTestName();
         }
 
-        return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (llFirst.getVisibility() == View.VISIBLE) {
-                    finish();
-                } else {
-                    llFirst.setVisibility(View.VISIBLE);
-                    rlSecond.setVisibility(View.GONE);
-                    stopRun();
-                }
-
-            }
-        }).addRightText("项目设置", new View.OnClickListener() {
+        return builder.setTitle(title).addRightText("项目设置", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 gotoItemSetting();
