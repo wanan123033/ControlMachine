@@ -1,9 +1,18 @@
 package com.feipulai.exam.activity;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.led.LEDManager;
@@ -11,19 +20,31 @@ import com.feipulai.device.led.RunLEDManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.adapter.PopAdapter;
 import com.feipulai.exam.config.TestConfigs;
 
+import java.util.Arrays;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
  * ledManager
  */
-public class LEDSettingActivity extends BaseTitleActivity {
+public class LEDSettingActivity extends BaseTitleActivity implements AdapterView.OnItemSelectedListener {
 
+    @BindView(R.id.sp_show_mode)
+    Spinner spShowMode;
+    @BindView(R.id.rv_led)
+    RecyclerView rvLed;
+    @BindView(R.id.btn_led_connect)
+    Button btnLedConnect;
     private LEDManager mLEDManager;
     private RunLEDManager runLEDManager;
     private int hostId;
     private int flag;
+    private int ledMode;
 
 
     @Override
@@ -40,6 +61,34 @@ public class LEDSettingActivity extends BaseTitleActivity {
             mLEDManager = new LEDManager();
             flag = 1;
         }
+        ledMode = SettingHelper.getSystemSetting().getLedMode();
+        rvLed.setVisibility(ledMode == 0 ? View.GONE : View.VISIBLE);
+        String[] strings = new String[]{"屏幕1连接", "屏幕2连接", "屏幕3连接", "屏幕4连接"};
+        PopAdapter adapter = new PopAdapter(Arrays.asList(strings));
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+        rvLed.setLayoutManager(layoutManager);
+        rvLed.setAdapter(adapter);
+        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
+                mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), hostId, i + 1);
+                String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
+                        + " " + hostId;
+                mLEDManager.showString(hostId, title, 0, true, false, LEDManager.MIDDLE);
+                mLEDManager.showString(hostId, "菲普莱体育", 3, 3, false, true);
+            }
+        });
+        initSp();
+    }
+
+    private void initSp() {
+        String[] spinnerItems = {"单屏模式", "多屏模式"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, spinnerItems);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spShowMode.setAdapter(adapter);
+        spShowMode.setSelection(ledMode == 0 ? 0 : 1);
+        spShowMode.setOnItemSelectedListener(this);
     }
 
     @Nullable
@@ -79,7 +128,14 @@ public class LEDSettingActivity extends BaseTitleActivity {
                 if (flag == 0) {
                     runLEDManager.test(hostId);
                 } else {
-                    mLEDManager.test(TestConfigs.sCurrentItem.getMachineCode(), hostId);
+
+                    if (SettingHelper.getSystemSetting().getLedMode() == 0) {
+                        mLEDManager.test(TestConfigs.sCurrentItem.getMachineCode(), hostId);
+                    } else {
+                        for (int i = 1; i <= 4; i++) {
+                            mLEDManager.test(TestConfigs.sCurrentItem.getMachineCode(), hostId,i);
+                        }
+                    }
                 }
                 break;
 
@@ -87,7 +143,14 @@ public class LEDSettingActivity extends BaseTitleActivity {
                 if (flag == 0) {
                     runLEDManager.decreaseLightness(TestConfigs.sCurrentItem.getMachineCode(), hostId);
                 } else {
-                    mLEDManager.decreaseLightness(TestConfigs.sCurrentItem.getMachineCode(), hostId);
+                    if (SettingHelper.getSystemSetting().getLedMode() == 0) {
+                        mLEDManager.decreaseLightness(TestConfigs.sCurrentItem.getMachineCode(), hostId);
+                    } else {
+                        for (int i = 1; i <= 4; i++) {
+                            mLEDManager.decreaseLightness(TestConfigs.sCurrentItem.getMachineCode(), hostId, i);
+                        }
+                    }
+
                 }
                 break;
 
@@ -95,7 +158,14 @@ public class LEDSettingActivity extends BaseTitleActivity {
                 if (flag == 0) {
                     runLEDManager.increaseLightness(hostId);
                 } else {
-                    mLEDManager.increaseLightness(TestConfigs.sCurrentItem.getMachineCode(), hostId);
+
+                    if (SettingHelper.getSystemSetting().getLedMode() == 0) {
+                        mLEDManager.increaseLightness(TestConfigs.sCurrentItem.getMachineCode(), hostId);
+                    } else {
+                        for (int i = 1; i <= 4; i++) {
+                            mLEDManager.increaseLightness(TestConfigs.sCurrentItem.getMachineCode(), hostId, i);
+                        }
+                    }
                 }
                 break;
         }
@@ -129,4 +199,22 @@ public class LEDSettingActivity extends BaseTitleActivity {
         super.onDestroy();
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        SettingHelper.getSystemSetting().setLedMode(position);
+        rvLed.setVisibility(position == 0 ? View.GONE : View.VISIBLE);
+        btnLedConnect.setVisibility(position == 0 ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
 }

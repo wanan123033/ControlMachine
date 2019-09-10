@@ -146,6 +146,7 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
         spinnerItems = new String[]{"1", "2", "3"};
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, spinnerItems);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTestRound.setAdapter(spinnerAdapter);
         if (maxTestNo != 0) {
             // 数据库中已经指定了测试次数,就不能再设置了
@@ -159,6 +160,7 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
         String[] deviceCount = {"1", "2", "3"};
         ArrayAdapter<String> adapter0 = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, deviceCount);
+        adapter0.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spDeviceCount.setAdapter(adapter0);
         spDeviceCount.setOnItemSelectedListener(this);
         spDeviceCount.setEnabled(false);

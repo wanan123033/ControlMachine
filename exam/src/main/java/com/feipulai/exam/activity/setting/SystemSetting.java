@@ -75,7 +75,7 @@ public class SystemSetting {
      * 网络是否添加路由表
      */
     private boolean isAddRoute = false;
-
+    private int ledMode = 0;
 
     private int ledVersion = 0;//0:1.0版本 1：V4.1 以上版本
     public static final int LED_VERSION_V1 = 0;
@@ -239,4 +239,11 @@ public class SystemSetting {
     public static final int CHECK_TOOL_IDCARD = 1;
     public static final int CHECK_TOOL_ICCARD = 2;
 
+    public int getLedMode() {
+        return ledMode;
+    }
+
+    public void setLedMode(int ledMode) {
+        this.ledMode = ledMode;
+    }
 }

@@ -138,6 +138,15 @@ public class LEDManager {
             RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
         }
 
+        public void test(int machineCode, int hostId,int ledId) {
+            if (machineCodesForLed.get(machineCode) == null) {
+                return;
+            }
+            byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xA6, 0x0D};
+            cmd[4] = (byte) (ledId & 0xff);
+            RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+        }
+
         /**
          * 清空LED显示屏
          *

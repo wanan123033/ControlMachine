@@ -170,6 +170,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         String[] times = {"1", "2", "3"};
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, times);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTestTimes.setAdapter(spinnerAdapter);
         spTestTimes.setOnItemSelectedListener(this);
         if (maxTestNo != 0) {
@@ -184,6 +185,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         String[] spinnerItems = {"四舍五入", "不进位", "非零进位"};
         ArrayAdapter<String> adapter0 = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, spinnerItems);
+        adapter0.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spMarkDegree.setAdapter(adapter0);
         spMarkDegree.setOnItemSelectedListener(this);
         if (carryMode != 0) {
@@ -197,6 +199,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         String[] interceptItems = {"红外拦截触发", "发令传感器触发"};
         ArrayAdapter<String> adapter1 = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, interceptItems);
+        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spInterceptWay.setAdapter(adapter1);
         spInterceptWay.setOnItemSelectedListener(this);
         int intercept = runTimerSetting.getInterceptWay();
@@ -205,6 +208,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         String[] items = {"0", "1", "2", "3", "4", "5", "6", "7"};
         ArrayAdapter<String> adapter2 = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, items);
+        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spSensor.setAdapter(adapter2);
         spSensor.setOnItemSelectedListener(this);
         int sensor = runTimerSetting.getSensor();
