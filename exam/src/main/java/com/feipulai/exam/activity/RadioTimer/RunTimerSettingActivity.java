@@ -102,13 +102,9 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("项目设置").addLeftText("返回", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        return builder.setTitle("项目设置");
     }
+
     /**
      * 单选框的设置
      */
@@ -130,7 +126,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         } else {
             isSecond = runTimerSetting.isSecond();
         }
-        radioGroupDegree.check(isSecond ? R.id.rb_ten_second:R.id.rb_hundred_second);
+        radioGroupDegree.check(isSecond ? R.id.rb_ten_second : R.id.rb_hundred_second);
 
 
         //拦截方式
@@ -216,7 +212,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         switch (adapterView.getId()) {
             case R.id.sp_test_times:
                 runTimerSetting.setTestTimes(i + 1);
-                Log.i("post","post ITEM_SETTING_UPDATE");
+                Log.i("post", "post ITEM_SETTING_UPDATE");
                 break;
             case R.id.sp_mark_degree:
                 runTimerSetting.setMarkDegree(i + 1);
@@ -259,11 +255,11 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         switch (compoundButton.getId()) {
             case R.id.cb_start:
-                runTimerSetting.setStartPoint(b? 1: 0);
+                runTimerSetting.setStartPoint(b ? 1 : 0);
 
                 break;
             case R.id.cb_end:
-                runTimerSetting.setEndPoint(b?2:0);
+                runTimerSetting.setEndPoint(b ? 2 : 0);
                 break;
         }
 
@@ -289,7 +285,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     @Override
     protected void onStop() {
         super.onStop();
-        runTimerSetting.setInterceptPoint(runTimerSetting.getStartPoint()+runTimerSetting.getEndPoint());
+        runTimerSetting.setInterceptPoint(runTimerSetting.getStartPoint() + runTimerSetting.getEndPoint());
         SharedPrefsUtil.save(this, runTimerSetting);
     }
 
@@ -298,7 +294,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_self_check:
-                if (runTimerSetting.getStartPoint()+runTimerSetting.getEndPoint() == 0){
+                if (runTimerSetting.getStartPoint() + runTimerSetting.getEndPoint() == 0) {
                     toastSpeak("必须设置拦截点");
                     return;
                 }

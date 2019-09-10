@@ -73,12 +73,7 @@ public class SargentItemSelectActivity extends BaseTitleActivity {
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
         String title =  "摸高模式选择";
-        return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        return builder.setTitle(title) ;
     }
 
 }

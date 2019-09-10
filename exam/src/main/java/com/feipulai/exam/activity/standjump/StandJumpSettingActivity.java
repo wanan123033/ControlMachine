@@ -160,12 +160,7 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("项目设置").addLeftText("返回", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        return builder.setTitle("项目设置") ;
     }
 
     /**

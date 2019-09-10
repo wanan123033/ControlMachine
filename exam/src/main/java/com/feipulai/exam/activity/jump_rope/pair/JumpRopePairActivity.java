@@ -57,12 +57,7 @@ public class JumpRopePairActivity extends BaseTitleActivity
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("手柄匹配").addLeftText("返回", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        return builder.setTitle("手柄匹配") ;
     }
 
     @Override

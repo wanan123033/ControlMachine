@@ -77,12 +77,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
         String title = TestConfigs.machineNameMap.get(machineCode)
                 + SettingHelper.getSystemSetting().getHostId() + "号机"
                 + (isTestNameEmpty ? "" : ("-" + SettingHelper.getSystemSetting().getTestName()));
-        builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        builder.setTitle(title) ;
 
         SystemSetting systemSetting = SettingHelper.getSystemSetting();
         if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN) {

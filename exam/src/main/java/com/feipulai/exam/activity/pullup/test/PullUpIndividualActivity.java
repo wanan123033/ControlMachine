@@ -146,10 +146,14 @@ public class PullUpIndividualActivity extends BaseTitleActivity
         title = TestConfigs.machineNameMap.get(machineCode)
                 + SettingHelper.getSystemSetting().getHostId() + "号机"
                 + (isTestNameEmpty ? "" : ("-" + SettingHelper.getSystemSetting().getTestName()));
-        return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {
+        return builder.setTitle(title) .addRightText("外接屏幕", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                if (isConfigurableNow()) {
+                    startActivity(new Intent(PullUpIndividualActivity.this, LEDSettingActivity.class));
+                } else {
+                    toastSpeak("测试中,不能进行外接屏幕设置");
+                }
             }
         }).addRightText("项目设置", new View.OnClickListener() {
             @Override

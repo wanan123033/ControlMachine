@@ -36,7 +36,7 @@
 
             <com.feipulai.exam.view.StuSearchEditText
                 android:id="@+id/et_input_text"
-                android:layout_width="350dp"
+                android:layout_width="380dp"
                 android:layout_height="35dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="3dp" />

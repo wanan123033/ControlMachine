@@ -96,12 +96,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("项目设置").addLeftText("返回", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        return builder.setTitle("项目设置") ;
     }
 
     private void init() {

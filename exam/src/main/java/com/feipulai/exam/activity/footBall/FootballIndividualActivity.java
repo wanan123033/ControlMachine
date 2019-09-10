@@ -453,12 +453,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         title = TestConfigs.machineNameMap.get(machineCode)
                 + SettingHelper.getSystemSetting().getHostId() + "号机"
                 + (isTestNameEmpty ? "" : ("-" + SettingHelper.getSystemSetting().getTestName()));
-        return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        }).addRightText("项目设置", new View.OnClickListener() {
+        return builder.setTitle(title) .addRightText("项目设置", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startProjectSetting();

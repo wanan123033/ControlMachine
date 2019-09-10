@@ -197,37 +197,41 @@ public class StuSearchEditText extends RelativeLayout {
     }
 
     private void showAddHint(final Student student) {
-        if (addDialog == null) {
-            addDialog = new SweetAlertDialog(mContext).setTitleText(mContext.getString(R.string.addStu_dialog_title))
-                    .setContentText(mContext.getString(R.string.addStu_dialog_content))
-                    .setConfirmText(mContext.getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            sweetAlertDialog.dismissWithAnimation();
-                            new AddStudentDialog(mContext).showDialog(student, false);
-                        }
-                    }).setCancelText(mContext.getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            sweetAlertDialog.dismissWithAnimation();
-                        }
-                    });
-        }
-        if (!addDialog.isShowing()) {
-            addDialog.show();
-        }
-//        new AlertDialog.Builder(mActivity)
-//                .setCancelable(false)
-//                .setTitle("提示")
-//                .setMessage("无考生信息，是否新增")
-//                .setPositiveButton("是", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        new AddStudentDialog(mActivity).showDialog(student, false);
-//                    }
-//                })
-//                .setNegativeButton("否", null)
-//                .show();
+
+        new SweetAlertDialog(mContext).setTitleText(mContext.getString(R.string.addStu_dialog_title))
+                .setContentText(mContext.getString(R.string.addStu_dialog_content))
+                .setConfirmText(mContext.getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                new AddStudentDialog(mContext).showDialog(student, false);
+            }
+        }).setCancelText(mContext.getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+            }
+        }).show();
+
+//        if (addDialog == null) {
+//            addDialog = new SweetAlertDialog(mContext).setTitleText(mContext.getString(R.string.addStu_dialog_title))
+//                    .setContentText(mContext.getString(R.string.addStu_dialog_content))
+//                    .setConfirmText(mContext.getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+//                        @Override
+//                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                            sweetAlertDialog.dismissWithAnimation();
+//                            new AddStudentDialog(mContext).showDialog(student, false);
+//                        }
+//                    }).setCancelText(mContext.getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+//                        @Override
+//                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                            sweetAlertDialog.dismissWithAnimation();
+//                        }
+//                    });
+//        }
+//        if (!addDialog.isShowing()) {
+//            addDialog.show();
+//        }
 
     }
 

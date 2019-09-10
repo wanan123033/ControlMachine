@@ -26,6 +26,19 @@ public class DateUtil {
         return System.currentTimeMillis();
     }
     /**
+     * 获取当前时间(按指定格式).
+     * <h3>Version</h3> 1.0
+     * <h3>CreateTime</h3> 2017/10/13,14:05
+     * <h3>UpdateTime</h3> 2017/10/13,14:05
+     * <h3>CreateAuthor</h3> zzs
+     * <h3>UpdateAuthor</h3>
+     * <h3>UpdateInfo</h3> (此处输入修改内容,若无修改可不写.)
+     */
+    public static String getCurrentTime(String pattern) {
+        return formatTime(getCurrentTime(), pattern);
+    }
+    /**
+    /**
      * 获取指定时间格式的时间戳
      *
      * @param time    时间
