@@ -8,6 +8,7 @@ import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.host.activity.height_weight.HeightWeightCheckActivity;
 import com.feipulai.host.activity.jump_rope.check.JumpRopeCheckActivity;
 import com.feipulai.host.activity.medicine_ball.MedicineBallTestActivity;
+import com.feipulai.host.activity.radio_timer.RunTimerActivityTestActivity;
 import com.feipulai.host.activity.sitreach.SitReachTestActivity;
 import com.feipulai.host.activity.situp.SitUpCheckActivity;
 import com.feipulai.host.activity.standjump.StandJumpTestActivity;
@@ -63,7 +64,8 @@ public class TestConfigs{
 		TestConfigs.proActivity.put(ItemDefault.CODE_ZWTQQ,SitReachTestActivity.class);
 		TestConfigs.proActivity.put(ItemDefault.CODE_LDTY,StandJumpTestActivity.class);
 		TestConfigs.proActivity.put(ItemDefault.CODE_HWSXQ,MedicineBallTestActivity.class);
-		
+		TestConfigs.proActivity.put(ItemDefault.CODE_ZFP, RunTimerActivityTestActivity.class);
+
 		// 每个机器码对应的机器名称
 		TestConfigs.machineNameMap.put(ItemDefault.CODE_TS,"跳绳");
 		TestConfigs.machineNameMap.put(ItemDefault.CODE_YWQZ,"仰卧起坐");
@@ -74,6 +76,7 @@ public class TestConfigs{
 		
 		TestConfigs.machineNameMap.put(ItemDefault.CODE_FHL,"肺活量");
 		TestConfigs.machineNameMap.put(ItemDefault.CODE_HWSXQ,"红外实心球");
+		TestConfigs.machineNameMap.put(ItemDefault.CODE_ZFP,"红外计时");
 
 		// 每个机器码对应的机器名称
 		TestConfigs.itemMinScope.put(ItemDefault.CODE_ZWTQQ, -200);

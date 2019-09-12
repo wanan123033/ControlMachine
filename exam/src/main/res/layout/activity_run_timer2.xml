@@ -170,7 +170,7 @@
                 android:layout_toRightOf="@+id/tv_wait_start"
                 android:background="@drawable/selector_blue_grey"
                 android:paddingTop="15dp"
-                android:drawableTop="@mipmap/wait"
+                android:drawableTop="@mipmap/ready"
                 android:text="预备" />
 
             <TextView

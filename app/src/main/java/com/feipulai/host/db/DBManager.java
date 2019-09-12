@@ -80,7 +80,7 @@ public class DBManager {
 
         int[] supportMachineCodes = {ItemDefault.CODE_HW, ItemDefault.CODE_TS, ItemDefault.CODE_YWQZ,
                 ItemDefault.CODE_LDTY, ItemDefault.CODE_ZWTQQ,
-                ItemDefault.CODE_HWSXQ, ItemDefault.CODE_FHL};
+                ItemDefault.CODE_HWSXQ, ItemDefault.CODE_FHL,ItemDefault.CODE_ZFP};
         for (int machineCode : supportMachineCodes) {
             //查询是否已经存在该机器码的项,如果存在就放弃,避免重复添加
             List<Item> items = itemDao.queryBuilder().where(ItemDao.Properties.MachineCode.eq(machineCode)).list();
@@ -115,6 +115,9 @@ public class DBManager {
 
                 case ItemDefault.CODE_FHL:
                     insertItem(machineCode, "肺活量", "毫升");
+                    break;
+                case ItemDefault.CODE_ZFP:
+                    insertItem(machineCode, "红外计时", "毫秒");
                     break;
             }
         }
@@ -889,6 +892,42 @@ public class DBManager {
                 .where(RoundResultDao.Properties.ItemCode.eq(stuItem.getItemCode()))
                 .where(RoundResultDao.Properties.MachineCode.eq(stuItem.getMachineCode()))
                 .list();
+    }
+
+    /**
+     * 查询对应考生当前项目最后一次成绩
+     *
+     * @param studentCode 考号
+     * @return
+     */
+    public List<RoundResult> queryFinallyRoundScoreByExamTypeList(String studentCode, int exemType) {
+        Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
+                + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\tIsLastResult:" + 1);
+        return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(RoundResultDao.Properties.ExamType.eq(exemType))
+                .orderDesc(RoundResultDao.Properties.TestNo)
+                .list();
+    }
+
+    /**
+     * 查询对应考生当前项目最后一次成绩
+     *
+     * @param studentCode 考号
+     * @return
+     */
+    public RoundResult queryFinallyRoundScore(String studentCode) {
+        Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
+                + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\tIsLastResult:" + 1);
+        return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .orderDesc(RoundResultDao.Properties.TestNo)
+                .limit(1)
+                .unique();
     }
 
     /********************************************多表操作**********************************************************************/

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="267dp"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+
+    <ImageView
+        android:id="@+id/img_portrait"
+        android:layout_width="180dp"
+        android:layout_height="253dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="6dp"
+        android:scaleType="fitXY"
+        android:src="@mipmap/icon_head_photo" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="学号："
+            android:textColor="@color/grey_A8"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/txt_stu_code"
+            android:layout_width="wrap_content"
+            android:layout_height="27dp"
+            android:background="@drawable/edit_search_bg"
+            android:paddingLeft="5dp"
+            android:textColor="@color/grey_A8"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="姓名："
+            android:textColor="@color/grey_A8"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/txt_stu_name"
+            android:layout_width="wrap_content"
+            android:layout_height="27dp"
+            android:background="@drawable/edit_search_bg"
+            android:paddingLeft="5dp"
+            android:textColor="@color/grey_A8"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="姓别："
+            android:textColor="@color/grey_A8"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/txt_stu_sex"
+            android:layout_width="wrap_content"
+            android:layout_height="27dp"
+            android:background="@drawable/edit_search_bg"
+            android:paddingLeft="5dp"
+            android:textColor="@color/grey_A8"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="11dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="成绩："
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/txt_stu_result"
+            android:layout_width="wrap_content"
+            android:layout_height="27dp"
+            android:background="@drawable/edit_search_bg"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

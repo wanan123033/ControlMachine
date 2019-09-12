@@ -50,15 +50,18 @@ public class RoundResult implements Serializable {
     private String remark1;
     private String remark2;
     private String remark3;
-
+    @NotNull
+    private int testNo;//测试次数
     public final static String BEAN_KEY = "ROUNDRESULT_KEY";
+    @NotNull
+    private int examType;//考试类型 0.正常 1.补考，(2.缓考,现没有这功能)
 
-
-    @Generated(hash = 224505125)
+    @Generated(hash = 210436332)
     public RoundResult(Long id, @NotNull String studentCode, @NotNull String itemCode,
             int machineCode, int roundNo, int result, int weightResult, int stumbleCount,
             int resultState, int isLastResult, @NotNull String testTime, String printTime,
-            int updateState, String remark1, String remark2, String remark3) {
+            int updateState, String remark1, String remark2, String remark3, int testNo,
+            int examType) {
         this.id = id;
         this.studentCode = studentCode;
         this.itemCode = itemCode;
@@ -75,6 +78,8 @@ public class RoundResult implements Serializable {
         this.remark1 = remark1;
         this.remark2 = remark2;
         this.remark3 = remark3;
+        this.testNo = testNo;
+        this.examType = examType;
     }
 
 
@@ -82,7 +87,7 @@ public class RoundResult implements Serializable {
     public RoundResult() {
     }
 
-    
+
     @Override
     public String toString() {
         return "RoundResult{" +
@@ -264,5 +269,22 @@ public class RoundResult implements Serializable {
     public void setRemark3(String remark3) {
         this.remark3 = remark3;
     }
-    
+
+
+    public int getTestNo() {
+        return this.testNo;
+    }
+
+
+    public void setTestNo(int testNo) {
+        this.testNo = testNo;
+    }
+
+    public int getExamType() {
+        return examType;
+    }
+
+    public void setExamType(int examType) {
+        this.examType = examType;
+    }
 }

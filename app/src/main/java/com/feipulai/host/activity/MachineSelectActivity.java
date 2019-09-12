@@ -47,9 +47,10 @@ public class MachineSelectActivity extends BaseTitleActivity implements DialogIn
         mTupleList.add(new Tuple(ItemDefault.CODE_TS, "跳绳", R.mipmap.icon_jump_rope, 3));
         mTupleList.add(new Tuple(ItemDefault.CODE_LDTY, "立定跳远", R.mipmap.icon_standjump, 3));
         mTupleList.add(new Tuple(ItemDefault.CODE_FHL, "肺活量", R.mipmap.icon_standjump, 3));
-        mTupleList.add(new Tuple(ItemDefault.CODE_ZWTQQ, "坐位体前屈", R.mipmap.icon_sitreach, 4));
-        mTupleList.add(new Tuple(ItemDefault.CODE_HWSXQ, "红外实心球", R.mipmap.icon_medicine_ball, 4));
-        mTupleList.add(new Tuple(ItemDefault.CODE_YWQZ, "仰卧起坐", R.mipmap.icon_situp, 4));
+        mTupleList.add(new Tuple(ItemDefault.CODE_ZWTQQ, "坐位体前屈", R.mipmap.icon_sitreach, 3));
+        mTupleList.add(new Tuple(ItemDefault.CODE_HWSXQ, "红外实心球", R.mipmap.icon_medicine_ball, 3));
+        mTupleList.add(new Tuple(ItemDefault.CODE_YWQZ, "仰卧起坐", R.mipmap.icon_situp, 3));
+        mTupleList.add(new Tuple(ItemDefault.CODE_ZFP, "红外计时", R.mipmap.icon_runtime, 3));
 
 
         RecyclerView recyclerView = findViewById(R.id.rv_item);

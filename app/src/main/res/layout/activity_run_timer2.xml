@@ -3,14 +3,98 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    tools:context="com.feipulai.exam.activity.RadioTimer.RunTimerActivityGroupActivity">
+    android:orientation="vertical"
+    tools:context=".activity.radio_timer.RunTimerActivityTestActivity">
+
+    <LinearLayout
+        android:id="@+id/ll_first"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        >
+        <include layout="@layout/stu_info_layout" />
+        <View
+            android:layout_width="8dp"
+            android:layout_height="match_parent"
+            android:background="#BFBFBF" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <include
+                android:id="@+id/title_layout"
+                layout="@layout/title_layout" />
+            <include
+                android:id="@+id/tab_title"
+                android:layout_marginTop="@dimen/dp_4"
+                layout="@layout/table_runner_layout"
+                android:layout_below="@+id/title_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:layout_marginLeft="20dp"
+                />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_timer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/rl_bottom"
+                android:layout_below="@+id/tab_title"
+                android:layout_marginLeft="20dp" />
+
+            <RelativeLayout
+                android:id="@+id/rl_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_marginRight="@dimen/dp_10"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="@dimen/dp_10">
+
+                <TextView
+                    android:id="@+id/btn_start"
+                    style="@style/style_run_timer_text"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/selector_blue_grey"
+                    android:drawableTop="@mipmap/start_test"
+                    android:paddingTop="15dp"
+                    android:text="进入测试"
+                     />
+
+                <TextView
+                    android:id="@+id/btn_led"
+                    style="@style/style_run_timer_text"
+                    android:layout_marginRight="@dimen/dp_40"
+                    android:layout_toLeftOf="@+id/btn_start"
+                    android:background="@drawable/selector_blue_grey"
+                    android:drawableTop="@mipmap/led_small"
+                    android:paddingTop="15dp"
+                    android:text="外接屏幕" />
+            </RelativeLayout>
+            <ListView
+                android:id="@+id/lv_results"
+                android:layout_width="321dp"
+                android:layout_height="260dp"
+                android:layout_marginLeft="190dp"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/bg_white_radius_10"
+                android:divider="@color/sbc_header_text"
+                android:dividerHeight="1dp"
+                android:paddingBottom="@dimen/dp_10"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="@dimen/dp_10"
+                android:visibility="gone" />
+        </RelativeLayout>
+    </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/rl_second"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="40dp"
-        android:layout_marginRight="@dimen/dp_40">
+        android:layout_marginRight="@dimen/dp_40"
+        android:visibility="gone">
 
         <include
             android:id="@+id/tab_title"
@@ -21,7 +105,7 @@
             android:layout_marginTop="15dp" />
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_timer"
+            android:id="@+id/rv_timer2"
             android:background="@color/black"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,14 +125,13 @@
             <TextView
                 android:id="@+id/tv_timer"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="91dp"
                 android:layout_centerVertical="true"
                 android:textColor="@color/black"
                 android:layout_marginLeft="20dp"
                 android:textSize="40dp"
                 android:textStyle="bold"
-                android:text="00:00.00"
-                />
+                android:text="00:00.00"/>
             <TextView
                 android:id="@+id/tv_run_state"
                 android:text="空闲"
@@ -65,11 +148,10 @@
             android:id="@+id/rl_control"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/rl_title"
             android:layout_marginTop="15dp"
-            android:layout_alignParentBottom="true"
-            android:layout_toRightOf="@+id/rl_state"
             android:layout_marginLeft="@dimen/dp_15"
+            android:layout_toRightOf="@+id/rl_state"
+            android:layout_alignParentBottom="true"
             android:layout_marginBottom="@dimen/dp_10"
             >
             <TextView
@@ -84,10 +166,10 @@
                 android:id="@+id/tv_wait_ready"
                 style="@style/style_run_timer_text"
                 android:layout_marginRight="@dimen/dp_10"
-                android:drawableTop="@mipmap/ready"
-                android:paddingTop="15dp"
                 android:layout_toRightOf="@+id/tv_wait_start"
-                android:background="@drawable/selector_yellow_grey"
+                android:background="@drawable/selector_blue_grey"
+                android:paddingTop="15dp"
+                android:drawableTop="@mipmap/ready"
                 android:text="预备" />
 
             <TextView
@@ -108,15 +190,16 @@
                 android:paddingTop="15dp"
                 android:background="@drawable/selector_red_grey"
                 android:text="强制启动" />
+
             <TextView
                 android:id="@+id/tv_mark_confirm"
+                android:layout_marginRight="@dimen/dp_10"
+                android:layout_alignParentRight="true"
                 style="@style/style_run_timer_text"
                 android:drawableTop="@mipmap/confirm"
-                android:layout_alignParentRight="true"
                 android:paddingTop="15dp"
                 android:background="@drawable/selector_green_grey"
                 android:text="成绩确认" />
         </RelativeLayout>
     </RelativeLayout>
 </LinearLayout>
-

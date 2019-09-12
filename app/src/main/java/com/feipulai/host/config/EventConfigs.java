@@ -6,5 +6,6 @@ package com.feipulai.host.config;
  */
 public class EventConfigs {
 
+    public static final int UPDATE_TEST_RESULT = 6;
     public static int  TEMPORARY_ADD_STU = 1;
 }

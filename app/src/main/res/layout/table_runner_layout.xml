@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="50dp"
+    android:background="@color/blue_sky"
+    >
+
+    <TextView
+        android:id="@+id/tv_num"
+        style="@style/style_run_timer_title"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:text="道次" />
+
+    <TextView
+        android:id="@+id/tv_stuCode"
+        style="@style/style_run_timer_title"
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:text="学号" />
+
+    <TextView
+        android:id="@+id/tv_stuName"
+        style="@style/style_run_timer_title"
+        android:layout_width="130dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:text="姓名" />
+
+    <TextView
+        android:id="@+id/tv_stuSex"
+        style="@style/style_run_timer_title"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:text="性别" />
+
+    <TextView
+        android:id="@+id/tv_stuItem"
+        style="@style/style_run_timer_title"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:text="项目" />
+
+
+
+    <TextView
+        android:id="@+id/tv_stuMark"
+        style="@style/style_run_timer_title"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:text="成绩" />
+
+    <TextView
+        android:id="@+id/tv_stuDelete"
+        style="@style/style_run_timer_title"
+        android:layout_width="80dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+         />
+</LinearLayout>
