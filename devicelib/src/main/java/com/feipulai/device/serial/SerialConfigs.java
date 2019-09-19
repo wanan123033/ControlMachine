@@ -222,6 +222,6 @@ public class SerialConfigs {
 
     //gps 时间测量获取用的
     public static final int GPS_TIME_RESPONSE = 0x38;
-
+    public static final int SARGENT_JUMP_SET_MORE_MATCH = 0x39;
 
 }

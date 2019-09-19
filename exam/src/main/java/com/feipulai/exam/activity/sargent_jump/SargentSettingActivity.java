@@ -1,5 +1,6 @@
 package com.feipulai.exam.activity.sargent_jump;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -31,7 +32,9 @@ import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.sargent_jump.pair.SargentPairActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.BaseEvent;
@@ -67,8 +70,8 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
     RadioButton rbRecycle;
     @BindView(R.id.rg_model)
     RadioGroup rgModel;
-    @BindView(R.id.cb_wireless)
-    CheckBox cbWireless;
+//    @BindView(R.id.cb_wireless)
+//    CheckBox cbWireless;
     @BindView(R.id.tv_match)
     TextView tvMatch;
     private SargentSetting sargentSetting;
@@ -172,10 +175,10 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
         cbRunUp.setChecked(sargentSetting.getRunUp() == 0);
         cbRunUp.setOnCheckedChangeListener(this);
         // 1无线 0有线
-        cbWireless.setChecked(sargentSetting.getType() == 1);
-        cbWireless.setVisibility(sargentSetting.getType() == 1 ? View.VISIBLE : View.GONE);
-        cbWireless.setOnCheckedChangeListener(this);
-        tvMatch.setVisibility(sargentSetting.getType() == 1 ? View.VISIBLE:View.GONE);
+//        cbWireless.setChecked(sargentSetting.getType() == 1);
+//        cbWireless.setVisibility(sargentSetting.getType() == 1 ? View.VISIBLE : View.GONE);
+//        cbWireless.setOnCheckedChangeListener(this);
+        tvMatch.setVisibility(sargentSetting.getType() == 2 ? View.VISIBLE:View.GONE);
         radioManager = RadioManager.getInstance();
         radioManager.init();
         radioManager.setOnRadioArrived(this);
@@ -197,6 +200,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
             maxTestNo = sargentSetting.getTestTimes();
         }
         spTestRound.setSelection(maxTestNo - 1);
+        sargentSetting.setTestTimes(maxTestNo);
 
         String[] deviceCount = {"1", "2", "3","4"};
         ArrayAdapter<String> adapter0 = new ArrayAdapter<>(this,
@@ -237,10 +241,10 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
                     sargentSetting.setFullReturn(false);
                 }
                 break;
-            case R.id.cb_wireless:
+//            case R.id.cb_wireless:
 //                cbWireless.setChecked(b);
 //                sargentSetting.setType(b ? 1 : 0);
-                break;
+//                break;
         }
 
     }
@@ -298,6 +302,8 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
                         mHandler.sendEmptyMessageDelayed(3, 10 * 1000);
                     }
 
+                }else if (sargentSetting.getType() == 2){
+                    startActivity(new Intent(SargentSettingActivity.this, SargentPairActivity.class));
                 }
                 break;
 

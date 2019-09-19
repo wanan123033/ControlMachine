@@ -27,7 +27,7 @@ import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.sargent_jump.pair.SargentPairActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
-import com.feipulai.exam.adapter.DeviceListAdapter;
+import com.feipulai.exam.activity.sargent_jump.adapter.DeviceListAdapter;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
@@ -158,13 +158,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         DeviceDetail deviceDetail = deviceDetails.get(index);
         deviceDetail.getStuDevicePair().setStudent(student);
         deviceDetail.getStuDevicePair().setCanTest(false);
-        String[] timeResult = deviceDetail.getStuDevicePair().getTimeResult();
-        int count;
-        if (timeResult != null) {
-            count = timeResult.length;
-        } else {
-            count = 0;
-        }
+        deviceDetail.getStuDevicePair().setBaseHeight(0);
+        int count = deviceDetail.getRound();
         toastSpeak(String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1)
                 , String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1));
 
@@ -193,8 +188,13 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 BaseStuPair pair = deviceDetails.get(pos).getStuDevicePair();
                 switch (view.getId()) {
                     case R.id.txt_start:
-                        if (pair.getStudent() != null ) {
+                        if (pair.getStudent() == null ) {
                             toastSpeak("当前无学生测试");
+                            return;
+                        }
+                        if (deviceDetails.get(pos).getRound() >= setTestCount()){
+                            toastSpeak("当前学生测试完成");
+                            stuSkip(pos);
                             return;
                         }
                         if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
@@ -233,7 +233,6 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         deviceDetails.get(pos).getStuDevicePair().setStudent(null);
         deviceDetails.get(pos).getStuDevicePair().setTimeResult(new String[setTestCount()]);
         deviceListAdapter.notifyItemChanged(pos);
-        deviceDetails.get(pos).getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_FREE);
     }
 
 
@@ -297,6 +296,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     private synchronized void doResult(BaseStuPair pair, int index) {
         DeviceDetail detail = deviceDetails.get(index);
         String[] timeResult = detail.getStuDevicePair().getTimeResult();
+        if (detail.getRound() >= timeResult.length)//防止
+            return;
         //设置设备成绩
         timeResult[detail.getRound()] = ((pair.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
                 ResultDisplayUtils.getStrResultForDisplay(pair.getResult()));
@@ -306,11 +307,11 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         saveResult(pair);
         printResult(pair);
 //        broadResult(pair);
-
+        detail.setRound(detail.getRound() + 1);
         if (detail.getRound() < setTestCount()) {
             if (pair.getResultState() == RoundResult.RESULT_STATE_NORMAL && pair.isFullMark()) {
                 //测试结束学生清除 ，设备设置空闲状态
-                detail.setRound(1);
+                detail.setRound(0);
                 //4秒后清理学生信息
                 Message msg = new Message();
                 msg.what = pair.getBaseDevice().getDeviceId();
@@ -318,16 +319,17 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 clearHandler.sendMessageDelayed(msg, 4000);
                 return;
             }
-            detail.setRound(detail.getRound() + 1);
 
-            toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), detail.getRound())
-                    , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), detail.getRound()));
+            if (detail.getRound() < setTestCount()){
+                toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), detail.getRound()+1)
+                        , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), detail.getRound()+1));
+            }
             Message msg = new Message();
             msg.obj = pair;
             ledHandler.sendMessageDelayed(msg, 2000);
             pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
         } else {
-            detail.setRound(1);
+            detail.setRound(0);
             //4秒后清理学生信息
             Message msg = new Message();
             msg.obj = detail;
@@ -538,6 +540,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         for (int i = 0; i < deviceCount; i++) {
             DeviceDetail detail = new DeviceDetail();
             detail.getStuDevicePair().getBaseDevice().setDeviceId(i + 1);
+            detail.getStuDevicePair().setTimeResult(new String[setTestCount()]);
             detail.setDeviceOpen(true);
             deviceDetails.add(detail);
         }

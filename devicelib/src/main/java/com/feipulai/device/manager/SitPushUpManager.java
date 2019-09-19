@@ -1,5 +1,6 @@
 package com.feipulai.device.manager;
 
+import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
@@ -126,6 +127,52 @@ public class SitPushUpManager {
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
         RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(targetChannel)));
     }
+
+    /**
+     * 摸高设置频段
+     * @param originFrequency
+     * @param deviceId
+     * @param hostId
+     */
+    public void setFrequencyMG(int originFrequency, int deviceId, int hostId){
+       int machineCode =  ItemDefault.CODE_MG;
+        int targetChannel = 0;
+        byte[] buf = new byte[18];
+        buf[0] = 0x54;
+        buf[1] = 0x44;    //包头
+        buf[2] = 0;       //包长
+        buf[3] = 0x12;
+        buf[4] = (byte) (deviceId & 0xff);      //设备号
+        buf[5] = (byte) (projectCode & 0xff);     //测试项目
+        buf[6] = 0x01;       //无线模式
+        buf[7] = 0x01;      //命令
+        targetChannel = SerialConfigs.sProChannels.get(machineCode) + hostId - 1;
+        buf[8] = (byte) (targetChannel & 0xff); //高字节在先
+        buf[9] = 4;
+        buf[10] = 0;
+        buf[11] = (byte) (hostId & 0xff);
+        buf[12] = 0;
+        buf[13] = 0;
+        buf[14] = 0;
+        for (int i = 2; i < 13; i++) {
+            buf[15] += buf[i] & 0xff;
+        }
+        buf[16] = 0x27;
+        buf[17] = 0x0d;   //包尾
+        //Logger.i(StringUtility.bytesToHexString(buf));
+        //先切到通信频段
+        //Log.i("james","originFrequency:" + originFrequency);
+        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(originFrequency)));
+        //Log.i("james",StringUtility.bytesToHexString(buf));
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
+        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(targetChannel)));
+    }
+
 
     /**
      * 开始测试,该操作完成->倒计时结束,进入计时,设备将处在{@link #STATE_READY} 准备状态

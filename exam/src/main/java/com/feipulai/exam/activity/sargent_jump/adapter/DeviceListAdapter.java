@@ -1,4 +1,4 @@
-package com.feipulai.exam.adapter;
+package com.feipulai.exam.activity.sargent_jump.adapter;
 
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -10,7 +10,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.person.BaseDeviceState;
-import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.entity.Student;
 
@@ -47,7 +46,7 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
         if (item.getStuDevicePair() != null) {
             if (item.getStuDevicePair().getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
                 helper.cbDeviceState.setChecked(true);
-            }else {
+            } else {
                 helper.cbDeviceState.setChecked(false);
             }
 
@@ -55,9 +54,12 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
                 Student student = item.getStuDevicePair().getStudent();
                 helper.txtStuCode.setText(student.getStudentCode());
                 helper.txtStuName.setText(student.getStudentName());
+            } else {
+                helper.txtStuCode.setText("");
+                helper.txtStuName.setText("");
             }
         }
-        if (item.getStuDevicePair().getTimeResult()!= null){
+        if (item.getStuDevicePair().getTimeResult() != null) {
             helper.itemTxtTestResult.setText(item.getStuDevicePair().getTimeResult()[0]);
         }
 
@@ -69,7 +71,9 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
         if (testCount == 3) {
             helper.itemTxtTestResult1.setVisibility(View.VISIBLE);
             helper.itemTxtTestResult2.setVisibility(View.VISIBLE);
-//            helper.itemTxtTestResult2.setText(item.getStuDevicePair().getTimeResult()[2]);
+            helper.itemTxtTestResult1.setText(item.getStuDevicePair().getTimeResult()[1]);
+            helper.itemTxtTestResult2.setText(item.getStuDevicePair().getTimeResult()[2]);
+
         }
         helper.addOnClickListener(R.id.txt_skip).addOnClickListener(R.id.txt_start);
         helper.swDeviceClose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
