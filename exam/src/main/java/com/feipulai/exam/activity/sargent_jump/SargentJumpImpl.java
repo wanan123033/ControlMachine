@@ -23,7 +23,7 @@ public class SargentJumpImpl implements SerialDeviceManager.RS232ResiltListener,
     private static final String TAG = "SargentJumpImpl";
     private SargentJumpListener jumpListener;
     private boolean showRes = true;
-
+    private int temp ;
     public SargentJumpImpl(SargentJumpListener jumpListener) {
         this.jumpListener = jumpListener;
     }
@@ -79,10 +79,14 @@ public class SargentJumpImpl implements SerialDeviceManager.RS232ResiltListener,
                 SargentJumpResult result = (SargentJumpResult) msg.obj;
                 if (result != null) {
                     jumpListener.onFree(result.getDeviceId());
-                    if (result.getState() == 1 && showRes) {//因为一个成绩会轮询查到多次
-                        jumpListener.onResultArrived(result);
-                        Logger.i("=>SargentJumpImpl====>" + result.getScore());
-                        showRes = false;
+
+                    if (result.getState() == 1 ) {//因为一个成绩会轮询查到多次
+                        if (showRes || result.getScore()!= temp){
+                            jumpListener.onResultArrived(result);
+                            Logger.i("=>SargentJumpImpl====>" + result.getScore());
+                            showRes = false;
+                        }
+                        temp = result.getScore();
                     } else if (result.getState() == 0) {
                         showRes = true;
                     }
