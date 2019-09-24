@@ -4,7 +4,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
@@ -52,18 +51,13 @@ public class SitReachSettingActivity extends BaseTitleActivity implements Serial
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("项目设置").addLeftText("返回", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        return builder.setTitle(R.string.item_setting_title);
     }
 
     @OnClick(R.id.tv_device_check)
     public void onViewClicked() {
         alertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
-        alertDialog.setTitleText("终端自检中...");
+        alertDialog.setTitleText(getString(R.string.device_check_hint));
         alertDialog.setCancelable(false);
         alertDialog.show();
 //        alertDialog = ProgressDialog.show(this, "", "终端自检中...", true);
@@ -98,7 +92,7 @@ public class SitReachSettingActivity extends BaseTitleActivity implements Serial
                 switch (msg.what) {
                     case MSG_DISCONNECT://连接失败
                         if (activity.isDisconnect) {
-                            activity.toastSpeak("设备未连接");
+                            activity.toastSpeak(activity.getString(R.string.device_noconnect));
                             //设置当前设置为不可用断开状态
                             if (activity.alertDialog.isShowing()) {
                                 activity.alertDialog.dismiss();
@@ -109,7 +103,7 @@ public class SitReachSettingActivity extends BaseTitleActivity implements Serial
                         //检测设备是否连接成功
                         activity.isDisconnect = false;
                         isDialogShow = false;
-                        activity.toastSpeak("设备连接成功");
+                        activity.toastSpeak(activity.getString(R.string.device_connect_succeed));
                         Logger.i("空命令回复:");
                         break;
                 }

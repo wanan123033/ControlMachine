@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.feipulai.common.tts.TtsManager;
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.host.R;
@@ -199,7 +200,7 @@ public abstract class BasePersonFaceIDActivity extends BaseActivity {
         roundResult.setItemCode(itemCode);
         roundResult.setResult(baseStuPair.getResult());
         roundResult.setResultState(baseStuPair.getResultState());
-        roundResult.setTestTime(TestConfigs.df.format(Calendar.getInstance().getTime()));
+        roundResult.setTestTime(DateUtil.getCurrentTime("yyyy-MM-dd HH:mm:ss"));
         roundResult.setRoundNo(1);
 
         RoundResult bestResult = DBManager.getInstance().queryBestScore(baseStuPair.getStudent().getStudentCode());

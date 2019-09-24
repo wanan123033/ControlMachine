@@ -17,6 +17,7 @@ import com.feipulai.host.adapter.ResultDetailAdapter;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
+import com.feipulai.host.entity.Student;
 import com.feipulai.host.utils.ResultDisplayUtils;
 
 import java.util.Collections;
@@ -60,11 +61,11 @@ public class DataDisplayActivity extends BaseTitleActivity {
     protected void initData() {
         mDataRetrieveBean = (DataRetrieveBean) getIntent().getSerializableExtra(DataRetrieveActivity.DATA_EXTRA);
         llStuResult.setVisibility(View.VISIBLE);
-        txtResultTitle.setText("最终成绩:");
+        txtResultTitle.setText(getString(R.string.final_score));
 
         txtStuCode.setText(mDataRetrieveBean.getStudentCode());
         txtStuName.setText(mDataRetrieveBean.getStudentName());
-        txtStuSex.setText(mDataRetrieveBean.getSex() == 0 ? "男" : "女");
+        txtStuSex.setText(mDataRetrieveBean.getSex() == Student.MALE ? getString(R.string.male) : getString(R.string.female));
         rvResult.setLayoutManager(new LinearLayoutManager(this));
         displayResults();
     }
@@ -72,23 +73,17 @@ public class DataDisplayActivity extends BaseTitleActivity {
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("成绩详情").addLeftText("返回", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        return builder.setTitle(R.string.data_display_title);
     }
 
 
     private void displayResults() {
         if (mDataRetrieveBean.getTestState() == 0) {
             //没有测试过,显示未测试
-            txtStuResult.setText("未测试");
+            txtStuResult.setText(getString(R.string.no_test));
         } else {
-            // TODO: 2019/3/11 应该讲身高体重项目成绩的特殊性剔除掉
+
             if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_HW) {
-//                toastSpeak("身高体重项目暂时成绩还没想清楚咋写");
                 displayHW();
             } else {
                 normalDisplay();
@@ -124,7 +119,7 @@ public class DataDisplayActivity extends BaseTitleActivity {
                         break;
 
                     case RoundResult.RESULT_STATE_FOUL:
-                        txtStuResult.setText("犯规");
+                        txtStuResult.setText(getString(R.string.foul));
                         break;
 
                 }
@@ -153,7 +148,7 @@ public class DataDisplayActivity extends BaseTitleActivity {
                         break;
 
                     case RoundResult.RESULT_STATE_FOUL:
-                        txtStuResult.setText("犯规");
+                        txtStuResult.setText(R.string.foul);
                         break;
                 }
                 break;

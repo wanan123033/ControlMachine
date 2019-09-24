@@ -14,6 +14,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.jump_rope.task.LEDContentGenerator;
 import com.feipulai.common.jump_rope.task.LEDResultDisplayTask;
 import com.feipulai.common.jump_rope.task.LEDResultDisplayer;
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.DividerItemDecoration;
 import com.feipulai.device.printer.PrinterManager;
@@ -41,7 +42,7 @@ import java.util.concurrent.Executors;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
+@Deprecated
 public class SitUpResultActivity
         extends BaseActivity
         implements LEDContentGenerator,
@@ -101,7 +102,7 @@ public class SitUpResultActivity
 
         initAdapter();
 
-        mTestTime = TestConfigs.df.format(Calendar.getInstance().getTime());
+        mTestTime = DateUtil.getCurrentTime("yyyy-MM-dd HH:mm:ss");
 
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setTitle("保存成绩");

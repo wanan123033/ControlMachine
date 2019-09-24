@@ -21,7 +21,7 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.beans.RunTimerResult;
 
 import com.feipulai.host.R;
-import com.feipulai.host.activity.LEDSettingActivity;
+import com.feipulai.host.activity.setting.LEDSettingActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.adapter.PopAdapter;
 import com.feipulai.host.adapter.RunNumberAdapter;

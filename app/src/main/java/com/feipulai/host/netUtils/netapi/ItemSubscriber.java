@@ -2,6 +2,7 @@ package com.feipulai.host.netUtils.netapi;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
@@ -137,6 +138,10 @@ public class ItemSubscriber {
                             SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS,
                                     SharedPrefsConfigs.LAST_DOWNLOAD_TIME, studentList.get(studentList.size() - 1).getDownloadTime());
                             pageNo++;
+                            for (Student student : studentList) {
+
+                                student.setIdCardNo(TextUtils.isEmpty(student.getIdCardNo()) ? null : student.getIdCardNo());
+                            }
                             DBManager.getInstance().insertStudentList(studentList);
             
                             ArrayList<StudentItem> studentItems = new ArrayList<>();

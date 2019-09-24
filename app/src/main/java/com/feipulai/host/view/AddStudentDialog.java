@@ -43,7 +43,6 @@ public class AddStudentDialog {
     private Dialog dialog;
     private Window window = null;
     private int sex = Student.MALE;
-    private String schedult;
     private String[] sexData = new String[]{"男", "女"};
 
     public AddStudentDialog(Context context) {
@@ -62,7 +61,7 @@ public class AddStudentDialog {
         spStuSex.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, sexData));
     }
 
-    @OnItemSelected({R.id.sp_stu_sex })
+    @OnItemSelected({R.id.sp_stu_sex})
     public void spinnerItemSelected(Spinner spinner, int position) {
         switch (spinner.getId()) {
             case R.id.sp_stu_sex:
@@ -89,14 +88,17 @@ public class AddStudentDialog {
     private boolean isCheckData() {
 
         if (TextUtils.isEmpty(editStuCode.getText().toString())) {
-         ToastUtils.showShort("请输入考号");
+            ToastUtils.showShort("请输入考号");
             return false;
         }
         if (TextUtils.isEmpty(editStuName.getText().toString())) {
             ToastUtils.showShort("请输入姓名");
             return false;
         }
-
+        if (!StuSearchEditText.patternStuCode(editStuCode.getText().toString().trim())) {
+            ToastUtils.showShort("请输入正确格式的考号");
+            return false;
+        }
         return true;
     }
 
@@ -170,7 +172,7 @@ public class AddStudentDialog {
      * @return
      */
     public boolean isShow() {
-	    return dialog != null && dialog.isShowing();
+        return dialog != null && dialog.isShowing();
     }
 
 

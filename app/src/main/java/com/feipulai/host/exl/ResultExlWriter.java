@@ -3,15 +3,22 @@ package com.feipulai.host.exl;
 import com.feipulai.common.exl.ExlListener;
 import com.feipulai.common.exl.ExlWriter;
 import com.feipulai.common.exl.ExlWriterUtil;
+import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.host.MyApplication;
+import com.feipulai.host.R;
+import com.feipulai.host.activity.height_weight.HWConfigs;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.entity.StudentItem;
+import com.feipulai.host.utils.ResultDisplayUtils;
 import com.github.mjdev.libaums.fs.UsbFile;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -21,7 +28,6 @@ import java.util.List;
 
 public class ResultExlWriter extends ExlWriter {
 
-    int rowIndex;
     private List<List<String>> writeData = new ArrayList<>();
 
     public ResultExlWriter(ExlListener listener) {
@@ -30,25 +36,25 @@ public class ResultExlWriter extends ExlWriter {
 
     @Override
     protected void write(UsbFile file) {
-        String[] headers = {"学籍号", "姓名", "性别", "项目", "成绩", "轮次", "测试时间", "成绩状态", "备注"};
-
-        writeData.add(Arrays.asList(headers));
-
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_HW) {
+            String[] headers = {"学籍号", "姓名", "性别", "项目", "身高", "体重"};
+            writeData.add(Arrays.asList(headers));
+        } else {
+            String[] headers = {"学籍号", "姓名", "性别", "项目", "成绩"};
+            writeData.add(Arrays.asList(headers));
+        }
         // 所有该项目的报名信息
         // 这里以报名信息开始,因为报名信息是每个报名信息 学生 机器码 项目代码 的组合是唯一的
         List<StudentItem> studentItems = DBManager.getInstance()
                 .querystuItemsByMachineItemCode(TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.getCurrentItemCode());
 
-
-        generateRows(studentItems);
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_HW) {
+            generateRowsHW(studentItems);
+        } else {
+            generateRows(studentItems);
+        }
         new ExlWriterUtil.Builder(file).setWriteData(writeData).setExlListener(listener).setSheetname("测试成绩").build().write();
-        // 身高体重,还需要生成体重成绩
-        // TODO: 2019/3/12 身高体重导出成绩处理方式待定
-        // if(TestConfigs.HEIGHT_ITEM_CODE.equals(TestConfigs.sCurrentItem.getItemCode())){
-        // 	studentItems = DBManager.getInstance()
-        // 			.querystuItemsByMachineItemCode(TestConfigs.sCurrentItem.getMachineCode(),TestConfigs.WEIGHT_ITEM_CODE);
-        // 	generateRows(studentItems,sheet);
-        // }
+
     }
 
     private void generateRows(List<StudentItem> studentItems) {
@@ -62,18 +68,51 @@ public class ResultExlWriter extends ExlWriter {
             student = DBManager.getInstance().queryStudentByStuCode(stuItem.getStudentCode());
 
             for (RoundResult result : roundResults) {
-                String[] rowData = new String[8];
+                String[] rowData = new String[5];
                 rowData[0] = student.getStudentCode();
                 rowData[1] = student.getStudentName();
-                rowData[2] = student.getSex() == Student.MALE ? "男" : "女";
+                rowData[2] = student.getSex() == Student.MALE ? MyApplication.getInstance().getString(R.string.male) :
+                        MyApplication.getInstance().getString(R.string.female);
                 rowData[3] = itemName;
-                rowData[4] = result.getResult() + "";
-                rowData[5] = result.getRoundNo() + "";
-                rowData[6] = result.getTestTime();
-                rowData[7] = result.getResultState() == RoundResult.RESULT_STATE_NORMAL ? "正常" : "犯规";
+                rowData[4] = ResultDisplayUtils.getStrResultForDisplay(result.getResult(), false);
                 writeData.add(Arrays.asList(rowData));
             }
         }
     }
 
+    private Comparator<RoundResult> roundResultComparator = Collections.reverseOrder(new Comparator<RoundResult>() {
+        @Override
+        public int compare(RoundResult lhs, RoundResult rhs) {
+            return lhs.getTestTime().compareTo(rhs.getTestTime());
+        }
+    });
+
+    private void generateRowsHW(List<StudentItem> studentItems) {
+
+        Student student;
+        String itemName = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode());
+
+        for (StudentItem stuItem : studentItems) {
+
+            student = DBManager.getInstance().queryStudentByStuCode(stuItem.getStudentCode());
+
+            List<RoundResult> heightResults = DBManager.getInstance().queryResultsByStudentCode(stuItem.getStudentCode(), HWConfigs
+                    .HEIGHT_ITEM);
+            List<RoundResult> weightResults = DBManager.getInstance().queryResultsByStudentCode(stuItem.getStudentCode(), HWConfigs
+                    .WEIGHT_ITEM);
+            Collections.sort(heightResults, roundResultComparator);
+            Collections.sort(weightResults, roundResultComparator);
+            for (int i = 0; i < heightResults.size(); i++) {
+                String[] rowData = new String[6];
+                rowData[0] = student.getStudentCode();
+                rowData[1] = student.getStudentName();
+                rowData[2] = student.getSex() == Student.MALE ? MyApplication.getInstance().getString(R.string.male) :
+                        MyApplication.getInstance().getString(R.string.female);
+                rowData[3] = itemName;
+                rowData[4] = ResultDisplayUtils.getStrResultForDisplay(heightResults.get(i).getResult(), HWConfigs.HEIGHT_ITEM, false);
+                rowData[5] = ResultDisplayUtils.getStrResultForDisplay(weightResults.get(i).getResult(), HWConfigs.WEIGHT_ITEM, false);
+                writeData.add(Arrays.asList(rowData));
+            }
+        }
+    }
 }

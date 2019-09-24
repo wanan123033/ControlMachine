@@ -40,15 +40,6 @@
                     android:layout_height="35dp"
                     android:layout_margin="30dp" />
 
-                <!--<TextView-->
-                <!--android:id="@+id/btn_search"-->
-                <!--android:layout_width="80dp"-->
-                <!--android:layout_height="35dp"-->
-                <!--android:background="@color/colorAccent"-->
-                <!--android:gravity="center"-->
-                <!--android:text="搜索"-->
-                <!--android:textColor="@color/white"-->
-                <!--android:textSize="20dp" />-->
 
             </LinearLayout>
 
@@ -132,7 +123,7 @@
                 <Button
                     android:id="@+id/btn_kill_devices"
                     style="@style/style_rectangle_btn"
-                    android:background="#ffff0000"
+                    android:background="@drawable/btn_rectangle_red_selector"
                     android:text="清除所有设备" />
                 <!--android:drawableTop="@drawable/led_screen"-->
 

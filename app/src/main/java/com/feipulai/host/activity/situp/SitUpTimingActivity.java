@@ -38,7 +38,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
+@Deprecated
 public class SitUpTimingActivity extends BaseActivity implements BaseQuickAdapter.OnItemClickListener,
 		LEDContentGenerator,
 		GetDeviceStatesTask.OnGettingDeviceStatesListener,

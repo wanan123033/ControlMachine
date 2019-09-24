@@ -1,7 +1,5 @@
 package com.feipulai.host.activity.person;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,12 +17,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.feipulai.common.tts.TtsManager;
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.host.R;
-import com.feipulai.host.activity.LEDSettingActivity;
+import com.feipulai.host.activity.setting.LEDSettingActivity;
 import com.feipulai.host.activity.base.BaseCheckActivity;
 import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BaseStuPair;
@@ -48,6 +47,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * 个人测试基类
@@ -125,27 +125,21 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
         String title;
         if (TextUtils.isEmpty(SettingHelper.getSystemSetting().getTestName())) {
-            title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机";
+            title = String.format(getString(R.string.host_name), TestConfigs.machineNameMap.get(machineCode), SettingHelper.getSystemSetting().getHostId());
         } else {
-            title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机-" + SettingHelper.getSystemSetting().getTestName();
+            title = String.format(getString(R.string.host_name), TestConfigs.machineNameMap.get(machineCode), SettingHelper.getSystemSetting().getHostId())
+                    + "-" + SettingHelper.getSystemSetting().getTestName();
         }
 
-        return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        }).addRightText("项目设置", new View.OnClickListener() {
+        return builder.setTitle(title).addRightText(R.string.item_setting_title, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 gotoItemSetting();
-//                startActivity(new Intent(BasePersonTestActivity.this, BaseItemSettingActivity.class));
             }
         }).addRightImage(R.mipmap.icon_setting, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 gotoItemSetting();
-//                startActivity(new Intent(BasePersonTestActivity.this, BaseItemSettingActivity.class));
             }
         });
     }
@@ -181,7 +175,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     }
 
     public void setBegin(int isBegin) {
-        txtStartTest.setText(isBegin == 0 ? "暂停测试" : "开始测试");
+        txtStartTest.setText(isBegin == 0 ? R.string.stop_test : R.string.start_test);
     }
 
     private void refreshDevice() {
@@ -249,7 +243,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         if (pair.getBaseDevice().getState() != BaseDeviceState.STATE_NOT_BEGAIN
                 && pair.getBaseDevice().getState() != BaseDeviceState.STATE_FREE
                 && pair.getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
-            toastSpeak("测试中不可使用");
+            toastSpeak(getString(R.string.testing_no_use));
             return;
         }
         startActivity(new Intent(this, LEDSettingActivity.class));
@@ -264,7 +258,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
             String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()) + " " + SettingHelper.getSystemSetting().getHostId();
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), title, mLEDManager.getX(title), 0, true, false);
-            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "菲普莱体育", 3, 3, false, true);
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), getString(R.string.fairplay), 3, 3, false, true);
             mLEDManager = null;
         }
 
@@ -289,7 +283,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             Logger.i("addStudent:" + student.toString());
             Logger.i("addStudent:当前考生进行第" + testNo + "次的第" + roundNo + "轮测试");
         } else {
-            toastSpeak("当前无设备可添加学生测试");
+            toastSpeak(getString(R.string.no_device_add_test_hint));
         }
 
     }
@@ -300,7 +294,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     private void refreshTxtStu(@NonNull Student student) {
         if (student != null) {
             txtStuName.setText(student.getStudentName());
-            txtStuSex.setText((student.getSex() == 0 ? "男" : "女"));
+            txtStuSex.setText((student.getSex() == Student.MALE ? R.string.male : R.string.female));
             txtStuCode.setText(student.getStudentCode());
 
         } else {
@@ -314,18 +308,28 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 
 
     private void stuSkipDialog() {
-        new AlertDialog.Builder(this).setMessage("是否跳过" + pair.getStudent().getStudentName() + "考生测试")
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Logger.i("stuSkip:" + pair.getStudent().toString());
-                        //测试结束学生清除 ，设备设置空闲状态
-                        roundNo = 1;
-                        clearHandler.sendEmptyMessageDelayed(0, 0);
-                        stuSkip();
-                        mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
-                    }
-                }).setNegativeButton("取消", null).show();
+        new SweetAlertDialog(this)
+                .setTitleText(String.format(getString(R.string.dialog_skip_stu_title), pair.getStudent().getStudentName()))
+                .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                Logger.i("stuSkip:" + pair.getStudent().toString());
+                //测试结束学生清除 ，设备设置空闲状态
+                roundNo = 1;
+                clearHandler.sendEmptyMessageDelayed(0, 0);
+                stuSkip();
+                mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
+
+            }
+        }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+
+            }
+        }).show();
+
     }
 
     /**
@@ -406,7 +410,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         roundResult.setItemCode(itemCode);
         roundResult.setResult(baseStuPair.getResult());
         roundResult.setResultState(baseStuPair.getResultState());
-        roundResult.setTestTime(TestConfigs.df.format(Calendar.getInstance().getTime()));
+        roundResult.setTestTime(DateUtil.getCurrentTime("yyyy-MM-dd HH:mm:ss"));
         roundResult.setRoundNo(1);
         RoundResult bestResult = DBManager.getInstance().queryBestScore(baseStuPair.getStudent().getStudentCode());
         if (bestResult != null) {
@@ -452,7 +456,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             return;
         }
         if (TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
-            ToastUtils.showShort("自动上传成绩需下载更新项目信息");
+            ToastUtils.showShort(R.string.upload_result_hint);
             return;
         }
 
@@ -483,7 +487,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     private void broadResult(@NonNull BaseStuPair baseStuPair) {
         if (SettingHelper.getSystemSetting().isAutoBroadcast()) {
             if (baseStuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) {
-                TtsManager.getInstance().speak(baseStuPair.getStudent().getSpeakStuName() + "犯规");
+                TtsManager.getInstance().speak(String.format(getString(R.string.speak_foul), baseStuPair.getStudent().getSpeakStuName()));
             } else {
 
                 TtsManager.getInstance().speak(String.format(getString(R.string.speak_result), baseStuPair.getStudent().getSpeakStuName(), ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult())));
@@ -503,10 +507,12 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), stuPair.getStudent().getStudentName(), mLEDManager.getX(stuPair.getStudent().getLEDStuName()), 0, true, false);
         if (stuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) {
 
-            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), stuPair.getStudent().getStudentName() + "犯规", mLEDManager.getX(stuPair.getStudent().getStudentName() + "犯规"), 2, false, true);
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), String.format(getString(R.string.speak_foul), stuPair.getStudent().getSpeakStuName())
+                    , mLEDManager.getX(String.format(getString(R.string.speak_foul), stuPair.getStudent().getSpeakStuName())), 2, false, true);
 
         } else {
-            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), ResultDisplayUtils.getStrResultForDisplay(stuPair.getResult()), mLEDManager.getX(ResultDisplayUtils.getStrResultForDisplay(stuPair.getResult())), 2, false, true);
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), ResultDisplayUtils.getStrResultForDisplay(stuPair.getResult())
+                    , mLEDManager.getX(ResultDisplayUtils.getStrResultForDisplay(stuPair.getResult())), 2, false, true);
 
         }
 
@@ -534,11 +540,17 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             return;
         Student student = baseStuPair.getStudent();
         PrinterManager.getInstance().print(" \n");
-        PrinterManager.getInstance().print(TestConfigs.sCurrentItem.getItemName() + SettingHelper.getSystemSetting().getHostId() + "号机\n");
-        PrinterManager.getInstance().print("考  号:" + student.getStudentCode() + "\n");
-        PrinterManager.getInstance().print("姓  名:" + student.getStudentName() + "\n");
-        PrinterManager.getInstance().print("成  绩:" + ((baseStuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "犯规" : ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult())) + "\n");
-        PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()) + "\n");
+        PrinterManager.getInstance().print(
+                String.format(getString(R.string.host_name), TestConfigs.sCurrentItem.getItemName(), SettingHelper.getSystemSetting().getHostId()) + "\n");
+        PrinterManager.getInstance().print(
+                String.format(getString(R.string.print_result_stu_code), student.getStudentCode()) + "\n");
+        PrinterManager.getInstance().print(
+                String.format(getString(R.string.print_result_stu_code), student.getStudentName()) + "\n");
+        PrinterManager.getInstance().print(
+                String.format(getString(R.string.print_result_stu_result), (baseStuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) ?
+                        getString(R.string.foul) : ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult())) + "\n");
+        PrinterManager.getInstance().print(
+                String.format(getString(R.string.print_result_time), TestConfigs.df.format(Calendar.getInstance().getTime())) + "\n");
         PrinterManager.getInstance().print(" \n");
         PrinterManager.getInstance().print(" \n");
 

@@ -1,24 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <array name="group_btn_function">
-        <item>设备匹配</item>
-        <item>切换分组</item>
-        <item>故障更换</item>
-        <item>开始计数</item>
-        <item>暂停使用</item>
-        <item>显示屏</item>
-        <item>删除</item>
-        <item>全删除</item>
-    </array>
-    <array name="main_function">
-        <item>显示屏</item>
-        <item>系统</item>
-        <item>数据</item>
-        <item>查询</item>
-        <item>设置</item>
-        <item>打印</item>
-    </array>
 
     <array name="check_tool">
         <item>条形码/二维码</item>
@@ -37,7 +19,31 @@
         <item>数据清空</item>
         <item>成绩上传</item>
         <item>成绩导出</item>
-        <!--<item>成绩删除</item>-->
+    </array>
 
+
+    <array name="sargent_jump_test_mode">
+        <item>原地</item>
+        <item>助跑</item>
+    </array>
+
+    <array name="array_time_out_deal">
+        <item>停止</item>
+        <item>不计数</item>
+    </array>
+
+    <string-array name="base_line_set">
+        <item>55</item>
+        <item>65</item>
+        <item>75</item>
+    </string-array>
+    <array name="download_select">
+        <item>下载全部</item>
+        <item>下载更新</item>
+    </array>
+
+    <array name="test_select">
+        <item>体测考试</item>
+        <item>自测测试</item>
     </array>
 </resources>

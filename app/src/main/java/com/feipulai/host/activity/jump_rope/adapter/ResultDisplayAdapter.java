@@ -54,12 +54,12 @@ public class ResultDisplayAdapter extends RecyclerView.Adapter<ResultDisplayAdap
 		RoundResult bestResult = bestResults.get(student);
 		
 		if (result == null) {
-			holder.tvResult.setText("未测试");
+			holder.tvResult.setText(R.string.no_test);
 		} else {
 			holder.tvResult.setText(ResultDisplayUtils.getStrResultForDisplay(result.getResult()));
 		}
 		if (bestResult == null) {
-			holder.tvBestResult.setText("未测试");
+			holder.tvBestResult.setText(R.string.no_test);
 		}else{
 			holder.tvBestResult.setText(ResultDisplayUtils.getStrResultForDisplay(bestResult.getResult()));
 			

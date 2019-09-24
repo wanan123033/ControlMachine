@@ -23,7 +23,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.db.DataBaseExecutor;
 import com.feipulai.common.db.DataBaseRespon;
 import com.feipulai.common.db.DataBaseTask;
-import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.PullToRefreshView;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -170,12 +169,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("数据查询").addLeftText("返回", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        return builder.setTitle(R.string.data_retrieve_title);
     }
 
     @Override
@@ -184,8 +178,8 @@ public class DataRetrieveActivity extends BaseTitleActivity
         StuInfo stuInfo = icCardDealer.IC_ReadStuInfo();
 
         if (stuInfo == null || TextUtils.isEmpty(stuInfo.getStuCode())) {
-            TtsManager.getInstance().speak("读卡(ka3)失败");
-            InteractUtils.toast(this, "读卡失败");
+//            TtsManager.getInstance().speak("读卡(ka3)失败");
+            InteractUtils.toast(this, getString(R.string.read_iccard_failed));
             return;
         }
 
@@ -197,7 +191,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
     public void onIdCardRead(IDCardInfo idCardInfo) {
         Student student = DBManager.getInstance().queryStudentByIDCode(idCardInfo.getId());
         if (student == null) {
-            InteractUtils.toast(this, "该考生不存在");
+            InteractUtils.toast(this, getString(R.string.student_nonentity));
         } else {
             setUiQueryData(student.getStudentCode());
         }
@@ -210,7 +204,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
 
     @Override
     public void onQRWrongLength(int length, int expectLength) {
-        InteractUtils.toast(this, "条码与当前设置位数不一致,请重扫条码");
+        InteractUtils.toast(this, getString(R.string.qr_length_error));
     }
 
 
@@ -269,7 +263,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
                 String input = mEtInputText.getText().toString().trim();
                 mPageNum = 0;
                 if (!StuSearchEditText.patternStuCode(input)) {
-                    ToastUtils.showShort("请输入正常学生考号或身份证");
+                    ToastUtils.showShort(R.string.data_search_hint);
                 } else {
                     queryData(input);
                 }
@@ -285,7 +279,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
                     }
                 }
                 if (roundResults.size() == 0) {
-                    ToastUtils.showShort("请选择未上传成绩考生");
+                    ToastUtils.showShort(R.string.please_no_upload_stu);
                 } else {
                     //上传数据前先进行项目信息校验
                     ItemSubscriber subscriber = new ItemSubscriber();
@@ -380,9 +374,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
             Logger.i("cbUnUpload===>" + cbUnUpload.isChecked());
             Logger.i("cbTested===>" + cbTested.isChecked());
             Logger.i("cbUnTested===>" + cbUnTested.isChecked());
-            if (isChecked) {
-                chooseStudent();
-            }
+            chooseStudent();
 
         } else {
             Logger.i("mRbAll===>" + mRbAll.isChecked());
@@ -419,7 +411,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
                     Logger.i("zzs===>" + countMap.toString());
                 }
                 if (studentList == null || studentList.size() == 0) {
-                    ToastUtils.showShort("没有更多数据了");
+                    ToastUtils.showShort(R.string.no_more_data);
                     mRefreshView.finishRefreshAndLoad();
                     mRefreshView.setLoadmoreFinished(true);
                     mAdapter.notifyDataSetChanged();
@@ -449,7 +441,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
     private void queryData(final String inputText) {
 
         if (TextUtils.isEmpty(inputText)) {
-            ToastUtils.showShort("请输入搜索内容");
+            ToastUtils.showShort(R.string.please_edit_search);
             return;
         }
         DataBaseExecutor.addTask(new DataBaseTask(this, getString(R.string.loading_hint), true) {
@@ -465,7 +457,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
                 List<Student> students = (List<Student>) respon.getObject();
                 if (mPageNum == 0) {
                     if (students == null || students.size() == 0) {
-                        ToastUtils.showShort("该考生不存在");
+                        ToastUtils.showShort(R.string.student_nonentity);
                         mList.clear();
                         mAdapter.notifyDataSetChanged();
                         return;
@@ -473,7 +465,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
                     mList.clear();
                 } else {
                     if (students == null || students.size() == 0) {
-                        ToastUtils.showShort("没有更多数据了");
+                        ToastUtils.showShort(R.string.no_more_data);
                         mAdapter.notifyDataSetChanged();
                         mRefreshView.finishRefreshAndLoad();
                         mRefreshView.setLoadmoreFinished(true);
@@ -500,6 +492,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
         });
 
     }
+
     private String displaStuResult(String studentCode) {
         if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_HW) {
             RoundResult mLastHeightResult = DBManager.getInstance().queryLastScoreByStuCode(studentCode, HWConfigs
@@ -563,7 +556,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
                     Logger.i("zzs===>" + countMap.toString());
                 }
                 if (studentList == null || studentList.size() == 0) {
-                    ToastUtils.showShort("没有更多数据了");
+                    ToastUtils.showShort(R.string.no_more_data);
                     mRefreshView.finishRefreshAndLoad();
                     mRefreshView.setLoadmoreFinished(true);
                     mAdapter.notifyDataSetChanged();

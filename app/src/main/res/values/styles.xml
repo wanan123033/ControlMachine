@@ -15,7 +15,9 @@
         <!--<item name="colorAccent">@color/colorAccent</item>-->
         <!--<item name="android:listDivider">@drawable/divider</item>-->
     <!--</style>-->
-
+    <style name="TabTextSize" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
+        <item name="android:textSize">18sp</item>
+    </style>
     <style name="customHoloLight" parent="@android:style/Theme.Holo.Light">
         <item name="android:windowNoTitle">true</item>
     </style>

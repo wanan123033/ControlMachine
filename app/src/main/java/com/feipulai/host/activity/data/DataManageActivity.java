@@ -19,6 +19,8 @@ import com.feipulai.common.db.ClearDataProcess;
 import com.feipulai.common.dbutils.BackupManager;
 import com.feipulai.common.dbutils.FileSelectActivity;
 import com.feipulai.common.exl.ExlListener;
+import com.feipulai.common.utils.DateUtil;
+import com.feipulai.common.utils.FileUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.StringChineseUtil;
 import com.feipulai.common.utils.ToastUtils;
@@ -52,10 +54,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.Common
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -98,8 +97,9 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
         File file = Environment.getExternalStorageDirectory();
         long freeSpace = file.getFreeSpace();
         long totalSpace = file.getTotalSpace();
-        txtStorageInfo.setText("总容量" + com.feipulai.common.utils.FileUtil.formatFileSize(totalSpace, true) + "剩余" + com.feipulai.common.utils.FileUtil.formatFileSize(freeSpace, true));
-        progressStorage.setProgress(com.feipulai.common.utils.FileUtil.getPercentRemainStorage());
+        txtStorageInfo.setText(String.format(getString(R.string.sdcard_capacity), FileUtil.formatFileSize(totalSpace, true)
+                , FileUtil.formatFileSize(freeSpace, true)));
+        progressStorage.setProgress(100 - FileUtil.getPercentRemainStorage());
 
         initGridView();
     }
@@ -107,12 +107,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("数据管理").addLeftText("返回", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        return builder.setTitle(R.string.data_message_title);
     }
 
     private void initGridView() {
@@ -215,7 +210,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                     case 6://成绩上传
                         List<RoundResult> resultList = DBManager.getInstance().getUploadResultsAll(false);
                         if (resultList.size() == 0) {
-                            ToastUtils.showShort("当前项目成绩已全部上传");
+                            ToastUtils.showShort(getString(R.string.item_result_already_upload));
                         } else {
                             //上传数据前先进行项目信息校验
                             ItemSubscriber subscriber = new ItemSubscriber();
@@ -246,9 +241,9 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
 
     private void showDownLoadDialog() {
         final String[] lastDownLoadTime = new String[1];
-        String item[] = new String[]{"下载全部", "下载更新"};
+        String item[] = getResources().getStringArray(R.array.download_select);
         new AlertDialog.Builder(this)
-                .setTitle("名单下载")
+                .setTitle(R.string.download_title)
                 .setSingleChoiceItems(item, 0, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -259,14 +254,14 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                         }
                     }
                 })
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         ItemSubscriber itemSubscriber = new ItemSubscriber();
                         itemSubscriber.getItemAll(MyApplication.TOKEN, DataManageActivity.this, lastDownLoadTime[0], null);
                     }
                 })
-                .setNegativeButton("取消", null).show();
+                .setNegativeButton(R.string.cancel, null).show();
     }
 
     @Override
@@ -278,7 +273,9 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
             case REQUEST_CODE_RESTORE:
                 DBManager.getInstance().close();
                 boolean restoreSuccess = backupManager.restore(FileSelectActivity.sSelectedFile);
-                ToastUtils.showShort(restoreSuccess ? "数据库恢复成功" : "数据库恢复失败,请检查文件格式");
+                ToastUtils.showShort(restoreSuccess ?
+                        R.string.recover_db_succeed
+                        : R.string.recover_db_error);
                 Logger.i(restoreSuccess ? ("数据库恢复成功,文件路径:" + FileSelectActivity.sSelectedFile.getName())
                         : "数据库恢复失败");
                 SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
@@ -291,7 +288,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                 break;
 
             case REQUEST_CODE_IMPORT:
-                OperateProgressBar.showLoadingUi(this, "正在读取exel文件...");
+                OperateProgressBar.showLoadingUi(this, getString(R.string.read_exl_hint));
                 //导入学生信息和学生项目信息
                 isProcessingData = true;
                 Logger.i("exel数据导入,文件名:" + FileSelectActivity.sSelectedFile.getName());
@@ -309,7 +306,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
     @Override
     public void onBackPressed() {
         if (isProcessingData) {
-            ToastUtils.showShort("正在处理数据,请勿退出!");
+            ToastUtils.showShort(R.string.data_exit_hint);
             return;
         }
         super.onBackPressed();
@@ -366,27 +363,15 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
     }
 
     private void createFileNameDialog(EditDialog.OnConfirmClickListener confirmListener) {
-//        mEditText = new EditText(this);
-//        mEditText.setSingleLine();
-//        mEditText.setBackgroundColor(0xffcccccc);
-        DateFormat df = new SimpleDateFormat("yyyy年MM月dd日");
-//        mEditText.setText(SettingHelper.getSystemSetting().getTestName() +
-//                SettingHelper.getSystemSetting().getHostId() + "号机" + df.format(new Date()));
-//        nameFileDialog = new AlertDialog.Builder(this)
-//                .setTitle("文件名")
-//                .setMessage("请输入文件名")
-//                .setView(mEditText)
-//                .setPositiveButton("确定", confirmListener)
-//                .setNegativeButton("取消", null)
-//                .create();
-//        nameFileDialog.show();
 
-        new EditDialog.Builder(this).setTitle("文件名")
+
+        new EditDialog.Builder(this).setTitle(getString(R.string.add_file_title))
                 .setCanelable(false)
-                .setMessage("输入合法保存文件名")
-                .setEditHint("请输入文件名")
-                .setEditText(SettingHelper.getSystemSetting().getTestName() +
-                        SettingHelper.getSystemSetting().getHostId() + "号机" + df.format(new Date()))
+                .setMessage(getString(R.string.add_file_message))
+                .setEditHint(getString(R.string.please_edit_file_hint))
+                .setEditText(String.format(getString(R.string.please_edit_file_txt),
+                        SettingHelper.getSystemSetting().getTestName(), SettingHelper.getSystemSetting().getHostId(),
+                        DateUtil.getCurrentTime("yyyyMMddHHmmss")))
                 .setPositiveButton(confirmListener)
                 .build().show();
 
@@ -400,20 +385,20 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                 String text = content.trim();
                 if (StringChineseUtil.patternFileName(text)) {
                     OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
-                    ToastUtils.showShort("文件创建失败,请确保输入文件名合法(中文、字母、数字和下划线),且不存在已有文件");
+                    ToastUtils.showShort(R.string.file_name_legal_hint);
                     return;
                 }
                 UsbFile targetFile;
                 try {
                     targetFile = FileSelectActivity.sSelectedFile.createFile(text + ".xls");
-                    OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在导出xel文件...");
+                    OperateProgressBar.showLoadingUi(DataManageActivity.this, getString(R.string.export_exl_hint));
                     //导入学生信息和学生项目信息
                     isProcessingData = true;
                     new ResultExlWriter(DataManageActivity.this).writeExelData(targetFile);
 
                 } catch (IOException e) {
                     e.printStackTrace();
-                    ToastUtils.showShort("文件创建失败,请确保路径目录不存在已有文件");
+                    ToastUtils.showShort(R.string.file_create_failed);
                     Logger.i("文件创建失败,Exel导出失败");
                 }
             }
@@ -427,7 +412,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                 String text = content.trim();
                 if (StringChineseUtil.patternFileName(text)) {
                     OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
-                    ToastUtils.showShort("文件创建失败,请确保输入文件名合法(中文、字母、数字和下划线),且不存在已有文件");
+                    ToastUtils.showShort(R.string.file_name_legal_hint);
                     return;
                 }
                 UsbFile targetFile;
@@ -436,14 +421,14 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                     boolean backupSuccess = backupManager.backup(targetFile);
                     UsbFile deleteFile = FileSelectActivity.sSelectedFile.createFile("." + text + "delete.db");
                     deleteFile.delete();
-                    ToastUtils.showShort(backupSuccess ? "数据库备份成功" : "数据库备份失败");
+                    ToastUtils.showShort(backupSuccess ? R.string.backup_db_succeed : R.string.backup_db_error);
                     Logger.i(backupSuccess ? ("数据库备份成功,备份文件名:" +
                             FileSelectActivity.sSelectedFile.getName() + "/" + targetFile.getName())
                             : "数据库备份失败");
                     FileSelectActivity.sSelectedFile = null;
                 } catch (IOException e) {
                     e.printStackTrace();
-                    ToastUtils.showShort("文件创建失败,请检查后再试");
+                    ToastUtils.showShort(R.string.file_create_failed);
                     Logger.i("文件创建失败,数据库备份失败");
                 }
             }
@@ -455,13 +440,13 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
         intent.setClass(this, FileSelectActivity.class);
         intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_FILE);
         startActivityForResult(intent, REQUEST_CODE_RESTORE);
-        ToastUtils.showShort("请选择备份文件");
+        ToastUtils.showShort(getString(R.string.please_select_backup_file));
     }
 
     @Override
     public void onRestoreConfirmed() {
         chooseFile();
-        ToastUtils.showShort("请选择需要恢复的数据库文件");
+        ToastUtils.showShort(getString(R.string.please_recover_db_file));
     }
 
     @Override
@@ -471,7 +456,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
         DBManager.getInstance().initDB();
         TestConfigs.init(this, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), null);
         Logger.i("数据清空完成");
-        ToastUtils.showShort("数据清空完成");
+        ToastUtils.showShort(R.string.clear_data_succeed);
     }
 
     // @Override

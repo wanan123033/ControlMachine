@@ -42,7 +42,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity implements Sta
             @Override
             public void onClick(View v) {
                 if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_ERROR) {
-                    toastSpeak("等待连接");
+                    toastSpeak(getString(R.string.waiting_connect));
                     onResume();
                     if (pair.getStudent() != null) {
                         standResiltListener.setTestState(StandResiltListener.TestState.START_TEST);
@@ -136,7 +136,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity implements Sta
                 switch (msg.what) {
                     case MSG_DISCONNECT://连接失败
                         if (activity.isDisconnect) {
-                            activity.toastSpeak("测量垫未连接");
+                            activity.toastSpeak(activity.getString(R.string.device_noconnect));
                             //设置当前设置为不可用断开状态
                             activity.updateDevice(new BaseDeviceState(BaseDeviceState.STATE_ERROR, 1));
                         }
@@ -194,12 +194,12 @@ public class StandJumpTestActivity extends BasePersonTestActivity implements Sta
     public void StartDevice() {
         isDisconnect = false;
         //检测通过可以发送测试指令
-        toastSpeak("测试开始");
+        toastSpeak(getString(R.string.start_test));
     }
 
     @Override
     public void AgainTest(BaseDeviceState deviceState) {
-
+        toastSpeak(getString(R.string.again_test_hint));
 //        Message msg = mHandler.obtainMessage();
 //        msg.what = INIT_AGAIN;
 //        mHandler.sendMessage(msg);

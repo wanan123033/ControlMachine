@@ -3,6 +3,7 @@ package com.feipulai.host.utils;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.beans.HeightWeightResult;
 import com.feipulai.host.activity.height_weight.HWConfigs;
@@ -11,8 +12,6 @@ import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.Item;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
-
-import java.util.Calendar;
 
 /**
  * Created by James on 2019/2/14 0014.
@@ -34,7 +33,7 @@ public class ResultUtils{
 	 * @return
 	 */
 	public static RoundResult generateRoughResultWithRaw(Student student,Object machineResult,int arg){
-		String testTime = TestConfigs.df.format(Calendar.getInstance().getTime());
+		String testTime = DateUtil.getCurrentTime("yyyy-MM-dd HH:mm:ss");
 		int machineCode = TestConfigs.sCurrentItem.getMachineCode();
 		RoundResult result = new RoundResult();
 		result.setMachineCode(machineCode);

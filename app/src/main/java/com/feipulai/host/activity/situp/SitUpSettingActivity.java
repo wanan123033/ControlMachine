@@ -16,7 +16,7 @@ import com.feipulai.host.config.SharedPrefsConfigs;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
+@Deprecated
 public class SitUpSettingActivity extends BaseActivity implements NumberPicker.OnValueChangeListener, AdapterView.OnItemSelectedListener{
 	
 	@BindView(R.id.btn_show_judgements)

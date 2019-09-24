@@ -59,7 +59,16 @@ public class SystemSetting {
      * 登录用户名
      */
     private String userName;
+    /**是否自由测试*/
+    private boolean isFreedomTest;
 
+    public boolean isFreedomTest() {
+        return isFreedomTest;
+    }
+
+    public void setFreedomTest(boolean freedomTest) {
+        isFreedomTest = freedomTest;
+    }
 
     public String getTestName() {
         return testName;

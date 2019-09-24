@@ -23,7 +23,6 @@
             android:textSize="18sp" />
 
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,9 +37,11 @@
             <EditText
                 android:id="@+id/edit_stu_code"
                 android:layout_width="200dp"
-                android:maxLines="1"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionNext" />
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                android:maxLines="1"
+                android:singleLine="true" />
         </LinearLayout>
 
         <LinearLayout
@@ -58,9 +59,10 @@
                 android:id="@+id/edit_stu_name"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:maxLines="1"
+                android:imeOptions="actionGo"
                 android:inputType="textPersonName"
-                android:imeOptions="actionNext" />
+                android:singleLine="true"
+                android:maxLines="1" />
         </LinearLayout>
 
         <LinearLayout
@@ -78,6 +80,7 @@
                 android:id="@+id/sp_stu_sex"
                 android:layout_width="200dp"
                 android:layout_height="35dp"
+                android:background="@drawable/icon_spinner_bg"
                 android:paddingLeft="@dimen/dp_10" />
         </LinearLayout>
 

@@ -57,7 +57,7 @@
                     android:background="@mipmap/icon_test_result_bg"
                     android:gravity="center"
                     android:textColor="@color/white"
-                    android:textSize="61sp" />
+                    android:textSize="50sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -116,7 +116,7 @@
                         android:background="@mipmap/icon_test_result_bg"
                         android:gravity="center"
                         android:textColor="@color/white"
-                        android:textSize="30sp" />
+                        android:textSize="28sp" />
 
                     <TextView
                         style="@style/style_setting_tv_title"
@@ -140,7 +140,7 @@
                         android:background="@mipmap/icon_test_result_bg"
                         android:gravity="center"
                         android:textColor="@color/white"
-                        android:textSize="30sp" />
+                        android:textSize="28sp" />
 
                     <TextView
                         style="@style/style_setting_tv_title"

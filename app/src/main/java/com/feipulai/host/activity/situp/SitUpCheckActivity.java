@@ -30,7 +30,7 @@ import com.feipulai.device.serial.beans.SitPushUpStateResult;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.host.R;
-import com.feipulai.host.activity.LEDSettingActivity;
+import com.feipulai.host.activity.setting.LEDSettingActivity;
 import com.feipulai.host.activity.base.BaseCheckActivity;
 import com.feipulai.host.activity.base.BaseCheckPairAdapter;
 import com.feipulai.host.activity.base.BaseDeviceState;
@@ -54,6 +54,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+@Deprecated
 public class SitUpCheckActivity
         extends BaseCheckActivity
         implements BaseQuickAdapter.OnItemClickListener,
@@ -220,7 +221,7 @@ public class SitUpCheckActivity
 
         mTvStudentCode.setText(stu.getStudentCode());
         mTvStudentName.setText(stu.getStudentName());
-        mTvGender.setText(stu.getSex() == 0 ? "男" : "女");
+        mTvGender.setText(stu.getSex() == Student.MALE ? R.string.male : R.string.female);
         RoundResult lastResult = DBManager.getInstance().queryLastScoreByStuCode(stu.getStudentCode());
         String displayResult = "";
         if (lastResult == null) {
@@ -458,7 +459,6 @@ public class SitUpCheckActivity
 
         }
     }
-
 
 
     private static class MyHandler extends Handler {

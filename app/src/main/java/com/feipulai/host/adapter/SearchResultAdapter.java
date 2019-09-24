@@ -62,7 +62,7 @@ public class SearchResultAdapter extends BaseAdapter {
         holder.mTvStuCode.setText(list.get(position).getStudentCode());
         holder.mTvIdcardNumCode.setText(list.get(position).getIdCardNo());
         holder.mTvStuName.setText(list.get(position).getStudentName());
-        holder.mTvStuSex.setText(list.get(position).getSex() == 0 ? "男" : "女");
+        holder.mTvStuSex.setText(list.get(position).getSex() == Student.MALE ? R.string.male : R.string.female);
         return convertView;
     }
 

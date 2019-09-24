@@ -79,13 +79,13 @@ public class BaseItemSettingActivity extends BaseActivity {
         llDeviceTime.setDisable();
         btnTerminalMatching.setFocusable(false);
         btnTerminalMatching.setClickable(false);
-        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_HWSXQ){
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_HWSXQ) {
             beginPoint.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             beginPoint.setVisibility(View.GONE);
         }
 
-        String beginPoint = SharedPrefsUtil.getValue(this,"SXQ","beginPoint","0");
+        String beginPoint = SharedPrefsUtil.getValue(this, "SXQ", "beginPoint", "0");
         etBeginPoint.setText(beginPoint);
 
         etBeginPoint.addTextChangedListener(new TextWatcher() {
@@ -96,7 +96,7 @@ public class BaseItemSettingActivity extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                SharedPrefsUtil.putValue(BaseItemSettingActivity.this,"SXQ","beginPoint",
+                SharedPrefsUtil.putValue(BaseItemSettingActivity.this, "SXQ", "beginPoint",
                         etBeginPoint.getText().toString());
             }
 
@@ -150,7 +150,7 @@ public class BaseItemSettingActivity extends BaseActivity {
      */
     private void sendSelfCheckCommand() {
         isDisconnect = true;
-        mProgressDialog = ProgressDialog.show(this, "", "终端自检中...", true);
+        mProgressDialog = ProgressDialog.show(this, "", getString(R.string.device_check_hint), true);
         if (SerialDeviceManager.getInstance() != null) {
             SerialDeviceManager.getInstance().setRS232ResiltListener(listener);
             // 自检,校验连接是否正常
@@ -202,7 +202,7 @@ public class BaseItemSettingActivity extends BaseActivity {
                 switch (msg.what) {
                     case MSG_DISCONNECT://连接失败
                         if (activity.isDisconnect) {
-                            activity.toastSpeak("设备未连接");
+                            activity.toastSpeak(activity.getString(R.string.device_noconnect));
                             //设置当前设置为不可用断开状态
                             if (activity.mProgressDialog.isShowing()) {
                                 activity.mProgressDialog.dismiss();
@@ -211,7 +211,7 @@ public class BaseItemSettingActivity extends BaseActivity {
                         break;
                     case SerialConfigs.SIT_AND_REACH_EMPTY_RESPONSE://坐位体前屈自检回调
                         activity.isDisconnect = false;
-                        activity.toastSpeak("设备连接成功");
+                        activity.toastSpeak(activity.getString(R.string.device_connect_succeed));
                         break;
                     case SerialConfigs.JUMP_SELF_CHECK_RESPONSE://立地跳远自检失败回调
                         JumpSelfCheckResult result = (JumpSelfCheckResult) msg.obj;
@@ -221,18 +221,18 @@ public class BaseItemSettingActivity extends BaseActivity {
                         } else {
                             activity.isDisconnect = false;
                             isDialogShow = false;
-                            activity.toastSpeak("设备连接成功");
+                            activity.toastSpeak(activity.getString(R.string.device_connect_succeed));
                         }
                         break;
                     case SerialConfigs.JUMP_SELF_CHECK_RESPONSE_Simple://立地跳远自检成功回调
                         activity.isDisconnect = false;
                         isDialogShow = false;
-                        activity.toastSpeak("设备连接成功");
+                        activity.toastSpeak(activity.getString(R.string.device_connect_succeed));
                         break;
                     case SerialConfigs.VITAL_CAPACITY_RESULT://肺活量
                         activity.isDisconnect = false;
                         isDialogShow = false;
-                        activity.toastSpeak("设备连接成功");
+                        activity.toastSpeak(activity.getString(R.string.device_connect_succeed));
                         break;
                     case SerialConfigs.MEDICINE_BALL_SELF_CHECK_RESPONSE://红外实心球
                         MedicineBallSelfCheckResult selfCheckResult = (MedicineBallSelfCheckResult) msg.obj;
@@ -242,7 +242,7 @@ public class BaseItemSettingActivity extends BaseActivity {
                         } else {
                             activity.isDisconnect = false;
                             isDialogShow = false;
-                            activity.toastSpeak("设备连接成功");
+                            activity.toastSpeak(activity.getString(R.string.device_connect_succeed));
                         }
 
                         break;

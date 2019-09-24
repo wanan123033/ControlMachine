@@ -3,7 +3,6 @@ package com.feipulai.host.activity.standjump;
 import android.os.Message;
 import android.util.Log;
 
-import com.feipulai.common.tts.TtsManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.JumpScore;
@@ -136,7 +135,6 @@ public class StandResiltListener implements SerialDeviceManager.RS232ResiltListe
                                 || jumpScore.getScore() * 10 > maxValue) {
                             Logger.i("成绩数值超出范围:最小值->" + minValue + ",最大值->" + maxValue + ",获取的成绩->" + jumpScore.getScore());
 
-                            TtsManager.getInstance().speak("设备错误，考生请重测");
                             testState = TestState.WAIT_RESULT;
                             //重测设置设备正在使用中
                             deviceState.setState(BaseDeviceState.STATE_ONUSE);

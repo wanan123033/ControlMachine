@@ -44,12 +44,12 @@
                 <!-- <category android:name="android.intent.category.HOME" /> -->
             </intent-filter>
         </activity>
-        <activity android:name=".activity.MainActivity" />
-        <activity android:name=".activity.MachineSelectActivity" />
-        <activity android:name=".activity.SubItemsSelectActivity" />
+        <activity android:name=".activity.main.MainActivity" />
+        <activity android:name=".activity.main.MachineSelectActivity" />
+        <activity android:name=".activity.main.SubItemsSelectActivity" />
         <!--<activity android:name=".activity.ItemSelectActivity"/>-->
         <activity android:name=".activity.setting.SettingActivity" />
-        <activity android:name=".activity.LEDSettingActivity" />
+        <activity android:name=".activity.setting.LEDSettingActivity" />
 
         <!--data related-->
         <activity android:name="com.feipulai.common.dbutils.FileSelectActivity" />
@@ -63,11 +63,15 @@
         <activity android:name=".activity.jump_rope.test.JumpRopeTestActivity" />
         <activity android:name=".activity.jump_rope.base.result.RadioResultActivity" />
         <!--sit up-->
-        <activity android:name=".activity.situp.SitUpPairActivity" />
-        <activity android:name=".activity.situp.SitUpCheckActivity" />
-        <activity android:name=".activity.situp.SitUpSettingActivity" />
-        <activity android:name=".activity.situp.SitUpTimingActivity" />
-        <activity android:name=".activity.situp.SitUpResultActivity" />
+        <!--<activity android:name=".activity.situp.SitUpPairActivity" />-->
+        <!--<activity android:name=".activity.situp.SitUpCheckActivity" />-->
+        <!--<activity android:name=".activity.situp.SitUpSettingActivity" />-->
+        <!--<activity android:name=".activity.situp.SitUpTimingActivity" />-->
+        <!--<activity android:name=".activity.situp.SitUpResultActivity" />-->
+        <activity android:name=".activity.situp.setting.SitUpSettingActivity" />
+        <activity android:name=".activity.situp.test.SitUpTestActivity" />
+        <activity android:name=".activity.situp.check.SitUpCheckActivity" />
+        <activity android:name=".activity.situp.pair.SitUpPairActivity" />
         <!--height weight-->
         <activity android:name=".activity.height_weight.HeightWeightCheckActivity" />
         <!--sit reach-->

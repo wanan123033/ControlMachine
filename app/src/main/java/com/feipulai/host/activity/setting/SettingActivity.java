@@ -15,6 +15,7 @@ import android.widget.Spinner;
 import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseTitleActivity;
 import com.feipulai.host.config.TestConfigs;
@@ -92,12 +93,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("设置").addLeftText("返回", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        return builder.setTitle(R.string.setting_title);
     }
 
     @OnItemSelected({R.id.sp_host_id, R.id.sp_check_tool})
@@ -155,7 +151,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
             url = "http://" + url;
         }
         if (!NetWorkUtils.isValidUrl(url)) {
-            toastSpeak("非法的服务器地址");
+            toastSpeak(MyApplication.getInstance().getString(R.string.illegal_server_address));
             return;
         }
         HttpManager.getInstance().changeBaseUrl(url);

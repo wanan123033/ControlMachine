@@ -1,7 +1,132 @@
 <resources>
     <string name="app_name">智能主机(体测版)</string>
+    <string name="fairplay">菲普莱体育</string>
+    <string name="go_back">返回</string>
+    <string name="confirm">确定</string>
+    <string name="cancel">取消</string>
+    <string name="stop_use">暂停使用</string>
+    <string name="resume_use">恢复使用</string>
+    <string name="begin">开始</string>
+    <string name="finish">结束</string>
+    <!--项目名-->
+    <string name="height_weight">身高体重</string>
     <string name="jump_rope">跳绳</string>
-    <string name="broad_Jump">跳远</string>
+    <string name="stand_jump">立定跳远</string>
+    <string name="vital_capacity">肺活量</string>
+    <string name="sit_reach">坐位体前屈</string>
+    <string name="medicine_ball">红外实心球</string>
+    <string name="sit_up">仰卧起坐</string>
+    <string name="run_time">红外计时</string>
+    <!--标题-->
+    <string name="machine_select_title">设备切换</string>
+    <string name="led_setting_title">显示屏设置</string>
+    <string name="data_display_title">成绩详情</string>
+    <string name="data_message_title">数据管理</string>
+    <string name="data_retrieve_title">数据查询</string>
+    <string name="sub_item_select_title">项目选择</string>
+    <string name="radio_result_title">成绩确认</string>
+    <string name="item_setting_title">项目设置</string>
+    <string name="jump_rope_pair_title">手柄匹配</string>
+    <string name="sit_up_pair_title">设备匹配</string>
+    <string name="setting_title">设置</string>
+    <!--提示-->
+    <string name="exit_hint">再按一次后退键退出程序</string>
+    <string name="please_select_item">请先选择测试项目</string>
+    <string name="please_select_test_item">请选择当前考试对应项目</string>
+    <string name="student_nonentity">该考生不存在</string>
+    <string name="no_project">无此项目</string>
+    <string name="read_iccard_failed">读卡失败</string>
+    <string name="qr_length_error">条码与当前设置位数不一致,请重扫条码</string>
+    <string name="device_noconnect">设备未连接</string>
+    <string name="device_connect_succeed">设备连接成功</string>
+    <string name="device_check_hint">终端自检中...</string>
+    <string name="please_select_backup_file">请选择备份文件</string>
+    <string name="please_recover_db_file">请选择需要恢复的数据库文件</string>
+    <string name="item_result_already_upload">当前项目成绩已全部上传</string>
+    <string name="recover_db_succeed">数据库恢复成功</string>
+    <string name="recover_db_error">数据库恢复失败,请检查文件格式</string>
+    <string name="read_exl_hint">正在读取exel文件...</string>
+    <string name="data_exit_hint">正在处理数据,请勿退出!</string>
+    <string name="clear_data_succeed">数据清空完成</string>
+    <string name="file_name_legal_hint">文件创建失败,请确保输入文件名合法(中文、字母、数字和下划线),且不存在已有文件</string>
+    <string name="backup_db_succeed">数据库备份成功</string>
+    <string name="backup_db_error">数据库备份失败</string>
+    <string name="file_create_failed">文件创建失败,请确保路径目录不存在已有文件</string>
+    <string name="download_title">名单下载</string>
+    <string name="export_exl_hint">正在导出xel文件...</string>
+    <string name="no_more_data">没有更多数据了</string>
+    <string name="please_no_upload_stu">请选择未上传成绩考生</string>
+    <string name="please_edit_search">请输入搜索内容</string>
+    <string name="height_weight_speak">身高%1$s体重%2$s</string>
+    <string name="data_search_hint">请输入正常学生考号或身份证</string>
+    <string name="jump_rope_bind_hint">该考生已绑定手柄</string>
+    <string name="jump_rope_test_hint_1">存在考生设备为非空闲状态</string>
+    <string name="jump_rope_test_hint_2">不存在已配对好的考生和设备</string>
+    <string name="upload_result_hint">自动上传成绩需先下载更新项目信息</string>
+    <string name="print_error_hint_1">打印机缺纸</string>
+    <string name="print_error_hint_2">打印机过热</string>
+    <string name="jump_setting_device_num_hint">无效的最大设备数</string>
+    <string name="jump_setting_time_hint_1">测试时长不能小于10秒</string>
+    <string name="jump_setting_time_hint_2">测试时长不能大于1000秒</string>
+    <string name="function_development_hint">功能开发中,敬请期待</string>
+    <string name="testing_back_stop">测试中,返回键被禁用</string>
+    <string name="restart_confirm_hint">重新开始将取消当前测试,确定重新开始测试吗？</string>
+    <string name="device_disconnect_save_result_hint">存在考生设备状态为断开连接,确定保存成绩？</string>
+    <string name="confirm_exit_test_hint">确定退出当前测试吗？</string>
+    <string name="replace_success">更换成功</string>
+    <string name="group_name">%1$s组</string>
+    <string name="no_device_add_test_hint">当前无设备可添加学生测试</string>
+    <string name="speak_foul">%1$s犯规</string>
+    <string name="testing_no_use">测试中不可使用</string>
+    <string name="illegal_server_address">非法的服务器地址</string>
+    <string name="please_restart_device">请重启待连接设备</string>
+    <string name="no_reply_received_hint">未收到子机回复,设置失败,请重试</string>
+    <string name="setting_succeed">设置成功</string>
+    <string name="setting_failed">设置失败</string>
+    <string name="find_fault_point">发现故障点:%1$s</string>
+    <string name="stand_jump_range">范围：51cm-%1$dcm</string>
+    <string name="edit_range_hint">请输入设置范围</string>
+    <string name="edit_correct_range_hint">请输入正确的设置范围</string>
+    <string name="again_test_hint">设备错误，考生请重测</string>
+    <string name="freedom_operation_hint">当前使用自由模式，无法使用该功能</string>
+    <!--dialog-->
+    <string name="add_file_title">文件名</string>
+    <string name="add_file_message">输入合法保存文件名</string>
+    <string name="dialog_get_result_title">获取最终成绩中</string>
+    <string name="dialog_get_result_message">获取设备成绩中...</string>
+    <string name="dialog_chang_bad_title">请按下手柄按钮</string>
+    <string name="dialog_skip_stu_title">是否跳过%1$s考生测试</string>
+    <string name="dialog_set_setting_range_title">设置范围中...</string>
+    <string name="waiting_connect">等待连接</string>
+    <string name="dialog_item_select_title">请选择测试项目(该项会被应用至当前机器所有已测成绩)</string>
+    <!--成绩状态-->
+    <string name="no_test">未测试</string>
+    <string name="foul">犯规</string>
+    <string name="unmeasured">未测</string>
+    <string name="measured">已测</string>
+    <string name="normal_test">正常考</string>
+    <string name="make_test">补考</string>
+    <!--姓别-->
+    <string name="male">男</string>
+    <string name="female">女</string>
+    <!--txt-->
+    <string name="final_score">最终成绩:</string>
+    <string name="please_edit_file_hint">最终成绩:</string>
+    <string name="please_edit_file_txt">%1$s%2$d号机%3$s</string>
+    <string name="sdcard_capacity">总容量%1$s剩余%2$s</string>
+
+    <string name="versions_name">智能主机(体测版V%1$s)</string>
+    <string name="versions_name_2">智能主机(自由模式V%1$s)</string>
+    <string name="host_name">%1$s%2$d号机</string>
+    <string name="print_result_stu_code">考  号:%1$s</string>
+    <string name="print_result_stu_name">姓  名:%1$s</string>
+    <string name="print_result_stu_result">成  绩:%1$s</string>
+    <string name="print_result_time">打印时间:%1$s</string>
+    <string name="stop_test">暂停测试</string>
+    <string name="start_test">开始测试</string>
+
+
+    <!--``````````````````````````````````````````-->
     <string name="host_style">体测版本</string>
     <string name="jump_rope_setting">1.跳绳设置</string>
     <string name="hand_setting">2.手柄配对</string>
@@ -19,8 +144,8 @@
 
     <string name="service_bind_fail">aidl service bind failed</string>
     <string name="service_bind_success">aidl service bind success</string>
-    <string name="stand_jump">立定跳远</string>
-    <string name="start_test">开始测试</string>
+
+
     <string name="system_setting">系统设置</string>
     <string name="data_manage">数据管理</string>
     <string name="title_activity_system_setting">系统设置</string>
@@ -44,23 +169,6 @@
     <string name="title_activity_data_display">DataDisplayActivity</string>
     <string name="title_activity_sargent_jump">SargentJumpActivity</string>
 
-    <array name="sargent_jump_test_mode">
-        <item>原地</item>
-        <item>助跑</item>
-    </array>
-
-    <array name="array_time_out_deal">
-        <item>停止</item>
-        <item>不计数</item>
-    </array>
-
-    <string-array name="base_line_set">
-        <item>55</item>
-        <item>65</item>
-        <item>75</item>
-    </string-array>
-
-
     <string name="student_Name">姓名:%1$s</string>
     <string name="student_Gender">性别:%1$s</string>
     <string name="student_Code">学号:%1$s</string>
@@ -72,4 +180,12 @@
 
     <string name="addStu_dialog_title">新增提示</string>
     <string name="addStu_dialog_content">无考生信息，是否新增</string>
+
+    <string name="clear_device_hint">是否清除当前设备?</string>
+    <string name="clear_all_device_hint">是否清除所有设备?</string>
+    <string name="confirm_result">确认成绩</string>
+    <string name="warning">警告</string>
+    <string name="low_battery_goto_hint">存在低电量设备,是否进入测试?</string>
+
+
 </resources>

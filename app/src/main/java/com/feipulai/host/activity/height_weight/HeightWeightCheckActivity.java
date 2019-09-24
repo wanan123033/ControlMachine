@@ -5,7 +5,6 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -89,17 +88,13 @@ public class HeightWeightCheckActivity
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
         String title;
         if (TextUtils.isEmpty(SettingHelper.getSystemSetting().getTestName())) {
-            title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机";
+            title = String.format(getString(R.string.host_name), TestConfigs.machineNameMap.get(machineCode), SettingHelper.getSystemSetting().getHostId());
         } else {
-            title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机-" + SettingHelper.getSystemSetting().getTestName();
+            title = String.format(getString(R.string.host_name), TestConfigs.machineNameMap.get(machineCode), SettingHelper.getSystemSetting().getHostId())
+                    + "-" + SettingHelper.getSystemSetting().getTestName();
         }
 
-        return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        return builder.setTitle(title);
     }
 
     private void init() {
@@ -130,7 +125,7 @@ public class HeightWeightCheckActivity
 //            displayWeight = ResultDisplayUtils.getStrResultForDisplay(mLastWeightResult.getResult(),HWConfigs.WEIGHT_ITEM);
 //        }
 
-        txtStuSex.setText(mStudent.getSex() == Student.MALE ? "男" : "女");
+        txtStuSex.setText(mStudent.getSex() == Student.MALE ? R.string.male : R.string.female);
         txtStuCode.setText(mStudent.getStudentCode());
         txtStuName.setText(mStudent.getStudentName());
 
@@ -164,7 +159,8 @@ public class HeightWeightCheckActivity
                 txtWeightResult.setText(displayWeight);
                 txtTestResult.setText(displayHeight + "\n" + displayWeight);
                 if (SettingHelper.getSystemSetting().isAutoBroadcast()) {
-                    TtsManager.getInstance().speak("身高" + displayHeight + "体重" + displayWeight);
+                    TtsManager.getInstance().speak(
+                            String.format(getString(R.string.height_weight_speak), displayHeight, displayWeight));
                 }
                 mHandler.sendEmptyMessageDelayed(CLEAR_DATA, 4000);
                 break;

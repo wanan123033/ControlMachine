@@ -42,7 +42,7 @@ public class RoundResult implements Serializable {
     @NotNull
     private int isLastResult;//是否为最好成绩 0-不是 1-是     身高体重最后成绩即为最好成绩
     @NotNull
-    private String testTime;//测试时间  格式:yyyy-MM-dd HH:mm:ss
+    private String testTime;//测试时间  格式:yyyy-MM-dd HH:mm:ss 与考试版不相同
     private String printTime;//打印时间 格式:yyyy-MM-dd HH:mm:ss
     @NotNull
     private int updateState;//上传状态 0未上传 1上传

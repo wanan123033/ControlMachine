@@ -1,11 +1,11 @@
 package com.feipulai.host.activity.base;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.FragmentActivity;
 import android.view.WindowManager;
 
 import com.feipulai.common.tts.TtsManager;
@@ -26,7 +26,7 @@ import java.lang.ref.WeakReference;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 @SuppressLint("Registered")
-public class BaseActivity extends Activity {
+public class BaseActivity extends FragmentActivity {
 
     private String mActivityName;
     public int machineCode;

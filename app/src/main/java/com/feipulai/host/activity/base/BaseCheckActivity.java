@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 
-import com.feipulai.common.tts.TtsManager;
 import com.feipulai.device.CheckDeviceOpener;
 import com.feipulai.device.ic.ICCardDealer;
 import com.feipulai.device.ic.NFCDevice;
@@ -99,8 +98,9 @@ public abstract class BaseCheckActivity
         StuInfo stuInfo = icCardDealer.IC_ReadStuInfo();
 
         if (stuInfo == null || TextUtils.isEmpty(stuInfo.getStuCode())) {
-            TtsManager.getInstance().speak("读卡(ka3)失败");
-            InteractUtils.toast(this, "读卡失败");
+//            TtsManager.getInstance().speak("读卡(ka3)失败");
+//            InteractUtils.toast(this, "读卡失败");
+            toastSpeak(getString(R.string.read_iccard_failed));
             return;
         }
 
@@ -138,7 +138,7 @@ public abstract class BaseCheckActivity
 
     @Override
     public void onQRWrongLength(int length, int expectLength) {
-        InteractUtils.toast(this, "条码与当前设置位数不一致,请重扫条码");
+        InteractUtils.toast(this, getString(R.string.qr_length_error));
     }
 
     protected void setAddable(boolean needAdd) {
@@ -164,7 +164,7 @@ public abstract class BaseCheckActivity
 
         if (student == null) {
             if (!needAdd) {
-                toastSpeak("该考生不存在");
+                toastSpeak(getString(R.string.student_nonentity));
             }
             return needAdd;
         }
@@ -175,7 +175,7 @@ public abstract class BaseCheckActivity
                 registerStuItem(student);
                 checkInUIThread(student);
             } else {
-                toastSpeak("无此项目");
+                toastSpeak(getString(R.string.no_project));
             }
             return false;
         } else {
@@ -219,13 +219,13 @@ public abstract class BaseCheckActivity
 
     public void checkInput(Student student) {
         if (student == null) {
-            toastSpeak("该考生不存在");
+            toastSpeak(getString(R.string.student_nonentity));
         } else {
             StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
             if (studentItem != null) {
                 onCheckIn(student);
             } else {
-                toastSpeak("无此项目");
+                toastSpeak(getString(R.string.no_project));
             }
         }
     }

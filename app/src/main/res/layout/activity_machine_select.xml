@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@mipmap/icon_white_bg">
+    android:layout_height="match_parent">
 
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_item"
-        android:layout_width="691dp"
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="13dp"
-        android:background="@drawable/bg_white_radius_10"
-        android:overScrollMode="never"
-        android:paddingBottom="37dp"
-        android:paddingLeft="73dp"
-        android:paddingRight="73dp" />
+        android:layout_alignParentBottom="true"
+        tab:tabGravity="fill"
+        tab:tabMaxWidth="0dp"
+        tab:tabMode="fixed"
+        tab:tabSelectedTextColor="@color/colorPrimary"
+        tab:tabTextAppearance="@style/TabTextSize"
+        tab:tabTextColor="@color/colorAccent" />
 
-
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/tab_layout" />
 </RelativeLayout>
+
+

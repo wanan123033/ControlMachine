@@ -86,12 +86,7 @@ public class StandJumpSettingActivity extends BaseTitleActivity {
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("项目设置").addLeftText("返回", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        return builder.setTitle(R.string.item_setting_title);
     }
 
     /**
@@ -106,7 +101,8 @@ public class StandJumpSettingActivity extends BaseTitleActivity {
         } else {
             editDeviceScope.setText((standSetting.getTestPoints() * 100 + 50 - 8) + "");
         }
-        txtDeviceScope.setText("范围：51cm-" + (standSetting.getTestPoints() * 100 + 50 - 8) + "cm");
+        txtDeviceScope.setText(
+                String.format(getString(R.string.stand_jump_range), (standSetting.getTestPoints() * 100 + 50 - 8)));
         scope = standSetting.getPointsScope();
         testPoints = standSetting.getTestPoints();
     }
@@ -117,7 +113,8 @@ public class StandJumpSettingActivity extends BaseTitleActivity {
 
             case R.id.sp_stamdjump_points:
 
-                txtDeviceScope.setText("范围：51cm-" + ((position + 1) * 100 + 50 - 8) + "cm");
+                txtDeviceScope.setText(
+                        String.format(getString(R.string.stand_jump_range), ((position + 1) * 100 + 50 - 8)));
                 if (position + 1 != standSetting.getTestPoints()) {
                     editDeviceScope.setText(((position + 1) * 100 + 50 - 8) + "");
                 }
@@ -135,7 +132,6 @@ public class StandJumpSettingActivity extends BaseTitleActivity {
     }
 
 
-
     SerialDeviceManager.RS232ResiltListener listener = new SerialDeviceManager.RS232ResiltListener() {
         @Override
         public void onRS232Result(Message msg) {
@@ -148,9 +144,8 @@ public class StandJumpSettingActivity extends BaseTitleActivity {
         switch (view.getId()) {
             case R.id.tv_device_check:
                 isDisconnect = true;
-//                mProgressDialog = ProgressDialog.show(this, "", "终端自检中...", true);
                 alertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
-                alertDialog.setTitleText("终端自检中...");
+                alertDialog.setTitleText(getString(R.string.device_check_hint));
                 alertDialog.setCancelable(false);
                 alertDialog.show();
 
@@ -162,18 +157,18 @@ public class StandJumpSettingActivity extends BaseTitleActivity {
             case R.id.txt_scope_confirm:
 
                 if (TextUtils.isEmpty(editDeviceScope.getText().toString())) {
-                    ToastUtils.showShort("请输入设置范围");
+                    ToastUtils.showShort(R.string.edit_range_hint);
                     return;
                 }
                 scope = Integer.valueOf(editDeviceScope.getText().toString());
                 if (scope < 51 || scope > (testPoints * 100 + 50 - 8)) {
-                    ToastUtils.showShort("请输入正确的设置范围");
+                    ToastUtils.showShort(R.string.edit_correct_range_hint);
                     return;
                 }
                 standSetting.setTestPoints(testPoints);
 //                mProgressDialog = ProgressDialog.show(this, "", "设置范围中...", true);
                 alertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
-                alertDialog.setTitleText("设置范围中...");
+                alertDialog.setTitleText(getString(R.string.dialog_set_setting_range_title));
                 alertDialog.setCancelable(false);
                 alertDialog.show();
                 isSetPoints = false;
@@ -206,8 +201,8 @@ public class StandJumpSettingActivity extends BaseTitleActivity {
                 switch (msg.what) {
                     case MSG_DISCONNECT://连接失败
                         if (activity.isDisconnect) {
-                            activity.toastSpeak("设备未连接");
-                            activity.tvCheckData.setText("设备未连接");
+                            activity.toastSpeak(activity.getString(R.string.device_noconnect));
+                            activity.tvCheckData.setText(R.string.device_noconnect);
                             //设置当前设置为不可用断开状态
                             if (activity.alertDialog.isShowing()) {
                                 activity.alertDialog.dismiss();
@@ -220,7 +215,7 @@ public class StandJumpSettingActivity extends BaseTitleActivity {
                         if (result.getTerminalCondition() == NORMAL) {
                             activity.isDisconnect = false;
                             isDialogShow = false;
-                            activity.toastSpeak("设备连接成功");
+                            activity.toastSpeak(activity.getString(R.string.device_connect_succeed));
                         } else {
                             activity.isDisconnect = false;
                             isDialogShow = false;
@@ -230,25 +225,25 @@ public class StandJumpSettingActivity extends BaseTitleActivity {
                                     ledPostion += (" " + (brokenLED + 50));
                                 }
                             }
-                            activity.tvCheckData.setText("发现故障点:" + ledPostion);
+                            activity.tvCheckData.setText(String.format(activity.getString(R.string.find_fault_point), ledPostion));
                         }
                         break;
                     case SerialConfigs.JUMP_SELF_CHECK_RESPONSE_Simple://立地跳远自检成功回调
                         Log.i("james", "JUMP_SELF_CHECK_RESPONSE_Simple");
                         activity.isDisconnect = false;
                         isDialogShow = false;
-                        activity.toastSpeak("设备连接成功");
+                        activity.toastSpeak(activity.getString(R.string.device_connect_succeed));
                         break;
                     case SerialConfigs.JUMP_SET_POINTS:
                         isDialogShow = false;
                         activity.isSetPoints = true;
-                        ToastUtils.showShort("设置成功");
+                        ToastUtils.showShort(R.string.setting_succeed);
                         activity.standSetting.setPointsScope(activity.scope);
                         break;
                     case JUMP_SET_POINTS_FAILURE:
                         isDialogShow = false;
                         if (!activity.isSetPoints) {
-                            ToastUtils.showShort("设置失败");
+                            ToastUtils.showShort(R.string.setting_failed);
                             activity.standSetting.setTestPoints(3);
                             activity.standSetting.setPointsScope(0);
                             activity.initPoints();

@@ -1,7 +1,5 @@
 package com.feipulai.host.activity.jump_rope.check;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
@@ -21,8 +19,9 @@ import com.feipulai.common.view.DividerItemDecoration;
 import com.feipulai.common.view.WaitDialog;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.SerialConfigs;
+import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
-import com.feipulai.host.activity.LEDSettingActivity;
+import com.feipulai.host.activity.setting.LEDSettingActivity;
 import com.feipulai.host.activity.base.BaseActivity;
 import com.feipulai.host.activity.base.BaseCheckActivity;
 import com.feipulai.host.activity.jump_rope.adapter.CheckPairAdapter;
@@ -44,6 +43,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class JumpRopeCheckActivity
         extends BaseCheckActivity
@@ -52,8 +52,8 @@ public class JumpRopeCheckActivity
 
     private static final int UPDATE_STATES = 0x1;
     private static final int UPDATE_SPECIFIC_ITEM = 0x2;
-    private static final String RESUME_USE = "恢复使用";
-    private static final String STOP_USE = "暂停使用";
+    private static final String STOP_USE = MyApplication.getInstance().getString(R.string.stop_use);
+    private static final String RESUME_USE = MyApplication.getInstance().getString(R.string.resume_use);
 
     @BindView(R.id.iv_portrait)
     ImageView mIvPortrait;
@@ -117,17 +117,13 @@ public class JumpRopeCheckActivity
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
         String title;
         if (TextUtils.isEmpty(SettingHelper.getSystemSetting().getTestName())) {
-            title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机";
+            title = String.format(getString(R.string.host_name), TestConfigs.machineNameMap.get(machineCode), SettingHelper.getSystemSetting().getHostId());
         } else {
-            title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机-" + SettingHelper.getSystemSetting().getTestName();
+            title = String.format(getString(R.string.host_name), TestConfigs.machineNameMap.get(machineCode), SettingHelper.getSystemSetting().getHostId())
+                    + "-" + SettingHelper.getSystemSetting().getTestName();
         }
 
-        return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        }).addRightText("项目设置", new View.OnClickListener() {
+        return builder.setTitle(title).addRightText(R.string.item_setting_title, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(JumpRopeCheckActivity.this, JumpRopeSettingActivity.class));
@@ -156,7 +152,7 @@ public class JumpRopeCheckActivity
     @Override
     public void initView(JumpRopeSetting setting, List pairs) {
         etSelect.setData(lvResults, this);
-        mTvGroup.setText(SerialConfigs.GROUP_NAME[setting.getDeviceGroup()] + "组");
+        mTvGroup.setText(String.format(getString(R.string.group_name), SerialConfigs.GROUP_NAME[setting.getDeviceGroup()]));
 
         mRvPairs.setLayoutManager(new GridLayoutManager(this, 5));
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this);
@@ -181,7 +177,7 @@ public class JumpRopeCheckActivity
 
     @Override
     public void showChangeDeviceGroup(int deviceGroup) {
-        mTvGroup.setText(SerialConfigs.GROUP_NAME[deviceGroup] + "组");
+        mTvGroup.setText(String.format(getString(R.string.group_name), SerialConfigs.GROUP_NAME[deviceGroup]));
         updateAllItems();
     }
 
@@ -229,13 +225,32 @@ public class JumpRopeCheckActivity
                 presenter.deleteAll();
                 break;
             case R.id.btn_kill_devices:
-                presenter.killAllDevices();
+//                presenter.killAllDevices();
+                showkillAllWarning();
                 break;
 
 //            case R.id.tv_project_setting:
 //
 //                break;
         }
+    }
+
+    public void showkillAllWarning() {
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.warning))
+                .setContentText(getString(R.string.clear_all_device_hint))
+                .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                ((JumpRopeCheckContract.Presenter) presenter).killAllDevices();
+            }
+        }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+
+            }
+        }).show();
     }
 
     @Override
@@ -298,16 +313,20 @@ public class JumpRopeCheckActivity
 
     @Override
     public void showLowBatteryStartDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("警告")
-                .setMessage("存在低电量手柄,是否进入测试?")
-                .setPositiveButton("继续开始", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        startTest();
-                    }
-                }).setNegativeButton("取消", null)
-                .show();
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.warning))
+                .setContentText(getString(R.string.low_battery_goto_hint))
+                .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                startTest();
+            }
+        }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+            }
+        }).show();
     }
 
     @Override
@@ -317,7 +336,7 @@ public class JumpRopeCheckActivity
         changBadDialog.setCancelable(false);
         changBadDialog.show();
         // 必须在dialog显示出来后再调用
-        changBadDialog.setTitle("请按下手柄按钮");
+        changBadDialog.setTitle(getString(R.string.dialog_chang_bad_title));
         changBadDialog.btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -335,7 +354,7 @@ public class JumpRopeCheckActivity
     @Override
     public void changeBadSuccess() {
         changBadDialog.dismiss();
-        toastSpeak("更换成功");
+        toastSpeak(getString(R.string.replace_success));
     }
 
     @Override

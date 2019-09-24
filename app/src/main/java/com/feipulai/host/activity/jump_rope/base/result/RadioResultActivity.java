@@ -65,7 +65,7 @@ public class RadioResultActivity
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("成绩确认");
+        return builder.setTitle(R.string.radio_result_title);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class RadioResultActivity
         if (SettingHelper.getSystemSetting().isRtUpload()) {
             itemSubscriber = new ItemSubscriber();
             if (TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
-                ToastUtils.showShort("自动上传成绩需先下载更新项目信息");
+                ToastUtils.showShort(R.string.upload_result_hint);
             } else {
                 List<RoundResult> results = new ArrayList<>(TestCache.getInstance().getSaveResults().values());
                 if (results.size() != 0) {
@@ -125,9 +125,9 @@ public class RadioResultActivity
         if (msg.what == SerialConfigs.PRINTER_STATE) {
             PrinterState state = (PrinterState) msg.obj;
             if (state.isPaperLack()) {
-                toastSpeak("打印机缺纸");
+                toastSpeak(getString(R.string.print_error_hint_1));
             } else if (state.isOverHeat()) {
-                toastSpeak("打印机过热");
+                toastSpeak(getString(R.string.print_error_hint_2));
             } else {
 
             }

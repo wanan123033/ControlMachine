@@ -11,7 +11,7 @@ public class SitUpSetting {
 	private int deviceSum = 5;
 	private int testTime = 30;// 一轮测试的时间,单位为秒
 	private boolean autoPair = true;
-
+	private int angle = 65;
 	public int getDeviceSum(){
 		return deviceSum;
 	}
@@ -34,6 +34,14 @@ public class SitUpSetting {
 
 	public void setAutoPair(boolean autoPair){
 		this.autoPair = autoPair;
+	}
+
+	public int getAngle() {
+		return angle;
+	}
+
+	public void setAngle(int angle) {
+		this.angle = angle;
 	}
 
 	@Override

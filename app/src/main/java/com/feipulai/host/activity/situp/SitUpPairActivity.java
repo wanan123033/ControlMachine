@@ -35,7 +35,7 @@ import java.util.Vector;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
+@Deprecated
 public class SitUpPairActivity extends BaseActivity implements BaseQuickAdapter.OnItemClickListener, RadioManager.OnRadioArrivedListener{
 	
 	private static final int NO_PAIR_RESPONSE_ARRIVED = 35;

@@ -3,6 +3,7 @@ package com.feipulai.host.activity.vccheck;
 import android.app.Activity;
 import android.os.Bundle;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.config.TestConfigs;
@@ -10,8 +11,6 @@ import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.netUtils.netapi.ItemSubscriber;
-
-import java.util.Calendar;
 
 public class UploadActivity extends Activity {
 
@@ -38,7 +37,7 @@ public class UploadActivity extends Activity {
         roundResult.setItemCode(itemCode);
         roundResult.setResult(baseStuPair.getResult());
         roundResult.setResultState(baseStuPair.getResultState());
-        roundResult.setTestTime(TestConfigs.df.format(Calendar.getInstance().getTime()));
+        roundResult.setTestTime(DateUtil.getCurrentTime("yyyy-MM-dd HH:mm:ss"));
         roundResult.setRoundNo(1);
 
         RoundResult bestResult = DBManager.getInstance().queryBestScore(baseStuPair.getStudent().getStudentCode());

@@ -2,6 +2,8 @@ package com.feipulai.host.activity.jump_rope.base.setting;
 
 import android.content.Context;
 
+import com.feipulai.host.R;
+
 public abstract class AbstractRadioSettingPresenter implements RadioSettingContract.Presenter {
 
     private Context context;
@@ -24,24 +26,24 @@ public abstract class AbstractRadioSettingPresenter implements RadioSettingContr
         if (deviceSum > 0 && deviceSum <= getMaxDeviceSum()) {
             setDeviceSum(deviceSum);
         } else {
-            view.showToast("无效的最大设备数");
+            view.showToast(context.getString(R.string.jump_setting_device_num_hint));
         }
     }
 
     @Override
     public void updateTestTime(int testTime) {
-        if (testTime < 10){
-            view.showToast("测试时长不能小于10秒");
-        }else if(testTime > 1000){
-            view.showToast("测试时长不能大于1000秒");
-        }else {
+        if (testTime < 10) {
+            view.showToast(context.getString(R.string.jump_setting_time_hint_1));
+        } else if (testTime > 1000) {
+            view.showToast(context.getString(R.string.jump_setting_time_hint_2));
+        } else {
             setTestTime(testTime);
         }
     }
 
     @Override
-    public void showJudgements(){
-        view.showToast("功能开发中,敬请期待");
+    public void showJudgements() {
+        view.showToast(context.getString(R.string.function_development_hint));
     }
 
     protected abstract void setDeviceSum(int deviceSum);

@@ -9,6 +9,7 @@ import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.command.ConvertCommand;
+import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BaseStuPair;
 
@@ -206,7 +207,7 @@ public class SitReachTestActivity extends com.feipulai.host.activity.person.Base
 
         @Override
         public void ready(int deviveId) {
-            toastSpeak("开始测试");
+            toastSpeak(getString(R.string.start_test));
         }
     });
 

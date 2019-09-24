@@ -8,11 +8,11 @@ import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.LogUtils;
 import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.utils.ToastUtils;
-import com.feipulai.device.serial.RadioManager;
 import com.feipulai.host.BuildConfig;
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseActivity;
+import com.feipulai.host.activity.main.MainActivity;
 import com.feipulai.host.tts.TtsConfig;
 
 /**

@@ -10,11 +10,9 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.height_weight.HWConfigs;
-import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.utils.ResultDisplayUtils;
 
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -52,7 +50,7 @@ public class ResultDetailAdapter extends BaseQuickAdapter<RoundResult, ResultDet
         String displayStr;
         if (!isHW) {
             viewHolder.mTvTimes.setText(roundResult.getRoundNo() + "");
-            viewHolder.mTvTestTime.setText(TestConfigs.df.format(new Date(Long.valueOf(roundResult.getTestTime()))));
+            viewHolder.mTvTestTime.setText(roundResult.getTestTime());
             displayStr = ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult());
             viewHolder.mTvResult.setText(setResult(roundResult.getResultState(), displayStr));
         } else {
@@ -63,7 +61,7 @@ public class ResultDetailAdapter extends BaseQuickAdapter<RoundResult, ResultDet
                     + ""
                     + ResultDisplayUtils.getStrResultForDisplay(weightResult.getResult(), HWConfigs.WEIGHT_ITEM);
             viewHolder.mTvTimes.setText(roundResult.getRoundNo() + "");
-            viewHolder.mTvTestTime.setText(TestConfigs.df.format(new Date(Long.valueOf(roundResult.getTestTime()))));
+            viewHolder.mTvTestTime.setText(roundResult.getTestTime());
             viewHolder.mTvResult.setText(setResult(heightResult.getResultState(), displayStr));
         }
         if (viewHolder.getLayoutPosition() == 0) {
@@ -90,11 +88,11 @@ public class ResultDetailAdapter extends BaseQuickAdapter<RoundResult, ResultDet
 
         switch (state) {
             case RoundResult.RESULT_STATE_NORMAL:
-                return "正常考";
+                return mContext.getString(R.string.normal_test);
             case RoundResult.RESULT_STATE_FOUL:
-                return "补考";
+                return mContext.getString(R.string.make_test);
             default:
-                return "正常考";
+                return mContext.getString(R.string.normal_test);
         }
     }
 

@@ -15,6 +15,7 @@ import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.data.DataRetrieveBean;
 import com.feipulai.host.config.TestConfigs;
+import com.feipulai.host.entity.Student;
 import com.feipulai.host.utils.ResultDisplayUtils;
 
 import java.util.List;
@@ -30,87 +31,87 @@ import butterknife.ButterKnife;
 public class DataRetrieveAdapter extends BaseQuickAdapter<DataRetrieveBean, DataRetrieveAdapter.ViewHolder> {
 
 
-	public DataRetrieveAdapter(@Nullable List<DataRetrieveBean> data) {
-		super(R.layout.item_data_retieve, data);
-	}
+    public DataRetrieveAdapter(@Nullable List<DataRetrieveBean> data) {
+        super(R.layout.item_data_retieve, data);
+    }
 
-	@Override
-	protected void convert(final ViewHolder viewHolder, DataRetrieveBean retieveData) {
-		viewHolder.mTvStuCode.setText(retieveData.getStudentCode().trim());
-		viewHolder.mTvStuName.setText(retieveData.getStudentName());
-		viewHolder.mTvSex.setText(retieveData.getSex() == 0 ? "男" : "女");
-		viewHolder.mTvTestState.setText(retieveData.getTestState() == 0 ? "未测" : "已测");
-		if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_HW) {
-			viewHolder.mTvScore.setText(TextUtils.equals(retieveData.getResult(), "X") ? retieveData.getResult() : Integer.valueOf(retieveData.getResult()) == -1000 ? "" : retieveData.getResult());
-		} else {
-			viewHolder.mTvScore.setText(TextUtils.equals(retieveData.getResult(), "X") ? retieveData.getResult() : Integer.valueOf(retieveData.getResult()) == -1000 ? "" :
-					ResultDisplayUtils.getStrResultForDisplay(Integer.valueOf(retieveData.getResult())));
-		}
+    @Override
+    protected void convert(final ViewHolder viewHolder, DataRetrieveBean retieveData) {
+        viewHolder.mTvStuCode.setText(retieveData.getStudentCode().trim());
+        viewHolder.mTvStuName.setText(retieveData.getStudentName());
+        viewHolder.mTvSex.setText(retieveData.getSex() == Student.MALE ? R.string.male : R.string.female);
+        viewHolder.mTvTestState.setText(retieveData.getTestState() == 0 ? R.string.unmeasured : R.string.measured);
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_HW) {
+            viewHolder.mTvScore.setText(TextUtils.equals(retieveData.getResult(), "X") ? retieveData.getResult() : TextUtils.equals(retieveData.getResult(), "-1000") ? "" : retieveData.getResult());
+        } else {
+            viewHolder.mTvScore.setText(TextUtils.equals(retieveData.getResult(), "X") ? retieveData.getResult() : TextUtils.equals(retieveData.getResult(), "-1000") ? "" :
+                    ResultDisplayUtils.getStrResultForDisplay(Integer.valueOf(retieveData.getResult())));
+        }
 
-		//将位置设置为CheckBox的tag
-		viewHolder.mCbSelect.setTag(viewHolder.getLayoutPosition());
-		viewHolder.mCbSelect.setChecked(retieveData.isChecked());
+        //将位置设置为CheckBox的tag
+        viewHolder.mCbSelect.setTag(viewHolder.getLayoutPosition());
+        viewHolder.mCbSelect.setChecked(retieveData.isChecked());
 //        viewHolder.mCbSelect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 //            @Override
 //            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 //
 //            }
 //        });
-		viewHolder.setOnCheckedChangeListener(R.id.cb_select, new CompoundButton.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
-				new Handler().post(new Runnable() {
-					@Override
-					public void run() {
-						if (viewHolder.getLayoutPosition()!=-1){
-							getData().get(viewHolder.getLayoutPosition()).setChecked(isChecked);
-							notifyItemChanged(viewHolder.getLayoutPosition());
-						}
+        viewHolder.setOnCheckedChangeListener(R.id.cb_select, new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (viewHolder.getLayoutPosition() != -1) {
+                            getData().get(viewHolder.getLayoutPosition()).setChecked(isChecked);
+                            notifyItemChanged(viewHolder.getLayoutPosition());
+                        }
 
-					}
-				});
-			}
-		});
-		if (retieveData.isChecked()) {
-			viewHolder.mTvStuCode.setSelected(true);
-			viewHolder.mTvScore.setSelected(true);
-			viewHolder.mTvSex.setSelected(true);
-			viewHolder.mTvStuName.setSelected(true);
-			viewHolder.mTvTestState.setSelected(true);
-			viewHolder.mViewCbContent.setSelected(true);
-		} else {
-			viewHolder.mTvStuCode.setSelected(false);
-			viewHolder.mTvScore.setSelected(false);
-			viewHolder.mTvSex.setSelected(false);
-			viewHolder.mTvStuName.setSelected(false);
-			viewHolder.mTvTestState.setSelected(false);
-			viewHolder.mViewCbContent.setSelected(false);
-		}
-	}
+                    }
+                });
+            }
+        });
+        if (retieveData.isChecked()) {
+            viewHolder.mTvStuCode.setSelected(true);
+            viewHolder.mTvScore.setSelected(true);
+            viewHolder.mTvSex.setSelected(true);
+            viewHolder.mTvStuName.setSelected(true);
+            viewHolder.mTvTestState.setSelected(true);
+            viewHolder.mViewCbContent.setSelected(true);
+        } else {
+            viewHolder.mTvStuCode.setSelected(false);
+            viewHolder.mTvScore.setSelected(false);
+            viewHolder.mTvSex.setSelected(false);
+            viewHolder.mTvStuName.setSelected(false);
+            viewHolder.mTvTestState.setSelected(false);
+            viewHolder.mViewCbContent.setSelected(false);
+        }
+    }
 
 
-	class ViewHolder extends BaseViewHolder {
-		@BindView(R.id.cb_select)
-		CheckBox mCbSelect;
-		@BindView(R.id.tv_stuCode)
-		TextView mTvStuCode;
-		@BindView(R.id.tv_stuName)
-		TextView mTvStuName;
-		@BindView(R.id.tv_sex)
-		TextView mTvSex;
-		@BindView(R.id.tv_testState)
-		TextView mTvTestState;
-		@BindView(R.id.tv_score)
-		TextView mTvScore;
-		//@BindView(R.id.ll_detail)
-		//LinearLayout mLlDetail;
-		@BindView(R.id.view_cb_content)
-		RelativeLayout mViewCbContent;
+    class ViewHolder extends BaseViewHolder {
+        @BindView(R.id.cb_select)
+        CheckBox mCbSelect;
+        @BindView(R.id.tv_stuCode)
+        TextView mTvStuCode;
+        @BindView(R.id.tv_stuName)
+        TextView mTvStuName;
+        @BindView(R.id.tv_sex)
+        TextView mTvSex;
+        @BindView(R.id.tv_testState)
+        TextView mTvTestState;
+        @BindView(R.id.tv_score)
+        TextView mTvScore;
+        //@BindView(R.id.ll_detail)
+        //LinearLayout mLlDetail;
+        @BindView(R.id.view_cb_content)
+        RelativeLayout mViewCbContent;
 
-		ViewHolder(View view) {
-			super(view);
-			ButterKnife.bind(this, view);
-		}
-	}
+        ViewHolder(View view) {
+            super(view);
+            ButterKnife.bind(this, view);
+        }
+    }
 
 }

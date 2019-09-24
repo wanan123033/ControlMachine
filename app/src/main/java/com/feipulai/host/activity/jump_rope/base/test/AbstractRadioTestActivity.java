@@ -1,8 +1,5 @@
 package com.feipulai.host.activity.jump_rope.base.test;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -17,6 +14,7 @@ import android.widget.TextView;
 
 import com.feipulai.common.view.DividerItemDecoration;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseTitleActivity;
 import com.feipulai.host.activity.jump_rope.adapter.RTResultAdapter;
@@ -30,14 +28,15 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public abstract class AbstractRadioTestActivity<Setting>
         extends BaseTitleActivity
         implements RadioTestContract.View<Setting>,
         RTResultAdapter.OnItemClickListener {
 
-    private static final String STOP_USE = "暂停使用";
-    private static final String RESUME_USE = "恢复使用";
+    private static final String STOP_USE = MyApplication.getInstance().getString(R.string.stop_use);
+    private static final String RESUME_USE = MyApplication.getInstance().getString(R.string.resume_use);
 
     private static final int TIME_COUNT = 0x1;
     private static final int UPDATE_SPECIFIC_ITEM = 0x2;
@@ -65,7 +64,7 @@ public abstract class AbstractRadioTestActivity<Setting>
     @BindView(R.id.btn_confirm_results)
     Button btnConfirm;
     private MyHandler mHandler = new MyHandler(this);
-    private ProgressDialog mProgressDialog;
+    private SweetAlertDialog sweetAlertDialog;
     private RTResultAdapter mAdapter;
     private boolean isTestFinished;
 
@@ -85,19 +84,14 @@ public abstract class AbstractRadioTestActivity<Setting>
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
         String title;
         if (TextUtils.isEmpty(SettingHelper.getSystemSetting().getTestName())) {
-            title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机";
+            title = String.format(getString(R.string.host_name), TestConfigs.machineNameMap.get(machineCode), SettingHelper.getSystemSetting().getHostId());
         } else {
-            title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机-" + SettingHelper.getSystemSetting().getTestName();
+            title = String.format(getString(R.string.host_name), TestConfigs.machineNameMap.get(machineCode), SettingHelper.getSystemSetting().getHostId())
+                    + "-" + SettingHelper.getSystemSetting().getTestName();
         }
 
-        return builder.setTitle(title).addLeftText("返回", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        return builder.setTitle(title);
     }
-
 
 
     protected abstract AbstractRadioTestPresenter getPresenter();
@@ -133,15 +127,22 @@ public abstract class AbstractRadioTestActivity<Setting>
                 break;
 
             case R.id.btn_restart:
-                new AlertDialog.Builder(this).setTitle("重新开始将取消当前测试,确定重新开始测试吗？")
-                        .setIcon(android.R.drawable.ic_dialog_info)
-                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                presenter.restartTest();
-                            }
-                        })
-                        .setNegativeButton("取消", null).show();
+
+                new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.warning))
+                        .setContentText(getString(R.string.restart_confirm_hint))
+                        .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                        presenter.restartTest();
+                    }
+                }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                    }
+                }).show();
+
                 break;
 
             case R.id.btn_quit_test:
@@ -264,17 +265,17 @@ public abstract class AbstractRadioTestActivity<Setting>
                 break;
 
             case SHOW_WAIT_DIALOG:
-                mProgressDialog = new ProgressDialog(this);
-                mProgressDialog.setTitle("获取最终成绩中");
-                mProgressDialog.setCancelable(false);
-                mProgressDialog.setCanceledOnTouchOutside(false);
-                mProgressDialog.setMessage("获取设备成绩中...");
-                mProgressDialog.show();
+                sweetAlertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+                sweetAlertDialog.setTitleText(getString(R.string.dialog_get_result_title));
+                sweetAlertDialog.setContentText(getString(R.string.dialog_get_result_message));
+                sweetAlertDialog.setCancelable(false);
+                sweetAlertDialog.setCanceledOnTouchOutside(false);
+                sweetAlertDialog.show();
                 break;
 
             case DISMISS_WAIT_DIALOG:
-                if (mProgressDialog != null) {
-                    mProgressDialog.dismiss();
+                if (sweetAlertDialog != null) {
+                    sweetAlertDialog.dismiss();
                 }
                 break;
 
@@ -300,7 +301,7 @@ public abstract class AbstractRadioTestActivity<Setting>
 
     @Override
     public void onBackPressed() {
-        toastSpeak("测试中,返回键被禁用");
+        toastSpeak(getString(R.string.testing_back_stop));
     }
 
     @Override
@@ -314,15 +315,20 @@ public abstract class AbstractRadioTestActivity<Setting>
 
     @Override
     public void showDisconnectForFinishTest() {
-        new AlertDialog.Builder(this).setTitle("存在考生手柄状态为断开连接,确定结束测试吗？")
-                .setIcon(android.R.drawable.ic_dialog_info)
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        presenter.finishTest();
-                    }
-                })
-                .setNegativeButton("返回", null).show();
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.warning))
+                .setContentText(getString(R.string.device_disconnect_save_result_hint))
+                .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                presenter.finishTest();
+            }
+        }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+            }
+        }).show();
     }
 
     @Override
@@ -331,15 +337,20 @@ public abstract class AbstractRadioTestActivity<Setting>
     }
 
     private void showQuitDialog() {
-        new AlertDialog.Builder(this).setTitle("确定退出当前测试吗？")
-                .setIcon(android.R.drawable.ic_dialog_info)
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        presenter.quitTest();
-                    }
-                })
-                .setNegativeButton("返回", null).show();
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.warning))
+                .setContentText(getString(R.string.confirm_exit_test_hint))
+                .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                presenter.quitTest();
+            }
+        }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+            }
+        }).show();
     }
 
 }
