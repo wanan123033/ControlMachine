@@ -60,7 +60,7 @@ public class IC_ResultResolve {
         System.arraycopy(data, 4, stuNameBytes, 0, 10);
         String stuName = Converter.decode(stuNameBytes).trim();
 
-        int sex = data[27] & 0xff;
+        int sex = data[28] & 0xff;
 
         return new StuInfo(stuCode, stuName, sex);
     }

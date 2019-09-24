@@ -196,7 +196,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("数据查询") ;
+        return builder.setTitle("数据查询");
     }
 
 
@@ -685,9 +685,9 @@ public class DataRetrieveActivity extends BaseTitleActivity
             Logger.i("cbUnUpload===>" + cbUnUpload.isChecked());
             Logger.i("cbTested===>" + cbTested.isChecked());
             Logger.i("cbUnTested===>" + cbUnTested.isChecked());
-            if (isChecked) {
-                chooseStudent();
-            }
+//            if (isChecked) {
+            chooseStudent();
+//            }
 
         } else {
             Logger.i("mRbAll===>" + mRbAll.isChecked());
@@ -742,7 +742,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
                         }
                     } else if (cbUploaded.isChecked() || cbUnUpload.isChecked()) {
 
-                        mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), 1, displaStuResult(student.getStudentCode()),mCbSelectAll.isChecked()));
+                        mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), 1, displaStuResult(student.getStudentCode()), mCbSelectAll.isChecked()));
                     }
                 }
                 mAdapter.notifyDataSetChanged();

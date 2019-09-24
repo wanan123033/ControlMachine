@@ -182,6 +182,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity implement
             serverIntent = new Intent(this, UploadService.class);
             startService(serverIntent);
         }
+        isShowCamera = isShowCamera();
         if (isShowCamera) {
             initUVCCamera();
 
@@ -356,7 +357,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity implement
                             return;
                         }
                         drawHelper.draw(null, null);
-                        isOpenCamera=false;
+                        isOpenCamera = false;
                         mUVCCamera.stopPreview();
                         if (compareResult.getSimilar() > SIMILAR_THRESHOLD) {
                             Student student = DBManager.getInstance().queryStudentByCode(compareResult.getUserName());

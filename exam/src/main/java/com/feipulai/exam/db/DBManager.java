@@ -1624,7 +1624,7 @@ public class DBManager {
      * @return
      */
     public List<UploadResults> getUploadResultsAll(String itemCode) {
-
+        Logger.i("zzzzzzzzzzzzzzzzzz");
         //查成绩表去重学生号  条件当前项目未上传成绩
         //获取根据考生号 获取考生当前项目未上传生所有成绩
         //根据成绩分组id 分配上传成绩内容（按分组、日程）
@@ -1716,7 +1716,7 @@ public class DBManager {
                 }
             }
         }
-
+    Logger.i("zzzzzzzzzzzzzzzzzz");
         return uploadResultsList;
     }
 

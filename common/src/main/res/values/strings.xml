@@ -10,4 +10,12 @@
 
     <string name="clear_data_title">清空本地数据</string>
     <string name="clear_data_content">请输入验证码:%1$s</string>
+    <string name="edit_hint">请输入验证码</string>
+    <string name="btn_automatic_backup">自动备份文件夹</string>
+    <string name="device_group_name">手柄分组:</string>
+    <string name="normal">正常</string>
+    <string name="interrupt">中断</string>
+    <string name="low_power">电量低</string>
+    <string name="temporarily_closed">暂停使用</string>
+    <string name="conflict">冲突</string>
 </resources>

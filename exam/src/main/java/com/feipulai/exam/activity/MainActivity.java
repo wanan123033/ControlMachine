@@ -10,13 +10,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SystemBrightUtils;
 import com.feipulai.common.view.baseToolbar.StatusBarUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
-import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.udp.UdpLEDUtil;
@@ -34,8 +34,13 @@ import com.feipulai.exam.activity.volleyball.VolleyballPatternSelectActivity;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.RoundResult;
+import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.netUtils.CommonUtils;
 import com.orhanobut.logger.Logger;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -83,30 +88,31 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
 //        testUpload();
     }
 
-//    private void addTestResult() {
-//        List<Student> dbStudentList = DBManager.getInstance().dumpAllStudents();
-//        for (Student student : dbStudentList) {
-//            for (int i = 0; i < 2; i++) {
-//                RoundResult roundResult = new RoundResult();
-//                roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
-//                roundResult.setStudentCode(student.getStudentCode());
-//                String itemCode = TestConfigs.sCurrentItem.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : TestConfigs.sCurrentItem.getItemCode();
-//                roundResult.setItemCode(itemCode);
-//                roundResult.setResult(100 + i);
-//                roundResult.setResultState(0);
-//                roundResult.setTestTime(DateUtil.getCurrentTime() + "");
-//                roundResult.setRoundNo(i);
-//                roundResult.setTestNo(1);
-//                roundResult.setExamType(0);
-//                roundResult.setUpdateState(0);
-////                 roundResult.setScheduleNo("1");
-//                if (i == 1) {
-//                    roundResult.setIsLastResult(1);
-//                }
-//                DBManager.getInstance().insertRoundResult(roundResult);
-//            }
-//        }
-//    }
+    private void addTestResult() {
+        List<Student> dbStudentList = DBManager.getInstance().dumpAllStudents();
+        for (Student student : dbStudentList) {
+            for (int i = 0; i < 1; i++) {
+                RoundResult roundResult = new RoundResult();
+                roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
+                roundResult.setStudentCode(student.getStudentCode());
+                String itemCode = TestConfigs.sCurrentItem.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : TestConfigs.sCurrentItem.getItemCode();
+                roundResult.setItemCode(itemCode);
+                roundResult.setResult(100 + i);
+                roundResult.setResultState(0);
+                roundResult.setTestTime(DateUtil.getCurrentTime() + "");
+                roundResult.setRoundNo(i);
+                roundResult.setTestNo(1);
+                roundResult.setExamType(0);
+                roundResult.setUpdateState(0);
+                roundResult.setIsLastResult(1);
+//                 roundResult.setScheduleNo("1");
+                if (i == 1) {
+                    roundResult.setIsLastResult(1);
+                }
+                DBManager.getInstance().insertRoundResult(roundResult);
+            }
+        }
+    }
 
     /**
      * 成绩上传
@@ -187,10 +193,10 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                 startActivity(new Intent(MainActivity.this, DataRetrieveActivity.class));
                 break;
             case R.id.card_print:
-                PrinterManager.getInstance().init();
-                PrinterManager.getInstance().selfCheck();
-                PrinterManager.getInstance().print("\n\n");
-
+//                PrinterManager.getInstance().init();
+//                PrinterManager.getInstance().selfCheck();
+//                PrinterManager.getInstance().print("\n\n");
+                addTestResult();
                 break;
             case R.id.card_parameter_setting:
                 startActivity(new Intent(MainActivity.this, SettingActivity.class));

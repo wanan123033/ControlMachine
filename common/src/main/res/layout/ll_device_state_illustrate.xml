@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="40dp"
     android:gravity="center_vertical"
@@ -17,14 +16,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="手柄分组:" />
+            android:text="@string/device_group_name" />
 
         <TextView
             android:id="@+id/tv_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="A组" />
+            android:layout_marginLeft="10dp" />
 
     </LinearLayout>
 
@@ -35,7 +33,7 @@
         android:drawableLeft="@drawable/shape_state_default"
         android:drawablePadding="10dp"
         android:gravity="center_vertical"
-        android:text="正常"/>
+        android:text="@string/normal" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -43,8 +41,8 @@
         android:layout_marginLeft="10dp"
         android:drawableLeft="@drawable/shape_state_red"
         android:gravity="center_vertical"
-        android:text="中断"/>
-        <!--android:drawablePadding="10dp"-->
+        android:text="@string/interrupt" />
+    <!--android:drawablePadding="10dp"-->
 
     <TextView
         android:layout_width="wrap_content"
@@ -53,7 +51,7 @@
         android:drawableLeft="@drawable/shape_state_yellow"
         android:drawablePadding="10dp"
         android:gravity="center_vertical"
-        android:text="电量低"/>
+        android:text="@string/low_power" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -62,7 +60,7 @@
         android:drawableLeft="@drawable/shape_state_grey"
         android:drawablePadding="10dp"
         android:gravity="center_vertical"
-        android:text="暂停使用"/>
+        android:text="@string/temporarily_closed" />
 
     <TextView
         android:id="@+id/tv_conflict"
@@ -72,7 +70,7 @@
         android:drawableLeft="@drawable/shape_state_conflict"
         android:drawablePadding="10dp"
         android:gravity="center_vertical"
-        android:text="冲突"
-        android:visibility="gone"/>
+        android:text="@string/conflict"
+        android:visibility="gone" />
 
 </LinearLayout>

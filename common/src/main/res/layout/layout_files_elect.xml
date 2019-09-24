@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:text="自动备份文件夹"
+            android:text="@string/btn_automatic_backup"
             android:textColor="#386EB3"
             android:textSize="18sp">
 
@@ -70,7 +70,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/circle_corner_button_selector"
-            android:text="确定"
+            android:text="@string/confirm"
             android:textColor="@color/black" />
 
         <Button
@@ -79,7 +79,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/circle_corner_button_selector"
-            android:text="取消"
+            android:text="@string/cancel"
             android:textColor="@color/black" />
 
     </LinearLayout>

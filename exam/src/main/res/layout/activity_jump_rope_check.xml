@@ -108,7 +108,7 @@
                 <Button
                     android:id="@+id/btn_kill_devices"
                     style="@style/style_rectangle_btn"
-                    android:background="#ffff0000"
+                    android:background="@drawable/btn_rectangle_red_selector"
                     android:text="清除所有设备" />
                     <!--android:drawableTop="@drawable/led_screen"-->
 

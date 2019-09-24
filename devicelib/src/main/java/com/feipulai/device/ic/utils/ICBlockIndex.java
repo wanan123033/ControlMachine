@@ -18,7 +18,7 @@ public class ICBlockIndex {
     // 第一扇区用于存储考生信息
     // 包括准考证号(考号)，姓名，性别，因为第一块已固化,从第二块开始存储数据
     public static final int[] STU_INFO_BLOCK_NO = {1, 2};
-    public static final int[] LIN_NAN_STU_INFO_BLOCK_NO = {56, 57, 58};
+    public static final int[] LIN_NAN_STU_INFO_BLOCK_NO = {60, 61, 62};
     // 扩展区(存放单位等信息放在第60,61,62块),共48个字节
     // BYTE[0]---表示项目属性描述页所占块数 目前为6
     // BYTE[1]---表示考生考试项目数

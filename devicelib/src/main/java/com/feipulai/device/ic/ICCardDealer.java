@@ -50,7 +50,7 @@ public class ICCardDealer {
                 }
                 break;
             case AdaptiveConfig.LIN_NAN_SHI_FAN:
-                ItemDefault.keyA = "73796E707562".toCharArray();
+
                 stuData = readBlocks(ICBlockIndex.LIN_NAN_STU_INFO_BLOCK_NO);
                 if (stuData != null) {
                     mStuInfo = IC_ResultResolve.getLinNanStuInfo(stuData);
@@ -249,11 +249,11 @@ public class ICCardDealer {
             // 每个扇区只需要验证一次密码
             boolean loadKey;
             if (blocks[i] / 4 != lastSector) {
-                loadKey = nfcd.loadKey((short) 0, (short) (blocks[i] / 4), ItemDefault.keyA);
+                loadKey = nfcd.loadKey((short) AdaptiveConfig.KEY_MODE, (short) (blocks[i] / 4), ItemDefault.keyA);
                 if (!loadKey) {
                     return null;
                 }
-                boolean auth = nfcd.authentication((short) 0, (short) (blocks[i] / 4));
+                boolean auth = nfcd.authentication((short) AdaptiveConfig.KEY_MODE, (short) (blocks[i] / 4));
                 if (!auth) {
                     return null;
                 }

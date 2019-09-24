@@ -20,10 +20,14 @@ import android.widget.Toast;
 
 import com.arcsoft.face.util.ImageUtils;
 import com.feipulai.common.db.ClearDataProcess;
+import com.feipulai.common.db.DataBaseExecutor;
+import com.feipulai.common.db.DataBaseRespon;
+import com.feipulai.common.db.DataBaseTask;
 import com.feipulai.common.dbutils.BackupManager;
 import com.feipulai.common.dbutils.FileSelectActivity;
 import com.feipulai.common.exl.ExlListener;
 import com.feipulai.common.utils.FileUtil;
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.common.view.dialog.EditDialog;
@@ -130,7 +134,7 @@ public class DataManageActivity
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("数据管理") ;
+        return builder.setTitle("数据管理");
     }
 
     private void initGridView() {
@@ -242,20 +246,8 @@ public class DataManageActivity
                         break;
 
                     case 10://成绩上传
-                        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
-                            List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
-                            List<UploadResults> uploadResultsList = new ArrayList<>();
-                            for (Item item : itemList) {
-                                List<UploadResults> dbResultsList = DBManager.getInstance().getUploadResultsAll(item.getItemCode());
-                                if (dbResultsList != null && dbResultsList.size() > 0)
-                                    uploadResultsList.addAll(dbResultsList);
-                            }
-                            ServerMessage.uploadResult(DataManageActivity.this, uploadResultsList);
 
-                        } else {
-                            ServerMessage.uploadResult(DataManageActivity.this, DBManager.getInstance().getUploadResultsAll(TestConfigs.getCurrentItemCode()));
-                        }
-
+                        uploadData();
                         break;
 
                     case 11://数据导出
@@ -294,6 +286,38 @@ public class DataManageActivity
                         break;
 
                 }
+            }
+        });
+    }
+
+    public void uploadData() {
+        DataBaseExecutor.addTask(new DataBaseTask(this, "成绩上传中，请稍后...", false) {
+            @Override
+            public DataBaseRespon executeOper() {
+                List<UploadResults> uploadResultsList = new ArrayList<>();
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+                    List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
+
+                    for (Item item : itemList) {
+                        List<UploadResults> dbResultsList = DBManager.getInstance().getUploadResultsAll(item.getItemCode());
+                        if (dbResultsList != null && dbResultsList.size() > 0)
+                            uploadResultsList.addAll(dbResultsList);
+                    }
+                } else {
+                    uploadResultsList = DBManager.getInstance().getUploadResultsAll(TestConfigs.getCurrentItemCode());
+                }
+
+                return new DataBaseRespon(true, "", uploadResultsList);
+            }
+
+            @Override
+            public void onExecuteSuccess(DataBaseRespon respon) {
+                ServerMessage.uploadResult(DataManageActivity.this, (List<UploadResults>) respon.getObject());
+            }
+
+            @Override
+            public void onExecuteFail(DataBaseRespon respon) {
+
             }
         });
     }
@@ -366,7 +390,7 @@ public class DataManageActivity
                 ToastUtils.showShort(restoreSuccess ? "数据库恢复成功" : "数据库恢复失败,请检查文件格式");
                 Logger.i(restoreSuccess ? ("数据库恢复成功,文件路径:" + FileSelectActivity.sSelectedFile.getName())
                         : "数据库恢复失败");
-                com.feipulai.common.utils.SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
+               SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
                 DBManager.getInstance().initDB();
                 TestConfigs.init(this, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), null);
                 break;
@@ -565,7 +589,7 @@ public class DataManageActivity
                 }
                 UsbFile targetFile;
                 try {
-                    targetFile = FileSelectActivity.sSelectedFile.createFile(text + ".xls"); 
+                    targetFile = FileSelectActivity.sSelectedFile.createFile(text + ".xls");
                     new ResultExlWriter(TestConfigs.getMaxTestCount(DataManageActivity.this), DataManageActivity.this)
                             .writeExelData(targetFile);
 

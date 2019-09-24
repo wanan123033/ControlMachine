@@ -161,7 +161,7 @@ public class NFCDevice{
 		int result = call_s8.fw_authentication(hdev,iMod,iSec);
 		return result == 0;
 	}
-	
+
 	/**
 	 * 修改扇区密码
 	 *
