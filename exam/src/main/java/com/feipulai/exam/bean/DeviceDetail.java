@@ -12,7 +12,7 @@ public class DeviceDetail {
     public DeviceDetail(){
         baseStuPair = new BaseStuPair();
         baseStuPair.setCanTest(true);
-        baseStuPair.setBaseDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE));
+        baseStuPair.setBaseDevice(new BaseDeviceState(BaseDeviceState.STATE_ERROR));
     }
     private BaseStuPair baseStuPair;
     private RoundResult roundResult;

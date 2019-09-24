@@ -56,7 +56,8 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
         mSerialManager.setRS232ResiltListener(resultImpl);
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
         setTestType(1);
-        sendCheck();
+//        sendCheck();
+        sendFree();
     }
 
     @Override
@@ -153,7 +154,6 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
                     MedicineBallSelfCheckResult selfCheckResult = (MedicineBallSelfCheckResult) msg.obj;
                     BaseStuPair pair = new BaseStuPair();
                     BaseDeviceState device = new BaseDeviceState();
-                    //TODO 设备ID 需要讨论
                     device.setDeviceId(1);
                     pair.setBaseDevice(device);
                     activity.disposeCheck(selfCheckResult, pair);
@@ -218,7 +218,6 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
         BaseDeviceState deviceState = stuPair.getBaseDevice();
         if (isInCorrect) {
             PROMPT_TIMES++;
-            startFlag = false ;
             checkFlag = false;
             mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
             if (PROMPT_TIMES >= 2 && PROMPT_TIMES < 4) {
@@ -232,11 +231,18 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
 
             }
             setBegin(0);
-            deviceState.setState(BaseDeviceState.STATE_ERROR);
+            if (deviceState.getState() != BaseDeviceState.STATE_ERROR){
+                deviceState.setState(BaseDeviceState.STATE_ERROR);
+                updateDevice(deviceState);
+            }
+
 //            mHandler.sendEmptyMessageDelayed(DELAY,1000);
         } else {
             PROMPT_TIMES = 0;
             checkFlag = true;
+            if (deviceState.getState() == BaseDeviceState.STATE_ERROR){
+                sendFree();
+            }
             if (testState == TestState.UN_STARTED) {
                 deviceState.setState(BaseDeviceState.STATE_NOT_BEGAIN);
                 setBegin(1);
@@ -249,7 +255,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
                 setBegin(0);
             }
         }
-        updateDevice(deviceState);
+
 
     }
 
@@ -313,7 +319,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
      * 终端自检结果可能在开始测试响应之前,也可能在开始测试响应之后
      * 所以轮询查看是否需要开始测试
      */
-    private synchronized void decideBegin() {
+    private void decideBegin() {
         executorService = Executors.newSingleThreadScheduledExecutor();
         executorService.scheduleAtFixedRate(new Runnable() {
             @Override

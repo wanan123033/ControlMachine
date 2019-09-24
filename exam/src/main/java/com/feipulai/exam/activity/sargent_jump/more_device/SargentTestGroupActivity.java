@@ -21,17 +21,16 @@ import static com.feipulai.exam.activity.sargent_jump.Constants.GET_SCORE_RESPON
 public class SargentTestGroupActivity extends BaseMoreGroupActivity {
     private static final String TAG = "SargentGroupTestActy";
     private SargentSetting sargentSetting;
-    @Override
-    public int setTestCount() {
-        return sargentSetting.getSpDeviceCount();
-    }
-    private int[] deviceState ;
+
+    private int[] deviceState;
+    private boolean[] basicHeight = {};
     //SARGENT JUMP
-    public byte[] CMD_SARGENT_JUMP_EMPTY = {0X54, 0X44, 00, 0X10, 01, 0x01, 00, 00, 00, 00, 00, 00, 00, 0x12, 0x27, 0x0d};
-    public byte[] CMD_SARGENT_JUMP_START = {0X54, 0X44, 00, 0X10, 01, 0x01, 00, 0x01, 00, 00, 00, 00, 00, 0x13, 0x27, 0x0d};
-//    public byte[] CMD_SARGENT_JUMP_STOP = {0X54, 0X44, 00, 0X10, 01, 0x01, 00, 0x02, 00, 00, 00, 00, 00, 0x14, 0x27, 0x0d};
+    public byte[] CMD_SARGENT_JUMP_EMPTY = {0X54, 0X44, 00, 0X0B, 01, 0x01, 00, 0x02, 0x00, 0x27, 0x0d};
+    public byte[] CMD_SARGENT_JUMP_START = {0X54, 0X44, 00, 0X0B, 01, 0x01, 00, 0x01, 0x13, 0x27, 0x0d};
+    //    public byte[] CMD_SARGENT_JUMP_STOP = {0X54, 0X44, 00, 0X10, 01, 0x01, 00, 0x02, 00, 00, 00, 00, 00, 0x14, 0x27, 0x0d};
 //    public byte[] CMD_SARGENT_JUMP_GET_SCORE = {0X54, 0X44, 00, 0X10, 01, 0x01, 00, 0x04, 00, 00, 00, 00, 00, 0x16, 0x27, 0x0d};
     private final int SEND_EMPTY = 1;
+    private int runUp;
 
     @Override
     public void initData() {
@@ -42,11 +41,18 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
         Logger.i(TAG + ":sargentSetting ->" + sargentSetting.toString());
         setDeviceCount(sargentSetting.getSpDeviceCount());
         deviceState = new int[sargentSetting.getSpDeviceCount()];
+        basicHeight = new boolean[sargentSetting.getBaseHeight()];
         for (int i = 0; i < deviceState.length; i++) {
             deviceState[i] = 1;
         }
+        runUp = sargentSetting.getRunUp();
         RadioManager.getInstance().setOnRadioArrived(resultImpl);
         sendEmpty();
+    }
+
+    @Override
+    public int setTestCount() {
+        return sargentSetting.getTestTimes();
     }
 
     @Override
@@ -61,9 +67,26 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
         updateDevice(pair.getBaseDevice());
         byte[] cmd = CMD_SARGENT_JUMP_START;
         cmd[4] = (byte) pair.getBaseDevice().getDeviceId();
-        cmd[13] = (byte) sum(cmd);
+        cmd[6] = 0x01;
+        cmd[7] = 0x03;
+        cmd[8] = (byte) sum(cmd, 8);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                 cmd));
+    }
+
+    //离地高度设置范围为0-255
+    public byte[] CMD_SARGENT_JUMP_GET_SET_0(int offGroundDistance, int deviceId) {
+        byte[] data = {0X54, 0X44, 00, 0X0D, 01, 0x01, 01, 0x05, 00, 00, 0x00, 0x27, 0x0d};
+        data[4] = (byte) deviceId;
+        data[8] = (byte) ((offGroundDistance >> 8) & 0xff);// 次低位
+        data[9] = (byte) (offGroundDistance & 0xff);// 最低位
+
+        int sum = 0;
+        for (int i = 2; i < 10; i++) {
+            sum += data[i] & 0xff;
+        }
+        data[10] = (byte) sum;
+        return data;
     }
 
     public void sendEmpty() {
@@ -71,7 +94,7 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
             BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
             if (deviceState[i] == 0) {
 
-                if (baseDevice.getState() != BaseDeviceState.STATE_ERROR){
+                if (baseDevice.getState() != BaseDeviceState.STATE_ERROR) {
                     baseDevice.setState(BaseDeviceState.STATE_ERROR);
                     updateDevice(baseDevice);
                 }
@@ -80,16 +103,19 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
                 if (baseDevice.getState() == BaseDeviceState.STATE_ERROR) {
                     baseDevice.setState(BaseDeviceState.STATE_NOT_BEGAIN);
                     updateDevice(baseDevice);
+                    deviceState[i] -= 1;
                 }
 
             }
 
-            deviceState[i] = 0;
+
         }
         for (DeviceDetail detail : deviceDetails) {
             byte[] cmd = CMD_SARGENT_JUMP_EMPTY;
             cmd[4] = (byte) detail.getStuDevicePair().getBaseDevice().getDeviceId();
-            cmd[13] = (byte) sum(cmd);
+            cmd[6] = 0x01;
+            cmd[7] = 0x02;
+            cmd[8] = (byte) sum(cmd, 8);
             RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                     cmd));
         }
@@ -97,9 +123,9 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
 
     }
 
-    private int sum(byte[] cmd) {
+    private int sum(byte[] cmd, int index) {
         int sum = 0;
-        for (int i = 2; i <= 12; i++) {
+        for (int i = 2; i < index; i++) {
             sum += cmd[i] & 0xff;
         }
         return sum;
@@ -126,7 +152,12 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
 
         @Override
         public void onFree(int deviceId) {
-            deviceState[deviceId] = 1;
+            deviceState[deviceId - 1] = 5;
+            if (!basicHeight[deviceId - 1]) {
+                RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
+                        CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight(), deviceId)));
+                basicHeight[deviceId - 1] = true;
+            }
         }
 
         @Override
@@ -145,12 +176,18 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
                     SargentJumpResult result = (SargentJumpResult) msg.obj;
                     for (DeviceDetail detail : deviceDetails) {
                         if (detail.getStuDevicePair().getBaseDevice().getDeviceId() == result.getDeviceId()) {
-                            if (detail.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_ONUSE) {
-                                int dbResult = result.getScore() * 10;
+                            int dbResult = result.getScore() * 10;
+                            if (runUp == 1) {
                                 onResultArrived(dbResult, detail.getStuDevicePair());
+                            } else {
+                                if (detail.getStuDevicePair().getBaseHeight() == 0) {
+                                    detail.getStuDevicePair().setBaseHeight(dbResult);
+                                } else {
+                                    onResultArrived(dbResult - detail.getStuDevicePair().getBaseHeight(), detail.getStuDevicePair());
+                                }
                             }
-                        }
 
+                        }
                     }
                     break;
                 case SEND_EMPTY:
@@ -180,7 +217,11 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
         stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
         updateTestResult(stuPair);
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, stuPair.getBaseDevice().getDeviceId()));
-
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mHandler.removeCallbacksAndMessages(null);
+    }
 }

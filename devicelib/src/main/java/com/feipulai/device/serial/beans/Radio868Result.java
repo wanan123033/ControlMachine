@@ -1,6 +1,8 @@
 package com.feipulai.device.serial.beans;
 
 
+import android.util.Log;
+
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.SerialConfigs;
@@ -17,7 +19,7 @@ public class Radio868Result {
     private Object mResult;
 
     public Radio868Result(byte[] data) {
-        // Log.i("james",StringUtility.bytesToHexString(data));
+        Log.i("james",StringUtility.bytesToHexString(data));
         if (MachineCode.machineCode == -1) {
             return;
         }
@@ -42,7 +44,7 @@ public class Radio868Result {
                         && data[3] == 0x10  //[02] [03]：长度高字节0x00   低字节0x10
                         && data[5] == 0x05//[05]：项目编号   5—仰卧起坐    8—俯卧撑
                         && data[14] == 0x27 && data[15] == 0x0d//[14] [15]：包尾高字节0x27   低字节0x0d
-                        ) {
+                ) {
                     // 仰卧起坐
                     int sum = 0;
                     //0b 命令(获取数据)不需要校验
@@ -81,7 +83,7 @@ public class Radio868Result {
                         && data[3] == 0x10  //[02] [03]：长度高字节0x00   低字节0x10
                         && data[5] == 0x08//[05]：项目编号   5—仰卧起坐    8—俯卧撑
                         && data[14] == 0x27 && data[15] == 0x0d//[14] [15]：包尾高字节0x27   低字节0x0d
-                        ) {
+                ) {
                     // 俯卧撑
                     int sum = 0;
                     //0b 命令(获取数据)不需要校验
@@ -114,71 +116,84 @@ public class Radio868Result {
                 }
                 break;
             case ItemDefault.CODE_MG:
-                if (data[0] == 0x54 && data[1] == 0x55 && data[3] == 0x10 && data[5]==0x01){//[00] [01]：包头高字节0x54   低字节0x55
-                    switch (data[7]){
-                        case 0x00:
-                            setType(SerialConfigs.SARGENT_JUMP_EMPTY_RESPONSE);
-                            break;
+                if (data[0] == 0x54 && data[1] == 0x55 && data[5] == 0x01) {//[00] [01]：包头高字节0x54   低字节0x55
+                    if (data[6] == 0x00) {
+                        switch (data[7]) {
+                            case 0x00:
+                                setType(SerialConfigs.SARGENT_JUMP_EMPTY_RESPONSE);
+                                break;
 
-                        case 0x01:
-                            setType(SerialConfigs.SARGENT_JUMP_START_RESPONSE);
-                            break;
+                            case 0x01:
+                                setType(SerialConfigs.SARGENT_JUMP_START_RESPONSE);
+                                break;
 
-                        case 0x02:
-                            setType(SerialConfigs.SARGENT_JUMP_STOP_RESPONSE);
-                            break;
+                            case 0x02:
+                                setType(SerialConfigs.SARGENT_JUMP_STOP_RESPONSE);
+                                break;
 
-                        case 0x04:
-                            setType(SerialConfigs.SARGENT_JUMP_GET_SCORE_RESPONSE);
-                            setResult(new SargentJumpResult(data));
-                            break;
+                            case 0x04:
+                                setType(SerialConfigs.SARGENT_JUMP_GET_SCORE_RESPONSE);
+                                setResult(new SargentJumpResult(data));
+                                break;
 
-                        case 0x06:
+                            case 0x06:
 
-                            break;
-                        case 0x0b:
-                            setType(SerialConfigs.SARGENT_JUMP_SET_MATCH);
-                            setResult(new SargentJumpResult(data));
-                            break;
+                                break;
+                            case 0x0b:
+                                setType(SerialConfigs.SARGENT_JUMP_SET_MATCH);
+                                setResult(new SargentJumpResult(data));
+                                break;
+                        }
+                    }else if (data[6] == 0x01){
+                        switch (data[7]){
+                            case 0x01:
+                                setType(SerialConfigs.SARGENT_JUMP_SET_MORE_MATCH);
+                                setResult(new SargentJumpResult(data));
+                                break;
+                            case 0x02:
+                                setType(SerialConfigs.SARGENT_JUMP_EMPTY_RESPONSE);
+                                setResult(new SargentJumpResult(data));
+                                break;
+                        }
                     }
                 }
                 break;
-            case ItemDefault.CODE_ZFP://无效
-                if (data.length == 0x0c) {
-                    switch (data[6]) {
-                        case (byte) 0xc1://参数设置
-                            setType(SerialConfigs.RUN_TIMER_SETTING);
-                            break;
-                        case (byte) 0xc2://准备
-                            setType(SerialConfigs.RUN_TIMER_READY);
-                            break;
-                        case (byte) 0xc3://控制设备版本
-
-                            break;
-                        case (byte) 0xc4://强制启动
-                            setType(SerialConfigs.RUN_TIMER_FORCE_START);
-                            break;
-                        case (byte) 0xc5://停止计时
-                            setType(SerialConfigs.RUN_TIMER_STOP);
-                            break;
-                        case (byte) 0xc6://连接状态
-                            setType(SerialConfigs.RUN_TIMER_CONNECT);
-                            setResult(new RunTimerConnectState(data));
-                            break;
-                        case (byte) 0xc7://拦截时间
-                            setType(SerialConfigs.RUN_TIMER_INTERCEPT_TIME);
-                            setResult(new RunTimerResult(data));
-                            break;
-                        case (byte) 0xc8://违规返回
-                            setType(SerialConfigs.RUN_TIMER_FAULT_BACK);
-                            break;
-
-
-                    }
-
-
-                }
-                break;
+//            case ItemDefault.CODE_ZFP://无效
+//                if (data.length == 0x0c) {
+//                    switch (data[6]) {
+//                        case (byte) 0xc1://参数设置
+//                            setType(SerialConfigs.RUN_TIMER_SETTING);
+//                            break;
+//                        case (byte) 0xc2://准备
+//                            setType(SerialConfigs.RUN_TIMER_READY);
+//                            break;
+//                        case (byte) 0xc3://控制设备版本
+//
+//                            break;
+//                        case (byte) 0xc4://强制启动
+//                            setType(SerialConfigs.RUN_TIMER_FORCE_START);
+//                            break;
+//                        case (byte) 0xc5://停止计时
+//                            setType(SerialConfigs.RUN_TIMER_STOP);
+//                            break;
+//                        case (byte) 0xc6://连接状态
+//                            setType(SerialConfigs.RUN_TIMER_CONNECT);
+//                            setResult(new RunTimerConnectState(data));
+//                            break;
+//                        case (byte) 0xc7://拦截时间
+//                            setType(SerialConfigs.RUN_TIMER_INTERCEPT_TIME);
+//                            setResult(new RunTimerResult(data));
+//                            break;
+//                        case (byte) 0xc8://违规返回
+//                            setType(SerialConfigs.RUN_TIMER_FAULT_BACK);
+//                            break;
+//
+//
+//                    }
+//
+//
+//                }
+//                break;
 
             case ItemDefault.CODE_YTXS:
                 if (data.length >= 0x10

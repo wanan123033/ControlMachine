@@ -76,7 +76,7 @@ public class SitPullLinker implements Handler.Callback {
             Log.i("james", pushUpSetFrequencyResult.toString());
             checkDevice(pushUpSetFrequencyResult);
             return true;
-        }else if (machineCode == ItemDefault.CODE_MG && what == SerialConfigs.SARGENT_JUMP_SET_MATCH){
+        }else if (machineCode == ItemDefault.CODE_MG && what == SerialConfigs.SARGENT_JUMP_SET_MORE_MATCH){
             SargentJumpResult sargentJumpResult = (SargentJumpResult) msg.obj;
             checkDevice(sargentJumpResult);
             return true;

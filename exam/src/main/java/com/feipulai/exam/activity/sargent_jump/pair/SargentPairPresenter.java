@@ -49,7 +49,7 @@ public class SargentPairPresenter extends SitPullUpPairPresenter {
     }
     
     public void setFrequency(int deviceId, int originFrequency, int deviceFrequency) {
-        sitPushUpManager.setFrequency(ItemDefault.CODE_MG,
+        sitPushUpManager.setFrequencyMG(
                 originFrequency,
                 deviceId,
                 SettingHelper.getSystemSetting().getHostId());
