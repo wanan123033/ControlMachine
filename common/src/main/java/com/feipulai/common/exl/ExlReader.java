@@ -10,7 +10,7 @@ import com.github.mjdev.libaums.fs.UsbFile;
 public abstract class ExlReader{
 	
 	protected ExlListener listener;
-	
+
 	/**
 	 * 创建对象时必须传入回调listener
 	 * @param listener 读写结果返回(成功或失败,及原因)

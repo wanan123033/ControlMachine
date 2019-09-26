@@ -66,8 +66,12 @@ public class BasketballParser extends UDPParser {
             case UDPBasketBallConfig.CMD_SET_T_RESPONSE://灵敏度
                 break;
             case UDPBasketBallConfig.CMD_GET_STATUS_RESPONSE://获取工作状态
+                if (data[2] == 3 && data[4] != 0xff) {
+                    return null;
+                }
                 result.setUcStatus(data[2]);
                 result.settNum(data[6]);
+
                 break;
 
             default:
