@@ -1,6 +1,9 @@
 package com.feipulai.device.udp.parse;
 
 
+import android.util.Log;
+
+import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.udp.UDPBasketBallConfig;
 import com.feipulai.device.udp.result.BasketballResult;
 import com.feipulai.device.udp.result.UDPResult;
@@ -57,20 +60,20 @@ public class BasketballParser extends UDPParser {
 
             case UDPBasketBallConfig.CMD_SET_BLOCKERTIME_RESPONSE://设置拦截器拦截的时间：0XA6， CMD_SET_ BLOCKERTIME, Second, 0XFF
             case UDPBasketBallConfig.CMD_GET_BLOCKERTIME_RESPONSE://获取拦截器拦截的时间0XA6， CMD_ GET _ BLOCKERTIME, Second, 0XFF
-                result.setSecond(data[2]);
+                result.setSecond(data[2]&0xff);
                 break;
             case UDPBasketBallConfig.CMD_SET_PRECISION_RESPONSE://设置计时器时间显示精度
             case UDPBasketBallConfig.CMD_GET_PRECISION_RESPONSE://获取计时器时间显示精度
-                result.setuPrecision(data[2]);
+                result.setuPrecision(data[2]&0xff);
                 break;
             case UDPBasketBallConfig.CMD_SET_T_RESPONSE://灵敏度
                 break;
             case UDPBasketBallConfig.CMD_GET_STATUS_RESPONSE://获取工作状态
-                if (data[2] == 3 && data[4] != 0xff) {
+                if ((data[2]&0xff) == 0 && (data[6]&0xff) == 0xff) {
                     return null;
                 }
-                result.setUcStatus(data[2]);
-                result.settNum(data[6]);
+                result.setUcStatus(data[2]&0xff);
+                result.settNum(data[6]&0xff);
 
                 break;
 
