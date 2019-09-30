@@ -21,7 +21,6 @@ import com.feipulai.common.view.WaitDialog;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
-import com.feipulai.host.activity.setting.LEDSettingActivity;
 import com.feipulai.host.activity.base.BaseActivity;
 import com.feipulai.host.activity.base.BaseCheckActivity;
 import com.feipulai.host.activity.jump_rope.adapter.CheckPairAdapter;
@@ -30,8 +29,9 @@ import com.feipulai.host.activity.jump_rope.base.check.RadioCheckContract;
 import com.feipulai.host.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.host.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.host.activity.jump_rope.bean.TestCache;
+import com.feipulai.host.activity.setting.LEDSettingActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
-import com.feipulai.host.activity.situp.pair.SitUpPairActivity;
+import com.feipulai.host.activity.situp.pair.SitPullPairActivity;
 import com.feipulai.host.activity.situp.setting.SitUpSetting;
 import com.feipulai.host.activity.situp.setting.SitUpSettingActivity;
 import com.feipulai.host.activity.situp.test.SitUpTestActivity;
@@ -136,7 +136,7 @@ public class SitUpCheckActivity
         switch (view.getId()) {
 
             case R.id.btn_device_pair:
-                startActivity(new Intent(this, SitUpPairActivity.class));
+                startActivity(new Intent(this, SitPullPairActivity.class));
                 break;
 
 

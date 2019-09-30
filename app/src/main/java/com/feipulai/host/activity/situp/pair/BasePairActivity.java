@@ -20,12 +20,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class SitUpPairActivity extends BaseTitleActivity
+public abstract class BasePairActivity extends BaseTitleActivity
         implements SitUpPairContract.View,
         DevicePairAdapter.OnItemClickListener {
 
     private static final int UPDATE_SPECIFIC_ITEM = 0x1;
-    private static final String TAG = "SitUpPairActivity";
+    private static final String TAG = "BasePairActivity";
     @BindView(R.id.sw_auto_pair)
     Switch mSwAutoPair;
     @BindView(R.id.rv_pairs)
@@ -44,7 +44,7 @@ public class SitUpPairActivity extends BaseTitleActivity
 
     @Override
     protected void initData() {
-        presenter = new SitUpPairPresenter(this, this);
+        presenter = getPresenter();
         presenter.start();
     }
 
@@ -54,6 +54,7 @@ public class SitUpPairActivity extends BaseTitleActivity
         return builder.setTitle(R.string.sit_up_pair_title);
     }
 
+    public abstract SitUpPairPresenter getPresenter();
 
     @Override
     public void initView(boolean isAutoPair, List pairs) {

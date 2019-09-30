@@ -12,7 +12,7 @@ import com.feipulai.host.activity.jump_rope.check.JumpRopeCheckActivity;
 import com.feipulai.host.activity.medicine_ball.MedicineBallTestActivity;
 import com.feipulai.host.activity.radio_timer.RunTimerActivityTestActivity;
 import com.feipulai.host.activity.sitreach.SitReachTestActivity;
-import com.feipulai.host.activity.situp.SitUpCheckActivity;
+import com.feipulai.host.activity.situp.check.SitUpCheckActivity;
 import com.feipulai.host.activity.standjump.StandJumpTestActivity;
 import com.feipulai.host.activity.vccheck.VitalCapacityTestActivity;
 import com.feipulai.host.db.DBManager;

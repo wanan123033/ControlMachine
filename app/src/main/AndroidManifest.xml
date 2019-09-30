@@ -2,26 +2,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.feipulai.host">
-
     <!-- 集成百度TTS时需要下列权限 -->
     <!-- 测试完成后，您自己的apAPP_KEYpSECRET_KEYtKey 请在 SynthActivity 和 MiniActivity 中修改 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <!--<uses-permission android:name="android.permission.WRITE_SETTINGS"/> -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- <uses-permission android:name="android.permission.WRITE_SETTINGS"/> -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-
-    <!-- 系统设置 -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" /> <!-- 系统设置 -->
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
-
-    <!-- vibrator -->
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" /> <!-- vibrator -->
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
@@ -32,57 +25,49 @@
         android:screenOrientation="landscape"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-
+        <activity android:name=".activity.situp.pair.SitPullPairActivity"></activity>
         <activity
             android:name=".activity.SplashScreenActivity"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
                 <!-- <category android:name="android.intent.category.HOME" /> -->
             </intent-filter>
         </activity>
         <activity android:name=".activity.main.MainActivity" />
         <activity android:name=".activity.main.MachineSelectActivity" />
-        <activity android:name=".activity.main.SubItemsSelectActivity" />
-        <!--<activity android:name=".activity.ItemSelectActivity"/>-->
+        <activity android:name=".activity.main.SubItemsSelectActivity" /> <!-- <activity android:name=".activity.ItemSelectActivity"/> -->
         <activity android:name=".activity.setting.SettingActivity" />
-        <activity android:name=".activity.setting.LEDSettingActivity" />
-
-        <!--data related-->
+        <activity android:name=".activity.setting.LEDSettingActivity" /> <!-- data related -->
         <activity android:name="com.feipulai.common.dbutils.FileSelectActivity" />
         <activity android:name=".activity.data.DataManageActivity" />
-        <activity android:name=".activity.data.DataDisplayActivity" />
-
-        <!-- jump rope -->
+        <activity android:name=".activity.data.DataDisplayActivity" /> <!-- jump rope -->
         <activity android:name=".activity.jump_rope.pair.JumpRopePairActivity" />
         <activity android:name=".activity.jump_rope.check.JumpRopeCheckActivity" />
         <activity android:name=".activity.jump_rope.setting.JumpRopeSettingActivity" />
         <activity android:name=".activity.jump_rope.test.JumpRopeTestActivity" />
-        <activity android:name=".activity.jump_rope.base.result.RadioResultActivity" />
-        <!--sit up-->
-        <!--<activity android:name=".activity.situp.SitUpPairActivity" />-->
-        <!--<activity android:name=".activity.situp.SitUpCheckActivity" />-->
-        <!--<activity android:name=".activity.situp.SitUpSettingActivity" />-->
-        <!--<activity android:name=".activity.situp.SitUpTimingActivity" />-->
-        <!--<activity android:name=".activity.situp.SitUpResultActivity" />-->
+        <activity android:name=".activity.jump_rope.base.result.RadioResultActivity" /> <!-- sit up -->
+        <!-- <activity android:name=".activity.situp.BasePairActivity" /> -->
+        <!-- <activity android:name=".activity.situp.SitUpCheckActivity" /> -->
+        <!-- <activity android:name=".activity.situp.SitUpSettingActivity" /> -->
+        <!-- <activity android:name=".activity.situp.SitUpTimingActivity" /> -->
+        <!-- <activity android:name=".activity.situp.SitUpResultActivity" /> -->
         <activity android:name=".activity.situp.setting.SitUpSettingActivity" />
         <activity android:name=".activity.situp.test.SitUpTestActivity" />
         <activity android:name=".activity.situp.check.SitUpCheckActivity" />
-        <activity android:name=".activity.situp.pair.SitUpPairActivity" />
-        <!--height weight-->
-        <activity android:name=".activity.height_weight.HeightWeightCheckActivity" />
-        <!--sit reach-->
+        <activity android:name=".activity.height_weight.HeightWeightCheckActivity" /> <!-- sit reach -->
         <activity
             android:name=".activity.sitreach.SitReachTestActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.sitreach.SitReachSettingActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity android:name=".activity.sitreach.SitReachFaceIDActivity" />
-        <!--stand jump-->
+        <activity android:name=".activity.sitreach.SitReachFaceIDActivity" /> <!-- stand jump -->
         <activity
             android:name=".activity.standjump.StandJumpTestActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
@@ -91,15 +76,12 @@
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity android:name=".activity.standjump.StandJumpFaceIDActivity" />
         <activity android:name=".activity.data.DataRetrieveActivity" />
-
-        <activity android:name=".activity.base.BaseItemSettingActivity" />
-        <!--vital capacity-->
+        <activity android:name=".activity.base.BaseItemSettingActivity" /> <!-- vital capacity -->
         <activity android:name=".activity.vccheck.FreeTestActivity" />
         <activity
             android:name=".activity.vccheck.VitalCapacityTestActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity android:name=".activity.vccheck.VitalCapacityFaceIDActivity" />
-        <!--medicine ball-->
+        <activity android:name=".activity.vccheck.VitalCapacityFaceIDActivity" /> <!-- medicine ball -->
         <activity
             android:name=".activity.medicine_ball.MedicineBallTestActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
@@ -107,7 +89,6 @@
         <activity android:name=".activity.vccheck.UploadActivity" />
         <activity android:name=".activity.radio_timer.RunTimerActivityTestActivity" />
         <activity android:name=".activity.radio_timer.RunTimerSettingActivity" />
-
     </application>
 
 </manifest>
