@@ -283,7 +283,6 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
             for (int i = roundNo; i <= setTestCount(); i++) {
                 for (int j = 0; j < pairList.size(); j++) {
                     if (TextUtils.isEmpty(pairList.get(j).getTimeResult()[i - 1])) {
-                        roundNo = i;
                         int index = -1;
                         for (DeviceDetail detail : deviceDetails) {
                             index++;
@@ -294,6 +293,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                                 detail.getStuDevicePair().setStudent(studentList.get(j));
                                 deviceDetails.get(index).getStuDevicePair().setTimeResult(pairList.get(j).getTimeResult());
                                 int testTimes = getRound(pairList.get(j).getTimeResult());
+                                roundNo = testTimes;
                                 toastSpeak(String.format(getString(R.string.test_speak_hint), studentList.get(j).getStudentName(), testTimes+1),
                                         String.format(getString(R.string.test_speak_hint), studentList.get(j).getStudentName(), testTimes + 1));
                                 deviceListAdapter.notifyDataSetChanged();
@@ -570,9 +570,6 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                     }, 3000);
 
                     deviceDetails.get(index).getStuDevicePair().setBaseHeight(0);
-//                    Message msg = new Message();
-//                    msg.obj = studentList.get(stuAdapter.getTestPosition());
-//                    stuHandler.sendMessageDelayed(msg, 3000);
                     Logger.i("下一位测试考生：" + studentList.get(stuAdapter.getTestPosition()));
                     group.setIsTestComplete(2);
                     DBManager.getInstance().updateGroup(group);
@@ -611,11 +608,6 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                         rvTestStu.scrollToPosition(stuAdapter.getTestPosition());
                     }
                 }, 3000);
-
-//                deviceDetails.get(deviceIndex).getStuDevicePair().setTimeResult(pairList.get(i).getTimeResult());
-//                deviceDetails.get(deviceIndex).getStuDevicePair().setStudent(studentList.get(i));
-//                Message msg = new Message();
-//                stuHandler.sendMessageDelayed(msg, 3000);
                 deviceDetails.get(deviceIndex).getStuDevicePair().setBaseHeight(0);
                 deviceDetails.get(deviceIndex).setRound(testTimes);
                 Logger.i("addStudent:" + studentList.get(i).toString());
@@ -752,7 +744,8 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().post(new BaseEvent(EventConfigs.UPDATE_TEST_RESULT));
+        EventBus.getDefault().post(new BaseEvent(EventConfigs.UPDATE_TEST_RESULT
+        ));
         Intent serverIntent = new Intent(this, UploadService.class);
         stopService(serverIntent);
     }

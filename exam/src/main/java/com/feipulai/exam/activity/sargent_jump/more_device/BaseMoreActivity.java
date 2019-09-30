@@ -23,11 +23,13 @@ import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
+import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.sargent_jump.pair.SargentPairActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.sargent_jump.adapter.DeviceListAdapter;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
@@ -41,6 +43,7 @@ import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.StuSearchEditText;
 import com.orhanobut.logger.Logger;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -163,16 +166,51 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         toastSpeak(String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1)
                 , String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1));
 
-        setShowLed(deviceDetail.getStuDevicePair());
+        setShowLed(deviceDetail.getStuDevicePair(),index);
 
     }
 
     /**
-     * led 显示 TODO
+     * led 显示
      *
      * @param pair
      */
-    private void setShowLed(BaseStuPair pair) {
+    private void setShowLed(BaseStuPair pair,int index) {
+        Student student = pair.getStudent();
+        if (student == null)
+            return;
+        int ledMode = SettingHelper.getSystemSetting().getLedMode();
+        if (ledMode == 0){
+            String str = InteractUtils.getStrWithLength(student.getStudentName(), 6);
+            str+="开始";
+            byte[] data = new byte[0];
+            try {
+                data = str.getBytes("GB2312");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, index, 1, false, true);
+        }else {
+            mLEDManager.ShowSubsetString(SettingHelper.getSystemSetting().getHostId(), index+1,student.getLEDStuName() + "   第" + deviceDetails.get(index).getRound() + "次", 0, 0, true, false);
+            mLEDManager.ShowSubsetString(SettingHelper.getSystemSetting().getHostId(),index+1, "当前：", 0, 1, false, true);
+            RoundResult bestResult = DBManager.getInstance().queryBestScore(student.getStudentCode(), testNo);
+            if (bestResult != null && bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
+                byte[] data = new byte[16];
+                String str = "最好：";
+                try {
+                    byte[] strData = str.getBytes("GB2312");
+                    System.arraycopy(strData, 0, data, 0, strData.length);
+                    byte[] resultData = ResultDisplayUtils.getStrResultForDisplay(bestResult.getResult()).getBytes("GB2312");
+                    System.arraycopy(resultData, 0, data, data.length - resultData.length - 1, resultData.length);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                mLEDManager.ShowSubsetString(SettingHelper.getSystemSetting().getHostId(),index+1, data, 0, 2, false, true);
+            } else {
+                mLEDManager.ShowSubsetString(SettingHelper.getSystemSetting().getHostId(),index+1, "最好：", 0, 2, false, true);
+
+            }
+        }
 
     }
 
@@ -455,7 +493,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
      * LED结果展示
      */
     private void updateLastResultLed(RoundResult roundResult) {
-
+        //todo
     }
 
 
@@ -484,7 +522,6 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
             refreshDevice(index);
 
-            //TODO LED
             updateResultLed();
             deviceListAdapter.notifyItemChanged(index);
         }
@@ -497,7 +534,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     }
 
     private void updateResultLed() {
-
+        //todo
     }
 
     @OnClick({R.id.txt_led_setting, R.id.tv_device_pair})
@@ -516,7 +553,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            setShowLed((BaseStuPair) msg.obj);
+            BaseStuPair pair = (BaseStuPair) msg.obj;
+            setShowLed(pair,pair.getBaseDevice().getDeviceId()-1);
         }
 
 

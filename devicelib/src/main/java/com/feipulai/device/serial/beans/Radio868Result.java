@@ -19,7 +19,7 @@ public class Radio868Result {
     private Object mResult;
 
     public Radio868Result(byte[] data) {
-        Log.i("james",StringUtility.bytesToHexString(data));
+        Log.i("james", StringUtility.bytesToHexString(data));
         if (MachineCode.machineCode == -1) {
             return;
         }
@@ -144,8 +144,8 @@ public class Radio868Result {
                                 setResult(new SargentJumpResult(data));
                                 break;
                         }
-                    }else if (data[6] == 0x01){
-                        switch (data[7]){
+                    } else if (data[6] == 0x01) {
+                        switch (data[7]) {
                             case 0x01:
                                 setType(SerialConfigs.SARGENT_JUMP_SET_MORE_MATCH);
                                 setResult(new SargentJumpResult(data));
@@ -155,6 +155,28 @@ public class Radio868Result {
                                 setResult(new SargentJumpResult(data));
                                 break;
                         }
+                    }
+                }
+                break;
+            case ItemDefault.CODE_PQ:
+                if (data[0] == 0xAA && data[2] == 0x0A && data[data.length-1] == 0x0d) {
+                    switch (data[7]){
+                        case (byte) 0xb0:
+                            setType(SerialConfigs.VOLLEY_BALL_SET_MORE_MATCH);
+                            setResult(new VolleyPairResult(data));
+                            break;
+                        case (byte) 0xb3://查询状态
+                            setType(SerialConfigs.VOLLEY_BALL_SET_MORE_MATCH);
+                            setResult(new VolleyPairResult(data));
+                            break;
+                        case (byte) 0xb7://自检
+                            setType(SerialConfigs.VOLLEY_BALL_SET_MORE_MATCH);
+                            setResult(new VolleyPairResult(data));
+                            break;
+                        case (byte) 0xb2://查询版本
+                            setType(SerialConfigs.VOLLEY_BALL_SET_MORE_MATCH);
+                            setResult(new VolleyPairResult(data));
+                            break;
                     }
                 }
                 break;
