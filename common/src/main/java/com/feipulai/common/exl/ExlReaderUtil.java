@@ -141,6 +141,8 @@ public class ExlReaderUtil {
     }
 
     private String getStringVal(Cell cell) {
+        if (cell == null)
+            return "";
         switch (cell.getCellType()) {
             case Cell.CELL_TYPE_NUMERIC:
                 cell.setCellType(Cell.CELL_TYPE_STRING);
