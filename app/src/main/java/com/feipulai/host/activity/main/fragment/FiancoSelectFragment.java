@@ -47,10 +47,10 @@ public class FiancoSelectFragment extends BaseFragment implements DialogInterfac
         mTupleList.add(new Tuple(ItemDefault.CODE_TS, getString(R.string.jump_rope), R.mipmap.icon_jump_rope, 3));
         mTupleList.add(new Tuple(ItemDefault.CODE_LDTY, getString(R.string.stand_jump), R.mipmap.icon_standjump, 3));
         mTupleList.add(new Tuple(ItemDefault.CODE_FHL, getString(R.string.vital_capacity), R.mipmap.icon_pulmonary, 3));
-        mTupleList.add(new Tuple(ItemDefault.CODE_ZWTQQ, getString(R.string.sit_reach), R.mipmap.icon_sitreach, 3));
-        mTupleList.add(new Tuple(ItemDefault.CODE_HWSXQ, getString(R.string.medicine_ball), R.mipmap.icon_medicine_ball, 3));
-        mTupleList.add(new Tuple(ItemDefault.CODE_YWQZ, getString(R.string.sit_up), R.mipmap.icon_situp, 3));
-        mTupleList.add(new Tuple(ItemDefault.CODE_ZFP, getString(R.string.run_time), R.mipmap.icon_runtime, 3));
+//        mTupleList.add(new Tuple(ItemDefault.CODE_ZWTQQ, getString(R.string.sit_reach), R.mipmap.icon_sitreach, 3));
+//        mTupleList.add(new Tuple(ItemDefault.CODE_HWSXQ, getString(R.string.medicine_ball), R.mipmap.icon_medicine_ball, 3));
+//        mTupleList.add(new Tuple(ItemDefault.CODE_YWQZ, getString(R.string.sit_up), R.mipmap.icon_situp, 3));
+//        mTupleList.add(new Tuple(ItemDefault.CODE_ZFP, getString(R.string.run_time), R.mipmap.icon_runtime, 3));
 
         RecyclerView recyclerView = findView(R.id.rv_item);
         GridLayoutManager layoutManager = new GridLayoutManager(mContext, 12);

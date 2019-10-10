@@ -10,14 +10,15 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
     <!--<style name="AppTheme" parent="android:Theme.Holo.Light">-->
-        <!--<item name="colorPrimary">@color/colorPrimary</item>-->
-        <!--<item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
-        <!--<item name="colorAccent">@color/colorAccent</item>-->
-        <!--<item name="android:listDivider">@drawable/divider</item>-->
+    <!--<item name="colorPrimary">@color/colorPrimary</item>-->
+    <!--<item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
+    <!--<item name="colorAccent">@color/colorAccent</item>-->
+    <!--<item name="android:listDivider">@drawable/divider</item>-->
     <!--</style>-->
     <style name="TabTextSize" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
         <item name="android:textSize">18sp</item>
     </style>
+
     <style name="customHoloLight" parent="@android:style/Theme.Holo.Light">
         <item name="android:windowNoTitle">true</item>
     </style>
@@ -30,6 +31,7 @@
         <item name="android:textSize">18sp</item>
         <item name="android:layout_margin">5dp</item>
     </style>
+
     <style name="NoTitleDialog" parent="Theme.AppCompat.Light.Dialog">
         <!--没有标题-->
         <item name="windowNoTitle">true</item>
@@ -38,7 +40,7 @@
         <!--是否有覆盖-->
         <item name="android:windowContentOverlay">@null</item>
         <!--是否浮动-->
-        <item name="android:windowIsFloating"> true </item>
+        <item name="android:windowIsFloating">true</item>
         <!--边框-->
         <item name="android:windowFrame">@null</item>
         <!--背景：透明-->
@@ -58,16 +60,16 @@
     </style>
 
     <!--<style name="loadingDialogStyle" parent="android:Theme.Dialog">-->
-        <!--<item name="android:windowBackground">@android:color/transparent</item>&lt;!&ndash;设置dialog的背景&ndash;&gt;-->
-        <!--<item name="android:windowFrame">@null</item>&lt;!&ndash;Dialog的windowFrame框为无&ndash;&gt;-->
-        <!--<item name="android:windowNoTitle">true</item>&lt;!&ndash;是否显示title&ndash;&gt;-->
-        <!--<item name="android:windowIsFloating">true</item>&lt;!&ndash;是否浮现在activity之上&ndash;&gt;-->
-        <!--<item name="android:windowIsTranslucent">true</item>&lt;!&ndash;是否半透明&ndash;&gt;-->
-        <!--<item name="android:windowContentOverlay">@null</item>&lt;!&ndash;是否半透明&ndash;&gt;-->
-        <!--<item name="android:windowAnimationStyle">@android:style/Animation.Dialog-->
-        <!--</item>&lt;!&ndash; 对话框是否有遮盖 &ndash;&gt;-->
-        <!--<item name="android:backgroundDimEnabled">false</item>&lt;!&ndash;背景是否模糊显示&ndash;&gt;-->
-        <!--<item name="android:backgroundDimAmount">0.6</item>&lt;!&ndash;背景的灰度&ndash;&gt;-->
+    <!--<item name="android:windowBackground">@android:color/transparent</item>&lt;!&ndash;设置dialog的背景&ndash;&gt;-->
+    <!--<item name="android:windowFrame">@null</item>&lt;!&ndash;Dialog的windowFrame框为无&ndash;&gt;-->
+    <!--<item name="android:windowNoTitle">true</item>&lt;!&ndash;是否显示title&ndash;&gt;-->
+    <!--<item name="android:windowIsFloating">true</item>&lt;!&ndash;是否浮现在activity之上&ndash;&gt;-->
+    <!--<item name="android:windowIsTranslucent">true</item>&lt;!&ndash;是否半透明&ndash;&gt;-->
+    <!--<item name="android:windowContentOverlay">@null</item>&lt;!&ndash;是否半透明&ndash;&gt;-->
+    <!--<item name="android:windowAnimationStyle">@android:style/Animation.Dialog-->
+    <!--</item>&lt;!&ndash; 对话框是否有遮盖 &ndash;&gt;-->
+    <!--<item name="android:backgroundDimEnabled">false</item>&lt;!&ndash;背景是否模糊显示&ndash;&gt;-->
+    <!--<item name="android:backgroundDimAmount">0.6</item>&lt;!&ndash;背景的灰度&ndash;&gt;-->
     <!--</style>-->
 
     <style name="style_setting_tv_title">
@@ -158,4 +160,10 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <style name="txt_black_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/sp_16</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
 </resources>

@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SystemBrightUtils;
 import com.feipulai.common.view.baseToolbar.StatusBarUtil;
@@ -107,14 +108,18 @@ public class MainActivity extends BaseActivity {
         switch (view.getId()) {
             case R.id.card_test:
                 if (isSettingFinished()) {
-                    startActivity(new Intent(MainActivity.this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
+                    if (SettingHelper.getSystemSetting().isFreedomTest()) {
+                        IntentUtil.gotoActivity(MainActivity.this, TestConfigs.freedomActivity.get(TestConfigs.sCurrentItem.getMachineCode()));
+                    } else {
+                        IntentUtil.gotoActivity(MainActivity.this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode()));
+                    }
                 }
                 break;
             case R.id.card_select:
                 if (SettingHelper.getSystemSetting().isFreedomTest()) {
                     toastSpeak(getString(R.string.freedom_operation_hint));
                 } else {
-                    startActivity(new Intent(MainActivity.this, DataRetrieveActivity.class));
+                    IntentUtil.gotoActivity(MainActivity.this, DataRetrieveActivity.class);
                 }
 
                 break;
@@ -124,13 +129,13 @@ public class MainActivity extends BaseActivity {
                 PrinterManager.getInstance().print("\n\n");
                 break;
             case R.id.card_parameter_setting:
-                startActivity(new Intent(MainActivity.this, SettingActivity.class));
+                IntentUtil.gotoActivity(MainActivity.this, SettingActivity.class);
                 break;
             case R.id.card_data_admin:
                 if (SettingHelper.getSystemSetting().isFreedomTest()) {
                     toastSpeak(getString(R.string.freedom_operation_hint));
                 } else {
-                    startActivity(new Intent(MainActivity.this, DataManageActivity.class));
+                    IntentUtil.gotoActivity(MainActivity.this, DataManageActivity.class);
                 }
 
                 break;
@@ -138,10 +143,10 @@ public class MainActivity extends BaseActivity {
                 startActivity(new Intent(Settings.ACTION_SETTINGS));
                 break;
             case R.id.card_led:
-                startActivity(new Intent(MainActivity.this, LEDSettingActivity.class));
+                IntentUtil.gotoActivity(MainActivity.this, LEDSettingActivity.class);
                 break;
             case R.id.card_device_cut:
-                startActivity(new Intent(this, MachineSelectActivity.class));
+                IntentUtil.gotoActivity(this, MachineSelectActivity.class);
                 break;
 
         }

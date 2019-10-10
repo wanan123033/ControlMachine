@@ -545,7 +545,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         PrinterManager.getInstance().print(
                 String.format(getString(R.string.print_result_stu_code), student.getStudentCode()) + "\n");
         PrinterManager.getInstance().print(
-                String.format(getString(R.string.print_result_stu_code), student.getStudentName()) + "\n");
+                String.format(getString(R.string.print_result_stu_name), student.getStudentName()) + "\n");
         PrinterManager.getInstance().print(
                 String.format(getString(R.string.print_result_stu_result), (baseStuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) ?
                         getString(R.string.foul) : ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult())) + "\n");

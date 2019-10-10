@@ -29,10 +29,16 @@ public class LEDManager {
     public static final int LEFT = 0;
     public static final int MIDDLE = 1;
     public static final int RIGHT = 2;
+    public static final int LED_VERSION_4_1 = 1;
+    //默认为0 第一版 led4.1 传1
+    private int versions = 0;
 
     public LEDManager() {
     }
 
+    public LEDManager(int versions) {
+        this.versions = versions;
+    }
 
     static final Map<Integer, Integer> machineCodesForLed = new HashMap<>();
 
@@ -57,7 +63,7 @@ public class LEDManager {
         machineCodesForLed.put(ItemDefault.CODE_PQ, 8);//排球垫球
     }
 
-            /**
+    /**
      * 连接屏幕
      *
      * @param machineCode 测试项目机器码{@link ItemDefault}.CODE_XXX
@@ -65,6 +71,10 @@ public class LEDManager {
      */
     public void link(int machineCode, int hostId) {
         if (machineCodesForLed.get(machineCode) == null) {
+            return;
+        }
+        if (versions == LED_VERSION_4_1) {
+            link(machineCode, hostId, 1);
             return;
         }
         //先切到0频道
@@ -92,90 +102,98 @@ public class LEDManager {
 //            link(machineCode, hostId, 1);
 //        }
 
-        /**
-         * 连接屏幕
-         *
-         * @param machineCode 测试项目机器码{@link ItemDefault}.CODE_XXX
-         * @param hostId      主机号
-         */
-        public void link(int machineCode, int hostId, int ledId) {
-            if (machineCodesForLed.get(machineCode) == null) {
-                return;
-            }
-            //先切到0频道
-            RadioChannelCommand channelCommand = new RadioChannelCommand(0);
-            RadioManager.getInstance().sendCommand(new ConvertCommand(channelCommand));
+    /**
+     * 连接屏幕
+     *
+     * @param machineCode 测试项目机器码{@link ItemDefault}.CODE_XXX
+     * @param hostId      主机号
+     */
+    public void link(int machineCode, int hostId, int ledId) {
+        if (machineCodesForLed.get(machineCode) == null) {
+            return;
+        }
+        //先切到0频道
+        RadioChannelCommand channelCommand = new RadioChannelCommand(0);
+        RadioManager.getInstance().sendCommand(new ConvertCommand(channelCommand));
 
-            //连接LED屏
-            byte[] command = {(byte) 0xaa, 0x00, (byte) 0xa1, 0x00, 0x02, (byte) 0xa1, 0x00, 0x00, 0x00, 0x00, 0x0d};
-            command[1] = (byte) (machineCodesForLed.get(machineCode) & 0xff);
-            command[6] = (byte) ((hostId + SerialConfigs.sProChannels.get(machineCode) - 1) & 0xff);
-            command[7] = (byte) (ledId & 0xff);
-            command[8] = (byte) (hostId & 0xff);
-            for (int i = 0; i < 9; i++) {
-                command[9] += command[i] & 0xff;
-            }
-
-            RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, command));
-
-            //调到与LED同频进行
-            RadioChannelCommand channelCommand1 = new RadioChannelCommand(hostId + SerialConfigs.sProChannels.get(machineCode) - 1);
-            RadioManager.getInstance().sendCommand(new ConvertCommand(channelCommand1));
+        //连接LED屏
+        byte[] command = {(byte) 0xaa, 0x00, (byte) 0xa1, 0x00, 0x02, (byte) 0xa1, 0x00, 0x00, 0x00, 0x00, 0x0d};
+        command[1] = (byte) (machineCodesForLed.get(machineCode) & 0xff);
+        command[6] = (byte) ((hostId + SerialConfigs.sProChannels.get(machineCode) - 1) & 0xff);
+        command[7] = (byte) (ledId & 0xff);
+        command[8] = (byte) (hostId & 0xff);
+        for (int i = 0; i < 9; i++) {
+            command[9] += command[i] & 0xff;
         }
 
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, command));
 
-        /**
-         * LED显示屏自检
-         *
-         * @param machineCode 测试项目机器码
-         * @param hostId      主机号
-         */
-        public void test(int machineCode, int hostId) {
-            if (machineCodesForLed.get(machineCode) == null) {
-                return;
-            }
-            byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xA6, 0x0D};
-            RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+        //调到与LED同频进行
+        RadioChannelCommand channelCommand1 = new RadioChannelCommand(hostId + SerialConfigs.sProChannels.get(machineCode) - 1);
+        RadioManager.getInstance().sendCommand(new ConvertCommand(channelCommand1));
+    }
+
+
+    /**
+     * LED显示屏自检
+     *
+     * @param machineCode 测试项目机器码
+     * @param hostId      主机号
+     */
+    public void test(int machineCode, int hostId) {
+        if (machineCodesForLed.get(machineCode) == null) {
+            return;
         }
-
-        public void test(int machineCode, int hostId,int ledId) {
-            if (machineCodesForLed.get(machineCode) == null) {
-                return;
-            }
-            byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xA6, 0x0D};
-            cmd[4] = (byte) (ledId & 0xff);
-            RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+        if (versions == LED_VERSION_4_1) {
+            test(machineCode, hostId, 1);
+            return;
         }
+        byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xA6, 0x0D};
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+    }
 
-        /**
-         * 清空LED显示屏
-         *
-         * @param machineCode 测试项目机器码
-         * @param hostId      主机号
-         */
-        public void clearScreen(int machineCode, int hostId) {
+    public void test(int machineCode, int hostId, int ledId) {
+        if (machineCodesForLed.get(machineCode) == null) {
+            return;
+        }
+        byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xA6, 0x0D};
+        cmd[4] = (byte) (ledId & 0xff);
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+    }
+
+    /**
+     * 清空LED显示屏
+     *
+     * @param machineCode 测试项目机器码
+     * @param hostId      主机号
+     */
+    public void clearScreen(int machineCode, int hostId) {
 //        if (machineCodesForLed.get(machineCode) == null) {
 //            return;
 //        }
 //        byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xa5, 0x01, (byte)
 //                0x00, 0x00, 0x00};
 //        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+        if (versions == LED_VERSION_4_1) {
             clearScreen(machineCode, hostId, 1);
+            return;
         }
+        clearScreen(machineCode, hostId, 1);
+    }
 
-        /**
-         * 清空LED显示屏
-         *
-         * @param machineCode 测试项目机器码
-         * @param hostId      主机号
-         */
-        public void clearScreen(int machineCode, int hostId, int ledId) {
-            if (machineCodesForLed.get(machineCode) == null) {
-                return;
-            }
-            byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xa5, 0x01, (byte)
-                    0x00, 0x00, 0x00};
-            cmd[4] = (byte) (ledId & 0xff);
+    /**
+     * 清空LED显示屏
+     *
+     * @param machineCode 测试项目机器码
+     * @param hostId      主机号
+     */
+    public void clearScreen(int machineCode, int hostId, int ledId) {
+        if (machineCodesForLed.get(machineCode) == null) {
+            return;
+        }
+        byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xa5, 0x01, (byte)
+                0x00, 0x00, 0x00};
+        cmd[4] = (byte) (ledId & 0xff);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -244,6 +262,7 @@ public class LEDManager {
 
         try {
             byte[] data = str.getBytes("GB2312");
+
             showString(machineCode, hostId, ledId, data, x, y, clearScreen, update);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
