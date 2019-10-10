@@ -46,18 +46,18 @@ public class LEDSettingActivity extends BaseTitleActivity {
         int machineCode = TestConfigs.sCurrentItem.getMachineCode();
         switch (view.getId()) {
             case R.id.btn_led_connect:
-                mLEDManager.link(machineCode, hostId);
+                mLEDManager.link(machineCode, hostId,1);
                 String machineName = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode());
                 mLEDManager.resetLEDScreen(hostId, machineName);
                 break;
             case R.id.btn_led_self:
-                mLEDManager.test(machineCode, hostId);
+                mLEDManager.test(machineCode, hostId,1);
                 break;
             case R.id.img_led_luminance_munus:
-                mLEDManager.decreaseLightness(machineCode, hostId);
+                mLEDManager.decreaseLightness(machineCode, hostId,1);
                 break;
             case R.id.img_led_luminance_add:
-                mLEDManager.increaseLightness(machineCode, hostId);
+                mLEDManager.increaseLightness(machineCode, hostId,1);
                 break;
         }
     }

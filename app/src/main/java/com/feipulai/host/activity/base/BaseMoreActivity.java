@@ -94,6 +94,21 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         setDeviceCount(MAX_DEVICE_COUNT);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        for (int i = 0;i< 4;i++){
+            StringBuilder data = new StringBuilder();
+            data.append(i+1).append("号机");//1号机         空闲
+            for (int j = 0;j<7;j++){
+                data.append(" ");
+            }
+            data.append("空闲");
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data.toString(), 0, i, false, true);
+        }
+
+    }
+
     private void setDeviceCount(int deviceCount) {
         this.deviceCount = deviceCount;
         deviceDetails.clear();
@@ -191,6 +206,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     private void stuSkip(int pos) {
         deviceDetails.get(pos).getStuDevicePair().setStudent(null);
+        deviceDetails.get(pos).getStuDevicePair().setCanTest(true);
         deviceDetails.get(pos).getStuDevicePair().setTimeResult(new String[setTestCount()]);
         deviceListAdapter.notifyItemChanged(pos);
     }
@@ -223,7 +239,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, index, 1, false, true);
+        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, index, false, true);
     }
 
 
@@ -283,13 +299,23 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             pair.setResultState(baseStu.getResultState());
             pair.setResult(baseStu.getResult());
             refreshDevice(index);
-            updateResultLed();
+            updateResultLed(pair,index);
             deviceListAdapter.notifyItemChanged(index);
         }
     }
 
-    private void updateResultLed() {
+    private void updateResultLed(BaseStuPair baseStu,int index) {
+        String result = ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
+        int x = 7;
+        if (baseStu.getResult()< 1000){
+            x= 9;
+        }else if (baseStu.getResult()>= 1000 && baseStu.getResult()< 10000){
+            x= 8;
+        }else if (baseStu.getResult()>= 10000){
+            x= 6 ;
+        }
 
+        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, x, index, false, true);
     }
 
     public synchronized void updateDevice(@NonNull BaseDeviceState deviceState) {

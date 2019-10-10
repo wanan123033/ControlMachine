@@ -3,6 +3,7 @@ package com.feipulai.host.activity.vccheck;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
 
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
@@ -37,7 +38,8 @@ public class VitalTestActivity extends BaseMoreActivity {
 
             deviceState[i] = 0;//连续5次检测不到认为掉线
         }
-
+        getToolbar().getRightView(0).setVisibility(View.GONE);
+        getToolbar().getRightView(1).setVisibility(View.GONE);
     }
 
     @Override
