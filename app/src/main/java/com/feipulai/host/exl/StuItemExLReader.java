@@ -157,7 +157,7 @@ public class StuItemExLReader extends ExlReader {
         }
         DBManager.getInstance().updateItem(TestConfigs.sCurrentItem);// 更新项目表中信息
 
-
+        insertDB(result);
         return true;
     }
 

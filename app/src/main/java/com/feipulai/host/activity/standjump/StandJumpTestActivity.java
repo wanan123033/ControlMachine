@@ -111,12 +111,12 @@ public class StandJumpTestActivity extends BasePersonTestActivity implements Sta
         }
         standResiltListener.setTestState(StandResiltListener.TestState.UN_STARTED);
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
-        try {
-            //睡眠 避免发送开始命令后没收到检测回调
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            //睡眠 避免发送开始命令后没收到检测回调
+//            Thread.sleep(100);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 
 

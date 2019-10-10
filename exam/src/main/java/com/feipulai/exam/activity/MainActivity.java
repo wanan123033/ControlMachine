@@ -17,6 +17,7 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SystemBrightUtils;
 import com.feipulai.common.view.baseToolbar.StatusBarUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.udp.UdpLEDUtil;
@@ -193,10 +194,10 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                 startActivity(new Intent(MainActivity.this, DataRetrieveActivity.class));
                 break;
             case R.id.card_print:
-//                PrinterManager.getInstance().init();
-//                PrinterManager.getInstance().selfCheck();
-//                PrinterManager.getInstance().print("\n\n");
-                addTestResult();
+                PrinterManager.getInstance().init();
+                PrinterManager.getInstance().selfCheck();
+                PrinterManager.getInstance().print("\n\n");
+//                addTestResult();
                 break;
             case R.id.card_parameter_setting:
                 startActivity(new Intent(MainActivity.this, SettingActivity.class));

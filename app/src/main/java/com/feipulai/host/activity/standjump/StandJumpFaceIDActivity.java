@@ -26,6 +26,7 @@ import static com.feipulai.device.serial.SerialConfigs.CMD_SELF_CHECK_JUMP;
  * Created by zzs on 2018/8/10
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
+@Deprecated
 public class StandJumpFaceIDActivity extends BasePersonFaceIDActivity implements StandResiltListener.HandlerInterface,
         BasePersonFaceIDActivity.OnMalfunctionClickListener {
 

@@ -73,6 +73,9 @@
             android:name=".activity.standjump.StandJumpTestActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
+            android:name=".activity.standjump.StandJumpFreedomActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
             android:name=".activity.standjump.StandJumpSettingActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity android:name=".activity.standjump.StandJumpFaceIDActivity" />

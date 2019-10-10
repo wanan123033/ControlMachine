@@ -12,6 +12,7 @@ import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BaseStuPair;
+import com.feipulai.host.activity.person.BasePersonTestActivity;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.ExecutorService;
@@ -22,7 +23,7 @@ import java.util.concurrent.Executors;
  * Created by zzs on 2018/7/2
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
-public class SitReachTestActivity extends com.feipulai.host.activity.person.BasePersonTestActivity {
+public class SitReachTestActivity extends BasePersonTestActivity {
     //最大使用设备数量
     private int maxDivice;
     private GetResultRunnable resultRunnable = new GetResultRunnable();

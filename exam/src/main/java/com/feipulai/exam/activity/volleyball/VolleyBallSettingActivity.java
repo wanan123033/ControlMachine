@@ -1,7 +1,6 @@
 package com.feipulai.exam.activity.volleyball;
 
 import android.app.Dialog;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -20,11 +19,11 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.feipulai.common.view.dialog.DialogUtils;
 import com.feipulai.common.utils.HandlerUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.common.view.dialog.DialogUtils;
 import com.feipulai.device.manager.VolleyBallManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
@@ -39,7 +38,6 @@ import com.orhanobut.logger.Logger;
 import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -287,12 +285,6 @@ public class VolleyBallSettingActivity
         });
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
-    }
 
 
     /**

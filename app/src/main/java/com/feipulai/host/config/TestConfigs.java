@@ -13,6 +13,7 @@ import com.feipulai.host.activity.medicine_ball.MedicineBallTestActivity;
 import com.feipulai.host.activity.radio_timer.RunTimerActivityTestActivity;
 import com.feipulai.host.activity.sitreach.SitReachTestActivity;
 import com.feipulai.host.activity.situp.check.SitUpCheckActivity;
+import com.feipulai.host.activity.standjump.StandJumpFreedomActivity;
 import com.feipulai.host.activity.standjump.StandJumpTestActivity;
 import com.feipulai.host.activity.vccheck.VitalCapacityTestActivity;
 import com.feipulai.host.activity.vccheck.VitalTestActivity;
@@ -45,6 +46,7 @@ public class TestConfigs {
 
     public static final String DEFAULT_IP_ADDRESS = "http://192.168.0.53:8036";
     public static final Map<Integer, Class<?>> proActivity = new HashMap<>();
+    public static final Map<Integer, Class<?>> freedomActivity = new HashMap<>();
     public static final Map<Integer, String> machineNameMap = new HashMap<>();
 
 
@@ -70,7 +72,7 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_ZFP, RunTimerActivityTestActivity.class);
 
-
+        TestConfigs.freedomActivity.put(ItemDefault.CODE_LDTY, StandJumpFreedomActivity.class);
         // 每个机器码对应的机器名称
         TestConfigs.machineNameMap.put(ItemDefault.CODE_TS, MyApplication.getInstance().getString(R.string.jump_rope));
         TestConfigs.machineNameMap.put(ItemDefault.CODE_YWQZ, MyApplication.getInstance().getString(R.string.sit_up));
