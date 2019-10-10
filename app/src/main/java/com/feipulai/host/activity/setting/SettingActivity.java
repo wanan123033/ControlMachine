@@ -77,7 +77,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         ArrayAdapter mSpHostIdAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, hostIdList);
         mSpHostIdAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpHostId.setAdapter(mSpHostIdAdapter);
-
+        mSpHostId.setSelection(setting.getHostId()-1);
         mSwAutoBroadcast.setChecked(setting.isAutoBroadcast());
         mSwRtUpload.setChecked(setting.isRtUpload());
         mSwAutoPrint.setChecked(setting.isAutoPrint());
