@@ -35,7 +35,7 @@ public abstract class BasePairActivity extends BaseTitleActivity
 
     private DevicePairAdapter mAdapter;
     private MyHandler mHandler = new MyHandler(this);
-    private SitUpPairPresenter presenter;
+    private BasePairPresenter presenter;
 
     @Override
     protected int setLayoutResID() {
@@ -54,7 +54,7 @@ public abstract class BasePairActivity extends BaseTitleActivity
         return builder.setTitle(R.string.sit_up_pair_title);
     }
 
-    public abstract SitUpPairPresenter getPresenter();
+    public abstract BasePairPresenter getPresenter();
 
     @Override
     public void initView(boolean isAutoPair, List pairs) {

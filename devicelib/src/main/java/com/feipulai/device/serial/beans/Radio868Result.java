@@ -159,8 +159,8 @@ public class Radio868Result {
                 }
                 break;
             case ItemDefault.CODE_PQ:
-                if (data[0] == 0xAA && data[2] == 0x0A && data[data.length-1] == 0x0d) {
-                    switch (data[7]){
+                if (data[0] == 0xAA && data[2] == 0x0A && data[data.length - 1] == 0x0d) {
+                    switch (data[7]) {
                         case (byte) 0xb0:
                             setType(SerialConfigs.VOLLEY_BALL_SET_MORE_MATCH);
                             setResult(new VolleyPairResult(data));
@@ -255,7 +255,11 @@ public class Radio868Result {
             case ItemDefault.CODE_FHL:
 
                 if ((data[0] & 0xff) == 0xaa && data.length == 16) {
-                    setType(SerialConfigs.VITAL_CAPACITY_RESULT);
+                    if (data[1] == 1 ||data[1] == 3){
+                        setType(SerialConfigs.VITAL_CAPACITY_SET_MORE_MATCH);
+                    }else {
+                        setType(SerialConfigs.VITAL_CAPACITY_RESULT);
+                    }
                     setResult(new VitalCapacityResult(data));
                 }
                 break;

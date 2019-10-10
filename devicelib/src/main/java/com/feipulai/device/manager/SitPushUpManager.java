@@ -128,6 +128,42 @@ public class SitPushUpManager {
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
         RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(targetChannel)));
     }
+    public void setFrequencyFHL(int machineCode, int originFrequency, int deviceId, int hostId) {
+        int targetChannel = 0;
+        byte[] buf = new byte[16];
+        buf[0] = (byte) 0xAB;
+        buf[1] = 0x02;    //包头
+        buf[2] = 0X10;       //包长
+        buf[3] = 0x02;
+        buf[4] = (byte) (deviceId & 0xff);      //设备号
+        buf[5] = 0X01;
+        targetChannel = SerialConfigs.sProChannels.get(machineCode) + hostId - 1;
+        buf[6] = (byte) (targetChannel & 0xff); //高字节在先
+        buf[7] = 0x05;    //传输速率
+
+        buf[8] = 0;
+        buf[9] = 0;
+        buf[10] = 0;
+        buf[11] = 0;
+        buf[12] = 0;
+        buf[13] = 0;
+        for (int i = 0; i < 14; i++) {
+            buf[14] += buf[i] & 0xff;
+        }
+        buf[15] = 0x0A;   //包尾
+        //Logger.i(StringUtility.bytesToHexString(buf));
+        //先切到通信频段
+        //Log.i("james","originFrequency:" + originFrequency);
+        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(originFrequency)));
+        //Log.i("james",StringUtility.bytesToHexString(buf));
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
+        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(targetChannel)));
+    }
 
     /**
      * 摸高设置频段

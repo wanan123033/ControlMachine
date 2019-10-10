@@ -29,6 +29,7 @@ import static com.feipulai.host.activity.vccheck.VCConstant.UPDATE_DEVICE;
 
 /**
  * 肺活量测试
+ * @deprecated
  */
 public class VitalCapacityTestActivity extends BasePersonTestActivity {
 

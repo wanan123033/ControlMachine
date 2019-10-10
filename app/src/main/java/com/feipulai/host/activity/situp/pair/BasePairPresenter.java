@@ -18,7 +18,7 @@ import java.util.List;
  * Created by pengjf on 2019/9/30.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
-public abstract class BsePairPresenter implements SitUpPairContract.Presenter,
+public abstract class BasePairPresenter implements SitUpPairContract.Presenter,
         RadioManager.OnRadioArrivedListener,
         SitPullLinker.SitPullPairListener{
 
@@ -30,7 +30,7 @@ public abstract class BsePairPresenter implements SitUpPairContract.Presenter,
     private final int TARGET_FREQUENCY = SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode()) + SettingHelper.getSystemSetting().getHostId() - 1;
     private volatile int focusPosition;
 
-    public BsePairPresenter(Context context, SitUpPairContract.View view) {
+    public BasePairPresenter(Context context, SitUpPairContract.View view) {
         this.context = context;
         this.view = view;
     }

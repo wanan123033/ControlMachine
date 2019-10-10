@@ -20,7 +20,8 @@ public class BaseStuPair implements Serializable {
     private BaseDeviceState baseDevice;
     //轮次成绩
     private String[] timeResult;
-
+    private boolean canTest;
+    private int baseHeight;
     public BaseStuPair(int result, int resultState, Student student, BaseDeviceState baseDevice) {
         this.result = result;
         this.resultState = resultState;
@@ -71,5 +72,21 @@ public class BaseStuPair implements Serializable {
 
     public void setTimeResult(String[] timeResult) {
         this.timeResult = timeResult;
+    }
+
+    public boolean isCanTest() {
+        return canTest;
+    }
+
+    public void setCanTest(boolean canTest) {
+        this.canTest = canTest;
+    }
+
+    public int getBaseHeight() {
+        return baseHeight;
+    }
+
+    public void setBaseHeight(int baseHeight) {
+        this.baseHeight = baseHeight;
     }
 }

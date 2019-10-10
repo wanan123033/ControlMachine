@@ -1,4 +1,4 @@
-package com.feipulai.host.activity.situp.pair;
+package com.feipulai.host.activity.vccheck.pair;
 
 import android.content.Context;
 import android.os.Build;
@@ -7,6 +7,8 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.host.activity.setting.SettingHelper;
+import com.feipulai.host.activity.situp.pair.BasePairPresenter;
+import com.feipulai.host.activity.situp.pair.SitUpPairContract;
 import com.feipulai.host.activity.situp.setting.SitUpSetting;
 
 import java.util.Objects;
@@ -15,12 +17,13 @@ import java.util.Objects;
  * Created by pengjf on 2019/10/8.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
-public class SitUpPairPresenter extends BasePairPresenter {
+public class VcPairPresenter extends BasePairPresenter {
 
     private Context context;
     private SitUpSetting setting;
     private SitPushUpManager sitPushUpManager;
-    public SitUpPairPresenter(Context context, SitUpPairContract.View view) {
+
+    public VcPairPresenter(Context context, SitUpPairContract.View view) {
         super(context, view);
         this.context = context;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -33,7 +36,7 @@ public class SitUpPairPresenter extends BasePairPresenter {
 
     @Override
     public void setFrequency(int deviceId, int originFrequency, int targetFrequency) {
-        sitPushUpManager.setFrequency(ItemDefault.CODE_YWQZ,
+        sitPushUpManager.setFrequencyFHL(ItemDefault.CODE_FHL,
                 originFrequency,
                 deviceId,
                 SettingHelper.getSystemSetting().getHostId());

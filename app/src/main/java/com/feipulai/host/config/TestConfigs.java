@@ -15,6 +15,7 @@ import com.feipulai.host.activity.sitreach.SitReachTestActivity;
 import com.feipulai.host.activity.situp.check.SitUpCheckActivity;
 import com.feipulai.host.activity.standjump.StandJumpTestActivity;
 import com.feipulai.host.activity.vccheck.VitalCapacityTestActivity;
+import com.feipulai.host.activity.vccheck.VitalTestActivity;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.db.MachineItemCodeUtil;
 import com.feipulai.host.entity.Item;
@@ -63,7 +64,7 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_YWQZ, SitUpCheckActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_HW, HeightWeightCheckActivity.class);
 
-        TestConfigs.proActivity.put(ItemDefault.CODE_FHL, VitalCapacityTestActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_FHL, VitalTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_ZWTQQ, SitReachTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_LDTY, StandJumpTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallTestActivity.class);

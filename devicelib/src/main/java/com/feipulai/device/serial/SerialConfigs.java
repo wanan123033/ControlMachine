@@ -224,5 +224,6 @@ public class SerialConfigs {
     public static final int GPS_TIME_RESPONSE = 0x38;
     public static final int SARGENT_JUMP_SET_MORE_MATCH = 0x39;
     public static final int VOLLEY_BALL_SET_MORE_MATCH = 0x40;
+    public static final int VITAL_CAPACITY_SET_MORE_MATCH = 0x41;
 
 }
