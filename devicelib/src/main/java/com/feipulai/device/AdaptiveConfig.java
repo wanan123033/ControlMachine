@@ -12,11 +12,13 @@ public class AdaptiveConfig {
     public static final int LIN_NAN_SHI_FAN = 1;
     public static int ADAPTIVE_TYPE = DEFAULT;
     public static int KEY_MODE = DEFAULT;
-
+    public static char[] IC_KEY;
+    public static char[] KEY_DEFAULT = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 
     public static void initIC(int type, int key_mode, char[] key) {
         ADAPTIVE_TYPE = type;
         KEY_MODE = key_mode;
         ItemDefault.keyA = key;
+        IC_KEY = key;
     }
 }

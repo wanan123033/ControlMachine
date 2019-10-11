@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 
-import com.feipulai.common.tts.TtsManager;
 import com.feipulai.device.CheckDeviceOpener;
 import com.feipulai.device.ic.ICCardDealer;
 import com.feipulai.device.ic.NFCDevice;
@@ -101,10 +100,14 @@ public abstract class BaseCheckActivity
         long startTime = System.currentTimeMillis();
         ICCardDealer icCardDealer = new ICCardDealer(nfcd);
         StuInfo stuInfo = icCardDealer.IC_ReadStuInfo();
+        if (stuInfo != null) {
+            Logger.i("iccard readInfo:" + stuInfo.toString());
+        }
 
         if (stuInfo == null || TextUtils.isEmpty(stuInfo.getStuCode())) {
-            TtsManager.getInstance().speak("读卡(ka3)失败");
-            InteractUtils.toast(this, "读卡失败");
+//            TtsManager.getInstance().speak("读卡(ka3)失败");
+//            InteractUtils.toast(this, "读卡失败");
+            toastSpeak("空卡");
             return;
         }
 
