@@ -57,6 +57,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * 数据查询
@@ -102,7 +103,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
     private List<DataRetrieveBean> mList;
     private static final int LOAD_ITEMS = 100;
     private int mPageNum;
-
+    private List<String> printList = new ArrayList<>();
     public BroadcastReceiver receiver;
 
     @Override
@@ -296,7 +297,53 @@ public class DataRetrieveActivity extends BaseTitleActivity
 
         }
     }
+    @OnClick({R.id.btn_print})
+    public void onClickPrint() {
+        boolean isCheck = false;
+//        boolean isTest = false;
+        printList.clear();
+        for (int i = 0; i < mList.size(); i++) {
+            if (mList.get(i).isChecked()) {
+                isCheck = true;
+                if (mList.get(i).getTestState() == 1) {
+                    printList.add(mList.get(i).getStudentCode());
+                }
 
+            }
+
+        }
+        if (isCheck) {
+            if (printList.size() == 0) {
+                ToastUtils.showShort("选中全部考生都未测试");
+                return;
+            }
+            if (printList.size() > 10) {
+                new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.warning))
+                        .setContentText(getString(R.string.print_more_hint))
+                        .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                        ToastUtils.showShort("开始打印");
+                        PrintResultUtil.printResult(printList);
+                    }
+                }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                    }
+                }).show();
+
+            } else {
+                ToastUtils.showShort("开始打印");
+                PrintResultUtil.printResult(printList);
+            }
+
+
+        } else {
+            ToastUtils.showShort("未选中数据打印");
+        }
+    }
     @Override
     protected void onResume() {
         super.onResume();

@@ -18,7 +18,8 @@ public class RoundResult implements Serializable {
 
     public static final int RESULT_STATE_NORMAL = 0;
     public static final int RESULT_STATE_FOUL = -1;
-
+    public static final int RESULT_STATE_BACK = 3;
+    public static final int RESULT_STATE_WAIVE = 4;
     private static final long serialVersionUID = -433841840345102180L;
     @Id(autoincrement = true)
     private Long id;//项目轮次成绩ID
