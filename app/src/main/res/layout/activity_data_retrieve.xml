@@ -191,7 +191,21 @@
             android:gravity="center_vertical"
             android:paddingLeft="5dp"
             android:textColor="#909399" />
-
+        <Button
+            android:id="@+id/btn_print"
+            android:layout_width="101dp"
+            android:layout_height="35dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="21dp"
+            android:layout_marginRight="37dp"
+            android:background="@color/colorAccent"
+            android:drawableLeft="@mipmap/icon_white_print"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="打印"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
     </LinearLayout>
 
     <LinearLayout
