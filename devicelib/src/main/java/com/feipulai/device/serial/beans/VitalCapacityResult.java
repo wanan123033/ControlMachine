@@ -16,6 +16,7 @@ public class VitalCapacityResult{
 		state = (data[5]&0xff);
 		index = (data[1]&0xff);
 		frequency = (data[06]&0xff);
+		velocity = (data[07]&0xff);
 	}
 	private int deviceId ;
 	private int power ;
@@ -23,6 +24,7 @@ public class VitalCapacityResult{
 	private int capacity ;
 	private int frequency ;
     private int index;
+    private int velocity;
 	public int getDeviceId() {
 		return deviceId;
 	}
@@ -70,5 +72,13 @@ public class VitalCapacityResult{
 
     public void setIndex(int index) {
         this.index = index;
+    }
+
+    public int getVelocity() {
+        return velocity;
+    }
+
+    public void setVelocity(int velocity) {
+        this.velocity = velocity;
     }
 }

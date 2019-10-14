@@ -90,6 +90,7 @@ public class SitPullLinker implements Handler.Callback {
         }
         else if (machineCode == ItemDefault.CODE_FHL && what == SerialConfigs.VITAL_CAPACITY_SET_MORE_MATCH){
             VitalCapacityResult fhl = (VitalCapacityResult) msg.obj;
+//            SerialConfigs.VITAL_VELOCITY = fhl.getVelocity();
             checkDevice(fhl);
             return true;
         }

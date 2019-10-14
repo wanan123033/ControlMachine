@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -48,6 +49,8 @@ import butterknife.OnClick;
 /**
  * Created by pengjf on 2019/10/8.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
+ *
+ * 一对多基类
  */
 public abstract class BaseMoreActivity extends BaseCheckActivity {
 
@@ -149,6 +152,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                         }
                         if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
                             sendTestCommand(pair, pos);
+//                            view.setBackgroundColor(ContextCompat.getColor(BaseMoreActivity.this, R.color.gray_btn_bg_color));
                         }
                         break;
                     case R.id.txt_skip:
@@ -361,6 +365,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
      * 处理结果
      */
     private synchronized void doResult(BaseStuPair pair, int index) {
+//        deviceListAdapter.getViewByPosition(index,R.id.txt_start).setBackground(ContextCompat.getDrawable(this,R.drawable.btn_click_bg_selected));
         DeviceDetail detail = deviceDetails.get(index);
         String[] timeResult = detail.getStuDevicePair().getTimeResult();
         if (detail.getRound() >= timeResult.length)//防止

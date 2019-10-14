@@ -35,7 +35,7 @@ public class SargentJumpImpl implements SerialDeviceManager.RS232ResiltListener,
             case SARGENT_JUMP_EMPTY_RESPONSE:
                 if (jumpListener != null) {
                     SargentJumpResult result = (SargentJumpResult) msg.obj;
-                    jumpListener.onFree(result.getDeviceId());
+                    jumpListener.onFree(0);
                 }
 
 

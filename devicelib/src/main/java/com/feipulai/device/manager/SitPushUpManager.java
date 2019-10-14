@@ -139,7 +139,7 @@ public class SitPushUpManager {
         buf[5] = 0X01;
         targetChannel = SerialConfigs.sProChannels.get(machineCode) + hostId - 1;
         buf[6] = (byte) (targetChannel & 0xff); //高字节在先
-        buf[7] = 0x05;    //传输速率
+        buf[7] = 0x04;    //传输速率
 
         buf[8] = 0;
         buf[9] = 0;

@@ -3,11 +3,13 @@ package com.feipulai.host.activity.vccheck.pair;
 import android.content.Context;
 import android.os.Build;
 
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.activity.situp.pair.BasePairPresenter;
 import com.feipulai.host.activity.situp.pair.SitUpPairContract;
+import com.feipulai.host.activity.situp.setting.SitUpSetting;
 
 import java.util.Objects;
 
@@ -18,7 +20,7 @@ import java.util.Objects;
 public class VcPairPresenter extends BasePairPresenter {
 
     private Context context;
-//    private SitUpSetting setting;
+    private SitUpSetting setting;
     private SitPushUpManager sitPushUpManager;
 
     public VcPairPresenter(Context context, SitUpPairContract.View view) {
@@ -28,7 +30,7 @@ public class VcPairPresenter extends BasePairPresenter {
             Objects.requireNonNull(view);
         }
 
-//        setting = SharedPrefsUtil.loadFormSource(context, SitUpSetting.class);
+        setting = SharedPrefsUtil.loadFormSource(context, SitUpSetting.class);
         sitPushUpManager = new SitPushUpManager(SitPushUpManager.PROJECT_CODE_SIT_UP);
     }
 
@@ -42,12 +44,12 @@ public class VcPairPresenter extends BasePairPresenter {
 
     @Override
     public void changeAutoPair(boolean isAutoPair) {
-//        setting.setAutoPair(isAutoPair);
+        setting.setAutoPair(isAutoPair);
     }
 
     @Override
     public void saveSettings() {
-//        SharedPrefsUtil.save(context,setting);
+        SharedPrefsUtil.save(context,setting);
     }
 
     @Override
@@ -58,7 +60,7 @@ public class VcPairPresenter extends BasePairPresenter {
 
     @Override
     protected boolean isAutoPair() {
-//        return setting.isAutoPair();
-        return false;
+        return setting.isAutoPair();
+//        return false;
     }
 }

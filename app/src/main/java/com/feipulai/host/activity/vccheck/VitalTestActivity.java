@@ -29,7 +29,7 @@ public class VitalTestActivity extends BaseMoreActivity {
     private final int SEND_EMPTY = 1;
     private final int GET_SCORE_RESPONSE = 2;
     private int frequency = SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode()) + SettingHelper.getSystemSetting().getHostId() - 1;
-
+//    private int velocity = SerialConfigs.VITAL_VELOCITY;
     @Override
     protected void initData() {
         super.initData();
