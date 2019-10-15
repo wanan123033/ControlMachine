@@ -6,7 +6,6 @@ import android.support.multidex.MultiDexApplication;
 
 import com.feipulai.common.CrashHandler;
 import com.feipulai.common.utils.SharedPrefsUtil;
-import com.feipulai.device.AdaptiveConfig;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.utils.NetUtil;
@@ -38,8 +37,8 @@ public class MyApplication extends MultiDexApplication {
         TOKEN = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.TOKEN, "");
         //默认打开WiFi，虹软sdk需要读物唯一标识，某些机器WiFi断开情况下读不到
         NetUtil.openWifi(this);
-        //TODO 岭南IC
-        AdaptiveConfig.initIC(AdaptiveConfig.LIN_NAN_SHI_FAN, AdaptiveConfig.DEFAULT,  new char[]{0x73, 0x79, 0x6E, 0x70, 0x75, 0x62});
+//        //TODO 岭南IC
+//        AdaptiveConfig.initIC(AdaptiveConfig.LIN_NAN_SHI_FAN, AdaptiveConfig.DEFAULT,  new char[]{0x73, 0x79, 0x6E, 0x70, 0x75, 0x62});
 
         // 初始化工作已经移至mainactivity中,保证尽快进入界面,减少白屏时间
 //         if (LeakCanary.isInAnalyzerProcess(this)) {
