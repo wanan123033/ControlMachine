@@ -127,7 +127,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
             title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机-" + SettingHelper.getSystemSetting().getTestName();
         }
 
-        return builder.setTitle(title) .addRightText("项目设置", new View.OnClickListener() {
+        return builder.setTitle(title).addRightText("项目设置", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 gotoItemSetting();
@@ -358,8 +358,8 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 SitReachSetting sitReachSetting = SharedPrefsUtil.loadFormSource(this, SitReachSetting.class);
                 if (sitReachSetting.isFullReturn()) {
                     full = new int[2];
-                    full[0] = sitReachSetting.getManFull() * 10;
-                    full[1] = sitReachSetting.getWomenFull() * 10;
+                    full[0] = (int) (sitReachSetting.getManFull() * 10);
+                    full[1] = (int) (sitReachSetting.getWomenFull() * 10);
                 }
                 break;
             case ItemDefault.CODE_LDTY:
@@ -480,7 +480,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
 
                 }
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_MG &&
-                        SharedPrefsUtil.loadFormSource(this, SargentSetting.class).getType()==2){
+                        SharedPrefsUtil.loadFormSource(this, SargentSetting.class).getType() == 2) {
                     startActivity(new Intent(this, SargentTestGroupActivity.class));
                     return;
                 }

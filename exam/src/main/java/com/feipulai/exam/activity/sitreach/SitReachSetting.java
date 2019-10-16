@@ -22,11 +22,11 @@ public class SitReachSetting {
     /**
      * 男满分值
      */
-    private int manFull = 0;
+    private double manFull = 0;
     /**
      * 女满分值
      */
-    private int womenFull = 0;
+    private double womenFull = 0;
     /**
      * 分组测试模式 0 连续 1 循环
      */
@@ -64,19 +64,19 @@ public class SitReachSetting {
         isFullReturn = fullReturn;
     }
 
-    public int getManFull() {
+    public double getManFull() {
         return manFull;
     }
 
-    public void setManFull(int manFull) {
+    public void setManFull(double manFull) {
         this.manFull = manFull;
     }
 
-    public int getWomenFull() {
+    public double getWomenFull() {
         return womenFull;
     }
 
-    public void setWomenFull(int womenFull) {
+    public void setWomenFull(double womenFull) {
         this.womenFull = womenFull;
     }
 

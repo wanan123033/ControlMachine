@@ -133,7 +133,7 @@ public class SitReachSettingActivity extends BaseTitleActivity implements Compou
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("项目设置") ;
+        return builder.setTitle("项目设置");
     }
 
     @Override
@@ -183,12 +183,12 @@ public class SitReachSettingActivity extends BaseTitleActivity implements Compou
             ToastUtils.showShort("请输入男子满分值");
             return false;
         }
-        int manFull = Integer.valueOf(editManFull.getText().toString());
+        double manFull = Double.valueOf(editManFull.getText().toString());
         if (manFull < -20) {
             ToastUtils.showShort("满分值输入范围超出（-20~40）");
             return false;
         }
-        reachSetting.setManFull(Integer.valueOf(editManFull.getText().toString()));
+        reachSetting.setManFull(manFull);
         if (TextUtils.isEmpty(editWomenFull.getText().toString())) {
             ToastUtils.showShort("启动满分跳过必须设置满分值");
             ToastUtils.showShort("请输入女子满分值");
@@ -198,12 +198,12 @@ public class SitReachSettingActivity extends BaseTitleActivity implements Compou
             ToastUtils.showShort("请输入男子满分值");
             return false;
         }
-        int womentFull = Integer.valueOf(editWomenFull.getText().toString());
+        double womentFull = Double.valueOf(editWomenFull.getText().toString());
         if (womentFull < -20) {
             ToastUtils.showShort("满分值输入范围超出（-20~40）");
             return false;
         }
-        reachSetting.setWomenFull(Integer.valueOf(editWomenFull.getText().toString()));
+        reachSetting.setWomenFull(womentFull);
         return true;
     }
 
@@ -242,13 +242,17 @@ public class SitReachSettingActivity extends BaseTitleActivity implements Compou
                     reachSetting.setFullReturn(false);
                 }
                 if (s.length() > 0 && !TextUtils.equals(s.toString(), "-") && !TextUtils.equals(s.toString(), "+")) {
+                    try {
+                        double number = Double.valueOf(editManFull.getText().toString());
+                        if (number > 40) {
+                            ToastUtils.showShort("满分值输入范围超出（-20~40）");
+                            editManFull.setText(manFull);
+                            editManFull.setSelection(manFull.length() - 1);
+                        }
+                    } catch (Exception e) {
 
-                    int number = Integer.valueOf(editManFull.getText().toString());
-                    if (number > 40) {
-                        ToastUtils.showShort("满分值输入范围超出（-20~40）");
-                        editManFull.setText(manFull);
-                        editManFull.setSelection(manFull.length() - 1);
                     }
+
                 }
 
             }
@@ -274,12 +278,18 @@ public class SitReachSettingActivity extends BaseTitleActivity implements Compou
                 }
 
                 if (s.length() > 0 && !TextUtils.equals(s.toString(), "-") && !TextUtils.equals(s.toString(), "+")) {
-                    int number = Integer.valueOf(editWomenFull.getText().toString());
-                    if (number > 40) {
-                        ToastUtils.showShort("满分值输入范围超出（-20~40）");
-                        editWomenFull.setText(womenFull);
-                        editWomenFull.setSelection(womenFull.length() - 1);
+                    try {
+                        double number = Double.valueOf(editWomenFull.getText().toString());
+                        if (number > 40) {
+                            ToastUtils.showShort("满分值输入范围超出（-20~40）");
+                            editWomenFull.setText(womenFull);
+                            editWomenFull.setSelection(womenFull.length() - 1);
+                        }
+                    } catch (Exception e) {
+
                     }
+
+
                 }
             }
         });

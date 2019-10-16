@@ -140,7 +140,7 @@
                 android:id="@+id/edit_man_full"
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
-                android:inputType="numberSigned"
+                android:inputType="numberSigned|numberDecimal"
                 android:singleLine="true" />
 
             <TextView
@@ -158,7 +158,7 @@
                 android:id="@+id/edit_women_full"
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
-                android:inputType="numberSigned"
+                android:inputType="numberSigned|numberDecimal"
                 android:singleLine="true" />
 
             <TextView
