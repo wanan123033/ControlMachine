@@ -261,7 +261,15 @@ public class Radio868Result {
                         setType(SerialConfigs.VITAL_CAPACITY_RESULT);
                     }
                     setResult(new VitalCapacityResult(data));
+                }else if ((data[0] & 0xff) == 0xaa && data.length == 18){
+                    if (data[7] == 1 ||data[7] == 2){
+                        setType(SerialConfigs.VITAL_CAPACITY_SET_MORE_MATCH);
+                    }else {
+                        setType(SerialConfigs.VITAL_CAPACITY_RESULT);
+                    }
+                    setResult(new VitalCapacityNewResult(data));
                 }
+
                 break;
         } /*else if(data.length >= 0x10 && data[0] == 0x54 && data[1] == 0x55 && data[3] == 0x10 && data[14] == 0x27 && data[15] == 0x0d
 				&& data[5] == 0x08){

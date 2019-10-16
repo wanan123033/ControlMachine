@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
+import com.feipulai.device.serial.beans.VitalCapacityNewResult;
 import com.feipulai.device.serial.beans.VitalCapacityResult;
 
 /**
@@ -23,31 +24,42 @@ public class WirelessVitalListener implements RadioManager.OnRadioArrivedListene
     public void onRadioArrived(Message msg) {
         switch (msg.what) {
             case SerialConfigs.VITAL_CAPACITY_RESULT:
-                final VitalCapacityResult result = (VitalCapacityResult) msg.obj;
-                Log.i(TAG, "子机号:" + result.getDeviceId() + "状态:" + result.getState() + "序号:" + result.getIndex());
-                int index = result.getIndex();
-                switch (index) {
-                    case 5:
-                        //回应主机查询
-                        listener.onResult(result);
-                        if (result.getState() == 4) {//结束
-                            //此处不应该直接发结束命令而是交给设备去判断
-                            listener.onStop(result);
-                            Log.i(TAG,"子机号:" + result.getDeviceId() + "状态:" + result.getState() +
-                                    "序号:" + result.getIndex()+"计数:"+result.getCapacity());
-                        }
-                        break;
-                    case 7:
-                        //回应开始计数命令  查询
+                if (msg.obj instanceof VitalCapacityResult){
+                    final VitalCapacityResult result = (VitalCapacityResult) msg.obj;
+                    Log.i(TAG, "子机号:" + result.getDeviceId() + "状态:" + result.getState() + "序号:" + result.getIndex());
+                    int index = result.getIndex();
+                    switch (index) {
+                        case 5:
+                            //回应主机查询
+                            listener.onResult(result.getDeviceId(),result.getState(),result.getCapacity());
+                            if (result.getState() == 4) {//结束
+                                //此处不应该直接发结束命令而是交给设备去判断
+                                listener.onStop();
+                                Log.i(TAG,"子机号:" + result.getDeviceId() + "状态:" + result.getState() +
+                                        "序号:" + result.getIndex()+"计数:"+result.getCapacity());
+                            }
+                            break;
 
-                        break;
-                    case 9:
-                        //回应结束命令
+                    }
+                }else if (msg.obj instanceof VitalCapacityNewResult){
+                    final VitalCapacityNewResult result = (VitalCapacityNewResult) msg.obj;
+                    Log.i(TAG, "子机号:" + result.getDeviceId() + "状态:" + result.getState() + "序号:" + result.getIndex());
+                    int index = result.getIndex();
+                    switch (index) {
+                        case 3:
+                            //回应主机查询
+                            listener.onResult(result.getDeviceId(),result.getState(),result.getCapacity());
+                            if (result.getState() == 4) {//结束
+                                //此处不应该直接发结束命令而是交给设备去判断
+                                listener.onStop();
+                                Log.i(TAG,"子机号:" + result.getDeviceId() + "状态:" + result.getState() +
+                                        "序号:" + result.getIndex()+"计数:"+result.getCapacity());
+                            }
+                            break;
 
-                        break;
-                    case 11:
-                        break;
+                    }
                 }
+
             break;
         }
     }
@@ -55,8 +67,8 @@ public class WirelessVitalListener implements RadioManager.OnRadioArrivedListene
 
     interface WirelessListener {
 
-        void onResult(VitalCapacityResult result);
+        void onResult(int id,int state,int result);
 
-        void onStop(VitalCapacityResult result);
+        void onStop();
     }
 }

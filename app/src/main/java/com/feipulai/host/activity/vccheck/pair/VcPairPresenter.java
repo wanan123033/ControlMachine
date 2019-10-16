@@ -6,6 +6,7 @@ import android.os.Build;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.manager.SitPushUpManager;
+import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.activity.situp.pair.BasePairPresenter;
 import com.feipulai.host.activity.situp.pair.SitUpPairContract;
@@ -22,7 +23,7 @@ public class VcPairPresenter extends BasePairPresenter {
     private Context context;
     private SitUpSetting setting;
     private SitPushUpManager sitPushUpManager;
-
+    private int VERSION = 363;
     public VcPairPresenter(Context context, SitUpPairContract.View view) {
         super(context, view);
         this.context = context;
@@ -36,10 +37,18 @@ public class VcPairPresenter extends BasePairPresenter {
 
     @Override
     public void setFrequency(int deviceId, int originFrequency, int targetFrequency) {
-        sitPushUpManager.setFrequencyFHL(ItemDefault.CODE_FHL,
-                originFrequency,
-                deviceId,
-                SettingHelper.getSystemSetting().getHostId());
+        if (SerialConfigs.USE_VSERSION >= VERSION){
+            sitPushUpManager.setFrequencyNewFHL(ItemDefault.CODE_FHL,
+                    originFrequency,
+                    deviceId,
+                    SettingHelper.getSystemSetting().getHostId());
+        }else {
+            sitPushUpManager.setFrequencyFHL(ItemDefault.CODE_FHL,
+                    originFrequency,
+                    deviceId,
+                    SettingHelper.getSystemSetting().getHostId());
+        }
+
     }
 
     @Override

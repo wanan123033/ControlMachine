@@ -286,6 +286,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     private void stuSkip(int pos) {
         deviceDetails.get(pos).getStuDevicePair().setStudent(null);
+        deviceDetails.get(pos).getStuDevicePair().setCanTest(true);
         deviceDetails.get(pos).getStuDevicePair().setTimeResult(new String[setTestCount()]);
         deviceListAdapter.notifyItemChanged(pos);
     }
@@ -542,6 +543,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             updateResultLed(baseStu,index);
             deviceListAdapter.notifyItemChanged(index);
         }
+
+
     }
 
     private void refreshDevice(int index) {

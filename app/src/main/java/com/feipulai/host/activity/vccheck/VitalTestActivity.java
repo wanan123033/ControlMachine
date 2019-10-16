@@ -28,8 +28,11 @@ public class VitalTestActivity extends BaseMoreActivity {
     private int[] deviceState = {};
     private final int SEND_EMPTY = 1;
     private final int GET_SCORE_RESPONSE = 2;
-    private int frequency = SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode()) + SettingHelper.getSystemSetting().getHostId() - 1;
-//    private int velocity = SerialConfigs.VITAL_VELOCITY;
+    int hostId = SettingHelper.getSystemSetting().getHostId();
+    private int frequency = SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode()) + hostId - 1;
+    //    private int velocity = SerialConfigs.VITAL_VELOCITY;
+    private int VERSION = 363;
+
     @Override
     protected void initData() {
         super.initData();
@@ -67,7 +70,11 @@ public class VitalTestActivity extends BaseMoreActivity {
 
     private void sendStart(byte id) {
 
-        cmd(0x06, id, 0x03);
+        if (SerialConfigs.USE_VSERSION >= VERSION) {
+            command(id, 0x03);
+        } else {
+            cmd(0x06, id, 0x03);
+        }
     }
 
     /**
@@ -81,6 +88,19 @@ public class VitalTestActivity extends BaseMoreActivity {
             sum += data[i];
         }
         data[14] = (byte) sum;
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
+
+    }
+
+    /**新版本一对多控制命令*/
+    private void command(int deviceId, int cmd) {
+        byte[] data = {(byte) 0xAA, 0x12, 0x02, 0x03, 0x01, (byte) hostId, (byte) deviceId, (byte) cmd,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, (byte) 0x00, 0x0D};
+        int sum = 0;
+        for (int i = 1; i < data.length - 2; i++) {
+            sum += data[i];
+        }
+        data[16] = (byte) sum;
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
     }
 
@@ -106,7 +126,11 @@ public class VitalTestActivity extends BaseMoreActivity {
         }
         for (DeviceDetail detail : deviceDetails) {
             //主机查询子机
-            cmd(4, detail.getStuDevicePair().getBaseDevice().getDeviceId(), 0x02);
+            if (SerialConfigs.USE_VSERSION >= VERSION) {
+                command(detail.getStuDevicePair().getBaseDevice().getDeviceId(), 0x02);
+            } else {
+                cmd(4, detail.getStuDevicePair().getBaseDevice().getDeviceId(), 0x02);
+            }
         }
         mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 1000);
 
@@ -116,22 +140,28 @@ public class VitalTestActivity extends BaseMoreActivity {
 
     private WirelessVitalListener resultImpl = new WirelessVitalListener(new WirelessVitalListener.WirelessListener() {
         @Override
-        public void onResult(VitalCapacityResult result) {
-            int deviceId = result.getDeviceId();
+        public void onResult(int deviceId, int state, int result) {
             deviceState[deviceId - 1] = 5;
-            if (result.getCapacity()> 0 && result.getState() == 4){
+            if (result > 0 && state == 4) {
                 Message msg = mHandler.obtainMessage();
                 msg.what = GET_SCORE_RESPONSE;
-                msg.obj = result ;
+                VcWrapper vcWrapper = new VcWrapper(deviceId,result);
+                msg.obj = vcWrapper;
                 mHandler.sendMessage(msg);
             }
-            if (result.getIndex() == 5 && result.getState()!= 2 && result.getState()!= 3){
-                cmd(0x0a, result.getDeviceId(),5 );
+            if (state != 2 && state != 3) {
+//                cmd(0x0a, deviceId, 5);
+                //设置空闲
+                if (SerialConfigs.USE_VSERSION >= VERSION) {
+                    command(deviceId, 0x05);
+                } else {
+                    cmd(0x0a, deviceId, 0x05);
+                }
             }
         }
 
         @Override
-        public void onStop(VitalCapacityResult result) {
+        public void onStop() {
 //            cmd(8, result.getDeviceId(),4 );
         }
     });
@@ -142,11 +172,11 @@ public class VitalTestActivity extends BaseMoreActivity {
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case GET_SCORE_RESPONSE:
-                    VitalCapacityResult result = (VitalCapacityResult) msg.obj;
+                    VcWrapper result = (VcWrapper) msg.obj;
                     for (DeviceDetail detail : deviceDetails) {
                         if (detail.getStuDevicePair().getBaseDevice().getDeviceId() == result.getDeviceId()) {
 
-                            onResultArrived(result.getCapacity(), detail.getStuDevicePair());
+                            onResultArrived(result.getResult(), detail.getStuDevicePair());
                         }
 
                     }
