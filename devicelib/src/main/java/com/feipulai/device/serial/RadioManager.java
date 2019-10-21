@@ -15,7 +15,7 @@ public class RadioManager{
 	private SerialPorter mSerialPorter;
 	private volatile OnRadioArrivedListener mOnRadioArrived;
 	private static volatile RadioManager instance;
-	public static final int RADIO_INTERVAL = 50;
+	public static final int RADIO_INTERVAL = 80;
 	private long mlastSendTime;
 	
 	private RadioManager(){}
