@@ -39,7 +39,7 @@ public class PrintResultUtil {
             PrinterManager.getInstance().print("姓  名:" + student.getStudentName());
             for (int i = 0; i < roundResults.size(); i++) {
                 RoundResult result = roundResults.get(i);
-                String printResult = "第" + i + "次:" + getPrintResultState(result);
+                String printResult = "第" + i + 1 + "次:" + getPrintResultState(result);
                 // 跳绳需要打印绊绳次数
                 switch (TestConfigs.sCurrentItem.getMachineCode()) {
                     case ItemDefault.CODE_TS:
