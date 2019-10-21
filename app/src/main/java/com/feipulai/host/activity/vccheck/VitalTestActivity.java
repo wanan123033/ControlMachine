@@ -7,7 +7,6 @@ import android.view.View;
 
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
-import com.feipulai.device.serial.beans.VitalCapacityResult;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.host.activity.base.BaseDeviceState;
@@ -70,7 +69,7 @@ public class VitalTestActivity extends BaseMoreActivity {
 
     private void sendStart(byte id) {
 
-        if (SerialConfigs.USE_VSERSION >= VERSION) {
+        if (SerialConfigs.USE_VERSION >= VERSION) {
             command(id, 0x03);
         } else {
             cmd(0x06, id, 0x03);
@@ -92,9 +91,11 @@ public class VitalTestActivity extends BaseMoreActivity {
 
     }
 
-    /**新版本一对多控制命令*/
+    /**
+     * 新版本一对多控制命令
+     */
     private void command(int deviceId, int cmd) {
-        byte[] data = {(byte) 0xAA, 0x12, 0x02, 0x03, 0x01, (byte) hostId, (byte) deviceId, (byte) cmd,
+        byte[] data = {(byte) 0xAA, 0x12, 0x09, 0x03, 0x01, (byte) hostId, (byte) deviceId, (byte) cmd,
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, (byte) 0x00, 0x0D};
         int sum = 0;
         for (int i = 1; i < data.length - 2; i++) {
@@ -126,7 +127,7 @@ public class VitalTestActivity extends BaseMoreActivity {
         }
         for (DeviceDetail detail : deviceDetails) {
             //主机查询子机
-            if (SerialConfigs.USE_VSERSION >= VERSION) {
+            if (SerialConfigs.USE_VERSION >= VERSION) {
                 command(detail.getStuDevicePair().getBaseDevice().getDeviceId(), 0x02);
             } else {
                 cmd(4, detail.getStuDevicePair().getBaseDevice().getDeviceId(), 0x02);
@@ -145,14 +146,14 @@ public class VitalTestActivity extends BaseMoreActivity {
             if (result > 0 && state == 4) {
                 Message msg = mHandler.obtainMessage();
                 msg.what = GET_SCORE_RESPONSE;
-                VcWrapper vcWrapper = new VcWrapper(deviceId,result);
+                VcWrapper vcWrapper = new VcWrapper(deviceId, result);
                 msg.obj = vcWrapper;
                 mHandler.sendMessage(msg);
             }
             if (state != 2 && state != 3) {
 //                cmd(0x0a, deviceId, 5);
                 //设置空闲
-                if (SerialConfigs.USE_VSERSION >= VERSION) {
+                if (SerialConfigs.USE_VERSION >= VERSION) {
                     command(deviceId, 0x05);
                 } else {
                     cmd(0x0a, deviceId, 0x05);
