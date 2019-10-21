@@ -121,6 +121,8 @@ public abstract class BaseCheckActivity
         boolean needAdd = checkQulification(idCardInfo.getId(), ID_CARD_NO);
         if (needAdd) {
             Student student = new Student();
+            student.setStudentName(idCardInfo.getName());
+            student.setSex(idCardInfo.getSex().contains("男") ? Student.MALE : Student.FEMALE);
             student.setIdCardNo(idCardInfo.getId());
             showAddHint(student);
         }
