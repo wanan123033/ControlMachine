@@ -539,19 +539,17 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         if (!SettingHelper.getSystemSetting().isAutoPrint())
             return;
         Student student = baseStuPair.getStudent();
-        PrinterManager.getInstance().print(" \n");
         PrinterManager.getInstance().print(
-                String.format(getString(R.string.host_name), TestConfigs.sCurrentItem.getItemName(), SettingHelper.getSystemSetting().getHostId()) + "\n");
+                String.format(getString(R.string.host_name), TestConfigs.sCurrentItem.getItemName(), SettingHelper.getSystemSetting().getHostId()));
         PrinterManager.getInstance().print(
-                String.format(getString(R.string.print_result_stu_code), student.getStudentCode()) + "\n");
+                String.format(getString(R.string.print_result_stu_code), student.getStudentCode()));
         PrinterManager.getInstance().print(
-                String.format(getString(R.string.print_result_stu_name), student.getStudentName()) + "\n");
+                String.format(getString(R.string.print_result_stu_name), student.getStudentName()));
         PrinterManager.getInstance().print(
                 String.format(getString(R.string.print_result_stu_result), (baseStuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) ?
-                        getString(R.string.foul) : ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult())) + "\n");
+                        getString(R.string.foul) : ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult())));
         PrinterManager.getInstance().print(
-                String.format(getString(R.string.print_result_time), TestConfigs.df.format(Calendar.getInstance().getTime())) + "\n");
-        PrinterManager.getInstance().print(" \n");
+                String.format(getString(R.string.print_result_time), TestConfigs.df.format(Calendar.getInstance().getTime())));
         PrinterManager.getInstance().print(" \n");
 
     }
