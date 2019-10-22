@@ -22,6 +22,8 @@ import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.udp.UdpLEDUtil;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceActivity;
+import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForPersonActivity;
 import com.feipulai.exam.activity.MiddleDistanceRace.MyTcpService;
 import com.feipulai.exam.activity.base.BaseActivity;
 import com.feipulai.exam.activity.base.BaseGroupActivity;
@@ -172,7 +174,11 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                         return;
                     }
                     if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
-                        IntentUtil.gotoActivity(this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode()));
+                        if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
+                            startActivity(new Intent(MainActivity.this, MiddleDistanceRaceForPersonActivity.class));
+                        } else {
+                            startActivity(new Intent(MainActivity.this, MiddleDistanceRaceActivity.class));
+                        }
                         return;
                     }
                     if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_MG) {

@@ -29,9 +29,20 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_centerVertical="true"
-        android:layout_toStartOf="@+id/btn_fullscreen"
         android:layout_marginEnd="30dp"
+        android:layout_toStartOf="@+id/btn_grouping"
         android:background="@drawable/red_circle" />
+
+    <com.feipulai.exam.activity.MiddleDistanceRace.ImageTextButton
+        android:id="@+id/btn_grouping"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="2dp"
+        android:layout_marginEnd="30dp"
+        android:visibility="gone"
+        android:layout_marginTop="2dp"
+        android:layout_toStartOf="@+id/btn_fullscreen" />
 
     <com.feipulai.exam.activity.MiddleDistanceRace.ImageTextButton
         android:id="@+id/btn_fullscreen"
@@ -60,8 +71,8 @@
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginBottom="2dp"
-        android:paddingStart="@dimen/dp_10"
-        android:paddingEnd="@dimen/dp_10"
         android:layout_marginEnd="20dp"
-        android:layout_marginTop="2dp" />
+        android:layout_marginTop="2dp"
+        android:paddingEnd="@dimen/dp_10"
+        android:paddingStart="@dimen/dp_10" />
 </RelativeLayout>

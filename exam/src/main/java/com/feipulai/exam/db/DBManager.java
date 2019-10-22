@@ -213,7 +213,6 @@ public class DBManager {
      * @return
      */
     public Student queryStudentByStuCode(final String stuCode) {
-
         Student student = studentDao.queryBuilder()
                 .where(StudentDao.Properties.StudentCode.eq(stuCode))
                 .unique();
@@ -2215,6 +2214,10 @@ public class DBManager {
 
     public Group queryGroup(String itemCode, int groupNo) {
         return groupDao.queryBuilder().where(GroupDao.Properties.ItemCode.eq(itemCode)).where(GroupDao.Properties.GroupNo.eq(groupNo)).unique();
+    }
+
+    public List<Group> queryGroup(String itemCode) {
+        return groupDao.queryBuilder().where(GroupDao.Properties.ItemCode.eq(itemCode)).list();
     }
 
 

@@ -99,10 +99,10 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
             hostIdList.add(i);
         }
 
-        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
-            spPattern.setSelection(1);
-            spPattern.setEnabled(false);
-        }
+//        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+//            spPattern.setSelection(1);
+//            spPattern.setEnabled(false);
+//        }
 
         ArrayAdapter spPatternAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, Arrays.asList(partternList));
         spPatternAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

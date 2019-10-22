@@ -204,10 +204,10 @@ public class DataManageActivity
                 Intent intent = new Intent();
                 switch (position) {
                     case 0://数据导入
-                        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
-                            toastSpeak("中长跑不允许进行个人名单导入");
-                            return;
-                        }
+//                        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+//                            toastSpeak("中长跑不允许进行个人名单导入");
+//                            return;
+//                        }
                         isGroupImport = false;
                         intent.setClass(DataManageActivity.this, FileSelectActivity.class);
                         intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_FILE);
