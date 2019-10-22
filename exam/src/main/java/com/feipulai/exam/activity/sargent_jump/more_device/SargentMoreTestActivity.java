@@ -40,12 +40,6 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
      */
     public int runUp;
 
-    @Override
-    protected void initData() {
-        super.initData();
-        RadioManager.getInstance().setOnRadioArrived(resultImpl);
-        sendEmpty();
-    }
 
     @Override
     protected void onResume() {
@@ -56,12 +50,14 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
         }
         setDeviceCount(sargentSetting.getSpDeviceCount());
         deviceState = new int[sargentSetting.getSpDeviceCount()];
-        basicHeight = new boolean[sargentSetting.getBaseHeight()];
+        basicHeight = new boolean[sargentSetting.getSpDeviceCount()];
         for (int i = 0; i < deviceState.length; i++) {
 
             deviceState[i] = 0;//连续5次检测不到认为掉线
         }
         runUp = sargentSetting.getRunUp();
+        RadioManager.getInstance().setOnRadioArrived(resultImpl);
+        sendEmpty();
     }
 
     @Override
@@ -121,7 +117,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
     }
 
     public void sendEmpty() {
-        Log.i(TAG,"send_empty");
+        Log.i(TAG,"james_send_empty");
         for (int i = 0; i < deviceState.length; i++) {
             BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
             if (deviceState[i] == 0) {
@@ -149,7 +145,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
             RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                     cmd));
         }
-        mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 3000);
+        mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 1000);
 
 
     }
@@ -253,9 +249,10 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
 
     }
 
+
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
         mHandler.removeCallbacksAndMessages(null);
     }
 }

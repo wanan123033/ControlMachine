@@ -177,7 +177,7 @@ public class SitPushUpManager {
         byte[] buf = new byte[18];
         buf[0] = (byte) 0xAA;
         buf[1] = 0x12;    //包长
-        buf[2] = 0X02;    //项目编号
+        buf[2] = 0X09;    //项目编号
         buf[3] = 0x03;    //目标设备编号（子设备）
         buf[4] = 0x01;    //本设备编号（主机）
         buf[5] = (byte) hostId;//本设备主机号

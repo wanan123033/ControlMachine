@@ -13,6 +13,7 @@ public class ExelReadBean{
 	private String itemName;//项目
 	private String itemCode;//项目代码
 	private String idCardNo;
+	private String icCardNo;
 	
 	public String getStudentCode(){
 		return studentCode;
@@ -61,5 +62,12 @@ public class ExelReadBean{
 	public void setIdCardNo(String idCardNo){
 		this.idCardNo = idCardNo;
 	}
-	
+
+	public String getIcCardNo() {
+		return icCardNo;
+	}
+
+	public void setIcCardNo(String icCardNo) {
+		this.icCardNo = icCardNo;
+	}
 }

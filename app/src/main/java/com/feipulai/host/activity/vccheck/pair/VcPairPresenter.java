@@ -37,7 +37,7 @@ public class VcPairPresenter extends BasePairPresenter {
 
     @Override
     public void setFrequency(int deviceId, int originFrequency, int targetFrequency) {
-        if (SerialConfigs.USE_VSERSION >= VERSION){
+        if (SerialConfigs.USE_VERSION >= VERSION){
             sitPushUpManager.setFrequencyNewFHL(ItemDefault.CODE_FHL,
                     originFrequency,
                     deviceId,

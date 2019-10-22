@@ -22,8 +22,8 @@ import static com.feipulai.device.serial.SerialConfigs.SARGENT_JUMP_STOP_RESPONS
 public class SargentJumpImpl implements SerialDeviceManager.RS232ResiltListener, RadioManager.OnRadioArrivedListener {
     private static final String TAG = "SargentJumpImpl";
     private SargentJumpListener jumpListener;
-    private boolean showRes = true;
-    private int temp ;
+    private boolean []showRes = {true,true,true,true};
+    private int []tempId = new int[4];
     public SargentJumpImpl(SargentJumpListener jumpListener) {
         this.jumpListener = jumpListener;
     }
@@ -34,7 +34,6 @@ public class SargentJumpImpl implements SerialDeviceManager.RS232ResiltListener,
         switch (msg.what) {
             case SARGENT_JUMP_EMPTY_RESPONSE:
                 if (jumpListener != null) {
-                    SargentJumpResult result = (SargentJumpResult) msg.obj;
                     jumpListener.onFree(0);
                 }
 
@@ -79,16 +78,20 @@ public class SargentJumpImpl implements SerialDeviceManager.RS232ResiltListener,
                 SargentJumpResult result = (SargentJumpResult) msg.obj;
                 if (result != null) {
                     jumpListener.onFree(result.getDeviceId());
+                    Log.i("SargentJumpImpl","score:"+result.getScore()+"state:"+result.getState()+"id:"+result.getDeviceId());
 
                     if (result.getState() == 1 ) {//因为一个成绩会轮询查到多次
-                        if (showRes || result.getScore()!= temp){
+                        if (showRes[result.getDeviceId()-1]){
                             jumpListener.onResultArrived(result);
                             Logger.i("=>SargentJumpImpl====>" + result.getScore());
-                            showRes = false;
+                            showRes[result.getDeviceId()-1] = false;
+                            tempId[result.getDeviceId()-1] = result.getDeviceId();
                         }
-                        temp = result.getScore();
+
                     } else if (result.getState() == 0) {
-                        showRes = true;
+
+                        if (tempId[result.getDeviceId()-1] == result.getDeviceId())
+                            showRes[result.getDeviceId()-1] = true;
                     }
                 }
                 break;

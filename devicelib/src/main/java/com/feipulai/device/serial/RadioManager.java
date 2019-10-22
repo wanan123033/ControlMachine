@@ -15,7 +15,7 @@ public class RadioManager{
 	private SerialPorter mSerialPorter;
 	private volatile OnRadioArrivedListener mOnRadioArrived;
 	private static volatile RadioManager instance;
-	public static final int RADIO_INTERVAL = 50;
+	public static final int RADIO_INTERVAL = 80;
 	private long mlastSendTime;
 	
 	private RadioManager(){}
@@ -53,8 +53,8 @@ public class RadioManager{
 	// 这个地方必须锁住,万恶之源
 	public synchronized void sendCommand(ConvertCommand convertCommand){
 		ensureInterval();
-        byte[] cmdBytes = convertCommand.getCmdBytes();
-        Log.i("james sendBytes",StringUtility.bytesToHexString(cmdBytes));
+//        byte[] cmdBytes = convertCommand.getCmdBytes();
+//        Log.i("james sendBytes",StringUtility.bytesToHexString(cmdBytes));
         mSerialPorter.sendCommand(convertCommand);
 	}
 	

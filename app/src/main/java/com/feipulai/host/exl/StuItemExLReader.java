@@ -171,7 +171,7 @@ public class StuItemExLReader extends ExlReader {
             student.setStudentName(bean.getStudentName());
             student.setSex(bean.getSex());
             student.setIdCardNo(bean.getIdCardNo());
-
+            student.setIcCardNo(bean.getIcCardNo());
             stuList.add(student);
 
             StudentItem studentItem = new StudentItem();
@@ -197,7 +197,8 @@ public class StuItemExLReader extends ExlReader {
         String stuName = data.get(0);
         String itemName = data.get(5);
         String itemCode = data.get(6);
-
+        String icCodeNo = data.get(4);
+        bean.setIcCardNo(icCodeNo);
         if (TextUtils.isEmpty(stuCode)) {
             return null;
         }
