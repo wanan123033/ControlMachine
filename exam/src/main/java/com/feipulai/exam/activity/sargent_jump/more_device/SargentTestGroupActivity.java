@@ -41,14 +41,15 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
         Logger.i(TAG + ":sargentSetting ->" + sargentSetting.toString());
         setDeviceCount(sargentSetting.getSpDeviceCount());
         deviceState = new int[sargentSetting.getSpDeviceCount()];
-        basicHeight = new boolean[sargentSetting.getBaseHeight()];
+        basicHeight = new boolean[sargentSetting.getSpDeviceCount()];
         for (int i = 0; i < deviceState.length; i++) {
-            deviceState[i] = 1;
+            deviceState[i] = 0;
         }
         runUp = sargentSetting.getRunUp();
         RadioManager.getInstance().setOnRadioArrived(resultImpl);
         sendEmpty();
     }
+
 
     @Override
     public int setTestCount() {
@@ -70,8 +71,6 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
         cmd[6] = 0x01;
         cmd[7] = 0x03;
         cmd[8] = (byte) sum(cmd, 8);
-        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
-                cmd));
     }
 
     //离地高度设置范围为0-255
@@ -119,7 +118,7 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
             RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                     cmd));
         }
-        mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 3000);
+        mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 1000);
 
     }
 
@@ -217,6 +216,12 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
         stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
         updateTestResult(stuPair);
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, stuPair.getBaseDevice().getDeviceId()));
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     @Override
