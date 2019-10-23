@@ -14,6 +14,8 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.PagerSettingAdapter;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,17 +68,23 @@ public class MiddleRaceSettingActivity extends BaseTitleActivity {
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull final BaseToolbar.Builder builder) {
-        return builder.setTitle("设置") ;
+        return builder.setTitle("设置");
     }
 
     private void quiet() {
         if (isChange) {
-            MiddleDistanceRaceActivity.instance.finish();
+            Intent intent;
+            if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
+                MiddleDistanceRaceForPersonActivity.instance.finish();
+                intent = new Intent(MiddleRaceSettingActivity.this, MiddleDistanceRaceForPersonActivity.class);
+            } else {
+                MiddleDistanceRaceActivity.instance.finish();
+                intent = new Intent(MiddleRaceSettingActivity.this, MiddleDistanceRaceActivity.class);
+            }
             Bundle bundle = new Bundle();
             bundle.putInt("schedulePosition", schedulePosition);
             bundle.putInt("mItemPosition", mItemPosition);
             bundle.putInt("groupStatePosition", groupStatePosition);
-            Intent intent = new Intent(MiddleRaceSettingActivity.this, MiddleDistanceRaceActivity.class);
             intent.putExtras(bundle);
             startActivity(intent);
         }

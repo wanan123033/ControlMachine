@@ -9,6 +9,7 @@ import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceActivity;
+import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForPersonActivity;
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleRaceSettingActivity;
 import com.feipulai.exam.activity.RadioTimer.RunTimerActivityGroupActivity;
 import com.feipulai.exam.activity.RadioTimer.RunTimerActivityTestActivity;
@@ -366,7 +367,7 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_MG, SargentItemSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_FWC, PushPatternSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_LQYQ, BasketballIndividualActivity.class);
-        TestConfigs.proActivity.put(ItemDefault.CODE_ZCP, MiddleDistanceRaceActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_ZCP, MiddleDistanceRaceForPersonActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_ZQYQ, FootballIndividualActivity.class);
 
         // 每个项目对应的分组检录Acitivity

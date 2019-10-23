@@ -60,8 +60,14 @@ public class AddStudentDialog {
     private int sex = Student.MALE;
     private String schedult;
     private String[] sexData = new String[]{"男", "女"};
+    private String currentItemCode;
 
     public AddStudentDialog(Context context) {
+        init(context);
+    }
+
+    public AddStudentDialog(Context context, String itemCode) {
+        currentItemCode = itemCode;
         init(context);
     }
 
@@ -129,7 +135,7 @@ public class AddStudentDialog {
             DBManager.getInstance().insertSchedules(new Schedule("-1", "946659661", "946659661"));
             ItemSchedule itemSchedule = new ItemSchedule();
             itemSchedule.setScheduleNo("-1");
-            itemSchedule.setItemCode(TestConfigs.DEFAULT_ITEM_CODE);
+            itemSchedule.setItemCode(currentItemCode == null ? TestConfigs.DEFAULT_ITEM_CODE : currentItemCode);
             List<ItemSchedule> dbItemScheduleList = new ArrayList<>();
             dbItemScheduleList.add(itemSchedule);
             DBManager.getInstance().insertItemSchedulesList(dbItemScheduleList);

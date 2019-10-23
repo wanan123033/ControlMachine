@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
@@ -47,6 +48,8 @@ import com.feipulai.device.udp.UdpLEDUtil;
 import com.feipulai.device.udp.result.UDPResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.ColorSelectAdapter;
+import com.feipulai.exam.activity.MiddleDistanceRace.adapter.GroupingAdapter;
+import com.feipulai.exam.activity.MiddleDistanceRace.adapter.ItemTouchHelperCallback;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.MiddleRaceGroupAdapter;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.RaceTimingAdapter;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.SelectResultAdapter;
@@ -117,7 +120,7 @@ import static com.feipulai.exam.config.SharedPrefsConfigs.SPAN_TIME;
  * 中长跑
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
-public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implements UdpClient.UDPChannelListerner, NettyListener, RaceTimingAdapter.MyClickListener, ChannelFutureListener, MiddleRaceGroupAdapter.OnItemClickListener, ColorSelectAdapter.OnItemClickListener, AdapterView.OnItemSelectedListener {
+public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity implements UdpClient.UDPChannelListerner, NettyListener, RaceTimingAdapter.MyClickListener, ChannelFutureListener, MiddleRaceGroupAdapter.OnItemClickListener, ColorSelectAdapter.OnItemClickListener, AdapterView.OnItemSelectedListener {
 
     @BindView(R.id.sp_race_item)
     Spinner spRaceItem;
@@ -228,7 +231,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
     private int carryMode;
     private int digital;
     private boolean isChange = false;
-    public static MiddleDistanceRaceActivity instance;
+    public static MiddleDistanceRaceForPersonActivity instance;
     private int width;
     private String machine_ip;
     private String machine_port;
@@ -258,6 +261,8 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         height = DisplayUtil.getScreenHightPx(this);
         width = DisplayUtil.getScreenWidthPx(this);
 
+        btnGrouping.setVisibility(View.VISIBLE);
+
         btnSetting.setText("设置");
         btnSetting.setImgResource(R.drawable.btn_setting_selecor);
         imageConnect.setText("连接设备");
@@ -267,13 +272,13 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         btnGrouping.setText("分组");
         btnGrouping.setImgResource(R.drawable.ic_launcher);
 
-
         schedulePosition = getIntent().getIntExtra("schedulePosition", 0);
         mItemPosition = getIntent().getIntExtra("mItemPosition", 0);
         groupStatePosition = getIntent().getIntExtra("groupStatePosition", 0);
 
         Item item = TestConfigs.sCurrentItem;
         carryMode = item.getCarryMode();
+        itemCode = item.getItemCode();
         digital = item.getDigital() == 0 ? 1 : item.getDigital();
         carryMode = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MIDDLE_RACE_CARRY, carryMode);
         digital = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MIDDLE_RACE_DIGITAL, digital);
@@ -350,10 +355,10 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         initSelectPop();
 
         //当上一次服务开启时间小于12小时，每次进入自动开启服务
-        if (!TextUtils.isEmpty(server_Port) && lastServiceTime != 0 && (System.currentTimeMillis() - lastServiceTime) < 12 * 60 * 60 * 1000) {
-            currentPort = Integer.parseInt(server_Port);
-            bindTcpService();
-        }
+//        if (!TextUtils.isEmpty(server_Port) && lastServiceTime != 0 && (System.currentTimeMillis() - lastServiceTime) < 12 * 60 * 60 * 1000) {
+//            currentPort = Integer.parseInt(server_Port);
+//            bindTcpService();
+//        }
     }
 
     private int cycleNo = 0;//当前项目圈数
@@ -389,6 +394,8 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         spRaceSchedule.setSelection(schedulePosition, false);
     }
 
+    public static String itemCode;
+
     /**
      * 获取日程分组
      */
@@ -399,7 +406,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
             return;
         }
 
-        final String itemCode = itemList.get(mItemPosition).getItemCode();
+        itemCode = itemList.get(mItemPosition).getItemCode();
         if (TextUtils.isEmpty(itemCode)) {
             ToastUtils.showShort("项目代码为空");
             groupItemBeans.clear();
@@ -660,7 +667,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                     ToastUtils.showShort("请先连接设备");
                     return;
                 }
-                nettyClient.sendMsgToServer(TcpConfig.getCmdUpdateDate(), MiddleDistanceRaceActivity.this);
+                nettyClient.sendMsgToServer(TcpConfig.getCmdUpdateDate(), MiddleDistanceRaceForPersonActivity.this);
                 ToastUtils.showShort("同步完成");
             }
         });
@@ -708,6 +715,110 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         }
     }
 
+    private EasyPopup groupPop;
+    private EditText groupInput;
+    private TextView groupingItem;
+    private TextView tvGroupeNo;
+    private RecyclerView rvGrouping;
+    private List<Student> groupIngStudents = new ArrayList<>();
+    private GroupingAdapter groupingAdapter;
+    private List<Group> groups;
+
+    /**
+     * 分组弹窗
+     */
+    private void showGroupPop() {
+        if (groupPop == null) {
+            groupPop = EasyPopup.create()
+                    .setContentView(this, R.layout.pop_group)
+                    .setBackgroundDimEnable(true)
+                    .setDimValue(0.5f)
+                    //是否允许点击PopupWindow之外的地方消失
+                    .setFocusAndOutsideEnable(false)
+                    .setHeight(height * 4 / 5)
+                    .setWidth(width * 3 / 4)
+                    .apply();
+
+            groupInput = groupPop.findViewById(R.id.et_group_input);
+            Button btnQuery = groupPop.findViewById(R.id.btn_group_query);
+            groupingItem = groupPop.findViewById(R.id.tv_grouping_item);
+            rvGrouping = groupPop.findViewById(R.id.rv_grouping);
+            tvGroupeNo = groupPop.findViewById(R.id.tv_grouping_no);
+            Button btnCancel = groupPop.findViewById(R.id.btn_cancel);
+            Button btnSure = groupPop.findViewById(R.id.btn_sure);
+
+            groupingAdapter = new GroupingAdapter(mContext, groupIngStudents);
+            rvGrouping.setLayoutManager(new LinearLayoutManager(mContext));
+            rvGrouping.setAdapter(groupingAdapter);
+
+            ItemTouchHelperCallback helperCallback = new ItemTouchHelperCallback(groupingAdapter);
+            helperCallback.setSwipeEnable(true);
+            helperCallback.setDragEnable(true);
+            ItemTouchHelper helper = new ItemTouchHelper(helperCallback);
+            helper.attachToRecyclerView(rvGrouping);
+
+            btnQuery.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DBManager.getInstance().queryStudentByStuCode(groupInput.getText().toString());
+                }
+            });
+
+            btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    groupIngStudents.clear();
+                    groupingAdapter.notifyDataSetChanged();
+                    groupInput.setText("");
+                    groupPop.dismiss();
+                }
+            });
+
+            btnSure.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Group group = new Group();
+                    group.setIsTestComplete(0);
+                    group.setItemCode(itemCode);
+                    group.setScheduleNo(DBManager.getInstance().queryItemSchedulesByItemCode(itemCode).get(0).getScheduleNo());
+                    group.setGroupNo(groups.size() + 1);
+                    group.setGroupType(groupIngStudents.get(0).getSex());
+                    group.setSortName("组");
+
+                    DBManager.getInstance().insertGroup(group);
+
+
+                    GroupItem groupItem;
+                    for (int i = 0; i < groupIngStudents.size(); i++) {
+                        groupItem = new GroupItem();
+                        groupItem.setItemCode(itemCode);
+                        groupItem.setTrackNo(i + 1);
+                        groupItem.setStudentCode(groupIngStudents.get(i).getStudentCode());
+                        groupItem.setScheduleNo(group.getScheduleNo());
+                        groupItem.setGroupNo(group.getGroupNo());
+                        groupItem.setGroupType(group.getGroupType());
+                        groupItem.setSortName("组");
+                        DBManager.getInstance().insertGroupItem(groupItem);
+                    }
+
+                    updateSchedules();
+                    getGroupList();
+
+                    groupIngStudents.clear();
+                    groupingAdapter.notifyDataSetChanged();
+                    groupInput.setText("");
+                    groupPop.dismiss();
+                }
+            });
+        }
+
+        if (!groupPop.isShowing()) {
+            groupingItem.setText(itemList.get(mItemPosition).getItemName());
+            groups = DBManager.getInstance().queryGroup(itemCode);
+            tvGroupeNo.setText(String.valueOf(groups.size() + 1) + "组");
+            groupPop.showAtLocation(getWindow().getDecorView(), Gravity.CENTER, 0, 0);
+        }
+    }
 
     private List<List<String>> selectResults;
 
@@ -759,7 +870,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                     isFirst = true;
                     nettyClient = new NettyClient(ip, port);
                     if (!nettyClient.getConnectStatus()) {
-                        nettyClient.setListener(MiddleDistanceRaceActivity.this);
+                        nettyClient.setListener(MiddleDistanceRaceForPersonActivity.this);
                         nettyClient.connect(isFirst);
                         mHander.sendEmptyMessageDelayed(2, 400);
                     } else {
@@ -906,8 +1017,20 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
     }
 
     @Override
-    public void channelInactive() {
+    public void onCheckIn(Student student) {
+        showGroupPop();
+        if (groupInput != null) {
+            groupInput.setText(student.getStudentCode());
+            groupInput.setSelection(student.getStudentCode().length());
+        }
+        if (!groupIngStudents.contains(student)) {
+            groupIngStudents.add(student);
+            groupingAdapter.notifyDataSetChanged();
+        }
+    }
 
+    @Override
+    public void channelInactive() {
     }
 
     @Override
@@ -1076,7 +1199,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
 
     private boolean isShow = true;
 
-    @OnClick({R.id.btn_find, R.id.btn_middle_back, R.id.tv_back, R.id.btn_setting, R.id.btn_fullscreen, R.id.btn_image_connect})
+    @OnClick({R.id.btn_find, R.id.btn_middle_back, R.id.tv_back, R.id.btn_setting, R.id.btn_fullscreen, R.id.btn_image_connect, R.id.btn_grouping})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_find:
@@ -1113,6 +1236,11 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
             case R.id.btn_image_connect:
                 mMachinePop.showAtLocation(getWindow().getDecorView(), Gravity.CENTER, 0, 0);
                 break;
+            case R.id.btn_grouping:
+                showGroupPop();
+                groupInput.setText("");
+                break;
+
         }
     }
 
