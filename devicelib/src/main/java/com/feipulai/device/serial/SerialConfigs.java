@@ -225,6 +225,6 @@ public class SerialConfigs {
     public static final int SARGENT_JUMP_SET_MORE_MATCH = 0x39;
     public static final int VOLLEY_BALL_SET_MORE_MATCH = 0x40;
     public static final int VITAL_CAPACITY_SET_MORE_MATCH = 0x41;
-    public static int USE_VERSION = 363;
+    public static int USE_VERSION = 362;//肺活量新版本为及以后为363
 
 }
