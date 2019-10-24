@@ -40,11 +40,11 @@ public class StuAdapter extends BaseQuickAdapter<Student, BaseViewHolder> {
         helper.setText(R.id.item_txt_stu_name, student.getStudentName());
 //        CheckBox cbDeviceState = helper.getView(R.id.item_cb_device_state);
         helper.setText(R.id.item_trackno, helper.getAdapterPosition() +1+ "");
-        if (testPosition == helper.getLayoutPosition()) {
-            helper.setBackgroundRes(R.id.view_content, R.drawable.group_select_bg);
-        } else {
-            helper.setBackgroundColor(R.id.view_content, ContextCompat.getColor(mContext, R.color.white));
-        }
+//        if (testPosition == helper.getLayoutPosition()) {
+//            helper.setBackgroundRes(R.id.view_content, R.drawable.group_select_bg);
+//        } else {
+//            helper.setBackgroundColor(R.id.view_content, ContextCompat.getColor(mContext, R.color.white));
+//        }
 
 
     }
