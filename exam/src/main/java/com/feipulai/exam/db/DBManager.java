@@ -234,6 +234,12 @@ public class DBManager {
     public List<StudentItem> queryStudentItemByItemCode(String itemCode) {
         return studentItemDao.queryBuilder().where(StudentItemDao.Properties.ItemCode.eq(itemCode)).list();
     }
+    public StudentItem queryStudentItemByCode(String itemCode, String stuCode) {
+        return studentItemDao.queryBuilder()
+                .where(StudentItemDao.Properties.ItemCode.eq(itemCode))
+                .where(StudentItemDao.Properties.StudentCode.eq(stuCode))
+                .unique();
+    }
 
     /**
      * 批量添加学生信息
