@@ -59,7 +59,6 @@ import com.feipulai.exam.activity.MiddleDistanceRace.bean.SelectResultBean;
 import com.feipulai.exam.activity.MiddleDistanceRace.bean.ServiceTcpBean;
 import com.feipulai.exam.activity.MiddleDistanceRace.vhtableview.VHTableAdapter;
 import com.feipulai.exam.activity.MiddleDistanceRace.vhtableview.VHTableView;
-import com.feipulai.exam.activity.base.MiddleBaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.adapter.ScheduleAdapter;
 import com.feipulai.exam.bean.RoundResultBean;
@@ -270,7 +269,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         btnFullscreen.setText("隐藏组别");
         btnFullscreen.setImgResource(R.drawable.btn_fullscreen_selecor);
         btnGrouping.setText("分组");
-        btnGrouping.setImgResource(R.drawable.ic_launcher);
+        btnGrouping.setImgResource(R.mipmap.grouping);
 
         schedulePosition = getIntent().getIntExtra("schedulePosition", 0);
         mItemPosition = getIntent().getIntExtra("mItemPosition", 0);
@@ -400,7 +399,6 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
      * 获取日程分组
      */
     private void getGroupList() {
-        Log.i("spinnerItemSelected", "getGroupList------------");
         groupItemBeans.clear();
         if (scheduleNo == null || scheduleNo.isEmpty()) {
             return;
@@ -705,6 +703,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         return false;
     }
 
+
     public void unBindService() {
         if (isBind && serviceConnection != null) {
             unbindService(serviceConnection);
@@ -760,7 +759,10 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             btnQuery.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DBManager.getInstance().queryStudentByStuCode(groupInput.getText().toString());
+                    if (TextUtils.isEmpty(groupInput.getText())) {
+                        return;
+                    }
+                    onQrArrived(groupInput.getText().toString());
                 }
             });
 
@@ -786,7 +788,6 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                     group.setSortName("组");
 
                     DBManager.getInstance().insertGroup(group);
-
 
                     GroupItem groupItem;
                     for (int i = 0; i < groupIngStudents.size(); i++) {
