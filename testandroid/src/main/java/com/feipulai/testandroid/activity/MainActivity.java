@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity
     private TextView btn_finger;
     private AudioMngHelper audioMngHelper;
     private MediaPlayer mediaPlayer;
+    private TextView vcCheck;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +125,8 @@ public class MainActivity extends AppCompatActivity
         voice.setOnClickListener(this);
         volAdd.setOnClickListener(this);
         volSub.setOnClickListener(this);
-
+        vcCheck = findViewById(R.id.btn_vc);
+        vcCheck.setOnClickListener(this);
     }
 
     @Override
@@ -199,6 +201,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.btn_volSub:
                 audioMngHelper.subVoiceSystem();
+                break;
+            case R.id.btn_vc:
+                startActivity(new Intent(this, VcPairActivity.class));
                 break;
         }
     }

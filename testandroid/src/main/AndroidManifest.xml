@@ -11,21 +11,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
-
+        <activity android:name=".activity.VcPairActivity"></activity>
         <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity android:name=".activity.SettingActivity" />
-
         <activity android:name=".activity.ScreenActivity" />
-
         <activity android:name=".activity.SerialPortActivity" />
         <activity android:name=".activity.FingerprintActivity" />
-
     </application>
 
 </manifest>

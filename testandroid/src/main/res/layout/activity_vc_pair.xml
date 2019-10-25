@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.VcPairActivity"
+    android:layout_margin="@dimen/dp_10"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/btn_pair"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:background="@drawable/btn_click_bg"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:padding="@dimen/dp_10"
+            android:text="匹配" />
+
+        <TextView
+            android:id="@+id/btn_pair_res"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:background="@drawable/btn_click_bg"
+            android:layout_marginLeft="40dp"
+            android:text=""/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="@dimen/dp_10"
+        >
+
+        <TextView
+            android:id="@+id/btn_test"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:background="@drawable/btn_click_bg"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:padding="@dimen/dp_10"
+            android:text="测试" />
+
+        <TextView
+            android:id="@+id/btn_vc"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:background="@drawable/btn_click_bg"
+            android:layout_marginLeft="40dp"
+            android:text=""/>
+
+        <EditText
+            android:id="@+id/et_value"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:layout_marginLeft="40dp"
+            android:inputType="number"
+            android:hint="请输入校准值"
+            android:text=""/>
+
+        <TextView
+            android:id="@+id/btn_adjust"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:background="@drawable/btn_click_bg"
+            android:layout_marginLeft="40dp"
+            android:text="校准"/>
+    </LinearLayout>
+</LinearLayout>

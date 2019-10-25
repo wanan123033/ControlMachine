@@ -360,7 +360,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         detail.getStuDevicePair().setTimeResult(timeResult);
 
         //保存成绩
-        saveResult(pair);
+        saveResult(pair ,index);
         printResult(pair);
 //        broadResult(pair);
         detail.setRound(detail.getRound() + 1);
@@ -431,7 +431,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         PrinterManager.getInstance().print("\n");
     }
 
-    private void saveResult(BaseStuPair baseStuPair) {
+    private void saveResult(BaseStuPair baseStuPair ,int index) {
         Logger.i("saveResult==>" + baseStuPair.toString());
         if (baseStuPair.getStudent() == null)
             return;
@@ -458,22 +458,22 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 roundResult.setIsLastResult(1);
                 bestResult.setIsLastResult(0);
                 DBManager.getInstance().updateRoundResult(bestResult);
-                updateLastResultLed(roundResult);
+                updateLastResultLed(roundResult ,index);
             } else {
                 if (bestResult.getResultState() != RoundResult.RESULT_STATE_NORMAL) {
                     roundResult.setIsLastResult(1);
                     bestResult.setIsLastResult(0);
                     DBManager.getInstance().updateRoundResult(bestResult);
-                    updateLastResultLed(roundResult);
+                    updateLastResultLed(roundResult ,index);
                 } else {
                     roundResult.setIsLastResult(0);
-                    updateLastResultLed(bestResult);
+                    updateLastResultLed(bestResult ,index);
                 }
             }
         } else {
             // 第一次测试
             roundResult.setIsLastResult(1);
-            updateLastResultLed(roundResult);
+            updateLastResultLed(roundResult ,index);
         }
 
 
@@ -510,8 +510,21 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     /**
      * LED结果展示
      */
-    private void updateLastResultLed(RoundResult roundResult) {
+    private void updateLastResultLed(RoundResult roundResult ,int index) {
+        int ledMode = SettingHelper.getSystemSetting().getLedMode();
+        if (ledMode == 0) {
+            String result = ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult());
+            int x = 7;
+            if (roundResult.getResult()< 1000){
+                x= 9;
+            }else if (roundResult.getResult()>= 1000 && roundResult.getResult()< 10000){
+                x= 8;
+            }else if (roundResult.getResult()>= 10000){
+                x= 6 ;
+            }
 
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, x, index, false, true);
+        }
     }
 
 
