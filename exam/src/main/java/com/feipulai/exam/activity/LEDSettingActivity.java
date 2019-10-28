@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -33,18 +34,22 @@ import butterknife.OnClick;
  */
 public class LEDSettingActivity extends BaseTitleActivity implements AdapterView.OnItemSelectedListener {
 
+    @BindView(R.id.btn_led_connect)
+    Button btnLedConnect;
     @BindView(R.id.sp_show_mode)
     Spinner spShowMode;
     @BindView(R.id.rv_led)
     RecyclerView rvLed;
-    @BindView(R.id.btn_led_connect)
-    Button btnLedConnect;
+    @BindView(R.id.led_version)
+    Spinner ledVersion;
+    @BindView(R.id.rv_mode)
+    RelativeLayout rvMode;
     private LEDManager mLEDManager;
     private RunLEDManager runLEDManager;
     private int hostId;
     private int flag;
     private int ledMode;
-
+    private int ledType;
 
     @Override
     protected int setLayoutResID() {
@@ -60,8 +65,13 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
             mLEDManager = new LEDManager();
             flag = 1;
         }
+
+        ledType = SettingHelper.getSystemSetting().getLedVersion();
+        rvMode.setVisibility(ledType == 0? View.VISIBLE:View.GONE);
+
         ledMode = SettingHelper.getSystemSetting().getLedMode();
         rvLed.setVisibility(ledMode == 0 ? View.GONE : View.VISIBLE);
+
         String[] strings = new String[]{"屏幕1连接", "屏幕2连接", "屏幕3连接", "屏幕4连接"};
         LedMoreAdapter adapter = new LedMoreAdapter(Arrays.asList(strings));
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
@@ -73,8 +83,8 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
                 mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), hostId, i + 1);
                 String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
                         + " " + hostId;
-                mLEDManager.ShowSubsetString(hostId,i+1, title, 0, true, false, LEDManager.MIDDLE);
-                mLEDManager.ShowSubsetString(hostId,i+1, "菲普莱体育", 3, 3, false, true);
+                mLEDManager.ShowSubsetString(hostId, i + 1, title, 0, true, false, LEDManager.MIDDLE);
+                mLEDManager.ShowSubsetString(hostId, i + 1, "菲普莱体育", 3, 3, false, true);
             }
         });
         initSp();
@@ -88,12 +98,22 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
         spShowMode.setAdapter(adapter);
         spShowMode.setSelection(ledMode == 0 ? 0 : 1);
         spShowMode.setOnItemSelectedListener(this);
+
+        String[] spinnerItems1 = {"4.1及以上", "4.1以下"};
+        ArrayAdapter<String> adapter1 = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, spinnerItems1);
+        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ledVersion.setAdapter(adapter1);
+        ledVersion.setSelection(ledType == 0 ? 0 : 1);
+        ledVersion.setOnItemSelectedListener(this);
+
+
     }
 
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("显示屏设置") ;
+        return builder.setTitle("显示屏设置");
     }
 
     @Override
@@ -123,11 +143,11 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
                     runLEDManager.test(hostId);
                 } else {
 
-                    if (SettingHelper.getSystemSetting().getLedMode() == 0) {
+                    if (SettingHelper.getSystemSetting().getLedVersion() == 1) {
                         mLEDManager.test(TestConfigs.sCurrentItem.getMachineCode(), hostId);
                     } else {
                         for (int i = 1; i <= 4; i++) {
-                            mLEDManager.test(TestConfigs.sCurrentItem.getMachineCode(), hostId,i);
+                            mLEDManager.test(TestConfigs.sCurrentItem.getMachineCode(), hostId, i);
                         }
                     }
                 }
@@ -137,7 +157,7 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
                 if (flag == 0) {
                     runLEDManager.decreaseLightness(TestConfigs.sCurrentItem.getMachineCode(), hostId);
                 } else {
-                    if (SettingHelper.getSystemSetting().getLedMode() == 0) {
+                    if (SettingHelper.getSystemSetting().getLedVersion() == 0) {
                         mLEDManager.decreaseLightness(TestConfigs.sCurrentItem.getMachineCode(), hostId);
                     } else {
                         for (int i = 1; i <= 4; i++) {
@@ -165,28 +185,6 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
         }
     }
 
-//    @OnClick({R.id.btn_led_1, R.id.btn_led_2, R.id.btn_led_3})
-//    public void setLedConnect(View view) {
-//        switch (view.getId()) {
-//            case R.id.btn_led_1:
-//                mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), hostId);
-//                String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
-//                        + " " + hostId;
-//                mLEDManager.showString(hostId, title, 0, true, false, LEDManager.MIDDLE);
-//                mLEDManager.showString(hostId, "菲普莱体育1", 3, 3, false, true);
-//                break;
-//            case R.id.btn_led_2:
-//                mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), hostId);
-//                title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
-//                        + " " + hostId;
-//                mLEDManager.showString(hostId,  title, 0, true, false, LEDManager.MIDDLE);
-//                mLEDManager.showString(hostId,  "菲普莱体育2", 3, 3, false, true);
-//                break;
-//            case R.id.btn_led_3:
-//                mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), hostId, 2);
-//                break;
-//        }
-//    }
 
     @Override
     protected void onDestroy() {
@@ -202,9 +200,25 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        SettingHelper.getSystemSetting().setLedMode(position);
-        rvLed.setVisibility(position == 0 ? View.GONE : View.VISIBLE);
-        btnLedConnect.setVisibility(position == 0 ? View.VISIBLE : View.GONE);
+        switch (parent.getId()) {
+            case R.id.sp_show_mode:
+                SettingHelper.getSystemSetting().setLedMode(position);
+                rvLed.setVisibility(position == 0 ? View.GONE : View.VISIBLE);
+                btnLedConnect.setVisibility(position == 0 ? View.VISIBLE : View.GONE);
+                break;
+            case R.id.led_version:
+                SettingHelper.getSystemSetting().setLedVersion(position);
+                rvMode.setVisibility(position == 0? View.VISIBLE:View.GONE);
+                if (rvLed.getVisibility() == View.VISIBLE){
+                    rvLed.setVisibility(position == 1 ? View.GONE : View.VISIBLE);
+                }
+                if (btnLedConnect.getVisibility() == View.GONE){
+                    btnLedConnect.setVisibility(position == 1 ? View.VISIBLE : View.GONE);
+                }
+
+                break;
+        }
+
     }
 
     @Override
