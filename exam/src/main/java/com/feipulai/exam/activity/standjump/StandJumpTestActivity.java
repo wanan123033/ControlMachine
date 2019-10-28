@@ -39,10 +39,6 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
     private volatile boolean isDisconnect;
     private long disconnectTime;
 
-    @Override
-    public boolean isShowCamera() {
-        return true;
-    }
 
     @Override
     public void initData() {

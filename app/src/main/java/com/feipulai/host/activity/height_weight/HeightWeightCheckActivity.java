@@ -193,7 +193,7 @@ public class HeightWeightCheckActivity
 
                 mHeightResult = ResultUtils.generateRoughResultWithRaw(mStudent, result, 1);
                 mWeightResult = ResultUtils.generateRoughResultWithRaw(mStudent, result, 2);
-
+                mHeightResult.setWeightResult(mWeightResult.getResult());
                 ResultUtils.saveResults(this, mHeightResult, mLastHeightResult);
                 ResultUtils.saveResults(this, mWeightResult, mLastWeightResult);
 
@@ -205,7 +205,7 @@ public class HeightWeightCheckActivity
 
                 if (SettingHelper.getSystemSetting().isRtUpload()) {
                     itemSubscriber.setDataUpLoad(mHeightResult, mHeightResult);
-                    itemSubscriber.setDataUpLoad(mWeightResult, mWeightResult);
+//                    itemSubscriber.setDataUpLoad(mWeightResult, mWeightResult);
                 }
 
                 //mLEDManager.showString(hostId,mStudent.getStudentName(),5,0,true,false);

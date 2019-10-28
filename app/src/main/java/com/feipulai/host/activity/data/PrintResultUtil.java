@@ -2,6 +2,7 @@ package com.feipulai.host.activity.data;
 
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.printer.PrinterManager;
+import com.feipulai.host.activity.height_weight.HWConfigs;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
@@ -55,6 +56,11 @@ public class PrintResultUtil {
                     case ItemDefault.CODE_ZQYQ:
 //                        PrinterManager.getInstance().print(printResult + "(违例:" + result.getPenalty() + ")");
                         break;
+                    case ItemDefault.CODE_HW:
+                        PrinterManager.getInstance().print(printResult);
+                        PrinterManager.getInstance().print("身  高:" + ResultDisplayUtils.getStrResultForDisplay(result.getResult(), HWConfigs.HEIGHT_ITEM));
+                        PrinterManager.getInstance().print("体  重:" + ResultDisplayUtils.getStrResultForDisplay(result.getWeightResult(), HWConfigs.WEIGHT_ITEM));
+                        break;
                     default:
                         PrinterManager.getInstance().print(printResult);
 
@@ -74,7 +80,12 @@ public class PrintResultUtil {
 
         switch (roundResult.getResultState()) {
             case RoundResult.RESULT_STATE_NORMAL:
-                return ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult(), false);
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_HW) {
+                    return "";
+                } else {
+                    return ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult(), false);
+                }
+
             case RoundResult.RESULT_STATE_FOUL:
                 return "X";
             case RoundResult.RESULT_STATE_BACK:

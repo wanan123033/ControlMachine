@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         tab:tabGravity="fill"
+        tab:tabIndicatorHeight="5dp"
         tab:tabMaxWidth="0dp"
         tab:tabMode="fixed"
         tab:tabSelectedTextColor="@color/colorPrimary"

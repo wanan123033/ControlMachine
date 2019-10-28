@@ -237,7 +237,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
 
     @Override
     public void onBackPressed() {
-        exit();
+//        exit();
 
     }
 

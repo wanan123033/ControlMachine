@@ -55,7 +55,7 @@ public class StuItemExLReader extends ExlReader {
         mColNums = new HashMap<>();
         final List<Object> readBeans = new ArrayList<>();
         if (importTyle == 0 && TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
-            listener.onExlResponse( ExlListener.EXEL_READ_FAIL, "中长跑项目无法进行个人导入");
+            listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "中长跑项目无法进行个人导入");
             return;
         }
         reader = new ExlReaderUtil.Builder(path).setCellLength(19).setReaderDataListener(new GetReaderDataListener() {
@@ -67,7 +67,7 @@ public class StuItemExLReader extends ExlReader {
                 } else {
                     ExelGroupReadBean bean = readXLSXRow(data);
                     if (bean == null) {
-                        listener.onExlResponse( ExlListener.EXEL_READ_FAIL, "Excel读取解析失败,第" + rowNum + 1 + "行读取失败");
+                        listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "Excel读取解析失败,第" + rowNum + 1 + "行读取失败");
                         Logger.i(TestConfigs.df.format(new Date()) + "---> " + "Excel读取解析失败,第" + rowNum + 1 + "行读取失败");
                         return;
                     }
@@ -77,7 +77,7 @@ public class StuItemExLReader extends ExlReader {
         }).setExlListener(listener).build();
         reader.read();
         if (readBeans == null || readBeans.size() == 0) {
-            listener.onExlResponse( ExlListener.EXEL_READ_FAIL, "导入文档数据为空");
+            listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "导入文档数据为空");
             return;
         }
         boolean success;
@@ -89,7 +89,7 @@ public class StuItemExLReader extends ExlReader {
         if (success) {
             SettingHelper.getSystemSetting().setTestPattern(importTyle == 0 ? SystemSetting.PERSON_PATTERN : SystemSetting.GROUP_PATTERN);
             SettingHelper.updateSettingCache(SettingHelper.getSystemSetting());
-            listener.onExlResponse( ExlListener.EXEL_READ_SUCCESS, "Excel导入成功!");
+            listener.onExlResponse(ExlListener.EXEL_READ_SUCCESS, "Excel导入成功!");
         }
     }
 
@@ -130,7 +130,7 @@ public class StuItemExLReader extends ExlReader {
         //检查是否有所有需要的索引
         for (int i = 0; i < mNecessaryCols.size(); i++) {
             if (!mColNums.containsKey(mNecessaryCols.get(i))) {
-                listener.onExlResponse( ExlListener.EXEL_READ_FAIL, "缺少必要列:" + mNecessaryCols.get(i) + ",excel读取失败");
+                listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "缺少必要列:" + mNecessaryCols.get(i) + ",excel读取失败");
                 Logger.i(TestConfigs.df.format(new Date()) + "---> " + "缺少必要列:" + mNecessaryCols.get(i) + ",excel读取失败");
                 return false;
             }
@@ -156,9 +156,9 @@ public class StuItemExLReader extends ExlReader {
         String trackNo = rowList.get(10);
         String examType = rowList.get(18);
         String idCardNo = rowList.get(14);
-        if (TextUtils.isEmpty(examType)) {
-            return null;
-        }
+//        if (TextUtils.isEmpty(examType)) {
+//            return null;
+//        }
         bean.setExamType(examType);
 
         if (TextUtils.isEmpty(stuCode)) {
@@ -230,9 +230,9 @@ public class StuItemExLReader extends ExlReader {
                 return null;
             }
             bean.setGroupNo(Integer.valueOf(groupNo));
-            if (TextUtils.isEmpty(scheduleTime)) {
-                return null;
-            }
+//            if (TextUtils.isEmpty(scheduleTime)) {
+//                return null;
+//            }
             bean.setScheduleTime(scheduleTime);
             if (TextUtils.isEmpty(trackNo)) {
                 return null;
@@ -261,14 +261,14 @@ public class StuItemExLReader extends ExlReader {
                         TestConfigs.sCurrentItem.setItemName(mItemName);
                         DBManager.getInstance().updateItem(TestConfigs.sCurrentItem);// 更新项目表中信息
                     } else {
-                        listener.onExlResponse( ExlListener.EXEL_READ_FAIL, "excel导入失败,导入项目名已存在,拒绝导入");
+                        listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel导入失败,导入项目名已存在,拒绝导入");
                         Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel导入失败,导入项目名已存在,拒绝导入");
                         return false;
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                listener.onExlResponse( ExlListener.EXEL_READ_FAIL, "excel导入失败,导入项目代码已存在,拒绝导入");
+                listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel导入失败,导入项目代码已存在,拒绝导入");
                 Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel导入失败,拒绝导入" + e.getMessage());
                 return false;
             }
@@ -284,7 +284,7 @@ public class StuItemExLReader extends ExlReader {
                 mItemName = itemCode;
             } else {
                 // 已经有了项目代码,那么导入时的项目项目代码必须与已有的相同
-                listener.onExlResponse( ExlListener.EXEL_READ_FAIL, "excel导入失败,导入项目代码与已有项目代码不同,拒绝导入");
+                listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel导入失败,导入项目代码与已有项目代码不同,拒绝导入");
                 Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel导入失败,导入项目代码与已有项目代码不同,拒绝导入");
                 return false;
             }
@@ -297,7 +297,7 @@ public class StuItemExLReader extends ExlReader {
                     TestConfigs.sCurrentItem.setItemName(mItemName);
                     DBManager.getInstance().updateItem(TestConfigs.sCurrentItem);// 更新项目表中信息(这里实际只更新了一个项目名)
                 } else {
-                    listener.onExlResponse( ExlListener.EXEL_READ_FAIL, "excel导入失败,导入项目名已存在,拒绝导入");
+                    listener.onExlResponse(ExlListener.EXEL_READ_FAIL, "excel导入失败,导入项目名已存在,拒绝导入");
                     Logger.i(TestConfigs.df.format(new Date()) + "---> " + "excel导入失败,导入项目名已存在,拒绝导入");
                 }
             }
@@ -465,6 +465,7 @@ public class StuItemExLReader extends ExlReader {
         List<Group> groupList = new ArrayList<>();
         List<GroupItem> groupItemList = new ArrayList<>();
         Logger.i(TestConfigs.df.format(new Date()) + "==》exel分组读取的考生：" + result.toString());
+        String scheduleTime = "";
         for (Object o : result) {
             ExelGroupReadBean bean = (ExelGroupReadBean) o;
             Student student = new Student();
@@ -487,7 +488,15 @@ public class StuItemExLReader extends ExlReader {
 //            studentItemList.add(studentItem);
 
             Schedule schedule = new Schedule();
-            schedule.setBeginTime(DateUtil.getTimeMillis(bean.getScheduleTime(), "yyyyMMddHHmmss") + "");
+            if (TextUtils.isEmpty(bean.getScheduleTime())) {
+                if (TextUtils.isEmpty(scheduleTime)) {
+                    scheduleTime = DateUtil.getCurrentTime() + "";
+                }
+                schedule.setBeginTime(scheduleTime);
+            } else {
+                schedule.setBeginTime(DateUtil.getTimeMillis(bean.getScheduleTime(), "yyyyMMddHHmmss") + "");
+            }
+
             schedule.setScheduleNo(bean.getSessionNo());
             scheduleList.add(schedule);
 //            DBManager.getInstance().insertSchedules(schedule);

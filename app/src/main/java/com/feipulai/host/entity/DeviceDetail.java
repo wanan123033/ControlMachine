@@ -16,6 +16,7 @@ public class DeviceDetail {
     private BaseStuPair baseStuPair;
     private RoundResult roundResult;
     private boolean isDeviceOpen;
+    //第几轮 仅用于个人
     private int round;
     public BaseStuPair getStuDevicePair() {
         return baseStuPair;
