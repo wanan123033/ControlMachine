@@ -32,6 +32,4 @@ public class RadioChannelCommand extends Command{
 	ConvertCommand.CmdTarget getTarget(){
 		return ConvertCommand.CmdTarget.CONVERTER;
 	}
-	
-	
 }

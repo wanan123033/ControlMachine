@@ -32,6 +32,7 @@ import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.activity.volleyball.more_devices.VolleyBallCheckDialog;
 import com.feipulai.exam.config.TestConfigs;
 import com.orhanobut.logger.Logger;
 
@@ -77,6 +78,8 @@ public class VolleyBallSettingActivity
     private VolleyBallManager volleyBallManager = new VolleyBallManager();
     private Dialog checkDialog;
 
+    private int deviceId;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_volleyball_setting;
@@ -85,7 +88,7 @@ public class VolleyBallSettingActivity
     @Override
     protected void initData() {
         setting = SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class);
-
+        deviceId = getIntent().getIntExtra("deviceId",0);
         ArrayAdapter spTestRoundAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testRound);
         spTestRoundAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTestNo.setAdapter(spTestRoundAdapter);
@@ -170,20 +173,29 @@ public class VolleyBallSettingActivity
                 ToastUtils.showShort("功能开发中,敬请期待");
                 break;
             case R.id.tv_device_check:
-                if (volleyBallManager == null) {
-                    volleyBallManager = new VolleyBallManager();
-                }
-                showCheckDiglog();
-                volleyBallManager.checkDevice();
-                isDisconnect = true;
+                if (deviceId == 0) {
+                    if (volleyBallManager == null) {
+                        volleyBallManager = new VolleyBallManager();
+                    }
+                    showCheckDiglog();
+                    volleyBallManager.checkDevice();
+                    isDisconnect = true;
 //                mProgressDialog = ProgressDialog.show(this, "", "终端自检中...", true);
-                alertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
-                alertDialog.setTitleText("终端自检中...");
-                alertDialog.setCancelable(false);
-                alertDialog.show();
+                    alertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+                    alertDialog.setTitleText("终端自检中...");
+                    alertDialog.setCancelable(false);
+                    alertDialog.show();
 
-                //3秒自检
-                mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 5000);
+                    //3秒自检
+                    mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 5000);
+                }else {
+                    //TODO 无线模式自检
+                    VolleyBallCheckDialog dialog = new VolleyBallCheckDialog();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("deviceId",deviceId);
+                    dialog.setArguments(bundle);
+                    dialog.show(getFragmentManager(),"VolleyBallCheckDialog");
+                }
                 break;
         }
     }

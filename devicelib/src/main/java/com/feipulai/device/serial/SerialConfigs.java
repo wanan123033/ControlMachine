@@ -11,6 +11,9 @@ import java.util.Map;
  */
 public class SerialConfigs {
 
+
+
+
     private SerialConfigs() {
     }
 
@@ -227,4 +230,14 @@ public class SerialConfigs {
     public static final int VITAL_CAPACITY_SET_MORE_MATCH = 0x41;
     public static int USE_VERSION = 363;//肺活量新版本为及以后为363
 
+    //排球垫球
+    public static final int VOLLEY_BALL_SET_PAIR = 0x41;
+    public static final int VOLLEY_BALL_EDITION = 0x42;
+    public static final int VOLLEY_BALL_STATE = 0x43;
+    public static final int VOLLEY_BALL_SELFCHECK = 0x44;
+    public static final int VOLLEY_BALL_B0 = 0x45;
+
+    //篮球足球运球
+    public static final int BASKETBALL_RESULT = 0x46;
+    public static final int FOOTBALL_RESULT = 0x47;
 }

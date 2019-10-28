@@ -56,13 +56,11 @@ public class SargentItemSelectActivity extends BaseTitleActivity {
                 SargentSetting setting = SharedPrefsUtil.loadFormSource(mContext, SargentSetting.class);
                 setting.setType(position);
                 if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
-                    startActivity(new Intent(mContext, position == 2? SargentMoreTestActivity.class :SargentTestActivity.class));
-
+                    startActivity(new Intent(mContext, position == 2? SargentMoreTestActivity.class : SargentTestActivity.class));
                 } else {
                     startActivity(new Intent(mContext, BaseGroupActivity.class));
                 }
                 SharedPrefsUtil.save(mContext, setting);
-
 
                 finish();
             }
@@ -75,5 +73,4 @@ public class SargentItemSelectActivity extends BaseTitleActivity {
         String title =  "摸高模式选择";
         return builder.setTitle(title) ;
     }
-
 }

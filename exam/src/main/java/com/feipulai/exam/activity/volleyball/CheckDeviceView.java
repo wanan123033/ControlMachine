@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 
 import com.feipulai.device.manager.VolleyBallManager;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.volleyball.adapter.CheckDeviceAdapter;
 import com.feipulai.exam.activity.volleyball.stepView.StepBean;
 
@@ -33,6 +34,8 @@ public class CheckDeviceView extends RelativeLayout {
     private List<List<StepBean>> checkList;
     private CheckDeviceAdapter adapter;
     private VolleyBallManager manager = new VolleyBallManager();
+    private boolean wiress = false;  //true 无线  false 有线
+    private int deviceId;
 
     public CheckDeviceView(Context context) {
         super(context);
@@ -121,13 +124,33 @@ public class CheckDeviceView extends RelativeLayout {
 
     @OnClick({R.id.tv_lose_dot, R.id.tv_cancel_lose_dot})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.tv_lose_dot:
-                manager.loseDot();
-                break;
-            case R.id.tv_cancel_lose_dot:
-                manager.cancelLoseDot();
-                break;
+        if (!wiress) {
+            switch (view.getId()) {
+                case R.id.tv_lose_dot:
+                    manager.loseDot();
+                    break;
+                case R.id.tv_cancel_lose_dot:
+                    manager.cancelLoseDot();
+                    break;
+            }
+        }else {
+            //TODO 无线模式
+            switch (view.getId()) {
+                case R.id.tv_lose_dot:
+                    manager.loseDot(deviceId, SettingHelper.getSystemSetting().getHostId());
+                    break;
+                case R.id.tv_cancel_lose_dot:
+                    manager.cancelLoseDot(deviceId,SettingHelper.getSystemSetting().getHostId());
+                    break;
+            }
         }
+    }
+
+    public void setWiress(boolean b) {
+        this.wiress = b;
+    }
+
+    public void setDeviceId(int deviceId) {
+        this.deviceId = deviceId;
     }
 }

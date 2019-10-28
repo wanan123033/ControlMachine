@@ -258,7 +258,7 @@ public class SitPushUpManager {
     }
 
     public void setFrequencyPQ(int originFrequency, int deviceId, int hostId) {
-        int machineCode = ItemDefault.CODE_MG;
+        int machineCode = ItemDefault.CODE_PQ;
         int targetChannel = 0;
         byte[] buf = new byte[17];
         buf[0] = (byte) 0xAA;
@@ -267,7 +267,8 @@ public class SitPushUpManager {
         buf[3] = 0x03;//目标设备编号：0x03（控制盒属于计数器）
         buf[4] = 0x01;      //本设备编号：0x01（主机）
         buf[5] = (byte) (hostId & 0xff);     //本设备主机号
-        buf[6] = (byte) (deviceId & 0xff);       //目标设备子机号
+//        buf[6] = (byte) (deviceId & 0xff);       //目标设备子机号
+        buf[6] = 0;
         buf[7] = (byte) 0xc1;      //命令
         targetChannel = SerialConfigs.sProChannels.get(machineCode) + hostId - 1;
         buf[8] = 0x00; //高字节在先
@@ -276,7 +277,7 @@ public class SitPushUpManager {
         buf[11] = 0x00;
         buf[12] = (byte) (targetChannel & 0xff); //高字节在先
         buf[13] = (byte) hostId;
-        buf[14] = (byte) (deviceId * 0xff);
+        buf[14] = (byte) (deviceId & 0xff);
         for (int i = 1; i < 15; i++) {
             buf[15] += buf[i] & 0xff;
         }

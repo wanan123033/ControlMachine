@@ -1,9 +1,7 @@
 package com.feipulai.device.serial;
 
 import android.os.Message;
-import android.util.Log;
 
-import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 
 /**
@@ -53,9 +51,8 @@ public class RadioManager{
 	// 这个地方必须锁住,万恶之源
 	public synchronized void sendCommand(ConvertCommand convertCommand){
 		ensureInterval();
-        byte[] cmdBytes = convertCommand.getCmdBytes();
-        Log.i("james sendBytes",StringUtility.bytesToHexString(cmdBytes));
-        mSerialPorter.sendCommand(convertCommand);
+		Log.i("TAG+++++发送", StringUtility.bytesToHexString(convertCommand.getCmdBytes()));
+		mSerialPorter.sendCommand(convertCommand);
 	}
 	
 	private void ensureInterval(){

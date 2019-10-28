@@ -1,6 +1,7 @@
 package com.feipulai.device.serial;
 
 import android.os.Message;
+import android.util.Log;
 
 import com.feipulai.device.printer.PrinterReadRunnable;
 import com.feipulai.device.serial.command.ConvertCommand;
@@ -46,6 +47,7 @@ public class SerialPorter {
     }
 
     private void startReading(SerialParams config) {
+        Log.e("TAG",config +"---------");
         switch (config) {
 
             case QR_CODE:

@@ -5,6 +5,7 @@ package com.feipulai.device.serial.beans;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 public class VolleyPairResult {
+    private byte[] data;
     private int score;
     private int id;
     private int frequency;
@@ -16,7 +17,7 @@ public class VolleyPairResult {
             score = ((data[9] & 0xff) << 8) + (data[10] & 0xff);
             state = (data[8] & 0xff);
         }
-
+        this.data = data;
         id = data[5]&0xff;
         frequency = data[12]&0xff;
 //		Log.i("sargent",StringUtility.bytesToHexString(data));
@@ -48,5 +49,9 @@ public class VolleyPairResult {
 
     public void setState(int state) {
         this.state = state;
+    }
+
+    public byte[] getDataArr() {
+        return data;
     }
 }

@@ -97,6 +97,7 @@ public abstract class SitPullPairActivity extends BaseTitleActivity
 
     @Override
     public void handleMessage(Message msg) {
+
         switch (msg.what) {
             case UPDATE_SPECIFIC_ITEM:
                 mAdapter.notifyItemChanged(msg.arg1);

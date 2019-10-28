@@ -383,6 +383,7 @@ public class TestConfigs {
         TestConfigs.groupActivity.put(ItemDefault.CODE_MG, SargentGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_FWC, PushUpCheckActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_ZCP, MiddleDistanceRaceActivity.class);
+
         TestConfigs.groupActivity.put(ItemDefault.CODE_LQYQ, BasketBallGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_ZQYQ, FootBallGroupActivity.class);
         // 每个机器码对应的机器名称
