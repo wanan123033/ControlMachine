@@ -84,8 +84,8 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
                 mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), hostId, i + 1);
                 String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
                         + " " + hostId;
-                mLEDManager.ShowSubsetString(hostId, i + 1, title, 0, true, false, LEDManager.MIDDLE);
-                mLEDManager.ShowSubsetString(hostId, i + 1, "菲普莱体育", 3, 3, false, true);
+                mLEDManager.showSubsetString(hostId, i + 1, title, 0, true, false, LEDManager.MIDDLE);
+                mLEDManager.showSubsetString(hostId, i + 1, "菲普莱体育", 3, 3, false, true);
             }
         });
         initSp();
@@ -131,11 +131,21 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
                     runLEDManager.link(hostId);
                     runLEDManager.resetLEDScreen(hostId);
                 } else {
-                    mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), hostId);
-                    String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
-                            + " " + hostId;
-                    mLEDManager.showString(hostId, title, 0, true, false, LEDManager.MIDDLE);
-                    mLEDManager.showString(hostId, "菲普莱体育", 3, 3, false, true);
+                    if (SettingHelper.getSystemSetting().getLedVersion() == 0){
+                        mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), hostId,1);
+                        String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
+                                + " " + hostId;
+                        mLEDManager.showSubsetString(hostId,1, title, 0, true, false, LEDManager.MIDDLE);
+                        mLEDManager.showSubsetString(hostId, 1,"菲普莱体育", 3, 3,false, true);
+                    }else {
+                        mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), hostId);
+                        String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
+                                + " " + hostId;
+                        mLEDManager.showString(hostId, title, 0, true, false, LEDManager.MIDDLE);
+                        mLEDManager.showString(hostId, "菲普莱体育", 3, 3, false, true);
+                    }
+
+
                 }
                 break;
 
