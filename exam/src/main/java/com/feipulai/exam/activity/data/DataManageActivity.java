@@ -91,7 +91,7 @@ public class DataManageActivity
     private static final int REQUEST_CODE_IMPORT = 3;
     private static final int REQUEST_CODE_EXPORT = 4;
     private static final int REQUEST_CODE_PHOTO = 5;
-
+    private static final int REQUEST_CODE_EXPORT_TEMPLATE = 6;
     @BindView(R.id.grid_viewpager)
     GridViewPager gridViewpager;
     @BindView(R.id.indicator_container)
@@ -142,7 +142,7 @@ public class DataManageActivity
         String[] typeName = getResources().getStringArray(R.array.data_admin);
         int[] typeRes = new int[]{R.mipmap.icon_data_import, R.mipmap.icon_group_import, R.mipmap.icon_data_down, R.mipmap.icon_position_import, R.mipmap.icon_position_down, R.mipmap.icon_delete_position
                 , R.mipmap.icon_data_backup, R.mipmap.icon_data_restore, R.mipmap.icon_data_look, R.mipmap.icon_data_clear, R.mipmap.icon_result_upload,
-                R.mipmap.icon_result_import/*, R.mipmap.icon_result_delete*/};
+                R.mipmap.icon_result_import, R.mipmap.icon_template_export};
         for (int i = 0; i < typeName.length; i++) {
             TypeListBean bean = new TypeListBean();
             bean.setName(typeName[i]);
@@ -226,7 +226,33 @@ public class DataManageActivity
 //                        ServerMessage.downloadData(DataManageActivity.this);
                         showDownloadDataDialog();
                         break;
+                    case 3://头像导入
+                        intent.setClass(DataManageActivity.this, FileSelectActivity.class);
+                        intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
+                        startActivityForResult(intent, REQUEST_CODE_PHOTO);
+                        break;
+                    case 4://头像下载
+                        ToastUtils.showShort("功能未开放，敬请期待");
+                        break;
+                    case 5://删除头像
+                        //TODO 测试使用
+//                        DBManager.getInstance().roundResultClear();
 
+                        new SweetAlertDialog(DataManageActivity.this, SweetAlertDialog.CUSTOM_IMAGE_TYPE).setTitleText("是否进行删除头像")
+                                .setConfirmText("确认").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismissWithAnimation();
+                                FaceServer.getInstance().clearAllFaces(DataManageActivity.this);
+                            }
+                        }).setCancelText("取消").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismissWithAnimation();
+
+                            }
+                        }).show();
+                        break;
                     case 6: //数据库备份
                         //选择备份到的文件夹
                         intent.setClass(DataManageActivity.this, FileSelectActivity.class);
@@ -256,33 +282,10 @@ public class DataManageActivity
                         intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
                         startActivityForResult(intent, REQUEST_CODE_EXPORT);
                         break;
-
-                    case 4://头像下载
-                        ToastUtils.showShort("功能未开放，敬请期待");
-                        break;
-                    case 3://头像导入
+                    case 12://exl模版导出
                         intent.setClass(DataManageActivity.this, FileSelectActivity.class);
                         intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
-                        startActivityForResult(intent, REQUEST_CODE_PHOTO);
-                        break;
-                    case 5://删除头像
-                        //TODO 测试使用
-//                        DBManager.getInstance().roundResultClear();
-
-                        new SweetAlertDialog(DataManageActivity.this, SweetAlertDialog.CUSTOM_IMAGE_TYPE).setTitleText("是否进行删除头像")
-                                .setConfirmText("确认").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                sweetAlertDialog.dismissWithAnimation();
-                                FaceServer.getInstance().clearAllFaces(DataManageActivity.this);
-                            }
-                        }).setCancelText("取消").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                sweetAlertDialog.dismissWithAnimation();
-
-                            }
-                        }).show();
+                        startActivityForResult(intent, REQUEST_CODE_EXPORT_TEMPLATE);
                         break;
 
                 }
@@ -390,11 +393,35 @@ public class DataManageActivity
                 ToastUtils.showShort(restoreSuccess ? "数据库恢复成功" : "数据库恢复失败,请检查文件格式");
                 Logger.i(restoreSuccess ? ("数据库恢复成功,文件路径:" + FileSelectActivity.sSelectedFile.getName())
                         : "数据库恢复失败");
-               SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
+                SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
                 DBManager.getInstance().initDB();
                 TestConfigs.init(this, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), null);
                 break;
+            case REQUEST_CODE_EXPORT_TEMPLATE:
 
+                boolean copySucceed;
+                try {
+                    UsbFile targetFile = FileSelectActivity.sSelectedFile.createFile("智能主机分组模板.xls");
+                    FileUtil.copyFromAssets(getResources().getAssets(), "智能主机分组模板.xls", targetFile);
+                    UsbFile deleteFile = FileSelectActivity.sSelectedFile.createFile(".智能主机分组模板delete.xls");
+                    deleteFile.delete();
+
+                    targetFile = FileSelectActivity.sSelectedFile.createFile("智能主机个人模板.xls");
+                    copySucceed = FileUtil.copyFromAssets(getResources().getAssets(), "智能主机个人模板.xls", targetFile);
+                    deleteFile = FileSelectActivity.sSelectedFile.createFile(".智能主机个人模板delete.xls");
+                    deleteFile.delete();
+
+                    ToastUtils.showShort(copySucceed ? "模版导出成功" : "模版导出失败");
+
+                    FileSelectActivity.sSelectedFile = null;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    ToastUtils.showShort("文件创建失败,请确保路径目录不存在已有文件");
+                    Logger.i("文件创建失败,模板备份失败");
+                }
+
+
+                break;
             case REQUEST_CODE_BACKUP:
                 showBackupFileNameDialog();
                 break;

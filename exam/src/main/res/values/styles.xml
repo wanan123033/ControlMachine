@@ -10,7 +10,15 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
-
+    <!--纯色加启动图标的方案-->
+    <style name="SplashThemeLayer" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@drawable/bg_splash_layer_list</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <!--沉浸-->
+        <!--<item name="android:windowTranslucentStatus">true</item>-->
+    </style>
     <style name="menu_labels_style">
         <item name="android:background">@drawable/fab_label_background</item>
         <item name="android:textColor">@color/white</item>

@@ -8,4 +8,5 @@ public class EventConfigs {
 
     public static final int UPDATE_TEST_RESULT = 6;
     public static int  TEMPORARY_ADD_STU = 1;
+    public static int  EVENT_UPLOAD_ITEM_SUCCEED = 2;
 }
