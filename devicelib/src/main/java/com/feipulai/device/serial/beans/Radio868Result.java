@@ -1,8 +1,6 @@
 package com.feipulai.device.serial.beans;
 
 
-import android.util.Log;
-
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.SerialConfigs;
@@ -19,7 +17,7 @@ public class Radio868Result {
     private Object mResult;
 
     public Radio868Result(byte[] data) {
-        Log.i("james", StringUtility.bytesToHexString(data));
+//        Log.i("james", StringUtility.bytesToHexString(data));
         if (MachineCode.machineCode == -1) {
             return;
         }

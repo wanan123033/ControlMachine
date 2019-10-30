@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.serial.RadioManager;
-import com.feipulai.device.serial.beans.VolleyPairResult;
+import com.feipulai.device.serial.beans.VolleyPair868Result;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.volleyball.CheckDeviceView;
@@ -28,7 +28,7 @@ public class VolleyBallCheckDialog extends DialogFragment implements RadioManage
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            VolleyPairResult resul = (VolleyPairResult) msg.obj;
+            VolleyPair868Result resul = (VolleyPair868Result) msg.obj;
             byte[] dataArr = resul.getDataArr();
             byte[] result = new byte[]{dataArr[14],dataArr[15],dataArr[16],dataArr[17],dataArr[18]};
             List<Integer> states = new ArrayList<>();
@@ -67,12 +67,13 @@ public class VolleyBallCheckDialog extends DialogFragment implements RadioManage
     public void setArguments(Bundle args) {
         super.setArguments(args);
         deviceId = args.getInt("deviceId");
-        checkDeviceView.setDeviceId(deviceId);
+//        checkDeviceView.setDeviceId(deviceId);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        checkDeviceView.setDeviceId(deviceId);
         sendSelfCheck(deviceId);
 
     }

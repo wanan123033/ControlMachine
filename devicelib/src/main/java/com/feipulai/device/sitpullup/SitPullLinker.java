@@ -9,11 +9,13 @@ import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
+import com.feipulai.device.serial.beans.Basketball868Result;
 import com.feipulai.device.serial.beans.PullUpSetFrequencyResult;
 import com.feipulai.device.serial.beans.SargentJumpResult;
 import com.feipulai.device.serial.beans.SitPushUpSetFrequencyResult;
 import com.feipulai.device.serial.beans.VitalCapacityNewResult;
 import com.feipulai.device.serial.beans.VitalCapacityResult;
+import com.feipulai.device.serial.beans.VolleyPair868Result;
 import com.feipulai.device.serial.beans.VolleyPairResult;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
@@ -87,8 +89,13 @@ public class SitPullLinker implements Handler.Callback {
         }
         else if (machineCode == ItemDefault.CODE_PQ && what == SerialConfigs.VOLLEY_BALL_SET_MORE_MATCH){
             Log.e("TAG87----",msg.obj.toString());
-            VolleyPairResult volleyPairResult = (VolleyPairResult) msg.obj;
-            checkDevice(volleyPairResult);
+            if (msg.obj instanceof  VolleyPairResult) {
+                VolleyPairResult volleyPairResult = (VolleyPairResult) msg.obj;
+                checkDevice(volleyPairResult);
+            }else {
+                VolleyPair868Result result = (VolleyPair868Result) msg.obj;
+                checkDevice(result.getDeviceid(),result.getFrequency());
+            }
             return true;
         }
         else if (machineCode == ItemDefault.CODE_FHL && what == SerialConfigs.VITAL_CAPACITY_SET_MORE_MATCH){
@@ -99,6 +106,10 @@ public class SitPullLinker implements Handler.Callback {
                 VitalCapacityNewResult fhl = (VitalCapacityNewResult) msg.obj;
                 checkDevice(fhl);
             }
+            return true;
+        }else if (machineCode == ItemDefault.CODE_LQYQ && what == SerialConfigs.BASKETBALL_RESULT){
+            Basketball868Result result = (Basketball868Result) msg.obj;
+            checkDevice(result.getDeviceId(),result.getFrequency());
             return true;
         }
         return false;

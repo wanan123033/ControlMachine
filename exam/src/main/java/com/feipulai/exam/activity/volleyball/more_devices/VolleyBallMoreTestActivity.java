@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 
@@ -23,6 +24,7 @@ import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
 import com.feipulai.exam.activity.volleyball.VolleyBallSettingActivity;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.utils.ResultDisplayUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +39,8 @@ public class VolleyBallMoreTestActivity extends BaseMoreActivity {
     private static final int START_STATE = 5;
 
     private final int TIME_DURATION = 1000*60;   //ms(毫秒)  计时时长
+
+    private String[] scoreStr = new String[3];
     private VolleyBallJumpImpl resultJump = new VolleyBallJumpImpl(new VolleyBallJumpImpl.VolleyBallCallBack() {
         @Override
         public void getState(VolleyPair868Result obj) {
@@ -75,7 +79,7 @@ public class VolleyBallMoreTestActivity extends BaseMoreActivity {
                     sendEmpty();
                     break;
                 case END_JS:
-                    sendEnd((int) msg.obj);
+                    sendEnd1((int) msg.obj);
                     break;
                 case GET_STATE:
                     VolleyPair868Result result = ((VolleyPair868Result)msg.obj);
@@ -88,14 +92,20 @@ public class VolleyBallMoreTestActivity extends BaseMoreActivity {
                         if (childid == stuDevicePair.getBaseDevice().getDeviceId() && deviceid == SettingHelper.getSystemSetting().getHostId()){
                             if (state == VolleyPair868Result.STATE_TIME_PREPARE || state == VolleyPair868Result.STATE_COUNT_PREPARE || state == VolleyPair868Result.STATE_FREE){
                                 stuDevicePair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
+                                scoreStr[1] = "设备空闲";
                             }else if (state == VolleyPair868Result.STATE_TIMING || state == VolleyPair868Result.STATE_COUNTING){
                                 stuDevicePair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
+                                scoreStr[1] = "计数中";
                             }else if (state == VolleyPair868Result.STATE_TIME_END || state == VolleyPair868Result.STATE_COUNT_END){
                                 stuDevicePair.getBaseDevice().setState(BaseDeviceState.STATE_END);
+                                scoreStr[1] = "计数已结束";
                             }
                             stuDevicePair.getBaseDevice().setBatteryLeft(result.getElectricityState());
-                            stuDevicePair.setResult(result.getScore());
+                            scoreStr[0] = ResultDisplayUtils.getStrResultForDisplay(result.getScore());
+                            scoreStr[2] = "";
+                            stuDevicePair.setTimeResult(scoreStr);
                             updateResult(stuDevicePair);
+//                            updateDevice(stuDevicePair.getBaseDevice());
                             break;
                         }
                     }
@@ -109,7 +119,7 @@ public class VolleyBallMoreTestActivity extends BaseMoreActivity {
                         Message msg1 = Message.obtain();
                         msg1.what = END_JS;
                         msg1.obj = deviceIds.get(i).getDeviceId();
-                        mHandler.sendMessageDelayed(msg1,TIME_DURATION);
+                        mHandler.sendMessageDelayed(msg1,volleyBallSetting.getTestTime() * 1000);
 
                     }
                     deviceIds.clear();
@@ -141,7 +151,7 @@ public class VolleyBallMoreTestActivity extends BaseMoreActivity {
 
     private void sendEmpty() {
         getState();
-        mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 5000);
+        mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 1000);
     }
 
     private void getState() {
@@ -159,9 +169,10 @@ public class VolleyBallMoreTestActivity extends BaseMoreActivity {
         }
     }
 
+
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
         mHandler.removeCallbacksAndMessages(null);
     }
 
@@ -176,6 +187,9 @@ public class VolleyBallMoreTestActivity extends BaseMoreActivity {
         cmd[12] = (byte) sum(cmd,12);
 
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+
+
+        stuSkipDialog(deviceDetails.get(deviceId - 1).getStuDevicePair().getStudent(), deviceId - 1);
     }
 
     private int sum(byte[] cmd, int index) {
@@ -191,7 +205,7 @@ public class VolleyBallMoreTestActivity extends BaseMoreActivity {
     }
     @Override
     public int setTestCount() {
-        return 1;
+        return 2;
     }
 
     @Override
@@ -220,8 +234,10 @@ public class VolleyBallMoreTestActivity extends BaseMoreActivity {
         Log.e("TAG","---------"+pair.toString());
 //        pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
         int id = pair.getBaseDevice().getDeviceId();
-        selfCheck((byte) id);
+//        selfCheck((byte) id);
         deviceIds.add(pair.getBaseDevice());
+
+        mHandler.sendEmptyMessage(START_STATE);
     }
 
     /**
@@ -241,13 +257,14 @@ public class VolleyBallMoreTestActivity extends BaseMoreActivity {
      * 停止计数
      * @param deviceId
      */
-    private void sendEnd(byte deviceId){
+    private void sendEnd1(int deviceId){
         byte[] cmd = {(byte) 0xAA,0x0F,0x0A,0x03,0x01,0x00,0x00, (byte) 0xC5,0x00,0x00,0x00,0x00,0x00,0x00,0x0D};
         cmd[5] = (byte) SettingHelper.getSystemSetting().getHostId();
-        cmd[6] = deviceId;
+        cmd[6] = (byte) deviceId;
         cmd[13] = (byte) sum(cmd,13);
 
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,cmd));
+        SystemClock.sleep(100);
         sendEnd(deviceId);
     }
 

@@ -1,6 +1,8 @@
 package com.feipulai.device.serial.beans;
 
 public class VolleyPair868Result {
+    private int frequency;
+    private byte[] data;
     private int state;
     private int score;
     private int childId;
@@ -25,6 +27,8 @@ public class VolleyPair868Result {
         deviceid = data[5];
         childId = data[6];
         electricityState = data[15];
+        frequency = (data[12]&0xff);
+        this.data = data;
     }
     public int getState() {
         return state;
@@ -44,5 +48,13 @@ public class VolleyPair868Result {
 
     public int getChildId() {
         return childId;
+    }
+
+    public byte[] getDataArr() {
+        return data;
+    }
+
+    public int getFrequency() {
+        return frequency;
     }
 }

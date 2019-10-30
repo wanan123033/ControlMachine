@@ -1,7 +1,9 @@
 package com.feipulai.device.serial;
 
 import android.os.Message;
+import android.util.Log;
 
+import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 
 /**

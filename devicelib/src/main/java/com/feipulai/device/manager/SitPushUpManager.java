@@ -24,6 +24,7 @@ public class SitPushUpManager {
     public static final int PROJECT_CODE_PUSH_UP = 8;// 8—俯卧撑
     public static final int PROJECT_CODE_SARGENT = 1;// 摸高
     public static final int PROJECT_CODE_VOLLEY_BALL = 10;// 排球
+    public static final int PROJECT_CODE_LZQYQ = 0x0D;  //篮足球运球
 
     public static final int DEFAULT_COUNT_DOWN_TIME = 5;
 
@@ -298,6 +299,47 @@ public class SitPushUpManager {
     }
 
     /**
+     * 篮足球设置参数
+     * @param originFrequency
+     * @param deviceId
+     * @param hostId
+     */
+    public void setFrequencyLZQYQ(int originFrequency, int deviceId, int hostId) {
+        int machineCode = ItemDefault.CODE_LQYQ;
+        int targetChannel = SerialConfigs.sProChannels.get(machineCode) + hostId - 1;
+        byte[] buf = new byte[20];
+        buf[0] = (byte) 0xAA;
+        buf[1] = 0x14;//包长
+        buf[2] = (byte) (projectCode & 0xff);     //测试项目
+        buf[3] = 0x03;//目标设备编号：0x03（控制盒属于计数器）
+        buf[4] = 0x01;      //本设备编号：0x01（主机）
+        buf[5] = (byte) (hostId & 0xff);     //本设备主机号
+        buf[6] = (byte) (deviceId & 0xff);       //目标设备子机号
+        buf[7] = 0x01;
+        buf[8] = 0x00; //高字节在先
+        buf[9] = 0x00;
+        buf[10] = 0x00;
+        buf[11] = 0x00;
+        buf[12] = (byte) (targetChannel & 0xff); //高字节在先
+        buf[13] = 4;
+        buf[14] = (byte) hostId;
+        buf[15] = (byte) deviceId;
+        buf[16] = 0;
+        buf[17] = 0;
+        for (int i = 1; i < 18; i++) {
+            buf[18] += buf[i] & 0xff;
+        }
+        buf[19] = 0x0d;
+        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(0)));
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
+        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(targetChannel)));
+    }
+    /**
      * 开始测试,该操作完成->倒计时结束,进入计时,设备将处在{@link #STATE_READY} 准备状态
      *
      * @param countTime 倒计时时间
@@ -439,5 +481,6 @@ public class SitPushUpManager {
         }
         wrapAndSend(cmd);
     }
+
 
 }

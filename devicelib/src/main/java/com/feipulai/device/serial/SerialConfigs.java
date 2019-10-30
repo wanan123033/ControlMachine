@@ -36,6 +36,8 @@ public class SerialConfigs {
         sProChannels.put(ItemDefault.CODE_ZCP, 0);//中长跑
         sProChannels.put(ItemDefault.CODE_PQ, 110);//排球垫球
         sProChannels.put(ItemDefault.CODE_ZFP, 41);//红外计时
+        sProChannels.put(ItemDefault.CODE_LQYQ, 55);//篮球运球
+        sProChannels.put(ItemDefault.CODE_ZQYQ, 55);//足球运球
     }
 
     public static final String[] GROUP_NAME = {"A", "B", "C"};

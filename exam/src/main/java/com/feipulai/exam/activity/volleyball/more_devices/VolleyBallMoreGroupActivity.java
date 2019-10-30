@@ -1,20 +1,29 @@
 package com.feipulai.exam.activity.volleyball.more_devices;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.view.View;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.VolleyPair868Result;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
+import com.feipulai.exam.R;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.sargent_jump.more_device.BaseMoreGroupActivity;
+import com.feipulai.exam.activity.sargent_jump.pair.VolleyBallPairActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
 import com.feipulai.exam.config.TestConfigs;
+
+import butterknife.OnClick;
 
 public class VolleyBallMoreGroupActivity extends BaseMoreGroupActivity {
     private static final int SEND_EMPTY = 1;
@@ -46,6 +55,14 @@ public class VolleyBallMoreGroupActivity extends BaseMoreGroupActivity {
 
         }
     });
+
+    @Nullable
+    @Override
+    protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
+        builder.setTitle("排球垫球");
+        return builder;
+    }
+
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -103,6 +120,10 @@ public class VolleyBallMoreGroupActivity extends BaseMoreGroupActivity {
         sendEmpty();
     }
 
+    @OnClick({R.id.txt_device_pair})
+    public void onClick(View view){
+        startActivity(new Intent(this, VolleyBallPairActivity.class));
+    }
     private void sendEmpty() {
         getState();
         mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 5000);
