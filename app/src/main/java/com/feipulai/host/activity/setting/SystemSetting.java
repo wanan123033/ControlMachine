@@ -61,7 +61,9 @@ public class SystemSetting {
     private String userName;
     /**是否自由测试*/
     private boolean isFreedomTest;
-
+    /**单屏0 多屏1*/
+    private int ledMode = 0;
+    private int ledVersion = 0;
     public boolean isFreedomTest() {
         return isFreedomTest;
     }
@@ -180,5 +182,21 @@ public class SystemSetting {
                 ", checkTool=" + checkTool +
                 ", userName='" + userName + '\'' +
                 '}';
+    }
+
+    public int getLedMode() {
+        return ledMode;
+    }
+
+    public void setLedMode(int ledMode) {
+        this.ledMode = ledMode;
+    }
+
+    public int getLedVersion() {
+        return ledVersion;
+    }
+
+    public void setLedVersion(int ledVersion) {
+        this.ledVersion = ledVersion;
     }
 }

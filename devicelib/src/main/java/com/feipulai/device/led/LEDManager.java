@@ -203,22 +203,22 @@ public class LEDManager {
     }
 
     public void showString(int hostId, String str, int x, int y, boolean clearScreen, boolean update) {
-        ShowSubsetString(MachineCode.machineCode, hostId, 1, str, x, y, clearScreen, update);
+        showSubsetString(MachineCode.machineCode, hostId, 1, str, x, y, clearScreen, update);
     }
 
     public void showString(int machineCode, int hostId, String str, int x, int y, boolean clearScreen, boolean update) {
-        ShowSubsetString(machineCode, hostId, 1, str, x, y, clearScreen, update);
+        showSubsetString(machineCode, hostId, 1, str, x, y, clearScreen, update);
     }
 
     public void showString(int hostId, byte[] data, int x, int y, boolean clearScreen, boolean update) {
         showString(MachineCode.machineCode, hostId, 1, data, x, y, clearScreen, update);
     }
 
-    public void ShowSubsetString(int hostId, int ledId, String str, int y, boolean clearScreen, boolean update, int align) {
+    public void showSubsetString(int hostId, int ledId, String str, int y, boolean clearScreen, boolean update, int align) {
         showString(MachineCode.machineCode, hostId, ledId, str, y, clearScreen, update, align);
     }
 
-    public void ShowSubsetString(int hostId, int ledId, String str, int x, int y, boolean clearScreen, boolean update) {
+    public void showSubsetString(int hostId, int ledId, String str, int x, int y, boolean clearScreen, boolean update) {
         try {
             byte[] data = str.getBytes("GB2312");
             showString(MachineCode.machineCode, hostId, ledId, data, x, y, clearScreen, update);
@@ -227,7 +227,7 @@ public class LEDManager {
         }
     }
 
-    public void ShowSubsetString(int machineCode, int hostId, int ledId, String str, int x, int y, boolean clearScreen, boolean update) {
+    public void showSubsetString(int machineCode, int hostId, int ledId, String str, int x, int y, boolean clearScreen, boolean update) {
         try {
             byte[] data = str.getBytes("GB2312");
             showString(machineCode, hostId, ledId, data, x, y, clearScreen, update);
@@ -236,7 +236,7 @@ public class LEDManager {
         }
     }
 
-    public void ShowSubsetString(int hostId, int ledId, byte[] data, int x, int y, boolean clearScreen, boolean update) {
+    public void showSubsetString(int hostId, int ledId, byte[] data, int x, int y, boolean clearScreen, boolean update) {
         showString(MachineCode.machineCode, hostId, ledId, data, x, y, clearScreen, update);
     }
 

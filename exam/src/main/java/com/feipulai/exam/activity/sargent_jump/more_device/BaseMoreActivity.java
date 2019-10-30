@@ -11,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
@@ -27,9 +26,10 @@ import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
-import com.feipulai.exam.activity.sargent_jump.adapter.DeviceListAdapter;
 import com.feipulai.exam.activity.sargent_jump.pair.SargentPairActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.sargent_jump.adapter.DeviceListAdapter;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
@@ -164,12 +164,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         deviceDetails.get(index).setRound(roundResultList.size());
         addStudent(student, index);
         deviceDetails.get(index).getStuDevicePair().setTimeResult(result);
-        notifyItemChanged(index);
-
-    }
-
-    protected void notifyItemChanged(int index){
         deviceListAdapter.notifyItemChanged(index);
+
     }
 
 
@@ -256,7 +252,6 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                             stuSkip(pos);
                             return;
                         }
-                        Log.e("TAG----",pair.getBaseDevice().getState()+"------");
                         if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
                             sendTestCommand(pair, pos);
                         }
@@ -588,7 +583,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         }
     }
 
-    @OnClick({R.id.txt_led_setting})
+    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_led_setting:
