@@ -33,7 +33,6 @@ public class VolleyBallMoreGroupActivity extends BaseMoreGroupActivity {
 
     private VolleyBallSetting volleyBallSetting;
     private int[] deviceState = {};
-    private int runUp;
     private final int TARGET_FREQUENCY = SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode()) + SettingHelper.getSystemSetting().getHostId() - 1;
 
     private VolleyBallJumpImpl resultImpl = new VolleyBallJumpImpl(new VolleyBallJumpImpl.VolleyBallCallBack() {
@@ -66,25 +65,25 @@ public class VolleyBallMoreGroupActivity extends BaseMoreGroupActivity {
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case GET_STATE:
-                    byte[] dataArr = ((VolleyPair868Result)msg.obj).getDataArr();
+                    byte[] dataArr = ((VolleyPair868Result) msg.obj).getDataArr();
                     int deviceid = dataArr[5];
                     int childid = dataArr[6];
                     int state = dataArr[12];
                     //重置机器状态
-                    for (int i = 0 ; i < deviceDetails.size() ; i++){
+                    for (int i = 0; i < deviceDetails.size(); i++) {
                         BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
-                        if (childid == baseDevice.getDeviceId() && deviceid == SettingHelper.getSystemSetting().getHostId()){
-                            if (state == 0x01 || state == 0x11 || state == 0x00){
+                        if (childid == baseDevice.getDeviceId() && deviceid == SettingHelper.getSystemSetting().getHostId()) {
+                            if (state == 0x01 || state == 0x11 || state == 0x00) {
                                 baseDevice.setState(BaseDeviceState.STATE_NOT_BEGAIN);
-                            }else if (state == 0x02 || state == 0x12){
+                            } else if (state == 0x02 || state == 0x12) {
                                 baseDevice.setState(BaseDeviceState.STATE_ONUSE);
-                            }else if (state == 0x03 || state == 0x13){
+                            } else if (state == 0x03 || state == 0x13) {
                                 baseDevice.setState(BaseDeviceState.STATE_END);
                             }
                             baseDevice.setBatteryLeft(dataArr[15]);
-                            deviceDetails.get(i).getStuDevicePair().setResult(dataArr[13]*0x0100 + dataArr[14]);
+                            deviceDetails.get(i).getStuDevicePair().setResult(dataArr[13] * 0x0100 + dataArr[14]);
                             updateDevice(baseDevice);
                         }
                     }
@@ -113,7 +112,6 @@ public class VolleyBallMoreGroupActivity extends BaseMoreGroupActivity {
             deviceState[i] = 0;//连续5次检测不到认为掉线
         }
 
-        runUp = volleyBallSetting.getRunUp();
         RadioManager.getInstance().setOnRadioArrived(resultImpl);
         RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(TARGET_FREQUENCY)));
 
@@ -121,51 +119,54 @@ public class VolleyBallMoreGroupActivity extends BaseMoreGroupActivity {
     }
 
     @OnClick({R.id.txt_device_pair})
-    public void onClick(View view){
+    public void onClick(View view) {
         startActivity(new Intent(this, VolleyBallPairActivity.class));
     }
+
     private void sendEmpty() {
         getState();
         mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 5000);
     }
 
     /**
-     *开始计数
+     * 开始计数
+     *
      * @param deviceId
      */
     private void sendStart(byte deviceId) {
-        byte[] cmd = {(byte) 0xAA,0x0F,0x0A,0x03,0x01,0x00,0x00, (byte) 0xC5,0x00,0x00,0x00,0x00,0x01,0x00,0x0D};
+        byte[] cmd = {(byte) 0xAA, 0x0F, 0x0A, 0x03, 0x01, 0x00, 0x00, (byte) 0xC5, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x0D};
         cmd[5] = (byte) SettingHelper.getSystemSetting().getHostId();
         cmd[6] = deviceId;
-        cmd[13] = (byte) sum(cmd,13);
+        cmd[13] = (byte) sum(cmd, 13);
 
-        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,cmd));
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
     /**
      * 停止计数
+     *
      * @param deviceId
      */
-    private void sendEnd(int deviceId){
-        byte[] cmd = {(byte) 0xAA,0x0F,0x0A,0x03,0x01,0x00,0x00, (byte) 0xC5,0x00,0x00,0x00,0x00,0x00,0x00,0x0D};
+    private void sendEnd(int deviceId) {
+        byte[] cmd = {(byte) 0xAA, 0x0F, 0x0A, 0x03, 0x01, 0x00, 0x00, (byte) 0xC5, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0D};
         cmd[5] = (byte) SettingHelper.getSystemSetting().getHostId();
         cmd[6] = (byte) deviceId;
-        cmd[13] = (byte) sum(cmd,13);
+        cmd[13] = (byte) sum(cmd, 13);
 
-        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,cmd));
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
         sendEnd(deviceId);
     }
 
 
     private void getState() {
-        byte[] cmd = {(byte) 0xAA,0x0e,0x0a,0x03,0x01,0x00,0x00, (byte) 0xC3,0x00,0x00,0x00,0x00,0x00,0x0d};
-        for (int i = 0 ; i < deviceDetails.size() ; i++) {
+        byte[] cmd = {(byte) 0xAA, 0x0e, 0x0a, 0x03, 0x01, 0x00, 0x00, (byte) 0xC3, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
+        for (int i = 0; i < deviceDetails.size(); i++) {
             BaseDeviceState device = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
             int deviceId = device.getDeviceId();
             int hostId = SettingHelper.getSystemSetting().getHostId();
             cmd[5] = (byte) hostId;
             cmd[6] = (byte) deviceId;
-            cmd[12] = (byte) sum(cmd,12);
+            cmd[12] = (byte) sum(cmd, 12);
 
             RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
 
@@ -179,6 +180,7 @@ public class VolleyBallMoreGroupActivity extends BaseMoreGroupActivity {
         }
         return sum;
     }
+
     @Override
     public void toStart(int pos) {
         BaseStuPair pair = deviceDetails.get(pos).getStuDevicePair();
@@ -189,7 +191,7 @@ public class VolleyBallMoreGroupActivity extends BaseMoreGroupActivity {
         Message msg1 = Message.obtain();
         msg1.what = END_JS;
         msg1.obj = id;
-        mHandler.sendMessageDelayed(msg1,1000*60);
+        mHandler.sendMessageDelayed(msg1, 1000 * 60);
     }
 
     @Override

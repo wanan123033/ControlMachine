@@ -12,8 +12,6 @@ import java.util.Map;
 public class SerialConfigs {
 
 
-
-
     private SerialConfigs() {
     }
 
@@ -36,8 +34,8 @@ public class SerialConfigs {
         sProChannels.put(ItemDefault.CODE_ZCP, 0);//中长跑
         sProChannels.put(ItemDefault.CODE_PQ, 110);//排球垫球
         sProChannels.put(ItemDefault.CODE_ZFP, 41);//红外计时
-        sProChannels.put(ItemDefault.CODE_LQYQ, 55);//篮球运球
-        sProChannels.put(ItemDefault.CODE_ZQYQ, 55);//足球运球
+        sProChannels.put(ItemDefault.CODE_LQYQ, 85);//篮球运球
+        sProChannels.put(ItemDefault.CODE_ZQYQ, 85);//足球运球
     }
 
     public static final String[] GROUP_NAME = {"A", "B", "C"};
@@ -240,6 +238,8 @@ public class SerialConfigs {
     public static final int VOLLEY_BALL_B0 = 0x45;
 
     //篮球足球运球
-    public static final int BASKETBALL_RESULT = 0x46;
-    public static final int FOOTBALL_RESULT = 0x47;
+    public static final int DRIBBLEING_RESULT = 0x46;
+    public static final int DRIBBLEING_FREQUENCY = 0x47;
+    public static final int DRIBBLEING_PARAMETER = 0x48;
+    public static final int DRIBBLEING_START = 0x49;
 }

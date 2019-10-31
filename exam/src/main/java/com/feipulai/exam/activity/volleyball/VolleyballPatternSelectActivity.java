@@ -34,18 +34,16 @@ public class VolleyballPatternSelectActivity extends SubItemsSelectActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 VolleyBallSetting setting = SharedPrefsUtil.loadFormSource(VolleyballPatternSelectActivity.this, VolleyBallSetting.class);
                 setting.setTestPattern(position % 2);
-                setting.setType(position >= 2 ? 1:0);
+                setting.setType(position >= 2 ? 1 : 0);
                 SharedPrefsUtil.save(VolleyballPatternSelectActivity.this, setting);
-                if ((position == 2 || position == 3) && SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN){
-                    startActivity(new Intent(getApplicationContext(), VolleyBallMoreTestActivity.class));
-                    return;
-                }else if (position == 2 || position == 3){
-                    startActivity(new Intent(VolleyballPatternSelectActivity.this, BaseGroupActivity.class));
-                    return;
-                }
-                if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN && position < 2) {
-                    startActivity(new Intent(VolleyballPatternSelectActivity.this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
-                }else {
+
+                if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN ) {
+                    if (setting.getType() == 1) {
+                        startActivity(new Intent(getApplicationContext(), VolleyBallMoreTestActivity.class));
+                    } else {
+                        startActivity(new Intent(VolleyballPatternSelectActivity.this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
+                    }
+                } else {
                     startActivity(new Intent(VolleyballPatternSelectActivity.this, BaseGroupActivity.class));
                 }
 

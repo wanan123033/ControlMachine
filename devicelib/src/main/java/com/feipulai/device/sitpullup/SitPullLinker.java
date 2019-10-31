@@ -9,7 +9,6 @@ import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
-import com.feipulai.device.serial.beans.Basketball868Result;
 import com.feipulai.device.serial.beans.PullUpSetFrequencyResult;
 import com.feipulai.device.serial.beans.SargentJumpResult;
 import com.feipulai.device.serial.beans.SitPushUpSetFrequencyResult;
@@ -27,9 +26,9 @@ public class SitPullLinker implements Handler.Callback {
     private volatile int currentFrequency;
     private HandlerThread handlerThread;
     private Handler mHandler;
-    private int machineCode;
+    public int machineCode;
     private final int TARGET_FREQUENCY;
-    private int currentDeviceId;
+    public int currentDeviceId;
     private volatile boolean linking;
 
     public SitPullLinker(int machineCode, int targetFrequency, SitPullPairListener listener) {
@@ -107,10 +106,6 @@ public class SitPullLinker implements Handler.Callback {
                 checkDevice(fhl);
             }
             return true;
-        }else if (machineCode == ItemDefault.CODE_LQYQ && what == SerialConfigs.BASKETBALL_RESULT){
-            Basketball868Result result = (Basketball868Result) msg.obj;
-            checkDevice(result.getDeviceId(),result.getFrequency());
-            return true;
         }
         return false;
     }
@@ -140,7 +135,7 @@ public class SitPullLinker implements Handler.Callback {
         checkDevice(result.getDeviceId(), result.getFrequency());
     }
 
-    private synchronized void checkDevice(int deviceId, int frequency) {
+    public synchronized void checkDevice(int deviceId, int frequency) {
         Log.e("TAG115----","currentFrequency = "+currentFrequency+",frequency="+frequency+",deviceId="+deviceId+",currentDeviceId="+currentDeviceId);
         if (currentFrequency == 0) {
             // 0频段接收到的结果,肯定是设备的开机广播

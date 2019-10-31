@@ -32,9 +32,9 @@ android {
 
     signingConfigs {
         releaseConfig {
-            keyAlias 'exam'
+            keyAlias 'fianco'
             keyPassword 'fairplay2019'
-            storeFile file('../exam.jks')
+            storeFile file('../app/fianco.jks')
             storePassword 'fairplay2019'
         }
     }
@@ -48,7 +48,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.releaseConfig
         }
-
+        ruiLiHeng {
+            initWith(buildTypes.debug)
+            applicationIdSuffix ".ruiliheng"
+            // 修改马甲包的applicationId，即在原来的applicationId后加上配置内容
+//            manifestPlaceholders = [APP_NAME: '第一个马甲包'] // 配置马甲包的应用名称
+        }
     }
 
     compileOptions {

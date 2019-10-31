@@ -467,7 +467,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
                 tvResult.setText("");
                 boolean noTimeLimit = setting.getTestTime() == VolleyBallSetting.NO_TIME_LIMIT;
                 prepareView(true, false, false, false,
-                        true, false, !noTimeLimit, noTimeLimit,
+                        true, false, !noTimeLimit, true,
                         false, false);
             }
         });

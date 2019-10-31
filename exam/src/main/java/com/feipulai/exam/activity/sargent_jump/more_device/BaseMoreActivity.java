@@ -26,10 +26,9 @@ import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
+import com.feipulai.exam.activity.sargent_jump.adapter.DeviceListAdapter;
 import com.feipulai.exam.activity.sargent_jump.pair.SargentPairActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
-import com.feipulai.exam.activity.sargent_jump.adapter.DeviceListAdapter;
-import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
@@ -208,8 +207,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             }
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, index, 1, false, true);
         } else {
-            mLEDManager.ShowSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, student.getLEDStuName() + "   第" + deviceDetails.get(index).getRound() + "次", 0, 0, true, false);
-            mLEDManager.ShowSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, "当前：", 0, 1, false, true);
+            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, student.getLEDStuName() + "   第" + deviceDetails.get(index).getRound() + "次", 0, 0, true, false);
+            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, "当前：", 0, 1, false, true);
             RoundResult bestResult = DBManager.getInstance().queryBestScore(student.getStudentCode(), testNo);
             if (bestResult != null && bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
                 byte[] data = new byte[16];
@@ -222,9 +221,9 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                mLEDManager.ShowSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, data, 0, 2, false, true);
+                mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, data, 0, 2, false, true);
             } else {
-                mLEDManager.ShowSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, "最好：", 0, 2, false, true);
+                mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, "最好：", 0, 2, false, true);
 
             }
         }

@@ -143,7 +143,6 @@ public class VolleyBallMoreTestActivity extends BaseMoreActivity {
             deviceState[i] = 0;//连续5次检测不到认为掉线
         }
 
-        runUp = volleyBallSetting.getRunUp();
         RadioManager.getInstance().setOnRadioArrived(resultJump);
         RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(TARGET_FREQUENCY)));
         sendEmpty();

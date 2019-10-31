@@ -23,7 +23,6 @@ public class VolleyBallSetting {
     private int type;//0一对一 1一对多
     //最多设备数量
     private int spDeviceCount = 4;
-    private int runUp = 1;
 
     public int getTestPattern() {
         return testPattern;
@@ -114,8 +113,5 @@ public class VolleyBallSetting {
         return spDeviceCount;
     }
 
-    public int getRunUp() {
 
-        return runUp;
-    }
 }

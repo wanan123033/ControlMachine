@@ -474,7 +474,8 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 TestConfigs.baseGroupMap.put("basePairStu", pairs);
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_FWC) {
                     PushUpSetting setting = SharedPrefsUtil.loadFormSource(this, PushUpSetting.class);
-                    if ((setting.getTestType() == PushUpSetting.WIRELESS_TYPE && setting.getDeviceSum() == 1) || setting.getTestType() == PushUpSetting.WIRED_TYPE) {
+                    if ((setting.getTestType() == PushUpSetting.WIRELESS_TYPE && setting.getDeviceSum() == 1)
+                            || setting.getTestType() == PushUpSetting.WIRED_TYPE) {
                         startActivity(new Intent(this, PushUpGroupActivity.class));
                         return;
                     }
@@ -485,7 +486,8 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     startActivity(new Intent(this, SargentTestGroupActivity.class));
                     return;
                 }
-                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_PQ){
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_PQ
+                        && SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class).getType() == 2) {
                     startActivity(new Intent(this, VolleyBallMoreGroupActivity.class));
                     return;
                 }
