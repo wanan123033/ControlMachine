@@ -1,5 +1,6 @@
 package com.feipulai.exam.activity.sargent_jump.adapter;
 
+import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.CheckBox;
@@ -24,7 +25,6 @@ import butterknife.ButterKnife;
  */
 
 public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceListAdapter.ViewHolder> {
-
 
     private int testCount = 1;
 
@@ -76,6 +76,17 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
 
         }
         helper.addOnClickListener(R.id.txt_skip).addOnClickListener(R.id.txt_start);
+        int state = item.getStuDevicePair().getBaseDevice().getState();
+        if (state == BaseDeviceState.STATE_FREE || state == BaseDeviceState.STATE_NOT_BEGAIN){
+            helper.txtStart.setEnabled(true);
+            helper.txtStart.setBackgroundResource(R.drawable.btn_click_bg_selected);
+            helper.txtStart.setTextColor(Color.WHITE);
+        }else {
+            helper.txtStart.setEnabled(false);
+            helper.txtStart.setBackgroundResource(R.drawable.btn_click_bg_unselected);
+            helper.txtStart.setTextColor(Color.BLUE);
+        }
+
         helper.swDeviceClose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

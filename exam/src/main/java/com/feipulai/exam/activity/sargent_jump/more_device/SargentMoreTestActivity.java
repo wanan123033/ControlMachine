@@ -4,19 +4,24 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.SargentJumpResult;
 import com.feipulai.device.serial.command.ConvertCommand;
+import com.feipulai.exam.R;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.sargent_jump.SargentJumpImpl;
 import com.feipulai.exam.activity.sargent_jump.SargentSetting;
 import com.feipulai.exam.activity.sargent_jump.SargentSettingActivity;
+import com.feipulai.exam.activity.sargent_jump.pair.SargentPairActivity;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
+
+import butterknife.OnClick;
 
 import static com.feipulai.exam.activity.sargent_jump.Constants.GET_SCORE_RESPONSE;
 
@@ -254,5 +259,10 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
     protected void onStop() {
         super.onStop();
         mHandler.removeCallbacksAndMessages(null);
+    }
+
+    @OnClick({R.id.tv_device_pair})
+    public void onClick(View view){
+        startActivity(new Intent(this, SargentPairActivity.class));
     }
 }

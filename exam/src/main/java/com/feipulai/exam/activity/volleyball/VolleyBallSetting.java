@@ -20,6 +20,10 @@ public class VolleyBallSetting {
     private boolean isPenalize;
 
     private int testPattern;//0对空 1对墙
+    private int type;//0一对一 1一对多
+    //最多设备数量
+    private int spDeviceCount = 4;
+    private int runUp = 1;
 
     public int getTestPattern() {
         return testPattern;
@@ -98,4 +102,20 @@ public class VolleyBallSetting {
                 '}';
     }
 
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public int getSpDeviceCount() {
+        return spDeviceCount;
+    }
+
+    public int getRunUp() {
+
+        return runUp;
+    }
 }

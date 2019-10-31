@@ -2,7 +2,6 @@ package com.feipulai.device.serial.runnable;
 
 import android.os.Message;
 
-
 import com.feipulai.device.serial.SerialPorter;
 
 import java.io.InputStream;
@@ -33,6 +32,7 @@ public abstract class SerialReadRunnable implements Runnable {
         while (!isInterrupt) {
 	        msg = new Message();
             convert(msg);
+//            Log.e("TAG","---------msg.what = "+msg.what);
             if(msg.what != 0){
             	mListener.onDataArrived(msg);
             }

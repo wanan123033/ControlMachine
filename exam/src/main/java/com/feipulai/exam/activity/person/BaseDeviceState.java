@@ -45,7 +45,7 @@ public class BaseDeviceState implements Serializable {
     //设备ID
     private int deviceId;
     //电量
-    //private int batteryLeft;
+    private int batteryLeft;
 
 
     public BaseDeviceState() {
@@ -82,5 +82,32 @@ public class BaseDeviceState implements Serializable {
                 "state=" + state +
                 ", deviceId=" + deviceId +
                 '}';
+    }
+
+
+    //排球计时准备
+    public static final int VOLLEY_STATE_JSZB = 0x01;
+    //排球计时中
+    public static final int VOLLEY_STATE_JSZ = 0x02;
+    //排球计时结束
+    public static final int VOLLEY_STATE_JSE = 0x03;
+    //排球计数准备
+    public static final int VOLLEY_STATE_JZB = 0x11;
+    //排球计数中
+    public static final int VOLLEY_STATE_JZ = 0x12;
+    //排球计数结束
+    public static final int VOLLEY_STATE_JE = 0x13;
+
+    //电量低
+    public static final int VOLLEY_STATE_DD = 0x80;
+    //电量正常
+    public static final int VOLLEY_STATE_DZ = 0x81;
+
+    public void setBatteryLeft(int batteryLeft) {
+        this.batteryLeft = batteryLeft;
+    }
+
+    public int getBatteryLeft() {
+        return batteryLeft;
     }
 }

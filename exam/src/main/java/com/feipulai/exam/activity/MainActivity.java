@@ -29,6 +29,7 @@ import com.feipulai.exam.activity.base.BaseActivity;
 import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.data.DataManageActivity;
 import com.feipulai.exam.activity.data.DataRetrieveActivity;
+import com.feipulai.exam.activity.footBall.FootBallItemSelectActivity;
 import com.feipulai.exam.activity.sargent_jump.SargentItemSelectActivity;
 import com.feipulai.exam.activity.setting.SettingActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -189,6 +190,14 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                         startActivity(new Intent(MainActivity.this, VolleyballPatternSelectActivity.class));
                         return;
                     }
+                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ){
+                        startActivity(new Intent(this, FootBallItemSelectActivity.class));
+                        return;
+                    }
+                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZQYQ){
+                        startActivity(new Intent(this, FootBallItemSelectActivity.class));
+                        return;
+                    }
                     if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
                         startActivity(new Intent(MainActivity.this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
                     } else {
@@ -237,8 +246,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
 
     @Override
     public void onBackPressed() {
-//        exit();
-
+        exit();
     }
 
     @Override

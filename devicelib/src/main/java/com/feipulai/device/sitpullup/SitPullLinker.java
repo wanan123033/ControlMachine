@@ -9,11 +9,13 @@ import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
+import com.feipulai.device.serial.beans.Basketball868Result;
 import com.feipulai.device.serial.beans.PullUpSetFrequencyResult;
 import com.feipulai.device.serial.beans.SargentJumpResult;
 import com.feipulai.device.serial.beans.SitPushUpSetFrequencyResult;
 import com.feipulai.device.serial.beans.VitalCapacityNewResult;
 import com.feipulai.device.serial.beans.VitalCapacityResult;
+import com.feipulai.device.serial.beans.VolleyPair868Result;
 import com.feipulai.device.serial.beans.VolleyPairResult;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
@@ -60,6 +62,7 @@ public class SitPullLinker implements Handler.Callback {
     }
 
     public boolean onRadioArrived(Message msg) {
+        Log.i("james+++++--------", msg.obj.toString());
         if (!linking) {
             return false;
         }
@@ -71,12 +74,12 @@ public class SitPullLinker implements Handler.Callback {
             return true;
         } else if (machineCode == ItemDefault.CODE_YTXS && what == SerialConfigs.PULL_UP_MACHINE_BOOT_RESPONSE) {
             PullUpSetFrequencyResult pullUpSetFrequencyResult = (PullUpSetFrequencyResult) msg.obj;
-            Log.i("james", pullUpSetFrequencyResult.toString());
+            Log.i("james----", pullUpSetFrequencyResult.toString());
             checkDevice(pullUpSetFrequencyResult);
             return true;
         } else if (machineCode == ItemDefault.CODE_FWC && what == SerialConfigs.PUSH_UP_MACHINE_BOOT_RESPONSE) {
             SitPushUpSetFrequencyResult pushUpSetFrequencyResult = (SitPushUpSetFrequencyResult) msg.obj;
-            Log.i("james", pushUpSetFrequencyResult.toString());
+            Log.i("james+++++", pushUpSetFrequencyResult.toString());
             checkDevice(pushUpSetFrequencyResult);
             return true;
         }else if (machineCode == ItemDefault.CODE_MG && what == SerialConfigs.SARGENT_JUMP_SET_MORE_MATCH){
@@ -85,8 +88,14 @@ public class SitPullLinker implements Handler.Callback {
             return true;
         }
         else if (machineCode == ItemDefault.CODE_PQ && what == SerialConfigs.VOLLEY_BALL_SET_MORE_MATCH){
-            VolleyPairResult volleyPairResult = (VolleyPairResult) msg.obj;
-            checkDevice(volleyPairResult);
+            Log.e("TAG87----",msg.obj.toString());
+            if (msg.obj instanceof  VolleyPairResult) {
+                VolleyPairResult volleyPairResult = (VolleyPairResult) msg.obj;
+                checkDevice(volleyPairResult);
+            }else {
+                VolleyPair868Result result = (VolleyPair868Result) msg.obj;
+                checkDevice(result.getDeviceid(),result.getFrequency());
+            }
             return true;
         }
         else if (machineCode == ItemDefault.CODE_FHL && what == SerialConfigs.VITAL_CAPACITY_SET_MORE_MATCH){
@@ -97,6 +106,10 @@ public class SitPullLinker implements Handler.Callback {
                 VitalCapacityNewResult fhl = (VitalCapacityNewResult) msg.obj;
                 checkDevice(fhl);
             }
+            return true;
+        }else if (machineCode == ItemDefault.CODE_LQYQ && what == SerialConfigs.BASKETBALL_RESULT){
+            Basketball868Result result = (Basketball868Result) msg.obj;
+            checkDevice(result.getDeviceId(),result.getFrequency());
             return true;
         }
         return false;
@@ -128,6 +141,7 @@ public class SitPullLinker implements Handler.Callback {
     }
 
     private synchronized void checkDevice(int deviceId, int frequency) {
+        Log.e("TAG115----","currentFrequency = "+currentFrequency+",frequency="+frequency+",deviceId="+deviceId+",currentDeviceId="+currentDeviceId);
         if (currentFrequency == 0) {
             // 0频段接收到的结果,肯定是设备的开机广播
             if (frequency == TARGET_FREQUENCY && deviceId == currentDeviceId) {

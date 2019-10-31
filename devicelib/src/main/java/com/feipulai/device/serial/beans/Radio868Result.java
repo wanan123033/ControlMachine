@@ -1,8 +1,6 @@
 package com.feipulai.device.serial.beans;
 
 
-import android.util.Log;
-
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.SerialConfigs;
@@ -19,7 +17,7 @@ public class Radio868Result {
     private Object mResult;
 
     public Radio868Result(byte[] data) {
-        Log.i("james", StringUtility.bytesToHexString(data));
+//        Log.i("james", StringUtility.bytesToHexString(data));
         if (MachineCode.machineCode == -1) {
             return;
         }
@@ -159,23 +157,61 @@ public class Radio868Result {
                 }
                 break;
             case ItemDefault.CODE_PQ:
-                if (data[0] == 0xAA && data[2] == 0x0A && data[data.length - 1] == 0x0d) {
-                    switch (data[7]) {
+                if (data[0] == (byte)0xAA && data[2] == 0x0A && data[data.length-1] == 0x0d) {
+                    switch (data[7]){
                         case (byte) 0xb0:
+                        case (byte)0xb1:
                             setType(SerialConfigs.VOLLEY_BALL_SET_MORE_MATCH);
                             setResult(new VolleyPairResult(data));
                             break;
                         case (byte) 0xb3://查询状态
                             setType(SerialConfigs.VOLLEY_BALL_SET_MORE_MATCH);
-                            setResult(new VolleyPairResult(data));
+                            setResult(new VolleyPair868Result(data));
                             break;
                         case (byte) 0xb7://自检
                             setType(SerialConfigs.VOLLEY_BALL_SET_MORE_MATCH);
-                            setResult(new VolleyPairResult(data));
+                            setResult(new VolleyPair868Result(data));
                             break;
                         case (byte) 0xb2://查询版本
                             setType(SerialConfigs.VOLLEY_BALL_SET_MORE_MATCH);
-                            setResult(new VolleyPairResult(data));
+                            setResult(new VolleyPair868Result(data));
+                            break;
+                    }
+                }
+                break;
+            case ItemDefault.CODE_LQYQ:
+                if (data[0] == (byte) 0xAA &&  data[data.length - 1] == 0x0D && data[2] == 0x0d){
+                    setType(SerialConfigs.BASKETBALL_RESULT);
+                    setResult(new Basketball868Result(data));
+                }
+                break;
+            case ItemDefault.CODE_ZQYQ:
+                if (data[0] == (byte) 0xAA &&  data[data.length - 1] == 0x0D && data[2] == 0x0d){
+                    setType(SerialConfigs.FOOTBALL_RESULT);
+                    setResult(new Basketball868Result(data));
+                }
+                break;
+                }/*else if (data[0] == (byte)0xAA && data[data.length - 1] == (byte)0x0D && data[2] == (byte)0x0A){
+                    switch (data[7]){
+                        case (byte) 0xb1:   //联机配对
+                            setType(SerialConfigs.VOLLEY_BALL_SET_PAIR);
+                            setResult(new BaseVolleyReceiveZl(data));
+                            break;
+                        case (byte) 0xb2:   //查询版本
+                            setType(SerialConfigs.VOLLEY_BALL_EDITION);
+                            setResult(new BaseVolleyReceiveZl(data));
+                            break;
+                        case (byte) 0xb3:   //查询状态
+                            setType(SerialConfigs.VOLLEY_BALL_STATE);
+                            setResult(new BaseVolleyReceiveZl(data));
+                            break;
+                        case (byte)0xb7:    //自检
+                            setType(SerialConfigs.VOLLEY_BALL_SELFCHECK);
+                            setResult(new BaseVolleyReceiveZl(data));
+                            break;
+                        case (byte)0xb0:
+                            setType(SerialConfigs.VOLLEY_BALL_B0);
+                            setResult(new BaseVolleyReceiveZl(data));
                             break;
                     }
                 }
@@ -255,21 +291,9 @@ public class Radio868Result {
             case ItemDefault.CODE_FHL:
 
                 if ((data[0] & 0xff) == 0xaa && data.length == 16) {
-                    if (data[1] == 1 ||data[1] == 3){
-                        setType(SerialConfigs.VITAL_CAPACITY_SET_MORE_MATCH);
-                    }else {
-                        setType(SerialConfigs.VITAL_CAPACITY_RESULT);
-                    }
+                    setType(SerialConfigs.VITAL_CAPACITY_RESULT);
                     setResult(new VitalCapacityResult(data));
-                }else if ((data[0] & 0xff) == 0xaa && data.length == 18){
-                    if (data[7] == 1 ||data[7] == 2){
-                        setType(SerialConfigs.VITAL_CAPACITY_SET_MORE_MATCH);
-                    }else {
-                        setType(SerialConfigs.VITAL_CAPACITY_RESULT);
-                    }
-                    setResult(new VitalCapacityNewResult(data));
                 }
-
                 break;
         } /*else if(data.length >= 0x10 && data[0] == 0x54 && data[1] == 0x55 && data[3] == 0x10 && data[14] == 0x27 && data[15] == 0x0d
 				&& data[5] == 0x08){

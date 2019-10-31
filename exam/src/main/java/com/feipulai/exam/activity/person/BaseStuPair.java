@@ -3,6 +3,7 @@ package com.feipulai.exam.activity.person;
 import com.feipulai.exam.entity.Student;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 
 /**
@@ -136,5 +137,22 @@ public class BaseStuPair implements Serializable {
 
     public void setBaseHeight(int baseHeight) {
         this.baseHeight = baseHeight;
+    }
+
+    @Override
+    public String toString() {
+        return "BaseStuPair{" +
+                "result=" + result +
+                ", resultState=" + resultState +
+                ", isFullMark=" + isFullMark +
+                ", trackNo=" + trackNo +
+                ", student=" + student +
+                ", baseDevice=" + baseDevice +
+                ", timeResult=" + Arrays.toString(timeResult) +
+                ", canTest=" + canTest +
+                ", canCheck=" + canCheck +
+                ", notBest=" + notBest +
+                ", baseHeight=" + baseHeight +
+                '}';
     }
 }

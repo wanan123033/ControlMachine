@@ -9,6 +9,7 @@ import com.feipulai.exam.activity.SubItemsSelectActivity;
 import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.activity.volleyball.more_devices.VolleyBallMoreTestActivity;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.Item;
 
@@ -24,23 +25,32 @@ public class VolleyballPatternSelectActivity extends SubItemsSelectActivity {
         itemList.clear();
         itemList.add(new Item("排球对空垫球"));
         itemList.add(new Item("排球对墙垫球"));
+        itemList.add(new Item("排球对空垫球(无线)"));
+        itemList.add(new Item("排球对墙垫球(无线)"));
         adapter.notifyDataSetChanged();
         getToolbar().setTitle("排球模式选择");
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 VolleyBallSetting setting = SharedPrefsUtil.loadFormSource(VolleyballPatternSelectActivity.this, VolleyBallSetting.class);
-                setting.setTestPattern(position);
-                if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
+                setting.setTestPattern(position % 2);
+                setting.setType(position >= 2 ? 1:0);
+                SharedPrefsUtil.save(VolleyballPatternSelectActivity.this, setting);
+                if ((position == 2 || position == 3) && SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN){
+                    startActivity(new Intent(getApplicationContext(), VolleyBallMoreTestActivity.class));
+                    return;
+                }else if (position == 2 || position == 3){
+                    startActivity(new Intent(VolleyballPatternSelectActivity.this, BaseGroupActivity.class));
+                    return;
+                }
+                if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN && position < 2) {
                     startActivity(new Intent(VolleyballPatternSelectActivity.this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
-                } else {
+                }else {
                     startActivity(new Intent(VolleyballPatternSelectActivity.this, BaseGroupActivity.class));
                 }
 
-                SharedPrefsUtil.save(VolleyballPatternSelectActivity.this, setting);
-                finish();
+//                finish();
             }
         });
     }
-
 }
