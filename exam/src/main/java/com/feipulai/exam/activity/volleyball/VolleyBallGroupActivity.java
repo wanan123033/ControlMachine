@@ -147,8 +147,6 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
     }
 
 
-
-
     @Override
     protected void onRestart() {
         super.onRestart();
@@ -232,13 +230,14 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         // tmpMap.put(student, roundResults);
 //        if (isAllTest) {
 //            uploadResults();
-            // if (systemSetting.isAutoPrint()) {
-            //     InteractUtils.printResults(group, tmpList, tmpMap,
-            //             TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
-            // }
+        // if (systemSetting.isAutoPrint()) {
+        //     InteractUtils.printResults(group, tmpList, tmpMap,
+        //             TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
+        // }
 //        }
 
     }
+
     private void locationTestStu() {
         if (setting.getGroupMode() == TestConfigs.GROUP_PATTERN_SUCCESIVE) {//连续
             for (int i = 0; i < pairs.size(); i++) {
@@ -264,6 +263,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
             }
         }
     }
+
     private void switchToPosition(int position) {
         int oldPosition = position();
         stuPairAdapter.setTestPosition(position);
@@ -483,7 +483,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
             public void run() {
                 boolean noTimeLimit = setting.getTestTime() == VolleyBallSetting.NO_TIME_LIMIT;
                 prepareView(false, false,
-                        true, false, !noTimeLimit, noTimeLimit,
+                        true, false, !noTimeLimit, true,
                         false);
             }
         });
@@ -603,7 +603,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         title = TestConfigs.machineNameMap.get(machineCode)
                 + SettingHelper.getSystemSetting().getHostId() + "号机"
                 + (isTestNameEmpty ? "" : ("-" + SettingHelper.getSystemSetting().getTestName()));
-        return builder.setTitle(title) ;
+        return builder.setTitle(title);
     }
 
     private int position() {

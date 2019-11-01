@@ -191,7 +191,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                         return;
                     }
                     if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ){
-                        startActivity(new Intent(this, FootBallItemSelectActivity.class));
+                        IntentUtil.gotoActivity(MainActivity.this,TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode()));
                         return;
                     }
                     if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZQYQ){

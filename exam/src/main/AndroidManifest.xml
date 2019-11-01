@@ -192,7 +192,7 @@
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity android:name=".activity.MiddleDistanceRace.MiddleDistanceRaceForPersonActivity" />
-        <activity android:name=".activity.volleyball.pair.VolleyBallMorePairActivity" />
+        <!--<activity android:name=".activity.volleyball.pair.VolleyBallMorePairActivity" />-->
         <activity android:name=".activity.volleyball.more_devices.VolleyBallMoreTestActivity" />
         <activity android:name=".activity.volleyball.more_devices.VolleyBallMoreGroupActivity" />
         <activity android:name=".activity.footBall.FootBallItemSelectActivity" />
