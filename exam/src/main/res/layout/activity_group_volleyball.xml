@@ -75,11 +75,24 @@
                     android:layout_width="362dp"
                     android:layout_height="154dp"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="40dp"
+                    android:layout_marginTop="30dp"
                     android:background="@mipmap/icon_test_result_bg"
                     android:gravity="center"
                     android:textColor="@color/white"
                     android:textSize="61sp" />
+
+                <TextView
+                    android:id="@+id/tv_time_count"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_result"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/bg_count_text"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:textSize="40sp"
+                    android:visibility="gone" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -131,7 +144,7 @@
                         android:layout_height="0dp"
                         android:layout_margin="5dp"
                         android:layout_weight="1"
-                        android:background="@drawable/icon_btn_blue_bg"
+                        android:background="@drawable/btn_bg_blue"
                         android:gravity="center"
                         android:text="开始测试"
                         android:textColor="@color/white"
@@ -158,7 +171,7 @@
                         android:layout_height="0dp"
                         android:layout_margin="5dp"
                         android:layout_weight="1"
-                        android:background="@drawable/icon_btn_blue_bg"
+                        android:background="@drawable/btn_bg_blue"
                         android:gravity="center"
                         android:text="结束测试"
                         android:textColor="@color/white"
@@ -167,24 +180,12 @@
 
 
                     <TextView
-                        android:id="@+id/tv_time_count"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_margin="10dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_count_text"
-                        android:gravity="center"
-                        android:padding="5dp"
-                        android:textSize="40sp"
-                        android:visibility="gone" />
-
-                    <TextView
                         android:id="@+id/tv_punish"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_margin="5dp"
                         android:layout_weight="1"
-                        android:background="@drawable/icon_btn_blue_bg"
+                        android:background="@drawable/btn_bg_blue"
                         android:gravity="center"
                         android:text="判罚"
                         android:textColor="@color/white"
@@ -197,7 +198,7 @@
                         android:layout_height="0dp"
                         android:layout_margin="5dp"
                         android:layout_weight="1"
-                        android:background="@drawable/icon_btn_blue_bg"
+                        android:background="@drawable/btn_bg_blue"
                         android:gravity="center"
                         android:text="确定"
                         android:textColor="@color/white"
@@ -210,7 +211,7 @@
                         android:layout_height="0dp"
                         android:layout_margin="5dp"
                         android:layout_weight="1"
-                        android:background="@drawable/icon_btn_blue_bg"
+                        android:background="@drawable/btn_bg_blue"
                         android:gravity="center"
                         android:text="放弃测试"
                         android:textColor="@color/white"
@@ -249,7 +250,7 @@
                         android:layout_height="0dp"
                         android:layout_margin="5dp"
                         android:layout_weight="1"
-                        android:background="@drawable/icon_btn_blue_bg"
+                        android:background="@drawable/btn_bg_blue"
                         android:gravity="center"
                         android:text="打印"
                         android:textColor="@color/white"

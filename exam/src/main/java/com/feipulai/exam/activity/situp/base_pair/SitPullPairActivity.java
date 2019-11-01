@@ -29,11 +29,11 @@ public abstract class SitPullPairActivity extends BaseTitleActivity
     @BindView(R.id.sw_auto_pair)
     Switch mSwAutoPair;
     @BindView(R.id.rv_pairs)
-    RecyclerView mRvPairs;
+    public RecyclerView mRvPairs;
     @BindView(R.id.ll_device_group_setting)
     LinearLayout llDeviceGroupSetting;
 
-    private DevicePairAdapter mAdapter;
+    public DevicePairAdapter mAdapter;
     private MyHandler mHandler = new MyHandler(this);
     private SitPullUpPairPresenter presenter;
 
@@ -51,7 +51,7 @@ public abstract class SitPullPairActivity extends BaseTitleActivity
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("设备匹配") ;
+        return builder.setTitle("设备匹配");
     }
 
     public abstract SitPullUpPairPresenter getPresenter();
@@ -97,6 +97,7 @@ public abstract class SitPullPairActivity extends BaseTitleActivity
 
     @Override
     public void handleMessage(Message msg) {
+
         switch (msg.what) {
             case UPDATE_SPECIFIC_ITEM:
                 mAdapter.notifyItemChanged(msg.arg1);

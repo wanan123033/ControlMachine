@@ -16,9 +16,9 @@ import com.feipulai.exam.activity.RadioTimer.RunTimerActivityTestActivity;
 import com.feipulai.exam.activity.RadioTimer.RunTimerSetting;
 import com.feipulai.exam.activity.RadioTimer.RunTimerSettingActivity;
 import com.feipulai.exam.activity.basketball.BasketBallGroupActivity;
+import com.feipulai.exam.activity.basketball.BasketBallSelectActivity;
 import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.basketball.BasketBallSettingActivity;
-import com.feipulai.exam.activity.basketball.BasketballIndividualActivity;
 import com.feipulai.exam.activity.footBall.FootBallGroupActivity;
 import com.feipulai.exam.activity.footBall.FootBallSettingActivity;
 import com.feipulai.exam.activity.footBall.FootballIndividualActivity;
@@ -366,7 +366,7 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_PQ, VolleyBallIndividualActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_MG, SargentItemSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_FWC, PushPatternSelectActivity.class);
-        TestConfigs.proActivity.put(ItemDefault.CODE_LQYQ, BasketballIndividualActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_LQYQ, BasketBallSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_ZCP, MiddleDistanceRaceForPersonActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_ZQYQ, FootballIndividualActivity.class);
 
@@ -383,6 +383,7 @@ public class TestConfigs {
         TestConfigs.groupActivity.put(ItemDefault.CODE_MG, SargentGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_FWC, PushUpCheckActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_ZCP, MiddleDistanceRaceActivity.class);
+
         TestConfigs.groupActivity.put(ItemDefault.CODE_LQYQ, BasketBallGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_ZQYQ, FootBallGroupActivity.class);
         // 每个机器码对应的机器名称

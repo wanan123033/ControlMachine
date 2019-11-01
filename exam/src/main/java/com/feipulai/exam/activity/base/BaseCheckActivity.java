@@ -3,8 +3,12 @@ package com.feipulai.exam.activity.base;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
+import android.view.View;
+import android.widget.FrameLayout;
 
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.CheckDeviceOpener;
 import com.feipulai.device.ic.ICCardDealer;
 import com.feipulai.device.ic.NFCDevice;
@@ -35,7 +39,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
  */
 public abstract class BaseCheckActivity
         extends BaseTitleActivity
-        implements CheckDeviceOpener.OnCheckDeviceArrived {
+        implements CheckDeviceOpener.OnCheckDeviceArrived, BaseAFRFragment.onAFRCompareListener {
 
     private MyHandler mHandler = new MyHandler(this);
     private boolean isOpenDevice = true;
@@ -46,6 +50,9 @@ public abstract class BaseCheckActivity
     private StudentItem mStudentItem;
     private List<RoundResult> mResults;
 
+    private FrameLayout afrFrameLayout;
+    private BaseAFRFragment afrFragment;
+
     public void setOpenDevice(boolean openDevice) {
         isOpenDevice = openDevice;
     }
@@ -53,6 +60,17 @@ public abstract class BaseCheckActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void initViews() {
+        super.initViews();
+        if (SettingHelper.getSystemSetting().getCheckTool() == 4 && setAFRFrameLayoutResID() != 0) {
+            afrFrameLayout = findViewById(setAFRFrameLayoutResID());
+            afrFragment = new BaseAFRFragment();
+            afrFragment.setCompareListener(this);
+            initAFR();
+        }
     }
 
     @Override
@@ -65,6 +83,12 @@ public abstract class BaseCheckActivity
         return 0;
     }
 
+    //    public abstract int setAFRFrameLayoutResID();
+    public int setAFRFrameLayoutResID() {
+        return 0;
+    }
+
+
     @Override
     protected void onResume() {
         if (isOpenDevice) {
@@ -75,8 +99,37 @@ public abstract class BaseCheckActivity
                     checkTool == SystemSetting.CHECK_TOOL_ICCARD,
                     checkTool == SystemSetting.CHECK_TOOL_QR);
 
+
         }
         super.onResume();
+    }
+
+    private void initAFR() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(setAFRFrameLayoutResID(), afrFragment);
+        transaction.commitAllowingStateLoss();// 提交更改
+    }
+
+    public void showAFR() {
+        if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
+            ToastUtils.showShort("未选择人脸识别检录功能");
+            return;
+        }
+        if (afrFrameLayout == null) {
+            return;
+        }
+
+        boolean isGoto = afrFragment.gotoUVCFaceCamera(!afrFragment.isOpenCamera);
+        if (isGoto) {
+            if (afrFragment.isOpenCamera) {
+                afrFrameLayout.setVisibility(View.VISIBLE);
+            } else {
+                afrFrameLayout.setVisibility(View.GONE);
+            }
+
+
+        }
+
     }
 
     @Override
@@ -189,6 +242,16 @@ public abstract class BaseCheckActivity
         // 可以直接检录
         checkInUIThread(student);
         return false;
+    }
+
+    @Override
+    public void compareStu(Student student) {
+        if (student==null){
+            afrFrameLayout.setVisibility(View.GONE);
+           toastSpeak("查无此人");
+           return;
+        }
+        checkInUIThread(student);
     }
 
     private void checkInUIThread(Student student) {

@@ -15,7 +15,7 @@ android {
         minSdkVersion 17
         targetSdkVersion 26
         versionCode 4
-        versionName "1.0.4"
+        versionName "1.1.0"
         multiDexEnabled true
         ndk {
             abiFilters "armeabi-v7a"
@@ -60,6 +60,13 @@ android {
     greendao {
         //上个版本为3
         schemaVersion 5  //数据库版本号，升级数据库需要修改版本号
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
     }
 }
 

@@ -2,6 +2,11 @@ package com.feipulai.common.utils;
 
 import android.content.res.AssetManager;
 import android.os.Environment;
+import android.util.Log;
+
+import com.feipulai.common.dbutils.UsbFileAdapter;
+import com.github.mjdev.libaums.fs.UsbFile;
+import com.github.mjdev.libaums.fs.UsbFileOutputStream;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,6 +18,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by fujiayi on 2017/5/19.
@@ -55,6 +62,40 @@ public class FileUtil {
             fileSizeString = df.format((double) size / (1024 * 1024 * 1024)) + "GB";
         }
         return fileSizeString;
+    }
+
+    public static boolean copyFromAssets(AssetManager assets, String source, UsbFile destFile) throws IOException {
+
+        InputStream is = null;
+        OutputStream fos = null;
+        try {
+            is = assets.open(source);
+            if (destFile instanceof UsbFileAdapter) {
+                fos = new FileOutputStream(((UsbFileAdapter) destFile).getFile());
+            } else {
+                fos = new UsbFileOutputStream(destFile);
+            }
+
+
+            byte[] buffer = new byte[1024];
+            int size;
+            while ((size = is.read(buffer, 0, 1024)) >= 0) {
+                fos.write(buffer, 0, size);
+            }
+            return true;
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } finally {
+                    if (is != null) {
+                        is.close();
+                    }
+                }
+            } else {
+                return false;
+            }
+        }
     }
 
     public static void copyFromAssets(AssetManager assets, String source, String dest) throws IOException {
@@ -223,6 +264,62 @@ public class FileUtil {
 
                 bos.close();
             }
+        }
+    }
+
+    public static List<String> getFilesAllName(String path) {
+        File file = new File(path);
+        File[] files = file.listFiles();
+        if (files == null) {
+            Log.e("error", "空目录");
+            return null;
+        }
+        List<String> s = new ArrayList<>();
+        for (int i = 0; i < files.length; i++) {
+            s.add(files[i].getAbsolutePath());
+        }
+        return s;
+    }
+
+    /**
+     * 创建根文件夹
+     * <p/>
+     * <br/>version
+     * <br/>createTime 2016/12/27 , 下午10:58
+     * <br/>updateTime 2016/12/27 , 下午10:58
+     * <br/>createAuthor wzl
+     * <br/>updateAuthor wzl
+     * <br/>updateInfo
+     */
+    public static void createAllFile() {
+        mkdirs(PATH_BASE);
+    }
+
+    /**
+     * 应用根目录
+     */
+    public static final String PATH_BASE = Environment.getExternalStorageDirectory().getAbsolutePath() + "/ControlMachine/";
+
+
+    /**
+     * 构建文件夹路径
+     * <p>
+     * <br/> Version: 1.0
+     * <br/> CreateTime:  2013-11-3,下午12:08:58
+     * <br/> UpdateTime:  2013-11-3,下午12:08:58
+     * <br/> CreateAuthor:  CodeApe
+     * <br/> UpdateAuthor:  CodeApe
+     * <br/> UpdateInfo:  (此处输入修改内容,若无修改可不写.)
+     *
+     * @param path
+     */
+    public static void mkdirs(String path) {
+        new File(path).mkdirs();
+        try {
+            new File(path + "/.nomedia").createNewFile();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 }

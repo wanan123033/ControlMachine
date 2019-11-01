@@ -33,6 +33,7 @@
         <item>数据清空</item>
         <item>成绩上传</item>
         <item>成绩导出</item>
+        <item>模版导出</item>
         <!--<item>成绩删除</item>-->
 
     </array>
@@ -42,6 +43,7 @@
         <item>身份证</item>
         <item>IC卡</item>
         <item>外接扫描枪</item>
+        <item>人脸识别</item>
     </array>
     <array name="angleLevel">
         <item>55度</item>

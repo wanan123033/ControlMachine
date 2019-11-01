@@ -46,8 +46,8 @@ public class RunTimerImpl implements SerialDeviceManager.RS232ResiltListener {
                 break;
 
             case RUN_TIMER_INTERCEPT_TIME:
-                log("红外计时===>拦截计时" );
                 RunTimerResult result = (RunTimerResult) msg.obj;
+                log("红外计时===>拦截计时"+result.toString() );
                 listener.onGetTime(result);
                 listener.onTestState(4);
                 break;

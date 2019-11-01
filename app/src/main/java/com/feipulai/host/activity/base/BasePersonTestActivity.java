@@ -47,6 +47,7 @@ import butterknife.OnClick;
 /**
  * 立定跳远和肺活量实心球的坐位体前屈测试基类(个人测试基类)
  */
+@Deprecated
 public abstract class BasePersonTestActivity extends BaseCheckActivity {
 
     @BindView(R.id.et_input_text)

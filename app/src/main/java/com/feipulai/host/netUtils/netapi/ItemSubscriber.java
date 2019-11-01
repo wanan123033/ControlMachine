@@ -38,12 +38,13 @@ import io.reactivex.observers.DisposableObserver;
  */
 
 public class ItemSubscriber {
-	
+
     private int pageNo = 1;
     private int hostId = SettingHelper.getSystemSetting().getHostId();
-    
+
     /**
      * 获取全部项目信息
+     *
      * @param token 设备绑定是返回的token
      */
     private void getAll(String token, DisposableObserver subscriber) {
@@ -53,6 +54,7 @@ public class ItemSubscriber {
 
     /**
      * 获取学生信息
+     *
      * @param token      设备绑定是返回的token
      * @param examStatus 考试状态 0 正常 1缓考 2补考
      */
@@ -72,11 +74,12 @@ public class ItemSubscriber {
 
     /**
      * 成绩上传接口
+     *
      * @param token          设备绑定是返回的token
      * @param testItemResult 体测项目成绩
      * @param examItemResult 考试项目成绩
      */
-    private void setUploadResultAction(String token, String testItemResult, String examItemResult, String machineNumber, String remark,DisposableObserver subscriber) {
+    private void setUploadResultAction(String token, String testItemResult, String examItemResult, String machineNumber, String remark, DisposableObserver subscriber) {
         HashMap<String, String> parameData = new HashMap<>();
         parameData.put("Token", token);
         parameData.put("testItemResult", testItemResult);
@@ -87,16 +90,17 @@ public class ItemSubscriber {
         Observable<HttpResult<String>> observable = HttpManager.getInstance().getHttpApi().uploadResult(CommonUtils.query(parameData));
         HttpManager.getInstance().toSubscribe(observable, subscriber);
     }
-	
-	/**
-	 * 获取 项目所有的项目信息
-	 * @param lastDownLoadTime
-	 * @param roundResults
-	 */
-    public  void getItemAll(final String token, final Context context ,
-                            final String lastDownLoadTime, final List<RoundResult> roundResults){
+
+    /**
+     * 获取 项目所有的项目信息
+     *
+     * @param lastDownLoadTime
+     * @param roundResults
+     */
+    public void getItemAll(final String token, final Context context,
+                           final String lastDownLoadTime, final List<RoundResult> roundResults) {
         pageNo = 1;
-        getAll(token,new RequestSub(new OnResultListener<List<Item>>() {
+        getAll(token, new RequestSub(new OnResultListener<List<Item>>() {
             public void onSuccess(List<Item> body) {
                 if (body == null || body.size() == 0) {
                     return;
@@ -106,32 +110,33 @@ public class ItemSubscriber {
                         TestConfigs.sCurrentItem.getMachineCode(),
                         TestConfigs.sCurrentItem.getItemCode(),
                         null);
-    
+
                 if (initState == TestConfigs.INIT_MULTI_ITEM_CODE) {
                     ToastUtils.showShort("请处理项目信息后重新操作");
                     return;
                 }
-    
+
                 if (roundResults == null) {
-                    getStudentData(lastDownLoadTime,context);
+                    getStudentData(lastDownLoadTime, context);
                     Logger.i("student start download:" + System.currentTimeMillis());
                 } else {
-                    setDataUpLoad(roundResults,context);
+                    setDataUpLoad(roundResults, context);
                 }
             }
-            
+
             @Override
             public void onFault(String errorMsg) {
                 ToastUtils.showShort(errorMsg);
             }
-        },context));
+        }, context));
     }
+
 
     // 获取学生信息
     private void getStudentData(final String lastDownLoadTime, final Context context) {
         getStudentAllAction(MyApplication.TOKEN, "", lastDownLoadTime, pageNo + "", "3000",
                 new RequestSub(new OnResultListener<List<Student>>() {
-    
+
                     @Override
                     public void onSuccess(List<Student> studentList) {
                         if (studentList.size() > 0) {
@@ -143,7 +148,7 @@ public class ItemSubscriber {
                                 student.setIdCardNo(TextUtils.isEmpty(student.getIdCardNo()) ? null : student.getIdCardNo());
                             }
                             DBManager.getInstance().insertStudentList(studentList);
-            
+
                             ArrayList<StudentItem> studentItems = new ArrayList<>();
                             for (Student student : studentList) {
                                 for (StudentItem studentItem : student.getStudentItemList()) {
@@ -156,7 +161,7 @@ public class ItemSubscriber {
                             getStudentData(lastDownLoadTime, context);
                         }
                     }
-    
+
                     @Override
                     public void onFault(String errorMsg) {
                         if (errorMsg.equals("成功获取该项目学生信息")) {
@@ -172,20 +177,22 @@ public class ItemSubscriber {
     public void setDataUpLoad(List<RoundResult> roundResults) {
         setDataUpLoad(roundResults, null);
     }
-    
+
     // 数据上传
-    public void setDataUpLoad(List<RoundResult> roundResults,Context context) {
+    public void setDataUpLoad(List<RoundResult> roundResults, Context context) {
+        if (roundResults == null || roundResults.size() == 0)
+            return;
         //上传数据
         List<HashMap<String, Object>> testItemResult = new ArrayList<>();
         //保存已添加的学生
         List<String> addStudentList = new ArrayList<>();
         int pageSum = 1;
         for (RoundResult roundResult : roundResults) {
-            
+
             //该学生是否已添加
             if (!addStudentList.contains(roundResult.getStudentCode())) {
                 addStudentList.add(roundResult.getStudentCode());
-                
+
                 HashMap<String, Object> itemResult = new HashMap<>();
                 itemResult.put("studentCode", roundResult.getStudentCode());
                 itemResult.put("itemCode", TestConfigs.sCurrentItem.getItemCode());
@@ -201,17 +208,16 @@ public class ItemSubscriber {
                 }
                 itemResult.put("result", lastResult.getResult());
                 itemResult.put("testTime", lastResult.getTestTime());
-                itemResult.put("resultState", lastResult.getResultState());
-                
+                itemResult.put("resultState", "0");
+
                 //获取该学生未上传的成绩轮次
-                List<RoundResult> studentRound = DBManager.getInstance().queryUploadStudentResults(roundResult.getStudentCode(),
-                        false);
+                List<RoundResult> studentRound = DBManager.getInstance().queryUploadStudentResults(roundResult.getStudentCode(), false);
                 itemResult.put("roundResult", studentRound);
-                
+
                 testItemResult.add(itemResult);
             }
         }
-        
+
         //上传数量是否大于100，大于100分页上传
         if (testItemResult.size() > 100) {
             //获取上传分页数目
@@ -221,11 +227,83 @@ public class ItemSubscriber {
                 pageSum = testItemResult.size() / 100 + 1;
             }
         }
-        setUploadResult(0, pageSum, testItemResult,context);
+        setUploadResult(0, pageSum, testItemResult, context);
     }
-    
+
+    public void setStudentDataUpLoad(final Context context, final List<String> studentList) {
+
+        getAll(MyApplication.TOKEN, new RequestSub(new OnResultListener<List<Item>>() {
+            public void onSuccess(List<Item> body) {
+                if (body == null || body.size() == 0) {
+                    return;
+                }
+                DBManager.getInstance().freshAllItems(body);
+                int initState = TestConfigs.init(context,
+                        TestConfigs.sCurrentItem.getMachineCode(),
+                        TestConfigs.sCurrentItem.getItemCode(),
+                        null);
+
+                if (initState == TestConfigs.INIT_MULTI_ITEM_CODE) {
+                    ToastUtils.showShort("请处理项目信息后重新操作");
+                    return;
+                }
+                List<HashMap<String, Object>> testItemResult = getUploadData(studentList);
+                int pageSum = 1;
+                //上传数量是否大于100，大于100分页上传
+                if (testItemResult.size() > 100) {
+                    //获取上传分页数目
+                    if (testItemResult.size() % 100 == 0) {
+                        pageSum = testItemResult.size() / 100;
+                    } else {
+                        pageSum = testItemResult.size() / 100 + 1;
+                    }
+                }
+                setUploadResult(0, pageSum, testItemResult, context);
+            }
+
+            @Override
+            public void onFault(String errorMsg) {
+                ToastUtils.showShort(errorMsg);
+            }
+        }, context));
+
+
+    }
+
+    private List<HashMap<String, Object>> getUploadData(List<String> studentList) {
+        //上传数据
+        List<HashMap<String, Object>> testItemResult = new ArrayList<>();
+
+        for (String stuCode : studentList) {
+            HashMap<String, Object> itemResult = new HashMap<>();
+            itemResult.put("studentCode", stuCode);
+            itemResult.put("itemCode", TestConfigs.sCurrentItem.getItemCode());
+            itemResult.put("itemName", TestConfigs.sCurrentItem.getItemName());
+            RoundResult lastResult;
+            //判断成绩类型
+            if (TestConfigs.sCurrentItem.getfResultType() == 0) {
+                //最好
+                lastResult = DBManager.getInstance().queryResultsByStudentCodeIsLastResult(stuCode);
+            } else {
+                //最后
+                lastResult = DBManager.getInstance().queryLastScoreByStuCode(stuCode);
+            }
+            itemResult.put("result", lastResult.getResult());
+            itemResult.put("testTime", lastResult.getTestTime());
+            itemResult.put("resultState","0");
+
+            //获取该学生未上传的成绩轮次
+            List<RoundResult> studentRound = DBManager.getInstance().queryResultsByStudentCode(stuCode);
+            itemResult.put("roundResult", studentRound);
+            testItemResult.add(itemResult);
+        }
+        return testItemResult;
+
+    }
+
     /**
      * 数据实时上传
+     *
      * @param roundResult 当前成绩,需实时上传的当前次测试成绩
      * @param lastResult  最终成绩,依据{@link Item#fResultType}判断,选出最好成绩或最后成绩(当前次测试成绩)作为最终成绩
      */
@@ -245,14 +323,14 @@ public class ItemSubscriber {
         //最后成绩信息
         itemResult.put("result", lastResult.getResult());
         itemResult.put("testTime", lastResult.getTestTime());
-        itemResult.put("resultState", lastResult.getResultState());
+        itemResult.put("resultState", "0");
 
         List<RoundResult> studentRound = DBManager.getInstance().queryUploadStudentResults(roundResult.getStudentCode(),
                 false);
         itemResult.put("roundResult", studentRound);
 
         testItemResult.add(itemResult);
-        setUploadResult(0, 1, testItemResult,null);
+        setUploadResult(0, 1, testItemResult, null);
     }
 
     /**
@@ -271,9 +349,9 @@ public class ItemSubscriber {
         Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
         String data = gson.toJson(uploadData);
         // Log.i("james",data);
-        
+
         setUploadResultAction(MyApplication.TOKEN, data,
-                null, hostId + "", null,new RequestSub(new OnResultListener() {
+                null, hostId + "", null, new RequestSub(new OnResultListener() {
                     @Override
                     public void onSuccess(Object result) {
                         // 更新本地数据
@@ -290,7 +368,7 @@ public class ItemSubscriber {
                             MyApplication.getInstance().sendBroadcast(intent);
                             ToastUtils.showLong("上传成功");
                         } else {
-                            setUploadResult(pageNo + 1, pageSum, testItemResult,context);
+                            setUploadResult(pageNo + 1, pageSum, testItemResult, context);
                         }
                     }
 
@@ -298,7 +376,7 @@ public class ItemSubscriber {
                     public void onFault(String errorMsg) {
                         ToastUtils.showShort(errorMsg);
                     }
-                },context));
+                }, context));
     }
-    
+
 }

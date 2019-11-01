@@ -28,9 +28,9 @@ public abstract class SitPullUpPairPresenter
 	private SitPullUpPairContract.View view;
 	private volatile int focusPosition;
 	private List<StuDevicePair> pairs;
-	private int machineCode = TestConfigs.sCurrentItem.getMachineCode();
-	private final int TARGET_FREQUENCY = SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode()) + SettingHelper.getSystemSetting().getHostId() - 1;
-	private SitPullLinker linker;
+	public int machineCode = TestConfigs.sCurrentItem.getMachineCode();
+	public final int TARGET_FREQUENCY = SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode()) + SettingHelper.getSystemSetting().getHostId() - 1;
+	public SitPullLinker linker;
 	
 	public SitPullUpPairPresenter(Context context, SitPullUpPairContract.View view) {
 		this.context = context;
@@ -42,8 +42,11 @@ public abstract class SitPullUpPairPresenter
 		pairs = CheckUtils.newPairs(getDeviceSum());
 		view.initView(isAutoPair(), pairs);
 		RadioManager.getInstance().setOnRadioArrived(this);
-		linker = new SitPullLinker(machineCode, TARGET_FREQUENCY, this);
-		linker.startPair(1);
+		if (linker==null){
+			linker = new SitPullLinker(machineCode, TARGET_FREQUENCY, this);
+			linker.startPair(1);
+		}
+
 	}
 	
 	@Override

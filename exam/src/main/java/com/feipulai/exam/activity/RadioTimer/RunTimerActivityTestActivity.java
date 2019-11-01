@@ -191,6 +191,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
             } else {
                 llFirst.setVisibility(View.VISIBLE);
                 rlSecond.setVisibility(View.GONE);
+                isSetting = true;
                 stopRun();
             }
         }
@@ -226,7 +227,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
      * @param position
      */
     private void deleteDialog(final int position) {
-        new AlertDialog.Builder(this).setMessage("是否确定删除此考生?")
+    new AlertDialog.Builder(this).setMessage("是否确定删除此考生?")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -447,7 +448,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
         mAdapter.notifyDataSetChanged();
         if ((mList.get(result.getTrackNum() - 1).getStudent() != null)) {
 //            disposeManager.saveResult(mList.get(result.getTrackNum() - 1).getStudent(), result.getResult(), currentTestTime, testNo);
-            Logger.i("runTimer:" + mList.get(result.getTrackNum() - 1).getStudent().getStudentName() + "测试次数:" + currentTestTime);
+            Logger.i("runTimer:" + mList.get(result.getTrackNum() - 1).getStudent().getStudentName() + "测试次数:" + currentTestTime+"time:"+realTime);
         }
 
 //        disposeManager.setShowLed(mList);

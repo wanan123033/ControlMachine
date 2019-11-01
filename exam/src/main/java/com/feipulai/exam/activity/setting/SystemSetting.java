@@ -67,15 +67,17 @@ public class SystemSetting {
      * 1　身份证
      * 2　IC卡
      * 3  外接扫描枪
-     * 4　指纹（暂无）后续增加
-     * 5　人脸识别（暂无）后续增加
+     * 4　人脸识别（暂无）后续增加
+     * 5　指纹（暂无）后续增加
      */
     private int checkTool = 0;
     /**
      * 网络是否添加路由表
      */
     private boolean isAddRoute = false;
-    /**单屏0 多屏1*/
+    /**
+     * 单屏0 多屏1
+     */
     private int ledMode = 0;
 
     private int ledVersion = 0;//0:1.0版本 1：V4.1 以上版本

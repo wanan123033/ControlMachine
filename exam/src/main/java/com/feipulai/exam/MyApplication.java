@@ -5,8 +5,8 @@ import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 
 import com.feipulai.common.CrashHandler;
+import com.feipulai.common.utils.FileUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
-import com.feipulai.device.AdaptiveConfig;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.utils.NetUtil;
@@ -14,6 +14,7 @@ import com.feipulai.exam.utils.NetUtil;
 
 public class MyApplication extends MultiDexApplication {
 
+    public static final String PATH_SPECIFICATION = FileUtil.PATH_BASE + "exam/";
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -38,6 +39,9 @@ public class MyApplication extends MultiDexApplication {
         TOKEN = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.TOKEN, "");
         //默认打开WiFi，虹软sdk需要读物唯一标识，某些机器WiFi断开情况下读不到
         NetUtil.openWifi(this);
+
+        FileUtil.createAllFile();
+        FileUtil.mkdirs(PATH_SPECIFICATION);
 //        //TODO 岭南IC
 //        AdaptiveConfig.initIC(AdaptiveConfig.LIN_NAN_SHI_FAN, AdaptiveConfig.DEFAULT, new char[]{0x73, 0x79, 0x6E, 0x70, 0x75, 0x62});
 

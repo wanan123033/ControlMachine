@@ -63,7 +63,19 @@
                 android:textColor="@color/white"
                 android:textSize="20dp" />
 
-
+            <TextView
+                android:id="@+id/txt_device_pair"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:background="@color/colorAccent"
+                android:drawablePadding="6dp"
+                android:gravity="center"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:text="设备配对"
+                android:textColor="@color/white"
+                android:textSize="20dp" />
         </RelativeLayout>
 
         <android.support.v7.widget.RecyclerView

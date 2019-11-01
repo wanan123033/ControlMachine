@@ -249,6 +249,11 @@ public class MedicineBallFaceIDActivity extends BasePersonFaceIDActivity {
             msg.what = SELF_CHECK_RESPONSE;
             mHandler.sendMessage(msg);
         }
+
+        @Override
+        public void onFree() {
+
+        }
     });
 
 }

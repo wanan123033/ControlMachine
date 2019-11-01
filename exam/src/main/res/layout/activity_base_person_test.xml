@@ -36,7 +36,7 @@
 
             <com.feipulai.exam.view.StuSearchEditText
                 android:id="@+id/et_input_text"
-                android:layout_width="380dp"
+                android:layout_width="360dp"
                 android:layout_height="35dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="3dp" />
@@ -65,8 +65,7 @@
                 android:padding="5dp"
                 android:src="@mipmap/icon_afr"
                 android:textColor="@color/white"
-                android:textSize="20dp"
-                android:visibility="gone" />
+                android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/txt_led_setting"
@@ -253,21 +252,9 @@
             android:layout_height="match_parent"
             android:layout_below="@+id/ll_seach"
             android:background="@color/black"
-            android:visibility="gone">
+            android:visibility="gone"/>
 
-            <TextureView
-                android:id="@+id/textureView2"
-                android:layout_width="640px"
-                android:layout_height="480px"
-                android:layout_gravity="center" />
 
-            <com.ww.fpl.libarcface.widget.FaceRectView
-                android:id="@+id/face_rect_view2"
-                android:layout_width="640px"
-                android:layout_height="480px"
-                android:layout_gravity="center" />
-
-        </FrameLayout>
     </RelativeLayout>
 
 

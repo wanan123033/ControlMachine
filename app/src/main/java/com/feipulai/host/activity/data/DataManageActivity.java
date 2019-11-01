@@ -69,7 +69,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
     private static final int REQUEST_CODE_IMPORT = 3;
 
     private static final int REQUEST_CODE_EXPORT = 4;
-
+    private static final int REQUEST_CODE_EXPORT_TEMPLATE = 6;
     @BindView(R.id.grid_viewpager)
     GridViewPager gridViewpager;
     @BindView(R.id.indicator_container)
@@ -115,7 +115,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
         String[] typeName = getResources().getStringArray(R.array.data_admin);
         int[] typeRes = new int[]{R.mipmap.icon_data_import, R.mipmap.icon_data_down
                 , R.mipmap.icon_data_backup, R.mipmap.icon_data_restore, R.mipmap.icon_data_look, R.mipmap.icon_data_clear, R.mipmap.icon_result_upload,
-                R.mipmap.icon_result_import};
+                R.mipmap.icon_result_import, R.mipmap.icon_template_export};
         for (int i = 0; i < typeName.length; i++) {
             TypeListBean bean = new TypeListBean();
             bean.setName(typeName[i]);
@@ -233,7 +233,11 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
 //                        DBManager.getInstance().roundResultClear();
 //                        ToastUtils.showShort("功能未开放，敬请期待");
 //                        break;
-
+                    case 8://模版导出
+                        intent.setClass(DataManageActivity.this, FileSelectActivity.class);
+                        intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
+                        startActivityForResult(intent, REQUEST_CODE_EXPORT_TEMPLATE);
+                        break;
                 }
             }
         });
@@ -282,7 +286,23 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                 DBManager.getInstance().initDB();
                 TestConfigs.init(this, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), null);
                 break;
+            case REQUEST_CODE_EXPORT_TEMPLATE:
 
+                boolean copySucceed;
+                try {
+                    UsbFile targetFile = FileSelectActivity.sSelectedFile.createFile("智能主机体测模板.xls");
+                    copySucceed = FileUtil.copyFromAssets(getResources().getAssets(), "智能主机体测模板.xls", targetFile);
+                    UsbFile deleteFile = FileSelectActivity.sSelectedFile.createFile(".智能主机体测模板delete.xls");
+                    deleteFile.delete();
+                    ToastUtils.showShort(copySucceed ? "模版导出成功" : "模版导出失败");
+
+                    FileSelectActivity.sSelectedFile = null;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    ToastUtils.showShort("文件创建失败,请确保路径目录不存在已有文件");
+                    Logger.i("文件创建失败,模板备份失败");
+                }
+                break;
             case REQUEST_CODE_BACKUP:
                 showBackupFileNameDialog();
                 break;

@@ -11,13 +11,63 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="34dp"
         android:layout_marginTop="26dp"
-        android:background="@drawable/bg_white_radius_10"
+        android:background="@drawable/btn_bg_white"
         android:orientation="vertical"
-        android:paddingBottom="69dp"
         android:paddingLeft="30dp"
         android:paddingRight="30dp"
+        android:paddingBottom="30dp"
         android:paddingTop="33dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginTop="@dimen/dp_10"
+            android:layout_marginBottom="5dp"
+            >
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textSize="14sp"
+                android:text="LED屏版本：" />
+
+            <Spinner
+                android:id="@+id/led_version"
+                android:layout_width="200dp"
+                android:layout_height="30dp"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/icon_spinner_bg" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rv_mode"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginTop="@dimen/dp_10"
+            android:layout_marginBottom="@dimen/dp_15">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="显示模式："
+                android:textSize="14sp" />
+
+            <Spinner
+                android:id="@+id/sp_show_mode"
+                android:layout_width="200dp"
+                android:layout_height="30dp"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/icon_spinner_bg" />
+
+        </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_led"
+            android:layout_width="match_parent"
+            android:layout_height="110dp"
+            android:visibility="visible"/>
         <Button
             android:id="@+id/btn_led_connect"
             android:layout_width="306dp"
@@ -33,7 +83,7 @@
             android:id="@+id/btn_led_self"
             android:layout_width="306dp"
             android:layout_height="42dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="30dp"
             android:background="@drawable/btn_click_bg_selected"
             android:paddingLeft="@dimen/dp_10"
             android:paddingRight="@dimen/dp_10"
@@ -68,6 +118,8 @@
 
 
         </RelativeLayout>
+
+
     </LinearLayout>
 
 

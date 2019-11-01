@@ -9,6 +9,7 @@ import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.height_weight.HeightWeightCheckActivity;
 import com.feipulai.host.activity.jump_rope.check.JumpRopeCheckActivity;
+import com.feipulai.host.activity.medicine_ball.MedicineBallFreeTestActivity;
 import com.feipulai.host.activity.medicine_ball.MedicineBallTestActivity;
 import com.feipulai.host.activity.radio_timer.RunTimerActivityTestActivity;
 import com.feipulai.host.activity.sitreach.SitReachTestActivity;
@@ -73,6 +74,7 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_ZFP, RunTimerActivityTestActivity.class);
 
         TestConfigs.freedomActivity.put(ItemDefault.CODE_LDTY, StandJumpFreedomActivity.class);
+        TestConfigs.freedomActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallFreeTestActivity.class);
         // 每个机器码对应的机器名称
         TestConfigs.machineNameMap.put(ItemDefault.CODE_TS, MyApplication.getInstance().getString(R.string.jump_rope));
         TestConfigs.machineNameMap.put(ItemDefault.CODE_YWQZ, MyApplication.getInstance().getString(R.string.sit_up));

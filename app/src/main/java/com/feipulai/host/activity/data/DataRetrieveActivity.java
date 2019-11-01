@@ -31,7 +31,6 @@ import com.feipulai.device.ic.ICCardDealer;
 import com.feipulai.device.ic.NFCDevice;
 import com.feipulai.device.ic.entity.StuInfo;
 import com.feipulai.device.ic.utils.ItemDefault;
-import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseTitleActivity;
 import com.feipulai.host.activity.height_weight.HWConfigs;
@@ -271,12 +270,11 @@ public class DataRetrieveActivity extends BaseTitleActivity
                 break;
 
             case R.id.btn_upload:
-                List<RoundResult> roundResults = new ArrayList<>();
+                List<String> roundResults = new ArrayList<>();
                 for (int i = 0; i < mList.size(); i++) {
                     DataRetrieveBean bean = mList.get(i);
                     if (bean.isChecked() && bean.getTestState() == 1) {
-                        List<RoundResult> results = DBManager.getInstance().queryUploadStudentResults(bean.getStudentCode(), false);
-                        roundResults.addAll(results);
+                        roundResults.add(bean.getStudentCode());
                     }
                 }
                 if (roundResults.size() == 0) {
@@ -284,7 +282,8 @@ public class DataRetrieveActivity extends BaseTitleActivity
                 } else {
                     //上传数据前先进行项目信息校验
                     ItemSubscriber subscriber = new ItemSubscriber();
-                    subscriber.getItemAll(MyApplication.TOKEN, this, null, roundResults);
+//                    subscriber.getItemAll(MyApplication.TOKEN, this, null, new ArrayList<RoundResult>());
+                    subscriber.setStudentDataUpLoad(this, roundResults);
                 }
                 break;
 
@@ -297,6 +296,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
 
         }
     }
+
     @OnClick({R.id.btn_print})
     public void onClickPrint() {
         boolean isCheck = false;
@@ -344,6 +344,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
             ToastUtils.showShort("未选中数据打印");
         }
     }
+
     @Override
     protected void onResume() {
         super.onResume();

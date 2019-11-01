@@ -49,7 +49,7 @@ import butterknife.OnClick;
 /**
  * Created by pengjf on 2019/10/8.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
- *
+ * <p>
  * 一对多基类
  */
 public abstract class BaseMoreActivity extends BaseCheckActivity {
@@ -72,6 +72,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     private DeviceListAdapter deviceListAdapter;
     private ClearHandler clearHandler = new ClearHandler();
     private LedHandler ledHandler = new LedHandler();
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_base_more;
@@ -100,10 +101,10 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        for (int i = 0;i< 4;i++){
+        for (int i = 0; i < 4; i++) {
             StringBuilder data = new StringBuilder();
-            data.append(i+1).append("号机");//1号机         空闲
-            for (int j = 0;j<7;j++){
+            data.append(i + 1).append("号机");//1号机         空闲
+            for (int j = 0; j < 7; j++) {
                 data.append(" ");
             }
             data.append("空闲");
@@ -184,7 +185,6 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     }
 
 
-
     @Override
     public void onCheckIn(Student student) {
         int index = 0;
@@ -192,7 +192,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         for (int i = 0; i < deviceCount; i++) {
             DeviceDetail deviceDetail = deviceDetails.get(i);
             if (deviceDetail.isDeviceOpen() && deviceDetail.getStuDevicePair().isCanTest()
-                    && deviceDetail.getStuDevicePair().getBaseDevice().getState()!= BaseDeviceState.STATE_ERROR ) {
+                    && deviceDetail.getStuDevicePair().getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
                 index = i;
                 canUseDevice = true;
                 break;
@@ -235,8 +235,22 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             return;
 //        int ledMode = SettingHelper.getSystemSetting().getLedMode();
 //        if (ledMode == 0){
-        String str = InteractUtils.getStrWithLength(student.getStudentName(), 6);
-        str += "开始";
+        String str = student.getStudentName();
+        int length = InteractUtils.stringLength(str);
+        int temp = 12 - length;
+        StringBuilder sb = new StringBuilder();
+        sb.append(str);
+        if (temp> 0){
+            for (int i = 0; i < temp; i++) {
+                sb.append(" ");
+            }
+            str = sb.append("开始").toString();
+
+        }else {
+            str = InteractUtils.getStrWithLength(str,4);
+            sb.append(str).append(" ").append(" ").append(" ").append(" ").append("开始");
+        }
+
         byte[] data = new byte[0];
         try {
             data = str.getBytes("GB2312");
@@ -269,7 +283,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机-" + SettingHelper.getSystemSetting().getTestName();
         }
 
-        return builder.setTitle(title) .addRightText("项目设置", new View.OnClickListener() {
+        return builder.setTitle(title).addRightText("项目设置", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 gotoItemSetting();
@@ -281,6 +295,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             }
         });
     }
+
     /**
      * 更新学生成绩
      *
@@ -303,20 +318,20 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             pair.setResultState(baseStu.getResultState());
             pair.setResult(baseStu.getResult());
             refreshDevice(index);
-            updateResultLed(pair,index);
+            updateResultLed(pair, index);
             deviceListAdapter.notifyItemChanged(index);
         }
     }
 
-    private void updateResultLed(BaseStuPair baseStu,int index) {
+    private void updateResultLed(BaseStuPair baseStu, int index) {
         String result = ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
         int x = 7;
-        if (baseStu.getResult()< 1000){
-            x= 9;
-        }else if (baseStu.getResult()>= 1000 && baseStu.getResult()< 10000){
-            x= 8;
-        }else if (baseStu.getResult()>= 10000){
-            x= 6 ;
+        if (baseStu.getResult() < 1000) {
+            x = 9;
+        } else if (baseStu.getResult() >= 1000 && baseStu.getResult() < 10000) {
+            x = 8;
+        } else if (baseStu.getResult() >= 10000) {
+            x = 6;
         }
 
         mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, x, index, false, true);
@@ -392,9 +407,9 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 return;
             }
 
-            if (detail.getRound() < setTestCount()){
-                toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), detail.getRound()+1)
-                        , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), detail.getRound()+1));
+            if (detail.getRound() < setTestCount()) {
+                toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), detail.getRound() + 1)
+                        , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), detail.getRound() + 1));
             }
             Message msg = new Message();
             msg.obj = pair;
@@ -417,16 +432,16 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         Student student = baseStuPair.getStudent();
 //        PrinterManager.getInstance().print(" \n");
         PrinterManager.getInstance().print(
-                String.format(getString(R.string.host_name), TestConfigs.sCurrentItem.getItemName(), SettingHelper.getSystemSetting().getHostId()) );
+                String.format(getString(R.string.host_name), TestConfigs.sCurrentItem.getItemName(), SettingHelper.getSystemSetting().getHostId()));
         PrinterManager.getInstance().print(
-                String.format(getString(R.string.print_result_stu_code), student.getStudentCode()) );
+                String.format(getString(R.string.print_result_stu_code), student.getStudentCode()));
         PrinterManager.getInstance().print(
-                String.format(getString(R.string.print_result_stu_code), student.getStudentName()) );
+                String.format(getString(R.string.print_result_stu_code), student.getStudentName()));
         PrinterManager.getInstance().print(
                 String.format(getString(R.string.print_result_stu_result), (baseStuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) ?
-                        getString(R.string.foul) : ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult())) );
+                        getString(R.string.foul) : ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult())));
         PrinterManager.getInstance().print(
-                String.format(getString(R.string.print_result_time), TestConfigs.df.format(Calendar.getInstance().getTime())) );
+                String.format(getString(R.string.print_result_time), TestConfigs.df.format(Calendar.getInstance().getTime())));
         PrinterManager.getInstance().print(" \n");
     }
 
@@ -500,7 +515,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             BaseStuPair pair = (BaseStuPair) msg.obj;
-            setShowLed(pair,pair.getBaseDevice().getDeviceId()-1);
+            setShowLed(pair, pair.getBaseDevice().getDeviceId() - 1);
         }
 
     }

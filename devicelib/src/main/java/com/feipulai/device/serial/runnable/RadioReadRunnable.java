@@ -94,7 +94,7 @@ public class RadioReadRunnable extends SerialReadRunnable{
 					Radio868Result result = new Radio868Result(data);
 					msg.what = result.getType();
 					msg.obj = result.getResult();
-					//Log.i("radio 868 receive",StringUtility.bytesToHexString(data));
+//					Log.i("radio 868 receive", StringUtility.bytesToHexString(data));
 					break;
 			}
 		}catch(IOException e){
