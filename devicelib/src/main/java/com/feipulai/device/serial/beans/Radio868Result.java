@@ -200,6 +200,61 @@ public class Radio868Result {
 
                 }
                 break;
+            case ItemDefault.CODE_YTXS:
+                if (data.length >= 0x10
+                        && data[0] == 0x54 && data[1] == 0x55
+                        && data[3] == 0x10
+                        && data[5] == 0x0b
+                        && data[14] == 0x27 && data[15] == 0x0d) {
+                    int sum = 0;
+                    //0B命令不需要校验
+                    if (data[7] != 0x0b) {
+                        for (int i = 2; i < 13; i++) {
+                            sum += (data[i] & 0xff);
+                        }
+                        if ((sum & 0xff) != (data[13] & 0xff)) {
+                            return;
+                        }
+                    }
+                    switch (data[7]) {
+                        case 4:
+                            setType(SerialConfigs.PULL_UP_GET_STATE);
+                            setResult(new PullUpStateResult(data));
+                            break;
+
+                        case 0x0b:
+                            setType(SerialConfigs.PULL_UP_MACHINE_BOOT_RESPONSE);
+                            setResult(new PullUpSetFrequencyResult(data));
+                            break;
+
+                        case 0x0c:
+                            setType(SerialConfigs.PULL_UP_GET_VERSION);
+                            setResult(new PullUpVersionResult(data));
+                            break;
+
+                    }
+                }
+                break;
+            case ItemDefault.CODE_FHL:
+
+                if ((data[0] & 0xff) == 0xaa && data.length == 16) {
+                    if (data[1] == 1 || data[1] == 3) {
+                        setType(SerialConfigs.VITAL_CAPACITY_SET_MORE_MATCH);
+                    } else {
+                        setType(SerialConfigs.VITAL_CAPACITY_RESULT);
+                    }
+                    setResult(new VitalCapacityResult(data));
+                } else if ((data[0] & 0xff) == 0xaa && data.length == 18) {
+                    if (data[7] == 1 || data[7] == 2) {
+                        setType(SerialConfigs.VITAL_CAPACITY_SET_MORE_MATCH);
+                    } else {
+                        setType(SerialConfigs.VITAL_CAPACITY_RESULT);
+                    }
+                    setResult(new VitalCapacityNewResult(data));
+                }
+
+                break;
+
 
         }
     }

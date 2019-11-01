@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.HeightWeightResult;
@@ -58,7 +59,7 @@ public class HeightWeightCheckActivity
     @BindView(R.id.lv_results)
     ListView lvResults;
     // 身高体重LED显示暂时不做
-    //private LEDManager mLEDManager = new LEDManager();
+    private LEDManager mLEDManager = new LEDManager();
 
     private Student mStudent;
     private volatile boolean isTesting;// 是否正在测试中(检录成功了等待测试成绩)
@@ -146,6 +147,8 @@ public class HeightWeightCheckActivity
         }
         mStudent = student;
         prepareForTest();
+        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), mStudent.getStudentName(), mLEDManager.getX(mStudent.getLEDStuName()), 0, true, false);
+
     }
 
     @Override
@@ -162,6 +165,11 @@ public class HeightWeightCheckActivity
                     TtsManager.getInstance().speak(
                             String.format(getString(R.string.height_weight_speak), displayHeight, displayWeight));
                 }
+                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "身高：" + displayHeight,
+                        0, 1, false, true);
+                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "体重：" + displayWeight,
+                        0, 2, false, true);
+
                 mHandler.sendEmptyMessageDelayed(CLEAR_DATA, 4000);
                 break;
 
