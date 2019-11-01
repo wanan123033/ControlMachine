@@ -191,6 +191,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
             } else {
                 llFirst.setVisibility(View.VISIBLE);
                 rlSecond.setVisibility(View.GONE);
+                isSetting = true;
                 stopRun();
             }
         }

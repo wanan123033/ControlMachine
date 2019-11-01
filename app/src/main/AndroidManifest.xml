@@ -25,7 +25,9 @@
         android:screenOrientation="landscape"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.vccheck.pair.VcPairActivity"></activity>
+        <activity android:name=".activity.medicine_ball.MedicineBallSettingActivity"></activity>
+        <activity android:name=".activity.medicine_ball.MedicineBallFreeTestActivity" />
+        <activity android:name=".activity.vccheck.pair.VcPairActivity" />
         <activity android:name=".activity.situp.pair.SitPullPairActivity" />
         <activity
             android:name=".activity.SplashScreenActivity"
@@ -93,7 +95,7 @@
         <activity android:name=".activity.vccheck.UploadActivity" />
         <activity android:name=".activity.radio_timer.RunTimerActivityTestActivity" />
         <activity android:name=".activity.radio_timer.RunTimerSettingActivity" />
-        <activity android:name=".activity.vccheck.VitalTestActivity"/>
+        <activity android:name=".activity.vccheck.VitalTestActivity" />
     </application>
 
 </manifest>

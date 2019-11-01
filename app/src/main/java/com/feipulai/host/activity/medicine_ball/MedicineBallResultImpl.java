@@ -29,6 +29,7 @@ public class MedicineBallResultImpl implements SerialDeviceManager.RS232ResiltLi
         switch (msg.what) {
             case SerialConfigs.MEDICINE_BALL_EMPTY_RESPONSE:
                 log("空闲命令回复");
+                disposeListener.onFree();
                 break;
             case SerialConfigs.MEDICINE_BALL_SELF_CHECK_RESPONSE:
                 MedicineBallSelfCheckResult selfCheckResult = (MedicineBallSelfCheckResult) msg.obj;
@@ -74,5 +75,6 @@ public class MedicineBallResultImpl implements SerialDeviceManager.RS232ResiltLi
         void onResultArrived(MedicineBallResult result);
         void onStopTest();
         void onSelfCheck(MedicineBallSelfCheckResult selfCheckResult);
+        void onFree();
     }
 }

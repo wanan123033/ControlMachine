@@ -39,9 +39,7 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
     @Override
     protected void convert(final ViewHolder helper, final DeviceDetail item) {
 
-        if (item.isDeviceOpen()) {
-            helper.swDeviceClose.setChecked(item.isDeviceOpen());
-        }
+        helper.swDeviceClose.setChecked(item.isDeviceOpen());
         helper.cbDeviceState.setText(String.format("%d号设备状态", helper.getLayoutPosition() + 1));
         if (item.getStuDevicePair() != null) {
             if (item.getStuDevicePair().getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
@@ -79,7 +77,6 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
         helper.swDeviceClose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                helper.swDeviceClose.setChecked(isChecked);
                 item.setDeviceOpen(isChecked);
             }
         });
