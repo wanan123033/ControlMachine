@@ -18,6 +18,10 @@ import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.manager.BallManager;
+import com.feipulai.device.serial.RadioManager;
+import com.feipulai.device.serial.SerialConfigs;
+import com.feipulai.device.serial.beans.Basketball868Result;
 import com.feipulai.device.udp.UDPBasketBallConfig;
 import com.feipulai.device.udp.UdpClient;
 import com.feipulai.device.udp.UdpLEDUtil;
@@ -46,7 +50,7 @@ import butterknife.OnItemSelected;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 public class BasketBallSettingActivity extends BaseTitleActivity implements CompoundButton.OnCheckedChangeListener, RadioGroup.OnCheckedChangeListener
-        , UdpClient.UDPChannelListerner {
+        , UdpClient.UDPChannelListerner, RadioManager.OnRadioArrivedListener {
 
     @BindView(R.id.sp_test_no)
     Spinner spTestNo;
@@ -66,7 +70,8 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
     EditText etHostIp;
     @BindView(R.id.et_port)
     EditText etPort;
-
+    @BindView(R.id.ll_ip)
+    LinearLayout llIp;
     @BindView(R.id.rg_accuracy)
     RadioGroup rgAccuracy;
     @BindView(R.id.sp_carryMode)
@@ -88,6 +93,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
      * 点击是否为连接
      */
     private boolean isClickConnect;
+    private BallManager manager;
 
     @Override
     protected int setLayoutResID() {
@@ -100,9 +106,11 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
         setting = SharedPrefsUtil.loadFormSource(this, BasketBallSetting.class);
         if (setting == null)
             setting = new BasketBallSetting();
-        UdpClient.getInstance().init(1527);
-        UdpClient.getInstance().setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(), this);
-
+        
+//        UdpClient.getInstance().init(1527);
+//        UdpClient.getInstance().setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(), this);
+        manager = new BallManager.Builder(setting.getTestType()).setRadioListener(this).setHostIp(setting.getHostIp())
+                .setInetPost(1527).setPost(setting.getPost()).setUdpListerner(this).build();
         //设置测试次数
         ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testRound);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -166,6 +174,17 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
     }
 
     @Override
+    public void onRadioArrived(Message msg) {
+        this.isDisconnect = false;
+        if (msg.what == SerialConfigs.DRIBBLEING_PARAMETER) {
+            ToastUtils.showShort("设置成功");
+            Basketball868Result result = (Basketball868Result) msg.obj;
+            this.setting.setSensitivity(result.getSensitivity());
+            this.setting.setInterceptSecond(result.getInterceptSecond());
+        }
+    }
+
+    @Override
     public void onDataArrived(UDPResult result) {
         isDisconnect = false;
         switch (result.getType()) {
@@ -207,7 +226,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("项目设置") ;
+        return builder.setTitle("项目设置");
     }
 
     private boolean isCheckSetting() {
@@ -282,8 +301,10 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
                     ToastUtils.showShort("请输拦截秒数");
                     return;
                 }
-                UdpClient.getInstance().setHostIpPost(setting.getHostIp(), setting.getPost());
-                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_BLOCKERTIME(Integer.valueOf(etInterceptTime.getText().toString())));
+//                UdpClient.getInstance().setHostIpPost(setting.getHostIp(), setting.getPost());
+//                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_BLOCKERTIME(Integer.valueOf(etInterceptTime.getText().toString())));
+                manager.setHostIpPost(setting.getHostIp(), setting.getPost());
+                manager.sendSetBlockertime(1, SettingHelper.getSystemSetting().getHostId(), this.setting.getSensitivity(), Integer.valueOf(this.etInterceptTime.getText().toString()));
                 isDisconnect = true;
                 isClickConnect = false;
                 mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 2000);
@@ -293,8 +314,10 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
                     ToastUtils.showShort("请输入灵敏度");
                     return;
                 }
-                UdpClient.getInstance().setHostIpPost(setting.getHostIp(), setting.getPost());
-                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_T(Integer.valueOf(etSensitivity.getText().toString())));
+                manager.setHostIpPost(setting.getHostIp(), setting.getPost());
+                manager.sendSetDelicacy(1, SettingHelper.getSystemSetting().getHostId(), Integer.valueOf(this.etSensitivity.getText().toString()), this.setting.getInterceptSecond());
+//                UdpClient.getInstance().setHostIpPost(setting.getHostIp(), setting.getPost());
+//                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_T(Integer.valueOf(etSensitivity.getText().toString())));
                 isDisconnect = true;
                 isClickConnect = false;
                 mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 2000);
@@ -324,15 +347,32 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
             case R.id.tv_accuracy_use:
                 switch (rgAccuracy.getCheckedRadioButtonId()) {
                     case R.id.rb_tenths: //十分位
-                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(0));
+
+                        if (this.setting.getTestType() == 1) {
+                            TestConfigs.sCurrentItem.setDigital(1);
+                            ToastUtils.showShort("设置成功");
+                        } else {
+                            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(0));
+                            isDisconnect = true;
+                            isClickConnect = false;
+                            mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 2000);
+                        }
+
                         break;
                     case R.id.rb_percentile://百分位
-                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(1));
+                        if (this.setting.getTestType() == 1) {
+                            TestConfigs.sCurrentItem.setDigital(1);
+                            ToastUtils.showShort("设置成功");
+                        } else {
+                            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(1));
+                            isDisconnect = true;
+                            isClickConnect = false;
+                            mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 2000);
+                        }
+
                         break;
                 }
-                isDisconnect = true;
-                isClickConnect = false;
-                mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 2000);
+
                 break;
         }
     }

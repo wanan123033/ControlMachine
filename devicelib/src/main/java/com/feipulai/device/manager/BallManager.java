@@ -10,6 +10,7 @@ import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.device.udp.UDPBasketBallConfig;
 import com.feipulai.device.udp.UdpClient;
+import com.feipulai.device.udp.UdpLEDUtil;
 
 import java.io.UnsupportedEncodingException;
 
@@ -23,18 +24,18 @@ public class BallManager {
     private int patternType = 0;//0 UDP  1 868 默认0
     private String hostIp;
     private int post;
-    private int inetPort;
+    private int inetPort = 1527;
     private UdpClient.UDPChannelListerner udpChannelListerner;
     private RadioManager.OnRadioArrivedListener radioArrivedListener;
 
     public BallManager(int patternType) {
         this.patternType = patternType;
-        init();
     }
 
     public void setHostIpPost(String hostIp, int post) {
         this.hostIp = hostIp;
         this.post = post;
+        UdpClient.getInstance().setHostIpPost(hostIp, post);
     }
 
     public void init() {
@@ -49,11 +50,11 @@ public class BallManager {
     /**
      * 设置停止工作状态
      */
-    public void sendSetStopStatus(int hostId, int deviceId) {
+    public void sendSetStopStatus(int hostId) {
         if (patternType == 0) {
             UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
         } else {
-//            setRadioState(hostId, deviceId, 5);
+            setRadioStopTime(hostId);
         }
     }
 
@@ -74,15 +75,14 @@ public class BallManager {
      * 显示屏
      *
      * @param showType UP =  1 ，DOWN=2
-     * @param dataByte
+     * @param data
      * @return
      */
-    public void sendDisLed(int showType, byte[] dataByte) {
+    public void sendDisLed(int hostId, int showType, String data, Paint.Align align) {
         if (patternType == 0) {
-            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(showType, dataByte));
+            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(showType, UdpLEDUtil.getLedByte(data, align)));
         } else {
-            RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
-                    UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(showType, dataByte)));
+            setLedShowData(hostId, data, showType, align);
         }
     }
 
@@ -91,28 +91,36 @@ public class BallManager {
      *
      * @param status STATUS_FREE		1		//FREE
      *               STATUS_WAIT  		2		//WAIT To Start
-     *               STATUS_RUNING 	    3		//Start Run
+     *               STATUS_RUNING 	    3		//Start Run  无法进行统一状态命令， 区分发送命令处理
      *               STATUS_PREP  		4		//Prepare to stop
      *               STATUS_PAUSE 		5		//Display stop time,But Timer is Running
      * @return
      */
-    public void sendSetStatus(int hostId, int deviceId, int status) {
+    public void sendSetStatus(int hostId, int status) {
 
         if (patternType == 0) {
             UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(status));
         } else {
-            status = status == 4 ? 5 : status == 5 ? 6 : status;
-//            setRadioState(hostId, deviceId, status);
+            switch (status) {
+                case 1:
+                    setRadioFreeStates(hostId);
+                    break;
+                case 2:
+                    setRadioStartAwait(hostId);
+                    break;
+                case 5:
+                    setRadioPause(hostId);
+                    break;
+            }
         }
     }
 
-    public void sendGetStatus() {
+    public void sendGetStatus(int hostId, int deviceId) {
         if (patternType == 0) {
             UdpClient.getInstance().setHostIpPost(hostIp, post);
             UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_GET_STATUS);
         } else {
-            RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
-                    UDPBasketBallConfig.BASKETBALL_CMD_GET_STATUS));
+            getRadioState(hostId, deviceId);
         }
     }
 
@@ -160,7 +168,7 @@ public class BallManager {
         buf[4] = 0x01;      //本设备编号：0x01（主机）
         buf[5] = (byte) (hostId & 0xff);     //本设备主机号
         buf[6] = (byte) (deviceId & 0xff);       //目标设备子机号
-        buf[7] = 0x01;
+        buf[7] = 0x02;
         buf[8] = 0x00; //高字节在先
         buf[9] = 0x00;
         buf[10] = 0x00;
@@ -208,13 +216,18 @@ public class BallManager {
     }
 
     public void getRadioState(int hostId, int deviceId) {
-        byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x03, 0x01, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
+        byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x03, 0x01, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
         cmd[5] = (byte) hostId;
         cmd[6] = (byte) deviceId;
         cmd[18] = (byte) sum(cmd, 18);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
-
+    public void getRadioLedState(int hostId ) {
+        byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x02, 0x01, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
+        cmd[5] = (byte) hostId;
+        cmd[18] = (byte) sum(cmd, 18);
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+    }
     /**
      * 离线：0
      * 空闲：1
@@ -225,12 +238,10 @@ public class BallManager {
      * 开始等待
      *
      * @param hostId
-     * @param deviceId
      */
-    public void setRadioStartAwait(int hostId, int deviceId) {
-        byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x03, 0x01, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
+    public void setRadioStartAwait(int hostId) {
+        byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x03, 0x01, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
         cmd[5] = (byte) hostId;
-        cmd[6] = (byte) deviceId;
         cmd[18] = (byte) sum(cmd, 18);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
@@ -242,7 +253,7 @@ public class BallManager {
      * @param result
      */
     public void setRadioLedStartTime(int hostId, Basketball868Result result) {
-        byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x02, 0x01, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
+        byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x02, 0x01, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
         cmd[5] = (byte) hostId;
         cmd[14] = (byte) (result.getHour() & 0xff);
         cmd[15] = (byte) (result.getMinth() & 0xff);
@@ -256,7 +267,7 @@ public class BallManager {
      * 设置停止
      */
     public void setRadioStopTime(int hostId) {
-        byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x03, 0x01, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
+        byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x03, 0x01, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
         cmd[5] = (byte) hostId;
         cmd[18] = (byte) sum(cmd, 18);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
@@ -268,14 +279,17 @@ public class BallManager {
      * @param hostId
      */
     public void setRadioFreeStates(int hostId) {
-        byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x03, 0x01, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
+        byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x03, 0x01, 0x00, 0x00, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
         cmd[5] = (byte) hostId;
         cmd[18] = (byte) sum(cmd, 18);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
+    /**
+     * 暂停走表（显示屏）
+     */
     public void setRadioPause(int hostId) {
-        byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x02, 0x01, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
+        byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x02, 0x01, 0x00, 0x00, 0x9, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
         cmd[5] = (byte) hostId;
         cmd[18] = (byte) sum(cmd, 18);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
@@ -290,31 +304,35 @@ public class BallManager {
      */
     public void setLedShowData(int hostId, String data, int showType, Paint.Align align) {
 
-
-        byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x02, 0x01, 0x00, 0x00, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
-        cmd[5] = (byte) hostId;
-        cmd[12] = (byte) showType;
+        int x = 0;
         try {
             if (data.length() > 5) {
                 data = data.substring(0, 5);
             }
             byte[] dataByte = data.getBytes("GB2312");
-
+            byte[] cmd = new byte[dataByte.length + 17];
+            cmd[0] = (byte) 0xAA;
+            cmd[1] = (byte) cmd.length;
+            cmd[2] = 0x0D;
+            cmd[3] = 0x02;
+            cmd[4] = 0x01;
+            cmd[5] = (byte) hostId;
+            cmd[7] = 0x8;
+            cmd[12] = (byte) showType;
             if (align == Paint.Align.CENTER) {
-
-
+                x = (16 - data.getBytes("GBK").length) / 2;
             } else if (align == Paint.Align.RIGHT) {
-
+                x = 16 - data.getBytes("GBK").length;
             }
-
+            cmd[13] = (byte) x;
+            cmd[14] = (byte) (dataByte.length & 0xff);
+            System.arraycopy(dataByte, 0, cmd, 15, dataByte.length);
+            cmd[cmd.length - 2] = (byte) sum(cmd, 18);
+            cmd[cmd.length - 1] = 0x0d;
+            RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-
-
-        cmd[18] = (byte) sum(cmd, 18);
-        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
 
 
     }
@@ -371,6 +389,7 @@ public class BallManager {
          * @return
          */
         public BallManager build() {
+            ballManager.init();
             return ballManager;
         }
     }

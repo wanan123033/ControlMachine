@@ -1,19 +1,13 @@
 package com.feipulai.exam.activity.footBall;
 
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.R;
-import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
-import com.feipulai.exam.activity.basketball.wiress.BasketBallWiressActivity;
-import com.feipulai.exam.activity.setting.SettingHelper;
-import com.feipulai.exam.activity.setting.SystemSetting;
-import com.feipulai.exam.config.TestConfigs;
 
 import butterknife.OnClick;
 
@@ -36,16 +30,16 @@ public class FootBallItemSelectActivity extends BaseTitleActivity {
     @OnClick({R.id.tv_wireless,R.id.tv_wired})
     public void onClick(View view){
         switch (view.getId()){
-            case R.id.tv_wireless:
-                startActivity(new Intent(this, BasketBallWiressActivity.class));
-                break;
-            case R.id.tv_wired:
-                if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
-                    startActivity(new Intent(FootBallItemSelectActivity.this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
-                } else {
-                    startActivity(new Intent(FootBallItemSelectActivity.this, BaseGroupActivity.class));
-                }
-                break;
+//            case R.id.tv_wireless:
+//                startActivity(new Intent(this, BasketBallWiressActivity.class));
+//                break;
+//            case R.id.tv_wired:
+//                if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
+//                    startActivity(new Intent(FootBallItemSelectActivity.this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
+//                } else {
+//                    startActivity(new Intent(FootBallItemSelectActivity.this, BaseGroupActivity.class));
+//                }
+//                break;
         }
     }
 }

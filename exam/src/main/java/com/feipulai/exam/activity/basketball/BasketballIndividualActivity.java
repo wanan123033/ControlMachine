@@ -26,6 +26,7 @@ import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.basketball.adapter.BasketBallResultAdapter;
 import com.feipulai.exam.activity.basketball.result.BasketBallTestResult;
 import com.feipulai.exam.activity.basketball.util.TimerUtil;
+import com.feipulai.exam.activity.basketball.wiress.BasketBallPairActivity;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
@@ -75,6 +76,10 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
     TextView txtStopTiming;
     @BindView(R.id.txt_device_status)
     TextView txtDeviceStatus;
+    @BindView(R.id.tv_pair)
+    TextView tvPair;
+
+
     private IndividualCheckFragment individualCheckFragment;
     // 状态 WAIT_FREE---> WAIT_CHECK_IN---> WAIT_BEGIN--->TESTING---->WAIT_STOP---->WAIT_CONFIRM--->WAIT_CHECK_IN
     private static final int WAIT_FREE = 0x0;
@@ -141,6 +146,9 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         prepareForCheckIn();
         state = WAIT_FREE;
         setOperationUI();
+        if (setting.getTestType() == 1) {
+            tvPair.setVisibility(View.VISIBLE);
+        }
     }
 
 
@@ -389,7 +397,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         title = TestConfigs.machineNameMap.get(machineCode)
                 + SettingHelper.getSystemSetting().getHostId() + "号机"
                 + (isTestNameEmpty ? "" : ("-" + SettingHelper.getSystemSetting().getTestName()));
-        return builder.setTitle(title) .addRightText("项目设置", new View.OnClickListener() {
+        return builder.setTitle(title).addRightText("项目设置", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startProjectSetting();
@@ -488,6 +496,11 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
     private boolean isConfigurableNow() {
 
         return !(state == WAIT_FREE || state == WAIT_CHECK_IN || state == WAIT_BEGIN);
+    }
+
+    @OnClick(R.id.tv_pair)
+    public void onViewClicked() {
+        IntentUtil.gotoActivity(this, BasketBallPairActivity.class);
     }
 
     @OnClick({R.id.tv_punish_add, R.id.tv_punish_subtract, R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal, R.id.tv_print, R.id.tv_confirm
@@ -994,6 +1007,5 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         }
 
     }
-
 
 }

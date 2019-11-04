@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -456,7 +455,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         roundResult.setItemCode(itemCode);
         roundResult.setResult(baseStuPair.getResult());
         roundResult.setResultState(baseStuPair.getResultState());
-        roundResult.setTestTime(DateUtil.getCurrentTime("yyyy-MM-dd HH:mm:ss"));
+        roundResult.setTestTime(DateUtil.getCurrentTime2("yyyy-MM-dd HH:mm:ss"));
         roundResult.setRoundNo(1);
         RoundResult bestResult = DBManager.getInstance().queryBestScore(baseStuPair.getStudent().getStudentCode());
         if (bestResult != null) {

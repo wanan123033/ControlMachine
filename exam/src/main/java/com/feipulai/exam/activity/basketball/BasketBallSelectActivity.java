@@ -1,52 +1,41 @@
 package com.feipulai.exam.activity.basketball;
 
-import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.View;
 
-import com.feipulai.common.view.baseToolbar.BaseToolbar;
-import com.feipulai.exam.R;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.utils.IntentUtil;
+import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.exam.activity.SubItemsSelectActivity;
 import com.feipulai.exam.activity.base.BaseGroupActivity;
-import com.feipulai.exam.activity.base.BaseTitleActivity;
-import com.feipulai.exam.activity.basketball.wiress.BasketBallWiressActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
-import com.feipulai.exam.activity.setting.SystemSetting;
-import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.entity.Item;
 
-import butterknife.OnClick;
-
-public class BasketBallSelectActivity extends BaseTitleActivity {
-    @Override
-    protected int setLayoutResID() {
-        return R.layout.activity_basketball_select;
-    }
-
-    @Nullable
-    @Override
-    protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        builder.setTitle("模式选择");
-        return builder;
-    }
-
-    @Override
-    protected void initData() {
-
-    }
-
-    @OnClick({R.id.tv_wireless,R.id.tv_wired})
-    public void onClick(View view){
-        switch (view.getId()){
-            case R.id.tv_wireless:
-                startActivity(new Intent(this, BasketBallWiressActivity.class));
-                break;
-            case R.id.tv_wired:
-                if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
-                    startActivity(new Intent(BasketBallSelectActivity.this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
-                } else {
-                    startActivity(new Intent(BasketBallSelectActivity.this, BaseGroupActivity.class));
+public class BasketBallSelectActivity
+        extends SubItemsSelectActivity
+{
+    protected void initData()
+    {
+        super.initData();
+        this.itemList.clear();
+        this.itemList.add(new Item("有线模式"));
+        this.itemList.add(new Item("无线模式"));
+        this.adapter.notifyDataSetChanged();
+        getToolbar().setTitle("篮球运球模式选择");
+        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                BasketBallSetting setting =  SharedPrefsUtil.loadFormSource(BasketBallSelectActivity.this, BasketBallSetting.class);
+                setting.setTestType(position);
+                if (SettingHelper.getSystemSetting().getTestPattern() == 0) {
+                    IntentUtil.gotoActivity(BasketBallSelectActivity.this, BasketballIndividualActivity.class);
+                }else{
+                    IntentUtil.gotoActivity(BasketBallSelectActivity.this, BaseGroupActivity.class);
                 }
-                break;
-        }
+                SharedPrefsUtil.save(BasketBallSelectActivity.this, setting);
+                BasketBallSelectActivity.this.finish();
+            }
+        });
     }
+
+    protected void toastSpeak(String paramString) {}
 }

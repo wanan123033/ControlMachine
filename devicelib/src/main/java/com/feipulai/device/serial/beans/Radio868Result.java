@@ -182,20 +182,38 @@ public class Radio868Result {
                 }
                 break;
             case ItemDefault.CODE_LQYQ:
+            case ItemDefault.CODE_ZQYQ:
                 if (data[0] == (byte) 0xAA && data[data.length - 1] == 0x0D && data[2] == 0x0d) {
+                    setResult(new Basketball868Result(data));
                     switch (data[7]) {
-                        case 0x01:
+                        case 0x01://0频配对返回
                             setType(SerialConfigs.DRIBBLEING_FREQUENCY);
-                            setResult(new Basketball868Result(data));
                             break;
-                        case 0x02:
+                        case 0x02://参数设置
                             setType(SerialConfigs.DRIBBLEING_PARAMETER);
-                            setResult(new Basketball868Result(data));
                             break;
-                        case 0x03:
+                        case 0x03://获取状态
                             setType(SerialConfigs.DRIBBLEING_START);
-                            setResult(new Basketball868Result(data));
                             break;
+                        case 0x04://等待
+                            setType(SerialConfigs.DRIBBLEING_AWAIT);
+                            break;
+                        case 0x05://LED开始计时
+                            setType(SerialConfigs.DRIBBLEING_LED_START_TIME);
+                            break;
+                        case 0x06://停止
+                            setType(SerialConfigs.DRIBBLEING_STOP);
+                            break;
+                        case 0x07://空闲
+                            setType(SerialConfigs.DRIBBLEING_FREE);
+                            break;
+                        case 0x08://led显示
+                            setType(SerialConfigs.DRIBBLEING_LED_CONTENT);
+                            break;
+                        case 0x09://暂停
+                            setType(SerialConfigs.DRIBBLEING_PAUSE);
+                            break;
+
                     }
 
                 }

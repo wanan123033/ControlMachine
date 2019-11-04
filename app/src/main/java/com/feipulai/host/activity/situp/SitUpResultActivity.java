@@ -102,7 +102,7 @@ public class SitUpResultActivity
 
         initAdapter();
 
-        mTestTime = DateUtil.getCurrentTime("yyyy-MM-dd HH:mm:ss");
+        mTestTime = DateUtil.getCurrentTime2("yyyy-MM-dd HH:mm:ss");
 
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setTitle("保存成绩");

@@ -17,9 +17,11 @@ public class BasketBallListener implements UdpClient.UDPChannelListerner, RadioM
 
     private BasketBallResponseListener listener;
 
-    public BasketBallListener(BasketBallResponseListener listener) {
+    public BasketBallListener(final BasketBallResponseListener listener) {
         this.listener = listener;
+
     }
+
 
     @Override
     public void channelInactive() {
@@ -34,7 +36,7 @@ public class BasketBallListener implements UdpClient.UDPChannelListerner, RadioM
             case UDPBasketBallConfig.CMD_GET_STATUS_RESPONSE:
             case UDPBasketBallConfig.CMD_SET_STATUS_RESPONSE:
                 if (basketballResult.getUcStatus() == 0) {
-                    if (basketballResult.gettNum()== -1)
+                    if (basketballResult.gettNum() == -1)
                         return;
                     listener.triggerStart(basketballResult);
                 } else {
@@ -59,7 +61,7 @@ public class BasketBallListener implements UdpClient.UDPChannelListerner, RadioM
             case UDPBasketBallConfig.CMD_GET_STATUS_RESPONSE:
             case UDPBasketBallConfig.CMD_SET_STATUS_RESPONSE:
                 if (basketballResult.getUcStatus() == 0) {
-                    if (basketballResult.gettNum()== -1)
+                    if (basketballResult.gettNum() == -1)
                         return;
                     listener.triggerStart(basketballResult);
                 } else {
@@ -99,5 +101,8 @@ public class BasketBallListener implements UdpClient.UDPChannelListerner, RadioM
          * @param result
          */
         void getStatusStop(BasketballResult result);
+
     }
+
+
 }

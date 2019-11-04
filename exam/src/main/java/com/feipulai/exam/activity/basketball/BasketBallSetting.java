@@ -7,6 +7,9 @@ import com.feipulai.exam.config.TestConfigs;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 public class BasketBallSetting {
+    public static final int WIRED_TYPE = 0;
+    public static final int WIRELESS_TYPE = 1;
+    private boolean autoPair = true;
     private int testNo = 1;// 允许测试的次数
     private int interceptSecond = 5;//默认5秒
     private int sensitivity = 15;//灵敏度
@@ -23,6 +26,7 @@ public class BasketBallSetting {
      * 分组测试模式 0 连续 1 循环
      */
     private int testPattern =TestConfigs.GROUP_PATTERN_SUCCESIVE;
+    private int testType = 0;
     public int getTestNo() {
         return testNo;
     }
@@ -102,6 +106,22 @@ public class BasketBallSetting {
 
     public void setTestPattern(int testPattern) {
         this.testPattern = testPattern;
+    }
+
+    public int getTestType() {
+        return testType;
+    }
+
+    public void setTestType(int testType) {
+        this.testType = testType;
+    }
+
+    public boolean isAutoPair() {
+        return autoPair;
+    }
+
+    public void setAutoPair(boolean autoPair) {
+        this.autoPair = autoPair;
     }
 
     @Override
