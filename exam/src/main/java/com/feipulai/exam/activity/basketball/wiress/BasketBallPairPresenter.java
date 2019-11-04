@@ -4,13 +4,12 @@ import android.content.Context;
 import android.os.Build;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
-import com.feipulai.device.ic.utils.ItemDefault;
-import com.feipulai.device.manager.BallManager;
+import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.exam.activity.basketball.BasketBallSetting;
+import com.feipulai.exam.activity.pushUp.PushUpSetting;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairContract;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairPresenter;
-import com.feipulai.exam.config.TestConfigs;
 
 import java.util.Objects;
 
@@ -65,6 +64,6 @@ public class BasketBallPairPresenter extends SitPullUpPairPresenter {
 
     @Override
     public void saveSettings() {
-        SharedPrefsUtil.save(this.context, this.setting);
+
     }
 }

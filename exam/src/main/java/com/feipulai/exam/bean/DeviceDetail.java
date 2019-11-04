@@ -9,6 +9,8 @@ import com.feipulai.exam.entity.RoundResult;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 public class DeviceDetail {
+    private int time;
+
     public DeviceDetail(){
         baseStuPair = new BaseStuPair();
         baseStuPair.setCanTest(true);
@@ -49,5 +51,13 @@ public class DeviceDetail {
 
     public void setRound(int round) {
         this.round = round;
+    }
+
+    public void setTestTime(int time) {
+        this.time = time;
+    }
+
+    public int getTime() {
+        return time;
     }
 }

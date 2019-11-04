@@ -198,6 +198,8 @@
         <activity android:name=".activity.footBall.FootBallItemSelectActivity" />
         <activity android:name=".activity.basketball.BasketBallSelectActivity" />
         <activity android:name=".activity.basketball.wiress.BasketBallPairActivity" />
+        <activity android:name=".activity.basketball.wiress.BasketBallWiressActivity" />
+        <activity android:name=".activity.volleyball.more_devices.VolleyBallMore2TestActivity" />
     </application>
 
 </manifest>

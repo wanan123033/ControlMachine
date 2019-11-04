@@ -18,6 +18,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.feipulai.common.utils.HandlerUtil;
@@ -65,6 +66,8 @@ public class VolleyBallSettingActivity
     EditText etTestTime;
     @BindView(R.id.txt_device_versions)
     TextView txtDeviceVersions;
+    @BindView(R.id.rb_pentity)
+    CheckBox rb_pentity;
 
     private Integer[] testRound = new Integer[]{1, 2, 3};
 
@@ -108,13 +111,15 @@ public class VolleyBallSettingActivity
         cbFullSkip.setChecked(setting.isFullSkip());
         llFullSkip.setVisibility(setting.isFullSkip() ? View.VISIBLE : View.GONE);
         cbFullSkip.setOnCheckedChangeListener(this);
-
+        rb_pentity.setChecked(setting.isPenalize());
         etTestTime.setText(setting.getTestTime() + "");
         editMaleFull.addTextChangedListener(this);
         editFemaleFull.addTextChangedListener(this);
         etTestTime.addTextChangedListener(this);
         SerialDeviceManager.getInstance().setRS232ResiltListener(this);
         volleyBallManager.getVersions();
+
+        rb_pentity.setOnCheckedChangeListener(this);
     }
 
     @Nullable
@@ -162,7 +167,9 @@ public class VolleyBallSettingActivity
                 setting.setFullSkip(isChecked);
                 llFullSkip.setVisibility(isChecked ? View.VISIBLE : View.GONE);
                 break;
-
+            case R.id.rb_pentity:
+                setting.setPenalize(rb_pentity.isChecked());
+                break;
         }
     }
 

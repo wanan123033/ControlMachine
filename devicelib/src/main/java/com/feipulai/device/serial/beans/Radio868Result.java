@@ -19,7 +19,7 @@ public class Radio868Result {
     private Object mResult;
 
     public Radio868Result(byte[] data) {
-        Log.i("james", StringUtility.bytesToHexString(data));
+//        Log.i("james", StringUtility.bytesToHexString(data));
         if (MachineCode.machineCode == -1) {
             return;
         }
@@ -167,6 +167,7 @@ public class Radio868Result {
                             setResult(new VolleyPairResult(data));
                             break;
                         case (byte) 0xb3://查询状态
+//                            Log.e("GGG",StringUtility.bytesToHexString(data));
                             setType(SerialConfigs.VOLLEY_BALL_SET_MORE_MATCH);
                             setResult(new VolleyPair868Result(data));
                             break;
