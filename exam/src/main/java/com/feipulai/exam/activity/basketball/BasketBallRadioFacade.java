@@ -97,28 +97,7 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
     public void onRadioArrived(Message msg) {
         if (msg.what == SerialConfigs.DRIBBLEING_START) {
             Basketball868Result result = (Basketball868Result) msg.obj;
-            if (deviceStateList.size() == getBallDeviceCount()) {
-
-                if (mCurrentConnect[result.getDeviceId()] == BaseDeviceState.STATE_CONFLICT) {
-                    return;
-                }
-                if (TextUtils.isEmpty(deviceStateList.get(result.getDeviceId()).getDeviceSerial())) {
-                    deviceStateList.get(result.getDeviceId()).setDeviceSerial(result.getSerialNumber());
-                    mCurrentConnect[result.getDeviceId()] = BaseDeviceState.STATE_FREE;
-                } else if (TextUtils.equals(deviceStateList.get(result.getDeviceId()).getDeviceSerial(), result.getSerialNumber())) {
-                    mCurrentConnect[result.getDeviceId()] = BaseDeviceState.STATE_FREE;
-                } else {
-                    mCurrentConnect[result.getDeviceId()] = BaseDeviceState.STATE_CONFLICT;
-                }
-
-                if (deviceStateList.get(result.getDeviceId()).getState() != mCurrentConnect[result.getDeviceId()]) {
-                    deviceStateList.get(result.getDeviceId()).setState(mCurrentConnect[result.getDeviceId()]);
-                    EventBus.getDefault().post(new BaseEvent(result.getDeviceId(), EventConfigs.BALL_STATE_UPDATE));
-                }
-
-            }
-
-
+            setState(result);
         }
 
     }
@@ -130,5 +109,28 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
         return 3;
     }
 
+
+
+    private void setState(Basketball868Result result) {
+        if (deviceStateList.size() == getBallDeviceCount()) {
+            if (mCurrentConnect[result.getDeviceId()] == BaseDeviceState.STATE_CONFLICT) {
+                return;
+            }
+            if (TextUtils.isEmpty(deviceStateList.get(result.getDeviceId()).getDeviceSerial())) {
+                deviceStateList.get(result.getDeviceId()).setDeviceSerial(result.getSerialNumber());
+                mCurrentConnect[result.getDeviceId()] = BaseDeviceState.STATE_FREE;
+            } else if (TextUtils.equals(deviceStateList.get(result.getDeviceId()).getDeviceSerial(), result.getSerialNumber())) {
+                mCurrentConnect[result.getDeviceId()] = BaseDeviceState.STATE_FREE;
+            } else {
+                mCurrentConnect[result.getDeviceId()] = BaseDeviceState.STATE_CONFLICT;
+            }
+
+            if (deviceStateList.get(result.getDeviceId()).getState() != mCurrentConnect[result.getDeviceId()]) {
+                deviceStateList.get(result.getDeviceId()).setState(mCurrentConnect[result.getDeviceId()]);
+                EventBus.getDefault().post(new BaseEvent(result.getDeviceId(), EventConfigs.BALL_STATE_UPDATE));
+            }
+
+        }
+    }
 
 }
