@@ -9,6 +9,7 @@ import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.activity.data.DataRetrieveActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
+import com.feipulai.host.config.EventConfigs;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
@@ -24,6 +25,8 @@ import com.feipulai.host.netUtils.RequestSub;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.orhanobut.logger.Logger;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -105,6 +108,18 @@ public class ItemSubscriber {
                 if (body == null || body.size() == 0) {
                     return;
                 }
+                for (Item item : body) {
+                    if (TextUtils.isEmpty(item.getItemCode())) {
+                        ToastUtils.showShort("项目代码不能为空，请联系管理员进行数据更新");
+                        return;
+                    }
+
+                    if (item.getMachineCode() == 0) {
+                        ToastUtils.showShort("项目机器码不能为空，请联系管理员进行数据更新");
+                        return;
+                    }
+                }
+
                 DBManager.getInstance().freshAllItems(body);
                 int initState = TestConfigs.init(context,
                         TestConfigs.sCurrentItem.getMachineCode(),
