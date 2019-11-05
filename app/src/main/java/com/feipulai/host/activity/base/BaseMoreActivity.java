@@ -232,31 +232,37 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         Student student = pair.getStudent();
         if (student == null)
             return;
-//        int ledMode = SettingHelper.getSystemSetting().getLedMode();
-//        if (ledMode == 0){
-        String str = student.getStudentName();
-        int length = InteractUtils.stringLength(str);
-        int temp = 12 - length;
-        StringBuilder sb = new StringBuilder();
-        sb.append(str);
-        if (temp> 0){
-            for (int i = 0; i < temp; i++) {
-                sb.append(" ");
+        int ledMode = SettingHelper.getSystemSetting().getLedMode();
+        if (ledMode == 0) {
+            String str = student.getStudentName();
+            int length = InteractUtils.stringLength(str);
+            int temp = 12 - length;
+            StringBuilder sb = new StringBuilder();
+            sb.append(str);
+            if (temp > 0) {
+                for (int i = 0; i < temp; i++) {
+                    sb.append(" ");
+                }
+                str = sb.append("开始").toString();
+
+            } else {
+                str = InteractUtils.getStrWithLength(str, 4);
+                sb.append(str).append(" ").append(" ").append(" ").append(" ").append("开始");
             }
-            str = sb.append("开始").toString();
 
+            byte[] data = new byte[0];
+            try {
+                data = str.getBytes("GB2312");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, index,
+                    false, true);
         }else {
-            str = InteractUtils.getStrWithLength(str,4);
-            sb.append(str).append(" ").append(" ").append(" ").append(" ").append("开始");
+            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index,
+                    pair.getStudent().getStudentName(), mLEDManager.getX(pair.getStudent().getLEDStuName()), 0,
+                    true, false);
         }
-
-        byte[] data = new byte[0];
-        try {
-            data = str.getBytes("GB2312");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, index, false, true);
     }
 
 
@@ -324,16 +330,32 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     private void updateResultLed(BaseStuPair baseStu, int index) {
         String result = ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
-        int x = 7;
-        if (baseStu.getResult() < 1000) {
-            x = 9;
-        } else if (baseStu.getResult() >= 1000 && baseStu.getResult() < 10000) {
-            x = 8;
-        } else if (baseStu.getResult() >= 10000) {
-            x = 6;
+        int ledMode = SettingHelper.getSystemSetting().getLedMode();
+        if (ledMode == 0) {
+            int x = 7;
+            if (baseStu.getResult() < 1000) {
+                x = 9;
+            } else if (baseStu.getResult() >= 1000 && baseStu.getResult() < 10000) {
+                x = 8;
+            } else if (baseStu.getResult() >= 10000) {
+                x = 6;
+            }
+
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, x, index, false, true);
+        }else {
+            byte[] data = new byte[16];
+            String str = "当前：";
+            try {
+                byte[] strData = str.getBytes("GB2312");
+                System.arraycopy(strData, 0, data, 0, strData.length);
+                byte[] resultData = result.getBytes("GB2312");
+                System.arraycopy(resultData, 0, data, data.length - resultData.length - 1, resultData.length);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(),index, data, 0, 1, false, true);
         }
 
-        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, x, index, false, true);
     }
 
     public synchronized void updateDevice(@NonNull BaseDeviceState deviceState) {
@@ -435,7 +457,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         PrinterManager.getInstance().print(
                 String.format(getString(R.string.print_result_stu_code), student.getStudentCode()));
         PrinterManager.getInstance().print(
-                String.format(getString(R.string.print_result_stu_code), student.getStudentName()));
+                String.format(getString(R.string.print_result_stu_name), student.getStudentName()));
         PrinterManager.getInstance().print(
                 String.format(getString(R.string.print_result_stu_result), (baseStuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) ?
                         getString(R.string.foul) : ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult())));

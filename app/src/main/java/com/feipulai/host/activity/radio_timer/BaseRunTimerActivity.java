@@ -18,6 +18,7 @@ import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.BaseEvent;
 import com.feipulai.host.config.EventConfigs;
 import com.feipulai.host.config.TestConfigs;
+import com.feipulai.host.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
@@ -435,65 +436,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
      * @return
      */
     public String getFormatTime(int time) {
-        int s = ((time / 1000) % 60);//秒
-        int m = time / 60000;//分钟
-        int hs;
-
-        switch (runTimerSetting.getMarkDegree()) {
-            case 3://非0进位
-                if (isSecond) {//十分位
-                    hs = (time % 1000 / 100);
-                    if ((time%100)-9> 0){
-                        hs+=1;
-                        if (hs>9){
-                            s+=1;
-                            hs= 0;
-                            if (s>59){
-                                m+=1;
-                                s=00;
-                            }
-                        }
-                    }
-                } else {
-                    hs = (time % 1000 / 10);
-                    if (time%10>0){
-                        hs+=1;
-                        if (hs>9){
-                            s+=1;
-                            hs= 0;
-                            if (s>59){
-                                m+=1;
-                                s=00;
-                            }
-                        }
-                    }
-                }
-                break;
-            case 1://四舍五入
-                if (isSecond) {//十分位
-                    hs = Math.round(time % 1000 / 100);
-                } else {
-                    hs = Math.round(time % 1000 / 10);
-                }
-                break;
-            case 2://不进位
-                if (isSecond) {//十分位
-                    hs = time % 1000 / 100;
-                } else {
-                    hs = time % 1000 / 10;
-                }
-                break;
-            default:
-                hs = 0;
-                break;
-
-        }
-        if (isSecond){
-            return String.format("%02d:%02d.%1d", m, s, hs);
-        }else {
-            return String.format("%02d:%02d.%02d", m, s, hs);
-        }
-
+        return ResultDisplayUtils.getStrResultForDisplay(time, false);
     }
 
     private void updateTimeText(int time) {
