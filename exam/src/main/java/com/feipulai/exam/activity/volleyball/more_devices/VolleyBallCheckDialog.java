@@ -30,20 +30,22 @@ public class VolleyBallCheckDialog extends DialogFragment implements RadioManage
         public boolean handleMessage(Message msg) {
             VolleyPair868Result resul = (VolleyPair868Result) msg.obj;
             byte[] dataArr = resul.getDataArr();
-            byte[] result = new byte[]{dataArr[14],dataArr[15],dataArr[16],dataArr[17],dataArr[18]};
-            List<Integer> states = new ArrayList<>();
-            for (int j = 0 ; j < result.length ; j++){
-                if (result[j] == (byte)0xFF){
-                    for (int i = 0 ; i < 10 ; i++){
-                        states.add(1);
-                    }
-                }else {
-                    for (int i = 0 ; i < 10 ; i++){
-                        states.add(0);
+            if (dataArr != null) {
+                byte[] result = new byte[]{dataArr[14], dataArr[15], dataArr[16], dataArr[17], dataArr[18]};
+                List<Integer> states = new ArrayList<>();
+                for (int j = 0; j < result.length; j++) {
+                    if (result[j] == (byte) 0xFF) {
+                        for (int i = 0; i < 10; i++) {
+                            states.add(1);
+                        }
+                    } else {
+                        for (int i = 0; i < 10; i++) {
+                            states.add(0);
+                        }
                     }
                 }
+                checkDeviceView.setData(5, states);
             }
-            checkDeviceView.setData(5,states);
             return false;
         }
     });

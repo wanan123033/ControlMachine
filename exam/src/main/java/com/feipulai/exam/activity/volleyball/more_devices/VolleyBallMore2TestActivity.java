@@ -149,17 +149,9 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
 
     @Override
     protected void gotoItemSetting() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("请选择");
-        builder.setItems(new String[]{"一号机", "二号机", "三号机", "四号机"}, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(getApplicationContext(), VolleyBallSettingActivity.class);
-                intent.putExtra("deviceId",which + 1);
-                startActivity(intent);
-            }
-        });
-        builder.create().show();
+        Intent intent = new Intent(getApplicationContext(), VolleyBallSettingActivity.class);
+        intent.putExtra("deviceId",3);
+        startActivity(intent);
     }
 
     @Override
