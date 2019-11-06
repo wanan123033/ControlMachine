@@ -21,6 +21,7 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.beans.RunTimerResult;
 
 import com.feipulai.host.R;
+import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.setting.LEDSettingActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.adapter.PopAdapter;
@@ -45,7 +46,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
+public class RunTimerTestActivity extends BaseRunTimerActivity {
 
     @BindView(R.id.et_input_text)
     StuSearchEditText etInputText;
@@ -81,20 +82,17 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     TextView tvRunState;
     @BindView(R.id.tv_wait_ready)
     TextView tvWaitReady;
-    private int testNo;
     private List<RunStudent> mList = new ArrayList<>();
     private RunNumberAdapter2 mAdapter2;
     private RunNumberAdapter mAdapter;
     private ResultPopWindow resultPopWindow;
-    //    private ListView lvResults;
     @BindView(R.id.lv_results)
     ListView lvResults;
-    //    private StudentPopWindow studentPopWindow ;
     private List<String> marks = new ArrayList<>();
     //更换成绩的序号
     private int select;
     //当前测试次数
-    private int currentTestTime = 0;
+//    private int currentTestTime = 0;
     private boolean isSetting = true;
     private SoundPlayUtils playUtils;
 
@@ -162,40 +160,12 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
             }
         });
 
-//        studentPopWindow = new StudentPopWindow(this);
-//        lvResults = studentPopWindow.getLvResults();
-        etInputText.setData(lvResults, this);
-//        etInputText.setShowListListener(new StuSearchEditText2.ShowListListener() {
-//            @Override
-//            public void onShowListener(boolean isShow) {
-//                if (isShow){
-//                    studentPopWindow.showPop(etInputText);
-//                    etInputText.setFocusable(true);
-//                    etInputText.setFocusableInTouchMode(true);
-//                    etInputText.requestFocus();
-//                }else {
-//                    studentPopWindow.dismiss();
-//                }
-//
-//            }
-//        });
 
-//        getToolbar().getLeftView(0).setOnClickListener(backListener);
-//        getToolbar().getLeftView(1).setOnClickListener(backListener);
+        etInputText.setData(lvResults, this);
+
     }
 
-    View.OnClickListener backListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (llFirst.getVisibility() == View.VISIBLE) {
-                finish();
-            } else {
-                llFirst.setVisibility(View.VISIBLE);
-                rlSecond.setVisibility(View.GONE);
-                stopRun();
-            }
-        }
-    };
+
 
     @Override
     protected void onResume() {
@@ -263,11 +233,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
                 break;
             case R.id.tv_wait_start://等待发令
                 waitStart();
-                if (currentTestTime >= maxTestTimes) {
-                    isOverTimes = true;
-                } else {
-                    showReady(mList, true);
-                }
+                showReady(mList, true);
                 for (RunStudent runStudent : mList) {
                     runStudent.setMark("");
                     runStudent.getResultList().clear();
@@ -289,37 +255,23 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
                 changeState(new boolean[]{false, true, false, false, false});
                 break;
             case R.id.tv_mark_confirm://成绩确认
-                currentTestTime++;
                 markConfirm();
                 for (RunStudent runStudent : mList) {
                     if (runStudent.getStudent() != null) {
-                        disposeManager.saveResult(runStudent.getStudent(), runStudent.getOriginalMark(), currentTestTime, testNo + 1);
-                        List<RoundResult> resultList = DBManager.getInstance().queryResultsByStudentCode(runStudent.getStudent().getStudentCode());
-                        List<String> list = new ArrayList<>();
-                        for (RoundResult result : resultList) {
-                            list.add(getFormatTime(result.getResult()));
+                        BaseStuPair baseStuPair = new BaseStuPair();
+                        baseStuPair.setStudent(runStudent.getStudent());
+                        baseStuPair.setResult(runStudent.getOriginalMark());
+                        baseStuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
+                        disposeManager.saveResult(baseStuPair);
+                        if (SettingHelper.getSystemSetting().isAutoPrint()){
+                            disposeManager.printResult(runStudent.getStudent(),runStudent.getOriginalMark());
                         }
 
-                        disposeManager.printResult(runStudent.getStudent(), list, currentTestTime, maxTestTimes, -1);
-                        list.clear();
                     }
                 }
                 disposeManager.setShowLed(mList);
 
-                if (currentTestTime >= maxTestTimes) {//回到初始界面
-                    currentTestTime = 0;
-                    isSetting = true;
-                    llFirst.setVisibility(View.VISIBLE);
-                    rlSecond.setVisibility(View.GONE);
-                    mList.clear();
-                    for (int i = 0; i < runNum; i++) {
-                        RunStudent runStudent = new RunStudent();
-                        runStudent.setResultList(new ArrayList<RunStudent.WaitResult>());
-                        mList.add(runStudent);
-                    }
-                    mAdapter2.notifyDataSetChanged();
-                    mAdapter.notifyDataSetChanged();
-                }
+
                 break;
         }
     }
@@ -349,24 +301,6 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     @Override
     public void onCheckIn(Student student) {
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
-        List<RoundResult> roundResultList = DBManager.getInstance().queryFinallyRoundScoreByExamTypeList(student.getStudentCode(), studentItem.getExamType());
-        //保存成绩，并测试轮次大于测试轮次次数
-        if (roundResultList != null && roundResultList.size() >= maxTestTimes) {
-            //已测试，不重测
-//            roundNo = roundResult.getRoundNo();
-//            selectTestDialog(student);
-            toastSpeak("该考生所有轮次已全部测试完成");
-            return;
-        }
-
-        //是否有成绩，没有成绩查底该项目是否有成绩，没有成绩测试次数为1，有成绩测试次数+1
-        if (roundResultList != null && roundResultList.size() == 0) {
-            RoundResult testRoundResult = DBManager.getInstance().queryFinallyRoundScore(student.getStudentCode());
-            testNo = testRoundResult == null ? 1 : testRoundResult.getTestNo() + 1;
-        } else {
-            testNo = roundResultList.get(0).getTestNo();
-        }
-        currentTestTime = roundResultList.size();
         if (isExistStudent(student)) {
             toastSpeak("该考生已存在");
             return;
@@ -377,7 +311,6 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
 
     private void addStudent(Student student) {
         if (testState != 2 && testState != 3 && testState != 4) {
-            currentTestTime = 0;
             for (int i = 0; i < runNum; i++) {
                 if (mList.get(i).getStudent() == null) {
                     mList.get(i).setStudent(student);
@@ -415,18 +348,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
         txtStuSex.setText(student.getSex() == 0 ? "男" : "女");
     }
 
-//    private void selectTestDialog(final Student student) {
-//        new AlertDialog.Builder(this).setMessage(student.getStudentName() + "考生已测试过本项目，是否进行再次测试")
-//                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        //重测清除已有成绩
-//                        DBManager.getInstance().deleteStuResult(student.getStudentCode());
-//                        addStudent(student);
-//                        dialog.dismiss();
-//                    }
-//                }).setNegativeButton("取消", null).show();
-//    }
+
 
     @Override
     public void updateText(String time) {
@@ -446,10 +368,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
         list.add(waitResult);
         mAdapter2.notifyDataSetChanged();
         mAdapter.notifyDataSetChanged();
-        if ((mList.get(result.getTrackNum() - 1).getStudent() != null)) {
-//            disposeManager.saveResult(mList.get(result.getTrackNum() - 1).getStudent(), result.getResult(), currentTestTime, testNo);
-            Logger.i("runTimer:" + mList.get(result.getTrackNum() - 1).getStudent().getStudentName() + "测试次数:" + currentTestTime);
-        }
+
 
 //        disposeManager.setShowLed(mList);
     }

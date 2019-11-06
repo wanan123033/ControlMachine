@@ -12,12 +12,10 @@ import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.RunTimerConnectState;
 import com.feipulai.device.serial.beans.RunTimerResult;
 import com.feipulai.device.serial.command.ConvertCommand;
-
 import com.feipulai.host.activity.base.BaseCheckActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.BaseEvent;
 import com.feipulai.host.config.EventConfigs;
-import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
 
@@ -59,15 +57,13 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
     public int runNum;
     public int interceptPoint; //1起点  2终点
     private HashMap<String, Integer> promoteTimes = new HashMap<>();
-    /**
-     * 最大测试次数
-     */
-    public int maxTestTimes;
+
     public boolean isOverTimes;
     public RunTimerDisposeManager disposeManager;
     private int interceptWay;
     private int settingSensor;
     public boolean reLoad;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +78,6 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
     }
 
 
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -91,10 +86,10 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
         if (null == runTimerSetting) {
             runTimerSetting = new RunTimerSetting();
         }
-        if (runNum != Integer.parseInt(runTimerSetting.getRunNum())|| interceptPoint != runTimerSetting.getInterceptPoint()
-                ||interceptWay!= runTimerSetting.getInterceptWay() || settingSensor!= runTimerSetting.getSensor()){
+        if (runNum != Integer.parseInt(runTimerSetting.getRunNum()) || interceptPoint != runTimerSetting.getInterceptPoint()
+                || interceptWay != runTimerSetting.getInterceptWay() || settingSensor != runTimerSetting.getSensor()) {
             getSetting();
-            reLoad = true ;
+            reLoad = true;
         }
     }
 
@@ -110,11 +105,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
 
         //百分位
         isSecond = runTimerSetting.isSecond();
-        if (TestConfigs.sCurrentItem.getTestNum() != 0) {
-            maxTestTimes = TestConfigs.sCurrentItem.getTestNum();
-        } else {
-            maxTestTimes = runTimerSetting.getTestTimes();
-        }
+
 
         //跑道数量
         runNum = Integer.parseInt(runTimerSetting.getRunNum());
@@ -127,7 +118,6 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
         deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x04, (byte) interceptPoint)));//拦截点
         deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x05, (byte) (interceptWay + 1))));//触发方式
         deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x08, (byte) settingSensor)));//传感器信道
-        maxTestTimes = runTimerSetting.getTestTimes();
     }
 
 
@@ -161,14 +151,14 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
                 case 5://违规返回
                 case 6://停止计时
                     baseTimer = 0;
-                    changeState(new boolean[]{true, false, false, false,false});// 0 等待 1 强制 2 违规 3 成绩确认 4 预备
+                    changeState(new boolean[]{true, false, false, false, false});// 0 等待 1 强制 2 违规 3 成绩确认 4 预备
                     break;
                 case 2://等待计时
                     if (isOverTimes) {
                         toastSpeak("已经超过测试次数");
                         deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc5, (byte) 0x00, (byte) 0x00)));
                     }
-                    changeState(new boolean[]{false, false, false, false,true});
+                    changeState(new boolean[]{false, false, false, false, true});
                     if (baseTimer == 0 && runTimerSetting.getInterceptWay() == 0) {//红外拦截
                         baseTimer = System.currentTimeMillis();
                     }
@@ -176,7 +166,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
                     break;
                 case 3://启动
                     disposeManager.keepTime();
-                    changeState(new boolean[]{false, false, true, false,false});
+                    changeState(new boolean[]{false, false, true, false, false});
                     keepTime();
                     //算出误差时间
                     if (runTimerSetting.getInterceptWay() == 0) {
@@ -184,7 +174,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
                     }
                     break;
                 case 4://获取到结果
-                    changeState(new boolean[]{false, false, true, true,false});
+                    changeState(new boolean[]{false, false, true, true, false});
                     break;
 
 
@@ -473,7 +463,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc8, (byte) 0x00, (byte) 0x00)));
-                        mHandler.sendEmptyMessageDelayed(ILLEGAL_BACK,100);
+                        mHandler.sendEmptyMessageDelayed(ILLEGAL_BACK, 100);
                         dialog.dismiss();
                     }
                 }).setNegativeButton("取消", null).show();
