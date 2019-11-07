@@ -44,16 +44,15 @@ public class RunTimerDisposeManager {
 
     protected void printResult(Student student, int results) {
 
-        PrinterManager.getInstance().print(" \n");
 
         PrinterManager.getInstance().print(TestConfigs.sCurrentItem.getItemName() + SettingHelper.getSystemSetting().getHostId() + "号机");
 
-        PrinterManager.getInstance().print("考  号:" + student.getStudentCode());
+        PrinterManager.getInstance().print("学籍号:" + student.getStudentCode());
         PrinterManager.getInstance().print("姓  名:" + student.getStudentName());
 
         PrinterManager.getInstance().print("成绩："+ ResultDisplayUtils.getStrResultForDisplay(results));
         PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()));
-        PrinterManager.getInstance().print(" \n");
+
     }
 
 
@@ -81,7 +80,7 @@ public class RunTimerDisposeManager {
         RoundResult bestResult = DBManager.getInstance().queryBestScore(baseStuPair.getStudent().getStudentCode());
         if (bestResult != null) {
             // 原有最好成绩犯规 或者原有最好成绩没有犯规但是现在成绩更好
-            if (bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && bestResult.getResult() <= baseStuPair.getResult()) {
+            if (bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && bestResult.getResult() >= baseStuPair.getResult()) {
                 // 这个时候就要同时修改这两个成绩了
                 roundResult.setIsLastResult(1);
                 bestResult.setIsLastResult(0);

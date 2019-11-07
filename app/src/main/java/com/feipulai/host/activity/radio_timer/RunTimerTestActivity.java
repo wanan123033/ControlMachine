@@ -92,8 +92,6 @@ public class RunTimerTestActivity extends BaseRunTimerActivity {
     //更换成绩的序号
     private int select;
     //当前测试次数
-//    private int currentTestTime = 0;
-    private boolean isSetting = true;
     private SoundPlayUtils playUtils;
 
     @Override
@@ -162,10 +160,26 @@ public class RunTimerTestActivity extends BaseRunTimerActivity {
 
 
         etInputText.setData(lvResults, this);
+        getToolbar().getLeftView(0).setOnClickListener(backListener);
+        getToolbar().getLeftView(1).setOnClickListener(backListener);
+
 
     }
 
-
+    View.OnClickListener backListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (llFirst.getVisibility() == View.VISIBLE) {
+                finish();
+            } else {
+                llFirst.setVisibility(View.VISIBLE);
+                rlSecond.setVisibility(View.GONE);
+                getToolbar().getRightView(0).setVisibility(View.VISIBLE);
+                getToolbar().getRightView(1).setVisibility(View.VISIBLE);
+                stopRun();
+            }
+        }
+    };
 
     @Override
     protected void onResume() {
@@ -221,9 +235,10 @@ public class RunTimerTestActivity extends BaseRunTimerActivity {
                     ToastUtils.showShort("请先添加学生");
                     return;
                 }
-                isSetting = false;
                 llFirst.setVisibility(View.GONE);
                 rlSecond.setVisibility(View.VISIBLE);
+                getToolbar().getRightView(0).setVisibility(View.GONE);
+                getToolbar().getRightView(1).setVisibility(View.GONE);
                 break;
 //            case R.id.tv_project_setting:
 //                startActivity(new Intent(this, RunTimerSettingActivity.class));
@@ -263,8 +278,8 @@ public class RunTimerTestActivity extends BaseRunTimerActivity {
                         baseStuPair.setResult(runStudent.getOriginalMark());
                         baseStuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
                         disposeManager.saveResult(baseStuPair);
-                        if (SettingHelper.getSystemSetting().isAutoPrint()){
-                            disposeManager.printResult(runStudent.getStudent(),runStudent.getOriginalMark());
+                        if (SettingHelper.getSystemSetting().isAutoPrint()) {
+                            disposeManager.printResult(runStudent.getStudent(), runStudent.getOriginalMark());
                         }
 
                     }
@@ -347,7 +362,6 @@ public class RunTimerTestActivity extends BaseRunTimerActivity {
         txtStuName.setText(student.getStudentName());
         txtStuSex.setText(student.getSex() == 0 ? "男" : "女");
     }
-
 
 
     @Override
@@ -433,9 +447,7 @@ public class RunTimerTestActivity extends BaseRunTimerActivity {
     }
 
     private void gotoItemSetting() {
-        if (isSetting) {
-            startActivity(new Intent(this, RunTimerSettingActivity.class));
-        }
+        startActivity(new Intent(this, RunTimerSettingActivity.class));
 
     }
 

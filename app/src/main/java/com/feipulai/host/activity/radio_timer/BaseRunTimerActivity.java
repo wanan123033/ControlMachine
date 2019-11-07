@@ -50,7 +50,8 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
      * 测试状态
      */
     public int testState = 0;
-    private boolean isSecond;
+    private boolean isForce;
+    private boolean isAuto;
     /**
      * 跑到数量
      */
@@ -63,7 +64,6 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
     private int interceptWay;
     private int settingSensor;
     public boolean reLoad;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +78,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
     }
 
 
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -86,10 +87,10 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
         if (null == runTimerSetting) {
             runTimerSetting = new RunTimerSetting();
         }
-        if (runNum != Integer.parseInt(runTimerSetting.getRunNum()) || interceptPoint != runTimerSetting.getInterceptPoint()
-                || interceptWay != runTimerSetting.getInterceptWay() || settingSensor != runTimerSetting.getSensor()) {
+        if (runNum != Integer.parseInt(runTimerSetting.getRunNum())|| interceptPoint != runTimerSetting.getInterceptPoint()
+                ||interceptWay!= runTimerSetting.getInterceptWay() || settingSensor!= runTimerSetting.getSensor()){
             getSetting();
-            reLoad = true;
+            reLoad = true ;
         }
     }
 
@@ -102,10 +103,6 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
             runTimerSetting = new RunTimerSetting();
         }
         Logger.i("runTimerSetting:" + runTimerSetting.toString());
-
-        //百分位
-        isSecond = runTimerSetting.isSecond();
-
 
         //跑道数量
         runNum = Integer.parseInt(runTimerSetting.getRunNum());
@@ -127,12 +124,13 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
         public void onGetTime(RunTimerResult result) {
 
             Log.i(TAG, result.toString());
-//            if (result.getOrder() == 1) {
+            if (result.getOrder() == 1 && runTimerSetting.getInterceptWay() == 0 && !isForce) {
+                baseTimer = result.getResult();
+            }
             Message msg = mHandler.obtainMessage();
             msg.obj = result;
             msg.what = TIME_RESPONSE;
             mHandler.sendMessageDelayed(msg, 100);
-//            }
         }
 
         @Override
@@ -151,30 +149,36 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
                 case 5://违规返回
                 case 6://停止计时
                     baseTimer = 0;
-                    changeState(new boolean[]{true, false, false, false, false});// 0 等待 1 强制 2 违规 3 成绩确认 4 预备
+                    changeState(new boolean[]{true, false, false, false,false});// 0 等待 1 强制 2 违规 3 成绩确认 4 预备
                     break;
                 case 2://等待计时
                     if (isOverTimes) {
                         toastSpeak("已经超过测试次数");
                         deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc5, (byte) 0x00, (byte) 0x00)));
                     }
-                    changeState(new boolean[]{false, false, false, false, true});
+                    changeState(new boolean[]{false, false, false, false,true});
                     if (baseTimer == 0 && runTimerSetting.getInterceptWay() == 0) {//红外拦截
                         baseTimer = System.currentTimeMillis();
                     }
 
                     break;
                 case 3://启动
-                    disposeManager.keepTime();
-                    changeState(new boolean[]{false, false, true, false, false});
-                    keepTime();
                     //算出误差时间
                     if (runTimerSetting.getInterceptWay() == 0) {
                         baseTimer = System.currentTimeMillis() - baseTimer;
                     }
+                    disposeManager.keepTime();
+                    changeState(new boolean[]{false, false, true, false, false});
+                    keepTime();
                     break;
                 case 4://获取到结果
-                    changeState(new boolean[]{false, false, true, true, false});
+                    if (!isAuto){
+                        changeState(new boolean[]{false, false, true, false, false});
+                        isAuto = true;
+                    }else {
+                        changeState(new boolean[]{false, false, true, true, false});
+                    }
+
                     break;
 
 
@@ -400,8 +404,10 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
                     if (msg.obj instanceof RunTimerResult) {
                         RunTimerResult result = (RunTimerResult) msg.obj;
                         if (runTimerSetting.getInterceptWay() == 1) {
+                            Logger.i("getInterceptWay() == 1：" + result.getResult());
                             updateTableUI(result);
                         } else if (result.getResult() - baseTimer > 1000) {
+                            Logger.i("getInterceptWay() == 0：" + (result.getResult() - baseTimer) + "baseTimer:" + baseTimer);
                             updateTableUI(result);
                         }
 
@@ -436,12 +442,15 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
     }
 
     public void waitStart() {
+        isForce = false;
+        isAuto = false ;
         deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc2, (byte) 0x00, (byte) 0x00)));
     }
 
     public void forceStart() {
+        isForce = true;
+        isAuto = true;
         deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc4, (byte) 0x00, (byte) 0x00)));
-
     }
 
     public void faultBack() {
@@ -463,7 +472,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc8, (byte) 0x00, (byte) 0x00)));
-                        mHandler.sendEmptyMessageDelayed(ILLEGAL_BACK, 100);
+                        mHandler.sendEmptyMessageDelayed(ILLEGAL_BACK,100);
                         dialog.dismiss();
                     }
                 }).setNegativeButton("取消", null).show();
