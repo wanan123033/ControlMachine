@@ -93,13 +93,6 @@ public class MedicineBallSettingActivity extends BaseTitleActivity {
 
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
-    }
-
 
     @Nullable
     @Override
@@ -142,18 +135,18 @@ public class MedicineBallSettingActivity extends BaseTitleActivity {
                     if (isDisconnect) {
                         toastSpeak(getString(R.string.device_noconnect));
                         tvCheckData.setText(R.string.device_noconnect);
-                        //设置当前设置为不可用断开状态
-                        if (alertDialog.isShowing()) {
-                            alertDialog.dismiss();
-                        }
+
                     }
                     break;
                 case SerialConfigs.MEDICINE_BALL_EMPTY_RESPONSE://空闲命令
                     isDisconnect = false;
                     toastSpeak(getString(R.string.device_connect_succeed));
+
                     break;
             }
-
+            if (alertDialog.isShowing()) {
+                alertDialog.dismiss();
+            }
 
             return false;
         }
