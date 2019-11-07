@@ -1,6 +1,7 @@
 package com.feipulai.host.adapter;
 
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -33,15 +34,16 @@ public class RunNumberAdapter2 extends BaseQuickAdapter<RunStudent,BaseViewHolde
             helper.setText(R.id.tv_stuItem, TestConfigs.sCurrentItem.getItemName());
 //            helper.setText(R.id.tv_stuClass,student.getClassName());
             helper.setText(R.id.tv_stuMark,item.getMark());
-            helper.addOnClickListener(R.id.tv_stuMark);
         }else {
             helper.setText(R.id.tv_stuCode,"");
             helper.setText(R.id.tv_stuName,"");
             helper.setText(R.id.tv_stuSex,"");
 //            helper.setText(R.id.tv_stuSchool,"");
 //            helper.setText(R.id.tv_stuClass,"");
-            helper.setText(R.id.tv_stuMark,"");
+
         }
+        helper.addOnClickListener(R.id.tv_stuMark);
+        helper.setText(R.id.tv_stuMark,TextUtils.isEmpty(item.getMark())? "": item.getMark());
         helper.setText(R.id.tv_device_state,item.getConnectState() == 1 ?
                 "正常":"异常");
         helper.setBackgroundRes(R.id.tv_state_color,item.getConnectState() == 1 ? R.mipmap.icon_green:R.mipmap.icon_red);

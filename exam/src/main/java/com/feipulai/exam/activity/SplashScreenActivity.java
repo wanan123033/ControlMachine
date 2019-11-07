@@ -120,7 +120,7 @@ public class SplashScreenActivity extends BaseActivity {
                             ToastUtils.showShort(getString(R.string.active_success));
                             ConfigUtil.setISEngine(SplashScreenActivity.this, true);
                         } else if (activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
-                            ToastUtils.showShort(getString(R.string.already_activated));
+//                            ToastUtils.showShort(getString(R.string.already_activated));
                         } else {
                             ToastUtils.showShort(getString(R.string.active_failed));
                         }

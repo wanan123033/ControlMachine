@@ -18,6 +18,7 @@ import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.ref.WeakReference;
 
@@ -145,8 +146,7 @@ private long lastBroadcastTime;
     protected void handleMessage(Message msg) {
     }
 
-    // 妈的这个还不能删
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(BaseEvent baseEvent) {
     }
 

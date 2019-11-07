@@ -11,12 +11,12 @@ import com.feipulai.host.activity.height_weight.HeightWeightCheckActivity;
 import com.feipulai.host.activity.jump_rope.check.JumpRopeCheckActivity;
 import com.feipulai.host.activity.medicine_ball.MedicineBallFreeTestActivity;
 import com.feipulai.host.activity.medicine_ball.MedicineBallTestActivity;
-import com.feipulai.host.activity.radio_timer.RunTimerActivityTestActivity;
+import com.feipulai.host.activity.radio_timer.RunTimerFreeTestActivity;
+import com.feipulai.host.activity.radio_timer.RunTimerTestActivity;
 import com.feipulai.host.activity.sitreach.SitReachTestActivity;
 import com.feipulai.host.activity.situp.check.SitUpCheckActivity;
 import com.feipulai.host.activity.standjump.StandJumpFreedomActivity;
 import com.feipulai.host.activity.standjump.StandJumpTestActivity;
-import com.feipulai.host.activity.vccheck.VitalCapacityTestActivity;
 import com.feipulai.host.activity.vccheck.VitalTestActivity;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.db.MachineItemCodeUtil;
@@ -71,10 +71,11 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_ZWTQQ, SitReachTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_LDTY, StandJumpTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallTestActivity.class);
-        TestConfigs.proActivity.put(ItemDefault.CODE_ZFP, RunTimerActivityTestActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_ZFP, RunTimerTestActivity.class);
 
         TestConfigs.freedomActivity.put(ItemDefault.CODE_LDTY, StandJumpFreedomActivity.class);
         TestConfigs.freedomActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallFreeTestActivity.class);
+        TestConfigs.freedomActivity.put(ItemDefault.CODE_ZFP, RunTimerFreeTestActivity.class);
         // 每个机器码对应的机器名称
         TestConfigs.machineNameMap.put(ItemDefault.CODE_TS, MyApplication.getInstance().getString(R.string.jump_rope));
         TestConfigs.machineNameMap.put(ItemDefault.CODE_YWQZ, MyApplication.getInstance().getString(R.string.sit_up));

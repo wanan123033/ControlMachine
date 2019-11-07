@@ -93,9 +93,10 @@
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity android:name=".activity.medicine_ball.MedicineBallFaceIDActivity" />
         <activity android:name=".activity.vccheck.UploadActivity" />
-        <activity android:name=".activity.radio_timer.RunTimerActivityTestActivity" />
+        <activity android:name=".activity.radio_timer.RunTimerTestActivity" />
         <activity android:name=".activity.radio_timer.RunTimerSettingActivity" />
         <activity android:name=".activity.vccheck.VitalTestActivity" />
+        <activity android:name=".activity.radio_timer.RunTimerFreeTestActivity" />
     </application>
 
 </manifest>

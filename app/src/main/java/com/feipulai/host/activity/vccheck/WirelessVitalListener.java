@@ -31,7 +31,7 @@ public class WirelessVitalListener implements RadioManager.OnRadioArrivedListene
                     switch (index) {
                         case 5:
                             //回应主机查询
-                            listener.onResult(result.getDeviceId(),result.getState(),result.getCapacity());
+                            listener.onResult(result.getDeviceId(),result.getState(),result.getCapacity(),result.getPower());
                             if (result.getState() == 4) {//结束
                                 //此处不应该直接发结束命令而是交给设备去判断
                                 listener.onStop();
@@ -43,12 +43,12 @@ public class WirelessVitalListener implements RadioManager.OnRadioArrivedListene
                     }
                 }else if (msg.obj instanceof VitalCapacityNewResult){
                     final VitalCapacityNewResult result = (VitalCapacityNewResult) msg.obj;
-                    Log.i(TAG, "子机号:" + result.getDeviceId() + "状态:" + result.getState() + "序号:" + result.getIndex());
+                    Log.i(TAG, "子机号:" + result.getDeviceId() + "状态:" + result.getState() + "序号:" + result.getIndex()+"电量"+result.getPower());
                     int index = result.getIndex();
                     switch (index) {
                         case 3:
                             //回应主机查询
-                            listener.onResult(result.getDeviceId(),result.getState(),result.getCapacity());
+                            listener.onResult(result.getDeviceId(),result.getState(),result.getCapacity(),result.getPower());
                             if (result.getState() == 4) {//结束
                                 //此处不应该直接发结束命令而是交给设备去判断
                                 listener.onStop();
@@ -67,7 +67,7 @@ public class WirelessVitalListener implements RadioManager.OnRadioArrivedListene
 
     interface WirelessListener {
 
-        void onResult(int id,int state,int result);
+        void onResult(int id,int state,int result,int power);
 
         void onStop();
     }

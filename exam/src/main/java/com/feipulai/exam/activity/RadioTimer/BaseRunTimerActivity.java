@@ -51,8 +51,8 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
      * 测试状态
      */
     public int testState = 0;
-    private boolean isSecond;
     private boolean isForce;
+    private boolean isAuto;
     /**
      * 跑到数量
      */
@@ -108,8 +108,6 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
         }
         Logger.i("runTimerSetting:" + runTimerSetting.toString());
 
-        //百分位
-        isSecond = runTimerSetting.isSecond();
         if (TestConfigs.sCurrentItem.getTestNum() != 0) {
             maxTestTimes = TestConfigs.sCurrentItem.getTestNum();
         } else {
@@ -144,7 +142,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
             msg.obj = result;
             msg.what = TIME_RESPONSE;
             mHandler.sendMessageDelayed(msg, 100);
-//            }
+
         }
 
         @Override
@@ -187,7 +185,13 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
 
                     break;
                 case 4://获取到结果
-                    changeState(new boolean[]{false, false, true, true, false});
+                    if (!isAuto){
+                        changeState(new boolean[]{false, false, true, false, false});
+                        isAuto = true;
+                    }else {
+                        changeState(new boolean[]{false, false, true, true, false});
+                    }
+
                     break;
 
 
@@ -511,11 +515,13 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
 
     public void waitStart() {
         isForce = false;
+        isAuto = false ;
         deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc2, (byte) 0x00, (byte) 0x00)));
     }
 
     public void forceStart() {
         isForce = true;
+        isAuto = true;
         deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc4, (byte) 0x00, (byte) 0x00)));
 
     }
@@ -552,6 +558,10 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
 
     public abstract void updateConnect(HashMap<String, Integer> map);
 
+    /**
+     * 0 等待 1 强制 2 违规 3 成绩确认 4 预备
+     * @param state
+     */
     public abstract void changeState(final boolean[] state);
 
     public abstract void illegalBack();

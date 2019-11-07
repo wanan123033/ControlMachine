@@ -153,6 +153,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                         if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
                             sendTestCommand(pair, pos);
 //                            view.setBackgroundColor(ContextCompat.getColor(BaseMoreActivity.this, R.color.gray_btn_bg_color));
+                            deviceDetails.get(pos).getStuDevicePair().getTimeResult()[0] = "开始测试";
+                            deviceListAdapter.notifyItemChanged(pos);
                         }
                         break;
                     case R.id.txt_skip:
