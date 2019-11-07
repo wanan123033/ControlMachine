@@ -44,7 +44,12 @@
 
             </intent-filter>
         </activity>
-        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.MainActivity">
+            <intent-filter>
+                <action android:name="com.feipulai.exam.MainActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity android:name=".activity.LEDSettingActivity" />
         <activity
             android:name=".activity.setting.SettingActivity"

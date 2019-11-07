@@ -14,7 +14,7 @@ import com.feipulai.exam.utils.NetUtil;
 
 public class MyApplication extends MultiDexApplication {
 
-    public static final String PATH_SPECIFICATION = FileUtil.PATH_BASE + "exam/";
+    public static final String PATH_SPECIFICATION = FileUtil.PATH_BASE + "KS/";
 
     @Override
     protected void attachBaseContext(Context base) {
