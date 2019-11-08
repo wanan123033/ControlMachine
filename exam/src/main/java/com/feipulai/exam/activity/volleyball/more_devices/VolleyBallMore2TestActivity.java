@@ -3,6 +3,7 @@ package com.feipulai.exam.activity.volleyball.more_devices;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
@@ -43,6 +44,8 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
     private static final int END_JS = 2;
     private static final int GET_STATE = 3;
     private static final int TEST_TIME = 8;
+    private static final int TEST_TIME_PRE = 66;
+
     private VolleyBallJumpImpl resultJump = new VolleyBallJumpImpl(new VolleyBallJumpImpl.VolleyBallCallBack() {
         @Override
         public void getState(VolleyPair868Result obj) {
@@ -62,7 +65,6 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
 
         }
     });
-    private String[] scoreStr = new String[3];
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -78,10 +80,12 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
                     int deviceid = result.getDeviceid();
                     int childid = result.getChildId();
                     int state = result.getState();
+
                     //重置机器状态
                     for (int i = 0 ; i < deviceDetails.size() ; i++){
                         BaseStuPair stuDevicePair = deviceDetails.get(i).getStuDevicePair();
                         if (childid == stuDevicePair.getBaseDevice().getDeviceId() && deviceid == SettingHelper.getSystemSetting().getHostId()){
+                            String[] scoreStr = new String[3];
                             if (state == VolleyPair868Result.STATE_TIME_PREPARE || state == VolleyPair868Result.STATE_COUNT_PREPARE || state == VolleyPair868Result.STATE_FREE){
                                 stuDevicePair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
                                 scoreStr[1] = "设备空闲";
@@ -93,16 +97,29 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
                                 scoreStr[1] = "计数已结束";
                             }
                             stuDevicePair.getBaseDevice().setBatteryLeft(result.getElectricityState());
-                            scoreStr[0] = ResultDisplayUtils.getStrResultForDisplay(result.getScore());
+                            if (result.getScore() != 0 &&
+                                    deviceDetails.get(i).getStuDevicePair().getStudent() != null &&
+                                    stuDevicePair.getBaseDevice().getState() != BaseDeviceState.STATE_NOT_BEGAIN){
+                                scoreStr[0] = ResultDisplayUtils.getStrResultForDisplay(result.getScore());
+                            }
+                            if (result.getScore() == 0){
+                                scoreStr[0] = "";
+                            }
                             scoreStr[2] = "";
                             stuDevicePair.setTimeResult(scoreStr);
+                            stuDevicePair.setResult(result.getScore());
                             updateResult(stuDevicePair);
                             break;
                         }
                     }
+                    mHandler.removeMessages(SEND_EMPTY);
+                    mHandler.sendEmptyMessageDelayed(SEND_EMPTY,800);
                     break;
                 case TEST_TIME:
                     testTime(msg.arg1,msg.arg2, (DeviceDetail) msg.obj);
+                    break;
+                case TEST_TIME_PRE:
+
                     break;
             }
             return false;
@@ -119,6 +136,7 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
         msg1.obj = deviceDetail;
         if (msg1.arg2 >= 0) {
             Log.e("TAG","msg.arga2 = "+ msg1.arg2);
+            mHandler.removeMessages(TEST_TIME);
             mHandler.sendMessageDelayed(msg1, 1000);
         }else {
             Log.e("TAG","msg.arga2 jishi= "+ msg1.arg2+",deviceDetail = "+deviceDetail);
@@ -133,18 +151,46 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        setDeviceCount(4);
         setting = SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class);
         RadioManager.getInstance().setOnRadioArrived(resultJump);
+        getState();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mHandler.removeCallbacksAndMessages(null);
+    }
+
+    @Override
+    protected void fqCount(DeviceDetail deviceDetail, int pos) {
+        sendEnd(deviceDetail,pos);
+        stuSkip(pos);
+
+        deviceDetails.get(pos).getStuDevicePair().setStudent(null);
+        deviceListAdapter.notifyItemChanged(pos);
+
+        int hostId = SettingHelper.getSystemSetting().getHostId();
+        int deviceId = deviceDetail.getStuDevicePair().getBaseDevice().getDeviceId();
+        VolleyBallRadioManager.getInstance().deviceFree(hostId,deviceId);
+        mHandler.removeMessages(SEND_EMPTY);
+        mHandler.sendEmptyMessage(SEND_EMPTY);
     }
 
     private void getState() {
-        for (int i = 0 ; i < deviceDetails.size() ; i++) {
-            BaseDeviceState device = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
-            int deviceId = device.getDeviceId();
-            int hostId = SettingHelper.getSystemSetting().getHostId();
-            VolleyBallRadioManager.getInstance().getState(hostId,deviceId);
-        }
-        mHandler.sendEmptyMessageDelayed(SEND_EMPTY,1000);
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0 ; i < deviceDetails.size() ; i++) {
+                    BaseDeviceState device = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
+                    int deviceId = device.getDeviceId();
+                    int hostId = SettingHelper.getSystemSetting().getHostId();
+                    VolleyBallRadioManager.getInstance().getState(hostId,deviceId);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -157,19 +203,63 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
     @Override
     public void sendStart(DeviceDetail deviceDetail, int pos) {
 
-        int hostId = (byte) SettingHelper.getSystemSetting().getHostId();
-        int deviceId = (byte) deviceDetail.getStuDevicePair().getBaseDevice().getDeviceId();
-        VolleyBallRadioManager.getInstance().start(hostId,deviceId);
+        int hostId = SettingHelper.getSystemSetting().getHostId();
+        int deviceId = deviceDetail.getStuDevicePair().getBaseDevice().getDeviceId();
         //TODO 开始计时
         if (setting.getTestTime() > 0){
-            Message msg1 = Message.obtain();
-            msg1.what = TEST_TIME;
-            msg1.arg1 = pos;
-            msg1.obj = deviceDetail;
-            msg1.arg2 = setting.getTestTime();
-            mHandler.sendMessage(msg1);
+            startTime(deviceDetail,pos);
+        }else{
+            VolleyBallRadioManager.getInstance().startCount(hostId,deviceId);
         }
-        getState();
+    }
+    private void startTime(final DeviceDetail deviceDetail, final int pos) {
+        try {
+            final PreStartTimeRunnable runable = new PreStartTimeRunnable(this,deviceDetail);
+            runable.setListener(new PreStartTimeRunnable.TimeListener() {
+                @Override
+                public void startTime() {
+//                    Message msg1 = Message.obtain();
+//                    msg1.what = TEST_TIME;
+//                    msg1.arg1 = pos;
+//                    msg1.obj = deviceDetail;
+//                    msg1.arg2 = setting.getTestTime();
+//                    mHandler.sendMessage(msg1);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            CountDownTimer startTimer = new CountDownTimer(setting.getTestTime() * 1000, 1000) {
+                                @Override
+                                public void onTick(long millisUntilFinished) {
+                                    updateTime((int) (millisUntilFinished / 1000L),pos);
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            deviceListAdapter.notifyItemChanged(pos);
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onFinish() {
+                                    sendEnd(deviceDetail,pos);
+                                    cancel();
+                                }
+                            };
+                            startTimer.start();
+                        }
+                    });
+                }
+                @Override
+                public void preTime() {
+
+                }
+            });
+            Executors.newSingleThreadExecutor().execute(runable);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
     }
 
     @Override
@@ -179,9 +269,13 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
 
         int hostId = SettingHelper.getSystemSetting().getHostId();
         int deviceId = (byte)  deviceDetail.getStuDevicePair().getBaseDevice().getDeviceId();
-        VolleyBallRadioManager.getInstance().stop(hostId,deviceId);
+        if (setting.getTestTime() > 0){
+            VolleyBallRadioManager.getInstance().stopTime(hostId,deviceId);
+        }else {
+            VolleyBallRadioManager.getInstance().stopCount(hostId,deviceId);
+        }
         SystemClock.sleep(100);
-        VolleyBallRadioManager.getInstance().deviceFree(hostId,deviceId);
+//        VolleyBallRadioManager.getInstance().deviceFree(hostId,deviceId);
         mHandler.removeMessages(END_JS);
 
         SystemClock.sleep(200);
@@ -189,7 +283,7 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
         stuDevicePair.getBaseDevice().setState(BaseDeviceState.STATE_END);
         updateResult(stuDevicePair);
 
-        mHandler.removeCallbacksAndMessages(null);
+//        mHandler.removeCallbacksAndMessages(null);
     }
 
     @Override
@@ -208,7 +302,6 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
                 sendEnd(deviceDetail,pos);
                 sendConfirm(deviceDetail,pos);
                 dialog.dismiss();
-
             }
         });
 
@@ -221,6 +314,10 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
                 deviceDetails.get(pos).getStuDevicePair().setStudent(null);
                 deviceListAdapter.notifyItemChanged(pos);
                 dialog.dismiss();
+
+                int hostId = SettingHelper.getSystemSetting().getHostId();
+                int deviceId = deviceDetail.getStuDevicePair().getBaseDevice().getDeviceId();
+                VolleyBallRadioManager.getInstance().deviceFree(hostId,deviceId);
             }
         });
         builder.create().show();
@@ -229,14 +326,36 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
     @Override
     public void sendConfirm(DeviceDetail deviceDetail, int pos) {
         stuSkip(pos);
-        deviceDetail.getStuDevicePair().setStudent(null);
+        int hostId = SettingHelper.getSystemSetting().getHostId();
+        int deviceId = deviceDetail.getStuDevicePair().getBaseDevice().getDeviceId();
+        VolleyBallRadioManager.getInstance().deviceFree(hostId,deviceId);
 
+        saveResult(deviceDetail.getStuDevicePair(),pos);
+        deviceDetail.getStuDevicePair().setStudent(null);
         updateResult(deviceDetail.getStuDevicePair());
+    }
+
+    @Override
+    public void stopCount(DeviceDetail deviceDetail, int pos) {
+        int hostId = SettingHelper.getSystemSetting().getHostId();
+        int deviceId = deviceDetail.getStuDevicePair().getBaseDevice().getDeviceId();
+        VolleyBallRadioManager.getInstance().stopCount(hostId,deviceId);
+
+        SystemClock.sleep(100);
+//        VolleyBallRadioManager.getInstance().deviceFree(hostId,deviceId);
+        BaseStuPair stuDevicePair = deviceDetail.getStuDevicePair();
+        stuDevicePair.getBaseDevice().setState(BaseDeviceState.STATE_END);
+        updateResult(stuDevicePair);
+
     }
 
     @Override
     public void sendPenalty(DeviceDetail deviceDetail, int pos) {
         showPenalizeDialog(deviceDetail,pos);
+
+        int hostId = SettingHelper.getSystemSetting().getHostId();
+        int deviceId = deviceDetail.getStuDevicePair().getBaseDevice().getDeviceId();
+        VolleyBallRadioManager.getInstance().deviceFree(hostId,deviceId);
     }
 
     @Override
@@ -270,18 +389,10 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
                 })
                 .setNegativeButton("返回", null).show();
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         deviceDetails.clear();
-        mHandler.removeCallbacksAndMessages(null);
-    }
-
-    @Override
-    public void clearHandler() {
-        deviceDetails.clear();
-        setDeviceCount(4);
         mHandler.removeCallbacksAndMessages(null);
     }
 }

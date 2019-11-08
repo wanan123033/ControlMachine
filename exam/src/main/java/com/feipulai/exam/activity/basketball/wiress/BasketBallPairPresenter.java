@@ -31,7 +31,7 @@ public class BasketBallPairPresenter extends SitPullUpPairPresenter {
 
     @Override
     public void start() {
-        linker = new BasketBallLinker(this.machineCode, this.TARGET_FREQUENCY, this);
+        linker = new BasketBallLinker(machineCode, TARGET_FREQUENCY, this);
         linker.startPair(1);
         super.start();
     }

@@ -57,7 +57,7 @@ public final class MigrationHelper {
     }
 
     public static void migrate(Database database, Class<? extends AbstractDao<?, ?>>... daoClasses) {
-        printLog("【Generate temp table】start");
+        printLog("【Generate temp table】startTime");
         generateTempTables(database, daoClasses);
         printLog("【Generate temp table】complete");
         //添加非空判断
@@ -75,7 +75,7 @@ public final class MigrationHelper {
             dropAllTables(database, true, daoClasses);
             createAllTables(database, false, daoClasses);
         }
-        printLog("【Restore data】start");
+        printLog("【Restore data】startTime");
         restoreData(database, daoClasses);
         printLog("【Restore data】complete");
     }

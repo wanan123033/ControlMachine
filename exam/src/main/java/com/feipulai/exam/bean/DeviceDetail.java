@@ -11,6 +11,7 @@ import com.feipulai.exam.entity.RoundResult;
 public class DeviceDetail {
     private int time;
 
+
     public DeviceDetail(){
         baseStuPair = new BaseStuPair();
         baseStuPair.setCanTest(true);
@@ -59,5 +60,9 @@ public class DeviceDetail {
 
     public int getTime() {
         return time;
+    }
+
+    public int getPreTime(){
+        return 5;
     }
 }
