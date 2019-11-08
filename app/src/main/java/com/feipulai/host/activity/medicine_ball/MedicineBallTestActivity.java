@@ -33,19 +33,21 @@ import static com.feipulai.host.activity.medicine_ball.MedicineConstant.SELF_CHE
  * <p>
  * 针对一对多时，设备id处理需考虑，
  */
-public class MedicineBallTestActivity extends BasePersonTestActivity{
+public class MedicineBallTestActivity extends BasePersonTestActivity {
     private static final String TAG = "MedicineBallActivity";
     private int PROMPT_TIMES = 0;
     private TestState testState = TestState.UN_STARTED;
     private Handler mHandler = new MedicineBallHandler(this);
     private boolean checkFlag = false;
-    private boolean startFlag ;
+    private boolean startFlag;
     private ScheduledExecutorService executorService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
     }
+
     private void init() {
         setTestType(1);
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_ERROR, 1));
@@ -59,12 +61,15 @@ public class MedicineBallTestActivity extends BasePersonTestActivity{
     }
 
 
-
     @Override
     public void sendTestCommand(BaseStuPair baseStuPair) {
+        if (baseStuPair.getStudent() == null) {
+            toastSpeak("当前无学生测试");
+            return;
+        }
 //        stuPair = baseStuPair;
         //因为新测试人员过来时需要重新初始化
-        startFlag = true ;
+        startFlag = true;
         testState = TestState.UN_STARTED;
         decideBegin();
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
@@ -89,9 +94,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity{
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
     }
 
-    private void sendFree(){
-        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
-    }
+
     public static class MedicineBallHandler extends Handler {
         WeakReference<MedicineBallTestActivity> weakReference;
 
@@ -108,19 +111,15 @@ public class MedicineBallTestActivity extends BasePersonTestActivity{
 
                 case SELF_CHECK_RESPONSE:
                     MedicineBallSelfCheckResult selfCheckResult = (MedicineBallSelfCheckResult) msg.obj;
-                    BaseStuPair pair = new BaseStuPair();
-                    BaseDeviceState device = new BaseDeviceState();
-                    device.setDeviceId(1);
-                    pair.setBaseDevice(device);
-                    activity.disposeCheck(selfCheckResult, pair);
+                    activity.disposeCheck(selfCheckResult);
                     break;
 
                 case GET_SCORE_RESPONSE:
                     MedicineBallResult result = (MedicineBallResult) msg.obj;
                     BaseStuPair basePair = new BaseStuPair();
-                    basePair.setBaseDevice(new BaseDeviceState(BaseDeviceState.STATE_END,1));
-                    int beginPoint = Integer.parseInt(SharedPrefsUtil.getValue(activity,"SXQ","beginPoint","0"));
-                    activity.onResultArrived(result.getResult()*10+beginPoint*10, result.isFault(), basePair);
+                    basePair.setBaseDevice(new BaseDeviceState(BaseDeviceState.STATE_END, 1));
+                    int beginPoint = Integer.parseInt(SharedPrefsUtil.getValue(activity, "SXQ", "beginPoint", "0"));
+                    activity.onResultArrived(result.getResult() * 10 + beginPoint * 10, result.isFault(), basePair);
                     break;
                 case END_TEST:
                     BaseDeviceState device1 = new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1);
@@ -142,48 +141,43 @@ public class MedicineBallTestActivity extends BasePersonTestActivity{
      *
      * @param selfCheckResult 自检校验
      */
-    private void disposeCheck(MedicineBallSelfCheckResult selfCheckResult, BaseStuPair stuPair) {
+    private void disposeCheck(MedicineBallSelfCheckResult selfCheckResult) {
         boolean isInCorrect = selfCheckResult.isInCorrect();
-        BaseDeviceState deviceState = stuPair.getBaseDevice();
+        BaseDeviceState deviceState = new BaseDeviceState();
         if (isInCorrect) {
             PROMPT_TIMES++;
             checkFlag = false;
-            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
+            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_FAST_EMPTY));
             if (PROMPT_TIMES >= 2 && PROMPT_TIMES < 4) {
                 int[] errors = selfCheckResult.getIncorrectPoles();
-                for (int i = 1; i < errors.length+1; i++) {
-                    if (errors[i-1] == 1) {
-                        int e = errors[i]+1;
+                for (int i = 1; i < errors.length + 1; i++) {
+                    if (errors[i - 1] == 1) {
+                        int e = errors[i] + 1;
                         toastSpeak(String.format("%s测量杆出现异常", "第" + e));
                     }
                 }
 
             }
             setBegin(0);
-            if (deviceState.getState() != BaseDeviceState.STATE_ERROR){
-                deviceState.setState(BaseDeviceState.STATE_ERROR);
-                updateDevice(deviceState);
-            }
+            deviceState.setState(BaseDeviceState.STATE_ERROR);
 
         } else {
             PROMPT_TIMES = 0;
             checkFlag = true;
-            if (deviceState.getState() == BaseDeviceState.STATE_ERROR){
-                sendFree();
-            }
             if (testState == TestState.UN_STARTED) {
                 deviceState.setState(BaseDeviceState.STATE_NOT_BEGAIN);
                 setBegin(1);
             } else {
                 deviceState.setState(BaseDeviceState.STATE_ONUSE);
             }
-            if (testState == TestState.WAIT_RESULT && startFlag){
+            if (testState == TestState.WAIT_RESULT && startFlag) {
                 toastSpeak("开始测试");
                 startFlag = false;
                 setBegin(0);
             }
-        }
 
+        }
+        updateDevice(deviceState);
     }
 
 
@@ -221,9 +215,6 @@ public class MedicineBallTestActivity extends BasePersonTestActivity{
             public void run() {
                 if (checkFlag && testState == TestState.UN_STARTED) {
                     testState = TestState.WAIT_RESULT;
-//                    updateDevice(new BaseDeviceState(BaseDeviceState.STATE_ONUSE, 1));
-                    toastSpeak("开始测试");
-
                     SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                             SerialConfigs.CMD_MEDICINE_BALL_START));
 
@@ -231,8 +222,6 @@ public class MedicineBallTestActivity extends BasePersonTestActivity{
                 }
             }
         }, 0, 1000, TimeUnit.MILLISECONDS);
-
-
 
     }
 
@@ -261,7 +250,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity{
 
         @Override
         public void onFree() {
-            checkFlag = true ;
+            checkFlag = true;
         }
     });
 }
