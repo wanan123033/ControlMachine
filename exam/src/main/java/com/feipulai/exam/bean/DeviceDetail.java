@@ -21,6 +21,7 @@ public class DeviceDetail {
     private RoundResult roundResult;
     private boolean isDeviceOpen;
     private int round;
+    private boolean isConfirmVisible;
     public BaseStuPair getStuDevicePair() {
         return baseStuPair;
     }
@@ -64,5 +65,14 @@ public class DeviceDetail {
 
     public int getPreTime(){
         return 5;
+    }
+
+
+    public boolean isConfirmVisible() {
+        return isConfirmVisible;
+    }
+
+    public void setConfirmVisible(boolean confirmVisible) {
+        isConfirmVisible = confirmVisible;
     }
 }

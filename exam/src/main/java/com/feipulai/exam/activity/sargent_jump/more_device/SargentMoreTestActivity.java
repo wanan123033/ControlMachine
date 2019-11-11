@@ -96,6 +96,11 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
         sendStart((byte) id);
     }
 
+    @Override
+    protected void confirmResult(int pos) {
+
+    }
+
     private void sendStart(byte id) {
         byte[] cmd = CMD_SARGENT_JUMP_START;
         cmd[4] = id;

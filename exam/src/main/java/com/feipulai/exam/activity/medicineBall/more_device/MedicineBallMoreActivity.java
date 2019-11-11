@@ -17,14 +17,15 @@ import com.feipulai.exam.activity.medicineBall.pair.MedicineBallPairActivity;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.sargent_jump.more_device.BaseMoreActivity;
+import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 
 import butterknife.OnClick;
 
-import static com.feipulai.exam.activity.medicineBall.MedicineConstant.CMD_SARGENT_JUMP_EMPTY;
-import static com.feipulai.exam.activity.medicineBall.MedicineConstant.CMD_SARGENT_JUMP_START;
+import static com.feipulai.exam.activity.medicineBall.MedicineConstant.CMD_MEDICINE_BALL_EMPTY;
+import static com.feipulai.exam.activity.medicineBall.MedicineConstant.CMD_MEDICINE_BALL_START;
 import static com.feipulai.exam.activity.medicineBall.MedicineConstant.GET_SCORE_RESPONSE;
 
 public class MedicineBallMoreActivity extends BaseMoreActivity {
@@ -77,9 +78,9 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
 
         }
         for (DeviceDetail detail : deviceDetails) {
-            byte[] cmd = CMD_SARGENT_JUMP_EMPTY;
-            cmd[4] = (byte) detail.getStuDevicePair().getBaseDevice().getDeviceId();
-            cmd[6] = 0x01;
+            byte[] cmd = CMD_MEDICINE_BALL_EMPTY;
+            cmd[3] = (byte) detail.getStuDevicePair().getBaseDevice().getDeviceId();
+            cmd[4] = (byte) SettingHelper.getSystemSetting().getHostId();
             cmd[7] = 0x02;
             cmd[8] = (byte) sum(cmd, 8);
             RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
@@ -118,8 +119,13 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
         sendStart((byte) id);
     }
 
+    @Override
+    protected void confirmResult(int pos) {
+
+    }
+
     private void sendStart(byte id) {
-        byte[] cmd = CMD_SARGENT_JUMP_START;
+        byte[] cmd = CMD_MEDICINE_BALL_START;
         cmd[4] = id;
         cmd[6] = 0x01;
         cmd[7] = 0x03;
