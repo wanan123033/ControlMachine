@@ -9,6 +9,7 @@ import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
+import com.feipulai.device.serial.beans.MedicineBallNewResult;
 import com.feipulai.device.serial.beans.PullUpSetFrequencyResult;
 import com.feipulai.device.serial.beans.SargentJumpResult;
 import com.feipulai.device.serial.beans.SitPushUpSetFrequencyResult;
@@ -106,6 +107,9 @@ public class SitPullLinker implements Handler.Callback {
                 checkDevice(fhl);
             }
             return true;
+        }else if (machineCode == ItemDefault.CODE_HWSXQ && what == SerialConfigs.MEDICINE_BALL_MATCH_MORE){
+            MedicineBallNewResult mbn = (MedicineBallNewResult) msg.obj;
+            checkDevice(mbn);
         }
         return false;
     }
@@ -132,6 +136,10 @@ public class SitPullLinker implements Handler.Callback {
     }
 
     private void checkDevice(VolleyPairResult result) {
+        checkDevice(result.getDeviceId(), result.getFrequency());
+    }
+
+    private void checkDevice(MedicineBallNewResult result) {
         checkDevice(result.getDeviceId(), result.getFrequency());
     }
 

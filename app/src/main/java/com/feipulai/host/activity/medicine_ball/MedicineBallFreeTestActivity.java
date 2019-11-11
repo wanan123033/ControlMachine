@@ -14,6 +14,7 @@ import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.freedom.BaseFreedomTestActivity;
 import com.feipulai.host.activity.vccheck.TestState;
+import com.feipulai.host.entity.RoundResult;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -108,6 +109,7 @@ public class MedicineBallFreeTestActivity extends BaseFreedomTestActivity {
                 case GET_SCORE_RESPONSE:
                     MedicineBallResult result = (MedicineBallResult) msg.obj;
                     BaseStuPair basePair = new BaseStuPair();
+                    basePair.setResultState(result.isFault() ? RoundResult.RESULT_STATE_FOUL : RoundResult.RESULT_STATE_NORMAL);
                     basePair.setBaseDevice(new BaseDeviceState(BaseDeviceState.STATE_END, 1));
                     int beginPoint = Integer.parseInt(SharedPrefsUtil.getValue(MedicineBallFreeTestActivity.this, "SXQ", "beginPoint", "0"));
                     onResultArrived(result.getResult() * 10 + beginPoint * 10, basePair);

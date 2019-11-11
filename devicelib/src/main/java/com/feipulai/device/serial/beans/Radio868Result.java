@@ -44,7 +44,7 @@ public class Radio868Result {
                         && data[3] == 0x10  //[02] [03]：长度高字节0x00   低字节0x10
                         && data[5] == 0x05//[05]：项目编号   5—仰卧起坐    8—俯卧撑
                         && data[14] == 0x27 && data[15] == 0x0d//[14] [15]：包尾高字节0x27   低字节0x0d
-                        ) {
+                ) {
                     // 仰卧起坐
                     int sum = 0;
                     //0b 命令(获取数据)不需要校验
@@ -83,7 +83,7 @@ public class Radio868Result {
                         && data[3] == 0x10  //[02] [03]：长度高字节0x00   低字节0x10
                         && data[5] == 0x08//[05]：项目编号   5—仰卧起坐    8—俯卧撑
                         && data[14] == 0x27 && data[15] == 0x0d//[14] [15]：包尾高字节0x27   低字节0x0d
-                        ) {
+                ) {
                     // 俯卧撑
                     int sum = 0;
                     //0b 命令(获取数据)不需要校验
@@ -270,6 +270,23 @@ public class Radio868Result {
                         setType(SerialConfigs.VITAL_CAPACITY_RESULT);
                     }
                     setResult(new VitalCapacityNewResult(data));
+                }
+
+                break;
+            case ItemDefault.CODE_HWSXQ:
+
+                if ((data[0] & 0xff) == 0xaa && data.length == 21) {
+                    byte b = data[7];
+                    switch (b) {
+                        case 1:
+                            setType(SerialConfigs.MEDICINE_BALL_MATCH_MORE);
+                            setResult(new MedicineBallNewResult(data));
+                            break;
+                        default:
+                            break;
+
+
+                    }
                 }
 
                 break;

@@ -25,7 +25,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.sargent_jump.pair.VolleyBallPairActivity"></activity>
+        <activity android:name=".activity.medicineBall.more_device.MedicineBallMoreActivity"></activity>
+        <activity android:name=".activity.medicineBall.pair.MedicineBallPairActivity" />
+        <activity android:name=".activity.sargent_jump.pair.VolleyBallPairActivity" />
         <activity android:name=".activity.sargent_jump.more_device.SargentTestGroupActivity" />
         <activity android:name=".activity.sargent_jump.more_device.SargentMoreTestActivity" />
         <activity android:name=".activity.sargent_jump.pair.SargentPairActivity" />
@@ -41,12 +43,12 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.HOME" />
-
             </intent-filter>
         </activity>
         <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="com.feipulai.exam.MainActivity" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -196,8 +198,7 @@
             android:name=".activity.UVCCameraActivity"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity android:name=".activity.MiddleDistanceRace.MiddleDistanceRaceForPersonActivity" />
-        <!--<activity android:name=".activity.volleyball.pair.VolleyBallMorePairActivity" />-->
+        <activity android:name=".activity.MiddleDistanceRace.MiddleDistanceRaceForPersonActivity" /> <!-- <activity android:name=".activity.volleyball.pair.VolleyBallMorePairActivity" /> -->
         <activity android:name=".activity.volleyball.more_devices.VolleyBallMoreTestActivity" />
         <activity android:name=".activity.volleyball.more_devices.VolleyBallMoreGroupActivity" />
         <activity android:name=".activity.footBall.FootBallItemSelectActivity" />
@@ -205,6 +206,7 @@
         <activity android:name=".activity.basketball.wiress.BasketBallPairActivity" />
         <activity android:name=".activity.basketball.wiress.BasketBallWiressActivity" />
         <activity android:name=".activity.volleyball.more_devices.VolleyBallMore2TestActivity" />
+        <activity android:name=".activity.medicineBall.MedicineBallSelectActivity" />
     </application>
 
 </manifest>
