@@ -10,6 +10,7 @@ import com.feipulai.exam.activity.sargent_jump.SargentSetting;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairContract;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairPresenter;
+import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
 
 import java.util.Objects;
 
@@ -21,7 +22,7 @@ import java.util.Objects;
 public class VolleyBallPairPresenter extends SitPullUpPairPresenter {
 
     private Context context;
-    private SargentSetting setting;
+    private VolleyBallSetting setting;
     private SitPushUpManager sitPushUpManager;
 
     public VolleyBallPairPresenter(Context context, SitPullUpPairContract.View view) {
@@ -30,7 +31,7 @@ public class VolleyBallPairPresenter extends SitPullUpPairPresenter {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Objects.requireNonNull(view);
         }
-        setting = SharedPrefsUtil.loadFormSource(context, SargentSetting.class);
+        setting = SharedPrefsUtil.loadFormSource(context, VolleyBallSetting.class);
         sitPushUpManager = new SitPushUpManager(SitPushUpManager.PROJECT_CODE_VOLLEY_BALL,PushUpSetting.WIRELESS_TYPE);
     }
 

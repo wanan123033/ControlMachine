@@ -8,6 +8,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
@@ -15,6 +16,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.led.LEDManager;
+import com.feipulai.device.manager.VolleyBallRadioManager;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
@@ -141,11 +143,13 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
                         sendStart(deviceDetails.get(i),i);
                         break;
                     case R.id.txt_end:
-                    case R.id.txt_fq:
                         sendEnd(deviceDetails.get(i),i);
                         stuSkip(i);
                         deviceDetails.get(i).getStuDevicePair().setStudent(null);
                         refreshDevice(i);
+                        int hostId = SettingHelper.getSystemSetting().getHostId();
+                        int deviceId = (byte)  deviceDetails.get(i).getStuDevicePair().getBaseDevice().getDeviceId();
+                        VolleyBallRadioManager.getInstance().deviceFree(hostId,deviceId);
                         break;
                     case R.id.txt_time:
                         sendTime(deviceDetails.get(i),i);
@@ -154,16 +158,24 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
                         sendGaveUp(deviceDetails.get(i),i);
                         break;
                     case R.id.txt_confirm:
-                    case R.id.txt_js:
                         sendConfirm(deviceDetails.get(i),i);
                         break;
                     case R.id.txt_penalty:
                         sendPenalty(deviceDetails.get(i),i);
                         break;
+                    case R.id.txt_js:
+                        stopCount(deviceDetails.get(i),i);
+                        break;
+                    case R.id.txt_fq:
+                        fqCount(deviceDetails.get(i),i);
+                        break;
                 }
             }
         });
     }
+
+    protected abstract void fqCount(DeviceDetail deviceDetail, int pos);
+
     public void setDeviceCount(int deviceCount) {
         deviceDetails.clear();
         for (int i = 0; i < deviceCount; i++) {
@@ -180,8 +192,8 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
     public abstract void sendTime(DeviceDetail deviceDetail, int pos);
     public abstract void sendGaveUp(DeviceDetail deviceDetail, int pos);
     public abstract void sendConfirm(DeviceDetail deviceDetail, int pos);
+    public abstract void stopCount(DeviceDetail deviceDetail, int pos);
     public abstract void sendPenalty(DeviceDetail deviceDetail, int pos);
-    public abstract void clearHandler();
 
     @Override
     public void onCheckIn(Student student) {
@@ -231,7 +243,6 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
                 } else {
                     result[i] = ResultDisplayUtils.getStrResultForDisplay(roundResultList.get(i).getResult());
                 }
-
             }
         }
         deviceDetails.get(index).setRound(roundResultList.size());
@@ -272,7 +283,7 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, index, 1, false, true);
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, index, 0, false, true);
         } else {
             mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, student.getLEDStuName() + "   第" + deviceDetails.get(index).getRound() + "次", 0, 0, true, false);
             mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, "当前：", 0, 1, false, true);
@@ -298,16 +309,13 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
     }
 
     protected void stuSkip(int pos) {
-        deviceDetails.get(pos).getStuDevicePair().setStudent(null);
+//        deviceDetails.get(pos).getStuDevicePair().setStudent(null);
         deviceDetails.get(pos).getStuDevicePair().setCanTest(true);
         deviceDetails.get(pos).getStuDevicePair().setTimeResult(new String[setTestCount()]);
         deviceListAdapter.notifyItemChanged(pos);
     }
     @OnClick({R.id.txt_led_setting, R.id.tv_device_pair})
     public void onViewClicked(View view) {
-        deviceDetails.clear();
-        setDeviceCount(4);
-        clearHandler();
         switch (view.getId()) {
             case R.id.txt_led_setting:
                 startActivity(new Intent(this, LEDSettingActivity.class));
@@ -324,29 +332,30 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
      */
     public synchronized void updateResult(@NonNull BaseStuPair baseStu) {
         int deviceId = baseStu.getBaseDevice().getDeviceId();
+        Log.e("TAG","deviceId="+deviceId);
         BaseStuPair pair = null;
         int index = 0;
-        for (int i = 0; i < setTestCount(); i++) {
+        for (int i = 0; i < 4; i++) {
             int id = deviceDetails.get(i).getStuDevicePair().getBaseDevice().getDeviceId();
+            Log.e("TAG","id="+id);
             if (id == deviceId) {
                 pair = deviceDetails.get(i).getStuDevicePair();
                 index = i;
                 break;
             }
-
         }
+        Log.e("TAG","pair="+pair);
         if (null != pair.getBaseDevice()) {
             pair.setResultState(baseStu.getResultState());
             pair.setResult(baseStu.getResult());
             pair.setFullMark(baseStu.isFullMark());
-
 
             updateResultLed(baseStu, index);
             refreshDevice(index);
 
         }
     }
-    private void saveResult(BaseStuPair baseStuPair ,int index) {
+    public void saveResult(BaseStuPair baseStuPair ,int index) {
         Logger.i("saveResult==>" + baseStuPair.toString());
         if (baseStuPair.getStudent() == null)
             return;
@@ -399,7 +408,6 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
         UploadResults uploadResults = new UploadResults(studentItem.getScheduleNo(), TestConfigs.getCurrentItemCode(),
                 baseStuPair.getStudent().getStudentCode(), testNo + "", "", RoundResultBean.beanCope(roundResultList));
 
-
         uploadResult(uploadResults);
     }
 
@@ -415,7 +423,7 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
             }else if (baseStu.getResult()>= 10000){
                 x= 6 ;
             }
-
+            Log.e("TAG","result = "+ result);
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, x, index, false, true);
         }
     }

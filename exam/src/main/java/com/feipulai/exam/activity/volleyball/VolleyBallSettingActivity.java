@@ -1,6 +1,8 @@
 package com.feipulai.exam.activity.volleyball;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -162,7 +164,6 @@ public class VolleyBallSettingActivity
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()) {
-
             case R.id.cb_full_skip:
                 setting.setFullSkip(isChecked);
                 llFullSkip.setVisibility(isChecked ? View.VISIBLE : View.GONE);
@@ -198,11 +199,21 @@ public class VolleyBallSettingActivity
                     mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 5000);
                 }else {
                     //TODO 无线模式自检
-                    VolleyBallCheckDialog dialog = new VolleyBallCheckDialog();
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("deviceId",deviceId);
-                    dialog.setArguments(bundle);
-                    dialog.show(getFragmentManager(),"VolleyBallCheckDialog");
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("请选择");
+                    builder.setItems(new String[]{"一号机", "二号机", "三号机", "四号机"}, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    VolleyBallCheckDialog dialog1 = new VolleyBallCheckDialog();
+                                    Bundle bundle = new Bundle();
+                                    bundle.putInt("deviceId",which + 1);
+                                    dialog1.setArguments(bundle);
+                                    dialog1.show(getFragmentManager(),"VolleyBallCheckDialog");
+                                }
+                            });
+                    builder.create().show();
+
                 }
                 break;
         }

@@ -70,11 +70,11 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
             if (state == BaseDeviceState.STATE_FREE || state == BaseDeviceState.STATE_NOT_BEGAIN) {
                 helper.prepView(true, false, false, setting,setting1.isPenalize());
             } else if (state == BaseDeviceState.STATE_ONUSE) {
-                helper.prepView(false, true, false, setting,setting1.isPenalize());
                 if (item.getTime() > 0) {
+                    helper.prepView(false, true, false, setting,setting1.isPenalize());
                     helper.txt_time.setText(item.getTime() + "秒");
                 } else {
-                    helper.prepView(false, false, true, setting,setting1.isPenalize());
+                    helper.prepView(false, true, false, setting,setting1.isPenalize());
                 }
             } else if (state == BaseDeviceState.STATE_END) {
                 helper.prepView(false, false, true, setting,setting1.isPenalize());
@@ -158,9 +158,9 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
             txt_gave_up.setVisibility(flag2 && setting > 0 ? View.VISIBLE:View.GONE);
             rl_2.setVisibility(flag2 && setting > 0 ? View.VISIBLE:View.GONE);
 
-            rl_4.setVisibility(!flag2 && setting < 0 ? View.VISIBLE:View.GONE);
-            txt_js.setVisibility(!flag2 && setting < 0 ? View.VISIBLE:View.GONE);
-            txt_fq.setVisibility(!flag2 && setting < 0 ? View.VISIBLE:View.GONE);
+            rl_4.setVisibility(flag2 && setting == 0 ? View.VISIBLE:View.GONE);
+            txt_js.setVisibility(flag2 && setting == 0 ? View.VISIBLE:View.GONE);
+            txt_fq.setVisibility(flag2 && setting == 0 ? View.VISIBLE:View.GONE);
 
 
             txt_confirm.setVisibility(flag3 ? View.VISIBLE:View.GONE);

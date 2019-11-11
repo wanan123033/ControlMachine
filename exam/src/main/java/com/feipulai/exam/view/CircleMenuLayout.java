@@ -292,8 +292,8 @@ public class CircleMenuLayout<T> extends ViewGroup {
 				 */
 				float end = getAngle(x, y);
 
-				// Log.e("TAG", "start = " + start + " , end =" + end);
-				// 如果是一、四象限，则直接end-start，角度值都是正值
+				// Log.e("TAG", "startTime = " + startTime + " , end =" + end);
+				// 如果是一、四象限，则直接end-startTime，角度值都是正值
 				if (getQuadrant(x, y) == 1 || getQuadrant(x, y) == 4) {
 					mStartAngle += end - start;
 					mTmpAngle += end - start;

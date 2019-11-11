@@ -24,6 +24,7 @@ public class FootBallSetting {
      * 分组测试模式 0 连续 1 循环
      */
     private int testPattern = 0;
+    private int testType = 0;   //0 有线  1 无线
 
     public int getTestNo() {
         return testNo;
@@ -127,5 +128,13 @@ public class FootBallSetting {
 
     public void setTestPattern(int testPattern) {
         this.testPattern = testPattern;
+    }
+
+    public void setTestType(int testType) {
+        this.testType = testType;
+    }
+
+    public int getTestType() {
+        return testType;
     }
 }

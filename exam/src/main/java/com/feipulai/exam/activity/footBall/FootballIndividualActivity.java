@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -77,6 +78,13 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
     TextView txtStopTiming;
     @BindView(R.id.txt_device_status)
     TextView txtDeviceStatus;
+
+    @BindView(R.id.txt_near)
+    CheckBox txtNear;
+    @BindView(R.id.txt_far)
+    CheckBox txtFar;
+    @BindView(R.id.txt_led)
+    CheckBox txtLed;
     private IndividualCheckFragment individualCheckFragment;
     // 状态 WAIT_FREE---> WAIT_CHECK_IN---> WAIT_BEGIN--->TESTING---->WAIT_STOP---->WAIT_CONFIRM--->WAIT_CHECK_IN
     private static final int WAIT_FREE = 0x0;
@@ -96,6 +104,8 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
     private int roundNo;
     private TimerUtil timerUtil;
     private int useMode;
+
+    private int testType;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_individual_basketball;
@@ -143,6 +153,17 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         prepareForCheckIn();
         state = WAIT_FREE;
         setOperationUI();
+
+        testType = setting.getTestType();
+        if (testType == 1){
+            txtNear.setVisibility(View.VISIBLE);
+            txtFar.setVisibility(View.VISIBLE);
+            txtLed.setVisibility(View.VISIBLE);
+        }else {
+            txtNear.setVisibility(View.GONE);
+            txtFar.setVisibility(View.GONE);
+            txtLed.setVisibility(View.GONE);
+        }
     }
 
 
