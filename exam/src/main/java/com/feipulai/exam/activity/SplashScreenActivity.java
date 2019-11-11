@@ -38,9 +38,9 @@ import io.reactivex.schedulers.Schedulers;
 public class SplashScreenActivity extends BaseActivity {
 
     public static final String MACHINE_CODE = "machine_code";
-    public static final String APP_ID = "15431629";
-    public static final String APP_KEY = "ffHKDmoM0Rfwbh96lfIaKkG5";
-    public static final String SECRET_KEY = "8EhfDpV69gVojj8R9jYPU3kGSX1VkWjB";
+    public static final String APP_ID = MyApplication.getInstance().getString(R.string.tts_app_id);
+    public static final String APP_KEY = MyApplication.getInstance().getString(R.string.tts_app_key);
+    public static final String SECRET_KEY = MyApplication.getInstance().getString(R.string.tts_secret_key);
 
     // TtsMode.MIX; 离在线融合，在线优先； TtsMode.ONLINE 纯在线； 没有纯离线
     @Override
