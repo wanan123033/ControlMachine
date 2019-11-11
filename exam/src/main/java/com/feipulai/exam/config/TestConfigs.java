@@ -26,6 +26,7 @@ import com.feipulai.exam.activity.jump_rope.check.JumpRopeCheckActivity;
 import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSetting;
 import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSettingActivity;
 import com.feipulai.exam.activity.medicineBall.MedicineBallGroupActivity;
+import com.feipulai.exam.activity.medicineBall.MedicineBallSelectActivity;
 import com.feipulai.exam.activity.medicineBall.MedicineBallSetting;
 import com.feipulai.exam.activity.medicineBall.MedicineBallSettingActivity;
 import com.feipulai.exam.activity.medicineBall.MedicineBallTestActivity;
@@ -358,7 +359,7 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_ZWTQQ, SitReachTestActivity.class);
 
         TestConfigs.proActivity.put(ItemDefault.CODE_ZFP, RunTimerActivityTestActivity.class);
-        TestConfigs.proActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallTestActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallSelectActivity.class);
 
         TestConfigs.proActivity.put(ItemDefault.CODE_TS, JumpRopeCheckActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_YWQZ, SitUpCheckActivity.class);
