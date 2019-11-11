@@ -44,7 +44,7 @@ public class Radio868Result {
                         && data[3] == 0x10  //[02] [03]：长度高字节0x00   低字节0x10
                         && data[5] == 0x05//[05]：项目编号   5—仰卧起坐    8—俯卧撑
                         && data[14] == 0x27 && data[15] == 0x0d//[14] [15]：包尾高字节0x27   低字节0x0d
-                        ) {
+                ) {
                     // 仰卧起坐
                     int sum = 0;
                     //0b 命令(获取数据)不需要校验
@@ -83,7 +83,7 @@ public class Radio868Result {
                         && data[3] == 0x10  //[02] [03]：长度高字节0x00   低字节0x10
                         && data[5] == 0x08//[05]：项目编号   5—仰卧起坐    8—俯卧撑
                         && data[14] == 0x27 && data[15] == 0x0d//[14] [15]：包尾高字节0x27   低字节0x0d
-                        ) {
+                ) {
                     // 俯卧撑
                     int sum = 0;
                     //0b 命令(获取数据)不需要校验
@@ -160,6 +160,7 @@ public class Radio868Result {
                 break;
             case ItemDefault.CODE_PQ:
                 if (data[0] == (byte) 0xAA && data[2] == 0x0A && data[data.length - 1] == 0x0d) {
+                    Log.e("TAG",StringUtility.bytesToHexString(data));
                     switch (data[7]) {
                         case (byte) 0xb0:
                         case (byte) 0xb1:
@@ -167,6 +168,7 @@ public class Radio868Result {
                             setResult(new VolleyPairResult(data));
                             break;
                         case (byte) 0xb3://查询状态
+//                            Log.e("GGG",StringUtility.bytesToHexString(data));
                             setType(SerialConfigs.VOLLEY_BALL_SET_MORE_MATCH);
                             setResult(new VolleyPair868Result(data));
                             break;
@@ -182,24 +184,114 @@ public class Radio868Result {
                 }
                 break;
             case ItemDefault.CODE_LQYQ:
+            case ItemDefault.CODE_ZQYQ:
                 if (data[0] == (byte) 0xAA && data[data.length - 1] == 0x0D && data[2] == 0x0d) {
+                    setResult(new Basketball868Result(data));
                     switch (data[7]) {
-                        case 0x01:
+                        case 0x01://0频配对返回
                             setType(SerialConfigs.DRIBBLEING_FREQUENCY);
-                            setResult(new Basketball868Result(data));
                             break;
-                        case 0x02:
+                        case 0x02://参数设置
                             setType(SerialConfigs.DRIBBLEING_PARAMETER);
-                            setResult(new Basketball868Result(data));
                             break;
-                        case 0x03:
+                        case 0x03://获取状态
                             setType(SerialConfigs.DRIBBLEING_START);
-                            setResult(new Basketball868Result(data));
                             break;
+                        case 0x04://等待
+                            setType(SerialConfigs.DRIBBLEING_AWAIT);
+                            break;
+                        case 0x05://LED开始计时
+                            setType(SerialConfigs.DRIBBLEING_LED_START_TIME);
+                            break;
+                        case 0x06://停止
+                            setType(SerialConfigs.DRIBBLEING_STOP);
+                            break;
+                        case 0x07://空闲
+                            setType(SerialConfigs.DRIBBLEING_FREE);
+                            break;
+                        case 0x08://led显示
+                            setType(SerialConfigs.DRIBBLEING_LED_CONTENT);
+                            break;
+                        case 0x09://暂停
+                            setType(SerialConfigs.DRIBBLEING_PAUSE);
+                            break;
+
                     }
 
                 }
                 break;
+            case ItemDefault.CODE_YTXS:
+                if (data.length >= 0x10
+                        && data[0] == 0x54 && data[1] == 0x55
+                        && data[3] == 0x10
+                        && data[5] == 0x0b
+                        && data[14] == 0x27 && data[15] == 0x0d) {
+                    int sum = 0;
+                    //0B命令不需要校验
+                    if (data[7] != 0x0b) {
+                        for (int i = 2; i < 13; i++) {
+                            sum += (data[i] & 0xff);
+                        }
+                        if ((sum & 0xff) != (data[13] & 0xff)) {
+                            return;
+                        }
+                    }
+                    switch (data[7]) {
+                        case 4:
+                            setType(SerialConfigs.PULL_UP_GET_STATE);
+                            setResult(new PullUpStateResult(data));
+                            break;
+
+                        case 0x0b:
+                            setType(SerialConfigs.PULL_UP_MACHINE_BOOT_RESPONSE);
+                            setResult(new PullUpSetFrequencyResult(data));
+                            break;
+
+                        case 0x0c:
+                            setType(SerialConfigs.PULL_UP_GET_VERSION);
+                            setResult(new PullUpVersionResult(data));
+                            break;
+
+                    }
+                }
+                break;
+            case ItemDefault.CODE_FHL:
+
+                if ((data[0] & 0xff) == 0xaa && data.length == 16) {
+                    if (data[1] == 1 || data[1] == 3) {
+                        setType(SerialConfigs.VITAL_CAPACITY_SET_MORE_MATCH);
+                    } else {
+                        setType(SerialConfigs.VITAL_CAPACITY_RESULT);
+                    }
+                    setResult(new VitalCapacityResult(data));
+                } else if ((data[0] & 0xff) == 0xaa && data.length == 18) {
+                    if (data[7] == 1 || data[7] == 2) {
+                        setType(SerialConfigs.VITAL_CAPACITY_SET_MORE_MATCH);
+                    } else {
+                        setType(SerialConfigs.VITAL_CAPACITY_RESULT);
+                    }
+                    setResult(new VitalCapacityNewResult(data));
+                }
+
+                break;
+            case ItemDefault.CODE_HWSXQ:
+
+                if ((data[0] & 0xff) == 0xaa && data.length == 21) {
+                    byte b = data[7];
+                    switch (b) {
+                        case 1:
+                            setType(SerialConfigs.MEDICINE_BALL_MATCH_MORE);
+                            setResult(new MedicineBallNewResult(data));
+                            break;
+                        default:
+                            break;
+
+
+                    }
+                }
+
+                break;
+
 
         }
     }

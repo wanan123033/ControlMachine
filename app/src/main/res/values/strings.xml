@@ -138,7 +138,7 @@
     <string name="studentGender">性别 :</string>
     <string name="studentCode">学号 :</string>
     <string name="grades">成绩 :</string>
-    <string name="start">开始</string>
+    <string name="startTime">开始</string>
     <string name="stop_using">暂停使用</string>
     <string name="end">结束</string>
 

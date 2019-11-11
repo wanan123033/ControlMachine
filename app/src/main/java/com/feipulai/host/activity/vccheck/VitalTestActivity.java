@@ -24,7 +24,9 @@ import com.feipulai.host.entity.RoundResult;
 public class VitalTestActivity extends BaseMoreActivity {
 
     private static final String TAG = "VitalTestActivity";
-    private int[] deviceState = {};
+    private int[] deviceState = new int[4];
+    private int[] powerState = new int[4];
+    private int[] tempPower = {-1,-1,-1,-1};
     private final int SEND_EMPTY = 1;
     private final int GET_SCORE_RESPONSE = 2;
     int hostId = SettingHelper.getSystemSetting().getHostId();
@@ -35,7 +37,6 @@ public class VitalTestActivity extends BaseMoreActivity {
     @Override
     protected void initData() {
         super.initData();
-        deviceState = new int[4];
         for (int i = 0; i < deviceState.length; i++) {
 
             deviceState[i] = 0;//连续5次检测不到认为掉线
@@ -121,6 +122,12 @@ public class VitalTestActivity extends BaseMoreActivity {
                     updateDevice(baseDevice);
                 }
                 deviceState[i] -= 1;
+
+                if (tempPower[i] != powerState[i]){
+                    deviceDetails.get(i).getStuDevicePair().setPower(powerState[i]);
+                    updateDevice(baseDevice);
+                    tempPower[i] = powerState[i];
+                }
             }
 
 
@@ -141,8 +148,9 @@ public class VitalTestActivity extends BaseMoreActivity {
 
     private WirelessVitalListener resultImpl = new WirelessVitalListener(new WirelessVitalListener.WirelessListener() {
         @Override
-        public void onResult(int deviceId, int state, int result) {
+        public void onResult(int deviceId, int state, int result,int power) {
             deviceState[deviceId - 1] = 5;
+            powerState[deviceId-1] = power;
             if (result > 0 && state == 4) {
                 Message msg = mHandler.obtainMessage();
                 msg.what = GET_SCORE_RESPONSE;
@@ -176,7 +184,6 @@ public class VitalTestActivity extends BaseMoreActivity {
                     VcWrapper result = (VcWrapper) msg.obj;
                     for (DeviceDetail detail : deviceDetails) {
                         if (detail.getStuDevicePair().getBaseDevice().getDeviceId() == result.getDeviceId()) {
-
                             onResultArrived(result.getResult(), detail.getStuDevicePair());
                         }
 

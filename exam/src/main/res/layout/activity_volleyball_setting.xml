@@ -171,7 +171,15 @@
                 android:text="循环测试：" />
 
         </RadioGroup>
-
+        <CheckBox
+            android:id="@+id/rb_pentity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@null"
+            android:drawablePadding="40dp"
+            android:layout_marginTop="5dp"
+            android:drawableRight="@drawable/checkbox_switch_selected"
+            android:text="是否开启判罚功能：" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

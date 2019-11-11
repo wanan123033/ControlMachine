@@ -54,6 +54,7 @@ public class RadioManager{
 	public synchronized void sendCommand(ConvertCommand convertCommand){
 		ensureInterval();
 		Log.i("TAG+++++发送", StringUtility.bytesToHexString(convertCommand.getCmdBytes()));
+
 		mSerialPorter.sendCommand(convertCommand);
 	}
 	

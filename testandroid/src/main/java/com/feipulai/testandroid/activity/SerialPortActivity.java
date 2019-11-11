@@ -66,7 +66,7 @@ public class SerialPortActivity extends BaseActivity implements AdapterView.OnIt
 
         // 设备
 //        mDevices = serialPortFinder.getAllDevicesPath();
-        mDevices = new String[]{"/dev/ttysWK3"};
+        mDevices = new String[]{"/dev/ttysWK3","/dev/ttysWK0"};
         if (mDevices.length == 0) {
             mDevices = new String[]{
                     getString(R.string.no_serial_device)

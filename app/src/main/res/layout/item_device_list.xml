@@ -32,12 +32,28 @@
             android:text="1号设备状态"
             android:textColor="@color/white"
             android:textSize="14sp" />
+
+        <CheckBox
+            android:id="@+id/sw_power"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="40dp"
+            android:layout_marginRight="15dp"
+            android:checked="true"
+            android:clickable="false"
+            android:button="@null"
+            android:drawableRight="@drawable/checkbox_switch_power"
+            android:text="电量: "
+            android:textColor="@color/white"
+            android:textSize="14sp"/>
+
         <CheckBox
             android:id="@+id/sw_device_close"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="20dp"
             android:layout_alignParentRight="true"
-            android:layout_marginTop="55dp"
+            android:layout_marginTop="65dp"
             android:layout_marginRight="10dp"
             android:button="@null"
             android:drawableRight="@drawable/checkbox_switch_selected"

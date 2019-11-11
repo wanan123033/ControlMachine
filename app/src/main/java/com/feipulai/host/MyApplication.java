@@ -11,7 +11,7 @@ import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.SharedPrefsConfigs;
 
 public class MyApplication extends MultiDexApplication {
-    public static final String PATH_SPECIFICATION = FileUtil.PATH_BASE + "test/";
+    public static final String PATH_SPECIFICATION = FileUtil.PATH_BASE + "TC/";
 
     @Override
     protected void attachBaseContext(Context base) {

@@ -36,6 +36,8 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
         this.testCount = testCount;
     }
 
+
+
     @Override
     protected void convert(final ViewHolder helper, final DeviceDetail item) {
 
@@ -75,7 +77,7 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
             helper.itemTxtTestResult2.setText(item.getStuDevicePair().getTimeResult()[2]);
 
         }
-        helper.addOnClickListener(R.id.txt_skip).addOnClickListener(R.id.txt_start);
+        helper.addOnClickListener(R.id.txt_skip).addOnClickListener(R.id.txt_start).addOnClickListener(R.id.txt_confirm);
         int state = item.getStuDevicePair().getBaseDevice().getState();
         if (state == BaseDeviceState.STATE_FREE || state == BaseDeviceState.STATE_NOT_BEGAIN){
             helper.txtStart.setEnabled(true);
@@ -95,6 +97,8 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
             }
         });
 
+        helper.txtConfirm.setVisibility(item.isConfirmVisible()?View.VISIBLE:View.GONE);
+        helper.txtStart.setVisibility(item.isConfirmVisible()? View.GONE:View.VISIBLE);
     }
 
     static class ViewHolder extends BaseViewHolder {
@@ -110,6 +114,8 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
         TextView txtSkip;
         @BindView(R.id.txt_start)
         TextView txtStart;
+        @BindView(R.id.txt_confirm)
+        TextView txtConfirm;
         @BindView(R.id.item_txt_test_result)
         TextView itemTxtTestResult;
         @BindView(R.id.item_txt_test_result1)

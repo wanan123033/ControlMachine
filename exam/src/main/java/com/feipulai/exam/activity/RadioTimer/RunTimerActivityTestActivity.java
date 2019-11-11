@@ -94,7 +94,6 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     private int select;
     //当前测试次数
     private int currentTestTime = 0;
-    private boolean isSetting = true;
     private SoundPlayUtils playUtils;
 
     @Override
@@ -191,7 +190,9 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
             } else {
                 llFirst.setVisibility(View.VISIBLE);
                 rlSecond.setVisibility(View.GONE);
-                isSetting = true;
+
+                getToolbar().getRightView(0).setVisibility(View.VISIBLE);
+                getToolbar().getRightView(1).setVisibility(View.VISIBLE);
                 stopRun();
             }
         }
@@ -227,7 +228,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
      * @param position
      */
     private void deleteDialog(final int position) {
-    new AlertDialog.Builder(this).setMessage("是否确定删除此考生?")
+        new AlertDialog.Builder(this).setMessage("是否确定删除此考生?")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -251,9 +252,11 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
                     ToastUtils.showShort("请先添加学生");
                     return;
                 }
-                isSetting = false;
                 llFirst.setVisibility(View.GONE);
                 rlSecond.setVisibility(View.VISIBLE);
+
+                getToolbar().getRightView(0).setVisibility(View.GONE);
+                getToolbar().getRightView(1).setVisibility(View.GONE);
                 break;
 //            case R.id.tv_project_setting:
 //                startActivity(new Intent(this, RunTimerSettingActivity.class));
@@ -308,9 +311,11 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
 
                 if (currentTestTime >= maxTestTimes) {//回到初始界面
                     currentTestTime = 0;
-                    isSetting = true;
                     llFirst.setVisibility(View.VISIBLE);
                     rlSecond.setVisibility(View.GONE);
+                    getToolbar().getRightView(0).setVisibility(View.VISIBLE);
+                    getToolbar().getRightView(1).setVisibility(View.VISIBLE);
+
                     mList.clear();
                     for (int i = 0; i < runNum; i++) {
                         RunStudent runStudent = new RunStudent();
@@ -448,7 +453,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
         mAdapter.notifyDataSetChanged();
         if ((mList.get(result.getTrackNum() - 1).getStudent() != null)) {
 //            disposeManager.saveResult(mList.get(result.getTrackNum() - 1).getStudent(), result.getResult(), currentTestTime, testNo);
-            Logger.i("runTimer:" + mList.get(result.getTrackNum() - 1).getStudent().getStudentName() + "测试次数:" + currentTestTime+"time:"+realTime);
+            Logger.i("runTimer:" + mList.get(result.getTrackNum() - 1).getStudent().getStudentName() + "测试次数:" + currentTestTime + "time:" + realTime);
         }
 
 //        disposeManager.setShowLed(mList);
@@ -514,10 +519,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     }
 
     private void gotoItemSetting() {
-        if (isSetting) {
-            startActivity(new Intent(this, RunTimerSettingActivity.class));
-        }
-
+        startActivity(new Intent(this, RunTimerSettingActivity.class));
     }
 
 

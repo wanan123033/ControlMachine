@@ -25,7 +25,7 @@ import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.sargent_jump.adapter.StuAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
-import com.feipulai.exam.activity.sargent_jump.adapter.DeviceListAdapter;
+import com.feipulai.exam.activity.volleyball.adapter.DeviceListAdapter;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
@@ -151,6 +151,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
     private void initView() {
         deviceListAdapter = new DeviceListAdapter(deviceDetails);
         deviceListAdapter.setTestCount(setTestCount());
+
         GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
         rvDeviceList.setLayoutManager(layoutManager);
         rvDeviceList.setAdapter(deviceListAdapter);
@@ -436,11 +437,11 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                     && pair.getStudent() == null) {
                 pair.setCanTest(false);
                 pair.setStudent(student);
+                break;
             }
 
-            break;
         }
-
+        deviceListAdapter.notifyDataSetChanged();
     }
 
     public void updateDevice(BaseDeviceState deviceState) {

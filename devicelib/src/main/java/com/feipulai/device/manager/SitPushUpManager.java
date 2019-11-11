@@ -25,6 +25,7 @@ public class SitPushUpManager {
     public static final int PROJECT_CODE_SARGENT = 1;// 摸高
     public static final int PROJECT_CODE_VOLLEY_BALL = 10;// 排球
     public static final int PROJECT_CODE_LZQYQ = 0x0D;  //篮足球运球
+    public static final int PROJECT_CODE_SXQ = 0x07;  //实心球
 
     public static final int DEFAULT_COUNT_DOWN_TIME = 5;
 
@@ -257,6 +258,57 @@ public class SitPushUpManager {
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
         RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(targetChannel)));
     }
+
+    /**
+     * 实心球设置频段
+     *
+     * @param originFrequency
+     * @param deviceId
+     * @param hostId
+     */
+    public void setFrequencySXQ(int originFrequency, int deviceId, int hostId) {
+        int machineCode = ItemDefault.CODE_MG;
+        int targetChannel = 0;
+        byte[] buf = new byte[21];
+        buf[0] = (byte) 0xAA;//包头
+        buf[1] = 0x15;    //包长
+        buf[2] = 0x07;       //项目编号
+        buf[3] = 0x01; //主机
+        buf[4] = 0x03;      //子机
+        buf[5] = (byte) (hostId & 0xff);     //主机号
+        buf[6] = (byte) (deviceId & 0xff);       //子机号
+        buf[7] = 0x01;      //命令
+        targetChannel = SerialConfigs.sProChannels.get(machineCode) + hostId - 1;
+        buf[8] = 0;
+        buf[9] = 0;
+        buf[10] = 0;
+        buf[11] = 0;
+        buf[12] = (byte) targetChannel;
+        buf[13] = 0x04;
+        buf[14] = (byte) (hostId & 0xff);
+        buf[15] = (byte) (deviceId & 0xff);
+        buf[16] = 0x00;
+        buf[17] = 0x00;
+        buf[18] = 0x00;
+        for (int i = 1; i < 19; i++) {
+            buf[19] += buf[i] & 0xff;
+        }
+        buf[20] = 0x0d;   //包尾
+        //Logger.i(StringUtility.bytesToHexString(buf));
+        //先切到通信频段
+        //Log.i("james","originFrequency:" + originFrequency);
+        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(originFrequency)));
+        //Log.i("james",StringUtility.bytesToHexString(buf));
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
+        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(targetChannel)));
+    }
+
+
 
     public void setFrequencyPQ(int originFrequency, int deviceId, int hostId) {
         int machineCode = ItemDefault.CODE_PQ;

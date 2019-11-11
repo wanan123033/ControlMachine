@@ -190,11 +190,11 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                         startActivity(new Intent(MainActivity.this, VolleyballPatternSelectActivity.class));
                         return;
                     }
-                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ){
-                        IntentUtil.gotoActivity(MainActivity.this,TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode()));
+                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ) {
+                        IntentUtil.gotoActivity(MainActivity.this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode()));
                         return;
                     }
-                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZQYQ){
+                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZQYQ) {
                         startActivity(new Intent(this, FootBallItemSelectActivity.class));
                         return;
                     }
@@ -213,6 +213,17 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                 PrinterManager.getInstance().selfCheck();
                 PrinterManager.getInstance().print("\n\n");
 //                addTestResult();
+//                try {
+//                    Intent intent = new Intent();
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    intent.setAction(Intent.ACTION_VIEW);
+//                    intent.setDataAndType(Uri.fromFile(new File(MyApplication.PATH_SPECIFICATION + "123.pdf")), "application/pdf");
+//                    startActivity(intent);
+//                    Intent.createChooser(intent, "请选择对应的软件打开该附件！");
+//                } catch (ActivityNotFoundException e) {
+//                    Toast.makeText(this, "sorry附件不能打开，请下载相关软件！", Toast.LENGTH_SHORT).show();
+//                }
+
                 break;
             case R.id.card_parameter_setting:
                 startActivity(new Intent(MainActivity.this, SettingActivity.class));

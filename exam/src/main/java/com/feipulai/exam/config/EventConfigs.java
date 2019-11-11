@@ -15,4 +15,7 @@ public class EventConfigs {
     public static final int DATA_RESTORE_SUCCEED = 7;
     public static final int UPDATE_INDEX = 0x8;
     public static final int ITEM_SETTING_UPDATE = 9;
+
+
+    public static final int  BALL_STATE_UPDATE = 10 ;
 }

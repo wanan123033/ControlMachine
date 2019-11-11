@@ -18,7 +18,7 @@ public class VolleyPairResult {
             state = (data[8] & 0xff);
         }
         this.data = data;
-        id = data[5]&0xff;
+        id = data[6]&0xff;
         frequency = data[12]&0xff;
 //		Log.i("sargent",StringUtility.bytesToHexString(data));
     }

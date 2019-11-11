@@ -487,7 +487,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     return;
                 }
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_PQ
-                        && SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class).getType() == 2) {
+                        && SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class).getType() == 1) {
                     startActivity(new Intent(this, VolleyBallMoreGroupActivity.class));
                     return;
                 }

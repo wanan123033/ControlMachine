@@ -26,6 +26,7 @@ import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseTitleActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
+import com.feipulai.host.activity.setting.SystemSetting;
 import com.feipulai.host.config.TestConfigs;
 
 import butterknife.BindView;
@@ -44,8 +45,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     Spinner spSensor;
     @BindView(R.id.radioGroup_degree)
     RadioGroup radioGroupDegree;
-//    @BindView(R.id.rg_model)
-//    RadioGroup rgModel;
+
     //    @BindView(R.id.cb_full_return)
 //    CheckBox cbFullReturn;
 //    @BindView(R.id.et_full_male)
@@ -110,11 +110,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     private void initRadioGroup() {
         radioGroupDegree.setOnCheckedChangeListener(this);
 
-//        rgModel.setOnCheckedChangeListener(this);
-//        if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {//个人模式模式隐藏
-//            rgModel.setEnabled(false);
-//            rgModel.setVisibility(View.GONE);
-//        }
+
         //成绩精度
         boolean isSecond;
         int di = TestConfigs.sCurrentItem.getDigital();
@@ -151,9 +147,6 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
 
         cbStart.setOnCheckedChangeListener(this);
         cbEnd.setOnCheckedChangeListener(this);
-        //测试模式
-//        boolean testModel = runTimerSetting.isTestModel();
-//        rgModel.check(testModel ? R.id.rb_continue : R.id.rb_recycle);
     }
 
     /**
@@ -244,13 +237,6 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
             case R.id.rb_ten_second:
                 runTimerSetting.setSecond(true);
                 break;
-
-//            case R.id.rb_continue:
-//                runTimerSetting.setTestModel(true);
-//                break;
-//            case R.id.rb_recycle:
-//                runTimerSetting.setTestModel(false);
-//                break;
         }
     }
 

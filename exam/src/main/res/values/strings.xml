@@ -26,7 +26,7 @@
     <string name="grades1">成绩1 :</string>
     <string name="grades2">成绩2 :</string>
     <string name="grades3">成绩3 :</string>
-    <string name="start">开始</string>
+    <string name="startTime">开始</string>
     <string name="stop_using">暂停使用</string>
     <string name="end">结束</string>
     <string name="service_bind_fail">aidl service bind failed</string>

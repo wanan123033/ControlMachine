@@ -242,4 +242,14 @@ public class SerialConfigs {
     public static final int DRIBBLEING_FREQUENCY = 0x47;
     public static final int DRIBBLEING_PARAMETER = 0x48;
     public static final int DRIBBLEING_START = 0x49;
+    public static final int DRIBBLEING_LED_CONTENT = 0x50;
+    public static final int DRIBBLEING_STOP = 0x51;
+    public static final int DRIBBLEING_PAUSE = 0x52;
+    public static final int DRIBBLEING_FREE = 0x53;
+    public static final int DRIBBLEING_AWAIT = 0x54;
+    public static final int DRIBBLEING_LED_START_TIME = 0x55;
+
+    //实心球无线
+    public static final int MEDICINE_BALL_MATCH_MORE = 0x56;
+
 }

@@ -107,6 +107,13 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         }
     }
 
+    public void setConfirmVisible(int index ,boolean visible){
+        deviceDetails.get(index).setConfirmVisible(visible);
+        deviceListAdapter.notifyItemChanged(index);
+    }
+
+
+
     @Override
     public void onCheckIn(Student student) {
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
@@ -260,6 +267,11 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                             stuSkipDialog(pair.getStudent(), pos);
                         }
                         break;
+                    case R.id.txt_confirm:
+                        if (pair.getStudent() != null) {
+                            confirmResult(pos);
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -268,6 +280,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             }
         });
     }
+
+
 
 
     protected void stuSkipDialog(final Student student, final int pos) {
@@ -644,5 +658,5 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     protected abstract void sendTestCommand(BaseStuPair pair, int index);
 
-
+    protected abstract void confirmResult(int pos);
 }

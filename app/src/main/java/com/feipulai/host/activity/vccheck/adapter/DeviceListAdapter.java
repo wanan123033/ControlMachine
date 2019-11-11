@@ -41,6 +41,7 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
 
         helper.swDeviceClose.setChecked(item.isDeviceOpen());
         helper.cbDeviceState.setText(String.format("%d号设备状态", helper.getLayoutPosition() + 1));
+        helper.swPower.setChecked(item.getStuDevicePair().getPower() > 20);
         if (item.getStuDevicePair() != null) {
             if (item.getStuDevicePair().getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
                 helper.cbDeviceState.setChecked(true);
@@ -86,6 +87,8 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
     static class ViewHolder extends BaseViewHolder {
         @BindView(R.id.cb_device_state)
         CheckBox cbDeviceState;
+        @BindView(R.id.sw_power)
+        CheckBox swPower;
         @BindView(R.id.sw_device_close)
         CheckBox swDeviceClose;
         @BindView(R.id.txt_stu_name)

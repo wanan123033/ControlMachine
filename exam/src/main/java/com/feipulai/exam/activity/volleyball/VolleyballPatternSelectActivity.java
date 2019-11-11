@@ -9,6 +9,8 @@ import com.feipulai.exam.activity.SubItemsSelectActivity;
 import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.activity.volleyball.more_devices.VolleyBallMore2TestActivity;
+import com.feipulai.exam.activity.volleyball.more_devices.VolleyBallMoreGroupActivity;
 import com.feipulai.exam.activity.volleyball.more_devices.VolleyBallMoreTestActivity;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.Item;
@@ -39,11 +41,12 @@ public class VolleyballPatternSelectActivity extends SubItemsSelectActivity {
 
                 if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN ) {
                     if (setting.getType() == 1) {
-                        startActivity(new Intent(getApplicationContext(), VolleyBallMoreTestActivity.class));
+                        startActivity(new Intent(getApplicationContext(), VolleyBallMore2TestActivity.class));
                     } else {
                         startActivity(new Intent(VolleyballPatternSelectActivity.this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
                     }
                 } else {
+
                     startActivity(new Intent(VolleyballPatternSelectActivity.this, BaseGroupActivity.class));
                 }
 

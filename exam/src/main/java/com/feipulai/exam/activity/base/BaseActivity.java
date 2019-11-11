@@ -19,6 +19,7 @@ import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.ref.WeakReference;
 
@@ -153,7 +154,7 @@ public class BaseActivity extends FragmentActivity {
         });
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(BaseEvent baseEvent) {
 //        if (baseEvent.getTagInt() == EventConfigs.TOKEN_ERROR) {
 //            startActivity(new Intent(this, LoginActivity.class));

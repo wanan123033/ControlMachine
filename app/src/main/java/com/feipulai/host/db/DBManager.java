@@ -610,8 +610,8 @@ public class DBManager {
     // 刷新所有项目数据
     public void freshAllItems(List<Item> freshItems) {
         db.beginTransaction();
-        itemDao.deleteAll();
-        itemDao.insertInTx(freshItems);
+//        itemDao.deleteAll();
+        itemDao.insertOrReplaceInTx(freshItems);
         db.setTransactionSuccessful();
         db.endTransaction();
     }
