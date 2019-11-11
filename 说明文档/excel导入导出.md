@@ -99,7 +99,7 @@ protected abstract void read(String path);
 导入流程大致如下:
 
 ```flow
-st=>start: 打开excel文件
+st=>startTime: 打开excel文件
 openSuc=>condition: 打开成功?
 fail=>operation: 导入失败
 readFirstRow=>operation: 读取第一行信息(标题)
@@ -143,7 +143,7 @@ openSuc(no)->fail
 成绩导出会将当前项目已测试的成绩导出到指定excel文件中,大致流程如下:
 
 ```flow
-st=>start: 输出文件头
+st=>startTime: 输出文件头
 searchreg=>operation: 读取当前项目所有报名信息
 searchresults=>operation: 读取当前项目所有成绩信息
 output=>operation: 输出成绩信息

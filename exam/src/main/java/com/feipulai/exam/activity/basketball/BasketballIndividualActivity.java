@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.udp.UDPBasketBallConfig;
 import com.feipulai.device.udp.UdpClient;
 import com.feipulai.device.udp.UdpLEDUtil;
@@ -79,6 +81,14 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
     @BindView(R.id.tv_pair)
     TextView tvPair;
 
+    @BindView(R.id.txt_near)
+    CheckBox txtNear;
+    @BindView(R.id.txt_far)
+    CheckBox txtFar;
+    @BindView(R.id.txt_led)
+    CheckBox txtLed;
+
+
 
     private IndividualCheckFragment individualCheckFragment;
     // 状态 WAIT_FREE---> WAIT_CHECK_IN---> WAIT_BEGIN--->TESTING---->WAIT_STOP---->WAIT_CONFIRM--->WAIT_CHECK_IN
@@ -98,6 +108,8 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
     private StudentItem mStudentItem;
     private int roundNo;
     private TimerUtil timerUtil;
+
+    private int testType;  // 0 有线  1 无线
 
     @Override
     protected int setLayoutResID() {
@@ -149,6 +161,19 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         if (setting.getTestType() == 1) {
             tvPair.setVisibility(View.VISIBLE);
         }
+
+        //TODO 判断是否显示远近红外的状态标识
+
+        testType = setting.getTestType();
+        if (testType == 0){
+            txtNear.setVisibility(View.GONE);
+            txtFar.setVisibility(View.GONE);
+            txtLed.setVisibility(View.GONE);
+        }else {
+            txtNear.setVisibility(View.VISIBLE);
+            txtFar.setVisibility(View.GONE);
+            txtLed.setVisibility(View.VISIBLE);
+        }
     }
 
 
@@ -158,6 +183,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         UdpClient.getInstance().setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(), new BasketBallListener(this));
         //设置精度
         UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1));
+        RadioManager.getInstance().setOnRadioArrived(new BasketBallListener(this));
     }
 
 
@@ -508,22 +534,32 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_waiting://等待发令
-                if ((state == WAIT_CHECK_IN || state == WAIT_CONFIRM || state == WAIT_STOP) && isExistTestPlace()) {
-                    timerUtil.stop();
-                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
+                if (testType == 0) {
+                    if ((state == WAIT_CHECK_IN || state == WAIT_CONFIRM || state == WAIT_STOP) && isExistTestPlace()) {
+                        timerUtil.stop();
+                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
+                    }
+                }else {
+
                 }
                 break;
             case R.id.txt_illegal_return://违例返回
-                showIllegalReturnDialog();
+                if (testType == 0) {
+                    showIllegalReturnDialog();
+                }
                 break;
             case R.id.txt_continue_run://继续运行
-                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(3));
+                if (testType == 0) {
+                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(3));
+                }
                 break;
             case R.id.txt_stop_timing://停止计时
-                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
-
+                if (testType == 0) {
+                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
+                }
                 break;
             case R.id.tv_punish_add: //违例+
+
                 setPunish(1);
                 break;
             case R.id.tv_punish_subtract://违例-
@@ -548,7 +584,11 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             case R.id.tv_confirm://确定
                 timerUtil.stop();
                 if (state == WAIT_CONFIRM) {
-                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
+                    if (testType == 0) {
+                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
+                    }else {
+
+                    }
                 }
                 if (state != TESTING && pairs.get(0).getStudent() != null) {
                     tvResult.setText("");
@@ -563,12 +603,16 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                     timerUtil.stop();
                     resultAdapter.setSelectPosition(-1);
                     prepareForCheckIn();
-                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
                     txtDeviceStatus.setText("空闲");
-                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(1,
-                            UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
-                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
-                            UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
+                    if (testType == 0) {
+                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
+                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(1,
+                                UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
+                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
+                                UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
+                    }else {
+
+                    }
                 }
 
                 break;
@@ -1003,7 +1047,6 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 txtContinueRun.setEnabled(true);
                 txtStopTiming.setEnabled(false);
                 break;
-
         }
 
     }

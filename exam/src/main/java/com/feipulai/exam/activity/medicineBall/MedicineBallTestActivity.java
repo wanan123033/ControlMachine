@@ -38,12 +38,13 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
     private TestState testState = TestState.UN_STARTED;
     private Handler mHandler = new MedicineBallHandler(this);
     private boolean checkFlag = false;
-    private boolean startFlag ;
+    private boolean startFlag;
     private ScheduledExecutorService executorService;
     private static final int DELAY = 0X1000;
     private static final int UPDATEDEVICE = 0X1001;
     private ScheduledExecutorService checkService;
-    private Student student ;
+    private Student student;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +54,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
     private void init() {
         checkService = Executors.newSingleThreadScheduledExecutor();
         mSerialManager = SerialDeviceManager.getInstance();
-        mSerialManager.setRS232ResiltListener(resultImpl);
+
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
         setTestType(1);
 //        sendCheck();
@@ -68,6 +69,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mSerialManager.setRS232ResiltListener(resultImpl);
         //设置基点
 //        mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
 //                SerialConfigs.CMD_MEDICINE_BALL_SET_BASE_POINT));
@@ -85,7 +87,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
             medicineBallSetting = new MedicineBallSetting();
         }
         Logger.i(TAG + ":medicineBallSetting ->" + medicineBallSetting.toString());
-        if (medicineBallSetting.isPenalize()){
+        if (medicineBallSetting.isPenalize()) {
 
             setFaultEnable(true);
         }
@@ -95,11 +97,11 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
     @Override
     public void sendTestCommand(BaseStuPair baseStuPair) {
         student = baseStuPair.getStudent();
-        if (student == null){
+        if (student == null) {
             toastSpeak("请先添加学生");
             return;
         }
-        startFlag = true ;
+        startFlag = true;
         testState = TestState.UN_STARTED;
         decideBegin();
         mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
@@ -166,9 +168,9 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
                     basePair.setStudent(activity.student);
                     basePair.setBaseDevice(new BaseDeviceState(BaseDeviceState.STATE_END, 1));
                     int beginPoint = Integer.parseInt(SharedPrefsUtil.getValue(activity, "SXQ", "beginPoint", "0"));
-                    if (result.getSweepPoint()< 2){
+                    if (result.getSweepPoint() < 2) {
                         activity.showValidResult(result.getResult() * 10 + beginPoint * 10, result.isFault(), basePair);
-                    }else {
+                    } else {
                         activity.onResultArrived(result.getResult() * 10 + beginPoint * 10, result.isFault(), basePair);
                     }
                     break;
@@ -181,7 +183,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
                     activity.sendFree();
                     break;
                 case UPDATEDEVICE:
-                    BaseDeviceState deviceState = new BaseDeviceState(BaseDeviceState.STATE_ERROR,0);
+                    BaseDeviceState deviceState = new BaseDeviceState(BaseDeviceState.STATE_ERROR, 0);
                     activity.updateDevice(deviceState);
                     activity.sendFree();
                     break;
@@ -192,7 +194,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
         }
     }
 
-    private void sendCheck(){
+    private void sendCheck() {
 //        checkService.scheduleAtFixedRate(new Runnable() {
 //            @Override
 //            public void run() {
@@ -204,7 +206,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
         mHandler.sendEmptyMessage(UPDATEDEVICE);
     }
 
-    private void sendFree(){
+    private void sendFree() {
         mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
     }
 
@@ -222,34 +224,29 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
             mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
             if (PROMPT_TIMES >= 2 && PROMPT_TIMES < 4) {
                 int[] errors = selfCheckResult.getIncorrectPoles();
-                for (int i = 1; i < errors.length+1; i++) {
-                    if (errors[i-1] == 1) {
-                        int e = errors[i]+1;
+                for (int i = 1; i < errors.length + 1; i++) {
+                    if (errors[i - 1] == 1) {
+                        int e = errors[i] + 1;
                         toastSpeak(String.format("%s测量杆出现异常", "第" + e));
                     }
                 }
 
             }
             setBegin(0);
-            if (deviceState.getState() != BaseDeviceState.STATE_ERROR){
-                deviceState.setState(BaseDeviceState.STATE_ERROR);
-                updateDevice(deviceState);
-            }
+            deviceState.setState(BaseDeviceState.STATE_ERROR);
+            updateDevice(deviceState);
 
 //            mHandler.sendEmptyMessageDelayed(DELAY,1000);
         } else {
             PROMPT_TIMES = 0;
             checkFlag = true;
-            if (deviceState.getState() == BaseDeviceState.STATE_ERROR){
-                sendFree();
-            }
             if (testState == TestState.UN_STARTED) {
                 deviceState.setState(BaseDeviceState.STATE_NOT_BEGAIN);
                 setBegin(1);
             } else {
                 deviceState.setState(BaseDeviceState.STATE_ONUSE);
             }
-            if (testState == TestState.WAIT_RESULT && startFlag){
+            if (testState == TestState.WAIT_RESULT && startFlag) {
                 toastSpeak("开始测试");
                 startFlag = false;
                 setBegin(0);
@@ -282,8 +279,8 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
         }
     }
 
-    private void showValidResult(final int result, final boolean fault, final BaseStuPair stuPair){
-        AlertDialog.Builder builder  = new AlertDialog.Builder(this);
+    private void showValidResult(final int result, final boolean fault, final BaseStuPair stuPair) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("成绩是否有效");
         builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
             @Override
@@ -297,7 +294,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
         builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                onResultArrived(result,fault,stuPair);
+                onResultArrived(result, fault, stuPair);
                 dialog.dismiss();
             }
         });
@@ -369,7 +366,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
 
         @Override
         public void onFree() {
-            checkFlag = true ;
+            checkFlag = true;
         }
     });
 }

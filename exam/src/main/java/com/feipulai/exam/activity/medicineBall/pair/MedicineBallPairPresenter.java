@@ -1,4 +1,4 @@
-package com.feipulai.exam.activity.sargent_jump.pair;
+package com.feipulai.exam.activity.medicineBall.pair;
 
 import android.content.Context;
 import android.os.Build;
@@ -10,7 +10,6 @@ import com.feipulai.exam.activity.sargent_jump.SargentSetting;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairContract;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairPresenter;
-import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
 
 import java.util.Objects;
 
@@ -19,20 +18,20 @@ import java.util.Objects;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 
-public class VolleyBallPairPresenter extends SitPullUpPairPresenter {
+public class MedicineBallPairPresenter extends SitPullUpPairPresenter {
 
     private Context context;
-    private VolleyBallSetting setting;
+    private SargentSetting setting;
     private SitPushUpManager sitPushUpManager;
 
-    public VolleyBallPairPresenter(Context context, SitPullUpPairContract.View view) {
+    public MedicineBallPairPresenter(Context context, SitPullUpPairContract.View view) {
         super(context, view);
         this.context = context;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Objects.requireNonNull(view);
         }
-        setting = SharedPrefsUtil.loadFormSource(context, VolleyBallSetting.class);
-        sitPushUpManager = new SitPushUpManager(SitPushUpManager.PROJECT_CODE_VOLLEY_BALL,PushUpSetting.WIRELESS_TYPE);
+        setting = SharedPrefsUtil.loadFormSource(context, SargentSetting.class);
+        sitPushUpManager = new SitPushUpManager(SitPushUpManager.PROJECT_CODE_SXQ,PushUpSetting.WIRELESS_TYPE);
     }
 
     @Override
@@ -49,7 +48,7 @@ public class VolleyBallPairPresenter extends SitPullUpPairPresenter {
     }
     
     public void setFrequency(int deviceId, int originFrequency, int deviceFrequency) {
-        sitPushUpManager.setFrequencyPQ(
+        sitPushUpManager.setFrequencySXQ(
                 originFrequency,
                 deviceId,
                 SettingHelper.getSystemSetting().getHostId());

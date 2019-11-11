@@ -288,13 +288,13 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
      * 所以轮询查看是否需要开始测试
      */
     private void decideBegin() {
-        Log.i("MedicineBallResultImpl", "decideBegin====");
+        Log.i("MedicineBallImpl", "decideBegin====");
         executorService = Executors.newSingleThreadScheduledExecutor();
         executorService.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 if (checkFlag && testState == TestState.UN_STARTED) {
-                    Log.i("MedicineBallResultImpl", "decideBegin");
+                    Log.i("MedicineBallImpl", "decideBegin");
                     testState = TestState.WAIT_RESULT;
 //                    updateDevice(new BaseDeviceState(BaseDeviceState.STATE_ONUSE, 1));
                     // 开始测试后,会收到1次终端自检结果(终端自检结果可能在开始测试响应之前,也可能在开始测试响应之后)

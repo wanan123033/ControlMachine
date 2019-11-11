@@ -53,6 +53,45 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:background="#313131">
+                <CheckBox
+                    android:id="@+id/txt_near"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="28sp"
+                    android:button="@null"
+                    android:layout_marginTop="15dp"
+                    android:drawablePadding="15dp"
+                    android:layout_marginRight="10dp"
+                    android:drawableRight="@drawable/cb_device_state"
+                    android:layout_alignParentRight="true"
+                    android:textColor="@color/white"
+                    android:text="近红外"/>
+                <CheckBox
+                    android:id="@+id/txt_far"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="28sp"
+                    android:drawablePadding="15dp"
+                    android:layout_marginRight="10dp"
+                    android:button="@null"
+                    android:layout_below="@id/txt_near"
+                    android:layout_alignParentRight="true"
+                    android:drawableRight="@drawable/cb_device_state"
+                    android:textColor="@color/white"
+                    android:text="远红外"/>
+                <CheckBox
+                    android:id="@+id/txt_led"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="28sp"
+                    android:drawablePadding="15dp"
+                    android:layout_below="@id/txt_far"
+                    android:layout_marginRight="10dp"
+                    android:drawableRight="@drawable/cb_device_state"
+                    android:layout_alignParentRight="true"
+                    android:textColor="@color/white"
+                    android:button="@null"
+                    android:text="显示屏"/>
 
                 <TextView
                     android:id="@+id/tv_result"

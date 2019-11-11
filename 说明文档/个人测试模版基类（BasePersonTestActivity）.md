@@ -69,7 +69,7 @@
 
 
 ```flow
-st=>start: Start
+st=>startTime: Start
 e=>end 
 test=>operation: 考生检入  
 cond=>condition: 设备是否可用 

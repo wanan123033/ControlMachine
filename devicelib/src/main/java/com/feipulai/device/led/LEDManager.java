@@ -203,6 +203,7 @@ public class LEDManager {
     }
 
     public void showString(int hostId, String str, int x, int y, boolean clearScreen, boolean update) {
+
         showSubsetString(MachineCode.machineCode, hostId, 1, str, x, y, clearScreen, update);
     }
 
