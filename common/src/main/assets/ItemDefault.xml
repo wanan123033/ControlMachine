@@ -13,7 +13,7 @@
     </stuBlockNo>
 
     <!-- 第61块，6字节到13字节为学年。即学年：byte[22]—byte[29] 8个字节 -->
-    <stuYear blockNo="61" end="13" start="6"/>
+    <stuYear blockNo="61" end="13" startTime="6"/>
 
     <!-- 项目元素 -->
     <element name="身高、体重" blockNum="1" code="1"/>

@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.led.LEDManager;
@@ -26,6 +27,7 @@ import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.sargent_jump.pair.VolleyBallPairActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
 import com.feipulai.exam.activity.volleyball.adapter.DeviceListAdapter;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.bean.RoundResultBean;
@@ -42,6 +44,7 @@ import com.orhanobut.logger.Logger;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -178,10 +181,12 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
 
     public void setDeviceCount(int deviceCount) {
         deviceDetails.clear();
+        VolleyBallSetting setting = SharedPrefsUtil.loadFormSource(this,VolleyBallSetting.class);
         for (int i = 0; i < deviceCount; i++) {
             DeviceDetail detail = new DeviceDetail();
             detail.getStuDevicePair().getBaseDevice().setDeviceId(i + 1);
             detail.getStuDevicePair().setTimeResult(new String[setTestCount()]);
+            detail.setTestTime(setting.getTestTime());
             detail.setDeviceOpen(true);
             deviceDetails.add(detail);
         }
@@ -252,11 +257,13 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
     }
 
     private void addStudent(Student student, int index) {
+        VolleyBallSetting setting = SharedPrefsUtil.loadFormSource(this,VolleyBallSetting.class);
         DeviceDetail deviceDetail = deviceDetails.get(index);
         deviceDetail.getStuDevicePair().setStudent(student);
         deviceDetail.getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
         deviceDetail.getStuDevicePair().setCanTest(false);
         deviceDetail.getStuDevicePair().setBaseHeight(0);
+        deviceDetail.setTestTime(setting.getTestTime());
         int count = deviceDetail.getRound();
         toastSpeak(String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1)
                 , String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1));
@@ -409,12 +416,17 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
                 baseStuPair.getStudent().getStudentCode(), testNo + "", "", RoundResultBean.beanCope(roundResultList));
 
         uploadResult(uploadResults);
+
+        printResult(baseStuPair);
     }
 
     private void updateResultLed(BaseStuPair baseStu , int index) {
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
         if (ledMode == 0){
             String result = ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
+            if (baseStu.getResult() == 0){
+                result = "";
+            }
             int x = 7;
             if (baseStu.getResult()< 1000){
                 x= 9;
@@ -424,6 +436,7 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
                 x= 6 ;
             }
             Log.e("TAG","result = "+ result);
+
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, x, index, false, true);
         }
     }
@@ -469,13 +482,14 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
             }else if (roundResult.getResult()>= 10000){
                 x= 6 ;
             }
-
+            Log.e("TAGP",result);
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, x, index, false, true);
         }
     }
     protected void updateTime(int time, int pos) {
         deviceDetails.get(pos).setTestTime(time);
 //        deviceListAdapter.notifyItemChanged(pos);
+
     }
 
     public synchronized void updateDevice(@NonNull BaseDeviceState deviceState) {
@@ -506,6 +520,29 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
             }
         }
         refreshDevice(index);
+    }
+
+    private void printResult(BaseStuPair baseStuPair) {
+        if (!SettingHelper.getSystemSetting().isAutoPrint())
+            return;
+        //是否已全部次数测试完成，非满分跳过
+        if (baseStuPair.getTimeResult().length < setTestCount() && !baseStuPair.isFullMark()) {
+            return;
+        }
+        Student student = baseStuPair.getStudent();
+//        PrinterManager.getInstance().print("\n");
+        PrinterManager.getInstance().print(TestConfigs.sCurrentItem.getItemName() + SettingHelper.getSystemSetting().getHostId() + "号机");
+        PrinterManager.getInstance().print("考  号:" + student.getStudentCode());
+        PrinterManager.getInstance().print("姓  名:" + student.getStudentName());
+        for (int i = 0; i < baseStuPair.getTimeResult().length; i++) {
+            if (!TextUtils.isEmpty(baseStuPair.getTimeResult()[i])) {
+                PrinterManager.getInstance().print(String.format("第 %1$d 次：", i + 1) + baseStuPair.getTimeResult()[i]);
+            } else {
+                PrinterManager.getInstance().print(String.format("第%1$d次：", i + 1));
+            }
+        }
+        PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()));
+        PrinterManager.getInstance().print("\n");
     }
 
     public abstract boolean isResultFullReturn(int sex, int result);

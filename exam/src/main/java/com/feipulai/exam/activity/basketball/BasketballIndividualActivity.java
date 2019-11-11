@@ -18,6 +18,7 @@ import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.udp.UDPBasketBallConfig;
 import com.feipulai.device.udp.UdpClient;
 import com.feipulai.device.udp.UdpLEDUtil;
@@ -182,6 +183,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         UdpClient.getInstance().setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(), new BasketBallListener(this));
         //设置精度
         UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1));
+        RadioManager.getInstance().setOnRadioArrived(new BasketBallListener(this));
     }
 
 
@@ -542,16 +544,22 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 }
                 break;
             case R.id.txt_illegal_return://违例返回
-                showIllegalReturnDialog();
+                if (testType == 0) {
+                    showIllegalReturnDialog();
+                }
                 break;
             case R.id.txt_continue_run://继续运行
-                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(3));
+                if (testType == 0) {
+                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(3));
+                }
                 break;
             case R.id.txt_stop_timing://停止计时
-                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
-
+                if (testType == 0) {
+                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
+                }
                 break;
             case R.id.tv_punish_add: //违例+
+
                 setPunish(1);
                 break;
             case R.id.tv_punish_subtract://违例-
@@ -576,7 +584,11 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             case R.id.tv_confirm://确定
                 timerUtil.stop();
                 if (state == WAIT_CONFIRM) {
-                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
+                    if (testType == 0) {
+                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
+                    }else {
+
+                    }
                 }
                 if (state != TESTING && pairs.get(0).getStudent() != null) {
                     tvResult.setText("");
@@ -591,12 +603,16 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                     timerUtil.stop();
                     resultAdapter.setSelectPosition(-1);
                     prepareForCheckIn();
-                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
                     txtDeviceStatus.setText("空闲");
-                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(1,
-                            UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
-                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
-                            UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
+                    if (testType == 0) {
+                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
+                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(1,
+                                UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
+                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
+                                UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
+                    }else {
+
+                    }
                 }
 
                 break;

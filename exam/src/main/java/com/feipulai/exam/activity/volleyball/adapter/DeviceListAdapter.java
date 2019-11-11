@@ -1,6 +1,7 @@
 package com.feipulai.exam.activity.volleyball.adapter;
 
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -70,6 +71,7 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
             if (state == BaseDeviceState.STATE_FREE || state == BaseDeviceState.STATE_NOT_BEGAIN) {
                 helper.prepView(true, false, false, setting,setting1.isPenalize());
             } else if (state == BaseDeviceState.STATE_ONUSE) {
+                Log.e("TAG",state+","+item.getTime());
                 if (item.getTime() > 0) {
                     helper.prepView(false, true, false, setting,setting1.isPenalize());
                     helper.txt_time.setText(item.getTime() + "秒");

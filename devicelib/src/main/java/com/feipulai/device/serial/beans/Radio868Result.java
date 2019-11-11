@@ -160,6 +160,7 @@ public class Radio868Result {
                 break;
             case ItemDefault.CODE_PQ:
                 if (data[0] == (byte) 0xAA && data[2] == 0x0A && data[data.length - 1] == 0x0d) {
+                    Log.e("TAG",StringUtility.bytesToHexString(data));
                     switch (data[7]) {
                         case (byte) 0xb0:
                         case (byte) 0xb1:
