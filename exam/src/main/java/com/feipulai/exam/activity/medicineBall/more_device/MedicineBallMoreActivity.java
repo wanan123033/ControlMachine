@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.serial.RadioManager;
+import com.feipulai.device.serial.beans.MedicineBallNewResult;
 import com.feipulai.device.serial.beans.SargentJumpResult;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.exam.R;
@@ -81,8 +82,7 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
             byte[] cmd = CMD_MEDICINE_BALL_EMPTY;
             cmd[3] = (byte) detail.getStuDevicePair().getBaseDevice().getDeviceId();
             cmd[4] = (byte) SettingHelper.getSystemSetting().getHostId();
-            cmd[7] = 0x02;
-            cmd[8] = (byte) sum(cmd, 8);
+            cmd[19] = (byte) sum(cmd, 19);
             RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                     cmd));
         }
@@ -126,17 +126,16 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
 
     private void sendStart(byte id) {
         byte[] cmd = CMD_MEDICINE_BALL_START;
-        cmd[4] = id;
-        cmd[6] = 0x01;
-        cmd[7] = 0x03;
-        cmd[8] = (byte) sum(cmd, 8);
+        cmd[3] = id;
+        cmd[4] = (byte) SettingHelper.getSystemSetting().getHostId();
+        cmd[19] = (byte) sum(cmd, 19);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                 cmd));
     }
 
-    private int sum(byte[] cmd, int index) {
+    private int sum(byte[] cmd, int end) {
         int sum = 0;
-        for (int i = 2; i < index; i++) {
+        for (int i = 1; i < end; i++) {
             sum += cmd[i] & 0xff;
         }
         return sum;
@@ -201,5 +200,21 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
         startActivity(new Intent(this, MedicineBallPairActivity.class));
     }
 
-    private MedicineBallImpl medicineBall = new MedicineBallImpl();
+    private MedicineBallImpl medicineBall = new MedicineBallImpl(new MedicineBallImpl.MainThreadDisposeListener() {
+        @Override
+        public void onResultArrived(MedicineBallNewResult result) {
+            result.toString();
+            deviceState[result.getDeviceId() - 1] = 5;
+        }
+
+        @Override
+        public void onStopTest() {
+
+        }
+
+        @Override
+        public void onStarTest() {
+
+        }
+    });
 }

@@ -239,6 +239,11 @@ public class VolleyBallMoreTestActivity extends BaseMoreActivity {
         mHandler.sendEmptyMessage(START_STATE);
     }
 
+    @Override
+    protected void confirmResult(int pos) {
+
+    }
+
     /**
      *开始计数
      * @param deviceId

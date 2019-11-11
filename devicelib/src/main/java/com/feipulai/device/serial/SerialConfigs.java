@@ -251,5 +251,6 @@ public class SerialConfigs {
 
     //实心球无线
     public static final int MEDICINE_BALL_MATCH_MORE = 0x56;
+    public static final int MEDICINE_BALL_RESULT_MORE = 0x57;
 
 }

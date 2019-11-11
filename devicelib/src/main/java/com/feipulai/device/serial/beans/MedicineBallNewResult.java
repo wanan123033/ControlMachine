@@ -82,4 +82,16 @@ public class MedicineBallNewResult {
     public void setState(int state) {
         this.state = state;
     }
+
+    @Override
+    public String toString() {
+        return "MedicineBallNewResult{" +
+                "result=" + result +
+                ", fault=" + fault +
+                ", sweepPoint=" + sweepPoint +
+                ", deviceId=" + deviceId +
+                ", frequency=" + frequency +
+                ", state=" + state +
+                '}';
+    }
 }

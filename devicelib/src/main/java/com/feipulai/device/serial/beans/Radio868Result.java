@@ -283,6 +283,10 @@ public class Radio868Result {
                             setType(SerialConfigs.MEDICINE_BALL_MATCH_MORE);
                             setResult(new MedicineBallNewResult(data));
                             break;
+                        case 3:
+                            setType(SerialConfigs.MEDICINE_BALL_RESULT_MORE);
+                            setResult(new MedicineBallNewResult(data));
+                            break;
                         default:
                             break;
 

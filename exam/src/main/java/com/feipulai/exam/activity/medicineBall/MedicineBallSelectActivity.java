@@ -11,9 +11,11 @@ import android.view.View;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.serial.beans.MedicineBallNewResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.medicineBall.more_device.MedicineBallMoreActivity;
 import com.feipulai.exam.activity.sargent_jump.SargentSetting;
 import com.feipulai.exam.activity.sargent_jump.SargentTestActivity;
 import com.feipulai.exam.activity.sargent_jump.more_device.SargentMoreTestActivity;
@@ -57,7 +59,7 @@ public class MedicineBallSelectActivity extends BaseTitleActivity {
                 SargentSetting setting = SharedPrefsUtil.loadFormSource(mContext, SargentSetting.class);
                 setting.setType(position);
                 if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
-                    startActivity(new Intent(mContext, position == 1? SargentMoreTestActivity.class : SargentTestActivity.class));
+                    startActivity(new Intent(mContext, position == 1? MedicineBallMoreActivity.class : SargentTestActivity.class));
                 } else {
                     startActivity(new Intent(mContext, BaseGroupActivity.class));
                 }
