@@ -6,6 +6,7 @@ import android.os.Build;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.manager.BallManager;
+import com.feipulai.device.serial.RadioManager;
 import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairContract;
@@ -46,7 +47,6 @@ public class BasketBallPairPresenter extends SitPullUpPairPresenter {
         if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ) {
             return 2;
         }
-
         return 3;
     }
 

@@ -3,6 +3,7 @@ package com.feipulai.exam.activity.basketball.wiress;
 import android.os.Message;
 
 import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.Basketball868Result;
 import com.feipulai.device.sitpullup.SitPullLinker;

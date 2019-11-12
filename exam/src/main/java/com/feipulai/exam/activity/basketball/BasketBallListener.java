@@ -1,5 +1,7 @@
 package com.feipulai.exam.activity.basketball;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 
 import com.feipulai.device.serial.RadioManager;
@@ -18,10 +20,11 @@ import com.orhanobut.logger.Logger;
 public class BasketBallListener implements UdpClient.UDPChannelListerner, RadioManager.OnRadioArrivedListener {
 
     private BasketBallResponseListener listener;
+    private Handler mHandler;
 
     public BasketBallListener(final BasketBallResponseListener listener) {
         this.listener = listener;
-
+        mHandler = new Handler(Looper.getMainLooper());
     }
 
 
@@ -39,7 +42,7 @@ public class BasketBallListener implements UdpClient.UDPChannelListerner, RadioM
             case UDPBasketBallConfig.CMD_SET_STATUS_RESPONSE:
                 if (basketballResult.getUcStatus() == 0) {
                     if (basketballResult.gettNum() == -1)
-                        return;
+                        break;
                     listener.triggerStart(basketballResult);
                 } else {
                     listener.getDeviceStatus(basketballResult.getUcStatus());
@@ -56,7 +59,38 @@ public class BasketBallListener implements UdpClient.UDPChannelListerner, RadioM
     }
 
     @Override
-    public void onRadioArrived(Message msg) {
+    public void onRadioArrived(final Message msg) {
+        if (msg.obj instanceof Basketball868Result) {
+            final BasketballResult result = new BasketballResult();
+            Basketball868Result srcResult = (Basketball868Result) msg.obj;
+            result.setHour(srcResult.getHour());
+            result.setMinute(srcResult.getMinth());
+            result.setSecond(srcResult.getSencond());
+            result.setHund(srcResult.getMinsencond());
+            result.setUcStatus(srcResult.getState());
+            result.settNum(srcResult.getDeviceId());
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    switch (msg.what) {
+                        case SerialConfigs.DRIBBLEING_START:   //获取状态
+                            if (result.getUcStatus() == 0) {
+                                if (result.gettNum() == -1)
+                                    break;
+                                listener.triggerStart(result);
+                            } else {
+                                listener.getDeviceStatus(result.getUcStatus());
+                            }
+                            listener.getResult(result);
+                            break;
+                        case SerialConfigs.DRIBBLEING_STOP:  //停止计时
+                            listener.getStatusStop(result);
+                            break;
+                    }
+                }
+            });
+
+        }
 //        BasketballResult basketballResult = (BasketballResult) msg.obj;
 //        Logger.i("onDataArrived===>" + basketballResult.toString());
 //        switch (basketballResult.getType()) {

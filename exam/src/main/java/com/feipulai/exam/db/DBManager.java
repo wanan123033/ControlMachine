@@ -1228,6 +1228,7 @@ public class DBManager {
      * @param score
      */
     public void updateRoundResult(RoundResult score) {
+
         roundResultDao.update(score);
     }
 
@@ -1443,6 +1444,16 @@ public class DBManager {
                 .orderDesc(RoundResultDao.Properties.TestNo)
                 .limit(1)
                 .unique();
+    }
+
+    public List<RoundResult> queryRountScore(String studentCode) {
+        Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
+                + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\tIsLastResult:" + 1);
+        return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .orderDesc(RoundResultDao.Properties.TestNo).list();
     }
 
     /**
