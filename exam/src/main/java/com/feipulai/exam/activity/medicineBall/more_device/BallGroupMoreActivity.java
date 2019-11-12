@@ -1,23 +1,18 @@
 package com.feipulai.exam.activity.medicineBall.more_device;
 
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.View;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.MedicineBallNewResult;
 import com.feipulai.device.serial.command.ConvertCommand;
-import com.feipulai.exam.R;
 import com.feipulai.exam.activity.medicineBall.MedicineBallSetting;
-import com.feipulai.exam.activity.medicineBall.MedicineBallSettingActivity;
 import com.feipulai.exam.activity.medicineBall.MedicineConstant;
-import com.feipulai.exam.activity.medicineBall.pair.MedicineBallPairActivity;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
-import com.feipulai.exam.activity.sargent_jump.more_device.BaseMoreActivity;
+import com.feipulai.exam.activity.sargent_jump.more_device.BaseMoreGroupActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.config.TestConfigs;
@@ -25,43 +20,32 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
 
-import java.text.MessageFormat;
-
-import butterknife.OnClick;
-
 import static com.feipulai.exam.activity.medicineBall.MedicineConstant.CMD_MEDICINE_BALL_EMPTY;
 import static com.feipulai.exam.activity.medicineBall.MedicineConstant.CMD_MEDICINE_BALL_SET_EMPTY;
 import static com.feipulai.exam.activity.medicineBall.MedicineConstant.CMD_MEDICINE_BALL_START;
 import static com.feipulai.exam.activity.medicineBall.MedicineConstant.GET_SCORE_RESPONSE;
 
-public class MedicineBallMoreActivity extends BaseMoreActivity {
-    private static final String TAG = "MedicineMoreActivity";
-    private int[] deviceState = {};
-    private MedicineBallSetting setting;
-
-
+public class BallGroupMoreActivity extends BaseMoreGroupActivity {
+    private static final String TAG = "BallGroupMoreActivity";
+    private MedicineBallSetting sargentSetting;
+    private int [] deviceState = new int[4];
     private final int SEND_EMPTY = 1;
     private int beginPoint;
-
     @Override
-    protected void onResume() {
-        super.onResume();
-        setting = SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class);
-        if (null == setting) {
-            setting = new MedicineBallSetting();
+    protected void initData() {
+        sargentSetting = SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class);
+        if (null == sargentSetting) {
+            sargentSetting = new MedicineBallSetting();
         }
-        Logger.i(TAG + ":medicineBallSetting ->" + setting.toString());
-        setting.setSpDeviceCount(4);
-        setDeviceCount(setting.getSpDeviceCount());
-        deviceState = new int[setting.getSpDeviceCount()];
-
+        Logger.i(TAG + ":sargentSetting ->" + sargentSetting.toString());
+        sargentSetting.setSpDeviceCount(4);
+        setDeviceCount(sargentSetting.getSpDeviceCount());
+        deviceState = new int[sargentSetting.getSpDeviceCount()];
         for (int i = 0; i < deviceState.length; i++) {
-
-            deviceState[i] = 0;//连续5次检测不到认为掉线
+            deviceState[i] = 0;
         }
         beginPoint = Integer.parseInt(SharedPrefsUtil.getValue(this, "SXQ", "beginPoint", "0"));
-
-        RadioManager.getInstance().setOnRadioArrived(medicineBall);
+        RadioManager.getInstance().setOnRadioArrived(resultImpl);
         sendEmpty();
     }
 
@@ -96,43 +80,20 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
         mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 1000);
     }
 
-    @Override
-    public int setTestCount() {
-        if (TestConfigs.sCurrentItem.getTestNum() != 0) {
-            return TestConfigs.sCurrentItem.getTestNum();
-        } else {
-            return setting.getTestTimes();
+    private int sum(byte[] cmd, int end) {
+        int sum = 0;
+        for (int i = 1; i < end; i++) {
+            sum += cmd[i] & 0xff;
         }
+        return sum;
     }
 
     @Override
-    public boolean isResultFullReturn(int sex, int result) {
-        if (setting.isFullReturn()) {
-            if (sex == Student.MALE) {
-                return result >= Integer.valueOf(setting.getMaleFull()) * 10;
-            } else {
-                return result >= Integer.valueOf(setting.getFemaleFull()) * 10;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public void gotoItemSetting() {
-        startActivity(new Intent(this, MedicineBallSettingActivity.class));
-    }
-
-    @Override
-    protected void sendTestCommand(BaseStuPair pair, int index) {
+    public void toStart(int pos) {
+        BaseStuPair pair = deviceDetails.get(pos).getStuDevicePair();
         pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
         updateDevice(pair.getBaseDevice());
-        int id = pair.getBaseDevice().getDeviceId();
-        sendStart((byte) id);
-    }
-
-    @Override
-    protected void confirmResult(int pos) {
-
+        sendStart((byte) pair.getBaseDevice().getDeviceId());
     }
 
     private void sendStart(byte id) {
@@ -144,12 +105,18 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
                 cmd));
     }
 
-    private int sum(byte[] cmd, int end) {
-        int sum = 0;
-        for (int i = 1; i < end; i++) {
-            sum += cmd[i] & 0xff;
+    @Override
+    public int setTestCount() {
+        if (TestConfigs.sCurrentItem.getTestNum() != 0) {
+            return TestConfigs.sCurrentItem.getTestNum();
+        } else {
+            return sargentSetting.getTestTimes();
         }
-        return sum;
+    }
+
+    @Override
+    public int setTestPattern() {
+        return sargentSetting.getTestPattern();
     }
 
     private void sendFree(int deviceId) {
@@ -185,6 +152,55 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
 
     }
 
+    private void onResultArrived(int result, BaseStuPair stuPair) {
+        if (result < beginPoint * 10 || result >  5000* 10) {
+            toastSpeak("数据异常，请重测");
+            return;
+        }
+
+        if (stuPair == null || stuPair.getStudent() == null)
+            return;
+        if (sargentSetting.isFullReturn()) {
+            if (stuPair.getStudent().getSex() == Student.MALE) {
+                stuPair.setFullMark(stuPair.getResult() >= Integer.parseInt(sargentSetting.getMaleFull()) * 10);
+            } else {
+                stuPair.setFullMark(stuPair.getResult() >= Integer.parseInt(sargentSetting.getFemaleFull()) * 10);
+            }
+        }
+        stuPair.setResult(result);
+        stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
+        updateTestResult(stuPair);
+        updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, stuPair.getBaseDevice().getDeviceId()));
+
+    }
+
+
+    private MedicineBallImpl resultImpl = new MedicineBallImpl(new MedicineBallImpl.MainThreadDisposeListener() {
+        @Override
+        public void onResultArrived(MedicineBallNewResult result) {
+            Log.i(TAG,result.toString());
+            if (result.getState() == 2){
+                Message msg = mHandler.obtainMessage();
+                msg.obj = result;
+                msg.what = MedicineConstant.GET_SCORE_RESPONSE;
+                mHandler.sendMessage(msg);
+                sendFree(result.getDeviceId());
+            }else if (result.getState() == 0){
+                disposeDevice(result);
+            }
+        }
+
+        @Override
+        public void onStopTest() {
+
+        }
+
+        @Override
+        public void onStarTest(int deviceId) {
+
+        }
+    });
+
     private Handler mHandler = new Handler(new Handler.Callback() {
 
         @Override
@@ -195,7 +211,6 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
                     for (DeviceDetail detail : deviceDetails) {
                         if (detail.getStuDevicePair().getBaseDevice().getDeviceId() == result.getDeviceId()) {
                             int dbResult = result.getResult() * 10+beginPoint * 10;
-                            detail.getStuDevicePair().setResultState(result.isFault()? RoundResult.RESULT_STATE_FOUL:RoundResult.RESULT_STATE_NORMAL);
                             onResultArrived(dbResult, detail.getStuDevicePair());
 
                         }
@@ -208,69 +223,6 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
             }
 
             return false;
-        }
-    });
-
-    private void onResultArrived(int result, BaseStuPair stuPair) {
-        if (result < beginPoint * 10 || result >  5000* 10) {
-            toastSpeak("数据异常，请重测");
-            return;
-        }
-
-        if (stuPair == null || stuPair.getStudent() == null)
-            return;
-        if (setting.isFullReturn()) {
-            if (stuPair.getStudent().getSex() == Student.MALE) {
-                stuPair.setFullMark(stuPair.getResult() >= Integer.parseInt(setting.getMaleFull()) * 10);
-            } else {
-                stuPair.setFullMark(stuPair.getResult() >= Integer.parseInt(setting.getFemaleFull()) * 10);
-            }
-        }
-        stuPair.setResult(result);
-        updateResult(stuPair);
-        updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, stuPair.getBaseDevice().getDeviceId()));
-
-    }
-
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mHandler.removeCallbacksAndMessages(null);
-    }
-
-    @OnClick({R.id.tv_device_pair})
-    public void onClick(View view) {
-        startActivity(new Intent(this, MedicineBallPairActivity.class));
-    }
-
-    private MedicineBallImpl medicineBall = new MedicineBallImpl(new MedicineBallImpl.MainThreadDisposeListener() {
-        @Override
-        public void onResultArrived(MedicineBallNewResult result) {
-            Log.i(TAG,result.toString());
-
-            // MedicineBallNewResult{result=50, fault=false, sweepPoint=1, deviceId=2, frequency=0, state=2}
-            if (result.getState() == 2){
-                Message msg = mHandler.obtainMessage();
-                msg.obj = result;
-                msg.what = MedicineConstant.GET_SCORE_RESPONSE;
-                mHandler.sendMessage(msg);
-                sendFree(result.getDeviceId());
-            }
-            disposeDevice(result);
-        }
-
-        @Override
-        public void onStopTest() {
-
-        }
-
-        @Override
-        public void onStarTest(int deviceId) {
-            Student student = deviceDetails.get(deviceId-1).getStuDevicePair().getStudent();
-            if (student!=null){
-                toastSpeak(MessageFormat.format("请{0}号机开始测试", deviceId));
-            }
         }
     });
 

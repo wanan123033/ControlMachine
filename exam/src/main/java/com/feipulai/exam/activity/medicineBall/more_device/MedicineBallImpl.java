@@ -19,10 +19,14 @@ public class MedicineBallImpl implements RadioManager.OnRadioArrivedListener{
     @Override
     public void onRadioArrived(Message msg) {
         if (msg.obj instanceof MedicineBallNewResult){
+            MedicineBallNewResult result = (MedicineBallNewResult) msg.obj;
             switch (msg.what){
+
                 case SerialConfigs.MEDICINE_BALL_RESULT_MORE:
-                    MedicineBallNewResult result = (MedicineBallNewResult) msg.obj;
                     disposeListener.onResultArrived(result);
+                    break;
+                case SerialConfigs.MEDICINE_BALL_START_MORE:
+                    disposeListener.onStarTest(result.getDeviceId());
                     break;
             }
         }
@@ -31,6 +35,6 @@ public class MedicineBallImpl implements RadioManager.OnRadioArrivedListener{
     interface MainThreadDisposeListener{
         void onResultArrived(MedicineBallNewResult result);
         void onStopTest();
-        void onStarTest();
+        void onStarTest(int deviceId);
     }
 }

@@ -280,11 +280,16 @@ public class Radio868Result {
                     byte b = data[7];
                     switch (b) {
                         case 1:
+                        case 2:
                             setType(SerialConfigs.MEDICINE_BALL_MATCH_MORE);
                             setResult(new MedicineBallNewResult(data));
                             break;
                         case 3:
                             setType(SerialConfigs.MEDICINE_BALL_RESULT_MORE);
+                            setResult(new MedicineBallNewResult(data));
+                            break;
+                        case 4:
+                            setType(SerialConfigs.MEDICINE_BALL_START_MORE);
                             setResult(new MedicineBallNewResult(data));
                             break;
                         default:

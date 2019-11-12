@@ -25,7 +25,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.medicineBall.more_device.MedicineBallMoreActivity"></activity>
+        <activity android:name=".activity.medicineBall.more_device.BallGroupMoreActivity"></activity>
+        <activity android:name=".activity.medicineBall.more_device.MedicineBallMoreActivity" />
         <activity android:name=".activity.medicineBall.pair.MedicineBallPairActivity" />
         <activity android:name=".activity.sargent_jump.pair.VolleyBallPairActivity" />
         <activity android:name=".activity.sargent_jump.more_device.SargentTestGroupActivity" />

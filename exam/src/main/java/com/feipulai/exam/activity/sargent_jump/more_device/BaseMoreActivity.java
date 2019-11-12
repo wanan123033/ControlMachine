@@ -144,7 +144,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         int index = 0;
         boolean canUseDevice = false;
         for (int i = 0; i < deviceCount; i++) {
-            if (deviceDetails.get(i).isDeviceOpen() && deviceDetails.get(i).getStuDevicePair().isCanTest()) {
+            if (deviceDetails.get(i).isDeviceOpen() && deviceDetails.get(i).getStuDevicePair().isCanTest()
+                    &&deviceDetails.get(i).getStuDevicePair().getBaseDevice().getState()!=BaseDeviceState.STATE_ERROR) {
                 index = i;
                 canUseDevice = true;
                 break;

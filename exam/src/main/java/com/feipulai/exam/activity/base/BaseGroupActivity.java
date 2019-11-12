@@ -22,6 +22,7 @@ import com.feipulai.device.serial.MachineCode;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.medicineBall.MedicineBallSetting;
+import com.feipulai.exam.activity.medicineBall.more_device.BallGroupMoreActivity;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.pushUp.PushUpGroupActivity;
@@ -486,6 +487,13 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     startActivity(new Intent(this, SargentTestGroupActivity.class));
                     return;
                 }
+
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_HWSXQ &&
+                        SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class).getConnectType() == 1) {
+                    startActivity(new Intent(this, BallGroupMoreActivity.class));
+                    return;
+                }
+
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_PQ
                         && SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class).getType() == 1) {
                     startActivity(new Intent(this, VolleyBallMoreGroupActivity.class));

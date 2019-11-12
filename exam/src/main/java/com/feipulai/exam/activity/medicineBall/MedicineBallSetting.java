@@ -25,6 +25,7 @@ public class MedicineBallSetting {
      */
     private int testPattern = 0;
     private boolean isPenalize;
+    private int connectType = 0;
 
     public int getTestPattern() {
         return testPattern;
@@ -80,5 +81,13 @@ public class MedicineBallSetting {
 
     public void setPenalize(boolean penalize) {
         isPenalize = penalize;
+    }
+
+    public int getConnectType() {
+        return connectType;
+    }
+
+    public void setConnectType(int connectType) {
+        this.connectType = connectType;
     }
 }
