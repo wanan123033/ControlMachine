@@ -178,6 +178,9 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
 
             }
             deviceState[result.getDeviceId() - 1] = 0;//出现异常
+            if (result.getState() == 1){
+                sendFree(result.getDeviceId());
+            }
         }else {
             PROMPT_TIMES = 0;
             deviceState[result.getDeviceId() - 1] = 5;

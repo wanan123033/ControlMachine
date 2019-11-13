@@ -156,7 +156,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
                         toastSpeak("已经超过测试次数");
                         deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc5, (byte) 0x00, (byte) 0x00)));
                     }
-                    changeState(new boolean[]{false, false, false, false,true});
+                    changeState(new boolean[]{false, true, false, false,true});
                     if (baseTimer == 0 && runTimerSetting.getInterceptWay() == 0) {//红外拦截
                         baseTimer = System.currentTimeMillis();
                     }

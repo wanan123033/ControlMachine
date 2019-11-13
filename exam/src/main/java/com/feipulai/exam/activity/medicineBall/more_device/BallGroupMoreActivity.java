@@ -145,6 +145,9 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
 
             }
             deviceState[result.getDeviceId() - 1] = 0;//出现异常
+            if (result.getState() == 1){
+                sendFree(result.getDeviceId());
+            }
         }else {
             PROMPT_TIMES = 0;
             deviceState[result.getDeviceId() - 1] = 5;
@@ -168,7 +171,6 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
             }
         }
         stuPair.setResult(result);
-        stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
         updateTestResult(stuPair);
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, stuPair.getBaseDevice().getDeviceId()));
 
@@ -211,6 +213,7 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
                     for (DeviceDetail detail : deviceDetails) {
                         if (detail.getStuDevicePair().getBaseDevice().getDeviceId() == result.getDeviceId()) {
                             int dbResult = result.getResult() * 10+beginPoint * 10;
+                            detail.getStuDevicePair().setResultState(result.isFault()? RoundResult.RESULT_STATE_FOUL:RoundResult.RESULT_STATE_NORMAL);
                             onResultArrived(dbResult, detail.getStuDevicePair());
 
                         }

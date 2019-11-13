@@ -43,6 +43,7 @@ public class MedicineBallNewResult {
 		    state = data[12];
 
 		    //检测测量杆是否正常
+            //0xAA  15  07  01  03  06  01  03  00  00  00  00  01  80  00  00  00  00  00  AB  0D
             numOfPoles = data[16] & 0xff;
             int tmp = ((data[13] & 0xff) << 8) +  (data[14] & 0xff);
             incorrectPoles = new int[numOfPoles];
