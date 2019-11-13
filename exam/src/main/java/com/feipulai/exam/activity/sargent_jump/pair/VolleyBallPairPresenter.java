@@ -53,6 +53,8 @@ public class VolleyBallPairPresenter extends SitPullUpPairPresenter {
                 originFrequency,
                 deviceId,
                 SettingHelper.getSystemSetting().getHostId());
+        setting.setPairNum(deviceId);
+        SharedPrefsUtil.save(context,setting);
     }
 
     @Override

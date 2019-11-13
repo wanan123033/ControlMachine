@@ -1,6 +1,8 @@
 package com.feipulai.exam.activity.basketball;
 
 import android.graphics.Paint;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +20,7 @@ import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.manager.BallManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.udp.UDPBasketBallConfig;
 import com.feipulai.device.udp.UdpClient;
@@ -58,6 +61,8 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class BasketballIndividualActivity extends BaseTitleActivity implements IndividualCheckFragment.OnIndividualCheckInListener
         , BasketBallListener.BasketBallResponseListener, TimerUtil.TimerAccepListener {
+
+    private static final int GET_STATE = 22;
 
     @BindView(R.id.ll_stu_detail)
     LinearLayout llStuDetail;
@@ -110,6 +115,20 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
     private TimerUtil timerUtil;
 
     private int testType;  // 0 有线  1 无线
+
+    private BallManager ballManager;
+
+    private Handler handler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what){
+                case GET_STATE:
+                    getState();
+                    break;
+            }
+            return false;
+        }
+    });
 
     @Override
     protected int setLayoutResID() {
@@ -180,10 +199,27 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
     @Override
     protected void onResume() {
         super.onResume();
-        UdpClient.getInstance().setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(), new BasketBallListener(this));
-        //设置精度
-        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1));
-        RadioManager.getInstance().setOnRadioArrived(new BasketBallListener(this));
+
+        if (testType == 1){
+            RadioManager.getInstance().setOnRadioArrived(new BasketBallListener(this));
+            ballManager = new BallManager(testType);
+            //TODO  800毫秒取一次状态
+            getState();
+        }else {
+            UdpClient.getInstance().setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(), new BasketBallListener(this));
+            //设置精度
+            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1));
+        }
+    }
+
+    private void getState() {
+        int hostId = SettingHelper.getSystemSetting().getHostId();
+        int deviceId = 1;
+        ballManager.getRadioState(hostId,deviceId);
+        ballManager.getRadioLedState(hostId);
+
+        handler.removeMessages(GET_STATE);
+        handler.sendEmptyMessageDelayed(GET_STATE,800);
     }
 
 
@@ -540,7 +576,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                         UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
                     }
                 }else {
-
+                    ballManager.setRadioStartAwait(SettingHelper.getSystemSetting().getHostId());
                 }
                 break;
             case R.id.txt_illegal_return://违例返回

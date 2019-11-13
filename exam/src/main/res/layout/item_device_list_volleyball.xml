@@ -135,6 +135,18 @@
         android:gravity="center"
         android:textColor="@color/white"
         android:textSize="30sp" />
+    <TextView
+        android:id="@+id/item_txt_state"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="@mipmap/icon_test_result_bg"
+        android:layout_below="@+id/item_txt_test_result"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="30sp" />
     <RelativeLayout
         android:id="@+id/rl_1"
         android:layout_width="match_parent"

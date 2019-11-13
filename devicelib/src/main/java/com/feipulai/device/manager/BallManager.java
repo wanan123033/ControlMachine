@@ -340,8 +340,8 @@ public class BallManager {
 
     private int sum(byte[] cmd, int index) {
         int sum = 0;
-        for (int i = 2; i < index; i++) {
-            sum += cmd[i] & 0xff;
+        for (int i = 1; i < index; i++) {
+            sum += cmd[i];
         }
         return sum;
     }

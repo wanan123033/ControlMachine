@@ -1,6 +1,7 @@
 package com.feipulai.exam.utils;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.printer.PrinterManager;
@@ -53,6 +54,7 @@ public class PrintResultUtil {
 
                 RoundResultBean result = printResultList.get(i);
                 String printResult = "第" + result.getRoundNo() + "次:" + getPrintResultState(result);
+                Log.e("TAG------","printResult="+ printResult);
                 // 跳绳需要打印绊绳次数
                 switch (TestConfigs.sCurrentItem.getMachineCode()) {
                     case ItemDefault.CODE_TS:
@@ -81,7 +83,7 @@ public class PrintResultUtil {
     }
 
     private static String getPrintResultState(RoundResultBean roundResult) {
-
+        Log.e("TAG","roundResult.getIsFoul() = "+ roundResult.getIsFoul());
         switch (roundResult.getIsFoul()) {
             case RoundResult.RESULT_STATE_NORMAL:
                 return ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult(), false);

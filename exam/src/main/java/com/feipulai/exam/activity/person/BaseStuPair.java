@@ -32,6 +32,11 @@ public class BaseStuPair implements Serializable {
     //是否最好
     private boolean notBest ;
     private int baseHeight;
+    private boolean devicePairState = false;  //true 已配对  false 没有配对
+    private int penaltyNum;
+
+    private int roundNo;  //轮次
+
     public BaseStuPair(int result, int resultState, Student student, BaseDeviceState baseDevice) {
         this.result = result;
         this.resultState = resultState;
@@ -154,5 +159,29 @@ public class BaseStuPair implements Serializable {
                 ", notBest=" + notBest +
                 ", baseHeight=" + baseHeight +
                 '}';
+    }
+
+
+    public void setDevicePairState(boolean devicePairState) {
+        this.devicePairState = devicePairState;
+    }
+
+    public boolean getDevicePairState() {
+        return devicePairState;
+    }
+
+    public int getPenaltyNum() {
+        return penaltyNum;
+    }
+    public void setPenaltyNum(int penaltyNum) {
+        this.penaltyNum = penaltyNum;
+    }
+
+    public int getRoundNo() {
+        return roundNo;
+    }
+
+    public void setRoundNo(int roundNo) {
+        this.roundNo = roundNo;
     }
 }

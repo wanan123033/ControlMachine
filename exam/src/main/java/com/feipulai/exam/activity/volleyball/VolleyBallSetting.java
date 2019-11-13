@@ -24,6 +24,7 @@ public class VolleyBallSetting {
     //最多设备数量
     private int spDeviceCount = 4;
     private boolean autoPair;
+    private int pairNum;
 
     public int getTestPattern() {
         return testPattern;
@@ -121,5 +122,13 @@ public class VolleyBallSetting {
 
     public boolean isAutoPair() {
         return autoPair;
+    }
+
+    public void setPairNum(int pairNum) {
+        this.pairNum = pairNum;
+    }
+
+    public int getPairNum() {
+        return pairNum;
     }
 }
