@@ -29,6 +29,7 @@ import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.sargent_jump.adapter.DeviceListAdapter;
 import com.feipulai.exam.activity.sargent_jump.pair.SargentPairActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
@@ -49,6 +50,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
+import static com.feipulai.exam.utils.ResultDisplayUtils.setResultState;
 
 public abstract class BaseMoreActivity extends BaseCheckActivity {
 
@@ -66,7 +70,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     private Intent serverIntent;
     private ClearHandler clearHandler = new ClearHandler();
     private LedHandler ledHandler = new LedHandler();
-
+    private boolean isPenalize;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_sargent_jump_more;
@@ -175,6 +179,9 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     }
 
+    public void setFaultEnable(boolean isPenalize){
+        this.isPenalize = isPenalize;
+    }
 
     /**
      * 将考生与设备绑定
@@ -282,8 +289,38 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         });
     }
 
+    //确认成绩判罚
+    protected  void confirmResult(int pos){
+        showPenalize(pos);
+    }
 
-
+    /**
+     * 展示判罚
+     */
+    private void showPenalize(final int index) {
+        final BaseStuPair pair = deviceDetails.get(index).getStuDevicePair();
+        SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
+        alertDialog.setTitleText(getString(R.string.confirm_result));
+        alertDialog.setCancelable(false);
+        alertDialog.setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                updateResult(pair);
+                doResult(pair, index);
+            }
+        }).setCancelText(getString(R.string.foul)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                pair.setResultState(RoundResult.RESULT_STATE_FOUL);
+                updateResult(pair);
+                doResult(pair, index);
+            }
+        }).show();
+        deviceDetails.get(index).setConfirmVisible(false);
+        deviceListAdapter.notifyItemChanged(index);
+    }
 
     protected void stuSkipDialog(final Student student, final int pos) {
         new AlertDialog.Builder(this).setMessage("是否跳过" + student.getStudentName() + "考生测试")
@@ -354,7 +391,13 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 Logger.i("设备成绩信息STATE_END==>" + deviceState.toString());
                 pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
                 pair.setCanTest(true);
-                doResult(pair, index);
+                if (isPenalize && pair.getResultState() != RoundResult.RESULT_STATE_FOUL){
+                    deviceDetails.get(index).setConfirmVisible(true);
+                    deviceListAdapter.notifyItemChanged(index);
+                }else {
+                    doResult(pair, index);
+                }
+
             }
         }
         refreshDevice(index);
@@ -659,5 +702,5 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     protected abstract void sendTestCommand(BaseStuPair pair, int index);
 
-    protected abstract void confirmResult(int pos);
+
 }

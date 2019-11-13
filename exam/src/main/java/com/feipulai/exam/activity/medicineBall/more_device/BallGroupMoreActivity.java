@@ -47,6 +47,8 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
         beginPoint = Integer.parseInt(SharedPrefsUtil.getValue(this, "SXQ", "beginPoint", "0"));
         RadioManager.getInstance().setOnRadioArrived(resultImpl);
         sendEmpty();
+
+        setFaultEnable(sargentSetting.isPenalize());
     }
 
     private void sendEmpty() {
