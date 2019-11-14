@@ -172,7 +172,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
             }
         }
-        deviceDetails.get(index).setRound(roundResultList.size());
+        deviceDetails.get(index).setRound(roundResultList.size()+1);
         addStudent(student, index);
         deviceDetails.get(index).getStuDevicePair().setTimeResult(result);
         deviceListAdapter.notifyItemChanged(index);
@@ -194,8 +194,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         deviceDetail.getStuDevicePair().setCanTest(false);
         deviceDetail.getStuDevicePair().setBaseHeight(0);
         int count = deviceDetail.getRound();
-        toastSpeak(String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1)
-                , String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1));
+        toastSpeak(String.format(getString(R.string.test_speak_hint), student.getStudentName(), count )
+                , String.format(getString(R.string.test_speak_hint), student.getStudentName(), count ));
 
         setShowLed(deviceDetail.getStuDevicePair(), index);
 
@@ -261,7 +261,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                             toastSpeak("当前无学生测试");
                             return;
                         }
-                        if (deviceDetails.get(pos).getRound() >= setTestCount()) {
+                        if (deviceDetails.get(pos).getRound() > setTestCount()) {
                             toastSpeak("当前学生测试完成");
                             stuSkip(pos);
                             return;
@@ -409,10 +409,10 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     private synchronized void doResult(BaseStuPair pair, int index) {
         DeviceDetail detail = deviceDetails.get(index);
         String[] timeResult = detail.getStuDevicePair().getTimeResult();
-        if (detail.getRound() >= timeResult.length)//防止
+        if (detail.getRound() > timeResult.length)//防止
             return;
         //设置设备成绩
-        timeResult[detail.getRound()] = ((pair.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
+        timeResult[detail.getRound()-1] = ((pair.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
                 ResultDisplayUtils.getStrResultForDisplay(pair.getResult()));
         detail.getStuDevicePair().setTimeResult(timeResult);
 
@@ -420,7 +420,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         saveResult(pair ,index);
         printResult(pair);
 //        broadResult(pair);
-        detail.setRound(detail.getRound() + 1);
+
         if (detail.getRound() < setTestCount()) {
             if (pair.getResultState() == RoundResult.RESULT_STATE_NORMAL && pair.isFullMark()) {
                 //测试结束学生清除 ，设备设置空闲状态
@@ -432,10 +432,12 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 clearHandler.sendMessageDelayed(msg, 4000);
                 return;
             }
-
+            int count = detail.getRound();
             if (detail.getRound() < setTestCount()) {
-                toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), detail.getRound() + 1)
-                        , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), detail.getRound() + 1));
+                detail.setRound(count+1);
+                toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), count)
+                        , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), count));
+
             }
             Message msg = new Message();
             msg.obj = pair;
@@ -502,7 +504,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         roundResult.setResultState(baseStuPair.getResultState());
 //        roundResult.setTestTime(TestConfigs.df.format(Calendar.getInstance().getTime()));
         roundResult.setTestTime(System.currentTimeMillis() + "");
-        roundResult.setRoundNo(baseStuPair.getTimeResult().length);
+        roundResult.setRoundNo(deviceDetails.get(index).getRound());
         roundResult.setTestNo(testNo);
         roundResult.setExamType(studentItem.getExamType());
         roundResult.setScheduleNo(studentItem.getScheduleNo());
