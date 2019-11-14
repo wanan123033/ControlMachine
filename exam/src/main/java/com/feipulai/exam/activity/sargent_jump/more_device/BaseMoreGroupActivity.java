@@ -512,7 +512,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
             }
             Logger.i("设备成绩信息STATE_END==>" + deviceState.toString());
             pair.setCanTest(true);
-
+            pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
             if (isPenalize && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
                 deviceDetails.get(deviceIndex).setConfirmVisible(true);
                 deviceListAdapter.notifyItemChanged(deviceIndex);
