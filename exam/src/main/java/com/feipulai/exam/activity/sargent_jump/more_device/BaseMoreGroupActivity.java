@@ -11,7 +11,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -46,9 +45,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Timer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -849,16 +846,9 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
         if (ledMode == 0) {
             String result = ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult());
-            int x = 7;
-            if (roundResult.getResult() < 1000) {
-                x = 9;
-            } else if (roundResult.getResult() >= 1000 && roundResult.getResult() < 10000) {
-                x = 8;
-            } else if (roundResult.getResult() >= 10000) {
-                x = 6;
-            }
+            int x = ResultDisplayUtils.getStringLength(result);
 
-            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, x, index, false, true);
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result,16- x, index, false, true);
         }
 
     }
