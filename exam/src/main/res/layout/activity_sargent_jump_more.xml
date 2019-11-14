@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".activity.sargent_jump.more_device.BaseMoreActivity">
+
     <LinearLayout
         android:id="@+id/ll_top"
         android:layout_width="match_parent"
@@ -21,9 +22,9 @@
 
         <com.feipulai.exam.view.StuSearchEditText
             android:id="@+id/et_input_text"
-            android:layout_width="360dp"
+            android:layout_width="380dp"
             android:layout_height="35dp"
-            android:layout_marginLeft="170dp"
+            android:layout_marginLeft="150dp"
             android:layout_marginRight="3dp" />
 
 
@@ -57,12 +58,13 @@
             android:textSize="20dp"
             android:visibility="visible" />
     </LinearLayout>
+
     <android.support.v7.widget.RecyclerView
-        android:layout_below="@+id/ll_top"
         android:id="@+id/rv_device_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/ll_top" />
 
 
     <ListView
@@ -74,9 +76,9 @@
         android:background="@drawable/bg_white_radius_10"
         android:divider="@color/sbc_header_text"
         android:dividerHeight="1dp"
-        android:paddingLeft="20dp"
-        android:paddingTop="@dimen/dp_10"
-        android:paddingRight="20dp"
         android:paddingBottom="@dimen/dp_10"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="@dimen/dp_10"
         android:visibility="gone" />
 </RelativeLayout>

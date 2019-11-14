@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,16 +16,19 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
+import com.feipulai.exam.activity.sargent_jump.adapter.DeviceListAdapter;
 import com.feipulai.exam.activity.sargent_jump.adapter.StuAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
-import com.feipulai.exam.activity.volleyball.adapter.DeviceListAdapter;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
@@ -48,7 +52,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
@@ -73,6 +77,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
     private List<BaseStuPair> pairList;
     private StuHandler stuHandler = new StuHandler();
     private boolean addStudent = true;
+    private boolean isNextClickStart = true;
 
     @Override
     protected int setLayoutResID() {
@@ -82,7 +87,6 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.bind(this);
         PrinterManager.getInstance().init();
         group = (Group) TestConfigs.baseGroupMap.get("group");
 
@@ -117,6 +121,35 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         }, 3000);
     }
 
+    @Nullable
+    @Override
+    protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
+        String title;
+        if (TextUtils.isEmpty(SettingHelper.getSystemSetting().getTestName())) {
+            title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机";
+        } else {
+            title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机-" + SettingHelper.getSystemSetting().getTestName();
+        }
+
+        return builder.setTitle(title);
+    }
+
+    @OnClick(R.id.txt_led_setting)
+    public void onViewClicked() {
+        boolean isOnUse = false;
+        for (DeviceDetail deviceDetail : deviceDetails) {
+            if (deviceDetail.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_ONUSE) {
+                isOnUse = true;
+            }
+        }
+        if (isOnUse) {
+            toastSpeak("测试中,不允许修改设置");
+        } else {
+            IntentUtil.gotoActivity(this, LEDSettingActivity.class);
+        }
+
+    }
+
     /**
      * 初始化LED
      */
@@ -146,6 +179,28 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
             deviceDetails.add(detail);
         }
         initView();
+    }
+
+    /***
+     * 刷新
+     * @param index
+     */
+    public void refreshDevice(int index) {
+        if (deviceDetails.get(index).getStuDevicePair().getBaseDevice() != null) {
+            deviceListAdapter.notifyItemChanged(index);
+        }
+    }
+
+    /**
+     * 更新测试次数
+     */
+    public void updateAdapterTestCount() {
+
+        deviceListAdapter.setTestCount(setTestCount());
+        for (DeviceDetail deviceDetail : deviceDetails) {
+            deviceDetail.getStuDevicePair().setTimeResult(new String[setTestCount()]);
+        }
+        deviceListAdapter.notifyDataSetChanged();
     }
 
     private void initView() {
@@ -181,6 +236,10 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
 
     public void setFaultEnable(boolean isPenalize) {
         this.isPenalize = isPenalize;
+    }
+
+    public void setNextClickStart(boolean nextClickStart) {
+        isNextClickStart = nextClickStart;
     }
 
     protected void stuSkipDialog(final Student student, final int index) {
@@ -598,6 +657,9 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                                 String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), testTimes + 1));
                         group.setIsTestComplete(2);
                         DBManager.getInstance().updateGroup(group);
+                        if (!isNextClickStart) {
+                            toStart(deviceIndex);
+                        }
                     }
                 } else {//测试下一个
                     continuousTestNext(deviceIndex);
@@ -731,7 +793,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
      */
     private boolean hasStudentInDevice(String studentCode) {
         for (DeviceDetail detail : deviceDetails) {
-            if (studentCode.equals(detail.getStuDevicePair().getStudent().getStudentCode())) {
+            if (detail.getStuDevicePair().getStudent() != null && studentCode.equals(detail.getStuDevicePair().getStudent().getStudentCode())) {
                 return true;
             }
         }
@@ -873,6 +935,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         Intent serverIntent = new Intent(this, UploadService.class);
         stopService(serverIntent);
     }
+
 
     class StuHandler extends Handler {
         @Override

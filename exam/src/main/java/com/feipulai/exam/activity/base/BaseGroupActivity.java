@@ -32,6 +32,7 @@ import com.feipulai.exam.activity.sargent_jump.more_device.SargentTestGroupActiv
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.sitreach.SitReachSetting;
 import com.feipulai.exam.activity.standjump.StandJumpSetting;
+import com.feipulai.exam.activity.standjump.more.StandJumpGroupMoreActivity;
 import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
 import com.feipulai.exam.activity.volleyball.more_devices.VolleyBallMoreGroupActivity;
 import com.feipulai.exam.adapter.BaseGroupAdapter;
@@ -497,6 +498,11 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_PQ
                         && SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class).getType() == 1) {
                     startActivity(new Intent(this, VolleyBallMoreGroupActivity.class));
+                    return;
+                }
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LDTY
+                        && SharedPrefsUtil.loadFormSource(this, StandJumpSetting.class).getTestType() == 1) {
+                    startActivity(new Intent(this, StandJumpGroupMoreActivity.class));
                     return;
                 }
 

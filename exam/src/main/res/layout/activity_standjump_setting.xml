@@ -42,6 +42,20 @@
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/tv_pair"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_toLeftOf="@+id/tv_start_test"
+            android:background="@drawable/btn_click_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="设备配对"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tv_scoring"
@@ -55,12 +69,52 @@
             android:background="@drawable/btn_click_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:text="查看评分标准" />
+            android:text="查看评分标准"
+            android:visibility="gone" />
+
+        <RadioGroup
+            android:id="@+id/rg_device"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <RadioButton
+                android:id="@+id/rb_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="1号设备" />
+
+            <RadioButton
+                android:id="@+id/rb_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:text="2号设备" />
+
+            <RadioButton
+                android:id="@+id/rb_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:text="3号设备" />
+
+            <RadioButton
+                android:id="@+id/rb_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:text="4号设备" />
+
+        </RadioGroup>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_marginTop="@dimen/dp_10"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <TextView
@@ -130,7 +184,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_10"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            >
 
             <TextView
                 android:layout_width="wrap_content"

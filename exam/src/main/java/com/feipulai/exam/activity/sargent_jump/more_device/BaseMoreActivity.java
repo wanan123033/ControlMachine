@@ -69,6 +69,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     private ClearHandler clearHandler = new ClearHandler();
     private LedHandler ledHandler = new LedHandler();
     private boolean isPenalize;
+    private boolean isNextClickStart = true;
 
     @Override
     protected int setLayoutResID() {
@@ -175,10 +176,17 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         deviceDetails.get(index).getStuDevicePair().setTimeResult(result);
         deviceListAdapter.notifyItemChanged(index);
 
+        if (!isNextClickStart) {
+            sendTestCommand(deviceDetails.get(index).getStuDevicePair(), index);
+        }
     }
 
     public void setFaultEnable(boolean isPenalize) {
         this.isPenalize = isPenalize;
+    }
+
+    public void setNextClickStart(boolean nextClickStart) {
+        isNextClickStart = nextClickStart;
     }
 
     /**
@@ -356,7 +364,18 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         return builder.setTitle(title).addRightText("项目设置", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gotoItemSetting();
+                boolean isOnUse = false;
+                for (DeviceDetail deviceDetail : deviceDetails) {
+                    if (deviceDetail.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_ONUSE) {
+                        isOnUse = true;
+                    }
+                }
+                if (isOnUse) {
+                    toastSpeak("测试中,不允许修改设置");
+                } else {
+                    gotoItemSetting();
+                }
+
             }
         }).addRightImage(R.mipmap.icon_setting, new View.OnClickListener() {
             @Override
@@ -438,11 +457,15 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), count + 1)
                         , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), count + 1));
 
+                if (!isNextClickStart) {
+                    sendTestCommand(pair, index);
+                }
             }
             Message msg = new Message();
             msg.obj = pair;
             ledHandler.sendMessageDelayed(msg, 2000);
             pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
+
         } else {
             detail.setRound(0);
             //4秒后清理学生信息
@@ -451,7 +474,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             clearHandler.sendMessageDelayed(msg, 4000);
         }
 
-
+        pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+        deviceListAdapter.notifyItemChanged(index);
     }
 
     private void broadResult(BaseStuPair baseStuPair) {
@@ -674,6 +698,15 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             deviceDetails.add(detail);
         }
         initView();
+    }
+
+    public void updateAdapterTestCount() {
+
+        deviceListAdapter.setTestCount(setTestCount());
+        for (DeviceDetail deviceDetail : deviceDetails) {
+            deviceDetail.getStuDevicePair().setTimeResult(new String[setTestCount()]);
+        }
+        deviceListAdapter.notifyDataSetChanged();
     }
 
     /**

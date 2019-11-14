@@ -29,12 +29,9 @@ import com.feipulai.exam.activity.base.BaseActivity;
 import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.data.DataManageActivity;
 import com.feipulai.exam.activity.data.DataRetrieveActivity;
-import com.feipulai.exam.activity.footBall.FootBallItemSelectActivity;
-import com.feipulai.exam.activity.sargent_jump.SargentItemSelectActivity;
 import com.feipulai.exam.activity.setting.SettingActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
-import com.feipulai.exam.activity.volleyball.VolleyballPatternSelectActivity;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
@@ -133,7 +130,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
 
     private void showTestName() {
         SystemSetting systemSetting = SettingHelper.getSystemSetting();
-        StringBuilder sb = new StringBuilder("智能主机(安卓版V" + SystemBrightUtils.getCurrentVersion(this) + ")");
+        StringBuilder sb = new StringBuilder("智能主机(考试版V" + SystemBrightUtils.getCurrentVersion(this) + ")");
 
         if (machineCode != SharedPrefsConfigs.DEFAULT_MACHINE_CODE) {
 //            if (TestConfigs.sCurrentItem != null && TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
@@ -170,10 +167,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
             case R.id.card_test:
 //                startActivity(new Intent(MainActivity.this, MiddleDistanceRaceActivity.class));
                 if (isSettingFinished()) {
-                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_FWC) {
-                        IntentUtil.gotoActivity(this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode()));
-                        return;
-                    }
+
                     if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
                         if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
                             startActivity(new Intent(MainActivity.this, MiddleDistanceRaceForPersonActivity.class));
@@ -182,20 +176,28 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                         }
                         return;
                     }
-                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_MG) {
-                        startActivity(new Intent(MainActivity.this, SargentItemSelectActivity.class));
-                        return;
-                    }
-                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_PQ) {
-                        startActivity(new Intent(MainActivity.this, VolleyballPatternSelectActivity.class));
-                        return;
-                    }
-                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ) {
-                        IntentUtil.gotoActivity(MainActivity.this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode()));
-                        return;
-                    }
-                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZQYQ) {
-                        startActivity(new Intent(this, FootBallItemSelectActivity.class));
+//                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_MG) {
+//                        startActivity(new Intent(MainActivity.this, SargentItemSelectActivity.class));
+//                        return;
+//                    }
+//                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_PQ) {
+//                        startActivity(new Intent(MainActivity.this, VolleyballPatternSelectActivity.class));
+//                        return;
+//                    }
+//                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ) {
+//                        IntentUtil.gotoActivity(MainActivity.this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode()));
+//                        return;
+//                    }
+//                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZQYQ) {
+//                        startActivity(new Intent(this, FootBallItemSelectActivity.class));
+//                        return;
+//                    }
+//                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_FWC) {
+//                        IntentUtil.gotoActivity(this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode()));
+//                        return;
+//                    }
+                    if (TestConfigs.selectActivity.contains(TestConfigs.sCurrentItem.getMachineCode())) {
+                        IntentUtil.gotoActivity(this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode()));
                         return;
                     }
                     if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
