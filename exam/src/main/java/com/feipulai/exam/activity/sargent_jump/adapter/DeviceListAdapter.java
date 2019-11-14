@@ -37,7 +37,6 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
     }
 
 
-
     @Override
     protected void convert(final ViewHolder helper, final DeviceDetail item) {
 
@@ -64,26 +63,28 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
         if (item.getStuDevicePair().getTimeResult() != null) {
             helper.itemTxtTestResult.setText(item.getStuDevicePair().getTimeResult()[0]);
         }
-
-        if (testCount == 2) {
+        if (testCount == 1) {
+            helper.itemTxtTestResult.setVisibility(View.VISIBLE);
+            helper.itemTxtTestResult1.setVisibility(View.INVISIBLE);
+            helper.itemTxtTestResult2.setVisibility(View.INVISIBLE);
+        } else if (testCount == 2) {
             helper.itemTxtTestResult1.setVisibility(View.VISIBLE);
             helper.itemTxtTestResult2.setVisibility(View.INVISIBLE);
             helper.itemTxtTestResult1.setText(item.getStuDevicePair().getTimeResult()[1]);
-        }
-        if (testCount == 3) {
+        } else if (testCount == 3) {
             helper.itemTxtTestResult1.setVisibility(View.VISIBLE);
             helper.itemTxtTestResult2.setVisibility(View.VISIBLE);
             helper.itemTxtTestResult1.setText(item.getStuDevicePair().getTimeResult()[1]);
             helper.itemTxtTestResult2.setText(item.getStuDevicePair().getTimeResult()[2]);
 
         }
-        helper.addOnClickListener(R.id.txt_skip).addOnClickListener(R.id.txt_start).addOnClickListener(R.id.txt_confirm);
+        helper.addOnClickListener(R.id.txt_skip).addOnClickListener(R.id.txt_start);
         int state = item.getStuDevicePair().getBaseDevice().getState();
-        if (state == BaseDeviceState.STATE_FREE || state == BaseDeviceState.STATE_NOT_BEGAIN){
+        if (state == BaseDeviceState.STATE_FREE || state == BaseDeviceState.STATE_NOT_BEGAIN) {
             helper.txtStart.setEnabled(true);
             helper.txtStart.setBackgroundResource(R.drawable.btn_click_bg_selected);
             helper.txtStart.setTextColor(Color.WHITE);
-        }else {
+        } else {
             helper.txtStart.setEnabled(false);
             helper.txtStart.setBackgroundResource(R.drawable.btn_click_bg_unselected);
             helper.txtStart.setTextColor(Color.BLUE);
@@ -96,10 +97,17 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
                 item.setDeviceOpen(isChecked);
             }
         });
+        if (item.isPunish()) {
+            helper.txtPunish.setVisibility(View.VISIBLE);
+        } else {
+            helper.txtPunish.setVisibility(View.GONE);
+        }
 
-        helper.txtConfirm.setVisibility(item.isConfirmVisible()?View.VISIBLE:View.GONE);
-        helper.txtStart.setVisibility(item.isConfirmVisible()? View.GONE:View.VISIBLE);
+        helper.txtConfirm.setVisibility(item.isConfirmVisible() ? View.VISIBLE : View.GONE);
+        helper.txtStart.setVisibility(item.isConfirmVisible() ? View.GONE : View.VISIBLE);
+        helper.addOnClickListener(R.id.txt_punish);
     }
+
 
     static class ViewHolder extends BaseViewHolder {
         @BindView(R.id.cb_device_state)
@@ -116,6 +124,8 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
         TextView txtStart;
         @BindView(R.id.txt_confirm)
         TextView txtConfirm;
+        @BindView(R.id.txt_punish)
+        TextView txtPunish;
         @BindView(R.id.item_txt_test_result)
         TextView itemTxtTestResult;
         @BindView(R.id.item_txt_test_result1)

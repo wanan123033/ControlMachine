@@ -22,6 +22,7 @@ public class DeviceDetail {
     private boolean isDeviceOpen;
     private int round;
     private boolean isConfirmVisible;
+    private boolean isPunish;
     public BaseStuPair getStuDevicePair() {
         return baseStuPair;
     }
@@ -74,5 +75,13 @@ public class DeviceDetail {
 
     public void setConfirmVisible(boolean confirmVisible) {
         isConfirmVisible = confirmVisible;
+    }
+
+    public boolean isPunish() {
+        return isPunish;
+    }
+
+    public void setPunish(boolean punish) {
+        isPunish = punish;
     }
 }

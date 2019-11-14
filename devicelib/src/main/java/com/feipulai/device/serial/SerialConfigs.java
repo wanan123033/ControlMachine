@@ -254,4 +254,14 @@ public class SerialConfigs {
     public static final int MEDICINE_BALL_RESULT_MORE = 0x57;
     public static final int MEDICINE_BALL_START_MORE = 0x58;
 
+    //立定跳远
+    public static final int STAND_JUMP_FREQUENCY = 0x58;
+    public static final int STAND_JUMP_PARAMETER = 0x59;
+    public static final int STAND_JUMP_START = 0x60;
+    public static final int STAND_JUMP_END = 0x61;
+    public static final int STAND_JUMP_VERSION = 0x62;
+    public static final int STAND_JUMP_LEISURE = 0x63;
+    public static final int STAND_JUMP_GET_STATE = 0x64;
+    public static final int STAND_JUMP_CHECK = 0x65;
+    public static final int STAND_JUMP_SET_POINTS= 0x66;
 }

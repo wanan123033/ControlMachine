@@ -84,6 +84,18 @@
             android:name=".activity.RadioTimer.RunTimerActivityGroupActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
+            android:name=".activity.standjump.StandJumpSelectActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.standjump.more.StandJumpPairActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.standjump.more.StandJumpMoreActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.standjump.more.StandJumpGroupMoreActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
             android:name=".activity.standjump.StandJumpTestActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity

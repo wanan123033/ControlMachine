@@ -44,7 +44,7 @@ public class Radio868Result {
                         && data[3] == 0x10  //[02] [03]：长度高字节0x00   低字节0x10
                         && data[5] == 0x05//[05]：项目编号   5—仰卧起坐    8—俯卧撑
                         && data[14] == 0x27 && data[15] == 0x0d//[14] [15]：包尾高字节0x27   低字节0x0d
-                ) {
+                        ) {
                     // 仰卧起坐
                     int sum = 0;
                     //0b 命令(获取数据)不需要校验
@@ -83,7 +83,7 @@ public class Radio868Result {
                         && data[3] == 0x10  //[02] [03]：长度高字节0x00   低字节0x10
                         && data[5] == 0x08//[05]：项目编号   5—仰卧起坐    8—俯卧撑
                         && data[14] == 0x27 && data[15] == 0x0d//[14] [15]：包尾高字节0x27   低字节0x0d
-                ) {
+                        ) {
                     // 俯卧撑
                     int sum = 0;
                     //0b 命令(获取数据)不需要校验
@@ -160,7 +160,7 @@ public class Radio868Result {
                 break;
             case ItemDefault.CODE_PQ:
                 if (data[0] == (byte) 0xAA && data[2] == 0x0A && data[data.length - 1] == 0x0d) {
-                    Log.e("TAG",StringUtility.bytesToHexString(data));
+                    Log.e("TAG", StringUtility.bytesToHexString(data));
                     switch (data[7]) {
                         case (byte) 0xb0:
                         case (byte) 0xb1:
@@ -300,7 +300,41 @@ public class Radio868Result {
                 }
 
                 break;
+            case ItemDefault.CODE_LDTY:
+                if ((data[0] & 0xff) == 0xaa && (data[2] & 0xff) == 0x02 ) {
+                    setResult(new StandJumpResult(data));
+                    switch (data[7]) {
+                        case 0x01://配对
+                            setType(SerialConfigs.STAND_JUMP_FREQUENCY);
+                            break;
+                        case 0x02://设置参数
+                            setType(SerialConfigs.STAND_JUMP_PARAMETER);
+                            break;
+                        case 0x03://查询
+                            setType(SerialConfigs.STAND_JUMP_GET_STATE);
+                            break;
+                        case 0x04://开始
+                            setType(SerialConfigs.STAND_JUMP_START);
+                            break;
+                        case 0x05://结束
+                            setType(SerialConfigs.STAND_JUMP_END);
+                            break;
+                        case 0x06://空闲
+                            setType(SerialConfigs.STAND_JUMP_LEISURE);
+                            break;
+                        case 0x07://版本号
+                            setType(SerialConfigs.STAND_JUMP_VERSION);
+                            break;
+                        case 0x08://自检
+                            setType(SerialConfigs.STAND_JUMP_CHECK);
+                            break;
+                        case 0x09://设置测试长度
+                            setType(SerialConfigs.STAND_JUMP_SET_POINTS);
+                            break;
+                    }
+                }
 
+                break;
 
         }
     }

@@ -9,7 +9,7 @@ public class StandJumpSetting {
     /**
      * 测试设置数量
      */
-    private int testDeviceCount = 1;
+    private int testDeviceCount = 4;
 
     /**
      * 测试次数
@@ -41,10 +41,19 @@ public class StandJumpSetting {
      * 测试范围
      */
     private int pointsScope;
+
+    private int[] testPointsArray = new int[]{3, 3, 3, 3};
+    private int[] pointsScopeArray = new int[4];
+
     /**
      * 是否开启判罚
      */
     private boolean isPenalize;
+
+    //就否自动配对
+    private boolean autoPair = true;
+    //测试模式 0 有线 1 无线
+    private int testType = 0;
 
     public boolean isPenalize() {
         return isPenalize;
@@ -116,5 +125,47 @@ public class StandJumpSetting {
 
     public void setTestPoints(int testPoints) {
         this.testPoints = testPoints;
+    }
+
+    public boolean isAutoPair() {
+        return autoPair;
+    }
+
+    public void setAutoPair(boolean autoPair) {
+        this.autoPair = autoPair;
+    }
+
+    public int getTestType() {
+        return testType;
+    }
+
+    public void setTestType(int testType) {
+        this.testType = testType;
+    }
+
+    public int[] getTestPointsArray() {
+        return testPointsArray;
+    }
+
+    public void setTestPointsArray(int[] testPointsArray) {
+        this.testPointsArray = testPointsArray;
+    }
+
+    public int[] getPointsScopeArray() {
+        return pointsScopeArray;
+    }
+
+    public void setPointsScopeArray(int[] pointsScopeArray) {
+        this.pointsScopeArray = pointsScopeArray;
+    }
+
+    public int getPoints() {
+        //TODO 测试
+        return 100;
+//        if (pointsScope > 0) {
+//            return pointsScope;
+//        } else {
+//            return testPoints * 100;
+//        }
     }
 }
