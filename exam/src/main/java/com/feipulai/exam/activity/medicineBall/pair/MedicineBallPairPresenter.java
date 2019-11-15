@@ -5,6 +5,7 @@ import android.os.Build;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.manager.SitPushUpManager;
+import com.feipulai.exam.activity.medicineBall.MedicineBallSetting;
 import com.feipulai.exam.activity.pushUp.PushUpSetting;
 import com.feipulai.exam.activity.sargent_jump.SargentSetting;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -21,7 +22,7 @@ import java.util.Objects;
 public class MedicineBallPairPresenter extends SitPullUpPairPresenter {
 
     private Context context;
-    private SargentSetting setting;
+    private MedicineBallSetting setting;
     private SitPushUpManager sitPushUpManager;
 
     public MedicineBallPairPresenter(Context context, SitPullUpPairContract.View view) {
@@ -30,7 +31,7 @@ public class MedicineBallPairPresenter extends SitPullUpPairPresenter {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Objects.requireNonNull(view);
         }
-        setting = SharedPrefsUtil.loadFormSource(context, SargentSetting.class);
+        setting = SharedPrefsUtil.loadFormSource(context, MedicineBallSetting.class);
         sitPushUpManager = new SitPushUpManager(SitPushUpManager.PROJECT_CODE_SXQ,PushUpSetting.WIRELESS_TYPE);
     }
 

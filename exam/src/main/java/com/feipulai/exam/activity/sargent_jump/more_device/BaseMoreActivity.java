@@ -19,6 +19,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.exam.R;
@@ -61,7 +62,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     StuSearchEditText etInputText;
     @BindView(R.id.lv_results)
     ListView lvResults;
-    private int deviceCount = 4;
+    private int deviceCount = 1;
     private int testNo;
     private DeviceListAdapter deviceListAdapter;
     private LEDManager mLEDManager;
@@ -97,9 +98,13 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    public void ledShow(){
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
         if (ledMode == 0) {
-            for (int i = 0; i < 4; i++) {
+            mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(),SettingHelper.getSystemSetting().getHostId());
+            for (int i = 0; i < deviceCount; i++) {
                 StringBuilder data = new StringBuilder();
                 data.append(i + 1).append("号机");//1号机         空闲
                 for (int j = 0; j < 7; j++) {
@@ -636,7 +641,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     }
 
-    private void refreshDevice(int index) {
+    protected void refreshDevice(int index) {
         if (deviceDetails.get(index).getStuDevicePair().getBaseDevice() != null) {
             deviceListAdapter.notifyItemChanged(index);
         }

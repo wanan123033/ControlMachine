@@ -8,6 +8,7 @@ package com.feipulai.exam.activity.medicineBall;
 public class MedicineBallSetting {
     private String maleFull ;
     private String femaleFull ;
+    private boolean isAutoPair;
     /**
      * 是否满分返回
      */
@@ -89,5 +90,12 @@ public class MedicineBallSetting {
 
     public void setConnectType(int connectType) {
         this.connectType = connectType;
+    }
+
+    public void setAutoPair(boolean isAutoPair) {
+    }
+
+    public boolean isAutoPair() {
+        return isAutoPair;
     }
 }

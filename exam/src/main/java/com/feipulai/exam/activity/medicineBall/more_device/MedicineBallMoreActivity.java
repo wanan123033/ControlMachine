@@ -1,6 +1,7 @@
 package com.feipulai.exam.activity.medicineBall.more_device;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -44,6 +45,16 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
     private int beginPoint;
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setting = SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class);
+        if (null == setting) {
+            setting = new MedicineBallSetting();
+        }
+        setDeviceCount(setting.getSpDeviceCount());
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         setting = SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class);
@@ -51,7 +62,6 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
             setting = new MedicineBallSetting();
         }
         Logger.i(TAG + ":medicineBallSetting ->" + setting.toString());
-        setting.setSpDeviceCount(4);
         setDeviceCount(setting.getSpDeviceCount());
         deviceState = new int[setting.getSpDeviceCount()];
 
@@ -66,6 +76,7 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
         }
         RadioManager.getInstance().setOnRadioArrived(medicineBall);
         sendEmpty();
+        ledShow();
     }
 
     private void sendEmpty() {

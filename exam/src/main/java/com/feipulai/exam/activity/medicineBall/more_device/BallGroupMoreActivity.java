@@ -38,7 +38,6 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
             sargentSetting = new MedicineBallSetting();
         }
         Logger.i(TAG + ":sargentSetting ->" + sargentSetting.toString());
-        sargentSetting.setSpDeviceCount(4);
         setDeviceCount(sargentSetting.getSpDeviceCount());
         deviceState = new int[sargentSetting.getSpDeviceCount()];
         for (int i = 0; i < deviceState.length; i++) {

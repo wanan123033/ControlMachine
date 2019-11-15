@@ -157,14 +157,18 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
         }
         spTestRound.setSelection(maxTestNo - 1);
 
-        String[] deviceCount = {"1", "2", "3"};
+        String[] deviceCount = {"1", "2", "3","4"};
         ArrayAdapter<String> adapter0 = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, deviceCount);
         adapter0.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spDeviceCount.setAdapter(adapter0);
         spDeviceCount.setOnItemSelectedListener(this);
-        spDeviceCount.setEnabled(false);
-
+        spDeviceCount.setSelection(medicineBallSetting.getSpDeviceCount()-1);
+        spDeviceCount.setEnabled(medicineBallSetting.getConnectType() == 0 ? false:true);
+        if (medicineBallSetting.getConnectType() == 0){
+            spDeviceCount.setSelection(0);
+            spDeviceCount.setEnabled(false);
+        }
         rgModel.setVisibility(SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN ? View.GONE : View.VISIBLE);//个人模式隐藏
         rgModel.setOnCheckedChangeListener(this);
 
@@ -182,6 +186,9 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
             case R.id.sp_test_round:
                 medicineBallSetting.setTestTimes(i + 1);
                 EventBus.getDefault().post(new BaseEvent(EventConfigs.UPDATE_TEST_COUNT));
+                break;
+            case R.id.sp_device_count:
+                medicineBallSetting.setSpDeviceCount(i + 1);
                 break;
         }
     }
