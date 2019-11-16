@@ -246,8 +246,14 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
                 onResultArrived(result, stuPair);
                 sweetAlertDialog.dismissWithAnimation();
             }
-        }).setCancelText("否").show();
-        sendFree(deviceId);
-
+        }).setCancelText("否").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sendFree(deviceId);
+                stuPair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
+                updateDevice(stuPair.getBaseDevice());
+                sweetAlertDialog.dismissWithAnimation();
+            }
+        }).show();
     }
 }

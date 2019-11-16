@@ -47,6 +47,7 @@ import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -906,11 +907,22 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
 
     private void updateLastResultLed(RoundResult roundResult, int index) {
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
+        String result = ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult());
         if (ledMode == 0) {
-            String result = ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult());
             int x = ResultDisplayUtils.getStringLength(result);
-
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result,16- x, index, false, true);
+        }else {
+            byte[] data = new byte[16];
+            String str = "当前：";
+            try {
+                byte[] strData = str.getBytes("GB2312");
+                System.arraycopy(strData, 0, data, 0, strData.length);
+                byte[] resultData = result.getBytes("GB2312");
+                System.arraycopy(resultData, 0, data, data.length - resultData.length - 1, resultData.length);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 1, false, true);
         }
 
     }
