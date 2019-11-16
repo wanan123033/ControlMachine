@@ -156,7 +156,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
     private void initLed() {
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
         if (ledMode == 0) {
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < deviceCount; i++) {
                 StringBuilder data = new StringBuilder();
                 data.append(i + 1).append("号机");//1号机         空闲
                 for (int j = 0; j < 7; j++) {

@@ -29,6 +29,7 @@ import com.orhanobut.logger.Logger;
 import java.text.MessageFormat;
 
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 import static com.feipulai.exam.activity.medicineBall.MedicineConstant.CMD_MEDICINE_BALL_EMPTY;
 import static com.feipulai.exam.activity.medicineBall.MedicineConstant.CMD_MEDICINE_BALL_SET_EMPTY;
@@ -43,7 +44,7 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
 
     private final int SEND_EMPTY = 1;
     private int beginPoint;
-
+    private boolean using;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,7 +82,7 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
 
     private void sendEmpty() {
         Log.i(TAG, "james_send_empty");
-        for (int i = 0; i < deviceState.length; i++) {
+        for (int i = 0; i < setting.getSpDeviceCount(); i++) {
             BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
             if (deviceState[i] == 0) {
                 if (baseDevice.getState() != BaseDeviceState.STATE_ERROR) {
@@ -133,6 +134,10 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
 
     @Override
     public void gotoItemSetting() {
+        if (using){
+            toastSpeak("正在测试中,不能设置");
+            return;
+        }
         startActivity(new Intent(this, MedicineBallSettingActivity.class));
     }
 
@@ -142,8 +147,8 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
         updateDevice(pair.getBaseDevice());
         int id = pair.getBaseDevice().getDeviceId();
         sendStart((byte) id);
+        using = true ;
     }
-
 
 
     private void sendStart(byte id) {
@@ -174,9 +179,10 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
 
     private boolean isInCorrect;
     private int PROMPT_TIMES;
+
     private void disposeDevice(MedicineBallNewResult result) {
         isInCorrect = result.isInCorrect();
-        if (isInCorrect){
+        if (isInCorrect) {
             PROMPT_TIMES++;
             if (PROMPT_TIMES >= 2 && PROMPT_TIMES < 4) {
                 int[] errors = result.getIncorrectPoles();
@@ -189,10 +195,10 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
 
             }
             deviceState[result.getDeviceId() - 1] = 0;//出现异常
-            if (result.getState() == 1){
+            if (result.getState() == 1) {
                 sendFree(result.getDeviceId());
             }
-        }else {
+        } else {
             PROMPT_TIMES = 0;
             deviceState[result.getDeviceId() - 1] = 5;
         }
@@ -208,9 +214,14 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
                     MedicineBallNewResult result = (MedicineBallNewResult) msg.obj;
                     for (DeviceDetail detail : deviceDetails) {
                         if (detail.getStuDevicePair().getBaseDevice().getDeviceId() == result.getDeviceId()) {
-                            int dbResult = result.getResult() * 10+beginPoint * 10;
-                            detail.getStuDevicePair().setResultState(result.isFault()? RoundResult.RESULT_STATE_FOUL:RoundResult.RESULT_STATE_NORMAL);
-                            onResultArrived(dbResult, detail.getStuDevicePair());
+                            int dbResult = result.getResult() * 10 + beginPoint * 10;
+                            detail.getStuDevicePair().setResultState(result.isFault() ? RoundResult.RESULT_STATE_FOUL : RoundResult.RESULT_STATE_NORMAL);
+                            if (result.getSweepPoint() < 2) {
+                                showValidResult(dbResult,detail.getStuDevicePair(),result.getDeviceId());
+                            } else {
+                                onResultArrived(dbResult, detail.getStuDevicePair());
+                            }
+
 
                         }
 
@@ -226,7 +237,8 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
     });
 
     private void onResultArrived(int result, BaseStuPair stuPair) {
-        if (result < beginPoint * 10 || result >  5000* 10) {
+        using = false;
+        if (result < beginPoint * 10 || result > 5000 * 10) {
             toastSpeak("数据异常，请重测");
             return;
         }
@@ -234,10 +246,11 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
         if (stuPair == null || stuPair.getStudent() == null)
             return;
         if (setting.isFullReturn()) {
+
             if (stuPair.getStudent().getSex() == Student.MALE) {
-                stuPair.setFullMark(stuPair.getResult() >= Integer.parseInt(setting.getMaleFull()) * 10);
+                stuPair.setFullMark(result >= (Integer.parseInt(setting.getMaleFull()) * 10));
             } else {
-                stuPair.setFullMark(stuPair.getResult() >= Integer.parseInt(setting.getFemaleFull()) * 10);
+                stuPair.setFullMark(result >= Integer.parseInt(setting.getFemaleFull()) * 10);
             }
         }
         stuPair.setResult(result);
@@ -261,10 +274,10 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
     private MedicineBallImpl medicineBall = new MedicineBallImpl(new MedicineBallImpl.MainThreadDisposeListener() {
         @Override
         public void onResultArrived(MedicineBallNewResult result) {
-            Log.i(TAG,result.toString());
+            Log.i(TAG, result.toString());
 
             // MedicineBallNewResult{result=50, fault=false, sweepPoint=1, deviceId=2, frequency=0, state=2}
-            if (result.getState() == 2){
+            if (result.getState() == 2) {
                 Message msg = mHandler.obtainMessage();
                 msg.obj = result;
                 msg.what = MedicineConstant.GET_SCORE_RESPONSE;
@@ -281,12 +294,25 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
 
         @Override
         public void onStarTest(int deviceId) {
-            Student student = deviceDetails.get(deviceId-1).getStuDevicePair().getStudent();
-            if (student!=null){
-                toastSpeak(MessageFormat.format("请{0}号机开始测试", deviceId));
+            Student student = deviceDetails.get(deviceId - 1).getStuDevicePair().getStudent();
+            if (student != null) {
+                toastSpeak(MessageFormat.format("请{0}开始测试", student.getStudentName()));
             }
         }
     });
 
+    private void showValidResult(final int result,final BaseStuPair stuPair,final int deviceId) {
+        final SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
+        alertDialog.setTitleText(String.format("%d号机%s成绩是否有效", deviceId, stuPair.getStudent().getStudentName()));
+        alertDialog.setCancelable(false);
+        alertDialog.setConfirmText("是").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                onResultArrived(result, stuPair);
+                sweetAlertDialog.dismissWithAnimation();
+            }
+        }).setCancelText("否").show();
+        sendFree(deviceId);
 
+    }
 }

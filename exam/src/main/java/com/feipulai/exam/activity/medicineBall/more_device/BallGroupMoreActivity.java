@@ -20,6 +20,8 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 import static com.feipulai.exam.activity.medicineBall.MedicineConstant.CMD_MEDICINE_BALL_EMPTY;
 import static com.feipulai.exam.activity.medicineBall.MedicineConstant.CMD_MEDICINE_BALL_SET_EMPTY;
 import static com.feipulai.exam.activity.medicineBall.MedicineConstant.CMD_MEDICINE_BALL_START;
@@ -27,19 +29,19 @@ import static com.feipulai.exam.activity.medicineBall.MedicineConstant.GET_SCORE
 
 public class BallGroupMoreActivity extends BaseMoreGroupActivity {
     private static final String TAG = "BallGroupMoreActivity";
-    private MedicineBallSetting sargentSetting;
+    private MedicineBallSetting setting;
     private int [] deviceState = new int[4];
     private final int SEND_EMPTY = 1;
     private int beginPoint;
     @Override
     protected void initData() {
-        sargentSetting = SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class);
-        if (null == sargentSetting) {
-            sargentSetting = new MedicineBallSetting();
+        setting = SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class);
+        if (null == setting) {
+            setting = new MedicineBallSetting();
         }
-        Logger.i(TAG + ":sargentSetting ->" + sargentSetting.toString());
-        setDeviceCount(sargentSetting.getSpDeviceCount());
-        deviceState = new int[sargentSetting.getSpDeviceCount()];
+        Logger.i(TAG + ":setting ->" + setting.toString());
+        setDeviceCount(setting.getSpDeviceCount());
+        deviceState = new int[setting.getSpDeviceCount()];
         for (int i = 0; i < deviceState.length; i++) {
             deviceState[i] = 0;
         }
@@ -47,12 +49,12 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
         RadioManager.getInstance().setOnRadioArrived(resultImpl);
         sendEmpty();
 
-        setFaultEnable(sargentSetting.isPenalize());
+        setFaultEnable(setting.isPenalize());
     }
 
     private void sendEmpty() {
         Log.i(TAG, "james_send_empty");
-        for (int i = 0; i < deviceState.length; i++) {
+        for (int i = 0; i < setting.getSpDeviceCount(); i++) {
             BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
             if (deviceState[i] == 0) {
                 if (baseDevice.getState() != BaseDeviceState.STATE_ERROR) {
@@ -111,13 +113,13 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
         if (TestConfigs.sCurrentItem.getTestNum() != 0) {
             return TestConfigs.sCurrentItem.getTestNum();
         } else {
-            return sargentSetting.getTestTimes();
+            return setting.getTestTimes();
         }
     }
 
     @Override
     public int setTestPattern() {
-        return sargentSetting.getTestPattern();
+        return setting.getTestPattern();
     }
 
     private void sendFree(int deviceId) {
@@ -164,11 +166,11 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
 
         if (stuPair == null || stuPair.getStudent() == null)
             return;
-        if (sargentSetting.isFullReturn()) {
+        if (setting.isFullReturn()) {
             if (stuPair.getStudent().getSex() == Student.MALE) {
-                stuPair.setFullMark(stuPair.getResult() >= Integer.parseInt(sargentSetting.getMaleFull()) * 10);
+                stuPair.setFullMark(result >= Integer.parseInt(setting.getMaleFull()) * 10);
             } else {
-                stuPair.setFullMark(stuPair.getResult() >= Integer.parseInt(sargentSetting.getFemaleFull()) * 10);
+                stuPair.setFullMark(result >= Integer.parseInt(setting.getFemaleFull()) * 10);
             }
         }
         stuPair.setResult(result);
@@ -215,7 +217,11 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
                         if (detail.getStuDevicePair().getBaseDevice().getDeviceId() == result.getDeviceId()) {
                             int dbResult = result.getResult() * 10+beginPoint * 10;
                             detail.getStuDevicePair().setResultState(result.isFault()? RoundResult.RESULT_STATE_FOUL:RoundResult.RESULT_STATE_NORMAL);
-                            onResultArrived(dbResult, detail.getStuDevicePair());
+                            if (result.getSweepPoint() < 2) {
+                                showValidResult(dbResult,detail.getStuDevicePair(),result.getDeviceId());
+                            } else {
+                                onResultArrived(dbResult, detail.getStuDevicePair());
+                            }
 
                         }
 
@@ -230,5 +236,18 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
         }
     });
 
+    private void showValidResult(final int result,final BaseStuPair stuPair,final int deviceId) {
+        final SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
+        alertDialog.setTitleText(String.format("%d号机%s成绩是否有效", deviceId, stuPair.getStudent().getStudentName()));
+        alertDialog.setCancelable(false);
+        alertDialog.setConfirmText("是").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                onResultArrived(result, stuPair);
+                sweetAlertDialog.dismissWithAnimation();
+            }
+        }).setCancelText("否").show();
+        sendFree(deviceId);
 
+    }
 }
