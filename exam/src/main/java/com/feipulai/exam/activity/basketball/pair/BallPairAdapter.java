@@ -1,4 +1,4 @@
-package com.feipulai.exam.activity.basketball.wiress;
+package com.feipulai.exam.activity.basketball.pair;
 
 import android.content.Context;
 import android.view.LayoutInflater;

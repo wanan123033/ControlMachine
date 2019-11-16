@@ -215,6 +215,9 @@ public class Radio868Result {
                         case 0x09://暂停
                             setType(SerialConfigs.DRIBBLEING_PAUSE);
                             break;
+                        case 0x0a:
+                            setType(SerialConfigs.DRIBBLEING_SET_SETTING);
+                            break;
 
                     }
 
@@ -301,7 +304,7 @@ public class Radio868Result {
 
                 break;
             case ItemDefault.CODE_LDTY:
-                if ((data[0] & 0xff) == 0xaa && (data[2] & 0xff) == 0x02 ) {
+                if ((data[0] & 0xff) == 0xaa && (data[2] & 0xff) == 0x02) {
                     setResult(new StandJumpResult(data));
                     switch (data[7]) {
                         case 0x01://配对

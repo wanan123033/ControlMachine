@@ -1,4 +1,4 @@
-package com.feipulai.exam.activity.basketball.wiress;
+package com.feipulai.exam.activity.basketball.pair;
 
 import android.content.Context;
 import android.os.Build;
@@ -6,7 +6,6 @@ import android.os.Build;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.manager.BallManager;
-import com.feipulai.device.serial.RadioManager;
 import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairContract;

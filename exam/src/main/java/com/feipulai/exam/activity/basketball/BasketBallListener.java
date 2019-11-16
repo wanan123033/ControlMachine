@@ -2,11 +2,7 @@ package com.feipulai.exam.activity.basketball;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 
-import com.feipulai.device.serial.RadioManager;
-import com.feipulai.device.serial.SerialConfigs;
-import com.feipulai.device.serial.beans.Basketball868Result;
 import com.feipulai.device.udp.UDPBasketBallConfig;
 import com.feipulai.device.udp.UdpClient;
 import com.feipulai.device.udp.result.BasketballResult;
@@ -17,7 +13,7 @@ import com.orhanobut.logger.Logger;
  * Created by zzs on  2019/6/5
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
-public class BasketBallListener implements UdpClient.UDPChannelListerner, RadioManager.OnRadioArrivedListener {
+public class BasketBallListener implements UdpClient.UDPChannelListerner {
 
     private BasketBallResponseListener listener;
     private Handler mHandler;
@@ -43,76 +39,25 @@ public class BasketBallListener implements UdpClient.UDPChannelListerner, RadioM
                 if (basketballResult.getUcStatus() == 0) {
                     if (basketballResult.gettNum() == -1)
                         break;
+                    Logger.i("onDataArrived===>triggerStart");
                     listener.triggerStart(basketballResult);
                 } else {
+                    Logger.i("onDataArrived===>getDeviceStatus====>" + basketballResult.getUcStatus());
                     listener.getDeviceStatus(basketballResult.getUcStatus());
                 }
                 break;
             case UDPBasketBallConfig.CMD_SET_STATUS_STOP_RESPONSE://停止计时
+                Logger.i("onDataArrived===>getStatusStop====>");
                 listener.getStatusStop(basketballResult);
 
                 break;
             case UDPBasketBallConfig.CMD_BREAK_RESPONSE://拦截成绩
+                Logger.i("onDataArrived===>getResult====>");
                 listener.getResult(basketballResult);
                 break;
         }
     }
 
-    @Override
-    public void onRadioArrived(final Message msg) {
-        if (msg.obj instanceof Basketball868Result) {
-            final BasketballResult result = new BasketballResult();
-            Basketball868Result srcResult = (Basketball868Result) msg.obj;
-            result.setHour(srcResult.getHour());
-            result.setMinute(srcResult.getMinth());
-            result.setSecond(srcResult.getSencond());
-            result.setHund(srcResult.getMinsencond());
-            result.setUcStatus(srcResult.getState());
-            result.settNum(srcResult.getDeviceId());
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    switch (msg.what) {
-                        case SerialConfigs.DRIBBLEING_START:   //获取状态
-                            if (result.getUcStatus() == 0) {
-                                if (result.gettNum() == -1)
-                                    break;
-                                listener.triggerStart(result);
-                            } else {
-                                listener.getDeviceStatus(result.getUcStatus());
-                            }
-                            listener.getResult(result);
-                            break;
-                        case SerialConfigs.DRIBBLEING_STOP:  //停止计时
-                            listener.getStatusStop(result);
-                            break;
-                    }
-                }
-            });
-
-        }
-//        BasketballResult basketballResult = (BasketballResult) msg.obj;
-//        Logger.i("onDataArrived===>" + basketballResult.toString());
-//        switch (basketballResult.getType()) {
-//            case UDPBasketBallConfig.CMD_GET_STATUS_RESPONSE:
-//            case UDPBasketBallConfig.CMD_SET_STATUS_RESPONSE:
-//                if (basketballResult.getUcStatus() == 0) {
-//                    if (basketballResult.gettNum() == -1)
-//                        return;
-//                    listener.triggerStart(basketballResult);
-//                } else {
-//                    listener.getDeviceStatus(basketballResult.getUcStatus());
-//                }
-//                break;
-//            case UDPBasketBallConfig.CMD_SET_STATUS_STOP_RESPONSE://停止计时
-//                listener.getStatusStop(basketballResult);
-//
-//                break;
-//            case UDPBasketBallConfig.CMD_BREAK_RESPONSE://拦截成绩
-//                listener.getResult(basketballResult);
-//                break;
-//        }
-    }
 
     public interface BasketBallResponseListener {
 

@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -16,16 +17,20 @@ import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
-import com.feipulai.device.udp.UDPBasketBallConfig;
-import com.feipulai.device.udp.UdpClient;
-import com.feipulai.device.udp.UdpLEDUtil;
+import com.feipulai.device.manager.BallManager;
+import com.feipulai.device.serial.RadioManager;
+import com.feipulai.device.serial.beans.Basketball868Result;
 import com.feipulai.device.udp.result.BasketballResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.basketball.BasketBallListener;
+import com.feipulai.exam.activity.basketball.BasketBallRadioFacade;
+import com.feipulai.exam.activity.basketball.TimeUtil;
+import com.feipulai.exam.activity.basketball.bean.BallDeviceState;
 import com.feipulai.exam.activity.basketball.result.BasketBallTestResult;
 import com.feipulai.exam.activity.basketball.util.TimerUtil;
 import com.feipulai.exam.activity.footBall.adapter.FootBallResultAdapter;
+import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.check.CheckUtils;
@@ -79,6 +84,12 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
     TextView txtDeviceStatus;
     @BindView(R.id.tv_confirm)
     TextView tvConfirm;
+    @BindView(R.id.cb_near)
+    CheckBox cbNear;
+    @BindView(R.id.cb_far)
+    CheckBox cbFar;
+    @BindView(R.id.cb_led)
+    CheckBox cbLed;
     // 状态 WAIT_FREE---> WAIT_CHECK_IN---> WAIT_BEGIN--->TESTING---->WAIT_STOP---->WAIT_CONFIRM--->WAIT_CHECK_IN
     private static final int WAIT_FREE = 0x0;
     private static final int WAIT_CHECK_IN = 0x1;
@@ -98,7 +109,12 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
     private String testDate;
     private int roundNo;
     private static final String TAG = "FootBallGroupActivity";
-    private int useMode ;
+    private int useMode;
+
+    private BallManager ballManager;
+    private BasketBallRadioFacade facade;
+    private long timerDate;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_group_basketball;
@@ -111,14 +127,28 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         if (setting == null)
             setting = new FootBallSetting();
         useMode = setting.getUseMode();
-        //初始化UDP
-        UdpClient.getInstance().init(1527);
-        UdpClient.getInstance().setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(), new BasketBallListener(this));
-        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
-        sleep();
+//        //初始化UDP
+//        UdpClient.getInstance().init(1527);
+//        UdpClient.getInstance().setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(), new BasketBallListener(this));
+//        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
+//        sleep();
+//        //设置精度
+//        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1));
+//        sleep();
+        facade = new BasketBallRadioFacade(setting.getTestType(), this);
+        ballManager = new BallManager.Builder((setting.getTestType())).setHostIp(setting.getHostIp()).setInetPost(1527).setPost(setting.getPost())
+                .setRadioListener(facade).setUdpListerner(new BasketBallListener(this)).build();
+
+        if (setting.getTestType() == 1) {
+            facade.resume();
+            facade.setInterceptSecond(setting.getInterceptSecond());
+        }
         //设置精度
-        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1));
-        sleep();
+        //设置精度
+        ballManager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), setting.getSensitivity(),
+                setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1);
+
+
         timerUtil = new TimerUtil(this);
         //分组标题
         group = (Group) TestConfigs.baseGroupMap.get("group");
@@ -168,19 +198,37 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        facade.pause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        facade.finish();
+        facade = null;
+        RadioManager.getInstance().setOnRadioArrived(null);
+    }
+
+    @Override
     public void finish() {
         if (isConfigurableNow()) {
             toastSpeak("测试中,不允许退出当前界面");
             return;
         }
         super.finish();
-        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
         //清屏
-        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(1,
-                UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
-        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
-                UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
+        ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, "", Paint.Align.RIGHT);
+        ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "", Paint.Align.RIGHT);
         timerUtil.stop();
+        facade.finish();
+        if (setting.getTestType() == 0) {
+            ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
+        } else {
+            ballManager.setRadioFreeStates(SettingHelper.getSystemSetting().getHostId());
+        }
+
         EventBus.getDefault().post(new BaseEvent(EventConfigs.UPDATE_TEST_RESULT));
     }
 
@@ -191,12 +239,25 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         title = TestConfigs.machineNameMap.get(machineCode)
                 + SettingHelper.getSystemSetting().getHostId() + "号机"
                 + (isTestNameEmpty ? "" : ("-" + SettingHelper.getSystemSetting().getTestName()));
-        return builder.setTitle(title) ;
+        return builder.setTitle(title);
     }
 
     @Override
     public void onEventMainThread(BaseEvent baseEvent) {
         super.onEventMainThread(baseEvent);
+        if (baseEvent.getTagInt() == EventConfigs.BALL_STATE_UPDATE) {
+            BallDeviceState deviceState = (BallDeviceState) baseEvent.getData();
+
+            if (deviceState.getDeviceId() == 1) {
+                cbNear.setChecked(deviceState.getState() != BaseDeviceState.STATE_DISCONNECT);
+            }
+            if (deviceState.getDeviceId() == 2) {
+                cbFar.setChecked(deviceState.getState() != BaseDeviceState.STATE_DISCONNECT);
+            }
+            if (deviceState.getDeviceId() == 0) {
+                cbLed.setChecked(deviceState.getState() != BaseDeviceState.STATE_DISCONNECT);
+            }
+        }
     }
 
     @Override
@@ -224,32 +285,38 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                 state = WAIT_CONFIRM;
                 txtDeviceStatus.setText("中断");
                 break;
+            case 6:
+                txtDeviceStatus.setText("空闲");
+                state = WAIT_CHECK_IN;
+                break;
         }
         setOperationUI();
     }
 
     @Override
     public void triggerStart(BasketballResult result) {
-        Log.i(TAG,"triggerStart:"+result.toString());
-        switch (useMode){
+        Log.i(TAG, "triggerStart:" + result.toString());
+        switch (useMode) {
             case 0://单拦截
                 doTriggerStart();
                 break;
             case 1://"2:起点1:终点"
             case 4://2:起终点1:折返点
-                if (result.gettNum() == 1){ //起点触发
+                if (result.gettNum() == 1) { //起点触发
                     doTriggerStart();
-                }else {
-                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
+                } else {
+//                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
+                    ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
                 }
 
                 break;
             case 2://2:终点1:起点
             case 3://2:折返点1:起终点
-                if (result.gettNum() == 2){ //起点触发
+                if (result.gettNum() == 2) { //起点触发
                     doTriggerStart();
-                }else {
-                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
+                } else {
+//                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
+                    ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
                 }
                 break;
 
@@ -274,20 +341,20 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         if (state == WAIT_FREE || state == WAIT_CHECK_IN) {
             return;
         }
-        switch (useMode){
+        switch (useMode) {
 
             case 1://"2:起点1:终点"
-                if (result.gettNum() == 1){//拦截到了起点，重新计时
+                if (result.gettNum() == 1) {//拦截到了起点，重新计时
                     tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()));
-                }else {//拦截到终点，正常
+                } else {//拦截到终点，正常
                     doGetResult(result);
                 }
 
                 break;
             case 2://2:终点1:起点
-                if (result.gettNum() == 2){//拦截到了起点，重新计时
+                if (result.gettNum() == 2) {//拦截到了起点，重新计时
                     tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()));
-                }else {//拦截到终点，正常
+                } else {//拦截到终点，正常
                     doGetResult(result);
                 }
 
@@ -382,15 +449,16 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
             state = WAIT_CHECK_IN;
             setOperationUI();
             tvResult.setText(DateUtil.caculateFormatTime(0, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital()));
-            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
-                    UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
+//            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
+//                    UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
+            ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "", Paint.Align.RIGHT);
         } else {
             pairs.get(position()).setDeviceResult(result);
             state = WAIT_STOP;
             setOperationUI();
             tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital()));
-            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
-                    UdpLEDUtil.getLedByte(ResultDisplayUtils.getStrResultForDisplay(result.getResult()), Paint.Align.RIGHT)));
+            ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, ResultDisplayUtils.getStrResultForDisplay(result.getResult()), Paint.Align.RIGHT);
+
         }
 
 
@@ -398,6 +466,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
 
     @Override
     public void timer(Long time) {
+        timerDate = time * 10;
         if (state == TESTING) {
             tvResult.setText(DateUtil.caculateTime(time * 10, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital(), 0));
         }
@@ -434,7 +503,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                 if ((state == WAIT_CHECK_IN || state == WAIT_CONFIRM || state == WAIT_STOP)) {
                     if (isExistTestPlace()) {
                         timerUtil.stop();
-                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
+                        ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
                     } else {
                         toastSpeak("该考生已全部测试完成");
                     }
@@ -445,10 +514,22 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                 showIllegalReturnDialog();
                 break;
             case R.id.txt_continue_run://继续运行
-                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(3));
+                if (setting.getTestType() == 0) {
+                    ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 3);
+                } else {
+                    Basketball868Result result = new Basketball868Result();
+                    int[] time = TimeUtil.getTestResult(timerDate);
+                    if (time != null) {
+                        result.setHour(time[0]);
+                        result.setMinth(time[1]);
+                        result.setSencond(time[2]);
+                        result.setMinsencond(time[3]);
+                        ballManager.setRadioLedStartTime(SettingHelper.getSystemSetting().getHostId(), result);
+                    }
+                }
                 break;
             case R.id.txt_stop_timing://停止计时
-                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
+                ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
 
                 break;
             case R.id.tv_punish_add: //违例+
@@ -476,7 +557,8 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
             case R.id.tv_confirm://确定
                 timerUtil.stop();
                 if (state == WAIT_CONFIRM || state == WAIT_BEGIN) {
-                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
+                    ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
+                    ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 1);
                 }
                 if (state != TESTING) {
                     tvResult.setText("");
@@ -496,7 +578,12 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                         toastSpeak("分组考生全部测试完成，请选择下一组");
                     } else {
                         timerUtil.stop();
-                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
+                        if (setting.getTestType() == 0) {
+//                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
+                            ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
+                        } else {
+                            ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 1);
+                        }
                         prepareForFinish();
                     }
                 }
@@ -802,18 +889,17 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
         switch (testResult.getResultState()) {
             case RoundResult.RESULT_STATE_NORMAL:
-                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2, UdpLEDUtil.getLedByte(ResultDisplayUtils.getStrResultForDisplay(testResult.getResult()), testResult.getPenalizeNum() + "", Paint.Align.CENTER)));
+                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, ResultDisplayUtils.getStrResultForDisplay(testResult.getResult()), testResult.getPenalizeNum() + "", Paint.Align.CENTER);
                 break;
             case RoundResult.RESULT_STATE_FOUL:
-                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2, UdpLEDUtil.getLedByte("犯规", testResult.getPenalizeNum() + "", Paint.Align.CENTER)));
+                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "犯规", testResult.getPenalizeNum() + "", Paint.Align.CENTER);
                 break;
             case RoundResult.RESULT_STATE_BACK:
-                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2, UdpLEDUtil.getLedByte("中退", testResult.getPenalizeNum() + "", Paint.Align.CENTER)));
+                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "中退", testResult.getPenalizeNum() + "", Paint.Align.CENTER);
                 break;
             case RoundResult.RESULT_STATE_WAIVE:
-                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2, UdpLEDUtil.getLedByte("弃权", testResult.getPenalizeNum() + "", Paint.Align.CENTER)));
+                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "弃权", testResult.getPenalizeNum() + "", Paint.Align.CENTER);
                 break;
-
         }
     }
 
@@ -851,10 +937,8 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         tvResult.setText(student.getStudentName());
         state = WAIT_CHECK_IN;
         setOperationUI();
-        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(1,
-                UdpLEDUtil.getLedByte(pairs.get(position()).getStudent().getSpeakStuName(), Paint.Align.CENTER)));
-        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
-                UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
+        ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, student.getLEDStuName(), Paint.Align.CENTER);
+        ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "", Paint.Align.CENTER);
     }
 
 
@@ -1076,9 +1160,9 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                     resultAdapter.notifyDataSetChanged();
                 }
                 state = WAIT_CONFIRM;
-                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
+                ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
                 sleep();
-                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
+                ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
             }
         }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
