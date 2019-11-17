@@ -1808,7 +1808,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
             raceResultBean = new RaceResultBean();
             raceResultBean.setResults(strings2);
             raceResultBean.setNo(groupItemBeans.get(groupPosition).getGroup().getGroupNo() + "");
-            raceResultBean.setVestNo(i + 1);
+            raceResultBean.setVestNo(groupItems.get(i).getTrackNo());
             raceResultBean.setResultState(RaceResultBean.STATE_NORMAL);
             raceResultBean.setStudentCode(student.getStudentCode());
             raceResultBean.setStudentName(student.getStudentName());

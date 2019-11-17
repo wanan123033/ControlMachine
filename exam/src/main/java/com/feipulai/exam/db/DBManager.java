@@ -234,6 +234,7 @@ public class DBManager {
     public List<StudentItem> queryStudentItemByItemCode(String itemCode) {
         return studentItemDao.queryBuilder().where(StudentItemDao.Properties.ItemCode.eq(itemCode)).list();
     }
+
     public StudentItem queryStudentItemByCode(String itemCode, String stuCode) {
         return studentItemDao.queryBuilder()
                 .where(StudentItemDao.Properties.ItemCode.eq(itemCode))
@@ -991,6 +992,15 @@ public class DBManager {
                 .unique();
     }
 
+    public StudentItem queryStuItemByStuCode2(String studentCode, String code) {
+        return studentItemDao
+                .queryBuilder()
+                .where(StudentItemDao.Properties.StudentCode.eq(studentCode))
+                .where(StudentItemDao.Properties.ItemCode.eq(code))
+                .where(StudentItemDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .unique();
+    }
+
     /**
      * 添加学生报名
      *
@@ -1732,7 +1742,7 @@ public class DBManager {
                 }
             }
         }
-    Logger.i("zzzzzzzzzzzzzzzzzz");
+        Logger.i("zzzzzzzzzzzzzzzzzz");
         return uploadResultsList;
     }
 
@@ -2312,7 +2322,7 @@ public class DBManager {
     }
 
     /******************** 机器成绩表 **************/
-    public List<MachineResult> queryMachineResultByItemCodeDefault(int machineCode){
+    public List<MachineResult> queryMachineResultByItemCodeDefault(int machineCode) {
         return machineResultDao
                 .queryBuilder()
                 .where(MachineResultDao.Properties.MachineCode.eq(machineCode))

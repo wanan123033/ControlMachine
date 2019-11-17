@@ -7,10 +7,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -1059,8 +1061,11 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             if (chipInfo == null) {
                 continue;
             }
+            Log.i("chipInfo", "---" + chipInfo.toString());
             for (int i = 0; i < resultDataList.size(); i++) {
                 if (resultDataList.get(i).getColor() == chipInfo.getColor() && resultDataList.get(i).getVestNo() == chipInfo.getVestNo()) {
+                    Log.i("resultDataList", "---" + resultDataList.get(i).toString());
+
                     String[] result = resultDataList.get(i).getResults();
                     if (resultDataList.get(i).getStartTime() == 0) {
                         break;
@@ -1937,7 +1942,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             raceResultBean = new RaceResultBean();
             raceResultBean.setResults(strings2);
             raceResultBean.setNo(groupItemBeans.get(groupPosition).getGroup().getGroupNo() + "");
-            raceResultBean.setVestNo(i + 1);
+            raceResultBean.setVestNo(groupItems.get(i).getTrackNo());
             raceResultBean.setResultState(RaceResultBean.STATE_NORMAL);
             raceResultBean.setStudentCode(student.getStudentCode());
             raceResultBean.setStudentName(student.getStudentName());
@@ -1949,6 +1954,14 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             raceResultBean.setItemName(itemList.get(mItemPosition).getItemName());
             resultDataList.add(addPosition, raceResultBean);
         }
+
+//        Collections.sort(resultDataList, new Comparator<RaceResultBean>() {
+//            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+//            @Override
+//            public int compare(RaceResultBean o1, RaceResultBean o2) {
+//                return Integer.compare(o1.getVestNo(), o2.getVestNo());//按照道次升序排列
+//            }
+//        });
 
 //        Log.i(TAG, resultDataList.toString());
         resultShowTable.notifyContent();

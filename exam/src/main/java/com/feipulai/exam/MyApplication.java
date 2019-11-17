@@ -44,7 +44,7 @@ public class MyApplication extends MultiDexApplication {
         FileUtil.createAllFile();
         FileUtil.mkdirs(PATH_SPECIFICATION);
         //TODO 岭南IC
-        AdaptiveConfig.initIC(AdaptiveConfig.LIN_NAN_SHI_FAN, AdaptiveConfig.DEFAULT, new char[]{0x73, 0x79, 0x6E, 0x70, 0x75, 0x62});
+//        AdaptiveConfig.initIC(AdaptiveConfig.LIN_NAN_SHI_FAN, AdaptiveConfig.DEFAULT, new char[]{0x73, 0x79, 0x6E, 0x70, 0x75, 0x62});
 
         // 初始化工作已经移至mainactivity中,保证尽快进入界面,减少白屏时间
 //         if (LeakCanary.isInAnalyzerProcess(this)) {
