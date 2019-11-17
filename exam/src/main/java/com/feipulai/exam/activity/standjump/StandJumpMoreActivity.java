@@ -29,4 +29,9 @@ public class StandJumpMoreActivity extends BaseMoreActivity {
     protected void sendTestCommand(BaseStuPair pair, int index) {
 
     }
+
+    @Override
+    protected void confirmResult(int pos) {
+
+    }
 }
