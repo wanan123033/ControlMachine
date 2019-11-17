@@ -1,5 +1,7 @@
 package com.feipulai.device.serial.beans;
 
+import java.util.Arrays;
+
 /**
  * Created by James on 2018/5/11 0011.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
@@ -18,18 +20,46 @@ public class MedicineBallNewResult {
 	private int deviceId;
 	private int frequency;
     private int state ;//0 空闲 1测量 2结束
+
+    public int[] getIncorrectPoles() {
+        return incorrectPoles;
+    }
+
+    public void setIncorrectPoles(int[] incorrectPoles) {
+        this.incorrectPoles = incorrectPoles;
+    }
+
+    private int[] incorrectPoles;
+    private int numOfPoles;
+    private boolean isInCorrect;
 	public MedicineBallNewResult(byte[] data){
 		result = ((data[14] & 0xff) << 8) + (data[15] & 0xff);
 		checkFault(data);
 		sweepPoint = data[18]&0xff;
 		deviceId = data[6];
-		if (data[7] == 1){
+		if (data[7] == 1||data[7] == 2){
             frequency = data[12];
         }else if (data[07]== 3){
 		    state = data[12];
+
+		    //检测测量杆是否正常
+            //0xAA  15  07  01  03  06  01  03  00  00  00  00  01  80  00  00  00  00  00  AB  0D
+            numOfPoles = data[16] & 0xff;
+            int tmp = ((data[13] & 0xff) << 8) +  (data[14] & 0xff);
+            incorrectPoles = new int[numOfPoles];
+            int bit = 0x80_00;
+            int j = 0;
+            for(int i = 1;i < numOfPoles + 1;i++){
+                if((tmp & bit) != 0){
+                    isInCorrect = true;
+                    incorrectPoles[j ++] = i;
+                }
+                bit >>= 1;
+            }
         }
 
 	}
+
     public int getSweepPoint() {
         return sweepPoint;
     }
@@ -81,5 +111,28 @@ public class MedicineBallNewResult {
 
     public void setState(int state) {
         this.state = state;
+    }
+
+    @Override
+    public String toString() {
+        return "MedicineBallNewResult{" +
+                "result=" + result +
+                ", fault=" + fault +
+                ", sweepPoint=" + sweepPoint +
+                ", deviceId=" + deviceId +
+                ", frequency=" + frequency +
+                ", state=" + state +
+                ", incorrectPoles=" + Arrays.toString(incorrectPoles) +
+                ", numOfPoles=" + numOfPoles +
+                ", isInCorrect=" + isInCorrect +
+                '}';
+    }
+
+    public boolean isInCorrect() {
+        return isInCorrect;
+    }
+
+    public void setInCorrect(boolean inCorrect) {
+        isInCorrect = inCorrect;
     }
 }

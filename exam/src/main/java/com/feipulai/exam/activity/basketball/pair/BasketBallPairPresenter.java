@@ -1,4 +1,4 @@
-package com.feipulai.exam.activity.basketball.wiress;
+package com.feipulai.exam.activity.basketball.pair;
 
 import android.content.Context;
 import android.os.Build;
@@ -46,7 +46,6 @@ public class BasketBallPairPresenter extends SitPullUpPairPresenter {
         if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ) {
             return 2;
         }
-
         return 3;
     }
 
@@ -65,6 +64,6 @@ public class BasketBallPairPresenter extends SitPullUpPairPresenter {
 
     @Override
     public void saveSettings() {
-
+        SharedPrefsUtil.save(context,setting);
     }
 }

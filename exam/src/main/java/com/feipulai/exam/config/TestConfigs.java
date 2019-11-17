@@ -20,8 +20,8 @@ import com.feipulai.exam.activity.basketball.BasketBallSelectActivity;
 import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.basketball.BasketBallSettingActivity;
 import com.feipulai.exam.activity.footBall.FootBallGroupActivity;
+import com.feipulai.exam.activity.footBall.FootBallItemSelectActivity;
 import com.feipulai.exam.activity.footBall.FootBallSettingActivity;
-import com.feipulai.exam.activity.footBall.FootballIndividualActivity;
 import com.feipulai.exam.activity.jump_rope.check.JumpRopeCheckActivity;
 import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSetting;
 import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSettingActivity;
@@ -29,7 +29,6 @@ import com.feipulai.exam.activity.medicineBall.MedicineBallGroupActivity;
 import com.feipulai.exam.activity.medicineBall.MedicineBallSelectActivity;
 import com.feipulai.exam.activity.medicineBall.MedicineBallSetting;
 import com.feipulai.exam.activity.medicineBall.MedicineBallSettingActivity;
-import com.feipulai.exam.activity.medicineBall.MedicineBallTestActivity;
 import com.feipulai.exam.activity.pullup.PullUpSelectActivity;
 import com.feipulai.exam.activity.pullup.setting.PullUpSetting;
 import com.feipulai.exam.activity.pullup.setting.PullUpSettingActivity;
@@ -48,13 +47,13 @@ import com.feipulai.exam.activity.situp.check.SitUpCheckActivity;
 import com.feipulai.exam.activity.situp.setting.SitUpSetting;
 import com.feipulai.exam.activity.situp.setting.SitUpSettingActivity;
 import com.feipulai.exam.activity.standjump.StandJumpGroupTestActivity;
+import com.feipulai.exam.activity.standjump.StandJumpSelectActivity;
 import com.feipulai.exam.activity.standjump.StandJumpSetting;
 import com.feipulai.exam.activity.standjump.StandJumpSettingActivity;
-import com.feipulai.exam.activity.standjump.StandJumpTestActivity;
 import com.feipulai.exam.activity.volleyball.VolleyBallGroupActivity;
-import com.feipulai.exam.activity.volleyball.VolleyBallIndividualActivity;
 import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
 import com.feipulai.exam.activity.volleyball.VolleyBallSettingActivity;
+import com.feipulai.exam.activity.volleyball.VolleyballPatternSelectActivity;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.db.MachineItemCodeUtil;
 import com.feipulai.exam.entity.Group;
@@ -69,6 +68,7 @@ import com.orhanobut.logger.Logger;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -91,7 +91,7 @@ public class TestConfigs {
     public static final String DEFAULT_IP_ADDRESS = "http://feipulai.com";
     public static final Map<Integer, Class<?>> proActivity = new HashMap<>();
     public static final Map<Integer, Class<?>> groupActivity = new HashMap<>();
-
+    public static final List<Integer> selectActivity = new ArrayList<>();
     public static final Map<Integer, String> machineNameMap = new HashMap<>();
 
     public static final String DEFAULT_ITEM_CODE = "default";
@@ -354,8 +354,15 @@ public class TestConfigs {
     }
 
     static {
+        selectActivity.add(ItemDefault.CODE_LDTY);
+        selectActivity.add(ItemDefault.CODE_FWC);
+        selectActivity.add(ItemDefault.CODE_MG);
+        selectActivity.add(ItemDefault.CODE_PQ);
+        selectActivity.add(ItemDefault.CODE_LQYQ);
+
+
         // 每个项目对应的个人检录Activity
-        TestConfigs.proActivity.put(ItemDefault.CODE_LDTY, StandJumpTestActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_LDTY, StandJumpSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_ZWTQQ, SitReachTestActivity.class);
 
         TestConfigs.proActivity.put(ItemDefault.CODE_ZFP, RunTimerActivityTestActivity.class);
@@ -364,12 +371,12 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_TS, JumpRopeCheckActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_YWQZ, SitUpCheckActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_YTXS, PullUpSelectActivity.class);
-        TestConfigs.proActivity.put(ItemDefault.CODE_PQ, VolleyBallIndividualActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_PQ, VolleyballPatternSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_MG, SargentItemSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_FWC, PushPatternSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_LQYQ, BasketBallSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_ZCP, MiddleDistanceRaceForPersonActivity.class);
-        TestConfigs.proActivity.put(ItemDefault.CODE_ZQYQ, FootballIndividualActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_ZQYQ, FootBallItemSelectActivity.class);
 
         // 每个项目对应的分组检录Acitivity
         TestConfigs.groupActivity.put(ItemDefault.CODE_LDTY, StandJumpGroupTestActivity.class);

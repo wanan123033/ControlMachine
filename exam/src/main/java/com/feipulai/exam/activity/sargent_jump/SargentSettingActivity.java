@@ -210,7 +210,10 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
         spDeviceCount.setOnItemSelectedListener(this);
         spDeviceCount.setSelection(sargentSetting.getSpDeviceCount()-1);
         spDeviceCount.setEnabled(true);
-
+        if (sargentSetting.getType()!=2){
+            spDeviceCount.setSelection(0);
+            spDeviceCount.setEnabled(false);
+        }
         rgModel.setVisibility(SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN ? View.GONE : View.VISIBLE);//个人模式隐藏
         rgModel.setOnCheckedChangeListener(this);
 

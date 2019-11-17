@@ -1,13 +1,13 @@
-package com.feipulai.exam.activity.medicineBall.pair;
+package com.feipulai.exam.activity.standjump.more;
 
 import com.feipulai.exam.activity.situp.base_pair.SitPullPairActivity;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairPresenter;
 
-public class MedicineBallPairActivity extends SitPullPairActivity {
-
-
-    @Override
+public class StandJumpPairActivity
+        extends SitPullPairActivity {
     public SitPullUpPairPresenter getPresenter() {
-        return new MedicineBallPairPresenter(this,this);
+        return new StandJumpPairPresenter(this, this);
     }
+
+
 }

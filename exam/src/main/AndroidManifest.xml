@@ -25,7 +25,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.medicineBall.more_device.MedicineBallMoreActivity"></activity>
+        <activity android:name=".activity.medicineBall.more_device.BallGroupMoreActivity"></activity>
+        <activity android:name=".activity.medicineBall.more_device.MedicineBallMoreActivity" />
         <activity android:name=".activity.medicineBall.pair.MedicineBallPairActivity" />
         <activity android:name=".activity.sargent_jump.pair.VolleyBallPairActivity" />
         <activity android:name=".activity.sargent_jump.more_device.SargentTestGroupActivity" />
@@ -82,6 +83,18 @@
         <activity
             android:name=".activity.RadioTimer.RunTimerActivityGroupActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.standjump.StandJumpSelectActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.standjump.more.StandJumpPairActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.standjump.more.StandJumpMoreActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.standjump.more.StandJumpGroupMoreActivity"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.standjump.StandJumpTestActivity"
             android:windowSoftInputMode="stateHidden" />
@@ -203,7 +216,7 @@
         <activity android:name=".activity.volleyball.more_devices.VolleyBallMoreGroupActivity" />
         <activity android:name=".activity.footBall.FootBallItemSelectActivity" />
         <activity android:name=".activity.basketball.BasketBallSelectActivity" />
-        <activity android:name=".activity.basketball.wiress.BasketBallPairActivity" />
+        <activity android:name=".activity.basketball.pair.BasketBallPairActivity" />
         <activity android:name=".activity.volleyball.more_devices.VolleyBallMore2TestActivity" />
         <activity android:name=".activity.medicineBall.MedicineBallSelectActivity" />
     </application>

@@ -267,17 +267,17 @@ public class SitPushUpManager {
      * @param hostId
      */
     public void setFrequencySXQ(int originFrequency, int deviceId, int hostId) {
-        int machineCode = ItemDefault.CODE_MG;
+        int machineCode = ItemDefault.CODE_HWSXQ;
         int targetChannel = 0;
         byte[] buf = new byte[21];
         buf[0] = (byte) 0xAA;//包头
         buf[1] = 0x15;    //包长
         buf[2] = 0x07;       //项目编号
-        buf[3] = 0x01; //主机
-        buf[4] = 0x03;      //子机
+        buf[3] = 0x03; //子机
+        buf[4] = 0x01;      //主机
         buf[5] = (byte) (hostId & 0xff);     //主机号
         buf[6] = (byte) (deviceId & 0xff);       //子机号
-        buf[7] = 0x01;      //命令
+        buf[7] = 0x02;      //命令
         targetChannel = SerialConfigs.sProChannels.get(machineCode) + hostId - 1;
         buf[8] = 0;
         buf[9] = 0;

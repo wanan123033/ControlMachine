@@ -14,9 +14,8 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.medicineBall.more_device.MedicineBallMoreActivity;
 import com.feipulai.exam.activity.sargent_jump.SargentSetting;
-import com.feipulai.exam.activity.sargent_jump.SargentTestActivity;
-import com.feipulai.exam.activity.sargent_jump.more_device.SargentMoreTestActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.adapter.SubItemsSelectAdapter;
@@ -54,10 +53,10 @@ public class MedicineBallSelectActivity extends BaseTitleActivity {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                SargentSetting setting = SharedPrefsUtil.loadFormSource(mContext, SargentSetting.class);
-                setting.setType(position);
+                MedicineBallSetting setting = SharedPrefsUtil.loadFormSource(mContext, MedicineBallSetting.class);
+                setting.setConnectType(position);
                 if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
-                    startActivity(new Intent(mContext, position == 1? SargentMoreTestActivity.class : SargentTestActivity.class));
+                    startActivity(new Intent(mContext, position == 1? MedicineBallMoreActivity.class : MedicineBallTestActivity.class));
                 } else {
                     startActivity(new Intent(mContext, BaseGroupActivity.class));
                 }

@@ -38,6 +38,14 @@ public class BallManager {
         UdpClient.getInstance().setHostIpPost(hostIp, post);
     }
 
+    public void setHostIpPostLocatListener(String hostIp, int post, UdpClient.UDPChannelListerner listerner) {
+        this.hostIp = hostIp;
+        this.post = post;
+        this.udpChannelListerner = listerner;
+        UdpClient.getInstance().setHostIpPostLocatListener(hostIp, post, udpChannelListerner);
+    }
+
+
     public void init() {
         if (patternType == 0) {
             UdpClient.getInstance().init(inetPort);
@@ -58,16 +66,40 @@ public class BallManager {
         }
     }
 
+
     /**
-     * 设置精度
+     * 显示屏
      *
-     * @param uPrecision 0表示设置显示精度为十分秒
-     *                   1表示设置显示精度为百分秒
+     * @param showType  UP =  1 ，DOWN=2
+     * @param data
+     * @param rightTest
+     * @return
      */
-    public void sendSetPrecision(int uPrecision) {
+    public void sendDisLed(int hostId, int showType, String data, String rightTest, Paint.Align align) {
         if (patternType == 0) {
-            UdpClient.getInstance().setHostIpPost(hostIp, post);
-            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(uPrecision));
+            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(showType, UdpLEDUtil.getLedByte(data, rightTest, align)));
+        } else {
+            try {
+                byte[] showData = new byte[10];
+                byte[] dataByte = data.getBytes("GB2312");
+
+                int x = 0;
+                if (align == Paint.Align.CENTER) {
+                    x = (10 - data.getBytes("GBK").length) / 2;
+                } else if (align == Paint.Align.RIGHT) {
+                    x = 10 - data.getBytes("GBK").length;
+                }
+
+                System.arraycopy(dataByte, 0, showData, x, dataByte.length);
+
+                byte[] rightByte = rightTest.getBytes("GB2312");
+                x = 10 - rightTest.getBytes("GBK").length;
+                System.arraycopy(rightByte, 0, showData, x, rightByte.length);
+                setLedShowData(hostId, showData, 0, showType);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
@@ -106,6 +138,13 @@ public class BallManager {
                     setRadioFreeStates(hostId);
                     break;
                 case 2:
+                    setLedShowData(hostId, "", 2, Paint.Align.CENTER);
+                    setRadioFreeStates(hostId);
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     setRadioStartAwait(hostId);
                     break;
                 case 5:
@@ -130,12 +169,12 @@ public class BallManager {
      * @param interceptSecond 秒
      * @return
      */
-    public void sendSetBlockertime(int deviceId, int hostId, int sensitivity, int interceptSecond) {
+    public void sendSetBlockertime(int hostId, int sensitivity, int interceptSecond, int precision) {
         if (patternType == 0) {
             UdpClient.getInstance().setHostIpPost(hostIp, post);
             UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_BLOCKERTIME(interceptSecond));
         } else {
-            setRadioParameter(deviceId, hostId, sensitivity, interceptSecond);
+            setSettingParameter(hostId, sensitivity, interceptSecond, precision);
         }
     }
 
@@ -145,13 +184,36 @@ public class BallManager {
      * @param sensitivity 灵敏度
      * @return
      */
-    public void sendSetDelicacy(int deviceId, int hostId, int sensitivity, int interceptSecond) {
+    public void sendSetDelicacy(int hostId, int sensitivity, int interceptSecond, int precision) {
         if (patternType == 0) {
             UdpClient.getInstance().setHostIpPost(hostIp, post);
             UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_T(sensitivity));
         } else {
-            setRadioParameter(deviceId, hostId, sensitivity, interceptSecond);
+            setSettingParameter(hostId, sensitivity, interceptSecond, precision);
         }
+    }
+
+    /**
+     * 设置精度
+     */
+    public void sendSetPrecision(int hostId, int sensitivity, int interceptSecond, int precision) {
+        if (patternType == 0) {
+            UdpClient.getInstance().setHostIpPost(hostIp, post);
+            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(precision));
+        } else {
+            setSettingParameter(hostId, sensitivity, interceptSecond, precision);
+        }
+    }
+
+    public void setSettingParameter(int hostId, int sensitivity, int interceptSecond, int precision) {
+        byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x03, 0x01, 0x00, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
+        cmd[5] = (byte) hostId;
+        cmd[6] = (byte) 0x01;
+        cmd[12] = (byte) sensitivity;
+        cmd[13] = (byte) interceptSecond;
+        cmd[14] = (byte) precision;
+        cmd[18] = (byte) sum(cmd, 18);
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
     /**
@@ -222,12 +284,14 @@ public class BallManager {
         cmd[18] = (byte) sum(cmd, 18);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
-    public void getRadioLedState(int hostId ) {
+
+    public void getRadioLedState(int hostId) {
         byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x02, 0x01, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
         cmd[5] = (byte) hostId;
         cmd[18] = (byte) sum(cmd, 18);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
+
     /**
      * 离线：0
      * 空闲：1
@@ -235,12 +299,13 @@ public class BallManager {
      * 计时：3
      * 暂停：5（暂停显示时间，不停表只针对显示屏）
      * 结束：6
+     * <p>
      * 开始等待
      *
      * @param hostId
      */
     public void setRadioStartAwait(int hostId) {
-        byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x03, 0x01, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
+        byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x03, 0x01, 0x00, 0x01, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
         cmd[5] = (byte) hostId;
         cmd[18] = (byte) sum(cmd, 18);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
@@ -267,7 +332,7 @@ public class BallManager {
      * 设置停止
      */
     public void setRadioStopTime(int hostId) {
-        byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x03, 0x01, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
+        byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x03, 0x01, 0x00, 0x01, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
         cmd[5] = (byte) hostId;
         cmd[18] = (byte) sum(cmd, 18);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
@@ -279,7 +344,7 @@ public class BallManager {
      * @param hostId
      */
     public void setRadioFreeStates(int hostId) {
-        byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x03, 0x01, 0x00, 0x00, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
+        byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x03, 0x01, 0x00, 0x01, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
         cmd[5] = (byte) hostId;
         cmd[18] = (byte) sum(cmd, 18);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
@@ -306,45 +371,62 @@ public class BallManager {
 
         int x = 0;
         try {
-            if (data.length() > 5) {
-                data = data.substring(0, 5);
-            }
+
             byte[] dataByte = data.getBytes("GB2312");
-            byte[] cmd = new byte[dataByte.length + 17];
-            cmd[0] = (byte) 0xAA;
-            cmd[1] = (byte) cmd.length;
-            cmd[2] = 0x0D;
-            cmd[3] = 0x02;
-            cmd[4] = 0x01;
-            cmd[5] = (byte) hostId;
-            cmd[7] = 0x8;
-            cmd[12] = (byte) showType;
-            if (align == Paint.Align.CENTER) {
-                x = (16 - data.getBytes("GBK").length) / 2;
-            } else if (align == Paint.Align.RIGHT) {
-                x = 16 - data.getBytes("GBK").length;
+
+            if (dataByte.length > 10) {
+                byte[] copyData = new byte[10];
+                System.arraycopy(dataByte, 0, copyData, 0, copyData.length);
+                dataByte = copyData;
             }
-            cmd[13] = (byte) x;
-            cmd[14] = (byte) (dataByte.length & 0xff);
-            System.arraycopy(dataByte, 0, cmd, 15, dataByte.length);
-            cmd[cmd.length - 2] = (byte) sum(cmd, 18);
-            cmd[cmd.length - 1] = 0x0d;
-            RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+            if (align == Paint.Align.CENTER) {
+                x = (10 - data.getBytes("GBK").length) / 2;
+            } else if (align == Paint.Align.RIGHT) {
+                x = 10 - data.getBytes("GBK").length;
+            }
+            setLedShowData(hostId, dataByte, x, showType);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+    }
 
+
+    /**
+     * 显示屏
+     *
+     * @param showType UP =  1 ，DOWN=2
+     * @param
+     * @return
+     */
+    public void setLedShowData(int hostId, byte[] dataByte, int x, int showType) {
+
+        byte[] cmd = new byte[dataByte.length + 17];
+        cmd[0] = (byte) 0xAA;
+        cmd[1] = (byte) cmd.length;
+        cmd[2] = 0x0D;
+        cmd[3] = 0x02;
+        cmd[4] = 0x01;
+        cmd[5] = (byte) hostId;
+        cmd[7] = 0x8;
+        cmd[12] = (byte) showType;
+        cmd[13] = (byte) x;
+        cmd[14] = (byte) (dataByte.length & 0xff);
+        System.arraycopy(dataByte, 0, cmd, 15, dataByte.length);
+        cmd[cmd.length - 2] = (byte) sum(cmd, cmd.length - 2);
+        cmd[cmd.length - 1] = 0x0d;
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
 
     }
 
 
     private int sum(byte[] cmd, int index) {
         int sum = 0;
-        for (int i = 2; i < index; i++) {
-            sum += cmd[i] & 0xff;
+        for (int i = 1; i < index; i++) {
+            sum += cmd[i];
         }
         return sum;
     }
+
 
     /**
      * 创建对话框

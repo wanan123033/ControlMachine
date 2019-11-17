@@ -106,7 +106,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
         setting = SharedPrefsUtil.loadFormSource(this, BasketBallSetting.class);
         if (setting == null)
             setting = new BasketBallSetting();
-        
+
 //        UdpClient.getInstance().init(1527);
 //        UdpClient.getInstance().setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(), this);
         manager = new BallManager.Builder(setting.getTestType()).setRadioListener(this).setHostIp(setting.getHostIp())
@@ -176,17 +176,20 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
     @Override
     public void onRadioArrived(Message msg) {
         this.isDisconnect = false;
-        if (msg.what == SerialConfigs.DRIBBLEING_PARAMETER) {
-            ToastUtils.showShort("设置成功");
+        if (msg.what == SerialConfigs.DRIBBLEING_START) {
+           toastSpeak("连接成功");
+        } else if (msg.what == SerialConfigs.DRIBBLEING_SET_SETTING) {
+            toastSpeak("设置成功");
             Basketball868Result result = (Basketball868Result) msg.obj;
             this.setting.setSensitivity(result.getSensitivity());
             this.setting.setInterceptSecond(result.getInterceptSecond());
+            TestConfigs.sCurrentItem.setDigital(result.getuPrecision() == 0 ? 1 : 2);
         }
     }
 
     @Override
     public void onDataArrived(UDPResult result) {
-        isDisconnect = false;
+        this.isDisconnect = false;
         switch (result.getType()) {
             case UDPBasketBallConfig.CMD_GET_STATUS_RESPONSE:
                 setting.setHostIp(etHostIp.getText().toString());
@@ -304,7 +307,8 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
 //                UdpClient.getInstance().setHostIpPost(setting.getHostIp(), setting.getPost());
 //                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_BLOCKERTIME(Integer.valueOf(etInterceptTime.getText().toString())));
                 manager.setHostIpPost(setting.getHostIp(), setting.getPost());
-                manager.sendSetBlockertime(1, SettingHelper.getSystemSetting().getHostId(), this.setting.getSensitivity(), Integer.valueOf(this.etInterceptTime.getText().toString()));
+                manager.sendSetBlockertime(SettingHelper.getSystemSetting().getHostId(), this.setting.getSensitivity(),
+                        Integer.valueOf(this.etInterceptTime.getText().toString()), TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1);
                 isDisconnect = true;
                 isClickConnect = false;
                 mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 2000);
@@ -315,7 +319,8 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
                     return;
                 }
                 manager.setHostIpPost(setting.getHostIp(), setting.getPost());
-                manager.sendSetDelicacy(1, SettingHelper.getSystemSetting().getHostId(), Integer.valueOf(this.etSensitivity.getText().toString()), this.setting.getInterceptSecond());
+                manager.sendSetDelicacy(SettingHelper.getSystemSetting().getHostId(), Integer.valueOf(this.etSensitivity.getText().toString()),
+                        this.setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1);
 //                UdpClient.getInstance().setHostIpPost(setting.getHostIp(), setting.getPost());
 //                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_T(Integer.valueOf(etSensitivity.getText().toString())));
                 isDisconnect = true;
@@ -338,8 +343,9 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
                 }
 
 
-                UdpClient.getInstance().setHostIpPost(etHostIp.getText().toString(), Integer.valueOf(etPort.getText().toString()));
-                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_GET_STATUS);
+                manager.setHostIpPost(etHostIp.getText().toString(), Integer.valueOf(etPort.getText().toString()));
+                manager.sendGetStatus(SettingHelper.getSystemSetting().getHostId(), 1);
+//                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_GET_STATUS);
                 isDisconnect = true;
                 isClickConnect = true;
                 mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 2000);
@@ -347,32 +353,20 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
             case R.id.tv_accuracy_use:
                 switch (rgAccuracy.getCheckedRadioButtonId()) {
                     case R.id.rb_tenths: //十分位
-
-                        if (this.setting.getTestType() == 1) {
-                            TestConfigs.sCurrentItem.setDigital(1);
-                            ToastUtils.showShort("设置成功");
-                        } else {
-                            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(0));
-                            isDisconnect = true;
-                            isClickConnect = false;
-                            mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 2000);
-                        }
+//                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(0));
+                        manager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), Integer.valueOf(this.etSensitivity.getText().toString()),
+                                this.setting.getInterceptSecond(), 0);
 
                         break;
                     case R.id.rb_percentile://百分位
-                        if (this.setting.getTestType() == 1) {
-                            TestConfigs.sCurrentItem.setDigital(1);
-                            ToastUtils.showShort("设置成功");
-                        } else {
-                            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(1));
-                            isDisconnect = true;
-                            isClickConnect = false;
-                            mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 2000);
-                        }
-
+                        manager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), Integer.valueOf(this.etSensitivity.getText().toString()),
+                                this.setting.getInterceptSecond(), 1);
+//                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(1));
                         break;
                 }
-
+                isDisconnect = true;
+                isClickConnect = false;
+                mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 2000);
                 break;
         }
     }

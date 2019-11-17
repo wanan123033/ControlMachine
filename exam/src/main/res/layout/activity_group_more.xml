@@ -75,25 +75,26 @@
                 android:paddingRight="8dp"
                 android:text="设备配对"
                 android:textColor="@color/white"
-                android:textSize="20dp" />
+                android:textSize="20dp"
+                android:visibility="gone" />
         </RelativeLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_device_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
-            <TextView
-                android:id="@+id/tv_base_height"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="15dp"
-                android:text="原始高度: 厘米"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:visibility="gone" />
+        <TextView
+            android:id="@+id/tv_base_height"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="15dp"
+            android:text="原始高度: 厘米"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:visibility="gone" />
 
 
     </LinearLayout>

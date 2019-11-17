@@ -12,10 +12,13 @@ import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.sargent_jump.SargentJumpImpl;
 import com.feipulai.exam.activity.sargent_jump.SargentSetting;
 import com.feipulai.exam.bean.DeviceDetail;
+import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
 
+import static com.feipulai.exam.activity.sargent_jump.Constants.CMD_SARGENT_JUMP_EMPTY;
+import static com.feipulai.exam.activity.sargent_jump.Constants.CMD_SARGENT_JUMP_START;
 import static com.feipulai.exam.activity.sargent_jump.Constants.GET_SCORE_RESPONSE;
 
 public class SargentTestGroupActivity extends BaseMoreGroupActivity {
@@ -25,8 +28,7 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
     private int[] deviceState;
     private boolean[] basicHeight = {};
     //SARGENT JUMP
-    public byte[] CMD_SARGENT_JUMP_EMPTY = {0X54, 0X44, 00, 0X0B, 01, 0x01, 00, 0x02, 0x00, 0x27, 0x0d};
-    public byte[] CMD_SARGENT_JUMP_START = {0X54, 0X44, 00, 0X0B, 01, 0x01, 00, 0x01, 0x13, 0x27, 0x0d};
+
     //    public byte[] CMD_SARGENT_JUMP_STOP = {0X54, 0X44, 00, 0X10, 01, 0x01, 00, 0x02, 00, 00, 00, 00, 00, 0x14, 0x27, 0x0d};
 //    public byte[] CMD_SARGENT_JUMP_GET_SCORE = {0X54, 0X44, 00, 0X10, 01, 0x01, 00, 0x04, 00, 00, 00, 00, 00, 0x16, 0x27, 0x0d};
     private final int SEND_EMPTY = 1;
@@ -53,7 +55,11 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
 
     @Override
     public int setTestCount() {
-        return sargentSetting.getTestTimes();
+        if (TestConfigs.sCurrentItem.getTestNum() != 0) {
+            return TestConfigs.sCurrentItem.getTestNum();
+        } else {
+            return sargentSetting.getTestTimes();
+        }
     }
 
     @Override
