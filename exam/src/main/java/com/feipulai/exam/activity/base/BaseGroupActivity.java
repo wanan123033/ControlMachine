@@ -34,6 +34,7 @@ import com.feipulai.exam.activity.sitreach.SitReachSetting;
 import com.feipulai.exam.activity.standjump.StandJumpSetting;
 import com.feipulai.exam.activity.standjump.more.StandJumpGroupMoreActivity;
 import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
+import com.feipulai.exam.activity.volleyball.more_devices.VolleyBallGroupActivity;
 import com.feipulai.exam.activity.volleyball.more_devices.VolleyBallMoreGroupActivity;
 import com.feipulai.exam.adapter.BaseGroupAdapter;
 import com.feipulai.exam.adapter.GroupAdapter;
@@ -452,6 +453,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
 //                startActivity(new Intent(this, TestConfigs.settingActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
 //                break;
             case R.id.txt_start_test:
+
                 if (groupAdapter.getTestPosition() == -1) {
                     toastSpeak("请先选择分组");
                     return;
@@ -497,7 +499,8 @@ public class BaseGroupActivity extends BaseTitleActivity {
 
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_PQ
                         && SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class).getType() == 1) {
-                    startActivity(new Intent(this, VolleyBallMoreGroupActivity.class));
+
+                        startActivity(new Intent(this, VolleyBallGroupActivity.class));
                     return;
                 }
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LDTY

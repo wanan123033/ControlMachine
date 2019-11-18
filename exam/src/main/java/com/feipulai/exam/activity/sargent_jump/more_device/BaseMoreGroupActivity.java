@@ -418,7 +418,6 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
             for (int i = 0; i < pairList.size(); i++) {
                 //  查询学生成绩 当有成绩则添加数据跳过测试
                 pairList.get(i).getTimeResult();
-
                 allotStudent(i);
 
             }

@@ -652,7 +652,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     }
 
-    protected void refreshDevice(int index) {
+    public void refreshDevice(int index) {
         if (deviceDetails.get(index).getStuDevicePair().getBaseDevice() != null) {
             deviceListAdapter.notifyItemChanged(index);
         }

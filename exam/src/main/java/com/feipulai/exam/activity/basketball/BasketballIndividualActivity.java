@@ -21,6 +21,9 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.manager.BallManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.Basketball868Result;
+import com.feipulai.device.udp.UDPBasketBallConfig;
+import com.feipulai.device.udp.UdpClient;
+import com.feipulai.device.udp.UdpLEDUtil;
 import com.feipulai.device.udp.result.BasketballResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
@@ -218,15 +221,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         super.onEventMainThread(baseEvent);
         if (baseEvent.getTagInt() == EventConfigs.ITEM_SETTING_UPDATE) {
             setting = SharedPrefsUtil.loadFormSource(this, BasketBallSetting.class);
-        } else if (baseEvent.getTagInt() == EventConfigs.BALL_STATE_UPDATE) {
-            BallDeviceState deviceState = (BallDeviceState) baseEvent.getData();
 
-            if (deviceState.getDeviceId() == 1) {
-                cbNear.setChecked(deviceState.getState() != BaseDeviceState.STATE_DISCONNECT);
-            }
-            if (deviceState.getDeviceId() == 0) {
-                cbLed.setChecked(deviceState.getState() != BaseDeviceState.STATE_DISCONNECT);
-            }
         }
     }
 
@@ -452,7 +447,6 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
 
     @Override
     public void timer(Long time) {
-        timerDate = time * 10;
         if (state == TESTING) {
             tvResult.setText(DateUtil.caculateTime(time * 10, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital(), 0));
         }
@@ -608,12 +602,11 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                         ballManager.setRadioLedStartTime(SettingHelper.getSystemSetting().getHostId(), result);
                     }
                 }
-
-
                 break;
             case R.id.txt_stop_timing://停止计时
-//                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
-                ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
+                if (setting.getTestType() == 0) {
+                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
+                }
                 break;
             case R.id.tv_punish_add: //违例+
 
@@ -660,10 +653,13 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                     prepareForCheckIn();
                     txtDeviceStatus.setText("空闲");
                     if (setting.getTestType() == 0) {
-//                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
-                        ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
-                    } else {
-                        ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 1);
+                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
+                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(1,
+                                UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
+                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
+                                UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
+                    }else {
+
                     }
                     ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, "", Paint.Align.RIGHT);
                     ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "", Paint.Align.RIGHT);
@@ -1072,7 +1068,6 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
 
     }
 
-
     /**
      * 根据测试状态显示操作UI
      */
@@ -1116,6 +1111,5 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 txtStopTiming.setEnabled(false);
                 break;
         }
-
     }
 }

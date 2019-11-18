@@ -100,20 +100,31 @@
     <TextView
         android:id="@+id/item_txt_test_result"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:layout_marginTop="15dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="5dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:background="@mipmap/icon_test_result_bg"
         android:layout_below="@+id/ll_stu_id"
         android:gravity="center"
         android:textColor="@color/white"
-        android:textSize="30sp" />
+        android:textSize="20sp" />
+    <TextView
+        android:id="@+id/item_txt_result"
+        android:layout_width="wrap_content"
+        android:layout_height="42dp"
+        android:layout_marginLeft="15dp"
+        android:layout_below="@+id/ll_stu_id"
+        android:gravity="center_vertical"
+        android:layout_marginTop="5dp"
+        android:text="第一次:"
+        android:textColor="@color/white"
+        android:textSize="20sp" />
     <TextView
         android:id="@+id/item_txt_test_result1"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:layout_marginTop="15dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="5dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:background="@mipmap/icon_test_result_bg"
@@ -121,12 +132,23 @@
         android:gravity="center"
         android:visibility="invisible"
         android:textColor="@color/white"
-        android:textSize="30sp" />
+        android:textSize="20sp" />
+    <TextView
+        android:id="@+id/item_txt_result1"
+        android:layout_width="wrap_content"
+        android:layout_height="42dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="15dp"
+        android:layout_below="@+id/item_txt_test_result"
+        android:gravity="center_vertical"
+        android:textColor="@color/white"
+        android:text="第二次:"
+        android:textSize="20sp" />
     <TextView
         android:id="@+id/item_txt_test_result2"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:layout_marginTop="15dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="5dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:background="@mipmap/icon_test_result_bg"
@@ -134,19 +156,31 @@
         android:visibility="invisible"
         android:gravity="center"
         android:textColor="@color/white"
-        android:textSize="30sp" />
+        android:textSize="20sp" />
+    <TextView
+        android:id="@+id/item_txt_result2"
+        android:layout_width="wrap_content"
+        android:layout_height="42dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="15dp"
+        android:layout_below="@+id/item_txt_test_result1"
+        android:gravity="center_vertical"
+        android:textColor="@color/white"
+        android:text="第三次:"
+        android:textSize="20sp" />
     <TextView
         android:id="@+id/item_txt_state"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:layout_marginTop="15dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="5dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:background="@mipmap/icon_test_result_bg"
-        android:layout_below="@+id/item_txt_test_result"
+        android:layout_below="@id/item_txt_test_result2"
+        android:visibility="visible"
         android:gravity="center"
         android:textColor="@color/white"
-        android:textSize="30sp" />
+        android:textSize="20sp" />
     <RelativeLayout
         android:id="@+id/rl_1"
         android:layout_width="match_parent"
@@ -190,7 +224,7 @@
             android:layout_width="90dp"
             android:layout_height="48dp"
             android:background="@drawable/btn_click_bg_selected"
-            android:text="计时"
+            android:text="计时中"
             android:gravity="center"
             android:textColor="@color/white" />
         <TextView
