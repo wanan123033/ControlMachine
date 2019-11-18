@@ -248,6 +248,7 @@ public class SerialConfigs {
     public static final int DRIBBLEING_FREE = 0x53;
     public static final int DRIBBLEING_AWAIT = 0x54;
     public static final int DRIBBLEING_LED_START_TIME = 0x55;
+    public static final int DRIBBLEING_SET_SETTING = 0x56;
 
     //实心球无线
     public static final int MEDICINE_BALL_MATCH_MORE = 0x56;

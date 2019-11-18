@@ -29,6 +29,10 @@ public class Basketball868Result {
     public final static int DEVICE_LED = 2;
     private int interceptSecond;//默认5秒
     private int sensitivity;//灵敏度
+    private int uPrecision;//进位
+
+    public Basketball868Result() {
+    }
 
     public Basketball868Result(byte[] data) {
         state = data[12];
@@ -37,13 +41,26 @@ public class Basketball868Result {
         minth = data[15];
         sencond = data[16];
         minsencond = data[17];
-        deviceId = data[15];
+        if (data[7] == 0x02) {
+            deviceId = data[15];
+        } else {
+            deviceId = data[6];
+        }
+
         frequency = data[12];
         serialNumber = (data[8] & 0xff) + (data[9] & 0xff) + (data[10] & 0xff) + (data[11] & 0xff) + "";
         deviceCode = data[4];
-
         sensitivity = data[16] & 0xff;
         interceptSecond = data[17] & 0xff;
+
+        if (data[7] == 0x0a) {
+            sensitivity = data[13] & 0xff;
+            interceptSecond = data[14] & 0xff;
+            uPrecision = data[15] & 0xff;
+
+        }
+
+
     }
 
     public int getDeviceId() {
@@ -140,5 +157,36 @@ public class Basketball868Result {
 
     public void setSensitivity(int sensitivity) {
         this.sensitivity = sensitivity;
+    }
+
+    public int getuPrecision() {
+        return uPrecision;
+    }
+
+    public void setuPrecision(int uPrecision) {
+        this.uPrecision = uPrecision;
+    }
+
+    @Override
+    public String toString() {
+        return "Basketball868Result{" +
+                "frequency=" + frequency +
+                ", deviceId=" + deviceId +
+                ", state=" + state +
+                ", sum=" + sum +
+                ", hour=" + hour +
+                ", minth=" + minth +
+                ", sencond=" + sencond +
+                ", minsencond=" + minsencond +
+                ", serialNumber='" + serialNumber + '\'' +
+                ", deviceCode=" + deviceCode +
+                ", interceptSecond=" + interceptSecond +
+                ", sensitivity=" + sensitivity +
+                '}';
+    }
+
+
+    public long getInterceptTime() {
+        return hour * 60 * 60 * 1000 + minth * 60 * 1000 + sencond * 1000 + minsencond * 10;
     }
 }

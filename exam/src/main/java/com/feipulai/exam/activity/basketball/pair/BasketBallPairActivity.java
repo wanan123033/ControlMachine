@@ -1,4 +1,4 @@
-package com.feipulai.exam.activity.basketball.wiress;
+package com.feipulai.exam.activity.basketball.pair;
 
 import android.support.v7.widget.GridLayoutManager;
 

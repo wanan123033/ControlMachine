@@ -126,7 +126,9 @@ public class DataManageActivity
         txtStorageInfo.setText("总容量" + FileUtil.formatFileSize(totalSpace, true) + "剩余" + FileUtil.formatFileSize(freeSpace, true));
         progressStorage.setProgress(FileUtil.getPercentRemainStorage());
 
-        FaceServer.getInstance().init(this);
+        if (!FaceServer.getInstance().init(this)) {
+            ToastUtils.showShort("人脸识别引擎初始化失败");
+        }
         progressDialog = new ProgressDialog(this);
         initGridView();
     }

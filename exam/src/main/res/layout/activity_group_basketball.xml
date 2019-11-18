@@ -51,6 +51,57 @@
             android:layout_height="200dp"
             android:background="#313131">
 
+            <CheckBox
+                android:id="@+id/cb_near"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="15dp"
+                android:button="@null"
+                android:clickable="false"
+                android:enabled="false"
+                android:drawablePadding="15dp"
+                android:drawableRight="@drawable/cb_device_state"
+                android:text="近红外"
+                android:textColor="@color/white"
+
+                android:textSize="20sp" />
+
+            <CheckBox
+                android:id="@+id/cb_far"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/cb_near"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="@dimen/dp_10"
+                android:button="@null"
+                android:drawablePadding="15dp"
+                android:drawableRight="@drawable/cb_device_state"
+                android:text="远红外"
+                android:textColor="@color/white"
+                android:clickable="false"
+                android:enabled="false"
+                android:textSize="20sp" />
+
+            <CheckBox
+                android:id="@+id/cb_led"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/cb_far"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="@dimen/dp_10"
+                android:button="@null"
+                android:drawablePadding="15dp"
+                android:clickable="false"
+                android:enabled="false"
+                android:drawableRight="@drawable/cb_device_state"
+                android:text="显示屏"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
             <TextView
                 android:id="@+id/tv_result"
                 android:layout_width="350dp"

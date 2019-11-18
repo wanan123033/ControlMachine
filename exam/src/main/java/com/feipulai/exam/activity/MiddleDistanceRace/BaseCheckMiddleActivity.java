@@ -9,6 +9,7 @@ import com.feipulai.device.CheckDeviceOpener;
 import com.feipulai.device.ic.ICCardDealer;
 import com.feipulai.device.ic.NFCDevice;
 import com.feipulai.device.ic.entity.StuInfo;
+import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.MiddleBaseTitleActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
@@ -174,7 +175,12 @@ public abstract class BaseCheckMiddleActivity
             }
             return canTemporaryAdd;
         }
-        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+        StudentItem studentItem;
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+            studentItem = DBManager.getInstance().queryStuItemByStuCode2(student.getStudentCode(), MiddleDistanceRaceForPersonActivity.itemCode);
+        } else {
+            studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+        }
         if (studentItem == null) {
             InteractUtils.toastSpeak(this, "无此项目");
             return false;
