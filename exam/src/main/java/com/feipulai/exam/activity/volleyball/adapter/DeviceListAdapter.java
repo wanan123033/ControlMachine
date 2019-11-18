@@ -1,6 +1,8 @@
 package com.feipulai.exam.activity.volleyball.adapter;
 
+import android.graphics.Color;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
@@ -16,7 +18,6 @@ import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.entity.Student;
-import com.feipulai.exam.utils.ResultDisplayUtils;
 
 import java.util.List;
 
@@ -26,12 +27,12 @@ import butterknife.ButterKnife;
 public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceListAdapter.ViewHolder> {
     private int setting;
     private VolleyBallSetting setting1;
-    private LEDClearListener listener;
     public DeviceListAdapter(@Nullable List<DeviceDetail> data) {
         super(R.layout.item_device_list_volleyball,data);
-
         setting1 = SharedPrefsUtil.loadFormSource(mContext,VolleyBallSetting.class);
-        this.setting = setting1.getTestTime();
+        if (setting1 != null) {
+            this.setting = setting1.getTestTime();
+        }
     }
     private int testCount = 1;
     public void setTestCount(int testCount) {
@@ -43,47 +44,50 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
         int state = item.getStuDevicePair().getBaseDevice().getState();
         helper.cbDeviceState.setText((helper.getAdapterPosition()+1)+"号设备状态");
         helper.cbDeviceState.setChecked(state != BaseDeviceState.STATE_ERROR);
-        if (state == BaseDeviceState.STATE_ERROR && listener != null){
-            Log.e("TAG",helper.getAdapterPosition()+"-----------------");
-            listener.clearLED(helper.getAdapterPosition());
-        }else {
-            listener.showLED(helper.getAdapterPosition());
-        }
         if (item.getStuDevicePair().getStudent() != null) {
             Student student = item.getStuDevicePair().getStudent();
             helper.txtStuCode.setText(student.getStudentCode());
             helper.txtStuName.setText(student.getStudentName());
             helper.prepView(true,false,false,setting,setting1.isPenalize());
-            helper.txt_state.setVisibility(View.VISIBLE);
+
         } else {
             helper.txtStuCode.setText("");
             helper.txtStuName.setText("");
             helper.prepView(false,false,false,setting,setting1.isPenalize());
-            helper.txt_state.setVisibility(View.GONE);
         }
-        String resulr = ResultDisplayUtils.getStrResultForDisplay(item.getStuDevicePair().getResult());
-        if (item.getStuDevicePair().getResult() != 0 && item.getStuDevicePair().getStudent() != null) {
-            helper.itemTxtTestResult.setVisibility(View.VISIBLE);
-            helper.itemTxtTestResult.setText(resulr);
-        }else {
-            helper.itemTxtTestResult.setVisibility(View.GONE);
+        if (item.getStuDevicePair().getTimeResult() != null) {
+            helper.itemTxtTestResult.setText(getShow(1,item.getStuDevicePair().getTimeResult()[0]));
+            helper.itemTxtTestResult.setBackgroundColor(Color.BLACK);
         }
+
+        if (testCount >= 2) {
+            helper.itemTxtTestResult1.setVisibility(View.VISIBLE);
+            helper.itemTxtTestResult1.setBackgroundColor(Color.BLACK);
+            helper.itemTxtTestResult2.setVisibility(View.VISIBLE);
+            helper.itemTxtTestResult1.setText(getShow(2,item.getStuDevicePair().getTimeResult()[1]));
+        }
+        if (testCount >= 3) {
+            helper.itemTxtTestResult2.setVisibility(View.VISIBLE);
+            helper.itemTxtTestResult2.setBackgroundColor(Color.BLACK);
+            helper.itemTxtTestResult2.setText(getShow(3,item.getStuDevicePair().getTimeResult()[2]));
+        }
+        helper.item_txt_state.setText("");
         if (item.getStuDevicePair().getStudent() != null) {
             if (state == BaseDeviceState.STATE_FREE || state == BaseDeviceState.STATE_NOT_BEGAIN) {
-                helper.txt_state.setText("设备空闲");
                 helper.prepView(true, false, false, setting,setting1.isPenalize());
+                helper.item_txt_state.setText("设备空闲");
             } else if (state == BaseDeviceState.STATE_ONUSE) {
                 Log.e("TAG",state+","+item.getTime());
-                helper.txt_state.setText("设备测试中");
-                if (item.getTime() > 0) {
+                if (item.getTime() >= 0) {
                     helper.prepView(false, true, false, setting,setting1.isPenalize());
-                    helper.txt_time.setText(item.getTime() + "秒");
+                    helper.item_txt_state.setText(item.getTime() + "秒");
                 } else {
+                    helper.item_txt_state.setText("");
                     helper.prepView(false, true, false, setting,setting1.isPenalize());
                 }
             } else if (state == BaseDeviceState.STATE_END) {
                 helper.prepView(false, false, true, setting,setting1.isPenalize());
-                helper.txt_state.setText("设备测试结束");
+                helper.item_txt_state.setText("测试结束");
             }
         }
         helper.swDeviceClose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -106,8 +110,12 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
                 .addOnClickListener(R.id.txt_penalty);
     }
 
-    public void setListener(LEDClearListener listener) {
-        this.listener = listener;
+    public String getShow(int num,String result){
+        if (TextUtils.isEmpty(result)){
+            return "";
+        }else {
+            return result;
+        }
     }
 
     public static class ViewHolder extends BaseViewHolder{
@@ -156,7 +164,8 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
         RelativeLayout rl_4;
 
         @BindView(R.id.item_txt_state)
-        TextView txt_state;
+        TextView item_txt_state;
+
 
 
         public ViewHolder(View view) {
@@ -184,12 +193,7 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
 
 
         }
-    }
 
-    public interface LEDClearListener{
 
-        void clearLED(int position);
-
-        void showLED(int position);
     }
 }

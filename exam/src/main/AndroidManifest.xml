@@ -219,6 +219,7 @@
         <activity android:name=".activity.basketball.pair.BasketBallPairActivity" />
         <activity android:name=".activity.volleyball.more_devices.VolleyBallMore2TestActivity" />
         <activity android:name=".activity.medicineBall.MedicineBallSelectActivity" />
+        <activity android:name=".activity.volleyball.more_devices.VolleyBallGroupActivity" />
     </application>
 
 </manifest>

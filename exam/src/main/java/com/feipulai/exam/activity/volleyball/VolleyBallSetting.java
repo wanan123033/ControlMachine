@@ -14,10 +14,10 @@ public class VolleyBallSetting {
     private int testTime = NO_TIME_LIMIT;// 一轮测试的时间,单位为秒
     private int testNo = 1;// 允许测试的次数
     private int groupMode = TestConfigs.GROUP_PATTERN_SUCCESIVE;
-    private boolean fullSkip = false;
-    private int maleFullScore;
-    private int femaleFullScore;
-    private boolean isPenalize;
+    private boolean fullSkip = false;   //是否开启满分跳过功能
+    private int maleFullScore;       //男子满分值
+    private int femaleFullScore;     //女子满分值
+    private boolean isPenalize;     //是否判罚
 
     private int testPattern;//0对空 1对墙
     private int type;//0一对一 1一对多

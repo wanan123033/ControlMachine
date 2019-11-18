@@ -320,8 +320,8 @@ public class SitPushUpManager {
         buf[3] = 0x03;//目标设备编号：0x03（控制盒属于计数器）
         buf[4] = 0x01;      //本设备编号：0x01（主机）
         buf[5] = (byte) (hostId & 0xff);     //本设备主机号
-//        buf[6] = (byte) (deviceId & 0xff);       //目标设备子机号
-        buf[6] = 0;
+        buf[6] = (byte) (deviceId & 0xff);       //目标设备子机号
+//        buf[6] = 0;
         buf[7] = (byte) 0xc1;      //命令
         targetChannel = SerialConfigs.sProChannels.get(machineCode) + hostId - 1;
         buf[8] = 0x00; //高字节在先

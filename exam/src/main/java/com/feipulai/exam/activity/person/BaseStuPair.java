@@ -36,6 +36,7 @@ public class BaseStuPair implements Serializable {
     private int penaltyNum;
 
     private int roundNo;  //轮次
+    private boolean LEDupdate;
 
     public BaseStuPair(int result, int resultState, Student student, BaseDeviceState baseDevice) {
         this.result = result;
@@ -183,5 +184,13 @@ public class BaseStuPair implements Serializable {
 
     public void setRoundNo(int roundNo) {
         this.roundNo = roundNo;
+    }
+
+    public void setLEDupdate(boolean leDupdate) {
+        this.LEDupdate = leDupdate;
+    }
+
+    public boolean getLEDupdate() {
+        return LEDupdate;
     }
 }

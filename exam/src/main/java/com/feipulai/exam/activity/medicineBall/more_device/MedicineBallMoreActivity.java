@@ -221,8 +221,7 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
                             } else {
                                 onResultArrived(dbResult, detail.getStuDevicePair());
                             }
-
-
+                            break;
                         }
 
                     }

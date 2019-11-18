@@ -10,6 +10,8 @@ import com.feipulai.exam.entity.RoundResult;
  */
 public class DeviceDetail {
     private int time;
+    private int examType;
+    private boolean isFinal;
 
 
     public DeviceDetail(){
@@ -77,11 +79,27 @@ public class DeviceDetail {
         isConfirmVisible = confirmVisible;
     }
 
+    public void setExamType(int examType) {
+        this.examType = examType;
+    }
+
+    public int getExamType() {
+        return examType;
+    }
+
     public boolean isPunish() {
         return isPunish;
     }
 
     public void setPunish(boolean punish) {
         isPunish = punish;
+    }
+
+    public void setFinsh(boolean isFinal){
+        this.isFinal = isFinal;
+    }
+
+    public boolean isFinal() {
+        return isFinal;
     }
 }

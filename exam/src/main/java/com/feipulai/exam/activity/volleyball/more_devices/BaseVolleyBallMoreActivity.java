@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ListView;
 
@@ -50,7 +51,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity implements DeviceListAdapter.LEDClearListener {
+public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
     @BindView(R.id.rv_device_list)
     RecyclerView ll_top;
     @BindView(R.id.et_input_text)
@@ -60,10 +61,12 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity imple
 
     protected List<DeviceDetail> deviceDetails = new ArrayList<>();
     DeviceListAdapter deviceListAdapter;
-    private int testNo;
+    private int testNo;       //测试次数
     protected LEDManager mLEDManager;
     private Intent serverIntent;
     private VolleyBallSetting setting;
+
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_sargent_jump_more;
@@ -98,7 +101,7 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity imple
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setting = SharedPrefsUtil.loadFormSource(this,VolleyBallSetting.class);
+
         init();
         if (SettingHelper.getSystemSetting().isRtUpload()) {
 
@@ -117,10 +120,10 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity imple
     @Override
     protected void onResume() {
         super.onResume();
-        initLEDShow(true);
+        initLEDShow();
     }
 
-    public void initLEDShow(boolean flag) {
+    public void initLEDShow() {
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
         int pairNum = setting.getPairNum();
         if (pairNum == 0){
@@ -150,9 +153,10 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity imple
     @Override
     protected void initData() {
         super.initData();
+        setting = SharedPrefsUtil.loadFormSource(this,VolleyBallSetting.class);
         setDeviceCount(4);
         deviceListAdapter = new DeviceListAdapter(deviceDetails);
-        deviceListAdapter.setListener(this);
+        deviceListAdapter.setTestCount(setting.getTestNo());
 
         GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
         ll_top.setLayoutManager(layoutManager);
@@ -163,8 +167,8 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity imple
             public void onItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 switch (view.getId()){
                     case R.id.txt_start:
-
                         sendStart(deviceDetails.get(i),i);
+                        deviceDetails.get(i).setFinsh(false);
                         break;
                     case R.id.txt_end:
                         sendEnd(deviceDetails.get(i),i);
@@ -174,24 +178,31 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity imple
                         int hostId = SettingHelper.getSystemSetting().getHostId();
                         int deviceId = (byte)  deviceDetails.get(i).getStuDevicePair().getBaseDevice().getDeviceId();
                         VolleyBallRadioManager.getInstance().deviceFree(hostId,deviceId);
+                        deviceDetails.get(i).setFinsh(true);
                         break;
                     case R.id.txt_time:
                         sendTime(deviceDetails.get(i),i);
+
                         break;
                     case R.id.txt_gave_up:
                         sendGaveUp(deviceDetails.get(i),i);
+                        deviceDetails.get(i).setFinsh(false);
                         break;
                     case R.id.txt_confirm:
                         sendConfirm(deviceDetails.get(i),i);
+                        deviceDetails.get(i).setFinsh(true);
                         break;
                     case R.id.txt_penalty:
                         sendPenalty(deviceDetails.get(i),i);
+                        deviceDetails.get(i).setFinsh(true);
                         break;
                     case R.id.txt_js:
                         stopCount(deviceDetails.get(i),i);
+                        deviceDetails.get(i).setFinsh(false);
                         break;
                     case R.id.txt_fq:
                         fqCount(deviceDetails.get(i),i);
+                        deviceDetails.get(i).setFinsh(true);
                         break;
                 }
             }
@@ -209,6 +220,8 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity imple
             detail.getStuDevicePair().setTimeResult(new String[setting.getTestNo()]);
             detail.setTestTime(setting.getTestTime());
             detail.setDeviceOpen(true);
+            detail.setFinsh(true);
+            detail.getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_ERROR);
             deviceDetails.add(detail);
         }
     }
@@ -248,7 +261,9 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity imple
         int index = 0;
         boolean canUseDevice = false;
         for (int i = 0; i < 4; i++) {
-            if (deviceDetails.get(i).isDeviceOpen() && deviceDetails.get(i).getStuDevicePair().isCanTest()) {
+            if (deviceDetails.get(i).isDeviceOpen() &&
+                    deviceDetails.get(i).getStuDevicePair().isCanTest() &&
+                    deviceDetails.get(i).getStuDevicePair().getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
                 index = i;
                 canUseDevice = true;
                 break;
@@ -271,30 +286,25 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity imple
             }
         }
         deviceDetails.get(index).setRound(roundResultList.size());
-        addStudent(student, index);
+        deviceDetails.get(index).getStuDevicePair().setRoundNo(roundResultList.size());
         deviceDetails.get(index).getStuDevicePair().setTimeResult(result);
+        addStudent(student, index,true);
         deviceListAdapter.notifyItemChanged(index);
     }
 
-    private void addStudent(Student student, int index) {
-        VolleyBallSetting setting = SharedPrefsUtil.loadFormSource(this,VolleyBallSetting.class);
+    protected void addStudent(Student student, int index, boolean b) {
         DeviceDetail deviceDetail = deviceDetails.get(index);
-        if (deviceDetail.getStuDevicePair().getBaseDevice() != null
-                && deviceDetail.getStuDevicePair().getBaseDevice().getState() != BaseDeviceState.STATE_ONUSE){
-            deviceDetail.getStuDevicePair().setStudent(student);
-            deviceDetail.getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
-            deviceDetail.getStuDevicePair().setCanTest(false);
-            deviceDetail.getStuDevicePair().setBaseHeight(0);
-            deviceDetail.getStuDevicePair().setRoundNo(deviceDetail.getRound());
-            deviceDetail.setTestTime(setting.getTestTime());
-            int count = deviceDetail.getRound();
-            toastSpeak(String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1)
-                    , String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1));
+        deviceDetail.getStuDevicePair().setStudent(student);
+        deviceDetail.getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
+        deviceDetail.getStuDevicePair().setCanTest(false);
+        deviceDetail.getStuDevicePair().setBaseHeight(0);
+        deviceDetail.setTestTime(setting.getTestTime());
 
+        int count = deviceDetail.getRound();
+        toastSpeak(String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1)
+                , String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1));
+        if (b)
             setShowLed(deviceDetail.getStuDevicePair(), index);
-        }else {
-            toastSpeak("无法添加此学生进行测试");
-        }
 
     }
 
@@ -303,7 +313,7 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity imple
      *
      * @param pair
      */
-    private void setShowLed(BaseStuPair pair, int index) {
+    protected void setShowLed(BaseStuPair pair, int index) {
         Student student = pair.getStudent();
         if (student == null)
             return;
@@ -320,10 +330,31 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity imple
             }
             Log.e("TAGLED",str +","+index);
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, index, false, true);
+        }else {
+            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, student.getLEDStuName() + "   第" + deviceDetails.get(index).getRound() + "次", 0, 0, true, false);
+            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, "当前：", 0, 1, false, true);
+            RoundResult bestResult = DBManager.getInstance().queryBestScore(student.getStudentCode(), testNo);
+            if (bestResult != null && bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
+                byte[] data = new byte[16];
+                String str = "最好：";
+                try {
+                    byte[] strData = str.getBytes("GB2312");
+                    System.arraycopy(strData, 0, data, 0, strData.length);
+                    byte[] resultData = ResultDisplayUtils.getStrResultForDisplay(bestResult.getResult()).getBytes("GB2312");
+                    System.arraycopy(resultData, 0, data, data.length - resultData.length - 1, resultData.length);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, data, 0, 2, false, true);
+            } else {
+                mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, "最好：", 0, 2, false, true);
+            }
         }
     }
 
     protected void stuSkip(int pos) {
+        deviceDetails.get(pos).setTestTime(0);
+
 //        deviceDetails.get(pos).getStuDevicePair().setStudent(null);
         deviceDetails.get(pos).getStuDevicePair().setCanTest(true);
         deviceDetails.get(pos).getStuDevicePair().setTimeResult(new String[setTestCount()]);
@@ -331,6 +362,10 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity imple
     }
     @OnClick({R.id.txt_led_setting, R.id.tv_device_pair})
     public void onViewClicked(View view) {
+        if (!isExit()){
+            toastSpeak("正在测试项目");
+            return;
+        }
         switch (view.getId()) {
             case R.id.txt_led_setting:
                 startActivity(new Intent(this, LEDSettingActivity.class));
@@ -364,13 +399,13 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity imple
             pair.setResultState(baseStu.getResultState());
             pair.setResult(baseStu.getResult());
             pair.setFullMark(baseStu.isFullMark());
-
-            updateResultLed(baseStu, index);
+            if (pair.getLEDupdate())
+                updateResultLed(baseStu, index);
             refreshDevice(index);
 
         }
     }
-    public void saveResult(BaseStuPair baseStuPair ,int index) {
+    public void saveResult(final BaseStuPair baseStuPair ,final int index) {
         Logger.i("saveResult==>" + baseStuPair.toString());
         if (baseStuPair.getStudent() == null)
             return;
@@ -429,7 +464,7 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity imple
         printResult(baseStuPair);
     }
 
-    private void updateResultLed(BaseStuPair baseStu , int index) {
+    protected void updateResultLed(BaseStuPair baseStu, int index) {
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
         byte[] data = new byte[16];
         if (ledMode == 0) {
@@ -533,15 +568,15 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity imple
         refreshDevice(index);
     }
 
-    private void printResult(BaseStuPair baseStuPair) {
+    protected void printResult(BaseStuPair baseStuPair) {
         if (!SettingHelper.getSystemSetting().isAutoPrint())
             return;
-        //是否已全部次数测试完成，非满分跳过
-        if (baseStuPair.getTimeResult().length < setTestCount() && !baseStuPair.isFullMark()) {
-            return;
-        }
         Student student = baseStuPair.getStudent();
         List<RoundResult> roundResults = DBManager.getInstance().queryRountScore(student.getStudentCode());
+        //是否已全部次数测试完成，非满分跳过
+        if (roundResults.size() < setTestCount() && !baseStuPair.isFullMark()) {
+            return;
+        }
 //        PrinterManager.getInstance().print("\n");
         PrinterManager.getInstance().print(TestConfigs.sCurrentItem.getItemName() + SettingHelper.getSystemSetting().getHostId() + "号机");
         PrinterManager.getInstance().print("考  号:" + student.getStudentCode());
@@ -550,7 +585,7 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity imple
             int result = roundResults.get(i).getResult();
             if (result != 0) {
                 String strResultForDisplay = ResultDisplayUtils.getStrResultForDisplay(result);
-                PrinterManager.getInstance().print(String.format("第 %1$d 次：", i + 1) + strResultForDisplay);
+                PrinterManager.getInstance().print(String.format("第%1$d次：", i + 1) + strResultForDisplay+getPenalty(roundResults.get(i).getPenaltyNum()));
             } else {
                 PrinterManager.getInstance().print(String.format("第%1$d次：", i + 1));
             }
@@ -559,35 +594,78 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity imple
         PrinterManager.getInstance().print("\n");
     }
 
+    private String getPenalty(int penaltyNum) {
+        if (penaltyNum == 0){
+            return "(判罚:"+penaltyNum+")";
+        }else {
+            return "(判罚:-"+penaltyNum+")";
+        }
+
+    }
+
+    /**
+     * 获取该学生当前是第几轮测试
+     * @param  studentCode 考号
+     * @param examType 考试类型 0.正常，1.缓考，2.补考
+     * @param sex 性别  0-男  1-女
+     * @return  第几轮(0, 1, 2   最多三次)  (-1 无需测试)
+     */
+    protected int getRoundNo(String studentCode,int examType,int sex) {
+        List<RoundResult> roundResultList = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(studentCode, examType);
+        if (setting.isFullSkip()) {
+            int rounNo = 0;
+            for (RoundResult result : roundResultList) {
+                if (sex == 0) {
+                    rounNo = result.getResult() >= setting.getMaleFullScore() ? -1 : roundResultList.size();
+                } else if (sex == 1) {
+                    rounNo = result.getResult() >= setting.getFemaleFullScore() ? -1 : roundResultList.size();
+                }
+                if (rounNo == -1) {
+                    break;
+                }
+            }
+            return rounNo;
+        } else {
+            if (roundResultList.size() >= setting.getTestNo()) {
+                return -1;
+            }
+            return roundResultList.size();
+        }
+    }
+
     public abstract boolean isResultFullReturn(int sex, int result);
 
     @Override
-    public void clearLED(int position) {
-//        StringBuffer stringBuffer = new StringBuffer();
-//        for (int i = 0 ; i < 8 ; i++){
-//            stringBuffer.append(" ");
-//        }
-//        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), stringBuffer.toString(), 0, position, false, true);
+    public void finish() {
+
+        if (!isExit()){
+            toastSpeak("正在测试项目");
+            return;
+        }
+        super.finish();
     }
 
     @Override
-    public void showLED(int position) {
-//        BaseStuPair baseStu = deviceDetails.get(position).getStuDevicePair();
-//        int deviceId = baseStu.getBaseDevice().getDeviceId();
-//        Log.e("TAG","deviceId="+deviceId);
-//        BaseStuPair pair = null;
-//        int index = 0;
-//        for (int i = 0; i < 4; i++) {
-//            int id = deviceDetails.get(i).getStuDevicePair().getBaseDevice().getDeviceId();
-//            Log.e("TAG","id="+id);
-//            if (id == deviceId) {
-//                pair = deviceDetails.get(i).getStuDevicePair();
-//                index = i;
-//                break;
-//            }
-//        }
-//        if (null != pair.getBaseDevice()) {
-//            updateResultLed(baseStu, index);
-//        }
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && !isExit()){
+            toastSpeak("正在测试项目");
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    /**
+     * 是否允许跳出
+     * @return  true 允许  false 不允许
+     */
+    protected boolean isExit() {
+        boolean isExit = false;
+        for (int i = 0 ; i < deviceDetails.size() ; i++){
+            isExit = deviceDetails.get(i).isFinal();
+            if (!isExit){
+                break;
+            }
+        }
+        return isExit;
     }
 }

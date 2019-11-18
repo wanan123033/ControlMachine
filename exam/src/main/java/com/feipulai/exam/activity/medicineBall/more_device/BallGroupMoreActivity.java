@@ -222,7 +222,7 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
                             } else {
                                 onResultArrived(dbResult, detail.getStuDevicePair());
                             }
-
+                            break;
                         }
 
                     }

@@ -2,6 +2,7 @@ package com.feipulai.exam.activity.sargent_jump.pair;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.manager.SitPushUpManager;
@@ -55,6 +56,12 @@ public class VolleyBallPairPresenter extends SitPullUpPairPresenter {
                 SettingHelper.getSystemSetting().getHostId());
         setting.setPairNum(deviceId);
         SharedPrefsUtil.save(context,setting);
+    }
+
+    @Override
+    public void onNewDeviceConnect() {
+        super.onNewDeviceConnect();
+        Log.e("TAG","------------------------onNewDeviceConnect");
     }
 
     @Override
