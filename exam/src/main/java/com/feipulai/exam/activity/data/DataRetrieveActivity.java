@@ -224,8 +224,6 @@ public class DataRetrieveActivity extends BaseTitleActivity
         } else {
             setUiQueryData(student.getStudentCode());
         }
-
-
     }
 
     @Override

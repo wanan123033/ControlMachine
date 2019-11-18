@@ -1762,7 +1762,6 @@ public class DBManager {
 
         List<UploadResults> uploadResultsList = new ArrayList<>();
         for (String stuCode : stuCodeList) {
-            //获取学生未上传成绩
             List<RoundResult> stuResult = roundResultDao.queryBuilder().where(RoundResultDao.Properties.StudentCode.eq(stuCode))
 //                    .where(RoundResultDao.Properties.UpdateState.eq(0))
                     .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
