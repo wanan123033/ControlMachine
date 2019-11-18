@@ -153,7 +153,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         boolean canUseDevice = false;
         for (int i = 0; i < deviceCount; i++) {
             if (deviceDetails.get(i).isDeviceOpen() && deviceDetails.get(i).getStuDevicePair().isCanTest()&&
-                    deviceDetails.get(i).getStuDevicePair().getStudent()!=null
+                    deviceDetails.get(i).getStuDevicePair().getStudent()==null
                     && deviceDetails.get(i).getStuDevicePair().getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
                 index = i;
                 canUseDevice = true;
@@ -344,7 +344,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                         Logger.i("stuSkip:" + student.toString());
                         //测试结束学生清除 ，设备设置空闲状态
                         stuSkip(pos);
-                        mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
+//                        mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
                     }
                 }).setNegativeButton("取消", null).show();
     }
@@ -603,9 +603,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
         String result = ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult());
         if (ledMode == 0) {
-
             int x = ResultDisplayUtils.getStringLength(result);
-
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 16-x, index, false, true);
         }else {
             byte[] data = new byte[16];
@@ -663,11 +661,22 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     private void updateResultLed(BaseStuPair baseStu, int index) {
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
+        String result = ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
         if (ledMode == 0) {
-            String result = ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
             int x = ResultDisplayUtils.getStringLength(result);
-
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 16-x, index, false, true);
+        }else {
+            byte[] data = new byte[16];
+            String str = "当前：";
+            try {
+                byte[] strData = str.getBytes("GB2312");
+                System.arraycopy(strData, 0, data, 0, strData.length);
+                byte[] resultData = result.getBytes("GB2312");
+                System.arraycopy(resultData, 0, data, data.length - resultData.length - 1, resultData.length);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 1, false, true);
         }
     }
 
