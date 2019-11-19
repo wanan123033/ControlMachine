@@ -41,7 +41,7 @@ public class StandJumpPairPresenter extends SitPullUpPairPresenter {
 
     @Override
     protected int getDeviceSum() {
-        return 4;
+        return setting.getTestDeviceCount();
     }
 
     @Override

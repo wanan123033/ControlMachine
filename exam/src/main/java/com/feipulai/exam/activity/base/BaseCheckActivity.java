@@ -41,7 +41,7 @@ public abstract class BaseCheckActivity
         extends BaseTitleActivity
         implements CheckDeviceOpener.OnCheckDeviceArrived, BaseAFRFragment.onAFRCompareListener {
 
-    private MyHandler mHandler = new MyHandler(this);
+    public MyHandler mHandler = new MyHandler(this);
     private boolean isOpenDevice = true;
     private static final int STUDENT_CODE = 0x0;
     private static final int ID_CARD_NO = 0x1;
@@ -244,10 +244,10 @@ public abstract class BaseCheckActivity
 
     @Override
     public void compareStu(Student student) {
-        if (student==null){
+        if (student == null) {
             afrFrameLayout.setVisibility(View.GONE);
-           toastSpeak("查无此人");
-           return;
+            toastSpeak("查无此人");
+            return;
         }
         checkInUIThread(student);
     }

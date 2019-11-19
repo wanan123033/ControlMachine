@@ -46,13 +46,17 @@ public class StandJumpRadioFacade implements RadioManager.OnRadioArrivedListener
             @Override
             public void onGettingState(int position) {
                 StandJumpManager.getState(SettingHelper.getSystemSetting().getHostId(), position + 1, standJumpSetting.getPoints());
-                if (deviceList.size() < 2) {
-                    try {
+
+                try {
+                    if (deviceList.size() == 2) {
                         Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    } else if (deviceList.size() == 1) {
+                        Thread.sleep(500);
                     }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+
             }
 
             @Override
@@ -84,6 +88,10 @@ public class StandJumpRadioFacade implements RadioManager.OnRadioArrivedListener
         mExecutor.execute(mGetDeviceStatesTask);
     }
 
+    public void setDeviceList(List<DeviceDetail> deviceList) {
+        this.deviceList = deviceList;
+        mCurrentConnect = new int[deviceList.size()];
+    }
 
     public void setStandJumpSetting(StandJumpSetting standJumpSetting) {
         this.standJumpSetting = standJumpSetting;
@@ -98,6 +106,9 @@ public class StandJumpRadioFacade implements RadioManager.OnRadioArrivedListener
             listener.refreshDeviceState(result.getDeviceId() - 1);
             listener.StartDevice(result.getDeviceId());
         } else if (msg.what == SerialConfigs.STAND_JUMP_GET_STATE) {
+            if (result.getDeviceId() > deviceList.size()) {
+                return;
+            }
             BaseDeviceState deviceState = deviceList.get(result.getDeviceId() - 1).getStuDevicePair().getBaseDevice();
             Logger.i("JUMP_SCORE_RESPONSE====>" + result.toString());
             //状态处理

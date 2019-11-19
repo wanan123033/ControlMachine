@@ -1,5 +1,6 @@
 package com.feipulai.exam.bean;
 
+import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.entity.RoundResult;
@@ -8,23 +9,25 @@ import com.feipulai.exam.entity.RoundResult;
  * Created by pengjf on 2019/7/31.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
-public class DeviceDetail {
+public class DeviceDetail implements MultiItemEntity {
     private int time;
     private int examType;
     private boolean isFinal;
 
 
-    public DeviceDetail(){
+    public DeviceDetail() {
         baseStuPair = new BaseStuPair();
         baseStuPair.setCanTest(true);
         baseStuPair.setBaseDevice(new BaseDeviceState(BaseDeviceState.STATE_ERROR));
     }
+
     private BaseStuPair baseStuPair;
     private RoundResult roundResult;
     private boolean isDeviceOpen;
     private int round;
     private boolean isConfirmVisible;
     private boolean isPunish;
+
     public BaseStuPair getStuDevicePair() {
         return baseStuPair;
     }
@@ -66,7 +69,7 @@ public class DeviceDetail {
         return time;
     }
 
-    public int getPreTime(){
+    public int getPreTime() {
         return 5;
     }
 
@@ -95,11 +98,24 @@ public class DeviceDetail {
         isPunish = punish;
     }
 
-    public void setFinsh(boolean isFinal){
+    public void setFinsh(boolean isFinal) {
         this.isFinal = isFinal;
     }
 
     public boolean isFinal() {
         return isFinal;
+    }
+
+    public static final int ITEM_ONE = 1;
+    public static final int ITEM_MORE = 2;
+    private int itemType = ITEM_MORE;
+
+    public void setItemType(int itemType) {
+        this.itemType = itemType;
+    }
+
+    @Override
+    public int getItemType() {
+        return itemType;
     }
 }

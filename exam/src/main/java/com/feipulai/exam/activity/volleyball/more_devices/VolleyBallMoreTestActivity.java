@@ -69,6 +69,11 @@ public class VolleyBallMoreTestActivity extends BaseMoreActivity {
 
     private final int TARGET_FREQUENCY = SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode()) + SettingHelper.getSystemSetting().getHostId() - 1;
 
+    @Override
+    public int setTestDeviceCount() {
+        return 0;
+    }
+
     private int runUp;
 
     private Handler mHandler = new Handler(new Handler.Callback() {
