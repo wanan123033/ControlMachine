@@ -41,7 +41,7 @@ public class VolleyballPatternSelectActivity extends SubItemsSelectActivity {
                     if (setting.getType() == 1) {
                         startActivity(new Intent(getApplicationContext(), VolleyBallMore2TestActivity.class));
                     } else {
-                        startActivity(new Intent(VolleyballPatternSelectActivity.this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
+                        startActivity(new Intent(VolleyballPatternSelectActivity.this, VolleyBallIndividualActivity.class));
                     }
                 } else {
 
@@ -51,5 +51,7 @@ public class VolleyballPatternSelectActivity extends SubItemsSelectActivity {
 //                finish();
             }
         });
+    }
+    protected void toastSpeak(String paramString) {
     }
 }
