@@ -17,7 +17,7 @@ public class PreStartTimeRunnable implements Runnable {
     private TimeListener listener;
     public PreStartTimeRunnable(Context context,DeviceDetail deviceDetail) throws IllegalAccessException {
 //        time = deviceDetail.getPreTime();
-        time = 0;
+        time = 5;
         if (time < 0){
             throw new IllegalAccessException("VolleyBall PreTime < 0");
         }
