@@ -151,8 +151,7 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
                     }
                     if (!isledStartTime) {
                         Log.i("zzzz", "triggerStart=====>");
-                        listener.getDeviceStatus(3);//设置计时状态
-                        listener.triggerStart(basketballResult);//开始计时
+
                         Basketball868Result timeResult = new Basketball868Result();
                         timeResult.setHour(0);
                         timeResult.setSencond(0);
@@ -160,7 +159,8 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
                         timeResult.setMinth(0);
                         ballManager.setRadioLedStartTime(SettingHelper.getSystemSetting().getHostId(), timeResult);
                         isledStartTime = true;
-
+                        listener.getDeviceStatus(3);//设置计时状态
+                        listener.triggerStart(basketballResult);//开始计时
                     }
                     if (result.getSum() != 0 && timeRountList.size() >= 2) { //获取拦截成绩
                         ballManager.setRadioPause(SettingHelper.getSystemSetting().getHostId());

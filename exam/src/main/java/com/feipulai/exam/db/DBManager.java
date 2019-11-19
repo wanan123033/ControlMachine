@@ -142,7 +142,7 @@ public class DBManager {
                     break;
 
                 case ItemDefault.CODE_HWSXQ:
-                    insertItem(machineCode, "红外实心球", "厘米");
+                    insertItem(machineCode, "红外实心球", "米");
                     break;
 
                 case ItemDefault.CODE_FHL:

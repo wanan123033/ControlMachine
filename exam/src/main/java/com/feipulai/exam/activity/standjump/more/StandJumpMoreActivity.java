@@ -1,6 +1,7 @@
 package com.feipulai.exam.activity.standjump.more;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.view.View;
 
 import com.feipulai.common.utils.IntentUtil;
@@ -17,6 +18,7 @@ import com.feipulai.exam.activity.standjump.StandJumpSetting;
 import com.feipulai.exam.activity.standjump.StandJumpSettingActivity;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.Student;
+import com.orhanobut.logger.Logger;
 
 import butterknife.OnClick;
 
@@ -31,13 +33,14 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
 
     @Override
     protected void initData() {
-        super.initData();
         standJumpSetting = SharedPrefsUtil.loadFormSource(this, StandJumpSetting.class);
         if (standJumpSetting == null)
             standJumpSetting = new StandJumpSetting();
+        super.initData();
+
         setFaultEnable(standJumpSetting.isPenalize());
         setNextClickStart(false);
-        setDeviceCount(standJumpSetting.getTestDeviceCount());
+
         facade = new StandJumpRadioFacade(deviceDetails, standJumpSetting, this);
     }
 
@@ -49,6 +52,7 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
         if (standJumpSetting != null) {
             facade.setStandJumpSetting(standJumpSetting);
         }
+        facade.setDeviceList(deviceDetails);
         updateAdapterTestCount();
         facade.resume();
         RadioManager.getInstance().setOnRadioArrived(facade);
@@ -62,6 +66,11 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
         } else {
             return standJumpSetting.getTestCount();
         }
+    }
+
+    @Override
+    public int setTestDeviceCount() {
+        return standJumpSetting.getTestDeviceCount();
     }
 
     @Override
@@ -120,19 +129,27 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                stuPair.setFullMark(isResultFullReturn(stuPair.getStudent().getSex(), stuPair.getResult()));
                 updateResult(stuPair);
             }
         });
     }
 
     @Override
-    public void StartDevice(int deviceId) {
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        toastSpeak(deviceDetails.get(deviceId - 1).getStuDevicePair().getStudent().getSpeakStuName() + "开始测试");
+    public void StartDevice(final int deviceId) {
+        Logger.i("zzs=============StartDevice");
+//        try {
+//            Thread.sleep(500);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                toastSpeak(deviceDetails.get(deviceId - 1).getStuDevicePair().getStudent().getSpeakStuName() + "开始测试");
+            }
+        },500);
+
     }
 
     @Override

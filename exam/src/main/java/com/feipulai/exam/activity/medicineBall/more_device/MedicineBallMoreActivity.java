@@ -1,7 +1,6 @@
 package com.feipulai.exam.activity.medicineBall.more_device;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -45,14 +44,15 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
     private final int SEND_EMPTY = 1;
     private int beginPoint;
     private boolean using;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void initData() {
         setting = SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class);
         if (null == setting) {
             setting = new MedicineBallSetting();
         }
-        setDeviceCount(setting.getSpDeviceCount());
+        super.initData();
+
     }
 
     @Override
@@ -63,7 +63,7 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
             setting = new MedicineBallSetting();
         }
         Logger.i(TAG + ":medicineBallSetting ->" + setting.toString());
-        setDeviceCount(setting.getSpDeviceCount());
+//        setDeviceCount(setting.getSpDeviceCount());
         deviceState = new int[setting.getSpDeviceCount()];
 
         for (int i = 0; i < deviceState.length; i++) {
@@ -121,6 +121,11 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
     }
 
     @Override
+    public int setTestDeviceCount() {
+        return setting.getSpDeviceCount();
+    }
+
+    @Override
     public boolean isResultFullReturn(int sex, int result) {
         if (setting.isFullReturn()) {
             if (sex == Student.MALE) {
@@ -134,7 +139,7 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
 
     @Override
     public void gotoItemSetting() {
-        if (using){
+        if (using) {
             toastSpeak("正在测试中,不能设置");
             return;
         }
@@ -147,7 +152,7 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
         updateDevice(pair.getBaseDevice());
         int id = pair.getBaseDevice().getDeviceId();
         sendStart((byte) id);
-        using = true ;
+        using = true;
     }
 
 
@@ -217,7 +222,7 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
                             int dbResult = result.getResult() * 10 + beginPoint * 10;
                             detail.getStuDevicePair().setResultState(result.isFault() ? RoundResult.RESULT_STATE_FOUL : RoundResult.RESULT_STATE_NORMAL);
                             if (result.getSweepPoint() < 2) {
-                                showValidResult(dbResult,detail.getStuDevicePair(),result.getDeviceId());
+                                showValidResult(dbResult, detail.getStuDevicePair(), result.getDeviceId());
                             } else {
                                 onResultArrived(dbResult, detail.getStuDevicePair());
                             }
@@ -300,7 +305,7 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
         }
     });
 
-    private void showValidResult(final int result,final BaseStuPair stuPair,final int deviceId) {
+    private void showValidResult(final int result, final BaseStuPair stuPair, final int deviceId) {
         final SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
         alertDialog.setTitleText(String.format("%d号机%s成绩是否有效", deviceId, stuPair.getStudent().getStudentName()));
         alertDialog.setCancelable(false);

@@ -95,6 +95,14 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
     LinearLayout llFull;
     @BindView(R.id.rg_device)
     RadioGroup rgDevice;
+    @BindView(R.id.rb_1)
+    RadioButton rb1;
+    @BindView(R.id.rb_2)
+    RadioButton rb2;
+    @BindView(R.id.rb_3)
+    RadioButton rb3;
+    @BindView(R.id.rb_4)
+    RadioButton rb4;
 
     private Integer[] testRound = new Integer[]{1, 2, 3};
 
@@ -279,6 +287,34 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
                 break;
             case R.id.sp_device_count:
                 standSetting.setTestDeviceCount(position + 1);
+                switch (position) {
+                    case 0:
+                        rb1.setVisibility(View.VISIBLE);
+                        rb2.setVisibility(View.GONE);
+                        rb3.setVisibility(View.GONE);
+                        rb4.setVisibility(View.GONE);
+                        break;
+                    case 1:
+                        rb1.setVisibility(View.VISIBLE);
+                        rb2.setVisibility(View.VISIBLE);
+                        rb3.setVisibility(View.GONE);
+                        rb4.setVisibility(View.GONE);
+                        break;
+                    case 2:
+                        rb1.setVisibility(View.VISIBLE);
+                        rb2.setVisibility(View.VISIBLE);
+                        rb3.setVisibility(View.VISIBLE);
+                        rb4.setVisibility(View.GONE);
+                        break;
+                    case 3:
+                        rb1.setVisibility(View.VISIBLE);
+                        rb2.setVisibility(View.VISIBLE);
+                        rb3.setVisibility(View.VISIBLE);
+                        rb4.setVisibility(View.VISIBLE);
+                        break;
+                }
+
+
                 break;
         }
     }
@@ -526,6 +562,7 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
         mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
         tvCheckData.setText("");
     }
+
 
     /**
      * 回调

@@ -1,5 +1,7 @@
 package com.feipulai.exam.activity.standjump.more;
 
+import android.os.Handler;
+
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.manager.StandJumpManager;
 import com.feipulai.device.serial.RadioManager;
@@ -89,13 +91,13 @@ public class StandJumpGroupMoreActivity extends BaseMoreGroupActivity implements
     }
 
     @Override
-    public void StartDevice(int deviceId) {
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        toastSpeak("开始测试");
+    public void StartDevice(final int deviceId) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                toastSpeak(deviceDetails.get(deviceId - 1).getStuDevicePair().getStudent().getSpeakStuName() + "开始测试");
+            }
+        },500);
     }
 
     @Override

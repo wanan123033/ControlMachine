@@ -73,21 +73,24 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
         }
         helper.item_txt_state.setText("");
         if (item.getStuDevicePair().getStudent() != null) {
-            if (state == BaseDeviceState.STATE_FREE || state == BaseDeviceState.STATE_NOT_BEGAIN) {
-                helper.prepView(true, false, false, setting,setting1.isPenalize());
-                helper.item_txt_state.setText("设备空闲");
-            } else if (state == BaseDeviceState.STATE_ONUSE) {
-                Log.e("TAG",state+","+item.getTime());
-                if (item.getTime() >= 0) {
-                    helper.prepView(false, true, false, setting,setting1.isPenalize());
-                    helper.item_txt_state.setText(item.getTime() + "秒");
-                } else {
-                    helper.item_txt_state.setText("");
-                    helper.prepView(false, true, false, setting,setting1.isPenalize());
+            Log.e("TAG","deviceId="+item.getStuDevicePair().getBaseDevice().getDeviceId()+",state="+state);
+            if(state != BaseDeviceState.STATE_ERROR) {
+                if (state == BaseDeviceState.STATE_FREE || state == BaseDeviceState.STATE_NOT_BEGAIN) {
+                    helper.prepView(true, false, false, setting, setting1.isPenalize());
+                    helper.item_txt_state.setText("设备空闲");
+                } else if (state == BaseDeviceState.STATE_ONUSE) {
+                    Log.e("TAG", state + "," + item.getTime());
+                    if (item.getTime() >= 0) {
+                        helper.prepView(false, true, false, setting, setting1.isPenalize());
+                        helper.item_txt_state.setText("计时中:" + item.getTime() + "秒");
+                    } else {
+                        helper.item_txt_state.setText("");
+                        helper.prepView(false, true, false, setting, setting1.isPenalize());
+                    }
+                } else if (state == BaseDeviceState.STATE_END) {
+                    helper.prepView(false, false, true, setting, setting1.isPenalize());
+                    helper.item_txt_state.setText("测试结束");
                 }
-            } else if (state == BaseDeviceState.STATE_END) {
-                helper.prepView(false, false, true, setting,setting1.isPenalize());
-                helper.item_txt_state.setText("测试结束");
             }
         }
         helper.swDeviceClose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -178,7 +181,7 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
             txt_end.setVisibility(flag1 ? View.VISIBLE:View.GONE);
             rl_1.setVisibility(flag1 ? View.VISIBLE:View.GONE);
 
-            txt_time.setVisibility(flag2 && setting > 0 ? View.VISIBLE:View.GONE);
+            txt_time.setVisibility(flag2 && setting > 0 ? View.GONE:View.GONE);
             txt_gave_up.setVisibility(flag2 && setting > 0 ? View.VISIBLE:View.GONE);
             rl_2.setVisibility(flag2 && setting > 0 ? View.VISIBLE:View.GONE);
 

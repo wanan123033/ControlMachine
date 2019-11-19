@@ -77,8 +77,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void initData() {
+        super.initData();
         init();
         if (SettingHelper.getSystemSetting().isRtUpload()) {
             serverIntent = new Intent(this, UploadService.class);
@@ -92,17 +92,21 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
         PrinterManager.getInstance().init();
         etInputText.setData(lvResults, this);
+        setDeviceCount(setTestDeviceCount());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        if (deviceDetails.size() != setTestDeviceCount()) {
+            setDeviceCount(setTestDeviceCount());
+        }
     }
 
-    public void ledShow(){
+    public void ledShow() {
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
         if (ledMode == 0) {
-            mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(),SettingHelper.getSystemSetting().getHostId());
+            mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
             for (int i = 0; i < deviceCount; i++) {
                 StringBuilder data = new StringBuilder();
                 data.append(i + 1).append("号机");//1号机         空闲
@@ -151,8 +155,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         int index = 0;
         boolean canUseDevice = false;
         for (int i = 0; i < deviceCount; i++) {
-            if (deviceDetails.get(i).isDeviceOpen() && deviceDetails.get(i).getStuDevicePair().isCanTest()&&
-                    deviceDetails.get(i).getStuDevicePair().getStudent()==null
+            if (deviceDetails.get(i).isDeviceOpen() && deviceDetails.get(i).getStuDevicePair().isCanTest() &&
+                    deviceDetails.get(i).getStuDevicePair().getStudent() == null
                     && deviceDetails.get(i).getStuDevicePair().getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
                 index = i;
                 canUseDevice = true;
@@ -182,6 +186,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         deviceListAdapter.notifyItemChanged(index);
 
         if (!isNextClickStart) {
+            deviceDetails.get(index).getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
+            deviceListAdapter.notifyItemChanged(index);
             sendTestCommand(deviceDetails.get(index).getStuDevicePair(), index);
         }
     }
@@ -192,6 +198,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     public void setNextClickStart(boolean nextClickStart) {
         isNextClickStart = nextClickStart;
+        deviceListAdapter.setNextClickStart(nextClickStart);
     }
 
     /**
@@ -260,7 +267,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     private void initView() {
         deviceListAdapter = new DeviceListAdapter(deviceDetails);
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, deviceDetails.size());
         rvDeviceList.setLayoutManager(layoutManager);
         deviceListAdapter.setTestCount(setTestCount());
         rvDeviceList.setAdapter(deviceListAdapter);
@@ -351,6 +358,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     private void stuSkip(int pos) {
         deviceDetails.get(pos).getStuDevicePair().setStudent(null);
         deviceDetails.get(pos).getStuDevicePair().setCanTest(true);
+        deviceDetails.get(pos).getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_FREE);
         deviceDetails.get(pos).getStuDevicePair().setTimeResult(new String[setTestCount()]);
         deviceListAdapter.notifyItemChanged(pos);
     }
@@ -430,7 +438,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     /**
      * 处理结果
      */
-    private synchronized void doResult(BaseStuPair pair, int index) {
+    private synchronized void doResult(BaseStuPair pair, final int index) {
         DeviceDetail detail = deviceDetails.get(index);
         String[] timeResult = detail.getStuDevicePair().getTimeResult();
         if (detail.getRound() > timeResult.length)//防止
@@ -463,6 +471,15 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                         , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), count + 1));
 
                 if (!isNextClickStart) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            deviceDetails.get(index).getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
+                            deviceDetails.get(index).getStuDevicePair().setResult(0);
+                            deviceListAdapter.notifyItemChanged(index);
+                        }
+                    }, 2000);
+
                     sendTestCommand(pair, index);
                 }
             }
@@ -603,8 +620,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         String result = ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult());
         if (ledMode == 0) {
             int x = ResultDisplayUtils.getStringLength(result);
-            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 16-x, index, false, true);
-        }else {
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 16 - x, index, false, true);
+        } else {
             byte[] data = new byte[16];
             String str = "当前：";
             try {
@@ -663,8 +680,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         String result = ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
         if (ledMode == 0) {
             int x = ResultDisplayUtils.getStringLength(result);
-            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 16-x, index, false, true);
-        }else {
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 16 - x, index, false, true);
+        } else {
             byte[] data = new byte[16];
             String str = "当前：";
             try {
@@ -690,6 +707,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 break;
         }
     }
+
 
     public class LedHandler extends Handler {
         @Override
@@ -722,6 +740,9 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             detail.getStuDevicePair().getBaseDevice().setDeviceId(i + 1);
             detail.getStuDevicePair().setTimeResult(new String[setTestCount()]);
             detail.setDeviceOpen(true);
+            if (deviceCount == 1) {
+                detail.setItemType(DeviceDetail.ITEM_ONE);
+            }
             deviceDetails.add(detail);
         }
         initView();
@@ -740,6 +761,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
      * 设置项目测试轮次次数
      */
     public abstract int setTestCount();
+
+    public abstract int setTestDeviceCount();
 
     public abstract boolean isResultFullReturn(int sex, int result);
 

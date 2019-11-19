@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/view_content"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black_11">
+    android:background="@color/transparent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="248dp"
@@ -180,22 +182,23 @@
             android:gravity="center"
             android:text="开始"
             android:textColor="@color/white" />
+
         <TextView
             android:id="@+id/txt_confirm"
-            android:visibility="gone"
             style="@style/style_setting_tv_title"
-            android:layout_marginRight="5dp"
-            android:layout_marginBottom="@dimen/dp_10"
             android:layout_width="90dp"
             android:layout_height="48dp"
-            android:background="@drawable/btn_click_bg_selected"
-            android:text="确定"
-            android:gravity="center"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:textColor="@color/white" />
+            android:layout_marginBottom="@dimen/dp_10"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/btn_click_bg_selected"
+            android:gravity="center"
+            android:text="确定"
+            android:textColor="@color/white"
+            android:visibility="gone" />
 
     </RelativeLayout>
 
 
-</RelativeLayout>
+</LinearLayout>

@@ -173,6 +173,7 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
                     case R.id.txt_end:
                         sendEnd(deviceDetails.get(i),i);
                         stuSkip(i);
+//                        setShowLed(deviceDetails.get(i).getStuDevicePair(),i);
                         deviceDetails.get(i).getStuDevicePair().setStudent(null);
                         refreshDevice(i);
                         int hostId = SettingHelper.getSystemSetting().getHostId();
@@ -290,7 +291,11 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
         deviceDetails.get(index).getStuDevicePair().setTimeResult(result);
         addStudent(student, index,true);
         deviceListAdapter.notifyItemChanged(index);
+
+        deviceFree(deviceDetails.get(index),index);
     }
+
+    protected abstract void deviceFree(DeviceDetail deviceDetail, int index);
 
     protected void addStudent(Student student, int index, boolean b) {
         DeviceDetail deviceDetail = deviceDetails.get(index);
@@ -469,11 +474,16 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
         byte[] data = new byte[16];
         if (ledMode == 0) {
             if (baseStu.getStudent() != null) {
+
                 try {
                     String str = baseStu.getStudent().getStudentName();
                     String result = ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
                     if (baseStu.getResult() == 0 && baseStu.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN){
                         result = "准备";
+                    }else if (baseStu.getBaseDevice().getState() == BaseDeviceState.STATE_ONUSE){
+                        result = baseStu.getResult()+"计时";
+                    }else if (baseStu.getBaseDevice().getState() == BaseDeviceState.STATE_END){
+                        result = baseStu.getResult()+"结束";
                     }
                     byte[] strData = str.getBytes("GB2312");
                     System.arraycopy(strData, 0, data, 0, strData.length);
@@ -486,7 +496,7 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
             }
         }
     }
-    private void refreshDevice(int index) {
+    protected void refreshDevice(int index) {
         if (deviceDetails.get(index).getStuDevicePair().getBaseDevice() != null) {
             deviceListAdapter.notifyItemChanged(index);
         }
@@ -587,7 +597,7 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
                 String strResultForDisplay = ResultDisplayUtils.getStrResultForDisplay(result);
                 PrinterManager.getInstance().print(String.format("第%1$d次：", i + 1) + strResultForDisplay+getPenalty(roundResults.get(i).getPenaltyNum()));
             } else {
-                PrinterManager.getInstance().print(String.format("第%1$d次：", i + 1));
+                PrinterManager.getInstance().print(String.format("第%1$d次：", i + 1)+"0个(判罚:0)");
             }
         }
         PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()));

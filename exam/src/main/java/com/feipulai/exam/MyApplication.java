@@ -39,7 +39,7 @@ public class MyApplication extends MultiDexApplication {
         SettingHelper.init(this);
         TOKEN = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.TOKEN, "");
         //默认打开WiFi，虹软sdk需要读物唯一标识，某些机器WiFi断开情况下读不到
-        NetUtil.openWifi(this);
+//        NetUtil.openWifi(this);
 
         FileUtil.createAllFile();
         FileUtil.mkdirs(PATH_SPECIFICATION);

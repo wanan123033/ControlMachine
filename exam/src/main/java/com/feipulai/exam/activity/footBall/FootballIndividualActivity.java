@@ -29,6 +29,7 @@ import com.feipulai.exam.activity.basketball.BasketBallListener;
 import com.feipulai.exam.activity.basketball.BasketBallRadioFacade;
 import com.feipulai.exam.activity.basketball.TimeUtil;
 import com.feipulai.exam.activity.basketball.bean.BallDeviceState;
+import com.feipulai.exam.activity.basketball.pair.BasketBallPairActivity;
 import com.feipulai.exam.activity.basketball.result.BasketBallTestResult;
 import com.feipulai.exam.activity.basketball.util.TimerUtil;
 import com.feipulai.exam.activity.footBall.adapter.FootBallResultAdapter;
@@ -176,7 +177,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
             ballManager.setRadioFreeStates(SettingHelper.getSystemSetting().getHostId());
             tvPair.setVisibility(View.VISIBLE);
             cbNear.setVisibility(View.VISIBLE);
-            cbFar.setVisibility(View.GONE);
+            cbFar.setVisibility(View.VISIBLE);
             cbLed.setVisibility(View.VISIBLE);
         }
     }
@@ -393,6 +394,16 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
             case 1://"2:起点1:终点"
                 if (result.gettNum() == 1) {//拦截到了起点，重新计时
                     tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()));
+
+                    int[] time = TimeUtil.getTestResult(result.getResult());
+                    if (time != null) {
+                        Basketball868Result basketball868Result = new Basketball868Result();
+                        basketball868Result.setHour(time[0]);
+                        basketball868Result.setMinth(time[1]);
+                        basketball868Result.setSencond(time[2]);
+                        basketball868Result.setMinsencond(time[3]);
+                        ballManager.setRadioLedStartTime(SettingHelper.getSystemSetting().getHostId(), basketball868Result);
+                    }
                 } else {//拦截到终点，正常
                     doGetResult(result);
                 }
@@ -643,6 +654,11 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
     private boolean isConfigurableNow() {
 
         return !(state == WAIT_FREE || state == WAIT_CHECK_IN || state == WAIT_BEGIN);
+    }
+
+    @OnClick(R.id.tv_pair)
+    public void onViewClicked() {
+        IntentUtil.gotoActivity(this, BasketBallPairActivity.class);
     }
 
     @OnClick({R.id.tv_punish_add, R.id.tv_punish_subtract, R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal, R.id.tv_print, R.id.tv_confirm

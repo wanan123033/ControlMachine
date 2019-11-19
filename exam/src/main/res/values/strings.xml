@@ -76,4 +76,5 @@
     <string name="clear_all_device_hint">是否清除所有设备?</string>
     <string name="foul">犯规</string>
     <string name="confirm_result">确认成绩</string>
+
 </resources>

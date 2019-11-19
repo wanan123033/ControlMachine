@@ -41,12 +41,20 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
     //    public byte[] CMD_SARGENT_JUMP_STOP = {0X54, 0X44, 00, 0X10, 01, 0x01, 00, 0x02, 00, 00, 00, 00, 00, 0x14, 0x27, 0x0d};
 //    public byte[] CMD_SARGENT_JUMP_GET_SCORE = {0X54, 0X44, 00, 0X10, 01, 0x01, 00, 0x04, 00, 00, 00, 00, 00, 0x16, 0x27, 0x0d};
     private final int SEND_EMPTY = 1;
-    private boolean [] basicHeight = {};
+    private boolean[] basicHeight = {};
     /**
      * 开启助跑  0不助跑 1助跑
      */
     public int runUp;
 
+    @Override
+    protected void initData() {
+        sargentSetting = SharedPrefsUtil.loadFormSource(this, SargentSetting.class);
+        if (null == sargentSetting) {
+            sargentSetting = new SargentSetting();
+        }
+        super.initData();
+    }
 
     @Override
     protected void onResume() {
@@ -55,7 +63,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
         if (null == sargentSetting) {
             sargentSetting = new SargentSetting();
         }
-        setDeviceCount(sargentSetting.getSpDeviceCount());
+//        setDeviceCount(sargentSetting.getSpDeviceCount());
         deviceState = new int[sargentSetting.getSpDeviceCount()];
         basicHeight = new boolean[sargentSetting.getSpDeviceCount()];
         for (int i = 0; i < deviceState.length; i++) {
@@ -74,6 +82,11 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
         } else {
             return sargentSetting.getTestTimes();
         }
+    }
+
+    @Override
+    public int setTestDeviceCount() {
+        return sargentSetting.getSpDeviceCount();
     }
 
     @Override
@@ -118,8 +131,8 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
     }
 
     //离地高度设置范围为0-255
-    public byte[] CMD_SARGENT_JUMP_GET_SET_0(int offGroundDistance,int deviceId) {
-        byte[] data = {0X54, 0X44, 00, 0X0D, 01, 0x01, 01, 0x05, 00, 00,  0x00, 0x27, 0x0d};
+    public byte[] CMD_SARGENT_JUMP_GET_SET_0(int offGroundDistance, int deviceId) {
+        byte[] data = {0X54, 0X44, 00, 0X0D, 01, 0x01, 01, 0x05, 00, 00, 0x00, 0x27, 0x0d};
         data[4] = (byte) deviceId;
         data[8] = (byte) ((offGroundDistance >> 8) & 0xff);// 次低位
         data[9] = (byte) (offGroundDistance & 0xff);// 最低位
@@ -133,7 +146,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
     }
 
     public void sendEmpty() {
-        Log.i(TAG,"james_send_empty");
+        Log.i(TAG, "james_send_empty");
         for (int i = 0; i < deviceState.length; i++) {
             BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
             if (deviceState[i] == 0) {
@@ -196,10 +209,10 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
         @Override
         public void onFree(int deviceId) {
             deviceState[deviceId - 1] = 5;
-            if (!basicHeight[deviceId-1]){
+            if (!basicHeight[deviceId - 1]) {
                 RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
-                        CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight(),deviceId)));
-                basicHeight[deviceId -1] = true ;
+                        CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight(), deviceId)));
+                basicHeight[deviceId - 1] = true;
             }
         }
 
@@ -273,7 +286,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
     }
 
     @OnClick({R.id.tv_device_pair})
-    public void onClick(View view){
+    public void onClick(View view) {
         startActivity(new Intent(this, SargentPairActivity.class));
     }
 }
