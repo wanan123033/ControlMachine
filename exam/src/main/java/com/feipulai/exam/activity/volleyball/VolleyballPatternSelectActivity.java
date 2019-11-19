@@ -10,8 +10,6 @@ import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.activity.volleyball.more_devices.VolleyBallMore2TestActivity;
-import com.feipulai.exam.activity.volleyball.more_devices.VolleyBallMoreGroupActivity;
-import com.feipulai.exam.activity.volleyball.more_devices.VolleyBallMoreTestActivity;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.Item;
 

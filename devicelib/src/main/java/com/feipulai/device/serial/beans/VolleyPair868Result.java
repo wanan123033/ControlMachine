@@ -14,10 +14,10 @@ public class VolleyPair868Result {
     private int frequency;
     private int state;
     private int score;
-    private int childId;
+    private int deviceId;
     private int electricityState;
 
-    private int deviceid;
+    private int hostid;
 
     public static final int STATE_FREE = 0;       //空闲
     public static final int STATE_TIME_PREPARE = 1;  //计时准备
@@ -36,8 +36,8 @@ public class VolleyPair868Result {
         Log.e("TAG","----"+StringUtility.bytesToHexString(data));
         state = data[12];
         score = data[13] * 0x0100 + data[14];
-        deviceid = data[5];
-        childId = data[6];
+        hostid = data[5];
+        deviceId = data[6];
         electricityState = data[15];
         frequency = (data[12]&0xff);
         if (data.length > 18) {       //自检结果大于18位
@@ -67,12 +67,12 @@ public class VolleyPair868Result {
         return electricityState;
     }
 
-    public int getDeviceid() {
-        return deviceid;
+    public int getHostid() {
+        return hostid;
     }
 
-    public int getChildId() {
-        return childId;
+    public int getDeviceId() {
+        return deviceId;
     }
 
     public int getFrequency() {

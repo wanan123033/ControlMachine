@@ -94,7 +94,7 @@ public class SitPullLinker implements Handler.Callback {
                 checkDevice(volleyPairResult);
             }else {
                 VolleyPair868Result result = (VolleyPair868Result) msg.obj;
-                checkDevice(result.getDeviceid(),result.getFrequency());
+                checkDevice(result.getHostid(),result.getFrequency());
             }
             return true;
         }
