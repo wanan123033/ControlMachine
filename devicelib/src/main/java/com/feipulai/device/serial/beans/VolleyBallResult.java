@@ -1,7 +1,5 @@
 package com.feipulai.device.serial.beans;
 
-import java.util.Objects;
-
 /**
  * Created by James on 2018/5/8 0008.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密

@@ -81,7 +81,7 @@ public class VolleyBallSettingActivity
     private static final int MSG_CHECK = 0X102;
     private SerialHandler mHandler = new SerialHandler(this);
     private CheckDeviceView checkDeviceView;
-    private VolleyBallManager volleyBallManager = new VolleyBallManager();
+    private VolleyBallManager volleyBallManager;
     private Dialog checkDialog;
 
     private int deviceId;
@@ -94,6 +94,7 @@ public class VolleyBallSettingActivity
     @Override
     protected void initData() {
         setting = SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class);
+        volleyBallManager = new VolleyBallManager(setting.getType());
         deviceId = getIntent().getIntExtra("deviceId",0);
         ArrayAdapter spTestRoundAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testRound);
         spTestRoundAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -184,7 +185,7 @@ public class VolleyBallSettingActivity
             case R.id.tv_device_check:
                 if (deviceId == 0) {
                     if (volleyBallManager == null) {
-                        volleyBallManager = new VolleyBallManager();
+                        volleyBallManager = new VolleyBallManager(setting.getType());
                     }
                     showCheckDiglog();
                     volleyBallManager.checkDevice();

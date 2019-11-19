@@ -37,7 +37,7 @@
                     android:id="@+id/tv_led_setting"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="21dp"
+                    android:layout_marginLeft="5dp"
                     android:layout_toLeftOf="@+id/tv_start_test"
                     android:background="@color/colorAccent"
                     android:drawableLeft="@mipmap/icon_led_setting"
@@ -46,9 +46,23 @@
                     android:paddingLeft="8dp"
                     android:paddingRight="8dp"
                     android:text="外接屏幕"
+                    android:visibility="gone"
                     android:textColor="@color/white"
                     android:textSize="20dp" />
+                <TextView
+                    android:id="@+id/tv_pair"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:background="@color/colorAccent"
 
+                    android:drawablePadding="6dp"
+                    android:gravity="center"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:text="设备配对"
+                    android:textColor="@color/white"
+                    android:textSize="20dp" />
             </LinearLayout>
 
             <RelativeLayout
