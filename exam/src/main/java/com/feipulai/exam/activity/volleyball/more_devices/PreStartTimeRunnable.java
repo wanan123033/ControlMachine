@@ -2,6 +2,7 @@ package com.feipulai.exam.activity.volleyball.more_devices;
 
 import android.content.Context;
 import android.os.SystemClock;
+import android.util.Log;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.manager.VolleyBallRadioManager;
@@ -31,9 +32,9 @@ public class PreStartTimeRunnable implements Runnable {
 
     @Override
     public void run() {
-
         int tt = time;
         if (time == 0) {
+            Log.i("PreStartTimeRunnable","startTime---------0");
             VolleyBallRadioManager.getInstance().startTime(hostId, deviceId, 0, timeSum);
             if (listener != null) {
                 listener.startTime();
@@ -43,15 +44,17 @@ public class PreStartTimeRunnable implements Runnable {
                 if (flag) {
                     if (i == 0) {
                         VolleyBallRadioManager.getInstance().startTime(hostId, deviceId, 0, timeSum);
+                        Log.i("PreStartTimeRunnable","startTime");
                         if (listener != null) {
                             listener.startTime();
                         }
                     } else {
+                        if (listener != null) {
+                            listener.preTime(i);
+                        }
+                        Log.i("PreStartTimeRunnable","preTime");
                         VolleyBallRadioManager.getInstance().startTime(hostId, deviceId, i, timeSum);
                         SystemClock.sleep(1000);
-                        if (listener != null) {
-                            listener.preTime(tt--);
-                        }
                     }
                 } else {
                     break;

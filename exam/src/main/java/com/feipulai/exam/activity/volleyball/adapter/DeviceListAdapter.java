@@ -53,29 +53,67 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
             Student student = item.getStuDevicePair().getStudent();
             helper.txtStuCode.setText(student.getStudentCode());
             helper.txtStuName.setText(student.getStudentName());
-            helper.prepView(true, false, false, setting, setting1.isPenalize());
-
+            if (state != BaseDeviceState.STATE_ERROR) {
+                helper.prepView(true, false, false, setting, setting1.isPenalize());
+            }
         } else {
             helper.txtStuCode.setText("");
             helper.txtStuName.setText("");
-            helper.prepView(false, false, false, setting, setting1.isPenalize());
+            if (state != BaseDeviceState.STATE_ERROR) {
+                helper.prepView(false, false, false, setting, setting1.isPenalize());
+            }
         }
         if (item.getStuDevicePair().getTimeResult() != null) {
             helper.itemTxtTestResult.setText(getShow(1, item.getStuDevicePair().getTimeResult()));
-            helper.itemTxtTestResult.setBackgroundColor(Color.BLACK);
+//            helper.itemTxtTestResult.setBackgroundColor(Color.BLACK);
         }
 
         if (testCount >= 2) {
             helper.itemTxtTestResult1.setVisibility(View.VISIBLE);
-            helper.itemTxtTestResult1.setBackgroundColor(Color.BLACK);
+//            helper.itemTxtTestResult1.setBackgroundColor(Color.BLACK);
             helper.itemTxtTestResult2.setVisibility(View.VISIBLE);
             helper.itemTxtTestResult1.setText(getShow(2, item.getStuDevicePair().getTimeResult()));
         }
         if (testCount >= 3) {
             helper.itemTxtTestResult2.setVisibility(View.VISIBLE);
-            helper.itemTxtTestResult2.setBackgroundColor(Color.BLACK);
+//            helper.itemTxtTestResult2.setBackgroundColor(Color.BLACK);
             helper.itemTxtTestResult2.setText(getShow(3, item.getStuDevicePair().getTimeResult()));
         }
+
+        if (testCount == 1) {
+            helper.itemTxtTestResult.setVisibility(View.VISIBLE);
+            helper.itemTxtTestResult1.setVisibility(View.GONE);
+            helper.itemTxtTestResult2.setVisibility(View.GONE);
+        } else if (testCount == 2) {
+            helper.itemTxtTestResult.setVisibility(View.VISIBLE);
+            helper.itemTxtTestResult1.setVisibility(View.VISIBLE);
+            helper.itemTxtTestResult2.setVisibility(View.GONE);
+        } else if (testCount == 3) {
+            helper.itemTxtTestResult.setVisibility(View.VISIBLE);
+            helper.itemTxtTestResult1.setVisibility(View.VISIBLE);
+            helper.itemTxtTestResult2.setVisibility(View.VISIBLE);
+        }
+
+        if (item.getStuDevicePair().getStudent() != null) {
+            if (item.getStuDevicePair().getRoundNo() == 0) {
+                helper.itemTxtTestResult.setBackgroundColor(Color.GREEN);
+                helper.itemTxtTestResult1.setBackgroundColor(Color.BLACK);
+                helper.itemTxtTestResult2.setBackgroundColor(Color.BLACK);
+            } else if (item.getStuDevicePair().getRoundNo() == 1) {
+                helper.itemTxtTestResult.setBackgroundColor(Color.BLACK);
+                helper.itemTxtTestResult1.setBackgroundColor(Color.GREEN);
+                helper.itemTxtTestResult2.setBackgroundColor(Color.BLACK);
+            } else if (item.getStuDevicePair().getRoundNo() == 2) {
+                helper.itemTxtTestResult.setBackgroundColor(Color.BLACK);
+                helper.itemTxtTestResult1.setBackgroundColor(Color.BLACK);
+                helper.itemTxtTestResult2.setBackgroundColor(Color.GREEN);
+            }
+        }else {
+            helper.itemTxtTestResult.setBackgroundColor(Color.BLACK);
+            helper.itemTxtTestResult1.setBackgroundColor(Color.BLACK);
+            helper.itemTxtTestResult2.setBackgroundColor(Color.BLACK);
+        }
+
         helper.item_txt_state.setText("");
         if (item.getStuDevicePair().getStudent() != null) {
             Log.e("TAG", "deviceId=" + item.getStuDevicePair().getBaseDevice().getDeviceId() + ",state=" + state);
@@ -87,7 +125,7 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
                     Log.e("TAG", state + "," + item.getTime());
                     if (item.getTime() >= 0) {
                         helper.prepView(false, true, false, setting, setting1.isPenalize());
-                        helper.item_txt_state.setText("计时中:" + item.getTime() + "秒");
+                        helper.item_txt_state.setText("倒计时:" + item.getTime() + "秒");
                     } else {
                         helper.item_txt_state.setText("");
                         helper.prepView(false, true, false, setting, setting1.isPenalize());
@@ -96,7 +134,7 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
                     helper.prepView(false, false, true, setting, setting1.isPenalize());
                     helper.item_txt_state.setText("测试结束");
                 } else if (state == BaseDeviceState.STATE_PRE_TIME) {
-                    if (item.getTime() >= 0) {
+                    if (item.getTime() > 0) {
                         helper.prepView(false, true, false, setting, setting1.isPenalize());
                         helper.item_txt_state.setText(item.getTime() + "");
                     } else {
@@ -127,7 +165,7 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
     }
 
     public String getShow(int num, String[] result) {
-        Log.e("TAG","----"+ Arrays.toString(result));
+        Log.e("getShow", "----" + Arrays.toString(result));
         if (result == null) {
             return "";
         } else {

@@ -268,7 +268,7 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
     public void sendStart(DeviceDetail deviceDetail, int pos) {
         mHandler.removeMessages(AUTO_START);
         BaseStuPair stuPair = deviceDetail.getStuDevicePair();
-        stuPair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
+        stuPair.getBaseDevice().setState(BaseDeviceState.STATE_PRE_TIME);
         int hostId = SettingHelper.getSystemSetting().getHostId();
         int deviceId = deviceDetail.getStuDevicePair().getBaseDevice().getDeviceId();
 
@@ -309,6 +309,7 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
                         @Override
                         public void run() {
                             Log.i("preTime", "-------" + time);
+                            isStartTime=true;
                             updateTime(time, pos);
                             deviceListAdapter.notifyItemChanged(pos);
                         }
@@ -388,6 +389,9 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
                 int hostId = SettingHelper.getSystemSetting().getHostId();
                 int deviceId = deviceDetail.getStuDevicePair().getBaseDevice().getDeviceId();
                 runable.stop();
+                Executors.newSingleThreadExecutor().shutdown();
+                VolleyBallRadioManager.getInstance().deviceFree(hostId, deviceId);
+                SystemClock.sleep(100);
                 VolleyBallRadioManager.getInstance().deviceFree(hostId, deviceId);
                 SystemClock.sleep(100);
                 VolleyBallRadioManager.getInstance().deviceFree(hostId, deviceId);
