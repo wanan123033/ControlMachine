@@ -110,10 +110,20 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_led_setting:
-                startActivity(new Intent(this, LEDSettingActivity.class));
+                if (isUse()) {
+                    toastSpeak("测试中,不允许修改设置");
+                } else {
+                    startActivity(new Intent(this, LEDSettingActivity.class));
+                }
+
                 break;
             case R.id.tv_device_pair:
-                startActivity(new Intent(this, StandJumpPairActivity.class));
+                if (isUse()) {
+                    toastSpeak("测试中,不允许修改设置");
+                } else {
+                    startActivity(new Intent(this, StandJumpPairActivity.class));
+                }
+
                 break;
         }
     }

@@ -98,9 +98,21 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (deviceDetails.size() != setTestDeviceCount()) {
-            setDeviceCount(setTestDeviceCount());
+        if (!isUse()) {
+            if (deviceDetails.size() != setTestDeviceCount()) {
+                setDeviceCount(setTestDeviceCount());
+            }
         }
+
+    }
+
+    @Override
+    public void finish() {
+        if (isUse()) {
+            toastSpeak("测试中,不允许退出当前界面");
+            return;
+        }
+        super.finish();
     }
 
     public void ledShow() {
@@ -181,6 +193,12 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             }
         }
         deviceDetails.get(index).setRound(roundResultList.size() + 1);
+
+        int clertCount = 4 - deviceDetails.size();
+        for (int i = clertCount; i >= 1; i--) {
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), new byte[16], 0, i, false, true);
+        }
+
         addStudent(student, index);
         deviceDetails.get(index).getStuDevicePair().setTimeResult(result);
         deviceListAdapter.notifyItemChanged(index);
@@ -379,13 +397,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         return builder.setTitle(title).addRightText("项目设置", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean isOnUse = false;
-                for (DeviceDetail deviceDetail : deviceDetails) {
-                    if (deviceDetail.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_ONUSE) {
-                        isOnUse = true;
-                    }
-                }
-                if (isOnUse) {
+
+                if (isUse()) {
                     toastSpeak("测试中,不允许修改设置");
                 } else {
                     gotoItemSetting();
@@ -398,6 +411,23 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 gotoItemSetting();
             }
         });
+    }
+
+    /**
+     * 是否存在使用中设备
+     *
+     * @return
+     */
+    public boolean isUse() {
+        boolean isOnUse = false;
+        for (DeviceDetail deviceDetail : deviceDetails) {
+            if (deviceDetail.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_ONUSE) {
+                return true;
+            }
+        }
+        return isOnUse;
+
+
     }
 
     public synchronized void updateDevice(@NonNull BaseDeviceState deviceState) {
@@ -708,10 +738,21 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_led_setting:
-                startActivity(new Intent(this, LEDSettingActivity.class));
+
+                if (isUse()) {
+                    toastSpeak("测试中,不允许修改设置");
+                } else {
+                    startActivity(new Intent(this, LEDSettingActivity.class));
+                }
+
                 break;
             case R.id.tv_device_pair:
-                startActivity(new Intent(this, SargentPairActivity.class));
+                if (isUse()) {
+                    toastSpeak("测试中,不允许修改设置");
+                } else {
+                    startActivity(new Intent(this, SargentPairActivity.class));
+                }
+
                 break;
         }
     }

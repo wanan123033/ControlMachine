@@ -24,6 +24,8 @@ public class StandJumpResult {
     public static final int NEED_CHANGE = 0x01;
     public static final int HAS_BROKEN_POINTS = 0x02;
 
+    private int batteryLeftPercent;
+
     public StandJumpResult(byte[] data) {
 
         serialNumber = (data[8] & 0xff) + (data[9] & 0xff) + (data[10] & 0xff) + (data[11] & 0xff) + "";
@@ -45,7 +47,7 @@ public class StandJumpResult {
                 isFoul = true;
             }
         }
-
+        batteryLeftPercent = data[18] & 0xff;
         brokenLEDs[0] = ((data[12] & 0xff) << 8) + (data[13] & 0xff);
         brokenLEDs[1] = ((data[14] & 0xff) << 8) + (data[15] & 0xff);
         brokenLEDs[2] = ((data[16] & 0xff) << 8) + (data[17] & 0xff);
@@ -132,6 +134,14 @@ public class StandJumpResult {
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    public int getBatteryLeftPercent() {
+        return batteryLeftPercent;
+    }
+
+    public void setBatteryLeftPercent(int batteryLeftPercent) {
+        this.batteryLeftPercent = batteryLeftPercent;
     }
 
     @Override
