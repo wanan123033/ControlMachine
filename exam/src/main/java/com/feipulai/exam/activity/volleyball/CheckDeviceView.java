@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.manager.VolleyBallManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -33,7 +34,7 @@ public class CheckDeviceView extends RelativeLayout {
     private Context mContext;
     private List<List<StepBean>> checkList;
     private CheckDeviceAdapter adapter;
-    private VolleyBallManager manager = new VolleyBallManager();
+    private VolleyBallManager manager;
     private boolean wiress = false;  //true 无线  false 有线
     private int deviceId;
 
@@ -41,6 +42,8 @@ public class CheckDeviceView extends RelativeLayout {
         super(context);
         mContext = context;
         init();
+        VolleyBallSetting setting = SharedPrefsUtil.loadFormSource(context,VolleyBallSetting.class);
+        manager = new VolleyBallManager(setting.getType());
     }
 
     public CheckDeviceView(Context context, @Nullable AttributeSet attrs) {

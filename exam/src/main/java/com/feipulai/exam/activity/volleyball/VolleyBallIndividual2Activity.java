@@ -37,6 +37,7 @@ import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.fragment.IndividualCheckFragment;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
+import com.feipulai.exam.activity.sargent_jump.pair.VolleyBallPairActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.bean.RoundResultBean;
@@ -56,8 +57,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class VolleyBallIndividualActivity extends BaseTitleActivity
-        implements VolleyBallTestFacade.Listener,
+public class VolleyBallIndividual2Activity extends BaseTitleActivity
+        implements VolleyBallTest2Facade.Listener,
         IndividualCheckFragment.OnIndividualCheckInListener {
 
     private static final int UPDATE_SCORE = 0x3;
@@ -91,7 +92,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
     @BindView(R.id.tv_exit_test)
     TextView tvExitTest;
 
-    private VolleyBallTestFacade facade;
+    private VolleyBallTest2Facade facade;
     private IndividualCheckFragment individualCheckFragment;
     // 状态  WAIT_CHECK_IN--->WAIT_BEGIN--->TESTING---->WAIT_CONFIRM--->WAIT_CHECK_IN
     private static final int WAIT_CHECK_IN = 0x0;
@@ -129,7 +130,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         individualCheckFragment.setOnIndividualCheckInListener(this);
         ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), individualCheckFragment, R.id.ll_individual_check);
 
-        facade = new VolleyBallTestFacade(SettingHelper.getSystemSetting().getHostId(),setting.getType(), setting, this);
+        facade = new VolleyBallTest2Facade(SettingHelper.getSystemSetting().getHostId(),setting.getType(), setting, this);
         ledManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
         prepareForCheckIn();
     }
@@ -142,6 +143,16 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         title = TestConfigs.machineNameMap.get(machineCode)
                 + SettingHelper.getSystemSetting().getHostId() + "号机"
                 + (isTestNameEmpty ? "" : ("-" + SettingHelper.getSystemSetting().getTestName()));
+        builder.addRightText("外接屏幕", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isConfigurableNow()) {
+                    startActivity(new Intent(getApplicationContext(), LEDSettingActivity.class));
+                } else {
+                    toastSpeak("测试中,不能进行外接屏幕设置");
+                }
+            }
+        });
         return builder.setTitle(title) .addRightText("项目设置", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -164,7 +175,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
 
     private void startProjectSetting() {
         if (isConfigurableNow()) {
-            startActivity(new Intent(VolleyBallIndividualActivity.this, VolleyBallSettingActivity.class));
+            startActivity(new Intent(VolleyBallIndividual2Activity.this, VolleyBallSettingActivity.class));
         } else {
             toastSpeak("测试中,不允许修改设置");
         }
@@ -217,9 +228,10 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
     }
 
     @OnClick({R.id.tv_start_test, R.id.tv_stop_test, R.id.tv_print, R.id.tv_led_setting, R.id.tv_confirm,
-            R.id.tv_punish, R.id.tv_abandon_test, R.id.tv_finish_test, R.id.tv_exit_test})
+            R.id.tv_punish, R.id.tv_abandon_test, R.id.tv_finish_test, R.id.tv_exit_test,R.id.tv_pair})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+
             case R.id.tv_led_setting:
                 if (isConfigurableNow()) {
                     startActivity(new Intent(this, LEDSettingActivity.class));
@@ -267,6 +279,9 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
 
             case R.id.tv_exit_test:
                 prepareForCheckIn();
+                break;
+            case R.id.tv_pair:
+                startActivity(new Intent(getApplicationContext(), VolleyBallPairActivity.class));
                 break;
 
         }

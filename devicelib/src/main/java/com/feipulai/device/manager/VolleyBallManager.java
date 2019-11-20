@@ -22,45 +22,101 @@ public class VolleyBallManager {
     private static final byte[] CMD_LOSE_DOT = {0x54, 0x44, 0x00, 0x10, 0x00, 0x0a, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x20, 0x27, 0x0d};
     private static final byte[] CMD_CANCEL_LOSE_DOT = {0x54, 0x44, 0x00, 0x10, 0x00, 0x0a, 0x00, 0x06, 0x01, 0x00, 0x00, 0x00, 0x00, 0x21, 0x27, 0x0d};
     private static final byte[] CMD_VERSIONS = {0x54, 0x44, 0x00, 0x10, 0x00, 0x0a, 0x00, 0x0C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x26, 0x27, 0x0d};
+    private int pattry ;
+    private VolleyBallRadioManager volleyBallRadioManager;
 
+    public VolleyBallManager(int pattry){
+        this.pattry = pattry;
+        if (pattry == 1){
+            volleyBallRadioManager = VolleyBallRadioManager.getInstance();
+        }
+    }
 
 
 
     // 主机下发，测量杆收到会原样回复(0x44变化为0x55)。主机每5秒发送一次，用于检查测量杆连接是否正常。
     public void emptyCommand() {
-        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, EMPTY));
+        if (pattry == 0)
+            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, EMPTY));
+        else {
+
+        }
     }
 
     public void startTest() {
-        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_START));
+        if (pattry == 0)
+            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_START));
+    }
+    public void startTest(int hostId, int deviceId, int time, int timeSum) {
+        if (pattry == 0)
+            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_START));
+        else {
+            if (timeSum == 0){
+                volleyBallRadioManager.startCount(hostId, deviceId);
+            }else {
+                volleyBallRadioManager.startTime(hostId, deviceId, time, timeSum);
+            }
+        }
     }
 
     public void stopTest() {
-        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_END));
+        if (pattry == 0)
+            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_END));
+    }
+    public void stopTest(int hostId, int deviceId, int timeSum) {
+        if (pattry == 0)
+            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_END));
+        else {
+            if (timeSum == 0){
+                volleyBallRadioManager.startCount(hostId,deviceId);
+            }else {
+                volleyBallRadioManager.stopTime(hostId, deviceId);
+            }
+        }
     }
 
     public void getScore() {
-        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_GET_SCORE));
+        if (pattry == 0)
+            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_GET_SCORE));
+    }
+    public void getScore(int hostId, int deviceId) {
+        if (pattry == 0)
+            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_GET_SCORE));
+        else {
+            volleyBallRadioManager.getState(hostId,deviceId);
+        }
     }
 
     public void checkDevice() {
-        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_CHECK));
+        if (pattry == 0)
+            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_CHECK));
+        else {
+
+        }
     }
     public void getVersions() {
-        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_VERSIONS));
+        if (pattry == 0){
+            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_VERSIONS));
+        }
     }
     /**
      * 忽略点
      */
     public void loseDot() {
-        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_LOSE_DOT));
+        if (pattry == 0){
+            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_LOSE_DOT));
+        }
     }
 
     /**
      * 取消忽略点
      */
     public void cancelLoseDot() {
-        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_CANCEL_LOSE_DOT));
+        if (pattry == 0){
+            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_CANCEL_LOSE_DOT));
+        }else {
+
+        }
     }
 
     /**

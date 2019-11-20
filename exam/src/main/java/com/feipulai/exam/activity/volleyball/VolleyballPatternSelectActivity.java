@@ -41,7 +41,7 @@ public class VolleyballPatternSelectActivity extends SubItemsSelectActivity {
                     if (setting.getType() == 1) {
                         startActivity(new Intent(getApplicationContext(), VolleyBallMore2TestActivity.class));
                     } else {
-                        startActivity(new Intent(VolleyballPatternSelectActivity.this, VolleyBallIndividualActivity.class));
+                        startActivity(new Intent(VolleyballPatternSelectActivity.this, VolleyBallIndividual2Activity.class));
                     }
                 } else {
 

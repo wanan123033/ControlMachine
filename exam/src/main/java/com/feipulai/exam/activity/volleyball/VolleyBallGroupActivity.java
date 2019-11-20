@@ -139,7 +139,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         stuPairAdapter = new VolleyBallGroupStuAdapter(pairs);
         rvTestingPairs.setAdapter(stuPairAdapter);
 
-        facade = new VolleyBallTestFacade(SettingHelper.getSystemSetting().getHostId(), setting, this);
+        facade = new VolleyBallTestFacade(SettingHelper.getSystemSetting().getHostId(),setting.getType(), setting, this);
         stuPairAdapter.setOnItemClickListener(this);
 
 //        prepareForBegin();
