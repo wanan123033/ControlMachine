@@ -15,50 +15,62 @@ public class PreStartTimeRunnable implements Runnable {
     private int deviceId;
     private int timeSum;
     private TimeListener listener;
-    public PreStartTimeRunnable(Context context,DeviceDetail deviceDetail) throws IllegalAccessException {
+    private boolean flag = true;
+
+    public PreStartTimeRunnable(Context context, DeviceDetail deviceDetail) throws IllegalAccessException {
 //        time = deviceDetail.getPreTime();
         time = 5;
-        if (time < 0){
+        if (time < 0) {
             throw new IllegalAccessException("VolleyBall PreTime < 0");
         }
         hostId = SettingHelper.getSystemSetting().getHostId();
         deviceId = deviceDetail.getStuDevicePair().getBaseDevice().getDeviceId();
-        VolleyBallSetting setting = SharedPrefsUtil.loadFormSource(context,VolleyBallSetting.class);
+        VolleyBallSetting setting = SharedPrefsUtil.loadFormSource(context, VolleyBallSetting.class);
         timeSum = setting.getTestTime();
     }
+
     @Override
     public void run() {
+
         int tt = time;
-        if (time == 0){
+        if (time == 0) {
             VolleyBallRadioManager.getInstance().startTime(hostId, deviceId, 0, timeSum);
-            if (listener != null){
+            if (listener != null) {
                 listener.startTime();
             }
-        }else {
+        } else {
             for (int i = time; i >= 0; i--) {
-                if (i == 0) {
-                    VolleyBallRadioManager.getInstance().startTime(hostId, deviceId, 0, timeSum);
-                    if (listener != null) {
-                        listener.startTime();
+                if (flag) {
+                    if (i == 0) {
+                        VolleyBallRadioManager.getInstance().startTime(hostId, deviceId, 0, timeSum);
+                        if (listener != null) {
+                            listener.startTime();
+                        }
+                    } else {
+                        VolleyBallRadioManager.getInstance().startTime(hostId, deviceId, i, timeSum);
+                        SystemClock.sleep(1000);
+                        if (listener != null) {
+                            listener.preTime(tt--);
+                        }
                     }
                 } else {
-                    VolleyBallRadioManager.getInstance().startTime(hostId, deviceId, i, timeSum);
-                    SystemClock.sleep(1000);
-
-                    if (listener != null) {
-                        listener.preTime(tt--);
-                    }
+                    break;
                 }
             }
         }
+    }
+
+    public void stop() {
+        flag = false;
     }
 
     public void setListener(TimeListener listener) {
         this.listener = listener;
     }
 
-    interface TimeListener{
+    interface TimeListener {
         void startTime();
+
         void preTime(int time);
     }
 }

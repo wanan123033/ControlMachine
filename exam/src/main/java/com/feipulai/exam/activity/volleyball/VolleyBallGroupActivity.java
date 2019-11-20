@@ -165,7 +165,6 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
                     toastSpeak("测试中,不能进行外接屏幕设置");
                 }
                 break;
-
             case R.id.tv_start_test:
                 prepareForTesting();
                 break;

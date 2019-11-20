@@ -220,7 +220,6 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
             R.id.tv_punish, R.id.tv_abandon_test, R.id.tv_finish_test, R.id.tv_exit_test})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-
             case R.id.tv_led_setting:
                 if (isConfigurableNow()) {
                     startActivity(new Intent(this, LEDSettingActivity.class));

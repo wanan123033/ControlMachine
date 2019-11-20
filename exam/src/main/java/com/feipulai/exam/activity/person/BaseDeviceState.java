@@ -36,6 +36,7 @@ public class BaseDeviceState implements Serializable {
      */
     public static final int STATE_ERROR = 8;
     private static final long serialVersionUID = 5136286117736499597L;
+    public static final int STATE_PRE_TIME = 111;
 
     /**
      * 设备状态,为{@link #STATE_FREE}或{@link #STATE_DISCONNECT}{@link #STATE_LOW_BATTERY}{@link #STATE_CONFLICT}{@link #STATE_STOP_USE}

@@ -19,6 +19,7 @@ import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.entity.Student;
 
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -27,36 +28,40 @@ import butterknife.ButterKnife;
 public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceListAdapter.ViewHolder> {
     private int setting;
     private VolleyBallSetting setting1;
+
     public DeviceListAdapter(@Nullable List<DeviceDetail> data) {
-        super(R.layout.item_device_list_volleyball,data);
-        setting1 = SharedPrefsUtil.loadFormSource(mContext,VolleyBallSetting.class);
+        super(R.layout.item_device_list_volleyball, data);
+        setting1 = SharedPrefsUtil.loadFormSource(mContext, VolleyBallSetting.class);
         if (setting1 != null) {
             this.setting = setting1.getTestTime();
         }
     }
+
     private int testCount = 1;
+
     public void setTestCount(int testCount) {
         this.testCount = testCount;
     }
+
     @Override
     protected void convert(final ViewHolder helper, final DeviceDetail item) {
         helper.swDeviceClose.setChecked(item.isDeviceOpen());
         int state = item.getStuDevicePair().getBaseDevice().getState();
-        helper.cbDeviceState.setText((helper.getAdapterPosition()+1)+"号设备状态");
+        helper.cbDeviceState.setText((helper.getAdapterPosition() + 1) + "号设备状态");
         helper.cbDeviceState.setChecked(state != BaseDeviceState.STATE_ERROR);
         if (item.getStuDevicePair().getStudent() != null) {
             Student student = item.getStuDevicePair().getStudent();
             helper.txtStuCode.setText(student.getStudentCode());
             helper.txtStuName.setText(student.getStudentName());
-            helper.prepView(true,false,false,setting,setting1.isPenalize());
+            helper.prepView(true, false, false, setting, setting1.isPenalize());
 
         } else {
             helper.txtStuCode.setText("");
             helper.txtStuName.setText("");
-            helper.prepView(false,false,false,setting,setting1.isPenalize());
+            helper.prepView(false, false, false, setting, setting1.isPenalize());
         }
         if (item.getStuDevicePair().getTimeResult() != null) {
-            helper.itemTxtTestResult.setText(getShow(1,item.getStuDevicePair().getTimeResult()[0]));
+            helper.itemTxtTestResult.setText(getShow(1, item.getStuDevicePair().getTimeResult()));
             helper.itemTxtTestResult.setBackgroundColor(Color.BLACK);
         }
 
@@ -64,17 +69,17 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
             helper.itemTxtTestResult1.setVisibility(View.VISIBLE);
             helper.itemTxtTestResult1.setBackgroundColor(Color.BLACK);
             helper.itemTxtTestResult2.setVisibility(View.VISIBLE);
-            helper.itemTxtTestResult1.setText(getShow(2,item.getStuDevicePair().getTimeResult()[1]));
+            helper.itemTxtTestResult1.setText(getShow(2, item.getStuDevicePair().getTimeResult()));
         }
         if (testCount >= 3) {
             helper.itemTxtTestResult2.setVisibility(View.VISIBLE);
             helper.itemTxtTestResult2.setBackgroundColor(Color.BLACK);
-            helper.itemTxtTestResult2.setText(getShow(3,item.getStuDevicePair().getTimeResult()[2]));
+            helper.itemTxtTestResult2.setText(getShow(3, item.getStuDevicePair().getTimeResult()));
         }
         helper.item_txt_state.setText("");
         if (item.getStuDevicePair().getStudent() != null) {
-            Log.e("TAG","deviceId="+item.getStuDevicePair().getBaseDevice().getDeviceId()+",state="+state);
-            if(state != BaseDeviceState.STATE_ERROR) {
+            Log.e("TAG", "deviceId=" + item.getStuDevicePair().getBaseDevice().getDeviceId() + ",state=" + state);
+            if (state != BaseDeviceState.STATE_ERROR) {
                 if (state == BaseDeviceState.STATE_FREE || state == BaseDeviceState.STATE_NOT_BEGAIN) {
                     helper.prepView(true, false, false, setting, setting1.isPenalize());
                     helper.item_txt_state.setText("设备空闲");
@@ -90,6 +95,14 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
                 } else if (state == BaseDeviceState.STATE_END) {
                     helper.prepView(false, false, true, setting, setting1.isPenalize());
                     helper.item_txt_state.setText("测试结束");
+                } else if (state == BaseDeviceState.STATE_PRE_TIME) {
+                    if (item.getTime() >= 0) {
+                        helper.prepView(false, true, false, setting, setting1.isPenalize());
+                        helper.item_txt_state.setText(item.getTime() + "");
+                    } else {
+                        helper.item_txt_state.setText("");
+                        helper.prepView(false, true, false, setting, setting1.isPenalize());
+                    }
                 }
             }
         }
@@ -113,15 +126,16 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
                 .addOnClickListener(R.id.txt_penalty);
     }
 
-    public String getShow(int num,String result){
-        if (TextUtils.isEmpty(result)){
+    public String getShow(int num, String[] result) {
+        Log.e("TAG","----"+ Arrays.toString(result));
+        if (result == null) {
             return "";
-        }else {
-            return result;
+        } else {
+            return result[num - 1];
         }
     }
 
-    public static class ViewHolder extends BaseViewHolder{
+    public static class ViewHolder extends BaseViewHolder {
 
         @BindView(R.id.txt_start)
         TextView txt_start;
@@ -170,29 +184,28 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
         TextView item_txt_state;
 
 
-
         public ViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }
 
         public void prepView(boolean flag1, boolean flag2, boolean flag3, int setting, boolean penalize) {
-            txt_start.setVisibility(flag1 ? View.VISIBLE:View.GONE);
-            txt_end.setVisibility(flag1 ? View.VISIBLE:View.GONE);
-            rl_1.setVisibility(flag1 ? View.VISIBLE:View.GONE);
+            txt_start.setVisibility(flag1 ? View.VISIBLE : View.GONE);
+            txt_end.setVisibility(flag1 ? View.VISIBLE : View.GONE);
+            rl_1.setVisibility(flag1 ? View.VISIBLE : View.GONE);
 
-            txt_time.setVisibility(flag2 && setting > 0 ? View.GONE:View.GONE);
-            txt_gave_up.setVisibility(flag2 && setting > 0 ? View.VISIBLE:View.GONE);
-            rl_2.setVisibility(flag2 && setting > 0 ? View.VISIBLE:View.GONE);
+            txt_time.setVisibility(flag2 && setting > 0 ? View.GONE : View.GONE);
+            txt_gave_up.setVisibility(flag2 && setting > 0 ? View.VISIBLE : View.GONE);
+            rl_2.setVisibility(flag2 && setting > 0 ? View.VISIBLE : View.GONE);
 
-            rl_4.setVisibility(flag2 && setting == 0 ? View.VISIBLE:View.GONE);
-            txt_js.setVisibility(flag2 && setting == 0 ? View.VISIBLE:View.GONE);
-            txt_fq.setVisibility(flag2 && setting == 0 ? View.VISIBLE:View.GONE);
+            rl_4.setVisibility(flag2 && setting == 0 ? View.VISIBLE : View.GONE);
+            txt_js.setVisibility(flag2 && setting == 0 ? View.VISIBLE : View.GONE);
+            txt_fq.setVisibility(flag2 && setting == 0 ? View.VISIBLE : View.GONE);
 
 
-            txt_confirm.setVisibility(flag3 ? View.VISIBLE:View.GONE);
-            txt_penalty.setVisibility(flag3 && penalize ? View.VISIBLE:View.GONE);
-            rl_3.setVisibility(flag3 ? View.VISIBLE:View.GONE);
+            txt_confirm.setVisibility(flag3 ? View.VISIBLE : View.GONE);
+            txt_penalty.setVisibility(flag3 && penalize ? View.VISIBLE : View.GONE);
+            rl_3.setVisibility(flag3 ? View.VISIBLE : View.GONE);
 
 
         }
