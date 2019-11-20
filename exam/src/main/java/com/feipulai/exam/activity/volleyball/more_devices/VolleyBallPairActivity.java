@@ -1,4 +1,4 @@
-package com.feipulai.exam.activity.sargent_jump.pair;
+package com.feipulai.exam.activity.volleyball.more_devices;
 
 import com.feipulai.exam.activity.situp.base_pair.SitPullPairActivity;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairPresenter;

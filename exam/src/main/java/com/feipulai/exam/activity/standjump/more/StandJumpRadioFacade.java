@@ -99,7 +99,13 @@ public class StandJumpRadioFacade implements RadioManager.OnRadioArrivedListener
 
     @Override
     public void onRadioArrived(Message msg) {
-        StandJumpResult result = (StandJumpResult) msg.obj;
+        StandJumpResult result;
+        try {
+            result = (StandJumpResult) msg.obj;
+        } catch (Exception e) {
+            return;
+        }
+
         if (msg.what == SerialConfigs.STAND_JUMP_START) {
             mCurrentConnect[result.getDeviceId() - 1] = BaseDeviceState.STATE_FREE;
             deviceList.get(result.getDeviceId() - 1).getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
@@ -135,6 +141,13 @@ public class StandJumpRadioFacade implements RadioManager.OnRadioArrivedListener
                     stuPair.setResultState(RoundResult.RESULT_STATE_FOUL);
                     //成绩返回厘米 数据库保存为毫米
                     stuPair.setResult(result.getScore() * 10);
+                    if (stuPair.getStudent() != null)
+                        listener.getResult(stuPair);
+                    StandJumpManager.setLeisure(SettingHelper.getSystemSetting().getHostId(), result.getDeviceId());
+                    //更新设置状态为已结束
+                    stuPair.getBaseDevice().setState(BaseDeviceState.STATE_END);
+                    //设置设备状态
+                    listener.endDevice(stuPair.getBaseDevice());
                 } else {
                     stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
                     stuPair.setResult(result.getScore() * 10);
@@ -145,15 +158,16 @@ public class StandJumpRadioFacade implements RadioManager.OnRadioArrivedListener
                             || result.getScore() * 10 > maxValue) {
                         Logger.i("成绩数值超出范围:最小值->" + minValue + ",最大值->" + maxValue + ",获取的成绩->" + result.getScore());
 
-                        TtsManager.getInstance().speak("设备错误，考生请重测");
+                        TtsManager.getInstance().speak("成绩异常，考生请重测");
 
                         //重测设置设备正在使用中
                         stuPair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
-                        stuPair.setResult(0);
+//                        stuPair.setResult(0);
                         //设置设备状态
                         listener.refreshDeviceState(result.getDeviceId() - 1);
-                        //更新成绩
-                        listener.getResult(stuPair);
+//                        //更新成绩
+//                        if (stuPair.getStudent() != null)
+//                            listener.getResult(stuPair);
 //                        listener.AgainTest(result.getDeviceId());
                         StandJumpManager.setLeisure(SettingHelper.getSystemSetting().getHostId(), result.getDeviceId());
                         try {
@@ -163,7 +177,8 @@ public class StandJumpRadioFacade implements RadioManager.OnRadioArrivedListener
                         }
                         StandJumpManager.startTest(SettingHelper.getSystemSetting().getHostId(), result.getDeviceId());
                     } else {
-                        listener.getResult(stuPair);
+                        if (stuPair.getStudent() != null)
+                            listener.getResult(stuPair);
                         //结束测试 发送结束指令
 //                    StandJumpManager.endTest(SettingHelper.getSystemSetting().getHostId(), result.getDeviceId());
                         StandJumpManager.setLeisure(SettingHelper.getSystemSetting().getHostId(), result.getDeviceId());

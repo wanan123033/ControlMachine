@@ -96,8 +96,13 @@ public class HttpSubscriber {
             @Override
             public void onSuccess(ScheduleBean result) {
 //                Logger.i("getScheduleAll====>" + result.toString());
-                if (result == null)
+                if (result == null){
+                    if (onRequestEndListener != null) {
+                        onRequestEndListener.onFault(SCHEDULE_BIZ);
+                    }
                     return;
+                }
+
                 ScheduleBean.SITE_EXAMTYPE = result.getExamType();
                 List<Schedule> dbScheduleList = new ArrayList<>();
                 List<ItemSchedule> dbItemScheduleList = new ArrayList<>();

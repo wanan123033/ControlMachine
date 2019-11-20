@@ -39,7 +39,7 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
     private ExecutorService mExecutor;
     private GetDeviceStatesTask mGetDeviceStatesTask;
     private int[] mCurrentConnect;
-    private List<BallDeviceState> deviceStateList = new ArrayList<>();
+    public List<BallDeviceState> deviceStateList = new ArrayList<>();
     private List<Basketball868Result> timeRountList;
 
     private int interceptSecond = 5;
@@ -119,6 +119,15 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
     public void finish() {
         mGetDeviceStatesTask.finish();
         mExecutor.shutdownNow();
+    }
+
+    public boolean isDeviceNormal() {
+        for (BallDeviceState deviceState : deviceStateList) {
+            if (deviceState.getState() == BallDeviceState.STATE_DISCONNECT) {
+                return false;
+            }
+        }
+        return true;
     }
 
     //处理LED发送计时，避免重复发送指令

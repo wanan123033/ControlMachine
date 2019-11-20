@@ -1,13 +1,11 @@
-package com.feipulai.exam.activity.sargent_jump.pair;
+package com.feipulai.exam.activity.volleyball.more_devices;
 
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
-import com.feipulai.device.manager.SitPushUpManager;
-import com.feipulai.exam.activity.pushUp.PushUpSetting;
-import com.feipulai.exam.activity.sargent_jump.SargentSetting;
+import com.feipulai.device.manager.VolleyBallManager;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairContract;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairPresenter;
@@ -24,7 +22,7 @@ public class VolleyBallPairPresenter extends SitPullUpPairPresenter {
 
     private Context context;
     private VolleyBallSetting setting;
-    private SitPushUpManager sitPushUpManager;
+    public VolleyBallManager deviceManager;
 
     public VolleyBallPairPresenter(Context context, SitPullUpPairContract.View view) {
         super(context, view);
@@ -33,7 +31,7 @@ public class VolleyBallPairPresenter extends SitPullUpPairPresenter {
             Objects.requireNonNull(view);
         }
         setting = SharedPrefsUtil.loadFormSource(context, VolleyBallSetting.class);
-        sitPushUpManager = new SitPushUpManager(SitPushUpManager.PROJECT_CODE_VOLLEY_BALL,PushUpSetting.WIRELESS_TYPE);
+        deviceManager = new VolleyBallManager(setting.getType());
     }
 
     @Override
@@ -50,7 +48,7 @@ public class VolleyBallPairPresenter extends SitPullUpPairPresenter {
     }
     
     public void setFrequency(int deviceId, int originFrequency, int deviceFrequency) {
-        sitPushUpManager.setFrequencyPQ(
+        deviceManager.setFrequency(
                 originFrequency,
                 deviceId,
                 SettingHelper.getSystemSetting().getHostId());

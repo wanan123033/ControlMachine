@@ -28,7 +28,7 @@ import java.util.Map;
  */
 public class ResultExlWriter extends ExlWriter {
     private int testCount;
-    private   List<List<String>> writeData = new ArrayList<>();
+    private List<List<String>> writeData = new ArrayList<>();
 
     public ResultExlWriter(int testCount, ExlListener listener) {
         super(listener);
@@ -61,20 +61,20 @@ public class ResultExlWriter extends ExlWriter {
                 List<Student> studentList = DBManager.getInstance().getItemStudent
                         (item.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : item.getItemCode(), -1, 0);
 
-                generateRows(item.getItemName(), studentList);
+                generateRows(item, studentList);
             }
         } else {
             List<Student> studentList = DBManager.getInstance().getItemStudent(TestConfigs.getCurrentItemCode(), -1, 0);
 
-            generateRows(TestConfigs.sCurrentItem.getItemName(), studentList);
+            generateRows(TestConfigs.sCurrentItem, studentList);
         }
         new ExlWriterUtil.Builder(file).setSheetname("测试成绩").setExlListener(listener).setWriteData(writeData).build().write();
     }
 
-    private void generateRows(String itemName, List<Student> studentList) {
+    private void generateRows(Item item, List<Student> studentList) {
 
-        List<Map<String, Object>> resultsList = DBManager.getInstance().getResultsByStu(studentList);
-        if (resultsList==null){
+        List<Map<String, Object>> resultsList = DBManager.getInstance().getResultsByStu(item.getItemCode(), studentList);
+        if (resultsList == null) {
             return;
         }
         int number = 1;
@@ -91,7 +91,7 @@ public class ResultExlWriter extends ExlWriter {
                 rowData[3] = student.getSex() == Student.MALE ? "男" : "女";
                 rowData[4] = student.getSchoolName();
                 rowData[5] = student.getClassName();
-                rowData[6] = itemName;
+                rowData[6] = item.getItemName();
 
                 if (TextUtils.isEmpty(uploadResults.get(j).getSiteScheduleNo())) {
                     rowData[7] = "";

@@ -1,7 +1,5 @@
 package com.feipulai.exam.activity.standjump.more;
 
-import android.os.Handler;
-
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.manager.StandJumpManager;
 import com.feipulai.device.serial.RadioManager;
@@ -50,6 +48,12 @@ public class StandJumpGroupMoreActivity extends BaseMoreGroupActivity implements
 
     @Override
     public void toStart(int pos) {
+        StandJumpManager.setLeisure(SettingHelper.getSystemSetting().getHostId(), deviceDetails.get(pos).getStuDevicePair().getBaseDevice().getDeviceId());
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         StandJumpManager.startTest(SettingHelper.getSystemSetting().getHostId(), deviceDetails.get(pos).getStuDevicePair().getBaseDevice().getDeviceId());
     }
 
@@ -92,12 +96,13 @@ public class StandJumpGroupMoreActivity extends BaseMoreGroupActivity implements
 
     @Override
     public void StartDevice(final int deviceId) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                toastSpeak(deviceDetails.get(deviceId - 1).getStuDevicePair().getStudent().getSpeakStuName() + "开始测试");
-            }
-        },500);
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        toastSpeak(deviceDetails.get(deviceId - 1).getStuDevicePair().getStudent().getSpeakStuName() + "开始测试");
+
     }
 
     @Override
@@ -120,6 +125,7 @@ public class StandJumpGroupMoreActivity extends BaseMoreGroupActivity implements
         }
         return false;
     }
+
     @Override
     protected void onPause() {
         super.onPause();

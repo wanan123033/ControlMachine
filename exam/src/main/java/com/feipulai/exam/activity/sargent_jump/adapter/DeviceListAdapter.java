@@ -13,6 +13,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.bean.DeviceDetail;
+import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 
@@ -140,10 +141,11 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                     oneViewHolder.setText(R.id.txt_stu_sex, "");
                 }
                 if (item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_ONUSE) {
-                    if (item.getStuDevicePair().getResultState() == -999) {
+                    if (item.getStuDevicePair().getResult() == -999) {
                         oneViewHolder.setText(R.id.txt_test_result, "");
                     } else {
-                        oneViewHolder.setText(R.id.txt_test_result, ResultDisplayUtils.getStrResultForDisplay(item.getStuDevicePair().getResult()));
+                        oneViewHolder.setText(R.id.txt_test_result, item.getStuDevicePair().getResultState() == RoundResult.RESULT_STATE_FOUL ?
+                                "X" : ResultDisplayUtils.getStrResultForDisplay(item.getStuDevicePair().getResult()));
                     }
 
                 } else if (item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN

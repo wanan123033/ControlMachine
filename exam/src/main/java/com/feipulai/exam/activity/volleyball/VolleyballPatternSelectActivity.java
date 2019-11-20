@@ -9,8 +9,6 @@ import com.feipulai.exam.activity.SubItemsSelectActivity;
 import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
-import com.feipulai.exam.activity.volleyball.more_devices.VolleyBallMore2TestActivity;
-import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.Item;
 
 /**
@@ -37,12 +35,13 @@ public class VolleyballPatternSelectActivity extends SubItemsSelectActivity {
                 setting.setType(position >= 2 ? 1 : 0);
                 SharedPrefsUtil.save(VolleyballPatternSelectActivity.this, setting);
 
-                if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN ) {
+                if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
                     if (setting.getType() == 1) {
-                        startActivity(new Intent(getApplicationContext(), VolleyBallMore2TestActivity.class));
-                    } else {
                         startActivity(new Intent(VolleyballPatternSelectActivity.this, VolleyBallIndividual2Activity.class));
+                    } else {
+                        startActivity(new Intent(VolleyballPatternSelectActivity.this, VolleyBallIndividualActivity.class));
                     }
+
                 } else {
 
                     startActivity(new Intent(VolleyballPatternSelectActivity.this, BaseGroupActivity.class));
@@ -52,6 +51,7 @@ public class VolleyballPatternSelectActivity extends SubItemsSelectActivity {
             }
         });
     }
+
     protected void toastSpeak(String paramString) {
     }
 }

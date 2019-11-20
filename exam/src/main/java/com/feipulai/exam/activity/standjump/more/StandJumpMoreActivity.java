@@ -1,7 +1,6 @@
 package com.feipulai.exam.activity.standjump.more;
 
 import android.content.Intent;
-import android.os.Handler;
 import android.view.View;
 
 import com.feipulai.common.utils.IntentUtil;
@@ -42,6 +41,7 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
         setNextClickStart(false);
 
         facade = new StandJumpRadioFacade(deviceDetails, standJumpSetting, this);
+
     }
 
     @Override
@@ -92,6 +92,12 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
 
     @Override
     protected void sendTestCommand(BaseStuPair pair, int index) {
+        StandJumpManager.setLeisure(SettingHelper.getSystemSetting().getHostId(), pair.getBaseDevice().getDeviceId());
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         StandJumpManager.startTest(SettingHelper.getSystemSetting().getHostId(), pair.getBaseDevice().getDeviceId());
     }
 
@@ -104,10 +110,20 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_led_setting:
-                startActivity(new Intent(this, LEDSettingActivity.class));
+                if (isUse()) {
+                    toastSpeak("测试中,不允许修改设置");
+                } else {
+                    startActivity(new Intent(this, LEDSettingActivity.class));
+                }
+
                 break;
             case R.id.tv_device_pair:
-                startActivity(new Intent(this, StandJumpPairActivity.class));
+                if (isUse()) {
+                    toastSpeak("测试中,不允许修改设置");
+                } else {
+                    startActivity(new Intent(this, StandJumpPairActivity.class));
+                }
+
                 break;
         }
     }
@@ -136,19 +152,15 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
     }
 
     @Override
-    public void StartDevice(final int deviceId) {
+    public void StartDevice(int deviceId) {
         Logger.i("zzs=============StartDevice");
-//        try {
-//            Thread.sleep(500);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                toastSpeak(deviceDetails.get(deviceId - 1).getStuDevicePair().getStudent().getSpeakStuName() + "开始测试");
-            }
-        },500);
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        toastSpeak(deviceDetails.get(deviceId - 1).getStuDevicePair().getStudent().getSpeakStuName() + "开始测试");
+
 
     }
 
