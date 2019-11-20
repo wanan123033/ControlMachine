@@ -502,8 +502,14 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
             case R.id.txt_waiting://等待发令
                 if ((state == WAIT_CHECK_IN || state == WAIT_CONFIRM || state == WAIT_STOP)) {
                     if (isExistTestPlace()) {
-                        timerUtil.stop();
-                        ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
+                        if ((setting.getTestType() == 1 && facade.isDeviceNormal()) || setting.getTestType() == 0) {
+                            ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, pairs.get(position()).getStudent().getLEDStuName(), Paint.Align.CENTER);
+                            timerUtil.stop();
+                            ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
+                        } else {
+                            toastSpeak("存在未连接设备，请配对");
+                        }
+                   
                     } else {
                         toastSpeak("该考生已全部测试完成");
                     }

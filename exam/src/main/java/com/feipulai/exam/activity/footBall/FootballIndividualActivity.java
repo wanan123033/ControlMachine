@@ -667,9 +667,13 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         switch (view.getId()) {
             case R.id.txt_waiting://等待发令
                 if ((state == WAIT_CHECK_IN || state == WAIT_CONFIRM || state == WAIT_STOP) && isExistTestPlace()) {
-                    timerUtil.stop();
-//                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
-                    ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
+                    if ((setting.getTestType() == 1 && facade.isDeviceNormal()) || setting.getTestType() == 0) {
+                        ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, pairs.get(0).getStudent().getLEDStuName(), Paint.Align.CENTER);
+                        timerUtil.stop();
+                        ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
+                    } else {
+                        toastSpeak("存在未连接设备，请配对");
+                    }
                 }
                 break;
             case R.id.txt_illegal_return://违例返回

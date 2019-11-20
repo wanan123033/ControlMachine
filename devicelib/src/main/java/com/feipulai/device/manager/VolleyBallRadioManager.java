@@ -51,6 +51,15 @@ public class VolleyBallRadioManager {
         cmd[12] = (byte) sum(cmd,12);
 
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+
+        try {
+            Thread.sleep(100);
+            RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+            Thread.sleep(100);
+            RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

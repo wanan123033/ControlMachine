@@ -187,6 +187,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
         if (!isNextClickStart) {
             deviceDetails.get(index).getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
+            deviceDetails.get(index).getStuDevicePair().setResult(-999);
             deviceListAdapter.notifyItemChanged(index);
             sendTestCommand(deviceDetails.get(index).getStuDevicePair(), index);
         }
@@ -245,13 +246,14 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, student.getLEDStuName() + "   第" + deviceDetails.get(index).getRound() + "次", 0, 0, true, false);
             mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, "当前：", 0, 1, false, true);
             RoundResult bestResult = DBManager.getInstance().queryBestScore(student.getStudentCode(), testNo);
-            if (bestResult != null && bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
+            if (bestResult != null) {
                 byte[] data = new byte[16];
                 String str = "最好：";
+                String result = bestResult.getResultState() == RoundResult.RESULT_STATE_FOUL ? "X" : ResultDisplayUtils.getStrResultForDisplay(bestResult.getResult());
                 try {
                     byte[] strData = str.getBytes("GB2312");
                     System.arraycopy(strData, 0, data, 0, strData.length);
-                    byte[] resultData = ResultDisplayUtils.getStrResultForDisplay(bestResult.getResult()).getBytes("GB2312");
+                    byte[] resultData = result.getBytes("GB2312");
                     System.arraycopy(resultData, 0, data, data.length - resultData.length - 1, resultData.length);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
@@ -438,7 +440,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     /**
      * 处理结果
      */
-    private synchronized void doResult(BaseStuPair pair, final int index) {
+    private synchronized void doResult(final BaseStuPair pair, final int index) {
         DeviceDetail detail = deviceDetails.get(index);
         String[] timeResult = detail.getStuDevicePair().getTimeResult();
         if (detail.getRound() > timeResult.length)//防止
@@ -471,21 +473,25 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                         , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), count + 1));
 
                 if (!isNextClickStart) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            deviceDetails.get(index).getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
-                            deviceDetails.get(index).getStuDevicePair().setResult(0);
-                            deviceListAdapter.notifyItemChanged(index);
-                        }
-                    }, 2000);
+                    if (deviceDetails.size() == 1) {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                deviceDetails.get(index).getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
+                                deviceDetails.get(index).getStuDevicePair().setResult(-999);
+                                deviceListAdapter.notifyItemChanged(index);
+                                sendTestCommand(pair, index);
+                            }
+                        }, 3000);
+                    } else {
+                        sendTestCommand(pair, index);
+                    }
 
-                    sendTestCommand(pair, index);
                 }
             }
             Message msg = new Message();
             msg.obj = pair;
-            ledHandler.sendMessageDelayed(msg, 2000);
+            ledHandler.sendMessageDelayed(msg, 3000);
             pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
 
         } else {
@@ -579,6 +585,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             // 第一次测试
             roundResult.setIsLastResult(1);
             updateLastResultLed(roundResult, index);
+
+
         }
 
 
@@ -617,13 +625,13 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
      */
     private void updateLastResultLed(RoundResult roundResult, int index) {
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
-        String result = ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult());
+        String result = roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL ? "X" : ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult());
         if (ledMode == 0) {
             int x = ResultDisplayUtils.getStringLength(result);
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 16 - x, index, false, true);
         } else {
             byte[] data = new byte[16];
-            String str = "当前：";
+            String str = "最好：";
             try {
                 byte[] strData = str.getBytes("GB2312");
                 System.arraycopy(strData, 0, data, 0, strData.length);
@@ -632,7 +640,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 1, false, true);
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 2, false, true);
         }
     }
 
@@ -677,7 +685,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     private void updateResultLed(BaseStuPair baseStu, int index) {
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
-        String result = ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
+        String result = (baseStu.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
         if (ledMode == 0) {
             int x = ResultDisplayUtils.getStringLength(result);
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 16 - x, index, false, true);
@@ -727,6 +735,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             DeviceDetail detail = (DeviceDetail) msg.obj;
             detail.getStuDevicePair().setTimeResult(new String[setTestCount()]);
             detail.getStuDevicePair().setStudent(null);
+            detail.getStuDevicePair().setResult(0);
             deviceListAdapter.notifyDataSetChanged();
         }
     }

@@ -28,7 +28,7 @@
         <activity android:name=".activity.medicineBall.more_device.BallGroupMoreActivity"></activity>
         <activity android:name=".activity.medicineBall.more_device.MedicineBallMoreActivity" />
         <activity android:name=".activity.medicineBall.pair.MedicineBallPairActivity" />
-        <activity android:name=".activity.sargent_jump.pair.VolleyBallPairActivity" />
+        <activity android:name=".activity.volleyball.more_devices.VolleyBallPairActivity" />
         <activity android:name=".activity.sargent_jump.more_device.SargentTestGroupActivity" />
         <activity android:name=".activity.sargent_jump.more_device.SargentMoreTestActivity" />
         <activity android:name=".activity.sargent_jump.pair.SargentPairActivity" />

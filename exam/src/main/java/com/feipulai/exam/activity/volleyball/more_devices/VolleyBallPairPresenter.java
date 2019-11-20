@@ -1,4 +1,4 @@
-package com.feipulai.exam.activity.sargent_jump.pair;
+package com.feipulai.exam.activity.volleyball.more_devices;
 
 import android.content.Context;
 import android.os.Build;
@@ -7,7 +7,6 @@ import android.util.Log;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.exam.activity.pushUp.PushUpSetting;
-import com.feipulai.exam.activity.sargent_jump.SargentSetting;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairContract;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairPresenter;

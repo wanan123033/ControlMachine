@@ -115,7 +115,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
 
     private BallManager ballManager;
     private BasketBallRadioFacade facade;
-    private long timerDate;
+    private long timerDate;//当前计时时间
 
     @Override
     protected int setLayoutResID() {
@@ -222,6 +222,15 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         if (baseEvent.getTagInt() == EventConfigs.ITEM_SETTING_UPDATE) {
             setting = SharedPrefsUtil.loadFormSource(this, BasketBallSetting.class);
 
+        } else if (baseEvent.getTagInt() == EventConfigs.BALL_STATE_UPDATE) {
+            BallDeviceState deviceState = (BallDeviceState) baseEvent.getData();
+
+            if (deviceState.getDeviceId() == 1) {
+                cbNear.setChecked(deviceState.getState() != BaseDeviceState.STATE_DISCONNECT);
+            }
+            if (deviceState.getDeviceId() == 0) {
+                cbLed.setChecked(deviceState.getState() != BaseDeviceState.STATE_DISCONNECT);
+            }
         }
     }
 
@@ -447,6 +456,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
 
     @Override
     public void timer(Long time) {
+        timerDate = time * 10;
         if (state == TESTING) {
             tvResult.setText(DateUtil.caculateTime(time * 10, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital(), 0));
         }
@@ -577,10 +587,14 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         switch (view.getId()) {
             case R.id.txt_waiting://等待发令
                 if ((state == WAIT_CHECK_IN || state == WAIT_CONFIRM || state == WAIT_STOP) && isExistTestPlace()) {
-                    timerUtil.stop();
+                    if ((setting.getTestType() == 1 && facade.isDeviceNormal()) || setting.getTestType() == 0) {
+                        ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, pairs.get(0).getStudent().getLEDStuName(), Paint.Align.CENTER);
+                        timerUtil.stop();
+                        ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
+                    } else {
+                        toastSpeak("存在未连接设备，请配对");
+                    }
 
-//                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
-                    ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
                 }
 
                 break;
@@ -658,7 +672,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                                 UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
                         UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
                                 UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
-                    }else {
+                    } else {
 
                     }
                     ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, "", Paint.Align.RIGHT);

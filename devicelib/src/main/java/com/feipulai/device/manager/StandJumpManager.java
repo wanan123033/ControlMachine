@@ -12,7 +12,13 @@ import com.feipulai.device.serial.command.RadioChannelCommand;
  */
 public class StandJumpManager {
 
-
+    /**
+     * 设置频道
+     * @param hostId
+     * @param deviceId
+     * @param originFrequency
+     * @param points
+     */
     public static void setFrequencyParameter(int hostId, int deviceId, int originFrequency, int points) {
         int machineCode = MachineCode.machineCode;
         int targetChannel = SerialConfigs.sProChannels.get(machineCode) + hostId - 1;
@@ -34,6 +40,12 @@ public class StandJumpManager {
         RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(targetChannel)));
     }
 
+    /**
+     * 设置使用长度
+     * @param hostId
+     * @param deviceId
+     * @param points
+     */
     public static void setPoints(int hostId, int deviceId, int points) {
         byte[] cmd = new byte[]{(byte) 0xAA, 0x15, 0x02, 0x03, 0x01, 0x00, 0x00, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0D};
         cmd[5] = (byte) (hostId & 0xff);
@@ -44,6 +56,12 @@ public class StandJumpManager {
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
+    /**
+     * 获取状态
+     * @param hostId
+     * @param deviceId
+     * @param points
+     */
     public static void getState(int hostId, int deviceId, int points) {
         byte[] cmd = new byte[]{(byte) 0xAA, 0x15, 0x02, 0x03, 0x01, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0D};
         cmd[5] = (byte) (hostId & 0xff);
@@ -54,6 +72,11 @@ public class StandJumpManager {
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
+    /***
+     * 开始测试
+     * @param hostId
+     * @param deviceId
+     */
     public static void startTest(int hostId, int deviceId) {
         byte[] cmd = new byte[]{(byte) 0xAA, 0x15, 0x02, 0x03, 0x01, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0D};
         cmd[5] = (byte) (hostId & 0xff);
@@ -62,6 +85,11 @@ public class StandJumpManager {
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
+    /**
+     * 结束
+     * @param hostId
+     * @param deviceId
+     */
     public static void endTest(int hostId, int deviceId) {
         byte[] cmd = new byte[]{(byte) 0xAA, 0x15, 0x02, 0x03, 0x01, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0D};
         cmd[5] = (byte) (hostId & 0xff);

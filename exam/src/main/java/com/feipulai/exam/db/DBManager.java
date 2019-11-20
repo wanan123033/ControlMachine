@@ -1846,7 +1846,7 @@ public class DBManager {
      *
      * @return
      */
-    public List<Map<String, Object>> getResultsByStu(List<Student> stuCodeList) {
+    public List<Map<String, Object>> getResultsByStu(String itemCode, List<Student> stuCodeList) {
 
         //查成绩表去重学生号
         //获取根据考生号 获取考生当前项目所有成绩
@@ -1862,7 +1862,7 @@ public class DBManager {
             dataMap.put("stu", stu);
             //获取学生未上传成绩
             List<RoundResult> stuResult = roundResultDao.queryBuilder().where(RoundResultDao.Properties.StudentCode.eq(stu.getStudentCode()))
-                    .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                    .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
                     .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                     .list();
             Map<Long, List<RoundResult>> groupResult = new HashMap<>();

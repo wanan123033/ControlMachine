@@ -27,7 +27,10 @@ import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.manager.VolleyBallManager;
+import com.feipulai.device.manager.VolleyBallRadioManager;
+import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.VolleyBallResult;
+import com.feipulai.device.sitpullup.SitPullLinker;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
@@ -37,7 +40,6 @@ import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.fragment.IndividualCheckFragment;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
-import com.feipulai.exam.activity.sargent_jump.pair.VolleyBallPairActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.bean.RoundResultBean;
@@ -49,6 +51,7 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
+import com.feipulai.exam.view.WaitDialog;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
@@ -59,7 +62,7 @@ import butterknife.OnClick;
 
 public class VolleyBallIndividual2Activity extends BaseTitleActivity
         implements VolleyBallTest2Facade.Listener,
-        IndividualCheckFragment.OnIndividualCheckInListener {
+        IndividualCheckFragment.OnIndividualCheckInListener, SitPullLinker.SitPullPairListener {
 
     private static final int UPDATE_SCORE = 0x3;
 
@@ -107,6 +110,11 @@ public class VolleyBallIndividual2Activity extends BaseTitleActivity
     private SystemSetting systemSetting;
     private List<StuDevicePair> pairs = new ArrayList<>(1);
 
+
+    private WaitDialog changBadDialog;
+    private SitPullLinker linker;
+    protected final int TARGET_FREQUENCY = SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode()) + SettingHelper.getSystemSetting().getHostId() - 1;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_individual_volleyball;
@@ -130,7 +138,7 @@ public class VolleyBallIndividual2Activity extends BaseTitleActivity
         individualCheckFragment.setOnIndividualCheckInListener(this);
         ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), individualCheckFragment, R.id.ll_individual_check);
 
-        facade = new VolleyBallTest2Facade(SettingHelper.getSystemSetting().getHostId(),setting.getType(), setting, this);
+        facade = new VolleyBallTest2Facade(SettingHelper.getSystemSetting().getHostId(), setting, this);
         ledManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
         prepareForCheckIn();
     }
@@ -153,7 +161,7 @@ public class VolleyBallIndividual2Activity extends BaseTitleActivity
                 }
             }
         });
-        return builder.setTitle(title) .addRightText("项目设置", new View.OnClickListener() {
+        return builder.setTitle(title).addRightText("项目设置", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startProjectSetting();
@@ -214,6 +222,8 @@ public class VolleyBallIndividual2Activity extends BaseTitleActivity
         pairs.get(0).setPenalty(0);
 
         tvResult.setText(student.getStudentName());
+        if (setting.getType() == 1)
+            VolleyBallRadioManager.getInstance().deviceFree(SettingHelper.getSystemSetting().getHostId(), 1);
         prepareForBegin();
         displayCheckedInLED(lastResult);
     }
@@ -228,7 +238,7 @@ public class VolleyBallIndividual2Activity extends BaseTitleActivity
     }
 
     @OnClick({R.id.tv_start_test, R.id.tv_stop_test, R.id.tv_print, R.id.tv_led_setting, R.id.tv_confirm,
-            R.id.tv_punish, R.id.tv_abandon_test, R.id.tv_finish_test, R.id.tv_exit_test,R.id.tv_pair})
+            R.id.tv_punish, R.id.tv_abandon_test, R.id.tv_finish_test, R.id.tv_exit_test, R.id.tv_pair})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
@@ -261,6 +271,9 @@ public class VolleyBallIndividual2Activity extends BaseTitleActivity
                 tvResult.setText("");
                 InteractUtils.saveResults(pairs, testDate);
                 onResultConfirmed();
+                if (setting.getType() == 1) {
+                    VolleyBallRadioManager.getInstance().deviceFree(SettingHelper.getSystemSetting().getHostId(), 1);
+                }
                 break;
 
             case R.id.tv_punish:
@@ -281,7 +294,8 @@ public class VolleyBallIndividual2Activity extends BaseTitleActivity
                 prepareForCheckIn();
                 break;
             case R.id.tv_pair:
-                startActivity(new Intent(getApplicationContext(), VolleyBallPairActivity.class));
+//                startActivity(new Intent(getApplicationContext(), VolleyBallPairActivity.class));
+                changeBadDevice();
                 break;
 
         }
@@ -598,4 +612,65 @@ public class VolleyBallIndividual2Activity extends BaseTitleActivity
                 .setNegativeButton("返回", null).show();
     }
 
+    @Override
+    public void onNoPairResponseArrived() {
+        toastSpeak("未收到子机回复,设置失败,请重试");
+    }
+
+    @Override
+    public void onNewDeviceConnect() {
+        cancelChangeBad();
+        changBadDialog.dismiss();
+    }
+
+
+    @Override
+    public void setFrequency(int deviceId, int originFrequency, int targetFrequency) {
+        facade.deviceManager.setFrequency(
+                originFrequency,
+                deviceId,
+                SettingHelper.getSystemSetting().getHostId());
+
+    }
+
+    public void cancelChangeBad() {
+        facade.mLinking = false;
+        if (linker != null) {
+            linker.cancelPair();
+        }
+        facade.stopTotally();
+        facade = null;
+        facade = new VolleyBallTest2Facade(SettingHelper.getSystemSetting().getHostId(), setting, this);
+
+    }
+
+    public void changeBadDevice() {
+        if (linker == null) {
+            linker = new SitPullLinker(TestConfigs.sCurrentItem.getMachineCode(), TARGET_FREQUENCY, this);
+            facade.setLinker(linker);
+        } else {
+            facade.setLinker(linker);
+        }
+        facade.stopTotally();
+        facade.mLinking = true;
+        linker.startPair(1);
+        showChangeBadDialog();
+
+    }
+
+    public void showChangeBadDialog() {
+        changBadDialog = new WaitDialog(this);
+        changBadDialog.setCanceledOnTouchOutside(false);
+        changBadDialog.setCancelable(false);
+        changBadDialog.show();
+        // 必须在dialog显示出来后再调用
+        changBadDialog.setTitle("请重启待连接设备");
+        changBadDialog.btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cancelChangeBad();
+                changBadDialog.dismiss();
+            }
+        });
+    }
 }
