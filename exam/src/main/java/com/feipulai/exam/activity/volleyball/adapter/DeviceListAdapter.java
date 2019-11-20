@@ -2,7 +2,6 @@ package com.feipulai.exam.activity.volleyball.adapter;
 
 import android.graphics.Color;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
@@ -108,7 +107,7 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
                 helper.itemTxtTestResult1.setBackgroundColor(Color.BLACK);
                 helper.itemTxtTestResult2.setBackgroundColor(Color.GREEN);
             }
-        }else {
+        } else {
             helper.itemTxtTestResult.setBackgroundColor(Color.BLACK);
             helper.itemTxtTestResult1.setBackgroundColor(Color.BLACK);
             helper.itemTxtTestResult2.setBackgroundColor(Color.BLACK);

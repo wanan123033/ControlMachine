@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
@@ -199,8 +198,9 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
     protected void onResume() {
         super.onResume();
         setDeviceCount(4);
-        deviceListAdapter.notifyDataSetChanged();
         setting = SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class);
+        deviceListAdapter.setTestCount(setting.getTestNo());
+        deviceListAdapter.notifyDataSetChanged();
         RadioManager.getInstance().setOnRadioArrived(resultJump);
 
         getState();
@@ -309,7 +309,7 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
                         @Override
                         public void run() {
                             Log.i("preTime", "-------" + time);
-                            isStartTime=true;
+                            isStartTime = true;
                             updateTime(time, pos);
                             deviceListAdapter.notifyItemChanged(pos);
                         }
