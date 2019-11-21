@@ -45,7 +45,7 @@ public class StandJumpRadioFacade implements RadioManager.OnRadioArrivedListener
         mGetDeviceStatesTask = new GetDeviceStatesTask(new GetDeviceStatesTask.OnGettingDeviceStatesListener() {
             @Override
             public void onGettingState(int position) {
-                StandJumpManager.getState(SettingHelper.getSystemSetting().getHostId(), position + 1, standJumpSetting.getPoints());
+                StandJumpManager.getState(SettingHelper.getSystemSetting().getHostId(), position + 1, standJumpSetting.getPointsScopeArray()[position] - 42);
 
                 try {
                     if (deviceList.size() == 2) {

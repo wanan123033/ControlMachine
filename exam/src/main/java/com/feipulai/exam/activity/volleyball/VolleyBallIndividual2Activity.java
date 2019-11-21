@@ -371,7 +371,7 @@ public class VolleyBallIndividual2Activity extends BaseTitleActivity
         TestCache testCache = TestCache.getInstance();
         Student student = pairs.get(0).getStudent();
         InteractUtils.showStuInfo(llStuDetail, student, testCache.getResults().get(student));
-
+        pairs.get(0).setPenalty(0);
         tvResult.setText(student.getStudentName());
 
         prepareView(true, false, true, true,
