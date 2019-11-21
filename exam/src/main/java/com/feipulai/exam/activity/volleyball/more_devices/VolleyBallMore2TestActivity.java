@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
@@ -199,8 +198,9 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
     protected void onResume() {
         super.onResume();
         setDeviceCount(4);
-        deviceListAdapter.notifyDataSetChanged();
         setting = SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class);
+        deviceListAdapter.setTestCount(setting.getTestNo());
+        deviceListAdapter.notifyDataSetChanged();
         RadioManager.getInstance().setOnRadioArrived(resultJump);
 
         getState();
@@ -268,7 +268,7 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
     public void sendStart(DeviceDetail deviceDetail, int pos) {
         mHandler.removeMessages(AUTO_START);
         BaseStuPair stuPair = deviceDetail.getStuDevicePair();
-        stuPair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
+        stuPair.getBaseDevice().setState(BaseDeviceState.STATE_PRE_TIME);
         int hostId = SettingHelper.getSystemSetting().getHostId();
         int deviceId = deviceDetail.getStuDevicePair().getBaseDevice().getDeviceId();
 
@@ -309,6 +309,7 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
                         @Override
                         public void run() {
                             Log.i("preTime", "-------" + time);
+                            isStartTime = true;
                             updateTime(time, pos);
                             deviceListAdapter.notifyItemChanged(pos);
                         }
@@ -388,6 +389,9 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
                 int hostId = SettingHelper.getSystemSetting().getHostId();
                 int deviceId = deviceDetail.getStuDevicePair().getBaseDevice().getDeviceId();
                 runable.stop();
+                Executors.newSingleThreadExecutor().shutdown();
+                VolleyBallRadioManager.getInstance().deviceFree(hostId, deviceId);
+                SystemClock.sleep(100);
                 VolleyBallRadioManager.getInstance().deviceFree(hostId, deviceId);
                 SystemClock.sleep(100);
                 VolleyBallRadioManager.getInstance().deviceFree(hostId, deviceId);

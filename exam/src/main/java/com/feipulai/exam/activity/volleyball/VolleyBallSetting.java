@@ -20,7 +20,7 @@ public class VolleyBallSetting {
     private boolean isPenalize;     //是否判罚
 
     private int testPattern;//0对空 1对墙
-    private int type;//0一对一 1一对多
+    private int type;//0有线1无线一对一 2无线一对多
     //最多设备数量
     private int spDeviceCount = 4;
     private boolean autoPair;

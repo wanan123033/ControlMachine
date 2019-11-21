@@ -314,7 +314,7 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
         deviceDetail.getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
         deviceDetail.getStuDevicePair().setCanTest(false);
         deviceDetail.getStuDevicePair().setBaseHeight(0);
-        deviceDetail.setTestTime(setting.getTestTime());
+//        deviceDetail.setTestTime(setting.getTestTime());
 
         int count = deviceDetail.getRound();
         toastSpeak(String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1)
@@ -371,7 +371,7 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
     protected void stuSkip(int pos) {
         deviceDetails.get(pos).setTestTime(0);
 
-//        deviceDetails.get(pos).getStuDevicePair().setStudent(null);
+        deviceDetails.get(pos).getStuDevicePair().setStudent(null);
         deviceDetails.get(pos).getStuDevicePair().setCanTest(true);
         deviceDetails.get(pos).getStuDevicePair().setTimeResult(new String[setTestCount()]);
         deviceListAdapter.notifyItemChanged(pos);
