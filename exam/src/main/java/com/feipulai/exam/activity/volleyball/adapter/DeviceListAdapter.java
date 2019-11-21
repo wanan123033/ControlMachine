@@ -44,10 +44,6 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
         this.testCount = testCount;
     }
 
-    interface CountView{
-        void startCount(ViewHolder holder);
-    }
-
     @Override
     protected void convert(final ViewHolder helper, final DeviceDetail item) {
         helper.swDeviceClose.setChecked(item.isDeviceOpen());
@@ -142,19 +138,29 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
                     helper.item_txt_state.setText("测试结束");
                     stopCount(helper);
                 } else if (state == BaseDeviceState.STATE_PRE_TIME) {
-                    if (item.getTime() > 0) {
-                        helper.prepView(false, true, false, setting, setting1.isPenalize());
-                        helper.item_txt_state.setText(item.getTime()+"");
-                    }  else {
-                        helper.item_txt_state.setText("");
-                        helper.prepView(false, true, false, setting, setting1.isPenalize());
+                    if (item.getTime() != setting1.getTestTime()) {
+                        if (item.getTime() > 0) {
+                            helper.prepView(false, true, false, setting, setting1.isPenalize());
+                            helper.item_txt_state.setText(item.getTime() + "");
+                        } else {
+                            helper.item_txt_state.setText("");
+                            helper.prepView(false, true, false, setting, setting1.isPenalize());
+                        }
+                    } else {
+                        if (item.getTime() >= 0) {
+                            helper.prepView(false, true, false, setting, setting1.isPenalize());
+                            helper.item_txt_state.setText("倒计时:");
+                        } else {
+                            helper.item_txt_state.setText("");
+                            helper.prepView(false, true, false, setting, setting1.isPenalize());
+                        }
                     }
                 }
             }
         }
 
-        if(item.isStartCount()){
-            startCount(helper,item.getTime());
+        if (item.isStartCount()) {
+            startCount(helper, item.getTime());
             item.setStartCount(false);
         }
 
@@ -187,7 +193,7 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
     public void startCount(ViewHolder holder, int time) {
         Log.e("DeviceListAdapter", "startCount----------------");
         holder.count_down.setVisibility(View.VISIBLE);
-        holder.count_down.initTime(time+1);
+        holder.count_down.initTime(time + 1);
         holder.count_down.reStart();
     }
 

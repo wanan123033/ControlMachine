@@ -306,7 +306,6 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-//                            deviceDetail.getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
                             deviceDetail.setTestTime(setting.getTestTime());
                             deviceDetail.setStartCount(true);
                             deviceListAdapter.notifyItemChanged(pos);
