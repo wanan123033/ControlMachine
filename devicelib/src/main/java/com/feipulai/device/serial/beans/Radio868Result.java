@@ -173,7 +173,7 @@ public class Radio868Result {
                             setResult(new VolleyPair868Result(data));
                             break;
                         case (byte) 0xb7://自检
-                            setType(SerialConfigs.VOLLEY_BALL_SET_MORE_MATCH);
+                            setType(SerialConfigs.VOLLEY_BALL_CHECK_MATCH);
                             setResult(new VolleyPair868Result(data));
                             break;
                         case (byte) 0xb2://查询版本

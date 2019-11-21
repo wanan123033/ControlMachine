@@ -61,9 +61,6 @@ public class VolleyBallTest2Facade implements SerialDeviceManager.RS232ResiltLis
         this.linker = linker;
     }
 
-    public void checkDevice() {
-        deviceManager.checkDevice();
-    }
 
     // 重置任务
     private void reset() {

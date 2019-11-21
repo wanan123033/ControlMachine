@@ -600,6 +600,8 @@ public class VolleyBallIndividual2Activity extends BaseTitleActivity
                     public void onClick(DialogInterface dialog, int which) {
                         int value = -1 * numberPicker.getValue();
                         if (value != pairs.get(0).getPenalty()) {
+                            String displayInLed = "成绩:" + ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult());
+                            ledManager.showString(SettingHelper.getSystemSetting().getHostId(), displayInLed, 1, 1, false, true);
                             ledManager.showString(systemSetting.getHostId(), "判罚:" + ResultDisplayUtils.getStrResultForDisplay(value), 1, 2, false, false);
                             ledManager.showString(systemSetting.getHostId(),
                                     "最终:" + ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult() + value),

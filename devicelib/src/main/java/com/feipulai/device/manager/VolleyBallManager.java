@@ -100,11 +100,11 @@ public class VolleyBallManager {
         }
     }
 
-    public void checkDevice() {
+    public void checkDevice(int hostId, int deviceId) {
         if (pattryType == 0)
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_CHECK));
         else {
-
+            VolleyBallRadioManager.getInstance().selfCheck(hostId, deviceId);
         }
     }
 
