@@ -47,11 +47,11 @@ public class PreStartTimeRunnable implements Runnable {
                         VolleyBallRadioManager.getInstance().startTime(hostId, deviceId, 0, timeSum);
                         Log.i("PreStartTimeRunnable", "startTime");
                         if (listener != null) {
-                            listener.startTime();
+                            listener.startTime();//倒计时开始计数
                         }
                     } else {
                         if (listener != null) {
-                            listener.preTime(i);
+                            listener.preTime(i);//预备倒计时5秒
                         }
                         Log.i("PreStartTimeRunnable", "preTime");
                         VolleyBallRadioManager.getInstance().startTime(hostId, deviceId, i, timeSum);

@@ -63,6 +63,13 @@ public class CountDown extends Chronometer {
      * 初始化时间
      */
     public void initTime(long _time_s) {
+//        if (_time_s <= 60) {
+//            format = new SimpleDateFormat("ss");
+//        } else if (_time_s <= 60 * 60 && _time_s > 60) {
+//            format = new SimpleDateFormat("mm:ss");
+//        } else {
+//            format = new SimpleDateFormat("hh:mm:ss");
+//        }
         time = nextTime = _time_s;
         updateTimeNext();
     }

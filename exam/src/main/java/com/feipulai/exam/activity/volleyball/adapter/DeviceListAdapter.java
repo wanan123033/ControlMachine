@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.Chronometer;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -14,6 +15,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.person.BaseDeviceState;
+import com.feipulai.exam.activity.volleyball.CountDown;
 import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.entity.Student;
@@ -40,6 +42,10 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
 
     public void setTestCount(int testCount) {
         this.testCount = testCount;
+    }
+
+    interface CountView{
+        void startCount(ViewHolder holder);
     }
 
     @Override
@@ -120,11 +126,13 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
                 if (state == BaseDeviceState.STATE_FREE || state == BaseDeviceState.STATE_NOT_BEGAIN) {
                     helper.prepView(true, false, false, setting, setting1.isPenalize());
                     helper.item_txt_state.setText("设备空闲");
+                    stopCount(helper);
                 } else if (state == BaseDeviceState.STATE_ONUSE) {
-                    Log.e("TAG", state + "," + item.getTime());
+                    Log.i("TAG", state + "," + item.getTime());
                     if (item.getTime() >= 0) {
                         helper.prepView(false, true, false, setting, setting1.isPenalize());
-                        helper.item_txt_state.setText("倒计时:" + item.getTime() + "秒");
+//                        helper.item_txt_state.setText("倒计时:" + item.getTime() + "秒");
+                        helper.item_txt_state.setText("倒计时:");
                     } else {
                         helper.item_txt_state.setText("");
                         helper.prepView(false, true, false, setting, setting1.isPenalize());
@@ -132,17 +140,24 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
                 } else if (state == BaseDeviceState.STATE_END) {
                     helper.prepView(false, false, true, setting, setting1.isPenalize());
                     helper.item_txt_state.setText("测试结束");
+                    stopCount(helper);
                 } else if (state == BaseDeviceState.STATE_PRE_TIME) {
                     if (item.getTime() > 0) {
                         helper.prepView(false, true, false, setting, setting1.isPenalize());
-                        helper.item_txt_state.setText(item.getTime() + "");
-                    } else {
+                        helper.item_txt_state.setText(item.getTime()+"");
+                    }  else {
                         helper.item_txt_state.setText("");
                         helper.prepView(false, true, false, setting, setting1.isPenalize());
                     }
                 }
             }
         }
+
+        if(item.isStartCount()){
+            startCount(helper,item.getTime());
+            item.setStartCount(false);
+        }
+
         helper.swDeviceClose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -163,8 +178,21 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
                 .addOnClickListener(R.id.txt_penalty);
     }
 
+    public void stopCount(ViewHolder holder) {
+        Log.i("DeviceListAdapter", "stopCount----------------");
+        holder.count_down.stop();
+        holder.count_down.setVisibility(View.GONE);
+    }
+
+    public void startCount(ViewHolder holder, int time) {
+        Log.e("DeviceListAdapter", "startCount----------------");
+        holder.count_down.setVisibility(View.VISIBLE);
+        holder.count_down.initTime(time+1);
+        holder.count_down.reStart();
+    }
+
     public String getShow(int num, String[] result) {
-        Log.e("getShow", "----" + Arrays.toString(result));
+//        Log.e("DeviceListAdapter", "getShow----" + Arrays.toString(result));
         if (result == null) {
             return "";
         } else {
@@ -219,6 +247,8 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
 
         @BindView(R.id.item_txt_state)
         TextView item_txt_state;
+        @BindView(R.id.count_down)
+        CountDown count_down;
 
 
         public ViewHolder(View view) {
