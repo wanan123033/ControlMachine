@@ -448,6 +448,24 @@ public class LEDManager {
         showString(hostId, "菲普莱体育", 3, 3, false, true);
     }
 
+    /**
+     * 显示当前项目信息
+     *
+     * @param hostId 主机号
+     */
+    public void resetLEDScreen(int hostId, int ledId, String machineName) {
+        //第一行项目加主机号
+        //第二行“请检录”
+        //第三行空
+        //第四行“菲普莱体育”
+        String title;
+        title = machineName + " " + hostId;
+        showSubsetString(hostId, ledId, title, getX(title), 0, true, false);
+        showSubsetString(hostId, ledId, "请检录", 5, 1, false, false);
+        showSubsetString(hostId, ledId, "菲普莱体育", 3, 3, false, true);
+    }
+
+
     public int getX(String showMsg) {
         int x;
         try {

@@ -20,7 +20,6 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.feipulai.common.utils.HandlerUtil;
@@ -29,9 +28,11 @@ import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.common.view.dialog.DialogUtils;
 import com.feipulai.device.manager.VolleyBallManager;
+import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.VolleyBallCheck;
+import com.feipulai.device.serial.beans.VolleyPair868Result;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -50,7 +51,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 public class VolleyBallSettingActivity
         extends BaseTitleActivity
         implements CompoundButton.OnCheckedChangeListener, RadioGroup.OnCheckedChangeListener, TextWatcher
-        , SerialDeviceManager.RS232ResiltListener {
+        , SerialDeviceManager.RS232ResiltListener, RadioManager.OnRadioArrivedListener {
 
     @BindView(R.id.sp_test_no)
     Spinner spTestNo;
@@ -84,7 +85,6 @@ public class VolleyBallSettingActivity
     private VolleyBallManager volleyBallManager;
     private Dialog checkDialog;
 
-    private int deviceId;
 
     @Override
     protected int setLayoutResID() {
@@ -95,7 +95,6 @@ public class VolleyBallSettingActivity
     protected void initData() {
         setting = SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class);
         volleyBallManager = new VolleyBallManager(setting.getType());
-        deviceId = getIntent().getIntExtra("deviceId",0);
         ArrayAdapter spTestRoundAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testRound);
         spTestRoundAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTestNo.setAdapter(spTestRoundAdapter);
@@ -129,6 +128,12 @@ public class VolleyBallSettingActivity
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
         return builder.setTitle("项目设置");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        RadioManager.getInstance().setOnRadioArrived(this);
     }
 
     @Override
@@ -183,12 +188,12 @@ public class VolleyBallSettingActivity
                 ToastUtils.showShort("功能开发中,敬请期待");
                 break;
             case R.id.tv_device_check:
-                if (deviceId == 0) {
+                if (setting.getType() == 0 || setting.getType() == 1) {
                     if (volleyBallManager == null) {
                         volleyBallManager = new VolleyBallManager(setting.getType());
                     }
                     showCheckDiglog();
-                    volleyBallManager.checkDevice();
+                    volleyBallManager.checkDevice(SettingHelper.getSystemSetting().getHostId(), 1);
                     isDisconnect = true;
 //                mProgressDialog = ProgressDialog.show(this, "", "终端自检中...", true);
                     alertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
@@ -198,24 +203,47 @@ public class VolleyBallSettingActivity
 
                     //3秒自检
                     mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 5000);
-                }else {
+                } else if (setting.getType() == 2) {
                     //TODO 无线模式自检
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setTitle("请选择");
                     builder.setItems(new String[]{"一号机", "二号机", "三号机", "四号机"}, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    VolleyBallCheckDialog dialog1 = new VolleyBallCheckDialog();
-                                    Bundle bundle = new Bundle();
-                                    bundle.putInt("deviceId",which + 1);
-                                    dialog1.setArguments(bundle);
-                                    dialog1.show(getFragmentManager(),"VolleyBallCheckDialog");
-                                }
-                            });
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            VolleyBallCheckDialog dialog1 = new VolleyBallCheckDialog();
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("deviceId", which + 1);
+                            dialog1.setArguments(bundle);
+                            dialog1.show(getFragmentManager(), "VolleyBallCheckDialog");
+                        }
+                    });
                     builder.create().show();
 
                 }
+                break;
+        }
+    }
+
+    @Override
+    public void onRadioArrived(Message msg) {
+        switch (msg.what) {
+            case SerialConfigs.VOLLEY_BALL_CHECK_MATCH:
+                isDisconnect = false;
+                if (checkDeviceView == null) {
+                    return;
+                }
+                if (alertDialog != null) {
+                    alertDialog.dismiss();
+                }
+                VolleyPair868Result result = (VolleyPair868Result) msg.obj;
+                VolleyBallCheck volleyBallCheck = new VolleyBallCheck();
+                volleyBallCheck.setCheckType(8);
+                volleyBallCheck.setDeviceType(result.getDeviceType());
+                volleyBallCheck.setPoleNum(result.getPoleNum());
+                volleyBallCheck.setPositionList(result.getPositionList());
+                msg.obj = volleyBallCheck;
+                HandlerUtil.sendMessage(mHandler, MSG_CHECK, msg.obj);
                 break;
         }
     }
@@ -318,7 +346,6 @@ public class VolleyBallSettingActivity
     }
 
 
-
     /**
      * 回调
      */
@@ -366,7 +393,7 @@ public class VolleyBallSettingActivity
                         try {
                             Thread.sleep(100);
                             if (activity.checkDialog.isShowing()) {
-                                activity.volleyBallManager.checkDevice();
+                                activity.volleyBallManager.checkDevice(SettingHelper.getSystemSetting().getHostId(), 1);
                             }
 
                         } catch (InterruptedException e) {

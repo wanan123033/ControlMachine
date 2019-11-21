@@ -139,7 +139,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         stuPairAdapter = new VolleyBallGroupStuAdapter(pairs);
         rvTestingPairs.setAdapter(stuPairAdapter);
 
-        facade = new VolleyBallTestFacade(SettingHelper.getSystemSetting().getHostId(),setting.getType(), setting, this);
+        facade = new VolleyBallTestFacade(SettingHelper.getSystemSetting().getHostId(), setting.getType(), setting, this);
         stuPairAdapter.setOnItemClickListener(this);
 
 //        prepareForBegin();
@@ -398,7 +398,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
     private void prepareForBegin() {
         Student student = pairs.get(position()).getStudent();
         tvResult.setText(student.getStudentName());
-
+        pairs.get(position()).setPenalty(0);
         List<RoundResult> results = TestCache.getInstance().getResults().get(student);
 
         prepareView(true,

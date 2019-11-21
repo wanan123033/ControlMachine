@@ -79,6 +79,9 @@ public class VolleyBallCheck {
 
     }
 
+    public VolleyBallCheck() {
+    }
+
     public int getPoleNum() {
         return poleNum;
     }

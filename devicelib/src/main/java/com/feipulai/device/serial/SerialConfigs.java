@@ -35,7 +35,7 @@ public class SerialConfigs {
         sProChannels.put(ItemDefault.CODE_PQ, 110);//排球垫球
         sProChannels.put(ItemDefault.CODE_ZFP, 41);//红外计时
         sProChannels.put(ItemDefault.CODE_LQYQ, 85);//篮球运球
-        sProChannels.put(ItemDefault.CODE_ZQYQ, 85);//足球运球
+        sProChannels.put(ItemDefault.CODE_ZQYQ, 95);//足球运球
     }
 
     public static final String[] GROUP_NAME = {"A", "B", "C"};
@@ -228,6 +228,7 @@ public class SerialConfigs {
     public static final int SARGENT_JUMP_SET_MORE_MATCH = 0x39;
     public static final int VOLLEY_BALL_SET_MORE_MATCH = 0x40;
     public static final int VITAL_CAPACITY_SET_MORE_MATCH = 0x41;
+    public static final int VOLLEY_BALL_CHECK_MATCH = 0x42;
     public static int USE_VERSION = 363;//肺活量新版本为及以后为363
 
     //排球垫球

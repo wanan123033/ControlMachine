@@ -51,7 +51,7 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
     }
 
     public void checkDevice() {
-        deviceManager.checkDevice();
+//        deviceManager.checkDevice();
     }
 
     // 重置任务

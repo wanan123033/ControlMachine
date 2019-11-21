@@ -103,7 +103,7 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                         item.setDeviceOpen(isChecked);
                     }
                 });
-                if (item.isPunish()) {
+                if (item.isPunish() && item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_END) {
                     moreHelper.txtPunish.setVisibility(View.VISIBLE);
                 } else {
                     moreHelper.txtPunish.setVisibility(View.GONE);
@@ -177,6 +177,11 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
 
                 if (!isNextClickStart) {
                     oneViewHolder.txtStart.setVisibility(View.GONE);
+                }
+                if (item.isPunish()) {
+                    oneViewHolder.txtPunish.setVisibility(View.VISIBLE);
+                } else {
+                    oneViewHolder.txtPunish.setVisibility(View.GONE);
                 }
                 oneViewHolder.addOnClickListener(R.id.txt_skip).addOnClickListener(R.id.txt_start);
                 oneViewHolder.addOnClickListener(R.id.txt_punish);

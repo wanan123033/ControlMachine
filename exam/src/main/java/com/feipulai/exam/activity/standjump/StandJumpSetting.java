@@ -160,12 +160,10 @@ public class StandJumpSetting {
     }
 
     public int getPoints() {
-        //TODO 测试
-        return 100;
-//        if (pointsScope > 0) {
-//            return pointsScope;
-//        } else {
-//            return testPoints * 100;
-//        }
+        if (pointsScope > 0) {
+            return pointsScope;
+        } else {
+            return testPoints * 100;
+        }
     }
 }
