@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -59,6 +60,8 @@ public class DataDisplayActivity extends BaseTitleActivity {
     protected void initData() {
         mDataRetrieveBean = (DataRetrieveBean) getIntent().getSerializableExtra(DataRetrieveActivity.DATA_EXTRA);
         itemCode = getIntent().getStringExtra(DataRetrieveActivity.DATA_ITEM_CODE);
+
+        Log.e("itemCode", "---------" + itemCode);
         mTvStuCode.setText(mDataRetrieveBean.getStudentCode());
         mTvStuName.setText(mDataRetrieveBean.getStudentName());
         mTvSex.setText(mDataRetrieveBean.getSex() == 0 ? "男" : "女");
@@ -69,7 +72,7 @@ public class DataDisplayActivity extends BaseTitleActivity {
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("成绩详情") ;
+        return builder.setTitle("成绩详情");
     }
 
     private void displayResults() {

@@ -174,7 +174,6 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
                     case R.id.txt_end:
                         sendEnd(deviceDetails.get(i), i);
                         stuSkip(i);
-//                        setShowLed(deviceDetails.get(i).getStuDevicePair(),i);
                         deviceDetails.get(i).getStuDevicePair().setStudent(null);
                         refreshDevice(i);
 //                        int hostId = SettingHelper.getSystemSetting().getHostId();

@@ -64,18 +64,15 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
         }
         if (item.getStuDevicePair().getTimeResult() != null) {
             helper.itemTxtTestResult.setText(getShow(1, item.getStuDevicePair().getTimeResult()));
-//            helper.itemTxtTestResult.setBackgroundColor(Color.BLACK);
         }
 
         if (testCount >= 2) {
             helper.itemTxtTestResult1.setVisibility(View.VISIBLE);
-//            helper.itemTxtTestResult1.setBackgroundColor(Color.BLACK);
             helper.itemTxtTestResult2.setVisibility(View.VISIBLE);
             helper.itemTxtTestResult1.setText(getShow(2, item.getStuDevicePair().getTimeResult()));
         }
         if (testCount >= 3) {
             helper.itemTxtTestResult2.setVisibility(View.VISIBLE);
-//            helper.itemTxtTestResult2.setBackgroundColor(Color.BLACK);
             helper.itemTxtTestResult2.setText(getShow(3, item.getStuDevicePair().getTimeResult()));
         }
 
@@ -144,7 +141,12 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
                 } else if (state == BaseDeviceState.STATE_PRE_TIME) {
                     if (item.getTime() > 0) {
                         helper.prepView(false, true, false, setting, setting1.isPenalize());
-                        helper.item_txt_state.setText(item.getTime() + "");
+                        //此处避免显示问题
+                        if (item.getTime() == setting1.getTestTime()) {
+                            helper.item_txt_state.setText("倒计时:" + item.getTime() + "秒");
+                        } else {
+                            helper.item_txt_state.setText(item.getTime() + "");
+                        }
                     } else {
                         helper.item_txt_state.setText("");
                         helper.prepView(false, true, false, setting, setting1.isPenalize());

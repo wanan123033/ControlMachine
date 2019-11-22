@@ -312,7 +312,7 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 isStartTime = false;
-                deviceDetail.getCount().onFinish();
+                deviceDetail.getCount().cancel();
                 deviceDetail.getStuDevicePair().setResultState(3);
                 deviceDetails.get(pos).setTestTime(0);
                 deviceListAdapter.notifyItemChanged(pos);
@@ -326,7 +326,7 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 mHandler.removeMessages(TEST_TIME);
-                deviceDetail.getCount().onFinish();
+                deviceDetail.getCount().cancel();
                 isStartTime = false;
                 deviceDetails.get(pos).setTestTime(0);
                 deviceListAdapter.notifyItemChanged(pos);
