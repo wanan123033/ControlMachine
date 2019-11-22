@@ -85,6 +85,7 @@ public class VolleyBallSettingActivity
     private VolleyBallManager volleyBallManager;
     private Dialog checkDialog;
 
+    private long disconnectTime;
 
     @Override
     protected int setLayoutResID() {
@@ -325,6 +326,7 @@ public class VolleyBallSettingActivity
         checkDeviceView = new CheckDeviceView(this);
 
         checkDeviceView.setUnunitedData(setting.getTestPattern() == 0 ? VolleyBallSetting.ANTIAIRCRAFT_POLE : VolleyBallSetting.WALL_POLE);
+        checkDeviceView.setWiress(setting.getType() == 1);
         checkDialog = DialogUtils.create(this, checkDeviceView, true);
         checkDialog.show();
         //这种设置宽高的方式也是好使的！！！-- show 前调用，show 后调用都可以！！！
@@ -385,7 +387,10 @@ public class VolleyBallSettingActivity
 //                                }
                                 activity.checkDeviceView.setData(volleyBallCheck.getPoleNum() / 2, volleyBallCheck.getPositionList());
                             } else {
-                                activity.toastSpeak("当前项目使用设备错误，请更换");
+                                if (!activity.isDestroyed() && (System.currentTimeMillis() - activity.disconnectTime) > 30000) {
+                                    activity.toastSpeak("当前项目使用设备错误，请更换");
+                                    activity.disconnectTime = System.currentTimeMillis();
+                                }
                             }
                         } else {
                             activity.checkDeviceView.setData(activity.setting.getTestPattern() == 0 ? VolleyBallSetting.ANTIAIRCRAFT_POLE : VolleyBallSetting.WALL_POLE, volleyBallCheck.getPositionList());

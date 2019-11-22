@@ -147,6 +147,27 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/style_setting_tv_title"
+                    android:layout_marginLeft="20dp"
+                    android:text="频段号:" />
+
+                <TextView
+                    android:id="@+id/txt_channel"
+                    style="@style/style_setting_tv_title"
+                    android:layout_width="400dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="30dp"
+                    android:gravity="left|center_vertical" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="21dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">

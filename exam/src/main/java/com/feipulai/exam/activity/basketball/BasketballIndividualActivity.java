@@ -328,7 +328,12 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 break;
             case 6:
                 txtDeviceStatus.setText("空闲");
-                state = WAIT_CHECK_IN;
+                if (isExistTestPlace()) {
+                    state = WAIT_CHECK_IN;
+                } else {
+                    state = WAIT_FREE;
+                }
+
                 break;
         }
         setOperationUI();
@@ -618,9 +623,8 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 }
                 break;
             case R.id.txt_stop_timing://停止计时
-                if (setting.getTestType() == 0) {
-                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
-                }
+
+                ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
                 break;
             case R.id.tv_punish_add: //违例+
 

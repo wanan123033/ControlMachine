@@ -615,7 +615,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Intent intent = new Intent(DataRetrieveActivity.this, DataDisplayActivity.class);
                 intent.putExtra(DATA_EXTRA, mList.get(position));
-                intent.putExtra(DATA_ITEM_CODE, mCurrentItem.getItemCode());
+                intent.putExtra(DATA_ITEM_CODE, getItemCode());
                 startActivity(intent);
                 Logger.i("onItemClick:" + position);
             }
