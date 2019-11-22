@@ -1103,6 +1103,7 @@ public class DBManager {
     }
 
     public List<RoundResult> queryResultsByStudentCode(String itemCode, String studentCode) {
+        Log.e("tat","itemCode="+itemCode +",studentCode="+studentCode);
         return roundResultDao
                 .queryBuilder()
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))

@@ -37,6 +37,7 @@ public class BaseStuPair implements Serializable {
 
     private int roundNo;  //轮次
     private boolean LEDupdate = true;
+    private int time;
 
     public BaseStuPair(int result, int resultState, Student student, BaseDeviceState baseDevice) {
         this.result = result;
@@ -192,5 +193,13 @@ public class BaseStuPair implements Serializable {
 
     public boolean getLEDupdate() {
         return LEDupdate;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
     }
 }

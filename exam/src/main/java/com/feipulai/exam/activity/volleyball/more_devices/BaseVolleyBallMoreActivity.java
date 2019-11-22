@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.jump_rope.task.PreciseCountDownTimer;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -176,9 +177,9 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
 //                        setShowLed(deviceDetails.get(i).getStuDevicePair(),i);
                         deviceDetails.get(i).getStuDevicePair().setStudent(null);
                         refreshDevice(i);
-                        int hostId = SettingHelper.getSystemSetting().getHostId();
-                        int deviceId = (byte) deviceDetails.get(i).getStuDevicePair().getBaseDevice().getDeviceId();
-                        VolleyBallRadioManager.getInstance().deviceFree(hostId, deviceId);
+//                        int hostId = SettingHelper.getSystemSetting().getHostId();
+//                        int deviceId = (byte) deviceDetails.get(i).getStuDevicePair().getBaseDevice().getDeviceId();
+//                        VolleyBallRadioManager.getInstance().deviceFree(hostId, deviceId);
                         deviceDetails.get(i).setFinsh(true);
                         break;
                     case R.id.txt_time:
@@ -216,7 +217,7 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
         deviceDetails.clear();
         VolleyBallSetting setting = SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class);
         for (int i = 0; i < deviceCount; i++) {
-            DeviceDetail detail = new DeviceDetail();
+            final DeviceDetail detail = new DeviceDetail();
             detail.getStuDevicePair().getBaseDevice().setDeviceId(i + 1);
             detail.getStuDevicePair().setTimeResult(new String[setting.getTestNo()]);
             detail.setTestTime(setting.getTestTime());
@@ -445,6 +446,8 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
         roundResult.setScheduleNo(studentItem.getScheduleNo());
         roundResult.setUpdateState(0);
         RoundResult bestResult = DBManager.getInstance().queryBestScore(baseStuPair.getStudent().getStudentCode(), testNo);
+        if (bestResult != null)
+            Log.e("TAG======",bestResult.toString());
         if (bestResult != null) {
             // 原有最好成绩犯规 或者原有最好成绩没有犯规但是现在成绩更好
             if (bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && baseStuPair.getResultState() == RoundResult.RESULT_STATE_NORMAL && bestResult.getResult() <= baseStuPair.getResult()) {
@@ -512,6 +515,7 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
     }
 
     protected void refreshDevice(int index) {
+        Log.e("TAG--------","------refreshDevice,----index="+index);
         if (deviceDetails.get(index).getStuDevicePair().getBaseDevice() != null) {
             deviceListAdapter.notifyItemChanged(index);
         }

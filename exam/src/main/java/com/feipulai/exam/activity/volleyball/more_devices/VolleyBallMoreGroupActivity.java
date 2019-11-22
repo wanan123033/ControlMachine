@@ -42,16 +42,6 @@ public class VolleyBallMoreGroupActivity extends BaseMoreGroupActivity {
             msg.obj = obj;
             mHandler.sendMessage(msg);
         }
-
-        @Override
-        public void begin(VolleyPair868Result obj) {
-
-        }
-
-        @Override
-        public void onError(byte gan, byte[] bytes) {
-
-        }
     });
 
     @Nullable

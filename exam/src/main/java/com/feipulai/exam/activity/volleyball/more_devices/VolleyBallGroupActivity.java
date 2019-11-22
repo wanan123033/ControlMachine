@@ -93,16 +93,6 @@ public class VolleyBallGroupActivity extends BaseGroupActivity {
             msg.obj = obj;
             mHandler.sendMessage(msg);
         }
-
-        @Override
-        public void begin(VolleyPair868Result obj) {
-
-        }
-
-        @Override
-        public void onError(byte gan, byte[] bytes) {
-
-        }
     });
     private boolean isStartTime = false;
 

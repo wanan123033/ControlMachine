@@ -38,8 +38,10 @@ public class VolleyballPatternSelectActivity extends SubItemsSelectActivity {
 //                setting.setType(position >= 2 ? 1 : 0);
                 if (position == 0 || position == 1) {
                     setting.setType(0);
-                } else {
+                } else if (position == 2 || position == 3){
                     setting.setType(1);
+                }else {
+                    setting.setType(2);
                 }
                 SharedPrefsUtil.save(VolleyballPatternSelectActivity.this, setting);
 

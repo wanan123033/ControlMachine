@@ -42,7 +42,7 @@
         android:id="@+id/txt_search"
         android:layout_width="74dp"
         android:layout_height="match_parent"
-        android:background="@color/colorAccent"
+        android:background="@drawable/btn_selector"
         android:gravity="center"
         android:text="搜索"
         android:textColor="@color/white"

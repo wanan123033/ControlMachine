@@ -274,5 +274,16 @@ public class RoundResult implements Serializable {
         this.remark3 = remark3;
     }
 
-
+    @Override
+    public String toString() {
+        return "RoundResult{" +
+                "studentCode='" + studentCode + '\'' +
+                ", roundNo=" + roundNo +
+                ", testNo=" + testNo +
+                ", penaltyNum=" + penaltyNum +
+                ", result=" + result +
+                ", resultState=" + resultState +
+                ", isLastResult=" + isLastResult +
+                '}';
+    }
 }

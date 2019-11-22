@@ -138,7 +138,7 @@ public class VolleyBallIndividual2Activity extends BaseTitleActivity
         individualCheckFragment.setOnIndividualCheckInListener(this);
         ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), individualCheckFragment, R.id.ll_individual_check);
 
-        facade = new VolleyBallTest2Facade(SettingHelper.getSystemSetting().getHostId(), setting, this);
+
         ledManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
         prepareForCheckIn();
     }
@@ -172,6 +172,18 @@ public class VolleyBallIndividual2Activity extends BaseTitleActivity
                 startProjectSetting();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        facade = new VolleyBallTest2Facade(SettingHelper.getSystemSetting().getHostId(), setting, this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        facade.stopTotally();
     }
 
     @Override

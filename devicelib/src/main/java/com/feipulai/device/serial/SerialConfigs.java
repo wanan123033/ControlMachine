@@ -12,6 +12,8 @@ import java.util.Map;
 public class SerialConfigs {
 
 
+
+
     private SerialConfigs() {
     }
 
@@ -237,6 +239,7 @@ public class SerialConfigs {
     public static final int VOLLEY_BALL_STATE = 0x43;
     public static final int VOLLEY_BALL_SELFCHECK = 0x44;
     public static final int VOLLEY_BALL_B0 = 0x45;
+    public static final int VOLLEY_BALL_GET_VER = 0x4A;
 
     //篮球足球运球
     public static final int DRIBBLEING_RESULT = 0x46;
