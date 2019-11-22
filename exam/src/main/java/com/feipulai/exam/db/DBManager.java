@@ -191,8 +191,8 @@ public class DBManager {
         scheduleDao.deleteAll();
         itemScheduleDao.deleteAll();
         machineResultDao.deleteAll();
-        chipInfoDao.deleteAll();
-        chipGroupDao.deleteAll();
+//        chipInfoDao.deleteAll();
+//        chipGroupDao.deleteAll();
     }
 
     /**

@@ -99,7 +99,6 @@ public class ChipInfoExlWriter extends ExlWriter {
             }
             e.printStackTrace();
         }
-
     }
 
     private void generateRows(List<ChipInfo> chipInfos, HSSFSheet sheet) {
@@ -114,7 +113,7 @@ public class ChipInfoExlWriter extends ExlWriter {
             cell = row.createCell(3);
             cell.setCellValue(TextUtils.isEmpty(chipInfos.get(j).getChipID1())?"":chipInfos.get(j).getChipID1());
             cell = row.createCell(4);
-            cell.setCellValue(TextUtils.isEmpty(chipInfos.get(j).getChipID2())?"":chipInfos.get(j).getChipID1());
+            cell.setCellValue(TextUtils.isEmpty(chipInfos.get(j).getChipID2())?"":chipInfos.get(j).getChipID2());
         }
     }
 
