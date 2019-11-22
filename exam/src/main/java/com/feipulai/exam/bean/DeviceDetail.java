@@ -13,6 +13,8 @@ public class DeviceDetail implements MultiItemEntity {
     private int time;
     private int examType;
     private boolean isFinal;
+    private boolean isStartCount;
+    private boolean isStopCount;
 
 
     public DeviceDetail() {
@@ -27,6 +29,22 @@ public class DeviceDetail implements MultiItemEntity {
     private int round;
     private boolean isConfirmVisible;
     private boolean isPunish;
+
+    public boolean isStartCount() {
+        return isStartCount;
+    }
+
+    public void setStartCount(boolean startCount) {
+        isStartCount = startCount;
+    }
+
+    public boolean isStopCount() {
+        return isStopCount;
+    }
+
+    public void setStopCount(boolean stopCount) {
+        isStopCount = stopCount;
+    }
 
     public BaseStuPair getStuDevicePair() {
         return baseStuPair;
