@@ -245,6 +245,9 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
             runable.setListener(new PreStartTimeRunnable.TimeListener() {
                 @Override
                 public void startTime() {
+                    if (deviceDetail.getCount() != null){
+                        deviceDetail.getCount().cancel();
+                    }
                     deviceDetail.setCount(new PreciseCountDownTimer(setting.getTestTime() * 1000,1000,0) {
                         @Override
                         public void onTick(final long tick) {
@@ -294,7 +297,7 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
         BaseStuPair stuDevicePair = deviceDetail.getStuDevicePair();
         stuDevicePair.getBaseDevice().setState(BaseDeviceState.STATE_END);
         updateResult(stuDevicePair);
-
+        deviceDetail.getCount().cancel();
         setShowLed(deviceDetail.getStuDevicePair(), pos);
     }
 
@@ -351,6 +354,7 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
         if (deviceDetail.getStuDevicePair().getResultState() == 0){
             deviceDetail.getStuDevicePair().setResultState(1);
         }
+        deviceDetail.getCount().cancel();
         saveResult(deviceDetail.getStuDevicePair(), pos);
         updateResult(deviceDetail.getStuDevicePair());
 
@@ -411,7 +415,6 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
         BaseStuPair stuDevicePair = deviceDetail.getStuDevicePair();
         stuDevicePair.getBaseDevice().setState(BaseDeviceState.STATE_END);
         updateResult(stuDevicePair);
-
     }
 
     @Override

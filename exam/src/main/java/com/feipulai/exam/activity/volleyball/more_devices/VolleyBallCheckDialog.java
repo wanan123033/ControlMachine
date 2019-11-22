@@ -24,32 +24,27 @@ import java.util.List;
 public class VolleyBallCheckDialog extends DialogFragment implements RadioManager.OnRadioArrivedListener {
     private CheckDeviceView checkDeviceView;
     private int deviceId;
+    private VolleyBallSetting setting;
+    private Runnable runable = new Runnable() {
+        @Override
+        public void run() {
+            sendSelfCheck(deviceId);
+        }
+    };
 
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             VolleyPair868Result resul = (VolleyPair868Result) msg.obj;
-//                byte[] result = resul.getCheckResult();
-//                List<Integer> states = new ArrayList<>();
-//                for (int j = 0; j < result.length; j++) {
-//                    if (result[j] == (byte) 0xFF) {
-//                        for (int i = 0; i < 10; i++) {
-//                            states.add(1);
-//                        }
-//                    } else {
-//                        for (int i = 0; i < 10; i++) {
-//                            states.add(0);
-//                        }
-//                    }
-//                }
-                checkDeviceView.setData(5, resul.getPositionList());
-            sendSelfCheck(deviceId);
+            checkDeviceView.setData(setting.getTestPattern() == 0 ? VolleyBallSetting.ANTIAIRCRAFT_POLE : VolleyBallSetting.WALL_POLE, resul.getPositionList());
+
             return false;
         }
     });
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setting = SharedPrefsUtil.loadFormSource(getActivity().getApplicationContext(),VolleyBallSetting.class);
         RadioManager.getInstance().setOnRadioArrived(this);
     }
 
@@ -57,7 +52,7 @@ public class VolleyBallCheckDialog extends DialogFragment implements RadioManage
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         checkDeviceView = new CheckDeviceView(getActivity());
-        checkDeviceView.setUnunitedData(5);
+        checkDeviceView.setUnunitedData(setting.getTestPattern() == 0 ? VolleyBallSetting.ANTIAIRCRAFT_POLE : VolleyBallSetting.WALL_POLE);
         checkDeviceView.setWiress(true);
         return checkDeviceView;
     }
@@ -77,10 +72,19 @@ public class VolleyBallCheckDialog extends DialogFragment implements RadioManage
 
     }
 
-    private void sendSelfCheck(int deviceId) {
+    private void sendSelfCheck(final int deviceId) {
         int hostId = SettingHelper.getSystemSetting().getHostId();
         VolleyBallRadioManager.getInstance().selfCheck(hostId,deviceId);
+
+        handler.postDelayed(runable,3000);
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        handler.removeCallbacks(runable);
+    }
+
     @Override
     public void onRadioArrived(Message msg) {
         handler.sendMessage(msg);
