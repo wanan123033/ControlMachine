@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class VolleyPair868Result {
+    private int poleNum;
+    private int deviceType;
     private byte[] dataArr;
     private List<Integer> positionList;
     private int frequency;
@@ -29,9 +31,6 @@ public class VolleyPair868Result {
 
     public static final int ELECTRICITY_STATE_NOMAL = 0x81;  //电量充足
     public static final int ELECTRICITY_STATE_INADEQUATE = 0x80;  //电量不足
-
-    private int poleNum;//1米杆为2，2米杆为4，3米杆为6。
-    private int deviceType;//对空垫球为0；对墙垫球为1
 
 
     public VolleyPair868Result(byte[] data) {
@@ -63,7 +62,7 @@ public class VolleyPair868Result {
                     dList.add(Integer.valueOf(binaryData.substring(j, j + 1)));
                 }
             }
-            Integer positionArray[] = new Integer[40];
+            Integer positionArray[] = new Integer[30];
             System.arraycopy(dList.toArray(), 0, positionArray, 0, positionArray.length);
             positionList = new ArrayList<>(Arrays.asList(positionArray));
 
@@ -73,7 +72,6 @@ public class VolleyPair868Result {
         }
 
     }
-
     public int getState() {
         return state;
     }

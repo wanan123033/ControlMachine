@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.Chronometer;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -15,7 +14,6 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.person.BaseDeviceState;
-import com.feipulai.exam.activity.volleyball.CountDown;
 import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.entity.Student;
@@ -66,18 +64,15 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
         }
         if (item.getStuDevicePair().getTimeResult() != null) {
             helper.itemTxtTestResult.setText(getShow(1, item.getStuDevicePair().getTimeResult()));
-//            helper.itemTxtTestResult.setBackgroundColor(Color.BLACK);
         }
 
         if (testCount >= 2) {
             helper.itemTxtTestResult1.setVisibility(View.VISIBLE);
-//            helper.itemTxtTestResult1.setBackgroundColor(Color.BLACK);
             helper.itemTxtTestResult2.setVisibility(View.VISIBLE);
             helper.itemTxtTestResult1.setText(getShow(2, item.getStuDevicePair().getTimeResult()));
         }
         if (testCount >= 3) {
             helper.itemTxtTestResult2.setVisibility(View.VISIBLE);
-//            helper.itemTxtTestResult2.setBackgroundColor(Color.BLACK);
             helper.itemTxtTestResult2.setText(getShow(3, item.getStuDevicePair().getTimeResult()));
         }
 
@@ -85,14 +80,23 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
             helper.itemTxtTestResult.setVisibility(View.VISIBLE);
             helper.itemTxtTestResult1.setVisibility(View.GONE);
             helper.itemTxtTestResult2.setVisibility(View.GONE);
+            helper.itemTxtResult.setVisibility(View.VISIBLE);
+            helper.itemTxtResult1.setVisibility(View.GONE);
+            helper.itemTxtResult2.setVisibility(View.GONE);
         } else if (testCount == 2) {
             helper.itemTxtTestResult.setVisibility(View.VISIBLE);
             helper.itemTxtTestResult1.setVisibility(View.VISIBLE);
             helper.itemTxtTestResult2.setVisibility(View.GONE);
+            helper.itemTxtResult.setVisibility(View.VISIBLE);
+            helper.itemTxtResult1.setVisibility(View.VISIBLE);
+            helper.itemTxtResult2.setVisibility(View.GONE);
         } else if (testCount == 3) {
             helper.itemTxtTestResult.setVisibility(View.VISIBLE);
             helper.itemTxtTestResult1.setVisibility(View.VISIBLE);
             helper.itemTxtTestResult2.setVisibility(View.VISIBLE);
+            helper.itemTxtResult.setVisibility(View.VISIBLE);
+            helper.itemTxtResult1.setVisibility(View.VISIBLE);
+            helper.itemTxtResult2.setVisibility(View.VISIBLE);
         }
 
         if (item.getStuDevicePair().getStudent() != null) {
@@ -122,13 +126,11 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
                 if (state == BaseDeviceState.STATE_FREE || state == BaseDeviceState.STATE_NOT_BEGAIN) {
                     helper.prepView(true, false, false, setting, setting1.isPenalize());
                     helper.item_txt_state.setText("设备空闲");
-                    stopCount(helper);
                 } else if (state == BaseDeviceState.STATE_ONUSE) {
-                    Log.i("TAG", state + "," + item.getTime());
+                    Log.e("TAG", state + "," + item.getTime());
                     if (item.getTime() >= 0) {
                         helper.prepView(false, true, false, setting, setting1.isPenalize());
-//                        helper.item_txt_state.setText("倒计时:" + item.getTime() + "秒");
-                        helper.item_txt_state.setText("倒计时:");
+                        helper.item_txt_state.setText("倒计时:" + item.getTime() + "秒");
                     } else {
                         helper.item_txt_state.setText("");
                         helper.prepView(false, true, false, setting, setting1.isPenalize());
@@ -136,34 +138,22 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
                 } else if (state == BaseDeviceState.STATE_END) {
                     helper.prepView(false, false, true, setting, setting1.isPenalize());
                     helper.item_txt_state.setText("测试结束");
-                    stopCount(helper);
                 } else if (state == BaseDeviceState.STATE_PRE_TIME) {
-                    if (item.getTime() != setting1.getTestTime()) {
-                        if (item.getTime() > 0) {
-                            helper.prepView(false, true, false, setting, setting1.isPenalize());
-                            helper.item_txt_state.setText(item.getTime() + "");
+                    if (item.getTime() > 0) {
+                        helper.prepView(false, true, false, setting, setting1.isPenalize());
+                        //此处避免显示问题
+                        if (item.getTime() == setting1.getTestTime()) {
+                            helper.item_txt_state.setText("倒计时:" + item.getTime() + "秒");
                         } else {
-                            helper.item_txt_state.setText("");
-                            helper.prepView(false, true, false, setting, setting1.isPenalize());
+                            helper.item_txt_state.setText(item.getTime() + "");
                         }
                     } else {
-                        if (item.getTime() >= 0) {
-                            helper.prepView(false, true, false, setting, setting1.isPenalize());
-                            helper.item_txt_state.setText("倒计时:");
-                        } else {
-                            helper.item_txt_state.setText("");
-                            helper.prepView(false, true, false, setting, setting1.isPenalize());
-                        }
+                        helper.item_txt_state.setText("");
+                        helper.prepView(false, true, false, setting, setting1.isPenalize());
                     }
                 }
             }
         }
-
-        if (item.isStartCount()) {
-            startCount(helper, item.getTime());
-            item.setStartCount(false);
-        }
-
         helper.swDeviceClose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -184,21 +174,8 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
                 .addOnClickListener(R.id.txt_penalty);
     }
 
-    public void stopCount(ViewHolder holder) {
-        Log.i("DeviceListAdapter", "stopCount----------------");
-        holder.count_down.stop();
-        holder.count_down.setVisibility(View.GONE);
-    }
-
-    public void startCount(ViewHolder holder, int time) {
-        Log.e("DeviceListAdapter", "startCount----------------");
-        holder.count_down.setVisibility(View.VISIBLE);
-        holder.count_down.initTime(time + 1);
-        holder.count_down.reStart();
-    }
-
     public String getShow(int num, String[] result) {
-//        Log.e("DeviceListAdapter", "getShow----" + Arrays.toString(result));
+        Log.e("getShow", "----" + Arrays.toString(result));
         if (result == null) {
             return "";
         } else {
@@ -237,6 +214,13 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
         @BindView(R.id.item_txt_test_result2)
         TextView itemTxtTestResult2;
 
+        @BindView(R.id.item_txt_result)
+        TextView itemTxtResult;
+        @BindView(R.id.item_txt_result1)
+        TextView itemTxtResult1;
+        @BindView(R.id.item_txt_result2)
+        TextView itemTxtResult2;
+
         @BindView(R.id.sw_device_close)
         CheckBox swDeviceClose;
         @BindView(R.id.cb_device_state)
@@ -253,8 +237,6 @@ public class DeviceListAdapter extends BaseQuickAdapter<DeviceDetail, DeviceList
 
         @BindView(R.id.item_txt_state)
         TextView item_txt_state;
-        @BindView(R.id.count_down)
-        CountDown count_down;
 
 
         public ViewHolder(View view) {

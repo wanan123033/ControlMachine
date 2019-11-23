@@ -1,6 +1,7 @@
 package com.feipulai.exam.bean;
 
 import com.chad.library.adapter.base.entity.MultiItemEntity;
+import com.feipulai.common.jump_rope.task.PreciseCountDownTimer;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.entity.RoundResult;
@@ -15,7 +16,7 @@ public class DeviceDetail implements MultiItemEntity {
     private boolean isFinal;
     private boolean isStartCount;
     private boolean isStopCount;
-
+    private PreciseCountDownTimer count;
 
     public DeviceDetail() {
         baseStuPair = new BaseStuPair();
@@ -135,5 +136,13 @@ public class DeviceDetail implements MultiItemEntity {
     @Override
     public int getItemType() {
         return itemType;
+    }
+
+    public PreciseCountDownTimer getCount() {
+        return count;
+    }
+
+    public void setCount(PreciseCountDownTimer count) {
+        this.count = count;
     }
 }

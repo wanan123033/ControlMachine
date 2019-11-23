@@ -40,9 +40,10 @@ public class GetDeviceStatesTask implements Runnable{
 		int deviceCount;
 		try{
 			while(!mIsFinished){
-				for(i = 0;i < 3;i++){
-					deviceCount = listener.getDeviceCount();
-					for(j = 0;j < deviceCount;j++){
+
+				deviceCount = listener.getDeviceCount();
+				for(j = 0;j < deviceCount;j++){
+					for(i = 0;i < 3;i++){
 						while(!mIsGettingHandState){
 							if(mIsFinished){
 								return;

@@ -1,5 +1,7 @@
 package com.feipulai.device.manager;
 
+import android.os.SystemClock;
+
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.command.ConvertCommand;
 
@@ -89,6 +91,10 @@ public class VolleyBallRadioManager {
         cmd[14] = (byte) (timeSum / 0x0100);
         cmd[15] = (byte) (timeSum % 0x0100);
         cmd[16] = (byte) sum(cmd,16);
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,cmd));
+        SystemClock.sleep(100);
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,cmd));
+        SystemClock.sleep(100);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,cmd));
     }
 

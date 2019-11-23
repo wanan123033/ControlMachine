@@ -191,8 +191,8 @@ public class DBManager {
         scheduleDao.deleteAll();
         itemScheduleDao.deleteAll();
         machineResultDao.deleteAll();
-        chipInfoDao.deleteAll();
-        chipGroupDao.deleteAll();
+//        chipInfoDao.deleteAll();
+//        chipGroupDao.deleteAll();
     }
 
     /**
@@ -1103,6 +1103,7 @@ public class DBManager {
     }
 
     public List<RoundResult> queryResultsByStudentCode(String itemCode, String studentCode) {
+        Log.e("tat","itemCode="+itemCode +",studentCode="+studentCode);
         return roundResultDao
                 .queryBuilder()
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
