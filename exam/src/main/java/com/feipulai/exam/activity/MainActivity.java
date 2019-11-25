@@ -249,7 +249,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
 
     @Override
     public void onBackPressed() {
-//        exit();
+        exit();
     }
 
     @Override
@@ -267,7 +267,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         // 是否触发按键为back键
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-//            onBackPressed();
+            onBackPressed();
             return true;
         } else { // 如果不是back键正常响应
             return super.onKeyDown(keyCode, event);

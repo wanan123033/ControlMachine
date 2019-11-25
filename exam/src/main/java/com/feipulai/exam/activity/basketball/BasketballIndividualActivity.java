@@ -20,7 +20,10 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.manager.BallManager;
 import com.feipulai.device.serial.RadioManager;
+import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.Basketball868Result;
+import com.feipulai.device.serial.command.ConvertCommand;
+import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.device.udp.UDPBasketBallConfig;
 import com.feipulai.device.udp.UdpClient;
 import com.feipulai.device.udp.UdpLEDUtil;
@@ -29,9 +32,9 @@ import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.basketball.adapter.BasketBallResultAdapter;
 import com.feipulai.exam.activity.basketball.bean.BallDeviceState;
+import com.feipulai.exam.activity.basketball.pair.BasketBallPairActivity;
 import com.feipulai.exam.activity.basketball.result.BasketBallTestResult;
 import com.feipulai.exam.activity.basketball.util.TimerUtil;
-import com.feipulai.exam.activity.basketball.pair.BasketBallPairActivity;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
@@ -128,8 +131,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         setting = SharedPrefsUtil.loadFormSource(this, BasketBallSetting.class);
         if (setting == null)
             setting = new BasketBallSetting();
-
-        facade = new BasketBallRadioFacade(setting.getTestType(), this);
+         facade = new BasketBallRadioFacade(setting.getTestType(), this);
         ballManager = new BallManager.Builder((setting.getTestType())).setHostIp(setting.getHostIp()).setInetPost(1527).setPost(setting.getPost())
                 .setUdpListerner(new BasketBallListener(this)).build();
         timerUtil = new TimerUtil(this);
@@ -231,8 +233,13 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             if (deviceState.getDeviceId() == 0) {
                 cbLed.setChecked(deviceState.getState() != BaseDeviceState.STATE_DISCONNECT);
             }
+        } else if (baseEvent.getTagInt() == EventConfigs.TEMPORARY_ADD_STU) {
+            Student student = (Student) baseEvent.getData();
+            StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+            onIndividualCheckIn(student, studentItem, new ArrayList<RoundResult>());
         }
     }
+
 
     @Override
     public void onIndividualCheckIn(Student student, StudentItem studentItem, List<RoundResult> results) {

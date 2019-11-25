@@ -267,7 +267,7 @@ public class BallManager {
         int machineCode = MachineCode.machineCode;
         int targetChannel = SerialConfigs.sProChannels.get(machineCode) + hostId - 1;
         byte[] buf = getRadioParameterBuf(deviceId, hostId, sensitivity, interceptSecond);
-        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(originFrequency)));
+//        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(originFrequency)));
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {

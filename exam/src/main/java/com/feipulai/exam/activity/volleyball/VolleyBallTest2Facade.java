@@ -260,7 +260,6 @@ public class VolleyBallTest2Facade implements SerialDeviceManager.RS232ResiltLis
                             }
                         } else {
                             deviceManager.getScore(hostId, 1);
-
                         }
 
                         int count = missCount.addAndGet(1);

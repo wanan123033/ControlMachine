@@ -174,10 +174,12 @@ public class VolleyBallIndividual2Activity extends BaseTitleActivity
         });
     }
 
+
     @Override
-    protected void onResume() {
-        super.onResume();
-        facade = new VolleyBallTest2Facade(SettingHelper.getSystemSetting().getHostId(), setting, this);
+    protected void onRestart() {
+        super.onRestart();
+        facade.setVolleySetting(setting);
+
     }
 
     @Override
@@ -187,11 +189,17 @@ public class VolleyBallIndividual2Activity extends BaseTitleActivity
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
-        facade.setVolleySetting(setting);
+    protected void onResume() {
+        super.onResume();
+        if (facade == null) {
+            facade = new VolleyBallTest2Facade(SettingHelper.getSystemSetting().getHostId(), setting, this);
+        } else {
+            facade.stopTotally();
+            facade = new VolleyBallTest2Facade(SettingHelper.getSystemSetting().getHostId(), setting, this);
+        }
 
     }
+
 
     private void startProjectSetting() {
         if (isConfigurableNow()) {
