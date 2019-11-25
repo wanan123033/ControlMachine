@@ -291,7 +291,11 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                 break;
             case 6:
                 txtDeviceStatus.setText("空闲");
-                state = WAIT_CHECK_IN;
+                if (isExistTestPlace()) {
+                    state = WAIT_CHECK_IN;
+                } else {
+                    state = WAIT_FREE;
+                }
                 break;
         }
         setOperationUI();

@@ -5,6 +5,17 @@
     android:layout_height="match_parent"
     android:background="@mipmap/icon_main_bg">
 
+    <TextView
+        android:id="@+id/txt_help"
+        style="@style/style_txt_white_title"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="40dp"
+        android:drawablePadding="5dp"
+        android:drawableTop="@mipmap/icon_help"
+        android:textSize="@dimen/sp_16"
+        android:text="帮助" />
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -80,9 +91,9 @@
             android:layout_width="155dp"
             android:layout_height="155dp"
             android:layout_alignTop="@+id/card_test"
-            android:foreground="?android:attr/selectableItemBackground"
             android:layout_marginLeft="13dp"
             android:layout_toRightOf="@+id/card_select"
+            android:foreground="?android:attr/selectableItemBackground"
             custom:cardBackgroundColor="#FFB80D"
             custom:cardCornerRadius="5dp"
             custom:cardElevation="0dp">
@@ -110,10 +121,10 @@
             android:layout_width="155dp"
             android:layout_height="155dp"
             android:layout_below="@+id/card_print"
-            android:foreground="?android:attr/selectableItemBackground"
             android:layout_marginLeft="13dp"
             android:layout_marginTop="13dp"
             android:layout_toRightOf="@+id/card_select"
+            android:foreground="?android:attr/selectableItemBackground"
             custom:cardBackgroundColor="#186FFF"
             custom:cardCornerRadius="5dp"
             custom:cardElevation="0dp">
@@ -142,9 +153,9 @@
             android:layout_width="155dp"
             android:layout_height="155dp"
             android:layout_alignTop="@+id/card_test"
-            android:foreground="?android:attr/selectableItemBackground"
             android:layout_marginLeft="13dp"
             android:layout_toRightOf="@+id/card_print"
+            android:foreground="?android:attr/selectableItemBackground"
             custom:cardBackgroundColor="#0BF4FF"
             custom:cardCornerRadius="5dp"
             custom:cardElevation="0dp">
@@ -172,10 +183,10 @@
             android:layout_width="155dp"
             android:layout_height="155dp"
             android:layout_below="@+id/card_data_admin"
-            android:foreground="?android:attr/selectableItemBackground"
             android:layout_marginLeft="13dp"
             android:layout_marginTop="13dp"
             android:layout_toRightOf="@+id/card_print"
+            android:foreground="?android:attr/selectableItemBackground"
             custom:cardBackgroundColor="#FF7849"
             custom:cardCornerRadius="5dp"
             custom:cardElevation="0dp">
@@ -203,9 +214,9 @@
             android:layout_width="155dp"
             android:layout_height="155dp"
             android:layout_alignTop="@+id/card_test"
-            android:foreground="?android:attr/selectableItemBackground"
             android:layout_marginLeft="13dp"
             android:layout_toRightOf="@+id/card_data_admin"
+            android:foreground="?android:attr/selectableItemBackground"
             custom:cardBackgroundColor="#78F375"
             custom:cardCornerRadius="5dp"
             custom:cardElevation="0dp">
@@ -233,10 +244,10 @@
             android:layout_width="155dp"
             android:layout_height="155dp"
             android:layout_below="@+id/card_data_admin"
-            android:foreground="?android:attr/selectableItemBackground"
             android:layout_marginLeft="13dp"
             android:layout_marginTop="13dp"
             android:layout_toRightOf="@+id/card_data_admin"
+            android:foreground="?android:attr/selectableItemBackground"
             custom:cardBackgroundColor="#9352FF"
             custom:cardCornerRadius="5dp"
             custom:cardElevation="0dp">

@@ -62,7 +62,7 @@ public class VolleyPair868Result {
                     dList.add(Integer.valueOf(binaryData.substring(j, j + 1)));
                 }
             }
-            Integer positionArray[] = new Integer[30];
+            Integer positionArray[] = new Integer[40];
             System.arraycopy(dList.toArray(), 0, positionArray, 0, positionArray.length);
             positionList = new ArrayList<>(Arrays.asList(positionArray));
 

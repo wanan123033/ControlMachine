@@ -211,7 +211,8 @@ public class VolleyBallTest2Facade implements SerialDeviceManager.RS232ResiltLis
             if (pair868Result.getDeviceId() != 1)
                 return;
 
-            if (pair868Result.getState() == VolleyPair868Result.STATE_TIMING || pair868Result.getState() == VolleyPair868Result.STATE_TIME_END) {
+            if (pair868Result.getState() == VolleyPair868Result.STATE_TIMING || pair868Result.getState() == VolleyPair868Result.STATE_TIME_END
+                    || pair868Result.getState() == VolleyPair868Result.STATE_COUNTING || pair868Result.getState() == VolleyPair868Result.STATE_COUNT_END) {
                 VolleyBallResult result = new VolleyBallResult();
                 result.setResult(pair868Result.getScore());
                 listener.onScoreArrived(result);
@@ -259,7 +260,6 @@ public class VolleyBallTest2Facade implements SerialDeviceManager.RS232ResiltLis
                             }
                         } else {
                             deviceManager.getScore(hostId, 1);
-
                         }
 
                         int count = missCount.addAndGet(1);

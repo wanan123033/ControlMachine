@@ -20,11 +20,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.feipulai.common.utils.AudioUtil;
-import com.feipulai.common.view.dialog.DialogUtils;
 import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.common.view.dialog.DialogUtils;
 import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.device.serial.RadioManager;
+import com.feipulai.device.serial.SerialConfigs;
+import com.feipulai.device.serial.command.ConvertCommand;
+import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.device.udp.UdpLEDUtil;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
@@ -72,6 +76,8 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     SeekBar sb_volume;
     @BindView(R.id.cb_route)
     CheckBox cbRoute;
+    @BindView(R.id.txt_channel)
+    TextView txtChannel;
     private String[] partternList = new String[]{"个人测试", "分组测试"};
     private List<Integer> hostIdList;
     private SystemSetting systemSetting;
@@ -164,12 +170,14 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
             systemSetting.setAddRoute(false);
         }
         cbRoute.setChecked(systemSetting.isAddRoute());
+
+        txtChannel.setText((SerialConfigs.sProChannels.get(machineCode) + systemSetting.getHostId() - 1) + "");
     }
 
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("设置") ;
+        return builder.setTitle("设置");
     }
 
     @Override
@@ -184,6 +192,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         switch (spinner.getId()) {
             case R.id.sp_host_id:
                 systemSetting.setHostId(position + 1);
+                txtChannel.setText((SerialConfigs.sProChannels.get(machineCode) + systemSetting.getHostId() - 1) + "");
                 break;
             case R.id.sp_pattern:
                 systemSetting.setTestPattern(position == 0 ? SystemSetting.PERSON_PATTERN : SystemSetting.GROUP_PATTERN);
@@ -276,6 +285,9 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     @Override
     protected void onPause() {
         super.onPause();
+        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(
+                SerialConfigs.sProChannels.get(machineCode) + SettingHelper.getSystemSetting().getHostId() - 1)));
+
         HttpManager.resetManager();
         SettingHelper.updateSettingCache(systemSetting);
     }

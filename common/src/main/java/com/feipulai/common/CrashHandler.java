@@ -59,7 +59,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
         // }
         ActivityCollector.getInstance().finishAllActivity();
         android.os.Process.killProcess(android.os.Process.myPid());
-        System.exit(-1);
+        System.exit(1);
     }
 
     private String collectDeviceInfo(Context ctx) {

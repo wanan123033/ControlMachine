@@ -13,6 +13,8 @@ import com.feipulai.device.manager.BallManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.Basketball868Result;
+import com.feipulai.device.serial.command.ConvertCommand;
+import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.device.udp.result.BasketballResult;
 import com.feipulai.exam.activity.basketball.bean.BallDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
@@ -112,6 +114,7 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
     }
 
     public void resume() {
+
         mGetDeviceStatesTask.resume();
     }
 
@@ -198,16 +201,19 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
                 }
 
             } else if (msg.what == SerialConfigs.DRIBBLEING_FREE) {//空闲
+                Log.i("zzzz", "  DRIBBLEING_FREE=====>");
                 listener.getDeviceStatus(6);
 
             } else if (msg.what == SerialConfigs.DRIBBLEING_AWAIT) {//等待
+                Log.i("zzzz", " DRIBBLEING_AWAIT=====>");
                 listener.getDeviceStatus(2);
                 isledStartTime = false;
                 timeRountList = new ArrayList<>();
             } else if (msg.what == SerialConfigs.DRIBBLEING_STOP) {//停止
+                Log.i("zzzz", " DRIBBLEING_STOP=====>");
                 Basketball868Result result = (Basketball868Result) msg.obj;
                 BasketballResult basketballResult = new BasketballResult();
-                ballManager.setRadioPause(SettingHelper.getSystemSetting().getHostId());
+//                ballManager.setRadioPause(SettingHelper.getSystemSetting().getHostId());
                 basketballResult.setHour(result.getHour());
                 basketballResult.setMinute(result.getMinth());
                 basketballResult.setSecond(result.getSencond());

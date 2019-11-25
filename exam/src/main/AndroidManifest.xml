@@ -220,6 +220,10 @@
         <activity android:name=".activity.medicineBall.MedicineBallSelectActivity" />
         <activity android:name=".activity.volleyball.more_devices.VolleyBallGroupActivity" />
         <activity android:name=".activity.volleyball.VolleyBallIndividual2Activity" />
+
+        <activity
+            android:name=".activity.explain.ExplainActivity"
+            android:windowSoftInputMode="stateHidden" />
     </application>
 
 </manifest>

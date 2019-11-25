@@ -234,6 +234,10 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
             if (deviceState.getDeviceId() == 0) {
                 cbLed.setChecked(deviceState.getState() != BaseDeviceState.STATE_DISCONNECT);
             }
+        } else if (baseEvent.getTagInt() == EventConfigs.TEMPORARY_ADD_STU) {
+            Student student = (Student) baseEvent.getData();
+            StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+            onIndividualCheckIn(student, studentItem, new ArrayList<RoundResult>());
         }
     }
 
@@ -331,7 +335,11 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                 break;
             case 6:
                 txtDeviceStatus.setText("空闲");
-                state = WAIT_CHECK_IN;
+                if (isExistTestPlace()) {
+                    state = WAIT_CHECK_IN;
+                } else {
+                    state = WAIT_FREE;
+                }
                 break;
         }
         setOperationUI();

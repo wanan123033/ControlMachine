@@ -30,7 +30,7 @@ public class BallPairAdapter extends DevicePairAdapter {
         if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ) {
             holder.mTvDeviceId.setText(position == 0 ? "近红外" : "计时屏");
         } else {
-            holder.mTvDeviceId.setText(position == 0 ? "近红外" : position == 1 ? "远红外" : "计时屏");
+            holder.mTvDeviceId.setText(position == 0 ? "远红外" : position == 1 ? "近红外" : "计时屏");
         }
     }
 

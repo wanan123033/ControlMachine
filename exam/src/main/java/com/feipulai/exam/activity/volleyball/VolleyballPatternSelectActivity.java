@@ -26,8 +26,8 @@ public class VolleyballPatternSelectActivity extends SubItemsSelectActivity {
         itemList.add(new Item("排球对墙垫球"));
         itemList.add(new Item("排球对空垫球(无线-1对1)"));
         itemList.add(new Item("排球对墙垫球(无线-1对1)"));
-        itemList.add(new Item("排球对空垫球(无线-1对多)"));
-        itemList.add(new Item("排球对墙垫球(无线-1对多)"));
+//        itemList.add(new Item("排球对空垫球(无线-1对多)"));
+//        itemList.add(new Item("排球对墙垫球(无线-1对多)"));
         adapter.notifyDataSetChanged();
         getToolbar().setTitle("排球模式选择");
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {

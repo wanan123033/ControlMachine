@@ -30,7 +30,7 @@ public class StandJumpManager {
         cmd[17] = (byte) (points & 0xff);// 最低位
         cmd[19] = (byte) sum(cmd, 19);
 
-        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(originFrequency)));
+//        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(originFrequency)));
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {

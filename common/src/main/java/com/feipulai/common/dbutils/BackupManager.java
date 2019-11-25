@@ -1,8 +1,8 @@
 package com.feipulai.common.dbutils;
 
 import android.content.Context;
-import android.os.Environment;
 
+import com.feipulai.common.utils.FileUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.github.mjdev.libaums.fs.UsbFile;
 import com.github.mjdev.libaums.fs.UsbFileInputStream;
@@ -32,7 +32,7 @@ public class BackupManager {
 
 
     //自动备份文件夹
-    public static final String AUTO_BACKUP_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/fpl_autobackup/";
+    public static final String AUTO_BACKUP_DIR = FileUtil.PATH_BASE + "/fpl_autobackup/";
     private final byte[] DB_HEAD;
     private final byte[] DB_END;
 

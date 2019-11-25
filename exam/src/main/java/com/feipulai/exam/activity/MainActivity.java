@@ -29,6 +29,7 @@ import com.feipulai.exam.activity.base.BaseActivity;
 import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.data.DataManageActivity;
 import com.feipulai.exam.activity.data.DataRetrieveActivity;
+import com.feipulai.exam.activity.explain.ExplainActivity;
 import com.feipulai.exam.activity.setting.SettingActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
@@ -215,17 +216,6 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                 PrinterManager.getInstance().selfCheck();
                 PrinterManager.getInstance().print("\n\n");
 //                addTestResult();
-//                try {
-//                    Intent intent = new Intent();
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    intent.setAction(Intent.ACTION_VIEW);
-//                    intent.setDataAndType(Uri.fromFile(new File(MyApplication.PATH_SPECIFICATION + "123.pdf")), "application/pdf");
-//                    startActivity(intent);
-//                    Intent.createChooser(intent, "请选择对应的软件打开该附件！");
-//                } catch (ActivityNotFoundException e) {
-//                    Toast.makeText(this, "sorry附件不能打开，请下载相关软件！", Toast.LENGTH_SHORT).show();
-//                }
-
                 break;
             case R.id.card_parameter_setting:
                 startActivity(new Intent(MainActivity.this, SettingActivity.class));
@@ -259,7 +249,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
 
     @Override
     public void onBackPressed() {
-//        exit();
+        exit();
     }
 
     @Override
@@ -277,7 +267,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         // 是否触发按键为back键
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-//            onBackPressed();
+            onBackPressed();
             return true;
         } else { // 如果不是back键正常响应
             return super.onKeyDown(keyCode, event);
@@ -297,4 +287,8 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
     }
 
 
+    @OnClick(R.id.txt_help)
+    public void onViewClicked() {
+        IntentUtil.gotoActivity(this, ExplainActivity.class);
+    }
 }

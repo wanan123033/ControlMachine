@@ -53,6 +53,8 @@ public class BaseActivity extends FragmentActivity {
         //        SharedPrefsConfigs.BRIGHTNESS, 125));
         machineCode = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, SharedPrefsConfigs
                 .DEFAULT_MACHINE_CODE);
+
+
     }
 
     @Override
