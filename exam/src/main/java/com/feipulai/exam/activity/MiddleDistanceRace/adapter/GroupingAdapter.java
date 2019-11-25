@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +50,12 @@ public class GroupingAdapter extends RecyclerView.Adapter<GroupingAdapter.VH> im
 
     @Override
     public void onClear() {
-        notifyDataSetChanged();
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
     }
 
     private void popAlertDialog() {
@@ -82,6 +88,7 @@ public class GroupingAdapter extends RecyclerView.Adapter<GroupingAdapter.VH> im
                 }
             });
         }
+        alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();
     }
 
@@ -114,6 +121,12 @@ public class GroupingAdapter extends RecyclerView.Adapter<GroupingAdapter.VH> im
         holder.tvGroupingNo.setText(position + 1 + "");
         holder.tvGroupingName.setText(students.get(position).getStudentName());
         holder.tvGroupingCode.setText(students.get(position).getStudentCode());
+
+        if (position == students.size() - 1) {
+            holder.llGrouping.setBackgroundResource(R.color.blue);
+        } else {
+            holder.llGrouping.setBackgroundResource(R.color.white);
+        }
     }
 
     @Override

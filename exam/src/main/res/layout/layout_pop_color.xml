@@ -4,8 +4,7 @@
     android:layout_height="match_parent"
     android:layout_marginLeft="20dp"
     android:layout_marginRight="20dp"
-    android:background="@drawable/btn_bg_white"
-    android:orientation="vertical">
+    android:background="@drawable/btn_bg_white">
 
     <TextView
         android:id="@+id/tv_group_name"
@@ -15,12 +14,19 @@
         android:padding="10dp"
         android:textSize="18sp" />
 
+    <View
+        android:id="@+id/view1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/tv_group_name"
+        android:background="#E6E6E6" />
+
     <include
         android:id="@+id/view_title"
         layout="@layout/item_color_group"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_below="@+id/tv_group_name" />
+        android:layout_height="41dp"
+        android:layout_below="@+id/view1" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_color_select"

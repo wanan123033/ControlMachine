@@ -17,9 +17,10 @@
         <RelativeLayout
             android:id="@+id/rl_chip_add"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_margin="15dp"
-            android:layout_toLeftOf="@+id/ll">
+            android:layout_toStartOf="@+id/ll"
+            android:background="@drawable/bg_edit_grey">
 
             <include
                 android:id="@+id/view_title"
@@ -28,9 +29,8 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_color_group"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_below="@+id/view_title"
-                android:background="@color/white"
                 android:overScrollMode="never" />
         </RelativeLayout>
 

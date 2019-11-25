@@ -458,7 +458,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         for (TimingBean timingBean : timingLists
                 ) {
             if (timingBean.getState() == TIMING_STATE_WAITING || timingBean.getState() == TIMING_STATE_TIMING) {
-                ToastUtils.showShort("考试中，请勿退出");
+                toastSpeak("考试中，请勿退出");
                 return;
             }
         }
@@ -510,7 +510,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                 @Override
                 public void run() {
                     getItems();
-                    ToastUtils.showLong("上道终端上传分组数据");
+                    ToastUtils.showLong("接收到上道终端发送的分组数据");
                     for (int i = 0; i < itemList.size(); i++) {
                         if (itemList.get(i).getItemName().equals(message.getItemName())) {
                             spRaceItem.setSelection(i);
@@ -1021,6 +1021,11 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
 
     @Override
     public void onCheckIn(Student student) {
+        List<ChipGroup> chips = DBManager.getInstance().queryChipGroups();
+        if (!chips.isEmpty() && chips.get(0).getStudentNo() <= groupIngStudents.size()) {
+            toastSpeak("已达最大人数");
+            return;
+        }
         showGroupPop();
         if (groupInput != null) {
             groupInput.setText(student.getStudentCode());
@@ -1029,6 +1034,9 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         if (!groupIngStudents.contains(student)) {
             groupIngStudents.add(student);
             groupingAdapter.notifyDataSetChanged();
+            smoothMoveToPosition(rvGrouping, groupIngStudents.size() - 1);
+        } else {
+            toastSpeak("已存在");
         }
     }
 
@@ -1117,7 +1125,6 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         });
         isConnect = true;
         isFirst = false;
-//        Log.i("onConnected", "onConnected-----------------------");
         if (isFlag) {
             TtsManager.getInstance().speak("设备连接成功");
             mHander.sendMessage(mHander.obtainMessage(1, text));
@@ -1221,7 +1228,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                 for (TimingBean timingBean : timingLists
                         ) {
                     if (timingBean.getState() == TIMING_STATE_WAITING || timingBean.getState() == TIMING_STATE_TIMING) {
-                        ToastUtils.showShort("考试中，请勿跳转其它界面");
+                        toastSpeak("考试中，请勿跳转其它界面");
                         return;
                     }
                 }
@@ -1309,19 +1316,19 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
     @Override
     public void clickTimingWaitListener(int position, final RaceTimingAdapter.VH holder) {
         if (!isConnect) {
-            ToastUtils.showShort("请先连接设备");
+            toastSpeak("请先连接设备");
             return;
         }
 
         if (cycleNo == 0) {
-            ToastUtils.showShort("请先设置圈数");
+            toastSpeak("请先设置圈数");
             return;
         }
 
         if (timingLists.get(position).getNo() != 0) {
             raceTimingAdapter.notifyBackGround(holder, TIMING_STATE_WAITING);
         } else {
-            ToastUtils.showShort("请先选入组别");
+            toastSpeak("请先选入组别");
             return;
         }
 
@@ -1369,8 +1376,6 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                         resultBean2.setStartTime(0);
                     }
                 }
-                Log.i("clickTimingBackListener", timingLists.toString());
-
                 for (int i = 0; i < groupItemBeans.size(); i++) {
                     if (timingLists.get(position).getNo() == groupItemBeans.get(i).getGroup().getGroupNo()) {
                         groupItemBeans.get(i).getGroup().setIsTestComplete(GROUP_3);
@@ -1632,8 +1637,13 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             @Override
             public void onClick(View v) {
                 if (colorGroups.isEmpty()) {
-                    ToastUtils.showShort("请先设置颜色组");
+                    toastSpeak("请先设置颜色组");
                     mCirclePop.dismiss();
+                    return;
+                }
+                //颜色组设置的人数必须>=当前选择组别的人数
+                if (colorGroups.get(mColorGroupPosition).getStudentNo() < groupItemBeans.get(groupPosition).getGroupItems().size()) {
+                    toastSpeak("人数不匹配");
                     return;
                 }
 
@@ -1650,10 +1660,17 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             @Override
             public void onClick(View v) {
                 if (colorGroups.isEmpty()) {
-                    ToastUtils.showShort("请先设置颜色组");
+                    toastSpeak("请先设置颜色组");
                     mCirclePop.dismiss();
                     return;
                 }
+
+                //颜色组设置的人数必须>=当前选择组别的人数
+                if (colorGroups.get(mColorGroupPosition).getStudentNo() < groupItemBeans.get(groupPosition).getGroupItems().size()) {
+                    toastSpeak("人数不匹配");
+                    return;
+                }
+
                 groupItemBeans.get(groupPosition).getGroup().setIsTestComplete(TimingBean.GROUP_4);//关联状态
                 groupItemBeans.get(groupPosition).getGroup().setColorGroupName(colorGroups.get(mColorGroupPosition).getColorGroupName());//备注1字段---颜色组名
                 groupItemBeans.get(groupPosition).getGroup().setColorId(String.valueOf(colorGroups.get(mColorGroupPosition).getColor()));//备注2字段---颜色
@@ -1774,14 +1791,14 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                             for (TimingBean timing : timingLists
                                     ) {
                                 if (groupItemBeans.get(groupPosition).getGroupItemName().equals(timing.getItemGroupName())) {
-                                    ToastUtils.showShort("该组已选入");
+                                    toastSpeak("该组已选入比赛");
                                     return;
                                 }
                             }
                             addToTiming();
                             break;
                         } else if (testComplete == GROUP_FINISH) {
-                            ToastUtils.showShort("该组已完成");
+                            toastSpeak("该组已完成");
                             break;
                         }
                         colorGroupAdapter.notifyDataSetChanged();
@@ -1790,10 +1807,10 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                         break;
                     case 1:
                         if (testComplete == GROUP_3) {
-                            ToastUtils.showShort("该组已选入，不可取消关联");
+                            toastSpeak("该组已选入比赛");
                             break;
                         } else if (testComplete == GROUP_FINISH) {
-                            ToastUtils.showShort("该组已完成");
+                            toastSpeak("该组已完成");
                             break;
                         }
                         groupItemBeans.get(groupPosition).getGroup().setIsTestComplete(0);
@@ -1807,17 +1824,17 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                             for (TimingBean timing : timingLists
                                     ) {
                                 if (groupItemBeans.get(groupPosition).getGroupItemName().equals(timing.getItemGroupName())) {
-                                    ToastUtils.showShort("该组已存在");
+                                    toastSpeak("该组已存在");
                                     return;
                                 }
                             }
                             addToTiming();
                         } else if (testComplete == GROUP_FINISH) {
-                            ToastUtils.showShort("该组已完成");
+                            toastSpeak("该组已完成");
                         } else if (testComplete == GROUP_4) {
                             addToTiming();
                         } else {
-                            ToastUtils.showShort("请先关联颜色组");
+                            toastSpeak("请先关联颜色组");
                         }
                         break;
                     case 3:
@@ -1891,7 +1908,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         for (TimingBean timing : timingLists
                 ) {
             if (timing.getColor() == Integer.parseInt(groupItemBeans.get(groupPosition).getGroup().getColorId())) {
-                ToastUtils.showShort("当前颜色组已存在");
+                toastSpeak("当前颜色组已存在");
                 return;
             }
         }
@@ -1912,7 +1929,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                 break;
             } else {
                 if (i == timingLists.size() - 1) {
-                    ToastUtils.showShort("计时器已满，请等待其他组结束");
+                    toastSpeak("计时器已满");
                     return;
                 }
             }

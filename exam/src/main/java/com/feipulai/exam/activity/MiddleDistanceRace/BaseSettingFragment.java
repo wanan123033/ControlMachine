@@ -162,7 +162,6 @@ public class BaseSettingFragment extends Fragment implements AdapterView.OnItemS
     @Override
     public void onPause() {
         super.onPause();
-        Log.i("BaseFragment", "onPause----------");
         time_first = TextUtils.isEmpty(etMiddleRaceTimeFirst.getText().toString()) ? FIRST_TIME : Integer.parseInt(etMiddleRaceTimeFirst.getText().toString());
         time_span = TextUtils.isEmpty(etMiddleRaceTime_Span.getText().toString()) ? SPAN_TIME : Integer.parseInt(etMiddleRaceTime_Span.getText().toString());
         SharedPrefsUtil.putValue(mContext, MIDDLE_RACE, MIDDLE_RACE_TIME_FIRST, time_first);

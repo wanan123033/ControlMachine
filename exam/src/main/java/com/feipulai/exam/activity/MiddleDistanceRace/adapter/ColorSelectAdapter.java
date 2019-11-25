@@ -61,7 +61,6 @@ public class ColorSelectAdapter extends RecyclerView.Adapter<ColorSelectAdapter.
     //在Adapter中实现3个方法
     @Override
     public void onBindViewHolder(final VH holder, final int position) {
-        holder.tvColor.setBackgroundResource(chipGroups.get(position).getColor());
         holder.tvColor.setText("");
         holder.tvColorGroupName.setText(chipGroups.get(position).getColorGroupName());
         holder.tvColorGroupNo.setText(position + 1 + "");
@@ -69,10 +68,13 @@ public class ColorSelectAdapter extends RecyclerView.Adapter<ColorSelectAdapter.
         holder.tvRemark.setText(chipGroups.get(position).getGroupType() == 0 ? "正常组" : "备用组");
 
         if (mPosi == position) {
-            holder.llColorGroupItem.setBackgroundResource(R.color.viewfinder_laser);
+            holder.llColorGroupItem.setBackgroundResource(R.color.blue);
         } else {
-            holder.llColorGroupItem.setBackgroundResource(R.color.grey);
+            holder.llColorGroupItem.setBackgroundResource(R.color.white);
         }
+
+        holder.tvColor.setBackgroundResource(chipGroups.get(position).getColor());
+
         if (onRecyclerViewItemClickListener != null) {
             holder.llColorGroupItem.setOnClickListener(new View.OnClickListener() {
                 @Override

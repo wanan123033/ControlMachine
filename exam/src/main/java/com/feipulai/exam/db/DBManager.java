@@ -379,6 +379,10 @@ public class DBManager {
         chipInfoDao.deleteAll();
     }
 
+    public List<ChipGroup> queryChipGroups(){
+        return chipGroupDao.queryBuilder().orderDesc(ChipGroupDao.Properties.StudentNo).list();
+    }
+
     /**
      * 添加学生
      *

@@ -7,6 +7,7 @@ import android.support.multidex.MultiDexApplication;
 import com.feipulai.common.CrashHandler;
 import com.feipulai.common.utils.FileUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.device.AdaptiveConfig;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 

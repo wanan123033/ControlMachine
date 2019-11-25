@@ -26,7 +26,6 @@
             android:layout_marginStart="20dp"
             android:background="@drawable/bg_edittext"
             android:padding="8dp" />
-
         <EditText
             android:id="@+id/et_group_input"
             android:layout_width="231dp"
