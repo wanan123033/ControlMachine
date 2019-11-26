@@ -22,14 +22,20 @@ public class StandJumpGroupMoreActivity extends BaseMoreGroupActivity implements
 
     @Override
     protected void initData() {
-        super.initData();
         jumpSetting = SharedPrefsUtil.loadFormSource(this, StandJumpSetting.class);
         if (jumpSetting == null)
             jumpSetting = new StandJumpSetting();
+        super.initData();
+
         setFaultEnable(jumpSetting.isPenalize());
         setNextClickStart(false);
-        setDeviceCount(jumpSetting.getTestDeviceCount());
+//        setDeviceCount(jumpSetting.getTestDeviceCount());
         facade = new StandJumpRadioFacade(deviceDetails, jumpSetting, this);
+    }
+
+    @Override
+    public int setTestDeviceCount() {
+        return jumpSetting.getTestDeviceCount();
     }
 
     @Override

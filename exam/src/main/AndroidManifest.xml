@@ -129,9 +129,6 @@
         <activity android:name=".activity.pullup.test.PullUpTestActivity" />
         <activity android:name=".activity.pullup.test.PullUpIndividualActivity" />
         <activity android:name=".activity.pullup.test.PullUpGroupActivity" /> <!-- volleyball -->
-        <activity
-            android:name=".activity.volleyball.VolleyBallIndividualActivity"
-            android:configChanges="keyboardHidden|keyboard" />
         <activity android:name=".activity.volleyball.VolleyBallSettingActivity" />
         <activity android:name=".activity.volleyball.VolleyBallGroupActivity" />
         <activity android:name=".activity.volleyball.VolleyballPatternSelectActivity" />
@@ -219,7 +216,7 @@
         <activity android:name=".activity.volleyball.more_devices.VolleyBallMore2TestActivity" />
         <activity android:name=".activity.medicineBall.MedicineBallSelectActivity" />
         <activity android:name=".activity.volleyball.more_devices.VolleyBallGroupActivity" />
-        <activity android:name=".activity.volleyball.VolleyBallIndividual2Activity" />
+        <activity android:name=".activity.volleyball.VolleyBallIndividualActivity" />
 
         <activity
             android:name=".activity.explain.ExplainActivity"

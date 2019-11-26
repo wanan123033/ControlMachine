@@ -57,13 +57,13 @@ public class BasketBallPairPresenter extends SitPullUpPairPresenter {
     @Override
     public void setFrequency(int deviceId, int originFrequency, int deviceFrequency) {
         ballManager.setRadioFrequency(
-                originFrequency,
+                SettingHelper.getSystemSetting().getUseChannel(),
                 deviceId == getDeviceSum() ? 0 : deviceId,
                 SettingHelper.getSystemSetting().getHostId(), setting.getSensitivity(), setting.getInterceptSecond());
     }
 
     @Override
     public void saveSettings() {
-        SharedPrefsUtil.save(context,setting);
+        SharedPrefsUtil.save(context, setting);
     }
 }

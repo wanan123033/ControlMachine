@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Message;
 
 import com.feipulai.device.serial.RadioManager;
-import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.sitpullup.SitPullLinker;
 import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.jump_rope.bean.StuDevicePair;
@@ -27,7 +26,7 @@ public abstract class BasePairPresenter implements SitUpPairContract.Presenter,
     private List<StuDevicePair> pairs;
     private SitUpPairContract.View view;
     private int machineCode = TestConfigs.sCurrentItem.getMachineCode();
-    private final int TARGET_FREQUENCY = SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode()) + SettingHelper.getSystemSetting().getHostId() - 1;
+    private final int TARGET_FREQUENCY =SettingHelper.getSystemSetting().getUseChannel();;
     private volatile int focusPosition;
 
     public BasePairPresenter(Context context, SitUpPairContract.View view) {

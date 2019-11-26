@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Build;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
-import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.exam.activity.pushUp.PushUpSetting;
 import com.feipulai.exam.activity.sargent_jump.SargentSetting;
@@ -32,7 +31,7 @@ public class SargentPairPresenter extends SitPullUpPairPresenter {
             Objects.requireNonNull(view);
         }
         setting = SharedPrefsUtil.loadFormSource(context, SargentSetting.class);
-        sitPushUpManager = new SitPushUpManager(SitPushUpManager.PROJECT_CODE_SARGENT,PushUpSetting.WIRELESS_TYPE);
+        sitPushUpManager = new SitPushUpManager(SitPushUpManager.PROJECT_CODE_SARGENT, PushUpSetting.WIRELESS_TYPE);
     }
 
     @Override
@@ -47,9 +46,10 @@ public class SargentPairPresenter extends SitPullUpPairPresenter {
     protected boolean isAutoPair() {
         return setting.isAutoPair();
     }
-    
+
     public void setFrequency(int deviceId, int originFrequency, int deviceFrequency) {
         sitPushUpManager.setFrequencyMG(
+                SettingHelper.getSystemSetting().getUseChannel(),
                 originFrequency,
                 deviceId,
                 SettingHelper.getSystemSetting().getHostId());
@@ -57,7 +57,7 @@ public class SargentPairPresenter extends SitPullUpPairPresenter {
 
     @Override
     public void saveSettings() {
-        SharedPrefsUtil.save(context,setting);
+        SharedPrefsUtil.save(context, setting);
     }
 
 }

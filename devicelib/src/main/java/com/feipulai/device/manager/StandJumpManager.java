@@ -1,8 +1,6 @@
 package com.feipulai.device.manager;
 
-import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
-import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
 
@@ -14,14 +12,13 @@ public class StandJumpManager {
 
     /**
      * 设置频道
+     *
      * @param hostId
      * @param deviceId
-     * @param originFrequency
      * @param points
      */
-    public static void setFrequencyParameter(int hostId, int deviceId, int originFrequency, int points) {
-        int machineCode = MachineCode.machineCode;
-        int targetChannel = SerialConfigs.sProChannels.get(machineCode) + hostId - 1;
+    public static void setFrequencyParameter(int targetChannel, int hostId, int deviceId, int points) {
+
         byte[] cmd = new byte[]{(byte) 0xAA, 0x15, 0x02, 0x03, 0x01, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0D};
         cmd[12] = (byte) (targetChannel & 0xff);
         cmd[14] = (byte) (hostId & 0xff);
@@ -30,7 +27,6 @@ public class StandJumpManager {
         cmd[17] = (byte) (points & 0xff);// 最低位
         cmd[19] = (byte) sum(cmd, 19);
 
-//        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(originFrequency)));
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
@@ -42,6 +38,7 @@ public class StandJumpManager {
 
     /**
      * 设置使用长度
+     *
      * @param hostId
      * @param deviceId
      * @param points
@@ -58,6 +55,7 @@ public class StandJumpManager {
 
     /**
      * 获取状态
+     *
      * @param hostId
      * @param deviceId
      * @param points
@@ -87,6 +85,7 @@ public class StandJumpManager {
 
     /**
      * 结束
+     *
      * @param hostId
      * @param deviceId
      */

@@ -88,7 +88,7 @@ public class JumpRopeTestPresenter
         @Override
         public void run() {
             while (mLinking) {
-                deviceManager.link(systemSetting.getHostId(), focusPosition + 1, 0x06, setting.getDeviceGroup() + 1);
+                deviceManager.link(systemSetting.getUseChannel(),systemSetting.getHostId(), focusPosition + 1, 0x06, setting.getDeviceGroup() + 1);
             }
         }
     }

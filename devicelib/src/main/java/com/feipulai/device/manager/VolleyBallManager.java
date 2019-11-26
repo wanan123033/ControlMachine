@@ -1,8 +1,6 @@
 package com.feipulai.device.manager;
 
-import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.RadioManager;
-import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
@@ -167,9 +165,8 @@ public class VolleyBallManager {
     }
 
 
-    public void setFrequency(int originFrequency, int deviceId, int hostId) {
-        int machineCode = ItemDefault.CODE_PQ;
-        int targetChannel = 0;
+    public void setFrequency(int targetChannel,   int deviceId, int hostId) {
+
         byte[] buf = new byte[17];
         buf[0] = (byte) 0xAA;
         buf[1] = 0x11;//包长
@@ -180,7 +177,6 @@ public class VolleyBallManager {
         buf[6] = (byte) (deviceId & 0xff);       //目标设备子机号
 //        buf[6] = 0;
         buf[7] = (byte) 0xc1;      //命令
-        targetChannel = SerialConfigs.sProChannels.get(machineCode) + hostId - 1;
         buf[8] = 0x00; //高字节在先
         buf[9] = 0x00;
         buf[10] = 0x00;

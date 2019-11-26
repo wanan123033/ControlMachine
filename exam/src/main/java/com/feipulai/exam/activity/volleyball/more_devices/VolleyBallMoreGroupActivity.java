@@ -10,7 +10,6 @@ import android.view.View;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.RadioManager;
-import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.VolleyPair868Result;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
@@ -20,7 +19,6 @@ import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.sargent_jump.more_device.BaseMoreGroupActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
-import com.feipulai.exam.config.TestConfigs;
 
 import butterknife.OnClick;
 
@@ -30,9 +28,14 @@ public class VolleyBallMoreGroupActivity extends BaseMoreGroupActivity {
     private static final int GET_STATE = 3;
     private static final int START_STATE = 5;
 
+    @Override
+    public int setTestDeviceCount() {
+        return 0;
+    }
+
     private VolleyBallSetting volleyBallSetting;
     private int[] deviceState = {};
-    private final int TARGET_FREQUENCY = SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode()) + SettingHelper.getSystemSetting().getHostId() - 1;
+    private final int TARGET_FREQUENCY = SettingHelper.getSystemSetting().getUseChannel();
 
     private VolleyBallJumpImpl resultImpl = new VolleyBallJumpImpl(new VolleyBallJumpImpl.VolleyBallCallBack() {
         @Override

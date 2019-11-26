@@ -13,7 +13,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 
+import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
@@ -29,6 +31,7 @@ import com.feipulai.device.udp.result.BasketballResult;
 import com.feipulai.device.udp.result.UDPResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.basketball.pair.BasketBallPairActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.BaseEvent;
@@ -79,6 +82,8 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
     Spinner spTestMode;
     @BindView(R.id.ll_use_mode)
     LinearLayout llUseMode;
+    @BindView(R.id.tv_pair)
+    TextView tvPair;
     private Integer[] testRound = new Integer[]{1, 2, 3};
 
     private String[] carryMode = new String[]{"四舍五入", "不进位", "非零进位"};
@@ -159,7 +164,9 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
         rgAccuracy.check(getAccuracy() == 1 ? R.id.rb_tenths : R.id.rb_percentile);
 
         etPenaltySecond.setText(setting.getPenaltySecond() + "");
-
+        if (setting.getTestType() == 1) {
+            tvPair.setVisibility(View.VISIBLE);
+        }
     }
 
     private int getAccuracy() {
@@ -299,7 +306,10 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
                 break;
         }
     }
-
+    @OnClick(R.id.tv_pair)
+    public void onViewClicked() {
+        IntentUtil.gotoActivity(this, BasketBallPairActivity.class);
+    }
     @OnClick({R.id.tv_sensitivity_use, R.id.tv_ip_connect, R.id.tv_accuracy_use, R.id.tv_intercept_time_use})
     public void onViewClicked(View view) {
         switch (view.getId()) {

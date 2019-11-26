@@ -177,7 +177,7 @@ public class SitUpCheckPresenter
 
 
     public void setFrequency(int deviceId, int originFrequency, int deviceFrequency) {
-        deviceManager.setFrequency(ItemDefault.CODE_YWQZ,
+        deviceManager.setFrequency( SettingHelper.getSystemSetting().getUseChannel(),
                 originFrequency,
                 deviceId,
                 SettingHelper.getSystemSetting().getHostId());

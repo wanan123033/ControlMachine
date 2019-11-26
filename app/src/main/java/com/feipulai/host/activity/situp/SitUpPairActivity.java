@@ -13,7 +13,6 @@ import android.widget.Switch;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.DividerItemDecoration;
-import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
@@ -67,7 +66,7 @@ public class SitUpPairActivity extends BaseActivity implements BaseQuickAdapter.
 	
 	private void initView(){
 		hostId = SettingHelper.getSystemSetting().getHostId();
-		mTargetFrequency = SerialConfigs.sProChannels.get(ItemDefault.CODE_YWQZ) + hostId - 1;
+		mTargetFrequency =SettingHelper.getSystemSetting().getUseChannel();
 		
 		boolean isAutoPair = SharedPrefsUtil.getValue(this,SharedPrefsConfigs.DEFAULT_PREFS,SharedPrefsConfigs.SIT_UP_AUTO_PAIR,true);
 		mSwAutoPair.setChecked(isAutoPair);
@@ -181,7 +180,7 @@ public class SitUpPairActivity extends BaseActivity implements BaseQuickAdapter.
 				if(result.getFrequency() == mTargetFrequency && result.getDeviceId() == mCurrentPosition + 1){
 					onNewDeviceConnect();
 				}else{
-					mSitPushUpManager.setFrequency(SitPushUpManager.PROJECT_CODE_SIT_UP,result.getFrequency(),mCurrentPosition + 1,hostId);
+					mSitPushUpManager.setFrequency(SettingHelper.getSystemSetting().getUseChannel(),result.getFrequency(),mCurrentPosition + 1,hostId);
 					mCurrentFrequency = mTargetFrequency;
 					// 那个铁盒子就是有可能等这么久才收到回复
 					mHandler.sendEmptyMessageDelayed(NO_PAIR_RESPONSE_ARRIVED,5000);

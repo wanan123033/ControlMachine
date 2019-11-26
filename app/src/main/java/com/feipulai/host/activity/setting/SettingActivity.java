@@ -5,16 +5,22 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.device.serial.RadioManager;
+import com.feipulai.device.serial.SerialConfigs;
+import com.feipulai.device.serial.command.ConvertCommand;
+import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseTitleActivity;
@@ -48,6 +54,12 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     CheckBox mSwAutoPrint;
     @BindView(R.id.sp_check_tool)
     Spinner spCheckTool;
+    @BindView(R.id.txt_channel)
+    TextView txtChannel;
+    @BindView(R.id.edit_custom_channel)
+    EditText editCustomChannel;
+    @BindView(R.id.cb_custom_channel)
+    CheckBox cbCustomChannel;
     private List<Integer> hostIdList;
     private SystemSetting setting;
 
@@ -77,7 +89,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         ArrayAdapter mSpHostIdAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, hostIdList);
         mSpHostIdAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpHostId.setAdapter(mSpHostIdAdapter);
-        mSpHostId.setSelection(setting.getHostId()-1);
+        mSpHostId.setSelection(setting.getHostId() - 1);
         mSwAutoBroadcast.setChecked(setting.isAutoBroadcast());
         mSwRtUpload.setChecked(setting.isRtUpload());
         mSwAutoPrint.setChecked(setting.isAutoPrint());
@@ -88,6 +100,11 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         spCheckTool.setAdapter(spCheckToolAdapter);
 
         spCheckTool.setSelection(setting.getCheckTool());
+
+        txtChannel.setText((SerialConfigs.sProChannels.get(machineCode) + setting.getHostId() - 1) + "");
+
+        editCustomChannel.setText(setting.getChannel() + "");
+        cbCustomChannel.setChecked(setting.isCustomChannel());
     }
 
     @Nullable
@@ -102,6 +119,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
 
             case R.id.sp_host_id:
                 setting.setHostId(position + 1);
+                txtChannel.setText((SerialConfigs.sProChannels.get(machineCode) + setting.getHostId() - 1) + "");
                 break;
             case R.id.sp_check_tool:
                 setting.setCheckTool(position);
@@ -109,14 +127,16 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         }
     }
 
-    @OnClick({R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting})
+    @OnClick({R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting, R.id.cb_custom_channel})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
             case R.id.sw_auto_broadcast:
                 setting.setAutoBroadcast(mSwAutoBroadcast.isChecked());
                 break;
-
+            case R.id.cb_custom_channel:
+                setting.setCustomChannel(cbCustomChannel.isChecked());
+                break;
             case R.id.sw_rt_upload:
                 setting.setRtUpload(mSwRtUpload.isChecked());
                 break;
@@ -162,6 +182,11 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     @Override
     protected void onPause() {
         super.onPause();
+        if (!TextUtils.isEmpty(editCustomChannel.getText().toString().trim())) {
+            setting.setChannel(Integer.valueOf(editCustomChannel.getText().toString().trim()));
+        }
+        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(
+                setting.getUseChannel())));
         SettingHelper.updateSettingCache(setting);
     }
 

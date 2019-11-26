@@ -86,13 +86,13 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void initData() {
+        super.initData();
         PrinterManager.getInstance().init();
         group = (Group) TestConfigs.baseGroupMap.get("group");
 
         mLEDManager = new LEDManager();
-        mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+        mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
 
         rvTestStu.setLayoutManager(new LinearLayoutManager(this));
@@ -120,6 +120,35 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 getTestStudent();
             }
         }, 3000);
+        setDeviceCount(setTestDeviceCount());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!isUse()) {
+            if (deviceDetails.size() != setTestDeviceCount()) {
+                setDeviceCount(setTestDeviceCount());
+            }
+        }
+
+    }
+
+    /**
+     * 是否存在使用中设备
+     *
+     * @return
+     */
+    public boolean isUse() {
+        boolean isOnUse = false;
+        for (DeviceDetail deviceDetail : deviceDetails) {
+            if (deviceDetail.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_ONUSE) {
+                return true;
+            }
+        }
+        return isOnUse;
+
+
     }
 
     @Nullable
@@ -137,13 +166,8 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
 
     @OnClick(R.id.txt_led_setting)
     public void onViewClicked() {
-        boolean isOnUse = false;
-        for (DeviceDetail deviceDetail : deviceDetails) {
-            if (deviceDetail.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_ONUSE) {
-                isOnUse = true;
-            }
-        }
-        if (isOnUse) {
+
+        if (isUse()) {
             toastSpeak("测试中,不允许修改设置");
         } else {
             IntentUtil.gotoActivity(this, LEDSettingActivity.class);
@@ -177,6 +201,9 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
             detail.getStuDevicePair().getBaseDevice().setDeviceId(i + 1);
             detail.getStuDevicePair().setTimeResult(new String[setTestCount()]);
             detail.setDeviceOpen(true);
+            if (deviceCount == 1) {
+                detail.setItemType(DeviceDetail.ITEM_ONE);
+            }
             deviceDetails.add(detail);
         }
         initView();
@@ -205,10 +232,10 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
     }
 
     private void initView() {
-        deviceListAdapter = new DeviceListAdapter(deviceDetails);
+        deviceListAdapter = new DeviceListAdapter(deviceDetails, true);
         deviceListAdapter.setTestCount(setTestCount());
 
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, setTestDeviceCount());
         rvDeviceList.setLayoutManager(layoutManager);
         rvDeviceList.setAdapter(deviceListAdapter);
         deviceListAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
@@ -300,7 +327,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                         continue;
                     if (hasStudentInDevice(studentList.get(i).getStudentCode()))
                         continue;
-                    if (deviceDetails.get(index).isDeviceOpen() && deviceDetails.get(index).getStuDevicePair().getStudent()== null) {
+                    if (deviceDetails.get(index).isDeviceOpen() && deviceDetails.get(index).getStuDevicePair().getStudent() == null) {
                         deviceDetails.get(index).getStuDevicePair().setStudent(studentList.get(i));
                         deviceDetails.get(index).getStuDevicePair().setTimeResult(pairList.get(i).getTimeResult());
                         deviceListAdapter.notifyItemChanged(index);
@@ -615,7 +642,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         pairList.get(stuIndex).setTimeResult(timeResult);
 
 
-        updateResultLed(baseStu,index);
+        updateResultLed(baseStu, index);
     }
 
     private void updateResultLed(BaseStuPair baseStu, int index) {
@@ -623,8 +650,8 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         String result = ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
         if (ledMode == 0) {
             int x = ResultDisplayUtils.getStringLength(result);
-            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 16-x, index, false, true);
-        }else {
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 16 - x, index, false, true);
+        } else {
             byte[] data = new byte[16];
             String str = "当前：";
             try {
@@ -930,8 +957,8 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         String result = ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult());
         if (ledMode == 0) {
             int x = ResultDisplayUtils.getStringLength(result);
-            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result,16- x, index, false, true);
-        }else {
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 16 - x, index, false, true);
+        } else {
             byte[] data = new byte[16];
             String str = "当前：";
             try {
@@ -948,6 +975,8 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
     }
 
     public abstract void toStart(int pos);
+
+    public abstract int setTestDeviceCount();
 
     /**
      * 设置项目测试次数

@@ -33,14 +33,15 @@
                 <ImageView
                     android:layout_width="128dp"
                     android:layout_height="38dp"
-                    android:layout_marginLeft="30dp"
+                    android:layout_marginLeft="20dp"
                     android:src="@mipmap/icon_test_logo" />
 
                 <TextView
                     android:id="@+id/tv_group_name"
-                    android:layout_width="360dp"
+                    android:layout_width="300dp"
                     android:layout_height="35dp"
                     android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/dp_20"
                     android:background="@drawable/icon_test_result_bg"
                     android:gravity="center"
                     android:maxLines="1"
@@ -51,7 +52,7 @@
                     android:id="@+id/tv_led_setting"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="21dp"
+                    android:layout_marginLeft="10dp"
                     android:layout_toLeftOf="@+id/tv_start_test"
                     android:background="@color/colorAccent"
                     android:drawableLeft="@mipmap/icon_led_setting"
@@ -60,6 +61,21 @@
                     android:paddingLeft="8dp"
                     android:paddingRight="8dp"
                     android:text="外接屏幕"
+                    android:textColor="@color/white"
+                    android:textSize="20dp" />
+
+                <TextView
+                    android:id="@+id/tv_pair"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:background="@color/colorAccent"
+
+                    android:drawablePadding="6dp"
+                    android:gravity="center"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:text="设备配对"
                     android:textColor="@color/white"
                     android:textSize="20dp" />
 

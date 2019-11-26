@@ -1,5 +1,8 @@
 package com.feipulai.exam.activity.setting;
 
+import com.feipulai.device.serial.SerialConfigs;
+import com.feipulai.exam.config.TestConfigs;
+
 /**
  * 设置配置
  * Created by zzs on 2018/11/26
@@ -83,6 +86,11 @@ public class SystemSetting {
     private int ledVersion = 0;//0:1.0版本 1：V4.1 以上版本
     public static final int LED_VERSION_V1 = 0;
     public static final int LED_VERSION_V4 = 1;
+
+    //信道
+    private int channel;
+    //是否使用自定义信道
+    private boolean isCustomChannel;
 
     public int getQrLength() {
         return qrLength;
@@ -204,6 +212,22 @@ public class SystemSetting {
         this.ledVersion = ledVersion;
     }
 
+    public int getChannel() {
+        return channel;
+    }
+
+    public void setChannel(int channel) {
+        this.channel = channel;
+    }
+
+    public boolean isCustomChannel() {
+        return isCustomChannel;
+    }
+
+    public void setCustomChannel(boolean customChannel) {
+        isCustomChannel = customChannel;
+    }
+
     @Override
     public String toString() {
         return "SystemSetting{" +
@@ -248,5 +272,13 @@ public class SystemSetting {
 
     public void setLedMode(int ledMode) {
         this.ledMode = ledMode;
+    }
+
+    /***
+     * 使用信道
+     * @return
+     */
+    public int getUseChannel() {
+        return isCustomChannel ? channel : SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode()) + hostId - 1;
     }
 }

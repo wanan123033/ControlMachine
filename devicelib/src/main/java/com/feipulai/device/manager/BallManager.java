@@ -2,9 +2,7 @@ package com.feipulai.device.manager;
 
 import android.graphics.Paint;
 
-import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
-import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.Basketball868Result;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
@@ -219,9 +217,8 @@ public class BallManager {
     /**
      * 篮足球设置参数
      */
-    private byte[] getRadioParameterBuf(int deviceId, int hostId, int sensitivity, int interceptSecond) {
-        int machineCode = MachineCode.machineCode;
-        int targetChannel = SerialConfigs.sProChannels.get(machineCode) + hostId - 1;
+    private byte[] getRadioParameterBuf(int targetChannel,int deviceId, int hostId, int sensitivity, int interceptSecond) {
+
         byte[] buf = new byte[20];
         buf[0] = (byte) 0xAA;
         buf[1] = 0x14;//包长
@@ -251,23 +248,20 @@ public class BallManager {
     /**
      * 篮足球设置参数
      */
-    public void setRadioParameter(int deviceId, int hostId, int sensitivity, int interceptSecond) {
-        byte[] buf = getRadioParameterBuf(deviceId, hostId, sensitivity, interceptSecond);
+    public void setRadioParameter(int targetChannel,int deviceId, int hostId, int sensitivity, int interceptSecond) {
+        byte[] buf = getRadioParameterBuf(targetChannel,deviceId, hostId, sensitivity, interceptSecond);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
     }
 
     /**
      * 篮足球设置参数
      *
-     * @param originFrequency
      * @param deviceId
      * @param hostId
      */
-    public void setRadioFrequency(int originFrequency, int deviceId, int hostId, int sensitivity, int interceptSecond) {
-        int machineCode = MachineCode.machineCode;
-        int targetChannel = SerialConfigs.sProChannels.get(machineCode) + hostId - 1;
-        byte[] buf = getRadioParameterBuf(deviceId, hostId, sensitivity, interceptSecond);
-//        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(originFrequency)));
+    public void setRadioFrequency(int targetChannel, int deviceId, int hostId, int sensitivity, int interceptSecond) {
+
+        byte[] buf = getRadioParameterBuf(targetChannel,deviceId, hostId, sensitivity, interceptSecond);
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {

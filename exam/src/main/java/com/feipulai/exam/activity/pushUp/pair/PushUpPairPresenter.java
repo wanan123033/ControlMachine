@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Build;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
-import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.exam.activity.pushUp.PushUpSetting;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -48,7 +47,7 @@ public class PushUpPairPresenter extends SitPullUpPairPresenter {
     }
     
     public void setFrequency(int deviceId, int originFrequency, int deviceFrequency) {
-        sitPushUpManager.setFrequency(ItemDefault.CODE_FWC,
+        sitPushUpManager.setFrequency(SettingHelper.getSystemSetting().getUseChannel(),
                 originFrequency,
                 deviceId,
                 SettingHelper.getSystemSetting().getHostId());

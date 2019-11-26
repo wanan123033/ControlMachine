@@ -10,7 +10,6 @@ import android.view.View;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
-import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
@@ -118,7 +117,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
             }
         });
 
-        frequency = SerialConfigs.sProChannels.get(ItemDefault.CODE_MG) + SettingHelper.getSystemSetting().getHostId() - 1;
+        frequency = SettingHelper.getSystemSetting().getUseChannel();
     }
 
     /**

@@ -7,10 +7,14 @@ import com.feipulai.common.jump_rope.task.TestingCountDownTimer;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.manager.VolleyBallManager;
+import com.feipulai.device.manager.VolleyBallRadioManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.VolleyBallResult;
+import com.feipulai.device.serial.beans.VolleyPair868Result;
+import com.feipulai.device.serial.beans.VolleyPairResult;
+import com.feipulai.device.sitpullup.SitPullLinker;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 
@@ -34,25 +38,29 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
     private static final int FINISHED = 0x2;// 测试过程中
     protected volatile int testState = WAIT_BEGIN;
 
-    private VolleyBallManager deviceManager;
+    public VolleyBallManager deviceManager;
     private VolleyBallSetting setting;
+    protected volatile boolean mLinking;
+    private SitPullLinker linker;
 
-    public VolleyBallTestFacade(int hostId,int pattry, VolleyBallSetting setting, Listener listener) {
+
+    public VolleyBallTestFacade(int hostId, VolleyBallSetting setting, Listener listener) {
         this.listener = listener;
         this.setting = setting;
         this.hostId = hostId;
-        deviceManager = new VolleyBallManager(pattry);
+
+        deviceManager = new VolleyBallManager(setting.getType());
         executor = Executors.newCachedThreadPool();
         SerialDeviceManager.getInstance().setRS232ResiltListener(this);
         RadioManager.getInstance().setOnRadioArrived(this);
         deviceDetector = new VolleyBallDetector();
         deviceDetector.startDetect();
-
     }
 
-    public void checkDevice() {
-//        deviceManager.checkDevice();
+    public void setLinker(SitPullLinker linker) {
+        this.linker = linker;
     }
+
 
     // 重置任务
     private void reset() {
@@ -63,6 +71,11 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
 
                     @Override
                     public void beforeTick(long tick) {
+
+                        if (tick != 0) {
+                            VolleyBallRadioManager.getInstance().startTime(hostId, 1, (int) tick, setting.getTestTime());
+                        }
+
                         listener.onGetReadyTimerTick(tick);
                     }
 
@@ -73,7 +86,7 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
                     @Override
                     public void onFinish() {
                         listener.onGetReadyTimerFinish();
-                        deviceManager.startTest();
+                        deviceManager.startTest(hostId, 1, 0, setting.getTestTime());
                         testState = TESTING;
                         tmpResult = null;
                         String displayInLed = "成绩:" + ResultDisplayUtils.getStrResultForDisplay(0);
@@ -118,8 +131,8 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
         stopTimers();
 
         // 给设备发送开始后结束,在获取成绩的时候就不会一直有之前的成绩存在了
-        deviceManager.startTest();
-        deviceManager.stopTest();
+        deviceManager.startTest(hostId, 1, 0, setting.getTestTime());
+        deviceManager.stopTest(hostId, 1, setting.getTestTime());
 
         ledManager.showString(hostId, "", 0, 0, true, true);
 
@@ -129,16 +142,16 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
 
     public void stopTest() {
         stopTimers();
-
         testState = FINISHED;
-        deviceManager.stopTest();
-        deviceManager.getScore();
+        deviceManager.stopTest(hostId, 1, setting.getTestTime());
+        deviceManager.getScore(hostId, 1);
     }
 
     public void abandonTest() {
         testState = WAIT_BEGIN;
         stopTimers();
-        deviceManager.stopTest();
+        deviceManager.stopTest(hostId, 1, setting.getTestTime());
+        VolleyBallRadioManager.getInstance().deviceFree(hostId, 1);
         ledManager.showString(hostId, "", 0, 0, true, true);
     }
 
@@ -188,19 +201,43 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
         listener.onDeviceConnectState(VolleyBallManager.VOLLEY_BALL_CONNECT);
     }
 
-    //    public void setTimeLimit(int testTime) {
-//        this.timeLimit = testTime;
-//        SerialDeviceManager.getInstance().setRS232ResiltListener(this);
-//    }
+    @Override
+    public void onRadioArrived(Message msg) {
+        if (mLinking && linker.onRadioArrived(msg)) {
+            return;
+        }
+        if (msg.obj instanceof VolleyPair868Result) {
+            VolleyPair868Result pair868Result = (VolleyPair868Result) msg.obj;
+            if (pair868Result.getDeviceId() != 1)
+                return;
+
+            if (pair868Result.getState() == VolleyPair868Result.STATE_TIMING || pair868Result.getState() == VolleyPair868Result.STATE_TIME_END
+                    || pair868Result.getState() == VolleyPair868Result.STATE_COUNTING || pair868Result.getState() == VolleyPair868Result.STATE_COUNT_END) {
+                VolleyBallResult result = new VolleyBallResult();
+                result.setResult(pair868Result.getScore());
+                listener.onScoreArrived(result);
+                if (tmpResult == null || result.getResult() != tmpResult.getResult()) {
+                    String displayInLed = "成绩:" + ResultDisplayUtils.getStrResultForDisplay(result.getResult());
+                    ledManager.showString(SettingHelper.getSystemSetting().getHostId(), displayInLed, 1, 1, false, true);
+                    tmpResult = result;
+                }
+            }
+
+        }
+        if (msg.obj instanceof VolleyPair868Result || msg.obj instanceof VolleyPairResult) {
+            deviceDetector.missCount.getAndSet(0);
+            listener.onDeviceConnectState(VolleyBallManager.VOLLEY_BALL_CONNECT);
+        }
+
+    }
+
+
     public void setVolleySetting(VolleyBallSetting setting) {
         this.setting = setting;
         SerialDeviceManager.getInstance().setRS232ResiltListener(this);
+        RadioManager.getInstance().setOnRadioArrived(this);
     }
 
-    @Override
-    public void onRadioArrived(Message msg) {
-
-    }
 
     private class VolleyBallDetector {
 
@@ -215,20 +252,23 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
                 public void run() {
                     while (detecting) {
                         // 测试过程中不断获取成绩
-                        if (testState == TESTING) {
-                            deviceManager.getScore();
+                        if (setting.getType() == 0) {
+                            if (testState == TESTING) {
+                                deviceManager.getScore(hostId, 1);
+                            } else {
+                                deviceManager.emptyCommand();
+                            }
                         } else {
-                            deviceManager.emptyCommand();
-
-
+                            deviceManager.getScore(hostId, 1);
                         }
+
                         int count = missCount.addAndGet(1);
                         if (count >= 10) {
                             // 认为设备已经断开了连接
                             listener.onDeviceConnectState(VolleyBallManager.VOLLEY_BALL_DISCONNECT);
                         }
                         try {
-                            Thread.sleep(100);
+                            Thread.sleep(200);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }

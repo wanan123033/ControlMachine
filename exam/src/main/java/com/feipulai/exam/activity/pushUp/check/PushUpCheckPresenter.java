@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
-import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.exam.activity.jump_rope.base.check.RadioCheckContract;
 import com.feipulai.exam.activity.pushUp.PushUpSetting;
@@ -47,7 +46,7 @@ public class PushUpCheckPresenter extends SitPullUpCheckPresenter<PushUpSetting>
 
     @Override
     public void setFrequency(int deviceId, int originFrequency, int deviceFrequency) {
-        deviceManager.setFrequency(ItemDefault.CODE_FWC,
+        deviceManager.setFrequency(systemSetting.getUseChannel(),
                 originFrequency,
                 deviceId,
                 SettingHelper.getSystemSetting().getHostId());

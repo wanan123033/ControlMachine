@@ -51,9 +51,8 @@ public class StandJumpPairPresenter extends SitPullUpPairPresenter {
 
     @Override
     public void setFrequency(int deviceId, int originFrequency, int deviceFrequency) {
-
-
-        StandJumpManager.setFrequencyParameter(SettingHelper.getSystemSetting().getHostId(), deviceId, originFrequency, 100);
+        StandJumpManager.setFrequencyParameter(SettingHelper.getSystemSetting().getUseChannel(),
+                SettingHelper.getSystemSetting().getHostId(), deviceId, setting.getPointsScopeArray()[deviceId - 1] - 42);
     }
 
     @Override

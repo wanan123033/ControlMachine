@@ -1,8 +1,6 @@
 package com.feipulai.device.manager;
 
-import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.RadioManager;
-import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
@@ -95,8 +93,8 @@ public class SitPushUpManager {
      * @param deviceId        终端设备的设备ID
      * @param hostId          主机号
      */
-    public void setFrequency(int machineCode, int originFrequency, int deviceId, int hostId) {
-        int targetChannel = 0;
+    public void setFrequency(int targetChannel, int originFrequency, int deviceId, int hostId) {
+
         byte[] buf = new byte[16];
         buf[0] = 0x54;
         buf[1] = 0x44;    //包头
@@ -106,7 +104,6 @@ public class SitPushUpManager {
         buf[5] = (byte) (projectCode & 0xff);     //测试项目
         buf[6] = 0;       //单机模式
         buf[7] = 0x0b;      //命令
-        targetChannel = SerialConfigs.sProChannels.get(machineCode) + hostId - 1;
         buf[8] = (byte) (targetChannel & 0xff); //高字节在先
         buf[9] = 4;
         buf[10] = 0;
@@ -134,8 +131,8 @@ public class SitPushUpManager {
     /**
      * 肺活量旧版一对多
      */
-    public void setFrequencyFHL(int machineCode, int originFrequency, int deviceId, int hostId) {
-        int targetChannel = 0;
+    public void setFrequencyFHL(int targetChannel, int originFrequency, int deviceId, int hostId) {
+
         byte[] buf = new byte[16];
         buf[0] = (byte) 0xAB;
         buf[1] = 0x02;    //包头
@@ -143,7 +140,6 @@ public class SitPushUpManager {
         buf[3] = 0x02;
         buf[4] = (byte) (deviceId & 0xff);      //设备号
         buf[5] = 0X01;
-        targetChannel = SerialConfigs.sProChannels.get(machineCode) + hostId - 1;
         buf[6] = (byte) (targetChannel & 0xff); //高字节在先
         buf[7] = 0x04;    //传输速率
 
@@ -174,8 +170,7 @@ public class SitPushUpManager {
     /**
      * 肺活量新版一对多
      */
-    public void setFrequencyNewFHL(int machineCode, int originFrequency, int deviceId, int hostId) {
-        int targetChannel = 0;
+    public void setFrequencyNewFHL(int targetChannel, int originFrequency, int deviceId, int hostId) {
         byte[] buf = new byte[18];
         buf[0] = (byte) 0xAA;
         buf[1] = 0x12;    //包长
@@ -183,7 +178,6 @@ public class SitPushUpManager {
         buf[3] = 0x03;    //目标设备编号（子设备）
         buf[4] = 0x01;    //本设备编号（主机）
         buf[5] = (byte) hostId;//本设备主机号
-        targetChannel = SerialConfigs.sProChannels.get(machineCode) + hostId - 1;
         buf[6] = (byte) (deviceId & 0xff); //目标设备子机号
         buf[7] = 0x01;    //命令设置参数
 
@@ -196,7 +190,7 @@ public class SitPushUpManager {
         buf[14] = (byte) hostId;
         buf[15] = (byte) deviceId;
         for (int i = 1; i < 16; i++) {
-            buf[16] += buf[i] ;
+            buf[16] += buf[i];
         }
         buf[17] = 0x0D;   //包尾
         //Logger.i(StringUtility.bytesToHexString(buf));
@@ -220,9 +214,7 @@ public class SitPushUpManager {
      * @param deviceId
      * @param hostId
      */
-    public void setFrequencyMG(int originFrequency, int deviceId, int hostId) {
-        int machineCode = ItemDefault.CODE_MG;
-        int targetChannel = 0;
+    public void setFrequencyMG(int targetChannel, int originFrequency, int deviceId, int hostId) {
         byte[] buf = new byte[18];
         buf[0] = 0x54;
         buf[1] = 0x44;    //包头
@@ -232,7 +224,6 @@ public class SitPushUpManager {
         buf[5] = (byte) (projectCode & 0xff);     //测试项目
         buf[6] = 0x01;       //无线模式
         buf[7] = 0x01;      //命令
-        targetChannel = SerialConfigs.sProChannels.get(machineCode) + hostId - 1;
         buf[8] = (byte) (targetChannel & 0xff); //高字节在先
         buf[9] = 4;
         buf[10] = 0;
@@ -266,9 +257,7 @@ public class SitPushUpManager {
      * @param deviceId
      * @param hostId
      */
-    public void setFrequencySXQ(int originFrequency, int deviceId, int hostId) {
-        int machineCode = ItemDefault.CODE_HWSXQ;
-        int targetChannel = 0;
+    public void setFrequencySXQ(int targetChannel, int originFrequency, int deviceId, int hostId) {
         byte[] buf = new byte[21];
         buf[0] = (byte) 0xAA;//包头
         buf[1] = 0x15;    //包长
@@ -278,7 +267,6 @@ public class SitPushUpManager {
         buf[5] = (byte) (hostId & 0xff);     //主机号
         buf[6] = (byte) (deviceId & 0xff);       //子机号
         buf[7] = 0x02;      //命令
-        targetChannel = SerialConfigs.sProChannels.get(machineCode) + hostId - 1;
         buf[8] = 0;
         buf[9] = 0;
         buf[10] = 0;
@@ -306,48 +294,6 @@ public class SitPushUpManager {
         }
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
         RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(targetChannel)));
-    }
-
-
-
-    public void setFrequencyPQ(int originFrequency, int deviceId, int hostId) {
-        int machineCode = ItemDefault.CODE_PQ;
-        int targetChannel = 0;
-        byte[] buf = new byte[17];
-        buf[0] = (byte) 0xAA;
-        buf[1] = 0x11;//包长
-        buf[2] = (byte) (projectCode & 0xff);     //测试项目
-        buf[3] = 0x03;//目标设备编号：0x03（控制盒属于计数器）
-        buf[4] = 0x01;      //本设备编号：0x01（主机）
-        buf[5] = (byte) (hostId & 0xff);     //本设备主机号
-        buf[6] = (byte) (deviceId & 0xff);       //目标设备子机号
-//        buf[6] = 0;
-        buf[7] = (byte) 0xc1;      //命令
-        targetChannel = SerialConfigs.sProChannels.get(machineCode) + hostId - 1;
-        buf[8] = 0x00; //高字节在先
-        buf[9] = 0x00;
-        buf[10] = 0x00;
-        buf[11] = 0x00;
-        buf[12] = (byte) (targetChannel & 0xff); //高字节在先
-        buf[13] = (byte) hostId;
-        buf[14] = (byte) (deviceId & 0xff);
-        for (int i = 1; i < 15; i++) {
-            buf[15] += buf[i] & 0xff;
-        }
-        buf[16] = 0x0d;   //包尾
-        //Logger.i(StringUtility.bytesToHexString(buf));
-        //先切到通信频段
-        //Log.i("james","originFrequency:" + originFrequency);
-//        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(originFrequency)));
-        //Log.i("james",StringUtility.bytesToHexString(buf));
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
-        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(targetChannel)));
-
     }
 
 

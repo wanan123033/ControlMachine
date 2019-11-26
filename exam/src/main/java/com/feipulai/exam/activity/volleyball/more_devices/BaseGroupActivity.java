@@ -224,9 +224,9 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
     @Override
     protected void initData() {
 
-        setting = SharedPrefsUtil.loadFormSource(this,VolleyBallSetting.class);
+        setting = SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class);
 
-        rvTestStu.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
+        rvTestStu.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
         group = (Group) TestConfigs.baseGroupMap.get("group");
         //给 界面左侧recyclerView 添加学生
@@ -241,7 +241,7 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
 
         GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
         rv_device_list.setLayoutManager(layoutManager);
-        ((SimpleItemAnimator)rv_device_list.getItemAnimator()).setSupportsChangeAnimations(false);
+        ((SimpleItemAnimator) rv_device_list.getItemAnimator()).setSupportsChangeAnimations(false);
 
         setDeviceCount(4);
         deviceListAdapter = new DeviceListAdapter(deviceDetails);
@@ -251,43 +251,43 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
         deviceListAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
-                switch (view.getId()){
+                switch (view.getId()) {
                     case R.id.txt_start:
-                        sendStart(deviceDetails.get(i),i);
+                        sendStart(deviceDetails.get(i), i);
                         deviceDetails.get(i).setFinsh(false);
                         break;
                     case R.id.txt_end:
-                        sendEnd(deviceDetails.get(i),i);
+                        sendEnd(deviceDetails.get(i), i);
                         stuSkip(i);
                         deviceDetails.get(i).getStuDevicePair().setStudent(null);
                         refreshDevice(i);
                         int hostId = SettingHelper.getSystemSetting().getHostId();
-                        int deviceId = (byte)  deviceDetails.get(i).getStuDevicePair().getBaseDevice().getDeviceId();
-                        VolleyBallRadioManager.getInstance().deviceFree(hostId,deviceId);
+                        int deviceId = (byte) deviceDetails.get(i).getStuDevicePair().getBaseDevice().getDeviceId();
+                        VolleyBallRadioManager.getInstance().deviceFree(hostId, deviceId);
                         deviceDetails.get(i).setFinsh(true);
                         break;
                     case R.id.txt_time:
-                        sendTime(deviceDetails.get(i),i);
+                        sendTime(deviceDetails.get(i), i);
 
                         break;
                     case R.id.txt_gave_up:
-                        sendGaveUp(deviceDetails.get(i),i);
+                        sendGaveUp(deviceDetails.get(i), i);
                         deviceDetails.get(i).setFinsh(false);
                         break;
                     case R.id.txt_confirm:
-                        sendConfirm(deviceDetails.get(i),i);
+                        sendConfirm(deviceDetails.get(i), i);
                         deviceDetails.get(i).setFinsh(true);
                         break;
                     case R.id.txt_penalty:
-                        sendPenalty(deviceDetails.get(i),i);
+                        sendPenalty(deviceDetails.get(i), i);
                         deviceDetails.get(i).setFinsh(true);
                         break;
                     case R.id.txt_js:
-                        stopCount(deviceDetails.get(i),i);
+                        stopCount(deviceDetails.get(i), i);
                         deviceDetails.get(i).setFinsh(false);
                         break;
                     case R.id.txt_fq:
-                        fqCount(deviceDetails.get(i),i);
+                        fqCount(deviceDetails.get(i), i);
                         deviceDetails.get(i).setFinsh(true);
                         break;
                 }
@@ -313,7 +313,7 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
 
     private void init() {
         mLEDManager = new LEDManager();
-        mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+        mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
         PrinterManager.getInstance().init();
     }
@@ -328,10 +328,10 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
     public void initLEDShow() {
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
         int pairNum = setting.getPairNum();
-        if (pairNum == 0){
+        if (pairNum == 0) {
             pairNum = 4;
         }
-        Log.e("TAG","pairNum="+pairNum);
+        Log.e("TAG", "pairNum=" + pairNum);
         if (ledMode == 0) {
             for (int i = 0; i < pairNum; i++) {
                 StringBuilder data = new StringBuilder();
@@ -355,7 +355,7 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
 
     public void setDeviceCount(int deviceCount) {
         deviceDetails.clear();
-        VolleyBallSetting setting = SharedPrefsUtil.loadFormSource(this,VolleyBallSetting.class);
+        VolleyBallSetting setting = SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class);
         for (int i = 0; i < deviceCount; i++) {
             DeviceDetail detail = new DeviceDetail();
             detail.getStuDevicePair().getBaseDevice().setDeviceId(i + 1);
@@ -367,6 +367,7 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
             deviceDetails.add(detail);
         }
     }
+
     /**
      * 分配考生
      */
@@ -405,12 +406,14 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
         }
         return j;
     }
+
     protected void gotoItemSetting() {
 
         Intent intent = new Intent(getApplicationContext(), VolleyBallSettingActivity.class);
-        intent.putExtra("deviceId",3);
+        intent.putExtra("deviceId", 3);
         startActivity(intent);
     }
+
     @OnClick({R.id.txt_led_setting, R.id.tv_device_pair})
     public void onViewClicked(View view) {
 
@@ -423,6 +426,7 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
                 break;
         }
     }
+
     /**
      * 设置项目测试次数
      */
@@ -442,19 +446,19 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
      */
     public synchronized void updateResult(@NonNull BaseStuPair baseStu) {
         int deviceId = baseStu.getBaseDevice().getDeviceId();
-        Log.e("TAG","deviceId="+deviceId);
+        Log.e("TAG", "deviceId=" + deviceId);
         BaseStuPair pair = null;
         int index = 0;
         for (int i = 0; i < 4; i++) {
             int id = deviceDetails.get(i).getStuDevicePair().getBaseDevice().getDeviceId();
-            Log.e("TAG","id="+id);
+            Log.e("TAG", "id=" + id);
             if (id == deviceId) {
                 pair = deviceDetails.get(i).getStuDevicePair();
                 index = i;
                 break;
             }
         }
-        Log.e("TAG","pair="+pair);
+        Log.e("TAG", "pair=" + pair);
         if (null != pair.getBaseDevice()) {
             pair.setResultState(baseStu.getResultState());
             pair.setResult(baseStu.getResult());
@@ -465,6 +469,7 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
 
         }
     }
+
     protected void updateResultLed(BaseStuPair baseStu, int index) {
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
         byte[] data = new byte[16];
@@ -473,7 +478,7 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
                 try {
                     String str = baseStu.getStudent().getStudentName();
                     String result = ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
-                    if (baseStu.getResult() == 0 && baseStu.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN){
+                    if (baseStu.getResult() == 0 && baseStu.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN) {
                         result = "准备";
                     }
                     byte[] strData = str.getBytes("GB2312");
@@ -487,11 +492,13 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
             }
         }
     }
+
     private void refreshDevice(int index) {
         if (deviceDetails.get(index).getStuDevicePair().getBaseDevice() != null) {
             deviceListAdapter.notifyItemChanged(index);
         }
     }
+
     protected void stuSkip(int pos) {
         deviceDetails.get(pos).setTestTime(0);
 
@@ -502,6 +509,7 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
 
         allotStudent(pos);
     }
+
     /**
      * led 显示
      *
@@ -522,11 +530,12 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            Log.e("TAGLED",str +","+index);
+            Log.e("TAGLED", str + "," + index);
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, index, false, true);
         }
     }
-    public void saveResult(final BaseStuPair baseStuPair ,final int index) {
+
+    public void saveResult(final BaseStuPair baseStuPair, final int index) {
         Logger.i("saveResult==>" + baseStuPair.toString());
         if (baseStuPair.getStudent() == null)
             return;
@@ -554,22 +563,22 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
                 roundResult.setIsLastResult(1);
                 bestResult.setIsLastResult(0);
                 DBManager.getInstance().updateRoundResult(bestResult);
-                updateLastResultLed(roundResult ,index);
+                updateLastResultLed(roundResult, index);
             } else {
                 if (bestResult.getResultState() != RoundResult.RESULT_STATE_NORMAL) {
                     roundResult.setIsLastResult(1);
                     bestResult.setIsLastResult(0);
                     DBManager.getInstance().updateRoundResult(bestResult);
-                    updateLastResultLed(roundResult ,index);
+                    updateLastResultLed(roundResult, index);
                 } else {
                     roundResult.setIsLastResult(0);
-                    updateLastResultLed(bestResult ,index);
+                    updateLastResultLed(bestResult, index);
                 }
             }
         } else {
             // 第一次测试
             roundResult.setIsLastResult(1);
-            updateLastResultLed(roundResult ,index);
+            updateLastResultLed(roundResult, index);
         }
 
 
@@ -584,7 +593,8 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
 
         printResult(baseStuPair);
     }
-    private void updateLastResultLed(RoundResult roundResult ,int index) {
+
+    private void updateLastResultLed(RoundResult roundResult, int index) {
 
     }
 
@@ -606,6 +616,7 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
         serverIntent.putExtras(bundle);
         startService(serverIntent);
     }
+
     protected void printResult(BaseStuPair baseStuPair) {
         if (!SettingHelper.getSystemSetting().isAutoPrint())
             return;

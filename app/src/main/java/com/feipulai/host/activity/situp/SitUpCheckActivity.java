@@ -127,7 +127,7 @@ public class SitUpCheckActivity
 
     private void init() {
         mMaxDeviceNo = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.SIT_UP_TEST_NUMBER, 20);
-        mTargetFrequency = SerialConfigs.sProChannels.get(ItemDefault.CODE_YWQZ) + SettingHelper.getSystemSetting().getHostId() - 1;
+        mTargetFrequency = SettingHelper.getSystemSetting().getUseChannel();
 
         mLEDManager = new LEDManager();
         mSitPushUpManager = new SitPushUpManager(SitPushUpManager.PROJECT_CODE_SIT_UP);
@@ -515,7 +515,7 @@ public class SitUpCheckActivity
                 RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(mTargetFrequency)));
                 onNewDeviceConnect();
             } else {
-                mSitPushUpManager.setFrequency(projectCode, result.getFrequency(), mCurrentPosition + 1, SettingHelper.getSystemSetting().getHostId());
+                mSitPushUpManager.setFrequency(SettingHelper.getSystemSetting().getUseChannel(), result.getFrequency(), mCurrentPosition + 1, SettingHelper.getSystemSetting().getHostId());
                 mCurrentFrequency = mTargetFrequency;
                 // 那个铁盒子就是有可能等这么久才收到回复
                 mHandler.sendEmptyMessageDelayed(NO_PAIR_RESPONSE_ARRIVED, 5000);

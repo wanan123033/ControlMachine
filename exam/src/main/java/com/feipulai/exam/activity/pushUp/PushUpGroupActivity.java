@@ -21,10 +21,8 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
-import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.manager.SitPushUpManager;
-import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.SitPushUpStateResult;
 import com.feipulai.device.sitpullup.SitPullLinker;
 import com.feipulai.exam.R;
@@ -117,7 +115,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
     private int intervalCount = 0;
     private WaitDialog changBadDialog;
     private SitPullLinker linker;
-    protected final int TARGET_FREQUENCY = SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode()) + SettingHelper.getSystemSetting().getHostId() - 1;
+    protected final int TARGET_FREQUENCY = SettingHelper.getSystemSetting().getUseChannel();
 
     @Override
     protected int setLayoutResID() {
@@ -640,7 +638,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
 
     @Override
     public void setFrequency(int deviceId, int originFrequency, int targetFrequency) {
-        facade.deviceManager.setFrequency(ItemDefault.CODE_FWC,
+        facade.deviceManager.setFrequency(SettingHelper.getSystemSetting().getUseChannel(),
                 originFrequency,
                 deviceId,
                 SettingHelper.getSystemSetting().getHostId());

@@ -4,10 +4,8 @@ import android.content.Context;
 import android.os.Message;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
-import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.device.serial.RadioManager;
-import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.sitpullup.SitPullLinker;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.jump_rope.bean.BaseDeviceState;
@@ -35,7 +33,7 @@ public class SitUpPairPresenter2
     private volatile int focusPosition;
     private List<StuDevicePair> pairs;
     private int machineCode = TestConfigs.sCurrentItem.getMachineCode();
-    private final int TARGET_FREQUENCY = SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode()) + SettingHelper.getSystemSetting().getHostId() - 1;
+    private final int TARGET_FREQUENCY = SettingHelper.getSystemSetting().getUseChannel();;
     private SitPullLinker linker;
     private SitPushUpManager sitPushUpManager;
     public SitUpPairPresenter2(Context context, SitUpPairContract.View view) {
@@ -79,7 +77,7 @@ public class SitUpPairPresenter2
     }
 
     public void setFrequency(int deviceId, int originFrequency, int deviceFrequency){
-        sitPushUpManager.setFrequency(ItemDefault.CODE_YWQZ,
+        sitPushUpManager.setFrequency(SettingHelper.getSystemSetting().getUseChannel(),
                 originFrequency,
                 deviceId,
                 SettingHelper.getSystemSetting().getHostId());

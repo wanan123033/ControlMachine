@@ -90,7 +90,7 @@ public class JumpRopeCheckPresenter
         @Override
         public void run() {
             while (mLinking) {
-                mJumpRopeManager.link(hostId, focusPosition + 1, 0x06, setting.getDeviceGroup() + 1);
+                mJumpRopeManager.link(SettingHelper.getSystemSetting().getUseChannel(), hostId, focusPosition + 1, 0x06, setting.getDeviceGroup() + 1);
             }
         }
     }
