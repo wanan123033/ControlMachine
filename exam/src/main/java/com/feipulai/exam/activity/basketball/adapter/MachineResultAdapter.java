@@ -54,8 +54,14 @@ public class MachineResultAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+        String time = ResultDisplayUtils.getStrResultForDisplay(dataList.get(position).getResult());
+        if (time.charAt(0) == '0' && time.charAt(1) == '0'){
+            time = time.substring(3,time.toCharArray().length);
+        }else if (time.charAt(0) == '0'){
+            time = time.substring(1,time.toCharArray().length);
+        }
         holder.txtName.setText("第" + (position + 1) + "次拦截成绩：" +
-                ResultDisplayUtils.getStrResultForDisplay(dataList.get(position).getResult()) + "      ");
+                time + "      ");
         return convertView;
     }
 

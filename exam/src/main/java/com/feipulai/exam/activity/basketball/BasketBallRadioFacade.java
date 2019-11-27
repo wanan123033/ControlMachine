@@ -22,6 +22,7 @@ import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.utils.ResultDisplayUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -192,6 +193,11 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
                             //获取到多条成绩为停止状态
                             Log.i("zzzz", "getResult=====>" + basketballResult.toString());
                             String showLEDTime = DateUtil.caculateFormatTime(basketballResult.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital());
+                            if (showLEDTime.charAt(0) == '0' && showLEDTime.charAt(1) == '0'){
+                                showLEDTime = showLEDTime.substring(3,showLEDTime.toCharArray().length);
+                            }else if (showLEDTime.charAt(0) == '0'){
+                                showLEDTime = showLEDTime.substring(1,showLEDTime.toCharArray().length);
+                            }
                             ballManager.setLedShowData(SettingHelper.getSystemSetting().getHostId(), showLEDTime, 2, Paint.Align.RIGHT);
                             listener.getResult(basketballResult);//获取拦截时间
                         }

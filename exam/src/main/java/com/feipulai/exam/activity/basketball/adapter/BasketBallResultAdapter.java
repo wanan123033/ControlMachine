@@ -8,9 +8,11 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.basketball.result.BasketBallTestResult;
+import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.MachineResult;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.utils.ResultDisplayUtils;
@@ -49,7 +51,13 @@ public class BasketBallResultAdapter extends BaseQuickAdapter<BasketBallTestResu
     protected void convert(BasketBallResultAdapter.ViewHolder helper, final BasketBallTestResult item) {
         helper.txtRound.setText(item.getRoundNo() + "");
         helper.txtPenalizeNum.setText(item.getPenalizeNum() + "");
-        helper.txtPracticalResult.setText(item.getResult() < 0 ? "" : ResultDisplayUtils.getStrResultForDisplay(item.getResult()));
+        String time = ResultDisplayUtils.getStrResultForDisplay(item.getResult());
+        if (time.charAt(0) == '0' && time.charAt(1) == '0'){
+            time = time.substring(3,time.toCharArray().length);
+        }else if (time.charAt(0) == '0'){
+            time = time.substring(1,time.toCharArray().length);
+        }
+        helper.txtPracticalResult.setText(item.getResult() < 0 ? "" : time);
 //
         if (selectPosition == helper.getLayoutPosition()) {
             helper.viewContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.blue_CB));
