@@ -9,7 +9,7 @@ import com.feipulai.exam.activity.SubItemsSelectActivity;
 import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
-import com.feipulai.exam.activity.volleyball.more_devices.VolleyBallMore2TestActivity;
+import com.feipulai.exam.activity.volleyball.more_devices.VolleyBallMoreTestActivity;
 import com.feipulai.exam.entity.Item;
 
 /**
@@ -47,9 +47,9 @@ public class VolleyballPatternSelectActivity extends SubItemsSelectActivity {
 
                 if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
                     if (position == 2 || position == 3 || position == 0 || position == 1) {
-                        startActivity(new Intent(VolleyballPatternSelectActivity.this, VolleyBallIndividualActivity.class));
+                        startActivity(new Intent(VolleyballPatternSelectActivity.this, VolleyBallIndividual2Activity.class));
                     } else {
-                        startActivity(new Intent(VolleyballPatternSelectActivity.this, VolleyBallMore2TestActivity.class));
+                        startActivity(new Intent(VolleyballPatternSelectActivity.this, VolleyBallMoreTestActivity.class));
                     }
 
                 } else {

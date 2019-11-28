@@ -189,7 +189,7 @@ public class VolleyBallSettingActivity
                 ToastUtils.showShort("功能开发中,敬请期待");
                 break;
             case R.id.tv_device_check:
-                if (setting.getType() == 0||setting.getType() == 1) {
+                if (setting.getType() == 0) {
                     if (volleyBallManager == null) {
                         volleyBallManager = new VolleyBallManager(setting.getType());
                     }
@@ -221,14 +221,13 @@ public class VolleyBallSettingActivity
                     });
                     builder.create().show();
 
+                } else if (setting.getType() == 1){
+                    VolleyBallCheckDialog dialog1 = new VolleyBallCheckDialog();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("deviceId", 1);
+                    dialog1.setArguments(bundle);
+                    dialog1.show(getFragmentManager(), "VolleyBallCheckDialog");
                 }
-//                else if (setting.getType() == 1){
-//                    VolleyBallCheckDialog dialog1 = new VolleyBallCheckDialog();
-//                    Bundle bundle = new Bundle();
-//                    bundle.putInt("deviceId", 1);
-//                    dialog1.setArguments(bundle);
-//                    dialog1.show(getFragmentManager(), "VolleyBallCheckDialog");
-//                }
                 break;
         }
     }

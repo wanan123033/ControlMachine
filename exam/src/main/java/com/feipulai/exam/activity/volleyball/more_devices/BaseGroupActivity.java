@@ -73,6 +73,7 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
     private Intent serverIntent;
     private int roundNo;
     private int testNo;       //测试次数
+    private int currentStudentIndex;  //当前正在测试的学生下标
 
 
     @Nullable
@@ -125,12 +126,6 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
             return;
         }
 
-        //身份验证模式
-        if (SettingHelper.getSystemSetting().isIdentityMark()) {
-            stuAdapter.notifyDataSetChanged();
-            return;
-        }
-
         for (int i = 0; i < studentList.size(); i++) {
             //查询学生成绩
             List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound
@@ -175,11 +170,12 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
             toastSpeak("该考生不存在");
             return;
         }
-        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
-        if (studentItem == null) {
-            toastSpeak("无此项目");
-            return;
-        }
+//        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+//        Log.e("TAG====",student.getStudentCode()+"------"+studentItem);
+//        if (studentItem == null) {
+//            toastSpeak("无此项目");
+//            return;
+//        }
 
         //是否开启身份验证
         if (SettingHelper.getSystemSetting().isIdentityMark() && studentList.size() > 0) {
@@ -189,9 +185,18 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
             GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(group, student.getStudentCode());
             if ((roundResultList.size() == 0 || roundResultList.size() < setTestCount()) && groupItem != null) {
                 roundNo = roundResultList.size() == 0 ? 1 : roundResultList.size() + 1;
+
                 gotoTest(student);
                 groupItem.setIdentityMark(1);
                 DBManager.getInstance().updateStudentGroupItem(groupItem);
+                //TODO 保存当前测试的学生下标
+                for(int i = 0 ; i < studentList.size() ; i++){
+                    Student student1 = studentList.get(i);
+                    if (student1.equals(student)){
+                        currentStudentIndex = i;
+                        break;
+                    }
+                }
             } else if (groupItem == null) {//没报名
                 toastSpeak(student.getSpeakStuName() + "考生没有在选择的分组内，无法测试",
                         student.getStudentName() + "考生没有在选择的分组内，无法测试");
@@ -251,43 +256,43 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
         deviceListAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
-                switch (view.getId()) {
+                switch (view.getId()){
                     case R.id.txt_start:
-                        sendStart(deviceDetails.get(i), i);
+                        sendStart(deviceDetails.get(i),i);
                         deviceDetails.get(i).setFinsh(false);
                         break;
                     case R.id.txt_end:
-                        sendEnd(deviceDetails.get(i), i);
+                        sendEnd(deviceDetails.get(i),i);
                         stuSkip(i);
                         deviceDetails.get(i).getStuDevicePair().setStudent(null);
                         refreshDevice(i);
                         int hostId = SettingHelper.getSystemSetting().getHostId();
-                        int deviceId = (byte) deviceDetails.get(i).getStuDevicePair().getBaseDevice().getDeviceId();
-                        VolleyBallRadioManager.getInstance().deviceFree(hostId, deviceId);
+                        int deviceId = (byte)  deviceDetails.get(i).getStuDevicePair().getBaseDevice().getDeviceId();
+                        VolleyBallRadioManager.getInstance().deviceFree(hostId,deviceId);
                         deviceDetails.get(i).setFinsh(true);
                         break;
                     case R.id.txt_time:
-                        sendTime(deviceDetails.get(i), i);
+                        sendTime(deviceDetails.get(i),i);
 
                         break;
                     case R.id.txt_gave_up:
-                        sendGaveUp(deviceDetails.get(i), i);
+                        sendGaveUp(deviceDetails.get(i),i);
                         deviceDetails.get(i).setFinsh(false);
                         break;
                     case R.id.txt_confirm:
-                        sendConfirm(deviceDetails.get(i), i);
+                        sendConfirm(deviceDetails.get(i),i);
                         deviceDetails.get(i).setFinsh(true);
                         break;
                     case R.id.txt_penalty:
-                        sendPenalty(deviceDetails.get(i), i);
+                        sendPenalty(deviceDetails.get(i),i);
                         deviceDetails.get(i).setFinsh(true);
                         break;
                     case R.id.txt_js:
-                        stopCount(deviceDetails.get(i), i);
+                        stopCount(deviceDetails.get(i),i);
                         deviceDetails.get(i).setFinsh(false);
                         break;
                     case R.id.txt_fq:
-                        fqCount(deviceDetails.get(i), i);
+                        fqCount(deviceDetails.get(i),i);
                         deviceDetails.get(i).setFinsh(true);
                         break;
                 }
@@ -313,7 +318,7 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
 
     private void init() {
         mLEDManager = new LEDManager();
-        mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+//        mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
         PrinterManager.getInstance().init();
     }
@@ -328,10 +333,10 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
     public void initLEDShow() {
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
         int pairNum = setting.getPairNum();
-        if (pairNum == 0) {
+        if (pairNum == 0){
             pairNum = 4;
         }
-        Log.e("TAG", "pairNum=" + pairNum);
+        Log.e("TAG","pairNum="+pairNum);
         if (ledMode == 0) {
             for (int i = 0; i < pairNum; i++) {
                 StringBuilder data = new StringBuilder();
@@ -355,7 +360,7 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
 
     public void setDeviceCount(int deviceCount) {
         deviceDetails.clear();
-        VolleyBallSetting setting = SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class);
+        VolleyBallSetting setting = SharedPrefsUtil.loadFormSource(this,VolleyBallSetting.class);
         for (int i = 0; i < deviceCount; i++) {
             DeviceDetail detail = new DeviceDetail();
             detail.getStuDevicePair().getBaseDevice().setDeviceId(i + 1);
@@ -367,7 +372,6 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
             deviceDetails.add(detail);
         }
     }
-
     /**
      * 分配考生
      */
@@ -406,14 +410,12 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
         }
         return j;
     }
-
     protected void gotoItemSetting() {
 
         Intent intent = new Intent(getApplicationContext(), VolleyBallSettingActivity.class);
-        intent.putExtra("deviceId", 3);
+        intent.putExtra("deviceId",3);
         startActivity(intent);
     }
-
     @OnClick({R.id.txt_led_setting, R.id.tv_device_pair})
     public void onViewClicked(View view) {
 
@@ -426,7 +428,6 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
                 break;
         }
     }
-
     /**
      * 设置项目测试次数
      */
@@ -446,19 +447,19 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
      */
     public synchronized void updateResult(@NonNull BaseStuPair baseStu) {
         int deviceId = baseStu.getBaseDevice().getDeviceId();
-        Log.e("TAG", "deviceId=" + deviceId);
+        Log.e("TAG","deviceId="+deviceId);
         BaseStuPair pair = null;
         int index = 0;
         for (int i = 0; i < 4; i++) {
             int id = deviceDetails.get(i).getStuDevicePair().getBaseDevice().getDeviceId();
-            Log.e("TAG", "id=" + id);
+            Log.e("TAG","id="+id);
             if (id == deviceId) {
                 pair = deviceDetails.get(i).getStuDevicePair();
                 index = i;
                 break;
             }
         }
-        Log.e("TAG", "pair=" + pair);
+        Log.e("TAG","pair="+pair);
         if (null != pair.getBaseDevice()) {
             pair.setResultState(baseStu.getResultState());
             pair.setResult(baseStu.getResult());
@@ -469,7 +470,6 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
 
         }
     }
-
     protected void updateResultLed(BaseStuPair baseStu, int index) {
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
         byte[] data = new byte[16];
@@ -478,7 +478,7 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
                 try {
                     String str = baseStu.getStudent().getStudentName();
                     String result = ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
-                    if (baseStu.getResult() == 0 && baseStu.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN) {
+                    if (baseStu.getResult() == 0 && baseStu.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN){
                         result = "准备";
                     }
                     byte[] strData = str.getBytes("GB2312");
@@ -492,13 +492,11 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
             }
         }
     }
-
-    private void refreshDevice(int index) {
+    protected void refreshDevice(int index) {
         if (deviceDetails.get(index).getStuDevicePair().getBaseDevice() != null) {
             deviceListAdapter.notifyItemChanged(index);
         }
     }
-
     protected void stuSkip(int pos) {
         deviceDetails.get(pos).setTestTime(0);
 
@@ -509,7 +507,6 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
 
         allotStudent(pos);
     }
-
     /**
      * led 显示
      *
@@ -530,12 +527,11 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            Log.e("TAGLED", str + "," + index);
+            Log.e("TAGLED",str +","+index);
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, index, false, true);
         }
     }
-
-    public void saveResult(final BaseStuPair baseStuPair, final int index) {
+    public void saveResult(final BaseStuPair baseStuPair ,final int index) {
         Logger.i("saveResult==>" + baseStuPair.toString());
         if (baseStuPair.getStudent() == null)
             return;
@@ -546,16 +542,15 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
         roundResult.setItemCode(TestConfigs.getCurrentItemCode());
         roundResult.setResult(baseStuPair.getResult());
         roundResult.setMachineResult(baseStuPair.getResult());
-        roundResult.setPenaltyNum(baseStuPair.getPenaltyNum());
-        roundResult.setResultState(1);
-//        roundResult.setTestTime(TestConfigs.df.format(Calendar.getInstance().getTime()));
+        roundResult.setResultState(baseStuPair.getResultState());
         roundResult.setTestTime(System.currentTimeMillis() + "");
-        roundResult.setRoundNo(baseStuPair.getRoundNo() + 1);
-        roundResult.setTestNo(testNo);
-        roundResult.setExamType(studentItem.getExamType());
-        roundResult.setScheduleNo(studentItem.getScheduleNo());
+        roundResult.setRoundNo(roundNo);
+        roundResult.setTestNo(1);
+        roundResult.setGroupId(group.getId());
+        roundResult.setExamType(group.getExamType());
+        roundResult.setScheduleNo(group.getScheduleNo());
         roundResult.setUpdateState(0);
-        RoundResult bestResult = DBManager.getInstance().queryBestScore(baseStuPair.getStudent().getStudentCode(), testNo);
+        RoundResult bestResult = DBManager.getInstance().queryGroupBestScore(baseStuPair.getStudent().getStudentCode(), group.getId());
         if (bestResult != null) {
             // 原有最好成绩犯规 或者原有最好成绩没有犯规但是现在成绩更好
             if (bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && baseStuPair.getResultState() == RoundResult.RESULT_STATE_NORMAL && bestResult.getResult() <= baseStuPair.getResult()) {
@@ -581,20 +576,18 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
             updateLastResultLed(roundResult, index);
         }
 
-
         DBManager.getInstance().insertRoundResult(roundResult);
         Logger.i("saveResult==>insertRoundResult->" + roundResult.toString());
+
         List<RoundResult> roundResultList = new ArrayList<>();
         roundResultList.add(roundResult);
-        UploadResults uploadResults = new UploadResults(studentItem.getScheduleNo(), TestConfigs.getCurrentItemCode(),
-                baseStuPair.getStudent().getStudentCode(), testNo + "", "", RoundResultBean.beanCope(roundResultList));
+        UploadResults uploadResults = new UploadResults(group.getScheduleNo()
+                , TestConfigs.getCurrentItemCode(), baseStuPair.getStudent().getStudentCode()
+                , "1", group.getGroupNo() + "", RoundResultBean.beanCope(roundResultList));
 
         uploadResult(uploadResults);
-
-        printResult(baseStuPair);
     }
-
-    private void updateLastResultLed(RoundResult roundResult, int index) {
+    private void updateLastResultLed(RoundResult roundResult ,int index) {
 
     }
 
@@ -616,7 +609,6 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
         serverIntent.putExtras(bundle);
         startService(serverIntent);
     }
-
     protected void printResult(BaseStuPair baseStuPair) {
         if (!SettingHelper.getSystemSetting().isAutoPrint())
             return;
@@ -634,12 +626,61 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
             int result = roundResults.get(i).getResult();
             if (result != 0) {
                 String strResultForDisplay = ResultDisplayUtils.getStrResultForDisplay(result);
-//                PrinterManager.getInstance().print(String.format("第%1$d次：", i + 1) + strResultForDisplay+getPenalty(roundResults.get(i).getPenaltyNum()));
+                PrinterManager.getInstance().print(String.format("第%1$d次：", i + 1) + strResultForDisplay+getPenalty(roundResults.get(i).getPenaltyNum()));
             } else {
                 PrinterManager.getInstance().print(String.format("第%1$d次：", i + 1));
             }
         }
         PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()));
         PrinterManager.getInstance().print("\n");
+    }
+    private String getPenalty(int penaltyNum) {
+        if (penaltyNum == 0) {
+            return "(判罚:" + penaltyNum + ")";
+        } else {
+            return "(判罚:-" + penaltyNum + ")";
+        }
+
+    }
+    protected void updateTime(int time, int pos) {
+        deviceDetails.get(pos).setTestTime(time);
+//        deviceListAdapter.notifyItemChanged(pos);
+    }
+    protected void addStudent(Student student, int index, boolean b) {
+        Log.e("TAG----","student="+student+",index="+index);
+        DeviceDetail deviceDetail = deviceDetails.get(index);
+        deviceDetail.getStuDevicePair().setStudent(student);
+        deviceDetail.getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
+        deviceDetail.getStuDevicePair().setCanTest(false);
+        deviceDetail.getStuDevicePair().setBaseHeight(0);
+//        deviceDetail.setTestTime(setting.getTestTime());
+        deviceDetail.getStuDevicePair().setRoundNo(roundNo);
+        int count = deviceDetail.getRound();
+        toastSpeak(String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1)
+                , String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1));
+        if (b)
+            setShowLed(deviceDetail.getStuDevicePair(), index);
+    }
+
+    /**
+     * 进入下一个人的测试
+     */
+    protected void joinNextPerson(int pos) {
+        if (studentList.size() < currentStudentIndex + 2){
+            toastSpeak("当前分组已测试完成");
+            return;
+        }
+        Student student = studentList.get(currentStudentIndex+1);
+        List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound
+                (student.getStudentCode(), group.getId() + "");
+        if (roundResultList.size() >= setTestCount()){     //判断是否已测试
+            currentStudentIndex = currentStudentIndex+1;
+            joinNextPerson(pos);
+            return;
+        }
+
+        addStudent(student,pos,true);
+
+        deviceListAdapter.notifyDataSetChanged();
     }
 }

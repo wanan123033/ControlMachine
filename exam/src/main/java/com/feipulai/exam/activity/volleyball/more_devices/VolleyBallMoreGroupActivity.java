@@ -1,198 +1,450 @@
 package com.feipulai.exam.activity.volleyball.more_devices;
 
-import android.content.Intent;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.view.View;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 
+import com.feipulai.common.jump_rope.task.GetDeviceStatesTask;
+import com.feipulai.common.jump_rope.task.PreciseCountDownTimer;
 import com.feipulai.common.utils.SharedPrefsUtil;
-import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.manager.VolleyBallRadioManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.VolleyPair868Result;
-import com.feipulai.device.serial.command.ConvertCommand;
-import com.feipulai.device.serial.command.RadioChannelCommand;
-import com.feipulai.exam.R;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
-import com.feipulai.exam.activity.sargent_jump.more_device.BaseMoreGroupActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
+import com.feipulai.exam.bean.DeviceDetail;
+import com.feipulai.exam.utils.ResultDisplayUtils;
+import com.orhanobut.logger.Logger;
 
-import butterknife.OnClick;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class VolleyBallMoreGroupActivity extends BaseMoreGroupActivity {
-    private static final int SEND_EMPTY = 1;
-    private static final int END_JS = 2;
+/**
+ * 排球垫球一对多,分组模式
+ */
+public class VolleyBallMoreGroupActivity extends BaseGroupActivity {
+    private int[] mCurrentConnect;
+    private static final int RESH_STATE = 22;
     private static final int GET_STATE = 3;
-    private static final int START_STATE = 5;
+    private ExecutorService exec;
+    private boolean isStartTime = false;
+    private boolean flag = false;
 
-    @Override
-    public int setTestDeviceCount() {
-        return 0;
-    }
+    private GetDeviceStatesTask mGetDeviceStatesTask = new GetDeviceStatesTask(new GetDeviceStatesTask.OnGettingDeviceStatesListener() {
+        @Override
+        public void onGettingState(int position) {
+            BaseDeviceState device = deviceDetails.get(position).getStuDevicePair().getBaseDevice();
+            int deviceId = device.getDeviceId();
+            int hostId = SettingHelper.getSystemSetting().getHostId();
+            VolleyBallRadioManager.getInstance().getState(hostId, deviceId);
+        }
 
-    private VolleyBallSetting volleyBallSetting;
-    private int[] deviceState = {};
-    private final int TARGET_FREQUENCY = SettingHelper.getSystemSetting().getUseChannel();
+        @Override
+        public void onStateRefreshed() {
+            int oldState;
+            for (int i = 0; i < deviceDetails.size(); i++) {
+                BaseDeviceState deviceState = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
+                oldState = deviceState.getState();
+                if (mCurrentConnect[deviceState.getDeviceId() - 1] == 0
+                        && oldState != BaseDeviceState.STATE_ERROR
+                        && oldState != BaseDeviceState.STATE_CONFLICT) {
+                    Logger.i("zzs----->onStateRefreshed==========>STATE_ERROR" + mCurrentConnect[deviceState.getDeviceId() - 1]);
+                    deviceState.setState(BaseDeviceState.STATE_ERROR);
+                    final int finalI = i;
+                    Message message = Message.obtain();
+                    message.what = RESH_STATE;
+                    message.arg1 = finalI;
+                    mHandler.sendMessage(message);
 
-    private VolleyBallJumpImpl resultImpl = new VolleyBallJumpImpl(new VolleyBallJumpImpl.VolleyBallCallBack() {
+                }
+            }
+            mCurrentConnect = new int[deviceDetails.size()];
+        }
+
+        @Override
+        public int getDeviceCount() {
+            return 4;
+        }
+    });
+    private VolleyBallJumpImpl resultJump = new VolleyBallJumpImpl(new VolleyBallJumpImpl.VolleyBallCallBack() {
         @Override
         public void getState(VolleyPair868Result obj) {
+            Log.e("TAG---","getState(VolleyPair868Result obj)");
             Message msg = Message.obtain();
             msg.what = GET_STATE;
             msg.obj = obj;
             mHandler.sendMessage(msg);
         }
     });
-
-    @Nullable
-    @Override
-    protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        builder.setTitle("排球垫球");
-        return builder;
-    }
-
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            switch (msg.what) {
+            switch (msg.what){
+                case RESH_STATE:
+                    refreshDevice(msg.arg1);
+                    break;
                 case GET_STATE:
-                    byte[] dataArr = ((VolleyPair868Result) msg.obj).getDataArr();
-                    int deviceid = dataArr[5];
-                    int childid = dataArr[6];
-                    int state = dataArr[12];
-                    //重置机器状态
-                    for (int i = 0; i < deviceDetails.size(); i++) {
-                        BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
-                        if (childid == baseDevice.getDeviceId() && deviceid == SettingHelper.getSystemSetting().getHostId()) {
-                            if (state == 0x01 || state == 0x11 || state == 0x00) {
-                                baseDevice.setState(BaseDeviceState.STATE_NOT_BEGAIN);
-                            } else if (state == 0x02 || state == 0x12) {
-                                baseDevice.setState(BaseDeviceState.STATE_ONUSE);
-                            } else if (state == 0x03 || state == 0x13) {
-                                baseDevice.setState(BaseDeviceState.STATE_END);
-                            }
-                            baseDevice.setBatteryLeft(dataArr[15]);
-                            deviceDetails.get(i).getStuDevicePair().setResult(dataArr[13] * 0x0100 + dataArr[14]);
-                            updateDevice(baseDevice);
-                        }
+                    VolleyPair868Result result = ((VolleyPair868Result) msg.obj);
+                    int hostid = result.getHostid();
+                    int deviceId = result.getDeviceId();
+                    int state = result.getState();
+                    if (deviceDetails.size() < deviceId || deviceId == 0) {
+                        return false;
                     }
-                    break;
-                case SEND_EMPTY:
-                    sendEmpty();
-                    break;
-                case END_JS:
-                    sendEnd((int) msg.obj);
+                    mCurrentConnect[deviceId - 1] = BaseDeviceState.STATE_FREE;
+                    Log.e("TAG=-=-=-=", "deviceId = " + deviceId + ",state=" + state);
+                    //重置机器状态
+                    BaseStuPair stuDevicePair = deviceDetails.get(deviceId - 1).getStuDevicePair();
+                    if (deviceId == stuDevicePair.getBaseDevice().getDeviceId() && hostid == SettingHelper.getSystemSetting().getHostId()) {
+                        if ((state == VolleyPair868Result.STATE_FREE) && !isStartTime
+                        ) {
+                            stuDevicePair.setLEDupdate(false);
+                            stuDevicePair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
+                        } else if (state == VolleyPair868Result.STATE_TIMING || state == VolleyPair868Result.STATE_COUNTING) {
+                            stuDevicePair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
+                            stuDevicePair.setLEDupdate(true);
+                        } else if (state == VolleyPair868Result.STATE_TIME_END || state == VolleyPair868Result.STATE_COUNT_END) {
+                            stuDevicePair.getBaseDevice().setState(BaseDeviceState.STATE_END);
+                            stuDevicePair.setLEDupdate(true);
+                        } else if (state == VolleyPair868Result.STATE_TIME_PREPARE ||
+                                state == VolleyPair868Result.STATE_COUNT_PREPARE) {
+                            stuDevicePair.getBaseDevice().setState(BaseDeviceState.STATE_PRE_TIME);
+                        }
+                        stuDevicePair.getBaseDevice().setBatteryLeft(result.getElectricityState());
+                        if (stuDevicePair.getStudent() != null) {
+                            int roundNo = deviceDetails.get(deviceId - 1).getStuDevicePair().getRoundNo();
+                            Log.e("TAG++++", "roundNo = " + roundNo);
+                            stuDevicePair.setResult(result.getScore());
+                            String[] timeResult = stuDevicePair.getTimeResult();
+                            timeResult[roundNo] = ResultDisplayUtils.getStrResultForDisplay(result.getScore());
+                        }
+                        updateResult(stuDevicePair);
+                        break;
+                    }
                     break;
             }
             return false;
         }
     });
+    private PreStartTimeRunnable runable;
 
     @Override
-    protected void initData() {
-        super.initData();
-        volleyBallSetting = SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class);
-        if (null == volleyBallSetting) {
-            volleyBallSetting = new VolleyBallSetting();
-        }
-        setDeviceCount(volleyBallSetting.getSpDeviceCount());
-        deviceState = new int[volleyBallSetting.getSpDeviceCount()];
-        for (int i = 0; i < deviceState.length; i++) {
-            deviceState[i] = 0;//连续5次检测不到认为掉线
-        }
-
-        RadioManager.getInstance().setOnRadioArrived(resultImpl);
-        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(TARGET_FREQUENCY)));
-
-        sendEmpty();
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        exec = Executors.newFixedThreadPool(10);
     }
 
-    @OnClick({R.id.txt_device_pair})
-    public void onClick(View view) {
-        startActivity(new Intent(this, VolleyBallPairActivity.class));
-    }
-
-    private void sendEmpty() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setDeviceCount(4);
+        setting = SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class);
+        deviceListAdapter.setTestCount(setting.getTestNo());
+        deviceListAdapter.notifyDataSetChanged();
+        RadioManager.getInstance().setOnRadioArrived(resultJump);
         getState();
-        mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 5000);
     }
-
-    /**
-     * 开始计数
-     *
-     * @param deviceId
-     */
-    private void sendStart(byte deviceId) {
-        byte[] cmd = {(byte) 0xAA, 0x0F, 0x0A, 0x03, 0x01, 0x00, 0x00, (byte) 0xC5, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x0D};
-        cmd[5] = (byte) SettingHelper.getSystemSetting().getHostId();
-        cmd[6] = deviceId;
-        cmd[13] = (byte) sum(cmd, 13);
-
-        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
-    }
-
-    /**
-     * 停止计数
-     *
-     * @param deviceId
-     */
-    private void sendEnd(int deviceId) {
-        byte[] cmd = {(byte) 0xAA, 0x0F, 0x0A, 0x03, 0x01, 0x00, 0x00, (byte) 0xC5, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0D};
-        cmd[5] = (byte) SettingHelper.getSystemSetting().getHostId();
-        cmd[6] = (byte) deviceId;
-        cmd[13] = (byte) sum(cmd, 13);
-
-        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
-        sendEnd(deviceId);
-    }
-
 
     private void getState() {
-        byte[] cmd = {(byte) 0xAA, 0x0e, 0x0a, 0x03, 0x01, 0x00, 0x00, (byte) 0xC3, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
-        for (int i = 0; i < deviceDetails.size(); i++) {
-            BaseDeviceState device = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
-            int deviceId = device.getDeviceId();
-            int hostId = SettingHelper.getSystemSetting().getHostId();
-            cmd[5] = (byte) hostId;
-            cmd[6] = (byte) deviceId;
-            cmd[12] = (byte) sum(cmd, 12);
-
-            RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
-
-        }
-    }
-
-    private int sum(byte[] cmd, int index) {
-        int sum = 0;
-        for (int i = 2; i < index; i++) {
-            sum += cmd[i] & 0xff;
-        }
-        return sum;
+        mCurrentConnect = new int[deviceDetails.size()];
+        pause();
+        exec.execute(mGetDeviceStatesTask);
+        mGetDeviceStatesTask.resume();
     }
 
     @Override
-    public void toStart(int pos) {
-        BaseStuPair pair = deviceDetails.get(pos).getStuDevicePair();
-        pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
-        int id = pair.getBaseDevice().getDeviceId();
-        sendStart((byte) id);
+    protected void fqCount(DeviceDetail deviceDetail, int pos) {
+        sendEnd(deviceDetail, pos);
+        stuSkip(pos);
 
-        Message msg1 = Message.obtain();
-        msg1.what = END_JS;
-        msg1.obj = id;
-        mHandler.sendMessageDelayed(msg1, 1000 * 60);
+        deviceDetails.get(pos).getStuDevicePair().setStudent(null);
+        deviceListAdapter.notifyItemChanged(pos);
+
+        int hostId = SettingHelper.getSystemSetting().getHostId();
+        int deviceId = deviceDetail.getStuDevicePair().getBaseDevice().getDeviceId();
+        VolleyBallRadioManager.getInstance().deviceFree(hostId, deviceId);
+        deviceDetails.get(pos).setTestTime(0);
+    }
+
+    @Override
+    protected void stopCount(DeviceDetail deviceDetail, int i) {
+        int hostId = SettingHelper.getSystemSetting().getHostId();
+        int deviceId = deviceDetail.getStuDevicePair().getBaseDevice().getDeviceId();
+        VolleyBallRadioManager.getInstance().stopCount(hostId, deviceId);
+        BaseStuPair stuDevicePair = deviceDetail.getStuDevicePair();
+        stuDevicePair.getBaseDevice().setState(BaseDeviceState.STATE_END);
+        updateResult(stuDevicePair);
+    }
+
+    @Override
+    protected void sendPenalty(final DeviceDetail pair, final int pos) {
+        final NumberPicker numberPicker = new NumberPicker(this);
+
+        numberPicker.setMinValue(0);
+        numberPicker.setMaxValue(pair.getStuDevicePair().getResult());
+        LinearLayout layout = new LinearLayout(this);
+        layout.setGravity(Gravity.CENTER);
+        layout.addView(numberPicker, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        numberPicker.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS); //禁止输入
+        Log.e("TAG", "pair.getStuDevicePair().getResult()=" + pair.getStuDevicePair().getResult());
+        new AlertDialog.Builder(this).setTitle("请输入判罚值")
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .setView(layout)
+                .setCancelable(false)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        int value = -1 * numberPicker.getValue();
+                        pair.getStuDevicePair().setResult(value + pair.getStuDevicePair().getResult());
+                        String[] timeResult = pair.getStuDevicePair().getTimeResult();
+                        timeResult[pair.getStuDevicePair().getRoundNo()] = ResultDisplayUtils.getStrResultForDisplay(pair.getStuDevicePair().getResult());
+                        pair.getStuDevicePair().setPenaltyNum(numberPicker.getValue());
+                        updateResultLed(pair.getStuDevicePair(), pos);
+                        pair.getStuDevicePair().setResultState(2);
+                        toastSpeak("判罚成功");
+                        sendConfirm(pair, pos);
+                        pair.setFinsh(true);
+                    }
+                })
+                .setNegativeButton("返回", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).show();
+    }
+
+    @Override
+    protected void sendConfirm(DeviceDetail deviceDetail, int pos) {
+        int hostId = SettingHelper.getSystemSetting().getHostId();
+        int deviceId = deviceDetail.getStuDevicePair().getBaseDevice().getDeviceId();
+        VolleyBallRadioManager.getInstance().deviceFree(hostId, deviceId);
+
+        if (deviceDetail.getStuDevicePair().getResultState() == 0){
+            deviceDetail.getStuDevicePair().setResultState(1);
+        }
+        deviceDetail.getCount().cancel();
+        saveResult(deviceDetail.getStuDevicePair(), pos);
+        updateResult(deviceDetail.getStuDevicePair());
+
+        //TODO 是否进入下一轮测试
+        showRoundNoDialog(deviceDetail, pos);
+    }
+
+    @Override
+    protected void sendGaveUp(final DeviceDetail deviceDetail, final int pos) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("操作警告");
+        builder.setMessage("成绩是否保存");
+        builder.setPositiveButton("保存成绩", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                isStartTime = false;
+                deviceDetail.getCount().cancel();
+                deviceDetail.getStuDevicePair().setResultState(3);
+                deviceDetails.get(pos).setTestTime(0);
+                deviceListAdapter.notifyItemChanged(pos);
+                sendConfirm(deviceDetail, pos);
+                dialog.dismiss();
+                deviceDetail.setFinsh(true);
+            }
+        });
+
+        builder.setNegativeButton("重新开始", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deviceDetail.getCount().cancel();
+                isStartTime = false;
+                deviceDetails.get(pos).setTestTime(0);
+                deviceListAdapter.notifyItemChanged(pos);
+                dialog.dismiss();
+                deviceDetail.setFinsh(true);
+
+                int hostId = SettingHelper.getSystemSetting().getHostId();
+                int deviceId = deviceDetail.getStuDevicePair().getBaseDevice().getDeviceId();
+                runable.stop();
+                VolleyBallRadioManager.getInstance().deviceFree(hostId, deviceId);
+            }
+        });
+        builder.create().show();
+    }
+
+    @Override
+    protected void sendTime(DeviceDetail deviceDetail, int i) {
+
+    }
+
+    @Override
+    protected void sendEnd(DeviceDetail deviceDetail, int pos) {
+        BaseStuPair stuDevicePair = deviceDetail.getStuDevicePair();
+        stuDevicePair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+        deviceDetail.getStuDevicePair().setStudent(null);
+//        updateResult(stuDevicePair);
+//        deviceDetail.getCount().cancel();
+//        setShowLed(deviceDetail.getStuDevicePair(), pos);
+        joinNextPerson(pos);
+    }
+
+    @Override
+    protected void sendStart(DeviceDetail deviceDetail, int pos) {
+        BaseStuPair stuPair = deviceDetail.getStuDevicePair();
+        stuPair.getBaseDevice().setState(BaseDeviceState.STATE_PRE_TIME);
+        int hostId = SettingHelper.getSystemSetting().getHostId();
+        int deviceId = deviceDetail.getStuDevicePair().getBaseDevice().getDeviceId();
+        if (flag) {
+            setShowLed(deviceDetail.getStuDevicePair(), pos);
+        }
+        //TODO 开始计时
+        if (setting.getTestTime() > 0) {
+            startTime(deviceDetail, pos);
+        } else {
+            VolleyBallRadioManager.getInstance().startCount(hostId, deviceId);
+        }
     }
 
     @Override
     public int setTestCount() {
-        return 1;
+        return setting.getTestNo();
     }
 
     @Override
     public int setTestPattern() {
         return 0;
+    }
+
+    public void pause() {
+        mGetDeviceStatesTask.pause();
+    }
+
+    private void startTime(final DeviceDetail deviceDetail, final int pos) {
+        try {
+            runable = new PreStartTimeRunnable(this, deviceDetail);
+            runable.setListener(new PreStartTimeRunnable.TimeListener() {
+                @Override
+                public void startTime() {
+                    if (deviceDetail.getCount() != null){
+                        deviceDetail.getCount().cancel();
+                    }
+                    deviceDetail.setCount(new PreciseCountDownTimer(setting.getTestTime() * 1000,1000,0) {
+                        @Override
+                        public void onTick(final long tick) {
+
+                            Log.e("TAG","--------------"+tick);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    deviceDetail.setTestTime((int) tick);
+                                    deviceListAdapter.notifyItemChanged(pos);
+                                }
+                            });
+
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            isStartTime = false;
+                        }
+                    });
+                    exec.execute(deviceDetail.getCount());
+                }
+
+                @Override
+                public void preTime(final int time) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.i("preTime", "-------" + time);
+                            isStartTime = true;
+                            updateTime(time, pos);
+                            deviceListAdapter.notifyItemChanged(pos);
+                        }
+                    });
+                }
+            });
+            exec.execute(runable);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private void showRoundNoDialog(final DeviceDetail deviceDetail, final int pos) {
+
+        //TODO 进入下一轮测试
+        boolean flag = joinNext(deviceDetail, pos);
+
+        //TODO 5秒自动开始
+        if (!flag) {
+            deviceDetail.getStuDevicePair().setStudent(null);
+            deviceListAdapter.notifyItemChanged(pos);
+        }
+    }
+
+    private boolean joinNext(DeviceDetail deviceDetail, int pos) {
+        Log.e("TSFF", "deviceDetail.getStuDevicePair().getRoundNo()=" + deviceDetail.getStuDevicePair().getRoundNo() + ",testNo=" + setting.getTestNo());
+        //当前次数是否大于测试次数  当前测试次数从0开始
+        if (deviceDetail.getStuDevicePair().getRoundNo() >= setting.getTestNo() - 1) {
+            deviceDetail.getStuDevicePair().setRoundNo(0);  //清理轮次
+            stuSkip(pos);
+            joinNextPerson(pos);
+            return false;
+        }
+        //满分跳过
+        if (setting.isFullSkip() &&
+                isResultFullReturn(deviceDetail.getStuDevicePair().getStudent().getSex(),
+                        deviceDetail.getStuDevicePair().getResult() - deviceDetail.getStuDevicePair().getPenaltyNum())) {
+            deviceDetail.getStuDevicePair().setRoundNo(0);  //清理轮次
+            stuSkip(pos);
+            deviceDetail.getStuDevicePair().setFullMark(true);
+            printResult(deviceDetail.getStuDevicePair());
+            toastSpeak("满分");
+            joinNextPerson(pos);
+            return false;
+        }
+        deviceDetail.getStuDevicePair().setResultState(0);
+        deviceDetail.setRound(deviceDetail.getStuDevicePair().getRoundNo() + 1);
+        deviceDetail.getStuDevicePair().setPenaltyNum(0);
+        addStudent(deviceDetail.getStuDevicePair().getStudent(), pos, false);
+
+        //当前轮次加1
+        deviceDetail.getStuDevicePair().setRoundNo(deviceDetail.getStuDevicePair().getRoundNo() + 1);
+        deviceListAdapter.notifyItemChanged(pos);
+
+        flag = true;
+        return flag;
+    }
+
+
+
+    public boolean isResultFullReturn(int sex, int result) {
+        if (!setting.isFullSkip()) {
+            return false;
+        }
+        if (sex == 0 && result >= setting.getMaleFullScore()) {
+            return true;
+        } else if (sex == 1 && result >= setting.getFemaleFullScore()) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mGetDeviceStatesTask.finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        exec.shutdownNow();
     }
 }

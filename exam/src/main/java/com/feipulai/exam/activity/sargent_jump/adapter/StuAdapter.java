@@ -46,6 +46,6 @@ public class StuAdapter extends BaseQuickAdapter<Student, BaseViewHolder> {
 //            helper.setBackgroundColor(R.id.view_content, ContextCompat.getColor(mContext, R.color.white));
 //        }
 
-
+        helper.addOnClickListener(R.id.view_content);
     }
 }

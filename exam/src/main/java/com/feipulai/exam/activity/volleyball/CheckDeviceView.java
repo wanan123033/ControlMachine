@@ -37,6 +37,7 @@ public class CheckDeviceView extends RelativeLayout {
     private VolleyBallManager manager;
     private boolean wiress = false;  //true 无线  false 有线
     private int deviceId;
+    private byte[] checkResult;
 
     public CheckDeviceView(Context context) {
         super(context);
@@ -140,7 +141,7 @@ public class CheckDeviceView extends RelativeLayout {
             //TODO 无线模式
             switch (view.getId()) {
                 case R.id.tv_lose_dot:
-                    manager.loseDot(deviceId, SettingHelper.getSystemSetting().getHostId());
+                    manager.loseDot(deviceId, SettingHelper.getSystemSetting().getHostId(),checkResult);
                     break;
                 case R.id.tv_cancel_lose_dot:
                     manager.cancelLoseDot(deviceId,SettingHelper.getSystemSetting().getHostId());
@@ -155,5 +156,9 @@ public class CheckDeviceView extends RelativeLayout {
 
     public void setDeviceId(int deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public void setCheckResult(byte[] checkResult) {
+        this.checkResult = checkResult;
     }
 }

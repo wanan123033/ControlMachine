@@ -988,6 +988,7 @@ public class DBManager {
      * @return
      */
     public StudentItem queryStuItemByStuCode(String studentCode) {
+        Log.e("TAG===","studentCode="+studentCode+",ItemCode="+TestConfigs.getCurrentItemCode()+",MachineCode="+TestConfigs.sCurrentItem.getMachineCode());
         return studentItemDao
                 .queryBuilder()
                 .where(StudentItemDao.Properties.StudentCode.eq(studentCode))
