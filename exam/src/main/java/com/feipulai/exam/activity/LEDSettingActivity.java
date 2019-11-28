@@ -67,26 +67,26 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
         }
 
         ledType = SettingHelper.getSystemSetting().getLedVersion();
-        rvMode.setVisibility(ledType == 0 ? View.VISIBLE : View.GONE);
-
-        ledMode = SettingHelper.getSystemSetting().getLedMode();
-        rvLed.setVisibility(ledMode == 0 ? View.GONE : View.VISIBLE);
-
-        String[] strings = new String[]{"屏幕1连接", "屏幕2连接", "屏幕3连接", "屏幕4连接"};
-        LedMoreAdapter adapter = new LedMoreAdapter(Arrays.asList(strings));
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
-        rvLed.setLayoutManager(layoutManager);
-        rvLed.setAdapter(adapter);
-        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
-                mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), hostId, i + 1);
-                String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
-                        + " " + hostId;
-                mLEDManager.showSubsetString(hostId, i + 1, title, 0, true, false, LEDManager.MIDDLE);
-                mLEDManager.showSubsetString(hostId, i + 1, "菲普莱体育", 3, 3, false, true);
-            }
-        });
+//        rvMode.setVisibility(ledType == 0 ? View.VISIBLE : View.GONE);
+//
+//        ledMode = SettingHelper.getSystemSetting().getLedMode();
+//        rvLed.setVisibility(ledMode == 0 ? View.GONE : View.VISIBLE);
+          rvLed.setVisibility(View.GONE);
+//        String[] strings = new String[]{"屏幕1连接", "屏幕2连接", "屏幕3连接", "屏幕4连接"};
+//        LedMoreAdapter adapter = new LedMoreAdapter(Arrays.asList(strings));
+//        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+//        rvLed.setLayoutManager(layoutManager);
+//        rvLed.setAdapter(adapter);
+//        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
+//                mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), hostId, i + 1);
+//                String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
+//                        + " " + hostId;
+//                mLEDManager.showSubsetString(hostId, i + 1, title, 0, true, false, LEDManager.MIDDLE);
+//                mLEDManager.showSubsetString(hostId, i + 1, "菲普莱体育", 3, 3, false, true);
+//            }
+//        });
         initSp();
     }
 
@@ -97,7 +97,8 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spShowMode.setAdapter(adapter);
         spShowMode.setSelection(ledMode == 0 ? 0 : 1);
-        spShowMode.setOnItemSelectedListener(this);
+        spShowMode.setEnabled(false);
+//        spShowMode.setOnItemSelectedListener(this);
 
         String[] spinnerItems1 = {"4.1及以上", "4.1以下"};
         ArrayAdapter<String> adapter1 = new ArrayAdapter<>(this,

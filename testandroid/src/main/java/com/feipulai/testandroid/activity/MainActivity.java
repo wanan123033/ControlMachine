@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.btn_link:
                 MachineCode.machineCode = 2;
                 LEDManager ledManager = new LEDManager();
-                ledManager.link(2, 1);
+                ledManager.link(1,2, 1);
                 ledManager.resetLEDScreen(1, "安卓测试");
                 break;
             case R.id.btn_finger:

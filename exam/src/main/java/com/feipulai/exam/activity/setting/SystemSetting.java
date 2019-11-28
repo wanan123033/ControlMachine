@@ -81,7 +81,7 @@ public class SystemSetting {
     /**
      * 单屏0 多屏1
      */
-    private int ledMode = 0;
+    private int ledMode = 1;
 
     private int ledVersion = 0;//0:1.0版本 1：V4.1 以上版本
     public static final int LED_VERSION_V1 = 0;
