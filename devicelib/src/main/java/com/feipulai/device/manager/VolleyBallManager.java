@@ -1,6 +1,7 @@
 package com.feipulai.device.manager;
 
 import android.os.SystemClock;
+import android.util.Log;
 
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.RadioManager;
@@ -8,6 +9,8 @@ import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
+
+import java.util.Arrays;
 
 /**
  * Created by James on 2018/3/8 0008.
@@ -55,9 +58,11 @@ public class VolleyBallManager {
     }
 
     public void startTest(int hostId, int deviceId, int time, int testTime) {
-        if (pattryType == 0)
+
+        if (pattryType == 0) {
+            Log.e("TAG===", Arrays.toString(CMD_START));
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_START));
-        else {
+        }else {
             if (testTime == 0) {
                 volleyBallRadioManager.startCount(hostId, deviceId);
             } else {

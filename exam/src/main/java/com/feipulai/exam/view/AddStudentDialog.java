@@ -144,7 +144,7 @@ public class AddStudentDialog {
             scheduleAdapter.notifyDataSetChanged();
             schedult = scheduleList.get(0).getScheduleNo();
         }
-        //schedult = scheduleList.size() > 0 ? scheduleList.get(0).getScheduleNo() : "";
+//        schedult = scheduleList.size() > 0 ? scheduleList.get(0).getScheduleNo() : "";
     }
 
     private boolean isCheckData() {

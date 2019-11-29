@@ -265,8 +265,13 @@ public class VolleyBallIndividual2Activity extends BaseTitleActivity
                 break;
 
             case R.id.tv_start_test:
+                if (setting.getType() == 0){
+                    prepareForTesting();
+                }else {
+                    facade.checkDevice();
+                }
 //                prepareForTesting();
-                facade.checkDevice();
+
                 break;
 
             case R.id.tv_stop_test:

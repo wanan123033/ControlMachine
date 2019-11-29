@@ -132,8 +132,6 @@ public class VolleyBallTest2Facade implements SerialDeviceManager.RS232ResiltLis
     // 开始测试 可以用作 重新开始
     public void startTest() {
 
-
-
         stopTimers();
 
         // 给设备发送开始后结束,在获取成绩的时候就不会一直有之前的成绩存在了
