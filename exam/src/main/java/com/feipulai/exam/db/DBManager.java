@@ -2041,6 +2041,7 @@ public class DBManager {
         sqlBuf.append(" ON S." + ScheduleDao.Properties.ScheduleNo.columnName + " = I." + ItemScheduleDao.Properties.ScheduleNo.columnName);
         sqlBuf.append(" WHERE I." + GroupItemDao.Properties.ItemCode.columnName + " = '" + TestConfigs.getCurrentItemCode() + "'");
         List<Schedule> scheduleList = new ArrayList<>();
+        Log.i("sql",sqlBuf.toString());
         Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), null);
         while (c.moveToNext()) {
             Schedule schedule = scheduleDao.readEntity(c, 0);
@@ -2395,6 +2396,11 @@ public class DBManager {
                 .where(RoundResultDao.Properties.StudentCode.eq(student.getStudentCode()))
                 .list();
         return list != null && list.size() > 0;
+    }
+
+
+    public List<Schedule> getSchedules(){
+        return scheduleDao.loadAll();
     }
 
 }

@@ -3,6 +3,7 @@ package com.feipulai.exam.activity.standjump;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
@@ -50,7 +51,6 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
             setFaultEnable(true);
         }
 //        setOpenAFR(true);
-
         Logger.i(TAG + ":reachSetting ->" + jumpSetting.toString());
         mHandler = new MyHandler(this);
 //        SerialDeviceManager.getInstance().setRS232ResiltListener(standResiltListener);
@@ -161,6 +161,8 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+
     }
 
     private static class MyHandler extends Handler {
@@ -248,7 +250,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
 
         @Override
         public void CheckDevice(boolean isCheckDevice, int[] brokenLEDs) {
-            Logger.i("james", "CheckDevice++++++" + standResiltListener.getTestState());
+            Log.i("james", "CheckDevice++++++" + standResiltListener.getTestState());
             isDisconnect = !isCheckDevice;
 //            if (brokenLEDs != null) {
 //                String ledPostion = "";

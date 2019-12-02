@@ -63,9 +63,9 @@ public class StandResiltListener implements SerialDeviceManager.RS232ResiltListe
                     Log.i("james", "JUMP_SELF_CHECK_RESPONSE NEED_CHANGE");
 
                     //当设备状态为非读取成绩状态则修改为未测试
-                    if (testState != TestState.WAIT_RESULT) {
-                        testState = TestState.UN_STARTED;
-                    }
+//                    if (testState != TestState.WAIT_RESULT) {
+//                        testState = TestState.UN_STARTED;
+//                    }
 //                    //设置当前设置为不可用断开状态
 //                    handlerInterface.getDeviceState(new BaseDeviceState(BaseDeviceState.STATE_ERROR, 1));
 //                    //测量垫检测失败

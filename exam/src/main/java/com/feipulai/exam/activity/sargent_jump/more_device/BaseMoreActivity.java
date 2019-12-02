@@ -273,6 +273,11 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         } else {
             mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, student.getLEDStuName() + "   第" + deviceDetails.get(index).getRound() + "次", 0, 0, true, false);
             mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, "当前：", 0, 1, false, true);
+
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), student.getLEDStuName() + "   第" + deviceDetails.get(index).getRound() + "次", 0, 0, true, false);
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(),  "当前：", 0, 1, false, true);
+
+
             RoundResult bestResult = DBManager.getInstance().queryBestScore(student.getStudentCode(), testNo);
             if (bestResult != null) {
                 byte[] data = new byte[16];
@@ -287,8 +292,10 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                     e.printStackTrace();
                 }
                 mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, data, 0, 2, false, true);
+                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(),  data, 0, 2, false, true);
             } else {
                 mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, "最好：", 0, 2, false, true);
+                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(),  "最好：", 0, 2, false, true);
 
             }
         }
@@ -492,6 +499,9 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         if (detail.getRound() > timeResult.length)//防止
             return;
         //设置设备成绩
+        if (detail.getRound() - 1 < 0){
+            return;
+        }
         timeResult[detail.getRound() - 1] = ((pair.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
                 ResultDisplayUtils.getStrResultForDisplay(pair.getResult()));
         detail.getStuDevicePair().setTimeResult(timeResult);
@@ -552,18 +562,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         deviceListAdapter.notifyItemChanged(index);
     }
 
-    private void broadResult(BaseStuPair baseStuPair) {
-        if (SettingHelper.getSystemSetting().isAutoBroadcast()) {
-            if (baseStuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) {
-                TtsManager.getInstance().speak(baseStuPair.getStudent().getSpeakStuName() + "犯规");
-            } else {
 
-                TtsManager.getInstance().speak(String.format(getString(R.string.speak_result), baseStuPair.getStudent().getSpeakStuName(), ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult())));
-            }
-
-
-        }
-    }
 
     private void printResult(BaseStuPair baseStuPair, int index) {
         if (!SettingHelper.getSystemSetting().isAutoPrint())
@@ -732,9 +731,25 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
             updateResultLed(baseStu, index);
             deviceListAdapter.notifyItemChanged(index);
+            broadResult(baseStu);
         }
 
 
+    }
+
+    private void broadResult(BaseStuPair baseStuPair) {
+        if (deviceCount> 1)
+            return;
+        if (SettingHelper.getSystemSetting().isAutoBroadcast()) {
+            if (baseStuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) {
+                TtsManager.getInstance().speak(baseStuPair.getStudent().getSpeakStuName() + "犯规");
+            } else {
+
+                TtsManager.getInstance().speak(String.format(getString(R.string.speak_result), baseStuPair.getStudent().getSpeakStuName(), ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult())));
+            }
+
+
+        }
     }
 
     public void refreshDevice(int index) {
@@ -743,6 +758,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         }
     }
 
+
+
     private void updateResultLed(BaseStuPair baseStu, int index) {
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
         String result = (baseStu.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
@@ -750,29 +767,35 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             int x = ResultDisplayUtils.getStringLength(result);
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 16 - x, index, false, true);
         } else {
-            byte[] data = new byte[16];
-            String str = "当前：";
-            try {
-                byte[] strData = str.getBytes("GB2312");
-                System.arraycopy(strData, 0, data, 0, strData.length);
-                byte[] resultData = result.getBytes("GB2312");
-                System.arraycopy(resultData, 0, data, data.length - resultData.length - 1, resultData.length);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index, data, 0, 1, false, true);
+//            byte[] data = new byte[16];
+//            String str = "当前：";
+//            try {
+//                byte[] strData = str.getBytes("GB2312");
+//                System.arraycopy(strData, 0, data, 0, strData.length);
+//                byte[] resultData = result.getBytes("GB2312");
+//                System.arraycopy(resultData, 0, data, data.length - resultData.length - 1, resultData.length);
+//            } catch (UnsupportedEncodingException e) {
+//                e.printStackTrace();
+//            }
+            int length = ResultDisplayUtils.getStringLength(result);
+            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index, result, 15-length, 1, false, true);
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 15-length, 1, false, true);
 
             RoundResult bestResult = DBManager.getInstance().queryBestScore(baseStu.getStudent().getStudentCode(), testNo);
             int res = 0;
+            String data1 = "";
             if (bestResult!= null){
                 res = bestResult.getResult();
+                data1 = (bestResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(res);
             }
             if (baseStu.getResultState() == RoundResult.RESULT_STATE_NORMAL && baseStu.getResult()> res){
                 res = baseStu.getResult();
+                data1 = (baseStu.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(res);
             }
-            String data1 = ResultDisplayUtils.getStrResultForDisplay(res);
+
             int x = ResultDisplayUtils.getStringLength(data1);
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data1, 15-x, 2, false, true);
+            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index,data1, 15-x, 2, false, true);
         }
     }
 
