@@ -78,6 +78,10 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     CheckBox cbRoute;
     @BindView(R.id.txt_channel)
     TextView txtChannel;
+    @BindView(R.id.edit_custom_channel)
+    EditText editCustomChannel;
+    @BindView(R.id.cb_custom_channel)
+    CheckBox cbCustomChannel;
     private String[] partternList = new String[]{"个人测试", "分组测试"};
     private List<Integer> hostIdList;
     private SystemSetting systemSetting;
@@ -172,6 +176,9 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         cbRoute.setChecked(systemSetting.isAddRoute());
 
         txtChannel.setText((SerialConfigs.sProChannels.get(machineCode) + systemSetting.getHostId() - 1) + "");
+
+        editCustomChannel.setText(systemSetting.getChannel() + "");
+        cbCustomChannel.setChecked(systemSetting.isCustomChannel());
     }
 
     @Nullable
@@ -207,7 +214,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     }
 
     @OnClick({R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting
-            , R.id.txt_advanced, R.id.sw_identity_mark, R.id.sw_add_student, R.id.cb_route})
+            , R.id.txt_advanced, R.id.sw_identity_mark, R.id.sw_add_student, R.id.cb_route, R.id.cb_custom_channel})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
@@ -227,6 +234,9 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                 break;
             case R.id.sw_add_student:
                 systemSetting.setTemporaryAddStu(mSwAddStudent.isChecked());
+                break;
+            case R.id.cb_custom_channel:
+                systemSetting.setCustomChannel(cbCustomChannel.isChecked());
                 break;
             case R.id.btn_bind:
                 gotoLogin();
@@ -285,8 +295,11 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     @Override
     protected void onPause() {
         super.onPause();
+        if (!TextUtils.isEmpty(editCustomChannel.getText().toString().trim())) {
+            systemSetting.setChannel(Integer.valueOf(editCustomChannel.getText().toString().trim()));
+        }
         RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(
-                SerialConfigs.sProChannels.get(machineCode) + SettingHelper.getSystemSetting().getHostId() - 1)));
+                systemSetting.getUseChannel())));
 
         HttpManager.resetManager();
         SettingHelper.updateSettingCache(systemSetting);
@@ -336,5 +349,6 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
             }
         });
     }
+
 
 }

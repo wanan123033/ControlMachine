@@ -35,11 +35,13 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
     private int runUp;
 
     @Override
-    public void initData() {
+    protected void initData() {
         sargentSetting = SharedPrefsUtil.loadFormSource(this, SargentSetting.class);
         if (null == sargentSetting) {
             sargentSetting = new SargentSetting();
         }
+        super.initData();
+
         Logger.i(TAG + ":sargentSetting ->" + sargentSetting.toString());
         setDeviceCount(sargentSetting.getSpDeviceCount());
         deviceState = new int[sargentSetting.getSpDeviceCount()];
@@ -52,6 +54,10 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
         sendEmpty();
     }
 
+    @Override
+    public int setTestDeviceCount() {
+        return sargentSetting.getSpDeviceCount();
+    }
 
     @Override
     public int setTestCount() {

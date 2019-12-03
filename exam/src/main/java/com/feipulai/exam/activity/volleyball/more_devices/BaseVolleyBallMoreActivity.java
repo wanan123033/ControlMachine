@@ -14,12 +14,10 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.feipulai.common.jump_rope.task.PreciseCountDownTimer;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.led.LEDManager;
-import com.feipulai.device.manager.VolleyBallRadioManager;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
@@ -112,7 +110,7 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
 
     private void init() {
         mLEDManager = new LEDManager();
-        mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+        mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(),TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
         PrinterManager.getInstance().init();
         etInputText.setData(lvResults, this);

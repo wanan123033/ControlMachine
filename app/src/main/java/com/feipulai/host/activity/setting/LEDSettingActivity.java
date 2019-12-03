@@ -68,7 +68,7 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
         }
 
         ledType = SettingHelper.getSystemSetting().getLedVersion();
-        rvMode.setVisibility(ledType == 0? View.VISIBLE:View.GONE);
+        rvMode.setVisibility(ledType == 0 ? View.VISIBLE : View.GONE);
 
         ledMode = SettingHelper.getSystemSetting().getLedMode();
         rvLed.setVisibility(ledMode == 0 ? View.GONE : View.VISIBLE);
@@ -131,14 +131,14 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
                     runLEDManager.link(hostId);
                     runLEDManager.resetLEDScreen(hostId);
                 } else {
-                    if (SettingHelper.getSystemSetting().getLedVersion() == 0){
-                        mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), hostId,1);
+                    if (SettingHelper.getSystemSetting().getLedVersion() == 0) {
+                        mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), hostId, 1);
                         String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
                                 + " " + hostId;
-                        mLEDManager.showSubsetString(hostId,1, title, 0, true, false, LEDManager.MIDDLE);
-                        mLEDManager.showSubsetString(hostId, 1,"菲普莱体育", 3, 3,false, true);
-                    }else {
-                        mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), hostId);
+                        mLEDManager.showSubsetString(hostId, 1, title, 0, true, false, LEDManager.MIDDLE);
+                        mLEDManager.showSubsetString(hostId, 1, "菲普莱体育", 3, 3, false, true);
+                    } else {
+                        mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), hostId);
                         String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
                                 + " " + hostId;
                         mLEDManager.showString(hostId, title, 0, true, false, LEDManager.MIDDLE);
@@ -241,11 +241,11 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
                 break;
             case R.id.led_version:
                 SettingHelper.getSystemSetting().setLedVersion(position);
-                rvMode.setVisibility(position == 0? View.VISIBLE:View.GONE);
-                if (rvLed.getVisibility() == View.VISIBLE){
+                rvMode.setVisibility(position == 0 ? View.VISIBLE : View.GONE);
+                if (rvLed.getVisibility() == View.VISIBLE) {
                     rvLed.setVisibility(position == 1 ? View.GONE : View.VISIBLE);
                 }
-                if (btnLedConnect.getVisibility() == View.GONE){
+                if (btnLedConnect.getVisibility() == View.GONE) {
                     btnLedConnect.setVisibility(position == 1 ? View.VISIBLE : View.GONE);
                 }
 

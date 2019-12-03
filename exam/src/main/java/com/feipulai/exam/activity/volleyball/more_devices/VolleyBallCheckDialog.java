@@ -18,9 +18,6 @@ import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.volleyball.CheckDeviceView;
 import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class VolleyBallCheckDialog extends DialogFragment implements RadioManager.OnRadioArrivedListener {
     private CheckDeviceView checkDeviceView;
     private int deviceId;
@@ -37,6 +34,8 @@ public class VolleyBallCheckDialog extends DialogFragment implements RadioManage
         public boolean handleMessage(Message msg) {
             VolleyPair868Result resul = (VolleyPair868Result) msg.obj;
             checkDeviceView.setData(setting.getTestPattern() == 0 ? VolleyBallSetting.ANTIAIRCRAFT_POLE : VolleyBallSetting.WALL_POLE, resul.getPositionList());
+            checkDeviceView.setCheckResult(resul.getCheckResult());
+
 
             return false;
         }

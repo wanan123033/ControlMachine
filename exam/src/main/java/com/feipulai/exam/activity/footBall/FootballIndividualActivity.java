@@ -533,7 +533,13 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
             tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital()));
 //            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
 //                    UdpLEDUtil.getLedByte(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()), Paint.Align.RIGHT)));
-            ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()), Paint.Align.RIGHT);
+            String time = DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital());
+            if (time.charAt(0) == '0' && time.charAt(1) == '0'){
+                time = time.substring(3,time.toCharArray().length);
+            }else if (time.charAt(0) == '0'){
+                time = time.substring(1,time.toCharArray().length);
+            }
+            ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
 
         }
 
@@ -968,6 +974,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
         switch (testResult.getResultState()) {
             case RoundResult.RESULT_STATE_NORMAL:
+
                 ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, ResultDisplayUtils.getStrResultForDisplay(testResult.getResult()), testResult.getPenalizeNum() + "", Paint.Align.CENTER);
                 break;
             case RoundResult.RESULT_STATE_FOUL:

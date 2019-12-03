@@ -461,7 +461,14 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
             state = WAIT_STOP;
             setOperationUI();
             tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital()));
-            ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, ResultDisplayUtils.getStrResultForDisplay(result.getResult()), Paint.Align.RIGHT);
+
+            String time = DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital());
+            if (time.charAt(0) == '0' && time.charAt(1) == '0'){
+                time = time.substring(3,time.toCharArray().length);
+            }else if (time.charAt(0) == '0'){
+                time = time.substring(1,time.toCharArray().length);
+            }
+            ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
 
         }
 
@@ -899,7 +906,13 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
         switch (testResult.getResultState()) {
             case RoundResult.RESULT_STATE_NORMAL:
-                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, ResultDisplayUtils.getStrResultForDisplay(testResult.getResult()), testResult.getPenalizeNum() + "", Paint.Align.CENTER);
+                String time = ResultDisplayUtils.getStrResultForDisplay(testResult.getResult());
+                if (time.charAt(0) == '0' && time.charAt(1) == '0'){
+                    time = time.substring(3,time.toCharArray().length);
+                }else if (time.charAt(0) == '0'){
+                    time = time.substring(1,time.toCharArray().length);
+                }
+                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, testResult.getPenalizeNum() + "", Paint.Align.CENTER);
                 break;
             case RoundResult.RESULT_STATE_FOUL:
                 ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "犯规", testResult.getPenalizeNum() + "", Paint.Align.CENTER);

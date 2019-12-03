@@ -13,7 +13,6 @@ import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BaseMoreActivity;
 import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.setting.SettingHelper;
-import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.entity.DeviceDetail;
 import com.feipulai.host.entity.RoundResult;
 
@@ -30,7 +29,7 @@ public class VitalTestActivity extends BaseMoreActivity {
     private final int SEND_EMPTY = 1;
     private final int GET_SCORE_RESPONSE = 2;
     int hostId = SettingHelper.getSystemSetting().getHostId();
-    private int frequency = SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode()) + hostId - 1;
+    private int frequency = SettingHelper.getSystemSetting().getUseChannel();;
     //    private int velocity = SerialConfigs.VITAL_VELOCITY;
     private int VERSION = 363;
 

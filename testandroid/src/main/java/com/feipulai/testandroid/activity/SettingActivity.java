@@ -112,7 +112,7 @@ public class SettingActivity extends AppCompatActivity implements RadioManager.O
      * @param view
      */
     public void screenConnect(View view) {
-        mLEDManager.link(8, 1);
+        mLEDManager.link(1,8, 1);
         mLEDManager.resetLEDScreen(1,"跳绳");
     }
 

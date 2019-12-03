@@ -110,7 +110,7 @@ public class JumpRopePairPresenter
         public void run() {
             while (!mIsThreadStoped) {
                 if (mIsConnecting) {
-                    jumpRopeManager.link(SettingHelper.getSystemSetting().getHostId(),
+                    jumpRopeManager.link(SettingHelper.getSystemSetting().getUseChannel(),SettingHelper.getSystemSetting().getHostId(),
                             focusPosition + 1, 0x06,
                             setting.getDeviceGroup() + 1);
                 }

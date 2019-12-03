@@ -29,8 +29,7 @@ public abstract class SitPullUpTestPresenter<Setting>
         SitPullLinker.SitPullPairListener {
 
     private int machineCode = TestConfigs.sCurrentItem.getMachineCode();
-    private final int TARGET_FREQUENCY = SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode())
-            + SettingHelper.getSystemSetting().getHostId() - 1;
+    private final int TARGET_FREQUENCY = SettingHelper.getSystemSetting().getUseChannel();
     private SitPullLinker linker;
     private SitPullUpTestContract.View<Setting> view;
 

@@ -4,16 +4,23 @@
     android:background="@color/white"
     android:orientation="horizontal">
 
-    <include
-        layout="@layout/stu_info_layout"
-        android:layout_width="250dp"
-        android:layout_height="match_parent" />
-
-    <View
-        android:layout_width="8dp"
+    <LinearLayout
+        android:id="@+id/ll_stu_detail"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:background="@color/grey_light" />
+        android:orientation="horizontal">
 
+        <include
+
+            layout="@layout/stu_info_layout"
+            android:layout_width="250dp"
+            android:layout_height="match_parent" />
+
+        <View
+            android:layout_width="8dp"
+            android:layout_height="match_parent"
+            android:background="@color/grey_light" />
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/rl"

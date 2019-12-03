@@ -54,7 +54,7 @@ public class VitalCapacityFaceIDActivity extends BasePersonFaceIDActivity  {
         vcResultImpl.setTestState(TestState.WAIT_RESULT);
         if (mLEDManager == null){
             mLEDManager = new LEDManager();
-            mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+            mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(),TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
             mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(),TestConfigs.sCurrentItem.getItemName());
         }
 

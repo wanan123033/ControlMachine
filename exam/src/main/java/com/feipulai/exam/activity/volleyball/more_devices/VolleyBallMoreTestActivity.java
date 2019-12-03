@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup;
@@ -28,12 +27,13 @@ import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
+/**
+ * 排球垫球,个人模式
+ */
+public class VolleyBallMoreTestActivity extends BaseVolleyBallMoreActivity {
 
     private static final int SEND_EMPTY = 1;
     private static final int END_JS = 2;
@@ -297,8 +297,8 @@ public class VolleyBallMore2TestActivity extends BaseVolleyBallMoreActivity {
         BaseStuPair stuDevicePair = deviceDetail.getStuDevicePair();
         stuDevicePair.getBaseDevice().setState(BaseDeviceState.STATE_END);
         updateResult(stuDevicePair);
-        deviceDetail.getCount().cancel();
-        setShowLed(deviceDetail.getStuDevicePair(), pos);
+//        deviceDetail.getCount().cancel();
+//        setShowLed(deviceDetail.getStuDevicePair(), pos);
     }
 
     @Override

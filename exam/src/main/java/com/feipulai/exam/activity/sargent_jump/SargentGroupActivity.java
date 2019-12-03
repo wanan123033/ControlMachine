@@ -3,17 +3,13 @@ package com.feipulai.exam.activity.sargent_jump;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
-import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
@@ -36,7 +32,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static com.feipulai.exam.activity.RadioTimer.RunTimerConstant.ILLEGAL_BACK;
 import static com.feipulai.exam.activity.sargent_jump.Constants.CONNECTED;
 import static com.feipulai.exam.activity.sargent_jump.Constants.END_TEST;
 import static com.feipulai.exam.activity.sargent_jump.Constants.GET_SCORE_RESPONSE;
@@ -106,7 +101,7 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
             }
 
         }
-        frequency = SerialConfigs.sProChannels.get(ItemDefault.CODE_MG) + SettingHelper.getSystemSetting().getHostId() - 1;
+        frequency = SettingHelper.getSystemSetting().getUseChannel();
     }
 
     /**

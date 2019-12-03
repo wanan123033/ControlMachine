@@ -7,7 +7,6 @@ import com.feipulai.common.jump_rope.task.OnGetStateWithLedListener;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.serial.RadioManager;
-import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
@@ -44,7 +43,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
     protected SystemSetting systemSetting;
     protected Setting setting;
     protected int focusPosition;
-    protected final int TARGET_FREQUENCY = SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode()) + SettingHelper.getSystemSetting().getHostId() - 1;
+    protected final int TARGET_FREQUENCY =  SettingHelper.getSystemSetting().getUseChannel();
     protected int[] mCurrentConnect;
     protected volatile boolean mLinking;
 

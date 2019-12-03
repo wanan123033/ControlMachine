@@ -21,6 +21,8 @@ public class VolleyPair868Result {
 
     private int hostid;
 
+    private byte[] checkResult;
+
     public static final int STATE_FREE = 0;       //空闲
     public static final int STATE_TIME_PREPARE = 1;  //计时准备
     public static final int STATE_TIMING = 2;      //计时中
@@ -43,6 +45,7 @@ public class VolleyPair868Result {
         electricityState = data[15];
         frequency = (data[12] & 0xff);
         if (data.length > 18) {       //自检结果大于18位
+            checkResult = new byte[]{data[14], data[15], data[16], data[17], data[18]};
             List<Integer> dList = new ArrayList<>();
 //            byte[] checkResult = new byte[]{data[14], data[15], data[16], data[17], data[18]};
 //            for (int i = 0; i < checkResult.length; i++) {
@@ -119,5 +122,9 @@ public class VolleyPair868Result {
 
     public void setDeviceType(int deviceType) {
         this.deviceType = deviceType;
+    }
+
+    public byte[] getCheckResult() {
+        return checkResult;
     }
 }

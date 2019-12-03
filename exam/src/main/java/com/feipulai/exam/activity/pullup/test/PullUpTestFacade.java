@@ -13,7 +13,6 @@ import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.device.sitpullup.SitPullLinker;
 import com.feipulai.exam.activity.setting.SettingHelper;
-import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 
 import java.util.concurrent.ExecutorService;
@@ -42,7 +41,7 @@ public class PullUpTestFacade implements RadioManager.OnRadioArrivedListener,
 
     public PullUpTestFacade(int hostId, Listener listener) {
         this.hostId = hostId;
-        TARGET_FREQUENCY = SerialConfigs.sProChannels.get(ItemDefault.CODE_YTXS) + hostId - 1;
+        TARGET_FREQUENCY =  SettingHelper.getSystemSetting().getUseChannel();
         RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(TARGET_FREQUENCY)));
         this.listener = listener;
         executor = Executors.newCachedThreadPool();

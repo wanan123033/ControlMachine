@@ -146,6 +146,9 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
         if (!TextUtils.isEmpty(systemSetting.getTestName())) {
             sb.append("-").append(systemSetting.getTestName());
         }
+        if (machineCode != SharedPrefsConfigs.DEFAULT_MACHINE_CODE) {
+            sb.append(" [ F - " + SettingHelper.getSystemSetting().getUseChannel() + " ]");
+        }
         txtMainTitle.setText(sb.toString());
         txtDeviceId.setText(CommonUtils.getDeviceId(this));
     }

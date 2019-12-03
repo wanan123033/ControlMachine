@@ -69,12 +69,12 @@ public class LEDManager {
      * @param machineCode 测试项目机器码{@link ItemDefault}.CODE_XXX
      * @param hostId      主机号
      */
-    public void link(int machineCode, int hostId) {
+    public void link(int channel, int machineCode, int hostId) {
         if (machineCodesForLed.get(machineCode) == null) {
             return;
         }
         if (versions == LED_VERSION_4_1) {
-            link(machineCode, hostId, 1);
+            link(channel,machineCode, hostId, 1);
             return;
         }
         //先切到0频道
@@ -108,7 +108,7 @@ public class LEDManager {
      * @param machineCode 测试项目机器码{@link ItemDefault}.CODE_XXX
      * @param hostId      主机号
      */
-    public void link(int machineCode, int hostId, int ledId) {
+    public void link(int channel, int machineCode, int hostId, int ledId) {
         if (machineCodesForLed.get(machineCode) == null) {
             return;
         }
@@ -119,7 +119,7 @@ public class LEDManager {
         //连接LED屏
         byte[] command = {(byte) 0xaa, 0x00, (byte) 0xa1, 0x00, 0x02, (byte) 0xa1, 0x00, 0x00, 0x00, 0x00, 0x0d};
         command[1] = (byte) (machineCodesForLed.get(machineCode) & 0xff);
-        command[6] = (byte) ((hostId + SerialConfigs.sProChannels.get(machineCode) - 1) & 0xff);
+        command[6] = (byte) (channel & 0xff);
         command[7] = (byte) (ledId & 0xff);
         command[8] = (byte) (hostId & 0xff);
         for (int i = 0; i < 9; i++) {
@@ -129,7 +129,7 @@ public class LEDManager {
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, command));
 
         //调到与LED同频进行
-        RadioChannelCommand channelCommand1 = new RadioChannelCommand(hostId + SerialConfigs.sProChannels.get(machineCode) - 1);
+        RadioChannelCommand channelCommand1 = new RadioChannelCommand(channel);
         RadioManager.getInstance().sendCommand(new ConvertCommand(channelCommand1));
     }
 

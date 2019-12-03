@@ -151,7 +151,7 @@ public class SitUpTestPresenter
 
     @Override
     public void setFrequency(int deviceId, int frequency, int targetFrequency) {
-        deviceManager.setFrequency(ItemDefault.CODE_YWQZ,
+        deviceManager.setFrequency(SettingHelper.getSystemSetting().getUseChannel(),
                 frequency,
                 deviceId,
                 SettingHelper.getSystemSetting().getHostId());

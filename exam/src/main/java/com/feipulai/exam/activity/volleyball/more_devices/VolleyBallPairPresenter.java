@@ -46,25 +46,24 @@ public class VolleyBallPairPresenter extends SitPullUpPairPresenter {
     protected boolean isAutoPair() {
         return setting.isAutoPair();
     }
-    
+
     public void setFrequency(int deviceId, int originFrequency, int deviceFrequency) {
-        deviceManager.setFrequency(
-                originFrequency,
+        deviceManager.setFrequency(SettingHelper.getSystemSetting().getUseChannel(),
                 deviceId,
                 SettingHelper.getSystemSetting().getHostId());
         setting.setPairNum(deviceId);
-        SharedPrefsUtil.save(context,setting);
+        SharedPrefsUtil.save(context, setting);
     }
 
     @Override
     public void onNewDeviceConnect() {
         super.onNewDeviceConnect();
-        Log.e("TAG","------------------------onNewDeviceConnect");
+        Log.e("TAG", "------------------------onNewDeviceConnect");
     }
 
     @Override
     public void saveSettings() {
-        SharedPrefsUtil.save(context,setting);
+        SharedPrefsUtil.save(context, setting);
     }
 
 }

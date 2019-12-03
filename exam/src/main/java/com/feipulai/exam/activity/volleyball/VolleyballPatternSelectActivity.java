@@ -9,7 +9,7 @@ import com.feipulai.exam.activity.SubItemsSelectActivity;
 import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
-import com.feipulai.exam.activity.volleyball.more_devices.VolleyBallMore2TestActivity;
+import com.feipulai.exam.activity.volleyball.more_devices.VolleyBallMoreTestActivity;
 import com.feipulai.exam.entity.Item;
 
 /**
@@ -38,27 +38,24 @@ public class VolleyballPatternSelectActivity extends SubItemsSelectActivity {
 //                setting.setType(position >= 2 ? 1 : 0);
                 if (position == 0 || position == 1) {
                     setting.setType(0);
-                } else if (position == 2 || position == 3){
+                } else if (position == 2 || position == 3) {
                     setting.setType(1);
-                }else {
+                } else {
                     setting.setType(2);
                 }
                 SharedPrefsUtil.save(VolleyballPatternSelectActivity.this, setting);
-
                 if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
-                    if (position == 2 || position == 3) {
+                    if (position == 2 || position == 3 || position == 0 || position == 1) {
                         startActivity(new Intent(VolleyballPatternSelectActivity.this, VolleyBallIndividual2Activity.class));
-                    } else if (position == 0 || position == 1) {
-                        startActivity(new Intent(VolleyballPatternSelectActivity.this, VolleyBallIndividualActivity.class));
                     } else {
-                        startActivity(new Intent(VolleyballPatternSelectActivity.this, VolleyBallMore2TestActivity.class));
+                        startActivity(new Intent(VolleyballPatternSelectActivity.this, VolleyBallMoreTestActivity.class));
                     }
 
                 } else {
                     startActivity(new Intent(VolleyballPatternSelectActivity.this, BaseGroupActivity.class));
                 }
 
-//                finish();
+                finish();
             }
         });
     }

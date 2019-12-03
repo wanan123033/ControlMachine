@@ -142,9 +142,17 @@ public class AddStudentDialog {
             dbSchedule = DBManager.getInstance().getAllSchedules();
             scheduleList.addAll(dbSchedule);
             scheduleAdapter.notifyDataSetChanged();
-            schedult = scheduleList.get(0).getScheduleNo();
+            if (scheduleList.size()<1){
+                scheduleList = DBManager.getInstance().getSchedules();
+            }
+            if (scheduleList.size()> 0){
+                schedult = scheduleList.get(0).getScheduleNo();
+            }else {
+                schedult = "-1";
+            }
+
         }
-        //schedult = scheduleList.size() > 0 ? scheduleList.get(0).getScheduleNo() : "";
+//        schedult = scheduleList.size() > 0 ? scheduleList.get(0).getScheduleNo() : "";
     }
 
     private boolean isCheckData() {

@@ -33,9 +33,8 @@ import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.sitreach.SitReachSetting;
 import com.feipulai.exam.activity.standjump.StandJumpSetting;
 import com.feipulai.exam.activity.standjump.more.StandJumpGroupMoreActivity;
+import com.feipulai.exam.activity.volleyball.VolleyBallGroupActivity;
 import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
-import com.feipulai.exam.activity.volleyball.more_devices.VolleyBallGroupActivity;
-import com.feipulai.exam.activity.volleyball.more_devices.VolleyBallMoreGroupActivity;
 import com.feipulai.exam.adapter.BaseGroupAdapter;
 import com.feipulai.exam.adapter.GroupAdapter;
 import com.feipulai.exam.adapter.ResultsAdapter;
@@ -196,7 +195,8 @@ public class BaseGroupActivity extends BaseTitleActivity {
     public void finish() {
         super.finish();
         if (mLEDManager != null) {
-            mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+            mLEDManager.link(SettingHelper
+                    .getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
             String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()) + " " + SettingHelper.getSystemSetting().getHostId();
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), title, mLEDManager.getX(title), 0, true, false);
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "菲普莱体育", 3, 3, false, true);
@@ -498,9 +498,9 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 }
 
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_PQ
-                        && SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class).getType() == 1) {
+                        && SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class).getType() == 2) {
 
-                        startActivity(new Intent(this, VolleyBallGroupActivity.class));
+                    startActivity(new Intent(this, VolleyBallGroupActivity.class));
                     return;
                 }
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LDTY

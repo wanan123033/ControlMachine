@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
@@ -31,6 +32,7 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
 
     private int testCount = 1;
     private boolean isNextClickStart = true;
+    private boolean isGroup;
 
     public void setNextClickStart(boolean nextClickStart) {
         isNextClickStart = nextClickStart;
@@ -42,6 +44,18 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
         addItemType(DeviceDetail.ITEM_MORE, R.layout.item_device_list);
     }
 
+    public DeviceListAdapter(@Nullable List<DeviceDetail> data, boolean isGroup) {
+        super(data);
+        this.isGroup = isGroup;
+        addItemType(DeviceDetail.ITEM_ONE, R.layout.item_device_one_list);
+        if (isGroup) {
+            addItemType(DeviceDetail.ITEM_MORE, R.layout.item_group_device_list);
+        } else {
+            addItemType(DeviceDetail.ITEM_MORE, R.layout.item_device_list);
+        }
+
+    }
+
     public void setTestCount(int testCount) {
         this.testCount = testCount;
     }
@@ -51,7 +65,7 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
         if (viewType == DeviceDetail.ITEM_ONE)
             return new OneViewHolder(getItemView(R.layout.item_device_one_list, parent));
         else {
-            return new MoreViewHolder(getItemView(R.layout.item_device_list, parent));
+            return new MoreViewHolder(getItemView(isGroup ? R.layout.item_group_device_list : R.layout.item_device_list, parent));
         }
 //        return super.onCreateDefViewHolder(parent, viewType);
     }
@@ -135,6 +149,11 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
 
             case DeviceDetail.ITEM_ONE:
                 OneViewHolder oneViewHolder = (OneViewHolder) holder;
+                if (isGroup) {
+                    oneViewHolder.llStuDetail.setVisibility(View.GONE);
+                } else {
+                    oneViewHolder.llStuDetail.setVisibility(View.VISIBLE);
+                }
                 if (item.getStuDevicePair().getStudent() != null) {
                     oneViewHolder.setText(R.id.txt_stu_sex, item.getStuDevicePair().getStudent().getSex() == 0 ? "男" : "女");
                 } else {
@@ -239,6 +258,9 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
     }
 
     static class OneViewHolder extends BaseViewHolder {
+        @BindView(R.id.ll_stu_detail)
+        LinearLayout llStuDetail;
+
         @BindView(R.id.cb_device_state)
         CheckBox cbDeviceState;
         @BindView(R.id.txt_stu_name)

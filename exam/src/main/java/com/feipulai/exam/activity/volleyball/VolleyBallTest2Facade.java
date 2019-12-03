@@ -1,6 +1,7 @@
 package com.feipulai.exam.activity.volleyball;
 
 import android.os.Message;
+import android.util.Log;
 
 import com.feipulai.common.jump_rope.task.GetReadyCountDownTimer;
 import com.feipulai.common.jump_rope.task.TestingCountDownTimer;
@@ -11,6 +12,7 @@ import com.feipulai.device.manager.VolleyBallRadioManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
+import com.feipulai.device.serial.beans.VolleyBallCheck;
 import com.feipulai.device.serial.beans.VolleyBallResult;
 import com.feipulai.device.serial.beans.VolleyPair868Result;
 import com.feipulai.device.serial.beans.VolleyPairResult;
@@ -19,6 +21,7 @@ import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -48,7 +51,7 @@ public class VolleyBallTest2Facade implements SerialDeviceManager.RS232ResiltLis
         this.listener = listener;
         this.setting = setting;
         this.hostId = hostId;
-
+        Log.e("TAG====",setting.getType()+"----------");
         deviceManager = new VolleyBallManager(setting.getType());
         executor = Executors.newCachedThreadPool();
         SerialDeviceManager.getInstance().setRS232ResiltListener(this);
@@ -128,6 +131,7 @@ public class VolleyBallTest2Facade implements SerialDeviceManager.RS232ResiltLis
 
     // 开始测试 可以用作 重新开始
     public void startTest() {
+
         stopTimers();
 
         // 给设备发送开始后结束,在获取成绩的时候就不会一直有之前的成绩存在了
@@ -211,8 +215,10 @@ public class VolleyBallTest2Facade implements SerialDeviceManager.RS232ResiltLis
             if (pair868Result.getDeviceId() != 1)
                 return;
 
-            if (pair868Result.getState() == VolleyPair868Result.STATE_TIMING || pair868Result.getState() == VolleyPair868Result.STATE_TIME_END
-                    || pair868Result.getState() == VolleyPair868Result.STATE_COUNTING || pair868Result.getState() == VolleyPair868Result.STATE_COUNT_END) {
+            if (pair868Result.getState() == VolleyPair868Result.STATE_TIMING ||
+                    pair868Result.getState() == VolleyPair868Result.STATE_TIME_END ||
+                    pair868Result.getState() == VolleyPair868Result.STATE_COUNTING ||
+                    pair868Result.getState() == VolleyPair868Result.STATE_COUNT_END) {
                 VolleyBallResult result = new VolleyBallResult();
                 result.setResult(pair868Result.getScore());
                 listener.onScoreArrived(result);
@@ -228,6 +234,15 @@ public class VolleyBallTest2Facade implements SerialDeviceManager.RS232ResiltLis
             deviceDetector.missCount.getAndSet(0);
             listener.onDeviceConnectState(VolleyBallManager.VOLLEY_BALL_CONNECT);
         }
+        if (msg.what == SerialConfigs.VOLLEY_BALL_SELFCHECK && msg.obj instanceof VolleyPair868Result){
+            VolleyPair868Result result = (VolleyPair868Result) msg.obj;
+            VolleyBallCheck check = new VolleyBallCheck();
+            check.setPositionList(result.getPositionList());
+            check.setDeviceId(result.getDeviceId());
+            check.setPoleNum(result.getPoleNum());
+            check.setDeviceType(result.getDeviceType());
+            listener.checkDevice(check);
+        }
 
     }
 
@@ -236,6 +251,10 @@ public class VolleyBallTest2Facade implements SerialDeviceManager.RS232ResiltLis
         this.setting = setting;
         SerialDeviceManager.getInstance().setRS232ResiltListener(this);
         RadioManager.getInstance().setOnRadioArrived(this);
+    }
+
+    public void checkDevice() {
+        deviceManager.checkDevice(hostId, 1);
     }
 
 
@@ -260,6 +279,7 @@ public class VolleyBallTest2Facade implements SerialDeviceManager.RS232ResiltLis
                             }
                         } else {
                             deviceManager.getScore(hostId, 1);
+
                         }
 
                         int count = missCount.addAndGet(1);
@@ -298,7 +318,7 @@ public class VolleyBallTest2Facade implements SerialDeviceManager.RS232ResiltLis
 
         void onScoreArrived(VolleyBallResult result);
 
-//        void checkDevice(VolleyBallCheck check);
+        void checkDevice(VolleyBallCheck check);
     }
 
 }

@@ -74,6 +74,7 @@ public class UdpClient extends UdpChannelInboundHandler implements Runnable {
         eventLoopGroup = new NioEventLoopGroup();
         bootstrap.group(eventLoopGroup);
         bootstrap.channel(NioDatagramChannel.class)
+                .option(ChannelOption.SO_BROADCAST, true)
                 .option(ChannelOption.SO_RCVBUF, 1024 * 1024)// 设置UDP读缓冲区为1M
                 .option(ChannelOption.SO_SNDBUF, 1024 * 1024);// 设置UDP写缓冲区为1M
         udpChannelInitializer = new UdpChannelInitializer(this);

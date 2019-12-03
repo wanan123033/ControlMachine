@@ -1,11 +1,16 @@
 package com.feipulai.device.manager;
 
+import android.os.SystemClock;
+import android.util.Log;
+
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
+
+import java.util.Arrays;
 
 /**
  * Created by James on 2018/3/8 0008.
@@ -53,9 +58,11 @@ public class VolleyBallManager {
     }
 
     public void startTest(int hostId, int deviceId, int time, int testTime) {
-        if (pattryType == 0)
+
+        if (pattryType == 0) {
+            Log.e("TAG===", Arrays.toString(CMD_START));
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_START));
-        else {
+        }else {
             if (testTime == 0) {
                 volleyBallRadioManager.startCount(hostId, deviceId);
             } else {
@@ -137,12 +144,20 @@ public class VolleyBallManager {
     /**
      * 忽略点
      */
-    public void loseDot(int deviceId, int hostId) {
-        byte[] cmd = new byte[]{(byte) 0xAA, 0x0E, 0x0A, 0x03, 0x01, 0x00, 0x00, (byte) 0xC9, 0x00, 0x00, 0x00, 0x00, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, 0x00, 0x0d};
+    public void loseDot(int deviceId, int hostId,byte[] checkResult) {
+        byte[] cmd = new byte[]{(byte) 0xAA, 0x13, 0x0A, 0x03, 0x01, 0x00, 0x00, (byte) 0xC9, 0x00, 0x00, 0x00, 0x00, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, 0x00, 0x0d};
         cmd[5] = (byte) hostId;
         cmd[6] = (byte) deviceId;
+        cmd[12] = checkResult[0];
+        cmd[13] = checkResult[1];
+        cmd[14] = checkResult[2];
+        cmd[15] = checkResult[3];
+        cmd[16] = checkResult[4];
         cmd[17] = (byte) sum(cmd, 17);
-
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+        SystemClock.sleep(100);
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+        SystemClock.sleep(100);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -150,11 +165,15 @@ public class VolleyBallManager {
      * 取消忽略点
      */
     public void cancelLoseDot(int deviceId, int hostId) {
-        byte[] cmd = new byte[]{(byte) 0xAA, 0x0E, 0x0A, 0x03, 0x01, 0x00, 0x00, (byte) 0xC9, 0x00, 0x00, 0x00, 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, 0x00, 0x0d};
+        byte[] cmd = new byte[]{(byte) 0xAA, 0x13, 0x0A, 0x03, 0x01, 0x00, 0x00, (byte) 0xC9, 0x00, 0x00, 0x00, 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, 0x00, 0x0d};
         cmd[5] = (byte) hostId;
         cmd[6] = (byte) deviceId;
         cmd[17] = (byte) sum(cmd, 17);
 
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+        SystemClock.sleep(100);
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+        SystemClock.sleep(100);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 

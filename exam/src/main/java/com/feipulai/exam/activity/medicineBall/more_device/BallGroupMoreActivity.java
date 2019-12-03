@@ -30,15 +30,18 @@ import static com.feipulai.exam.activity.medicineBall.MedicineConstant.GET_SCORE
 public class BallGroupMoreActivity extends BaseMoreGroupActivity {
     private static final String TAG = "BallGroupMoreActivity";
     private MedicineBallSetting setting;
-    private int [] deviceState = new int[4];
+    private int[] deviceState = new int[4];
     private final int SEND_EMPTY = 1;
     private int beginPoint;
+
     @Override
     protected void initData() {
         setting = SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class);
         if (null == setting) {
             setting = new MedicineBallSetting();
         }
+        super.initData();
+
         Logger.i(TAG + ":setting ->" + setting.toString());
         setDeviceCount(setting.getSpDeviceCount());
         deviceState = new int[setting.getSpDeviceCount()];
@@ -50,6 +53,11 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
         sendEmpty();
 
         setFaultEnable(setting.isPenalize());
+    }
+
+    @Override
+    public int setTestDeviceCount() {
+        return setting.getSpDeviceCount();
     }
 
     private void sendEmpty() {
@@ -133,9 +141,10 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
 
     private boolean isInCorrect;
     private int PROMPT_TIMES;
+
     private void disposeDevice(MedicineBallNewResult result) {
         isInCorrect = result.isInCorrect();
-        if (isInCorrect){
+        if (isInCorrect) {
             PROMPT_TIMES++;
             if (PROMPT_TIMES >= 2 && PROMPT_TIMES < 4) {
                 int[] errors = result.getIncorrectPoles();
@@ -148,10 +157,10 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
 
             }
             deviceState[result.getDeviceId() - 1] = 0;//出现异常
-            if (result.getState() == 1){
+            if (result.getState() == 1) {
                 sendFree(result.getDeviceId());
             }
-        }else {
+        } else {
             PROMPT_TIMES = 0;
             deviceState[result.getDeviceId() - 1] = 5;
         }
@@ -159,7 +168,7 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
     }
 
     private void onResultArrived(int result, BaseStuPair stuPair) {
-        if (result < beginPoint * 10 || result >  5000* 10) {
+        if (result < beginPoint * 10 || result > 5000 * 10) {
             toastSpeak("数据异常，请重测");
             return;
         }
@@ -183,14 +192,14 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
     private MedicineBallImpl resultImpl = new MedicineBallImpl(new MedicineBallImpl.MainThreadDisposeListener() {
         @Override
         public void onResultArrived(MedicineBallNewResult result) {
-            Log.i(TAG,result.toString());
-            if (result.getState() == 2){
+            Log.i(TAG, result.toString());
+            if (result.getState() == 2) {
                 Message msg = mHandler.obtainMessage();
                 msg.obj = result;
                 msg.what = MedicineConstant.GET_SCORE_RESPONSE;
                 mHandler.sendMessage(msg);
                 sendFree(result.getDeviceId());
-            }else if (result.getState() == 0){
+            } else if (result.getState() == 0) {
                 disposeDevice(result);
             }
         }
@@ -215,10 +224,10 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
                     MedicineBallNewResult result = (MedicineBallNewResult) msg.obj;
                     for (DeviceDetail detail : deviceDetails) {
                         if (detail.getStuDevicePair().getBaseDevice().getDeviceId() == result.getDeviceId()) {
-                            int dbResult = result.getResult() * 10+beginPoint * 10;
-                            detail.getStuDevicePair().setResultState(result.isFault()? RoundResult.RESULT_STATE_FOUL:RoundResult.RESULT_STATE_NORMAL);
+                            int dbResult = result.getResult() * 10 + beginPoint * 10;
+                            detail.getStuDevicePair().setResultState(result.isFault() ? RoundResult.RESULT_STATE_FOUL : RoundResult.RESULT_STATE_NORMAL);
                             if (result.getSweepPoint() < 2) {
-                                showValidResult(dbResult,detail.getStuDevicePair(),result.getDeviceId());
+                                showValidResult(dbResult, detail.getStuDevicePair(), result.getDeviceId());
                             } else {
                                 onResultArrived(dbResult, detail.getStuDevicePair());
                             }
@@ -236,7 +245,7 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
         }
     });
 
-    private void showValidResult(final int result,final BaseStuPair stuPair,final int deviceId) {
+    private void showValidResult(final int result, final BaseStuPair stuPair, final int deviceId) {
         final SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
         alertDialog.setTitleText(String.format("%d号机%s成绩是否有效", deviceId, stuPair.getStudent().getStudentName()));
         alertDialog.setCancelable(false);

@@ -7,7 +7,6 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.exam.activity.medicineBall.MedicineBallSetting;
 import com.feipulai.exam.activity.pushUp.PushUpSetting;
-import com.feipulai.exam.activity.sargent_jump.SargentSetting;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairContract;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairPresenter;
@@ -50,6 +49,7 @@ public class MedicineBallPairPresenter extends SitPullUpPairPresenter {
     
     public void setFrequency(int deviceId, int originFrequency, int deviceFrequency) {
         sitPushUpManager.setFrequencySXQ(
+                SettingHelper.getSystemSetting().getUseChannel(),
                 originFrequency,
                 deviceId,
                 SettingHelper.getSystemSetting().getHostId());

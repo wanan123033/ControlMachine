@@ -13,7 +13,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 
+import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
@@ -29,6 +31,7 @@ import com.feipulai.device.udp.result.BasketballResult;
 import com.feipulai.device.udp.result.UDPResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.basketball.pair.BasketBallPairActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.BaseEvent;
@@ -82,6 +85,8 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
     EditText etPenaltySecond;
     @BindView(R.id.sp_test_mode)
     Spinner spTestMode;
+    @BindView(R.id.tv_pair)
+    TextView tvPair;
     private Integer[] testRound = new Integer[]{1, 2, 3};
     private String[] carryMode = new String[]{"四舍五入", "不进位", "非零进位"};
     private BasketBallSetting setting;
@@ -155,7 +160,9 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
 
         etPenaltySecond.setText(setting.getPenaltySecond() + "");
 
-
+        if (setting.getTestType() == 1) {
+            tvPair.setVisibility(View.VISIBLE);
+        }
     }
 
     private int getAccuracy() {
@@ -177,7 +184,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
     public void onRadioArrived(Message msg) {
         this.isDisconnect = false;
         if (msg.what == SerialConfigs.DRIBBLEING_START) {
-           toastSpeak("连接成功");
+            toastSpeak("连接成功");
         } else if (msg.what == SerialConfigs.DRIBBLEING_SET_SETTING) {
             toastSpeak("设置成功");
             Basketball868Result result = (Basketball868Result) msg.obj;
@@ -294,6 +301,11 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
                 setting.setTestNo(position + 1);
                 break;
         }
+    }
+
+    @OnClick(R.id.tv_pair)
+    public void onViewClicked() {
+        IntentUtil.gotoActivity(this, BasketBallPairActivity.class);
     }
 
     @OnClick({R.id.tv_sensitivity_use, R.id.tv_ip_connect, R.id.tv_accuracy_use, R.id.tv_intercept_time_use})

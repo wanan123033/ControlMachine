@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.manager.VolleyBallManager;
 import com.feipulai.device.manager.VolleyBallRadioManager;
 import com.feipulai.device.serial.SerialConfigs;
+import com.feipulai.device.serial.beans.VolleyBallCheck;
 import com.feipulai.device.serial.beans.VolleyBallResult;
 import com.feipulai.device.sitpullup.SitPullLinker;
 import com.feipulai.exam.R;
@@ -174,12 +176,10 @@ public class VolleyBallIndividual2Activity extends BaseTitleActivity
         });
     }
 
-
     @Override
-    protected void onRestart() {
-        super.onRestart();
-        facade.setVolleySetting(setting);
-
+    protected void onResume() {
+        super.onResume();
+        facade = new VolleyBallTest2Facade(SettingHelper.getSystemSetting().getHostId(), setting, this);
     }
 
     @Override
@@ -189,17 +189,11 @@ public class VolleyBallIndividual2Activity extends BaseTitleActivity
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (facade == null) {
-            facade = new VolleyBallTest2Facade(SettingHelper.getSystemSetting().getHostId(), setting, this);
-        } else {
-            facade.stopTotally();
-            facade = new VolleyBallTest2Facade(SettingHelper.getSystemSetting().getHostId(), setting, this);
-        }
+    protected void onRestart() {
+        super.onRestart();
+        facade.setVolleySetting(setting);
 
     }
-
 
     private void startProjectSetting() {
         if (isConfigurableNow()) {
@@ -271,8 +265,13 @@ public class VolleyBallIndividual2Activity extends BaseTitleActivity
                 break;
 
             case R.id.tv_start_test:
-                prepareForTesting();
-//                facade.checkDevice();
+                if (setting.getType() == 0){
+                    prepareForTesting();
+                }else {
+                    facade.checkDevice();
+                }
+//                prepareForTesting();
+
                 break;
 
             case R.id.tv_stop_test:
@@ -486,6 +485,7 @@ public class VolleyBallIndividual2Activity extends BaseTitleActivity
                 VolleyBallResult result = (VolleyBallResult) msg.obj;
                 pairs.get(0).setDeviceResult(result);
                 String displayResult = ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult());
+                Log.e("TAG=====",displayResult);
                 tvResult.setText(displayResult);
                 break;
         }
@@ -564,21 +564,38 @@ public class VolleyBallIndividual2Activity extends BaseTitleActivity
         handler.sendMessage(msg);
     }
 
-//    @Override
-//    public void checkDevice(VolleyBallCheck check) {
-//        if (check.getDeviceType() == setting.getTestPattern()) {
-//            if (check.getPoleNum() == 0) {
-//                toastSpeak("请连接测试杆");
-//            } else {
-//                Integer poleArray[] = new Integer[check.getPoleNum() / 2 * 10];
-//                System.arraycopy(check.getPositionList().toArray(), 0, poleArray, 0, poleArray.length);
-//
-//                prepareForTesting();
-//            }
-//        } else {
-//            toastSpeak("当前项目使用设备错误，请更换");
-//        }
-//    }
+    @Override
+    public void checkDevice(VolleyBallCheck check) {
+        if (check.getDeviceType() == setting.getTestPattern()) {
+            if (check.getPoleNum() == 0) {
+                toastSpeak("请连接测试杆");
+            } else {
+                final Integer poleArray[] = new Integer[check.getPoleNum() / 2 * 10];
+                System.arraycopy(check.getPositionList().toArray(), 0, poleArray, 0, poleArray.length);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        boolean isTest = true;
+                        for (int i = 0 ; i < poleArray.length ; i++){
+                            if (poleArray[i] == 0){
+                                isTest = true;
+                            }else{
+                                isTest = false;
+                                break;
+                            }
+                        }
+                        if (isTest)
+                            prepareForTesting();
+                        else
+                            toastSpeak("有坏点,请自检");
+                    }
+                });
+
+            }
+        } else {
+            toastSpeak("当前项目使用设备错误，请更换");
+        }
+    }
 
     private boolean isConfigurableNow() {
         return state == WAIT_CHECK_IN || state == WAIT_BEGIN;

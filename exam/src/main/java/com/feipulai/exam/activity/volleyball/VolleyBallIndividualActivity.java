@@ -27,7 +27,9 @@ import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.manager.VolleyBallManager;
+import com.feipulai.device.manager.VolleyBallRadioManager;
 import com.feipulai.device.serial.beans.VolleyBallResult;
+import com.feipulai.device.sitpullup.SitPullLinker;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
@@ -48,6 +50,7 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
+import com.feipulai.exam.view.WaitDialog;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
@@ -58,7 +61,7 @@ import butterknife.OnClick;
 
 public class VolleyBallIndividualActivity extends BaseTitleActivity
         implements VolleyBallTestFacade.Listener,
-        IndividualCheckFragment.OnIndividualCheckInListener {
+        IndividualCheckFragment.OnIndividualCheckInListener, SitPullLinker.SitPullPairListener {
 
     private static final int UPDATE_SCORE = 0x3;
 
@@ -90,6 +93,8 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
     TextView tvFinishTest;
     @BindView(R.id.tv_exit_test)
     TextView tvExitTest;
+    @BindView(R.id.tv_pair)
+    TextView tvPair;
 
     private VolleyBallTestFacade facade;
     private IndividualCheckFragment individualCheckFragment;
@@ -105,6 +110,11 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
     private String testDate;
     private SystemSetting systemSetting;
     private List<StuDevicePair> pairs = new ArrayList<>(1);
+
+
+    private WaitDialog changBadDialog;
+    private SitPullLinker linker;
+    protected final int TARGET_FREQUENCY = SettingHelper.getSystemSetting().getUseChannel();
 
     @Override
     protected int setLayoutResID() {
@@ -129,9 +139,13 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         individualCheckFragment.setOnIndividualCheckInListener(this);
         ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), individualCheckFragment, R.id.ll_individual_check);
 
-        facade = new VolleyBallTestFacade(SettingHelper.getSystemSetting().getHostId(),setting.getType(), setting, this);
+
         ledManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
         prepareForCheckIn();
+
+        if (setting.getType() == 0) {
+            tvPair.setVisibility(View.GONE);
+        }
     }
 
     @Nullable
@@ -142,7 +156,17 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         title = TestConfigs.machineNameMap.get(machineCode)
                 + SettingHelper.getSystemSetting().getHostId() + "号机"
                 + (isTestNameEmpty ? "" : ("-" + SettingHelper.getSystemSetting().getTestName()));
-        return builder.setTitle(title) .addRightText("项目设置", new View.OnClickListener() {
+        builder.addRightText("外接屏幕", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isConfigurableNow()) {
+                    startActivity(new Intent(getApplicationContext(), LEDSettingActivity.class));
+                } else {
+                    toastSpeak("测试中,不能进行外接屏幕设置");
+                }
+            }
+        });
+        return builder.setTitle(title).addRightText("项目设置", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startProjectSetting();
@@ -155,12 +179,32 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         });
     }
 
+
     @Override
     protected void onRestart() {
         super.onRestart();
         facade.setVolleySetting(setting);
 
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        facade.stopTotally();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (facade == null) {
+            facade = new VolleyBallTestFacade(SettingHelper.getSystemSetting().getHostId(), setting, this);
+        } else {
+            facade.stopTotally();
+            facade = new VolleyBallTestFacade(SettingHelper.getSystemSetting().getHostId(), setting, this);
+        }
+
+    }
+
 
     private void startProjectSetting() {
         if (isConfigurableNow()) {
@@ -203,6 +247,8 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         pairs.get(0).setPenalty(0);
 
         tvResult.setText(student.getStudentName());
+        if (setting.getType() == 1)
+            VolleyBallRadioManager.getInstance().deviceFree(SettingHelper.getSystemSetting().getHostId(), 1);
         prepareForBegin();
         displayCheckedInLED(lastResult);
     }
@@ -217,9 +263,10 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
     }
 
     @OnClick({R.id.tv_start_test, R.id.tv_stop_test, R.id.tv_print, R.id.tv_led_setting, R.id.tv_confirm,
-            R.id.tv_punish, R.id.tv_abandon_test, R.id.tv_finish_test, R.id.tv_exit_test})
+            R.id.tv_punish, R.id.tv_abandon_test, R.id.tv_finish_test, R.id.tv_exit_test, R.id.tv_pair})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+
             case R.id.tv_led_setting:
                 if (isConfigurableNow()) {
                     startActivity(new Intent(this, LEDSettingActivity.class));
@@ -249,6 +296,9 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
                 tvResult.setText("");
                 InteractUtils.saveResults(pairs, testDate);
                 onResultConfirmed();
+                if (setting.getType() == 1) {
+                    VolleyBallRadioManager.getInstance().deviceFree(SettingHelper.getSystemSetting().getHostId(), 1);
+                }
                 break;
 
             case R.id.tv_punish:
@@ -267,6 +317,9 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
 
             case R.id.tv_exit_test:
                 prepareForCheckIn();
+                break;
+            case R.id.tv_pair:
+                changeBadDevice();
                 break;
 
         }
@@ -342,7 +395,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         TestCache testCache = TestCache.getInstance();
         Student student = pairs.get(0).getStudent();
         InteractUtils.showStuInfo(llStuDetail, student, testCache.getResults().get(student));
-
+        pairs.get(0).setPenalty(0);
         tvResult.setText(student.getStudentName());
 
         prepareView(true, false, true, true,
@@ -571,6 +624,8 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
                     public void onClick(DialogInterface dialog, int which) {
                         int value = -1 * numberPicker.getValue();
                         if (value != pairs.get(0).getPenalty()) {
+                            String displayInLed = "成绩:" + ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult());
+                            ledManager.showString(SettingHelper.getSystemSetting().getHostId(), displayInLed, 1, 1, false, true);
                             ledManager.showString(systemSetting.getHostId(), "判罚:" + ResultDisplayUtils.getStrResultForDisplay(value), 1, 2, false, false);
                             ledManager.showString(systemSetting.getHostId(),
                                     "最终:" + ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult() + value),
@@ -583,4 +638,65 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
                 .setNegativeButton("返回", null).show();
     }
 
+    @Override
+    public void onNoPairResponseArrived() {
+        toastSpeak("未收到子机回复,设置失败,请重试");
+    }
+
+    @Override
+    public void onNewDeviceConnect() {
+        cancelChangeBad();
+        changBadDialog.dismiss();
+    }
+
+
+    @Override
+    public void setFrequency(int deviceId, int originFrequency, int targetFrequency) {
+        facade.deviceManager.setFrequency(
+                systemSetting.getUseChannel(),
+                deviceId,
+                SettingHelper.getSystemSetting().getHostId());
+
+    }
+
+    public void cancelChangeBad() {
+        facade.mLinking = false;
+        if (linker != null) {
+            linker.cancelPair();
+        }
+        facade.stopTotally();
+        facade = null;
+        facade = new VolleyBallTestFacade(SettingHelper.getSystemSetting().getHostId(), setting, this);
+
+    }
+
+    public void changeBadDevice() {
+        if (linker == null) {
+            linker = new SitPullLinker(TestConfigs.sCurrentItem.getMachineCode(), TARGET_FREQUENCY, this);
+            facade.setLinker(linker);
+        } else {
+            facade.setLinker(linker);
+        }
+        facade.stopTotally();
+        facade.mLinking = true;
+        linker.startPair(1);
+        showChangeBadDialog();
+
+    }
+
+    public void showChangeBadDialog() {
+        changBadDialog = new WaitDialog(this);
+        changBadDialog.setCanceledOnTouchOutside(false);
+        changBadDialog.setCancelable(false);
+        changBadDialog.show();
+        // 必须在dialog显示出来后再调用
+        changBadDialog.setTitle("请重启待连接设备");
+        changBadDialog.btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cancelChangeBad();
+                changBadDialog.dismiss();
+            }
+        });
+    }
 }

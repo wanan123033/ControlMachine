@@ -89,7 +89,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     private void init() {
         mLEDManager = new LEDManager();
-        mLEDManager.link(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+        mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(),TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
         PrinterManager.getInstance().init();
         etInputText.setData(lvResults, this);
@@ -334,14 +334,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         String result = ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
         if (ledMode == 0) {
-            int x = 7;
-            if (baseStu.getResult() < 1000) {
-                x = 9;
-            } else if (baseStu.getResult() >= 1000 && baseStu.getResult() < 10000) {
-                x = 8;
-            } else if (baseStu.getResult() >= 10000) {
-                x = 6;
-            }
+            int x = ResultDisplayUtils.getStringLength(result);
 
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, x, index, false, true);
         }else {

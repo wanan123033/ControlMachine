@@ -7,7 +7,6 @@ import com.feipulai.common.jump_rope.task.OnGetStateWithLedListener;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.serial.RadioManager;
-import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.host.R;
@@ -52,7 +51,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         this.view = view;
         this.context = context;
         hostId = SettingHelper.getSystemSetting().getHostId();
-        TARGET_FREQUENCY = SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode()) + hostId - 1;
+        TARGET_FREQUENCY = SettingHelper.getSystemSetting().getUseChannel();
         machineName = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode());
     }
 

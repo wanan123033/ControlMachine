@@ -160,84 +160,88 @@ public class StuItemExLReader extends ExlReader {
 //            return null;
 //        }
         bean.setExamType(examType);
-
-        if (TextUtils.isEmpty(stuCode)) {
-            return null;
-        }
-        bean.setStudentCode(stuCode);
-
-        if ("男".equals(sex)) {
-            bean.setSex(Student.MALE);
-        } else if ("女".equals(sex)) {
-            bean.setSex(Student.FEMALE);
-        } else {
-            // 不男不女
-            return null;
-        }
-
-        if (TextUtils.isEmpty(stuName)) {
-            return null;
-        }
-        bean.setStudentName(stuName);
-
-        if (mItemName == null) {
-            mItemName = itemName;
-        }
-        if (TextUtils.isEmpty(itemName) || !mItemName.equals(itemName)) {
-            // 表里面所有行的项目名必须相同
-            return null;
-        }
-        bean.setItemName(itemName);
-
-        if (mItemCode == null) {
-            mItemCode = itemCode;
-        }
-        if (TextUtils.isEmpty(itemCode) || !mItemCode.equals(itemCode)) {
-            // 表里面所有行的项目代码必须相同
-            return null;
-        }
-        bean.setItemCode(itemCode);
-
-        if (mHasIDCardCol) {
-
-
-            if (!TextUtils.isEmpty(idCardNo)) {
-                bean.setIdCardNo(idCardNo);
+        try {
+            if (TextUtils.isEmpty(stuCode)) {
+                return null;
             }
-        }
+            bean.setStudentCode(stuCode);
 
-        if (TextUtils.isEmpty(sessionNo)) {
-            return null;
-        }
-        bean.setSessionNo(sessionNo);
-        if (importTyle == 1) {
-            if ("男子".equals(groupSex)) {
-                bean.setGroupSex(Group.MALE);
-            } else if ("女子".equals(groupSex)) {
-                bean.setGroupSex(Group.FEMALE);
-            } else if ("混合".equals(groupSex)) {
-                //混合
-                bean.setGroupSex(Group.MIXTURE);
+            if ("男".equals(sex)) {
+                bean.setSex(Student.MALE);
+            } else if ("女".equals(sex)) {
+                bean.setSex(Student.FEMALE);
             } else {
+                // 不男不女
                 return null;
             }
 
-            if (TextUtils.isEmpty(tranches)) {
+            if (TextUtils.isEmpty(stuName)) {
                 return null;
             }
-            bean.setTranches(tranches);
-            if (TextUtils.isEmpty(groupNo)) {
+            bean.setStudentName(stuName);
+
+            if (mItemName == null) {
+                mItemName = itemName;
+            }
+            if (TextUtils.isEmpty(itemName) || !mItemName.equals(itemName)) {
+                // 表里面所有行的项目名必须相同
                 return null;
             }
-            bean.setGroupNo(Integer.valueOf(groupNo));
+            bean.setItemName(itemName);
+
+            if (mItemCode == null) {
+                mItemCode = itemCode;
+            }
+            if (TextUtils.isEmpty(itemCode) || !mItemCode.equals(itemCode)) {
+                // 表里面所有行的项目代码必须相同
+                return null;
+            }
+            bean.setItemCode(itemCode);
+
+            if (mHasIDCardCol) {
+
+
+                if (!TextUtils.isEmpty(idCardNo)) {
+                    bean.setIdCardNo(idCardNo);
+                }
+            }
+
+            if (TextUtils.isEmpty(sessionNo)) {
+                return null;
+            }
+            bean.setSessionNo(sessionNo);
+            if (importTyle == 1) {
+                if ("男子".equals(groupSex)) {
+                    bean.setGroupSex(Group.MALE);
+                } else if ("女子".equals(groupSex)) {
+                    bean.setGroupSex(Group.FEMALE);
+                } else if ("混合".equals(groupSex)) {
+                    //混合
+                    bean.setGroupSex(Group.MIXTURE);
+                } else {
+                    return null;
+                }
+
+                if (TextUtils.isEmpty(tranches)) {
+                    return null;
+                }
+                bean.setTranches(tranches);
+                if (TextUtils.isEmpty(groupNo)) {
+                    return null;
+                }
+
+                bean.setGroupNo(Integer.valueOf(groupNo));
 //            if (TextUtils.isEmpty(scheduleTime)) {
 //                return null;
 //            }
-            bean.setScheduleTime(scheduleTime);
-            if (TextUtils.isEmpty(trackNo)) {
-                return null;
+                bean.setScheduleTime(scheduleTime);
+                if (TextUtils.isEmpty(trackNo)) {
+                    return null;
+                }
+                bean.setTrackNo(Integer.valueOf(trackNo));
             }
-            bean.setTrackNo(Integer.valueOf(trackNo));
+        } catch (Exception e) {
+            return null;
         }
 
 
