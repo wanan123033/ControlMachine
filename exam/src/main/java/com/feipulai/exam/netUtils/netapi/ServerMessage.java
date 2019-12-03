@@ -168,7 +168,7 @@ public class ServerMessage {
      * @param uploadResultsList
      */
     public static void uploadZCPResult(final Context context, final String itemName, final List<UploadResults> uploadResultsList) {
-        Logger.i("uploadResult==>" + uploadResultsList.toString());
+//        Logger.i("uploadResult==>" + uploadResultsList.toString());
         if (uploadResultsList == null || uploadResultsList.size() == 0) {
             ToastUtils.showShort("没有需要上传的成绩");
             return;
@@ -190,11 +190,13 @@ public class ServerMessage {
                         break;
                     case HttpSubscriber.ITEM_BIZ://项目
                         Item item = DBManager.getInstance().queryItemByName(itemName);
-                        //更新项目代码
-                        for (UploadResults uploadResults : uploadResultsList) {
-                            uploadResults.setExamItemCode(item.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : item.getItemCode());
-                            for (RoundResultBean resultBean : uploadResults.getRoundResultList()) {
-                                resultBean.setItemCode(item.getItemCode());
+                        if (item != null) {
+                            //更新项目代码
+                            for (UploadResults uploadResults : uploadResultsList) {
+                                uploadResults.setExamItemCode(item.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : item.getItemCode());
+                                for (RoundResultBean resultBean : uploadResults.getRoundResultList()) {
+                                    resultBean.setItemCode(item.getItemCode());
+                                }
                             }
                         }
                         subscriber.uploadResult(uploadResultsList);

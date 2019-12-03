@@ -379,7 +379,7 @@ public class DBManager {
         chipInfoDao.deleteAll();
     }
 
-    public List<ChipGroup> queryChipGroups(){
+    public List<ChipGroup> queryChipGroups() {
         return chipGroupDao.queryBuilder().orderDesc(ChipGroupDao.Properties.StudentNo).list();
     }
 
@@ -1107,7 +1107,7 @@ public class DBManager {
     }
 
     public List<RoundResult> queryResultsByStudentCode(String itemCode, String studentCode) {
-        Log.e("tat","itemCode="+itemCode +",studentCode="+studentCode);
+        Log.e("tat", "itemCode=" + itemCode + ",studentCode=" + studentCode);
         return roundResultDao
                 .queryBuilder()
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
@@ -1663,10 +1663,10 @@ public class DBManager {
         List<String> stuCodeList = new ArrayList<>();
         StringBuffer sqlBuf1 = new StringBuffer("SELECT  DISTINCT " + RoundResultDao.Properties.StudentCode.columnName);
         sqlBuf1.append(" FROM " + RoundResultDao.TABLENAME);
-        sqlBuf1.append(" WHERE " + RoundResultDao.Properties.UpdateState.columnName + " = ? AND ");
-        sqlBuf1.append(RoundResultDao.Properties.ItemCode.columnName + " =  ?  AND ");
+//        sqlBuf1.append(" WHERE " + RoundResultDao.Properties.UpdateState.columnName + " = ? AND ");
+        sqlBuf1.append(" WHERE " + RoundResultDao.Properties.ItemCode.columnName + " =  ?  AND ");
         sqlBuf1.append(RoundResultDao.Properties.MachineCode.columnName + " = ? ");
-        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf1.toString(), new String[]{"0", itemCode, TestConfigs.sCurrentItem.getMachineCode() + ""});
+        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf1.toString(), new String[]{itemCode, TestConfigs.sCurrentItem.getMachineCode() + ""});
         while (c.moveToNext()) {
             stuCodeList.add(c.getString(0));
         }
@@ -1675,7 +1675,7 @@ public class DBManager {
         for (String stuCode : stuCodeList) {
             //获取学生未上传成绩
             List<RoundResult> stuResult = roundResultDao.queryBuilder().where(RoundResultDao.Properties.StudentCode.eq(stuCode))
-                    .where(RoundResultDao.Properties.UpdateState.eq(0))
+//                    .where(RoundResultDao.Properties.UpdateState.eq(0))
                     .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
                     .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                     .list();

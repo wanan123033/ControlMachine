@@ -822,7 +822,7 @@ public class DBManager {
 
     /**
      * 获取是否上传的成绩列表
-     *
+     * (改：上传所有不需要状态判断)
      * @param upLoaded
      * @return
      */
@@ -830,7 +830,15 @@ public class DBManager {
         return roundResultDao.queryBuilder()
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
-                .where(RoundResultDao.Properties.UpdateState.eq(upLoaded ? 1 : 0))
+//                .where(RoundResultDao.Properties.UpdateState.eq(upLoaded ? 1 : 0))
+                .list();
+    }
+
+    public List<RoundResult> getUploadResultsAll2() {
+        return roundResultDao.queryBuilder()
+//                .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+//                .where(RoundResultDao.Properties.UpdateState.eq(upLoaded ? 1 : 0))
                 .list();
     }
 
