@@ -279,6 +279,11 @@ public class SystemSetting {
      * @return
      */
     public int getUseChannel() {
-        return isCustomChannel ? channel : SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode()) + hostId - 1;
+        if (TestConfigs.sCurrentItem != null){
+            return isCustomChannel ? channel : SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode()) + hostId - 1;
+        }else {
+            return 0;
+        }
+
     }
 }

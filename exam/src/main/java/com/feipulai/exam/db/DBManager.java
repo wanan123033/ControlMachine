@@ -2402,5 +2402,4 @@ public class DBManager {
     public List<Schedule> getSchedules(){
         return scheduleDao.loadAll();
     }
-
 }

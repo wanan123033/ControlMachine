@@ -462,7 +462,19 @@ public class DataRetrieveActivity extends BaseTitleActivity
     }
 
     private String getItemCode() {
-        return mCurrentItem.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : mCurrentItem.getItemCode();
+        if (mCurrentItem.getItemCode() == null){
+            int machineCode = mCurrentItem.getMachineCode();
+            if (machineCode == ItemDefault.CODE_ZFP){
+                List<Item> items = DBManager.getInstance().queryItemsByMachineCode(18);
+                mCurrentItem.setItemCode(items.get(0).getItemCode());
+                return items.get(0).getItemCode();
+            }else {
+                return mCurrentItem.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : mCurrentItem.getItemCode();
+            }
+        }else {
+            return mCurrentItem.getItemCode();
+        }
+//        return mCurrentItem.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : mCurrentItem.getItemCode();
     }
 
 
@@ -470,6 +482,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
      * 查找所有学生信息
      */
     private void setAllList() {
+        DBManager.getInstance().queryItemByCode(mCurrentItem.getMachineCode()+"");
         DataBaseExecutor.addTask(new DataBaseTask(this, getString(R.string.loading_hint), true) {
             @Override
             public DataBaseRespon executeOper() {
