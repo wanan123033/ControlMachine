@@ -11,24 +11,36 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@color/colorAccent"
+                android:gravity="center_vertical"
+                android:minWidth="300dp"
+                android:paddingLeft="20dp"
+                android:text="组别选择"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_16" />
+            <SearchView
+                android:id="@+id/et_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="180dp"
+                android:gravity="center_horizontal"
+                android:layout_centerHorizontal="true"
+                />
+        </RelativeLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@color/colorAccent"
-            android:gravity="center_vertical"
-            android:minWidth="300dp"
-            android:paddingLeft="20dp"
-            android:text="组别选择"
-            android:textColor="@color/white"
-            android:textSize="@dimen/sp_16" />
+
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_popup_window"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/white" />
-
 
     </LinearLayout>
 </android.support.v7.widget.CardView>

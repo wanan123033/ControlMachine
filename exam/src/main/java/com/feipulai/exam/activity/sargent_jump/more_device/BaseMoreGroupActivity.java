@@ -113,7 +113,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         sbName.append(group.getSortName() + String.format("第%1$d组", group.getGroupNo()));
         txtGroupName.setText(sbName);
 
-        initLed();
+//        initLed();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -207,6 +207,27 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
             deviceDetails.add(detail);
         }
         initView();
+    }
+
+    /**
+     * LED屏显示
+     *
+     * @param stuPair
+     */
+    private void setStuShowLed(BaseStuPair stuPair) {
+        if (stuPair == null)
+            return;
+        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), stuPair.getTrackNo() + "   " + stuPair.getStudent().getLEDStuName(), 0, 0, true, false);
+        for (int i = 0; i < stuPair.getTimeResult().length; i++) {
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(),
+                    String.format("%-4s", String.format("第%1$d次：", i + 1)) + (TextUtils.isEmpty(stuPair.getTimeResult()[i]) ? "" : stuPair.getTimeResult()[i]),
+                    0, i + 1, false, true);
+
+            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(),1,
+                    String.format("%-4s", String.format("第%1$d次：", i + 1)) + (TextUtils.isEmpty(stuPair.getTimeResult()[i]) ? "" : stuPair.getTimeResult()[i]),
+                    0, i + 1, false, true);
+        }
+
     }
 
     /***
@@ -477,7 +498,9 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
             }
 
         }
-
+        if (deviceCount == 1){
+            setStuShowLed(stuAdapter.getTestPosition() != -1 ? pairList.get(stuAdapter.getTestPosition()) : null);
+        }
     }
 
     /**
@@ -663,6 +686,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 e.printStackTrace();
             }
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 1, false, true);
+            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(),1, data, 0, 1, false, true);
         }
     }
 
@@ -970,8 +994,60 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 e.printStackTrace();
             }
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 1, false, true);
+            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), 1,data, 0, 1, false, true);
+
+            RoundResult bestResult = DBManager.getInstance().queryGroupBestScore(deviceDetails.get(index).getStuDevicePair().getStudent().getStudentCode(), group.getId());
+            if (bestResult== null && roundResult.getResultState()==RoundResult.RESULT_STATE_NORMAL){
+                bestResult = new RoundResult();
+                bestResult.setResult(roundResult.getResult());
+                bestResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
+            }
+
+            if (bestResult != null && bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
+                if (roundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && roundResult.getResult()> bestResult.getResult()){
+                    bestResult.setResult(roundResult.getResult());
+                    bestResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
+                }
+                byte[] data1 = new byte[16];
+                String str1 = "最好：";
+                try {
+                    byte[] strData1 = str1.getBytes("GB2312");
+                    System.arraycopy(strData1, 0, data1, 0, strData1.length);
+                    byte[] resultData = ResultDisplayUtils.getStrResultForDisplay(bestResult.getResult()).getBytes("GB2312");
+                    System.arraycopy(resultData, 0, data1, data1.length - resultData.length - 1, resultData.length);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data1, 0, 2, false, true);
+                mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index+1,data1, 0, 2, false, true);
+            } else {
+                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "最好：", 0, 2, false, true);
+                mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(),index+1, "最好：", 0, 2, false, true);
+
+            }
+
+            if (!SettingHelper.getSystemSetting().isIdentityMark()) {
+                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "下一位：" + getNextName(), 0, 3, false, true);
+                mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(),index+1, "下一位：" + getNextName(), 0, 3, false, true);
+            }
         }
 
+    }
+
+    private String getNextName() {
+        if (pairList.size() == stuAdapter.getTestPosition() + 1) {
+            if (setTestPattern() == 0) {//连续
+                return "";
+            } else {
+                if (roundNo == setTestCount()) {
+                    return "";
+                } else {
+                    return pairList.get(0).getStudent().getLEDStuName();
+                }
+            }
+        } else {
+            return pairList.get(stuAdapter.getTestPosition() + 1).getStudent().getLEDStuName();
+        }
     }
 
     public abstract void toStart(int pos);

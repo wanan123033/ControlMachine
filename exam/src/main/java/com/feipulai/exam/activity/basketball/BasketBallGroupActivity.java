@@ -381,7 +381,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         resultAdapter.notifyDataSetChanged();
         DBManager.getInstance().insterMachineResult(machineResult);
         setOperationUI();
-        DBManager.getInstance().insterMachineResult(machineResult);
+//        DBManager.getInstance().insterMachineResult(machineResult);
         setOperationUI();
         String time = DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital());
         if (time.charAt(0) == '0' && time.charAt(1) == '0'){

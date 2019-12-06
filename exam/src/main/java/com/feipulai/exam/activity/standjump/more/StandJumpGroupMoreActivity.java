@@ -107,7 +107,9 @@ public class StandJumpGroupMoreActivity extends BaseMoreGroupActivity implements
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        toastSpeak(deviceDetails.get(deviceId - 1).getStuDevicePair().getStudent().getSpeakStuName() + "开始测试");
+        if (deviceDetails.get(deviceId - 1).getStuDevicePair().getStudent()!= null){
+            toastSpeak(deviceDetails.get(deviceId - 1).getStuDevicePair().getStudent().getSpeakStuName() + "开始测试");
+        }
 
     }
 

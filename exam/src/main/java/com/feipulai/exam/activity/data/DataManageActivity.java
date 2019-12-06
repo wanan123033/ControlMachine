@@ -281,6 +281,12 @@ public class DataManageActivity
                             if (itemList != null && itemList.size() > 0)
                                 showZcpSelect(itemList);
                         } else {
+                            if (TestConfigs.sCurrentItem.getItemCode() == null && TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZFP){
+                                List<Item> items = DBManager.getInstance().queryItemsByMachineCode(18);
+                                if (items.size()>0){
+                                    TestConfigs.sCurrentItem.setItemCode(items.get(0).getItemCode());
+                                }
+                            }
                             uploadData();
                         }
                         break;

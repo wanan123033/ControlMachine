@@ -7,7 +7,10 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.feipulai.exam.R;
 import com.feipulai.exam.entity.Group;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by pengjf on 2018/11/20.
@@ -50,5 +53,18 @@ public class GroupAdapter extends BaseQuickAdapter<Group,BaseViewHolder>{
 		int complete = item.getIsTestComplete();
 		helper.setText(R.id.tv_isTest,complete == 0 ? "未测试" : (complete == 1 ? "已测试" : "未测完"));
 	}
+
+
+    public List search(String name,List list){
+        List results = new ArrayList();
+        Pattern pattern = Pattern.compile(name);
+        for(int i=0; i < list.size(); i++){
+            Matcher matcher = pattern.matcher(((Group)list.get(i)).getGroupNo()+"");
+            if(matcher.find()){
+                results.add(list.get(i));
+            }
+        }
+        return results;
+    }
 	
 }
