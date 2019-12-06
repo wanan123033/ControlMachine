@@ -50,7 +50,6 @@ public class VolleyballPatternSelectActivity extends SubItemsSelectActivity {
                     } else {
                         startActivity(new Intent(VolleyballPatternSelectActivity.this, VolleyBallMoreTestActivity.class));
                     }
-
                 } else {
                     startActivity(new Intent(VolleyballPatternSelectActivity.this, BaseGroupActivity.class));
                 }

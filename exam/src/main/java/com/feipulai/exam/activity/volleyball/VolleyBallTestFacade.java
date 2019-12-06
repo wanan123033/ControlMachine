@@ -11,6 +11,7 @@ import com.feipulai.device.manager.VolleyBallRadioManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
+import com.feipulai.device.serial.beans.VolleyBallCheck;
 import com.feipulai.device.serial.beans.VolleyBallResult;
 import com.feipulai.device.serial.beans.VolleyPair868Result;
 import com.feipulai.device.serial.beans.VolleyPairResult;
@@ -228,7 +229,15 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
             deviceDetector.missCount.getAndSet(0);
             listener.onDeviceConnectState(VolleyBallManager.VOLLEY_BALL_CONNECT);
         }
-
+        if (msg.what == SerialConfigs.VOLLEY_BALL_SELFCHECK && msg.obj instanceof VolleyPair868Result){
+            VolleyPair868Result result = (VolleyPair868Result) msg.obj;
+            VolleyBallCheck check = new VolleyBallCheck();
+            check.setPositionList(result.getPositionList());
+            check.setDeviceId(result.getDeviceId());
+            check.setPoleNum(result.getPoleNum());
+            check.setDeviceType(result.getDeviceType());
+            listener.checkDevice(check);
+        }
     }
 
 
@@ -283,7 +292,9 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
         }
 
     }
-
+    public void checkDevice() {
+        deviceManager.checkDevice(hostId, 1);
+    }
     public interface Listener {
 
         void onDeviceConnectState(int state);
@@ -298,7 +309,7 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
 
         void onScoreArrived(VolleyBallResult result);
 
-//        void checkDevice(VolleyBallCheck check);
+        void checkDevice(VolleyBallCheck check);
     }
 
 }
