@@ -17,6 +17,7 @@ public class VitalCapacityNewResult {
 		index = (data[7]&0xff);
 		if (index == 1 || index == 2)
 		    frequency = (data[12]&0xff);
+		    hostId = data[5];
 		velocity = (data[13]&0xff);
 	}
 	private int deviceId ;
@@ -26,6 +27,7 @@ public class VitalCapacityNewResult {
 	private int frequency ;
     private int index;
     private int velocity;
+    private int hostId;
 	public int getDeviceId() {
 		return deviceId;
 	}
@@ -81,5 +83,13 @@ public class VitalCapacityNewResult {
 
     public void setVelocity(int velocity) {
         this.velocity = velocity;
+    }
+
+    public int getHostId() {
+        return hostId;
+    }
+
+    public void setHostId(int hostId) {
+        this.hostId = hostId;
     }
 }
