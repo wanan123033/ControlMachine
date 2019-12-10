@@ -261,8 +261,11 @@ public class LEDManager {
 
         try {
             byte[] data = str.getBytes("GB2312");
-
             showString(machineCode, hostId, ledId, data, x, y, clearScreen, update);
+//            byte[] data = new byte[16];
+//            System.arraycopy(stringData, 0, data, x, stringData.length);
+//
+//            showString(machineCode, hostId, ledId, data, 0, y, clearScreen, update);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

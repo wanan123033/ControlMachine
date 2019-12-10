@@ -223,9 +223,9 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                     String.format("%-4s", String.format("第%1$d次：", i + 1)) + (TextUtils.isEmpty(stuPair.getTimeResult()[i]) ? "" : stuPair.getTimeResult()[i]),
                     0, i + 1, false, true);
 
-            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(),1,
-                    String.format("%-4s", String.format("第%1$d次：", i + 1)) + (TextUtils.isEmpty(stuPair.getTimeResult()[i]) ? "" : stuPair.getTimeResult()[i]),
-                    0, i + 1, false, true);
+//            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), 1,
+//                    String.format("%-4s", String.format("第%1$d次：", i + 1)) + (TextUtils.isEmpty(stuPair.getTimeResult()[i]) ? "" : stuPair.getTimeResult()[i]),
+//                    0, i + 1, false, true);
         }
 
     }
@@ -270,8 +270,11 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                             stuSkipDialog(student, pos);
                         break;
                     case R.id.txt_start://开始
-                        if (pair.getBaseDevice().getState() != BaseDeviceState.STATE_ERROR)
+                        if (pair.getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
                             toStart(pos);
+                            updateLastResultLed("", pos);
+                        }
+
                         break;
                     case R.id.txt_confirm:
                         if (pair.getStudent() != null) {
@@ -498,7 +501,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
             }
 
         }
-        if (deviceCount == 1){
+        if (deviceCount == 1) {
             setStuShowLed(stuAdapter.getTestPosition() != -1 ? pairList.get(stuAdapter.getTestPosition()) : null);
         }
     }
@@ -669,9 +672,10 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
     }
 
     private void updateResultLed(BaseStuPair baseStu, int index) {
+        //todo led模式
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
         String result = ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
-        if (ledMode == 0) {
+        if (deviceDetails.size() > 1) {
             int x = ResultDisplayUtils.getStringLength(result);
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 16 - x, index, false, true);
         } else {
@@ -686,7 +690,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 e.printStackTrace();
             }
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 1, false, true);
-            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(),1, data, 0, 1, false, true);
+            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), 1, data, 0, 1, false, true);
         }
     }
 
@@ -731,6 +735,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                         DBManager.getInstance().updateGroup(group);
                         if (!isNextClickStart) {
                             toStart(deviceIndex);
+                            updateLastResultLed("", deviceIndex);
                         }
                     }
                 } else {//测试下一个
@@ -793,8 +798,13 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
 
                             deviceDetails.get(index).getStuDevicePair().setTimeResult(pairList.get(stuPos).getTimeResult());
                             deviceDetails.get(index).getStuDevicePair().setStudent(studentList.get(stuPos));
+                            deviceDetails.get(index).getStuDevicePair().setResult(-999);
                             deviceListAdapter.notifyItemChanged(index);
                             rvTestStu.scrollToPosition(stuAdapter.getTestPosition());
+                            updateLastResultLed("", index);
+                            if (!isNextClickStart) {
+                                toStart(index);
+                            }
                         }
                     }, 3000);
 
@@ -839,8 +849,13 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                     public void run() {
                         deviceDetails.get(deviceIndex).getStuDevicePair().setTimeResult(pairList.get(stuPos).getTimeResult());
                         deviceDetails.get(deviceIndex).getStuDevicePair().setStudent(studentList.get(stuPos));
+                        deviceDetails.get(deviceIndex).getStuDevicePair().setResult(-999);
                         deviceListAdapter.notifyItemChanged(deviceIndex);
                         rvTestStu.scrollToPosition(stuAdapter.getTestPosition());
+                        updateLastResultLed("", deviceIndex);
+                        if (!isNextClickStart) {
+                            toStart(deviceIndex);
+                        }
                     }
                 }, 3000);
 
@@ -929,27 +944,24 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 roundResult.setIsLastResult(1);
                 bestResult.setIsLastResult(0);
                 DBManager.getInstance().updateRoundResult(bestResult);
-                updateLastResultLed(roundResult, index);
             } else {
                 if (bestResult.getResultState() != RoundResult.RESULT_STATE_NORMAL) {
                     roundResult.setIsLastResult(1);
                     bestResult.setIsLastResult(0);
                     DBManager.getInstance().updateRoundResult(bestResult);
-                    updateLastResultLed(roundResult, index);
                 } else {
                     roundResult.setIsLastResult(0);
-                    updateLastResultLed(bestResult, index);
                 }
             }
         } else {
             // 第一次测试
             roundResult.setIsLastResult(1);
-            updateLastResultLed(roundResult, index);
+
         }
 
         DBManager.getInstance().insertRoundResult(roundResult);
         Logger.i("saveResult==>insertRoundResult->" + roundResult.toString());
-
+        updateLastResultLed(ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()), index);
         List<RoundResult> roundResultList = new ArrayList<>();
         roundResultList.add(roundResult);
         UploadResults uploadResults = new UploadResults(group.getScheduleNo()
@@ -976,61 +988,68 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         }
     }
 
-    private void updateLastResultLed(RoundResult roundResult, int index) {
+    private void updateLastResultLed(String result, int index) {
+        //TODO 模式一对多 和  一对一 选择模式都是一样的，无法区分
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
-        String result = ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult());
-        if (ledMode == 0) {
+//        String result = ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult());
+//        if (ledMode == 0) {
+        //todo 无法区分模式 使用设备数量来区分一对多与一对一模式 ，一对一只对1号设备操作
+        if (deviceDetails.size() > 1) {
             int x = ResultDisplayUtils.getStringLength(result);
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 16 - x, index, false, true);
         } else {
-            byte[] data = new byte[16];
-            String str = "当前：";
             try {
-                byte[] strData = str.getBytes("GB2312");
+                byte[] data = new byte[16];
+                String ledName = deviceDetails.get(index).getStuDevicePair().getStudent().getLEDStuName() + "   第" +
+                        (deviceDetails.get(index).getRound() + 1) + "次";
+                byte[] strData = ledName.getBytes("GB2312");
+                System.arraycopy(strData, 0, data, 0, strData.length);
+                //todo
+                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 0, false, true);
+                data = new byte[16];
+                String str = "当前：";
+                strData = str.getBytes("GB2312");
                 System.arraycopy(strData, 0, data, 0, strData.length);
                 byte[] resultData = result.getBytes("GB2312");
                 System.arraycopy(resultData, 0, data, data.length - resultData.length - 1, resultData.length);
+                //todo
+                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 1, false, true);
+//            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), 1, data, 0, 1, false, true);
+                RoundResult bestResult = DBManager.getInstance().queryGroupBestScore(deviceDetails.get(index).getStuDevicePair().getStudent().getStudentCode(), group.getId());
+                if (bestResult != null && bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
+                    data = new byte[16];
+                    str = "最好：";
+                    strData = str.getBytes("GB2312");
+                    System.arraycopy(strData, 0, data, 0, strData.length);
+                    resultData = ResultDisplayUtils.getStrResultForDisplay(bestResult.getResult()).getBytes("GB2312");
+                    System.arraycopy(resultData, 0, data, data.length - resultData.length - 1, resultData.length);
+                    //todo
+                    mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 2, false, true);
+                } else {
+                    //todo
+                    data = new byte[16];
+                    str = "最好：";
+                    strData = str.getBytes("GB2312");
+                    System.arraycopy(strData, 0, data, 0, strData.length);
+                    mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 2, false, true);
+
+                }
+                if (!SettingHelper.getSystemSetting().isIdentityMark()) {
+                    //todo
+                    data = new byte[16];
+                    ledName = "下一位：" + getNextName();
+                    strData = ledName.getBytes("GB2312");
+                    System.arraycopy(strData, 0, data, 0, strData.length);
+                    mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 3, false, true);
+
+//                    mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "下一位：" + getNextName(), 0, 3, false, true);
+//                mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, "下一位：" + getNextName(), 0, 3, false, true);
+                }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 1, false, true);
-            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), 1,data, 0, 1, false, true);
-
-            RoundResult bestResult = DBManager.getInstance().queryGroupBestScore(deviceDetails.get(index).getStuDevicePair().getStudent().getStudentCode(), group.getId());
-            if (bestResult== null && roundResult.getResultState()==RoundResult.RESULT_STATE_NORMAL){
-                bestResult = new RoundResult();
-                bestResult.setResult(roundResult.getResult());
-                bestResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
-            }
-
-            if (bestResult != null && bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
-                if (roundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && roundResult.getResult()> bestResult.getResult()){
-                    bestResult.setResult(roundResult.getResult());
-                    bestResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
-                }
-                byte[] data1 = new byte[16];
-                String str1 = "最好：";
-                try {
-                    byte[] strData1 = str1.getBytes("GB2312");
-                    System.arraycopy(strData1, 0, data1, 0, strData1.length);
-                    byte[] resultData = ResultDisplayUtils.getStrResultForDisplay(bestResult.getResult()).getBytes("GB2312");
-                    System.arraycopy(resultData, 0, data1, data1.length - resultData.length - 1, resultData.length);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data1, 0, 2, false, true);
-                mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index+1,data1, 0, 2, false, true);
-            } else {
-                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "最好：", 0, 2, false, true);
-                mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(),index+1, "最好：", 0, 2, false, true);
-
-            }
-
-            if (!SettingHelper.getSystemSetting().isIdentityMark()) {
-                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "下一位：" + getNextName(), 0, 3, false, true);
-                mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(),index+1, "下一位：" + getNextName(), 0, 3, false, true);
-            }
         }
+
 
     }
 
