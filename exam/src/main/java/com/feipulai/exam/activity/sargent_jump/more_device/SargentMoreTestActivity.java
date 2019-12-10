@@ -41,7 +41,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
     //    public byte[] CMD_SARGENT_JUMP_STOP = {0X54, 0X44, 00, 0X10, 01, 0x01, 00, 0x02, 00, 00, 00, 00, 00, 0x14, 0x27, 0x0d};
 //    public byte[] CMD_SARGENT_JUMP_GET_SCORE = {0X54, 0X44, 00, 0X10, 01, 0x01, 00, 0x04, 00, 00, 00, 00, 00, 0x16, 0x27, 0x0d};
     private final int SEND_EMPTY = 1;
-    private boolean[] basicHeight = {};
+    private int[] basicHeight = {};
     /**
      * 开启助跑  0不助跑 1助跑
      */
@@ -59,13 +59,14 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        setNextClickStart(false);
         sargentSetting = SharedPrefsUtil.loadFormSource(this, SargentSetting.class);
         if (null == sargentSetting) {
             sargentSetting = new SargentSetting();
         }
 //        setDeviceCount(sargentSetting.getSpDeviceCount());
         deviceState = new int[sargentSetting.getSpDeviceCount()];
-        basicHeight = new boolean[sargentSetting.getSpDeviceCount()];
+        basicHeight = new int[sargentSetting.getSpDeviceCount()];
         for (int i = 0; i < deviceState.length; i++) {
 
             deviceState[i] = 0;//连续5次检测不到认为掉线
@@ -209,10 +210,10 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
         @Override
         public void onFree(int deviceId) {
             deviceState[deviceId - 1] = 5;
-            if (!basicHeight[deviceId - 1]) {
+            if (basicHeight[deviceId - 1]< 3) {
                 RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                         CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight(), deviceId)));
-                basicHeight[deviceId - 1] = true;
+                basicHeight[deviceId - 1] +=1;
             }
         }
 

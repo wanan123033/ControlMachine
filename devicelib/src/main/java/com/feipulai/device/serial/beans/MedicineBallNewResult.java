@@ -20,7 +20,7 @@ public class MedicineBallNewResult {
 	private int deviceId;
 	private int frequency;
     private int state ;//0 空闲 1测量 2结束
-
+    private int hostId;
     public int[] getIncorrectPoles() {
         return incorrectPoles;
     }
@@ -39,6 +39,7 @@ public class MedicineBallNewResult {
 		deviceId = data[6];
 		if (data[7] == 1||data[7] == 2){
             frequency = data[12];
+            hostId = data[5];
         }else if (data[07]== 3){
 		    state = data[12];
 
@@ -134,5 +135,13 @@ public class MedicineBallNewResult {
 
     public void setInCorrect(boolean inCorrect) {
         isInCorrect = inCorrect;
+    }
+
+    public int getHostId() {
+        return hostId;
+    }
+
+    public void setHostId(int hostId) {
+        this.hostId = hostId;
     }
 }

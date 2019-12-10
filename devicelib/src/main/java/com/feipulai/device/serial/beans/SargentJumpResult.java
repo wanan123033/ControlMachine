@@ -13,6 +13,7 @@ public class SargentJumpResult{
 	private int id;
 	private int frequency;
 	private int state ;//等待触摸：0X00  已触摸显示成绩：0X01
+    private int hostId;
 	public SargentJumpResult(byte[] data){
 	    if (data.length == 16){
             score = ((data[8] & 0xff) << 8) + (data[9] & 0xff);
@@ -23,6 +24,9 @@ public class SargentJumpResult{
 
 		id = data[4]&0xff;
 		frequency = data[8]&0xff;
+		if (data[7] == 0x01){
+		    hostId = data[11];
+        }
 //		Log.i("sargent",StringUtility.bytesToHexString(data));
 	}
 	
@@ -52,5 +56,13 @@ public class SargentJumpResult{
 
     public void setState(int state) {
         this.state = state;
+    }
+
+    public int getHostId() {
+        return hostId;
+    }
+
+    public void setHostId(int hostId) {
+        this.hostId = hostId;
     }
 }

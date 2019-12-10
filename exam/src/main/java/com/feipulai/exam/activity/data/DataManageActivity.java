@@ -281,12 +281,12 @@ public class DataManageActivity
                             if (itemList != null && itemList.size() > 0)
                                 showZcpSelect(itemList);
                         } else {
-                            if (TestConfigs.sCurrentItem.getItemCode() == null && TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZFP){
-                                List<Item> items = DBManager.getInstance().queryItemsByMachineCode(18);
-                                if (items.size()>0){
-                                    TestConfigs.sCurrentItem.setItemCode(items.get(0).getItemCode());
-                                }
-                            }
+//                            if (TestConfigs.sCurrentItem.getItemCode() == null && TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZFP){
+//                                List<Item> items = DBManager.getInstance().queryItemsByMachineCode(18);
+//                                if (items.size()>0){
+//                                    TestConfigs.sCurrentItem.setItemCode(items.get(0).getItemCode());
+//                                }
+//                            }
                             uploadData();
                         }
                         break;
@@ -345,7 +345,6 @@ public class DataManageActivity
                 List<UploadResults> uploadResultsList = new ArrayList<>();
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
                     List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
-
                     for (Item item : itemList) {
                         List<UploadResults> dbResultsList = DBManager.getInstance().getUploadResultsAll(item.getItemCode());
                         if (dbResultsList != null && dbResultsList.size() > 0)
