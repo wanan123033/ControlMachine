@@ -215,13 +215,11 @@
         <activity android:name=".activity.basketball.pair.BasketBallPairActivity" />
         <activity android:name=".activity.volleyball.more_devices.VolleyBallMoreTestActivity" />
         <activity android:name=".activity.medicineBall.MedicineBallSelectActivity" />
-        <activity android:name=".activity.volleyball.more_devices.VolleyBallGroupActivity" />
         <activity android:name=".activity.volleyball.VolleyBallIndividualActivity" />
 
         <activity
             android:name=".activity.explain.ExplainActivity"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".activity.volleyball.VolleyBallIndividual2Activity" />
     </application>
 
 </manifest>

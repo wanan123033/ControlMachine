@@ -277,7 +277,11 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
                 break;
 
             case R.id.tv_start_test:
-                prepareForTesting();
+                if (setting.getType() == 0){
+                    prepareForTesting();
+                }else {
+                    facade.checkDevice();
+                }
 //                facade.checkDevice();
                 break;
 
@@ -568,27 +572,39 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         msg.obj = result;
         handler.sendMessage(msg);
     }
-
     @Override
     public void checkDevice(VolleyBallCheck check) {
+        if (check.getDeviceType() == setting.getTestPattern()) {
+            if (check.getPoleNum() == 0) {
+                toastSpeak("请连接测试杆");
+            } else {
+                final Integer poleArray[] = new Integer[check.getPoleNum() / 2 * 10];
+                System.arraycopy(check.getPositionList().toArray(), 0, poleArray, 0, poleArray.length);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        boolean isTest = true;
+                        for (int i = 0 ; i < poleArray.length ; i++){
+                            if (poleArray[i] == 0){
+                                isTest = true;
+                            }else{
+                                isTest = false;
+                                break;
+                            }
+                        }
+                        if (isTest)
+                            prepareForTesting();
+                        else
+                            toastSpeak("有坏点,请自检");
+                    }
+                });
 
+            }
+        } else {
+            toastSpeak("当前项目使用设备错误，请更换");
+        }
     }
 
-//    @Override
-//    public void checkDevice(VolleyBallCheck check) {
-//        if (check.getDeviceType() == setting.getTestPattern()) {
-//            if (check.getPoleNum() == 0) {
-//                toastSpeak("请连接测试杆");
-//            } else {
-//                Integer poleArray[] = new Integer[check.getPoleNum() / 2 * 10];
-//                System.arraycopy(check.getPositionList().toArray(), 0, poleArray, 0, poleArray.length);
-//
-//                prepareForTesting();
-//            }
-//        } else {
-//            toastSpeak("当前项目使用设备错误，请更换");
-//        }
-//    }
 
     private boolean isConfigurableNow() {
         return state == WAIT_CHECK_IN || state == WAIT_BEGIN;

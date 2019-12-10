@@ -22,13 +22,13 @@ import com.feipulai.device.serial.command.RadioChannelCommand;
 
 public class SitPullLinker implements Handler.Callback {
 
-    private static final int NO_PAIR_RESPONSE_ARRIVED = 0x1;
-    private final SitPullPairListener listener;
-    private volatile int currentFrequency;
+    public static final int NO_PAIR_RESPONSE_ARRIVED = 0x1;
+    public final SitPullPairListener listener;
+    public volatile int currentFrequency;
     private HandlerThread handlerThread;
-    private Handler mHandler;
+    public Handler mHandler;
     public int machineCode;
-    private final int TARGET_FREQUENCY;
+    public final int TARGET_FREQUENCY;
     public int currentDeviceId;
     private volatile boolean linking;
 
@@ -163,7 +163,7 @@ public class SitPullLinker implements Handler.Callback {
         }
     }
 
-    private synchronized void onNewDeviceConnect() {
+    public synchronized void onNewDeviceConnect() {
         mHandler.removeMessages(NO_PAIR_RESPONSE_ARRIVED);
         listener.onNewDeviceConnect();
     }

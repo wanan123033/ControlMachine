@@ -46,7 +46,7 @@ public class VolleyballPatternSelectActivity extends SubItemsSelectActivity {
                 SharedPrefsUtil.save(VolleyballPatternSelectActivity.this, setting);
                 if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
                     if (position == 2 || position == 3 || position == 0 || position == 1) {
-                        startActivity(new Intent(VolleyballPatternSelectActivity.this, VolleyBallIndividual2Activity.class));
+                        startActivity(new Intent(VolleyballPatternSelectActivity.this, VolleyBallIndividualActivity.class));
                     } else {
                         startActivity(new Intent(VolleyballPatternSelectActivity.this, VolleyBallMoreTestActivity.class));
                     }

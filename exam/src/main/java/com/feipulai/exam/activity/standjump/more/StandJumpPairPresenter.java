@@ -29,7 +29,7 @@ public class StandJumpPairPresenter extends SitPullUpPairPresenter {
     @Override
     public void start() {
         RadioManager.getInstance().setOnRadioArrived(this);
-        linker = new StandJumpLinker(machineCode, TARGET_FREQUENCY, this);
+        linker = new StandJumpLinker(machineCode, TARGET_FREQUENCY, this, SettingHelper.getSystemSetting().getHostId());
         linker.startPair(1);
         super.start();
     }

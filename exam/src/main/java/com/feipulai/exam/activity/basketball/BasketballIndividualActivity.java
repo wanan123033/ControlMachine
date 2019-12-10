@@ -20,10 +20,7 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.manager.BallManager;
 import com.feipulai.device.serial.RadioManager;
-import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.Basketball868Result;
-import com.feipulai.device.serial.command.ConvertCommand;
-import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.device.udp.UDPBasketBallConfig;
 import com.feipulai.device.udp.UdpClient;
 import com.feipulai.device.udp.UdpLEDUtil;
@@ -131,7 +128,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         setting = SharedPrefsUtil.loadFormSource(this, BasketBallSetting.class);
         if (setting == null)
             setting = new BasketBallSetting();
-         facade = new BasketBallRadioFacade(setting.getTestType(), this);
+        facade = new BasketBallRadioFacade(setting.getTestType(), this);
         ballManager = new BallManager.Builder((setting.getTestType())).setHostIp(setting.getHostIp()).setInetPost(1527).setPost(setting.getPost())
                 .setUdpListerner(new BasketBallListener(this)).build();
         timerUtil = new TimerUtil(this);
@@ -434,13 +431,13 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         DBManager.getInstance().insterMachineResult(machineResult);
         setOperationUI();
         String time = DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital());
-        if (time.charAt(0) == '0' && time.charAt(1) == '0'){
-            time = time.substring(3,time.toCharArray().length);
-        }else if (time.charAt(0) == '0'){
-            time = time.substring(1,time.toCharArray().length);
+        if (time.charAt(0) == '0' && time.charAt(1) == '0') {
+            time = time.substring(3, time.toCharArray().length);
+        } else if (time.charAt(0) == '0') {
+            time = time.substring(1, time.toCharArray().length);
         }
         tvResult.setText(time);
-
+        ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
     }
 
     @Override
@@ -467,11 +464,11 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
 //            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
 //                    UdpLEDUtil.getLedByte(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()), Paint.Align.RIGHT)));
 
-            String time = DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital());
-            if (time.charAt(0) == '0' && time.charAt(1) == '0'){
-                time = time.substring(3,time.toCharArray().length);
-            }else if (time.charAt(0) == '0'){
-                time = time.substring(1,time.toCharArray().length);
+            String time = DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital());
+            if (time.charAt(0) == '0' && time.charAt(1) == '0') {
+                time = time.substring(3, time.toCharArray().length);
+            } else if (time.charAt(0) == '0') {
+                time = time.substring(1, time.toCharArray().length);
             }
             ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
         }
@@ -911,10 +908,10 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         switch (testResult.getResultState()) {
             case RoundResult.RESULT_STATE_NORMAL:
                 String time = ResultDisplayUtils.getStrResultForDisplay(testResult.getResult());
-                if (time.charAt(0) == '0' && time.charAt(1) == '0'){
-                    time = time.substring(3,time.toCharArray().length);
-                }else if (time.charAt(0) == '0'){
-                    time = time.substring(1,time.toCharArray().length);
+                if (time.charAt(0) == '0' && time.charAt(1) == '0') {
+                    time = time.substring(3, time.toCharArray().length);
+                } else if (time.charAt(0) == '0') {
+                    time = time.substring(1, time.toCharArray().length);
                 }
                 ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, testResult.getPenalizeNum() + "", Paint.Align.CENTER);
 //                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2, UdpLEDUtil.getLedByte(ResultDisplayUtils.getStrResultForDisplay(testResult.getResult()), testResult.getPenalizeNum() + "", Paint.Align.CENTER)));

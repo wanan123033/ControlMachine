@@ -217,7 +217,7 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
                 VolleyBallResult result = new VolleyBallResult();
                 result.setResult(pair868Result.getScore());
                 listener.onScoreArrived(result);
-                if (tmpResult == null || result.getResult() != tmpResult.getResult()) {
+                if (testState != WAIT_BEGIN && (tmpResult == null || result.getResult() != tmpResult.getResult())) {
                     String displayInLed = "成绩:" + ResultDisplayUtils.getStrResultForDisplay(result.getResult());
                     ledManager.showString(SettingHelper.getSystemSetting().getHostId(), displayInLed, 1, 1, false, true);
                     tmpResult = result;
@@ -229,7 +229,7 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
             deviceDetector.missCount.getAndSet(0);
             listener.onDeviceConnectState(VolleyBallManager.VOLLEY_BALL_CONNECT);
         }
-        if (msg.what == SerialConfigs.VOLLEY_BALL_SELFCHECK && msg.obj instanceof VolleyPair868Result){
+        if (msg.what == SerialConfigs.VOLLEY_BALL_SELFCHECK && msg.obj instanceof VolleyPair868Result) {
             VolleyPair868Result result = (VolleyPair868Result) msg.obj;
             VolleyBallCheck check = new VolleyBallCheck();
             check.setPositionList(result.getPositionList());
@@ -292,9 +292,11 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
         }
 
     }
+
     public void checkDevice() {
         deviceManager.checkDevice(hostId, 1);
     }
+
     public interface Listener {
 
         void onDeviceConnectState(int state);

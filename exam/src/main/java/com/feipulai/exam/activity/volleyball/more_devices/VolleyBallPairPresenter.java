@@ -6,6 +6,8 @@ import android.util.Log;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.manager.VolleyBallManager;
+import com.feipulai.device.newProtocol.NewProtocolLinker;
+import com.feipulai.device.serial.RadioManager;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairContract;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairPresenter;
@@ -32,6 +34,13 @@ public class VolleyBallPairPresenter extends SitPullUpPairPresenter {
         }
         setting = SharedPrefsUtil.loadFormSource(context, VolleyBallSetting.class);
         deviceManager = new VolleyBallManager(setting.getType());
+    }
+    @Override
+    public void start() {
+        RadioManager.getInstance().setOnRadioArrived(this);
+        linker = new NewProtocolLinker(machineCode, TARGET_FREQUENCY, this, SettingHelper.getSystemSetting().getHostId());
+        linker.startPair(1);
+        super.start();
     }
 
     @Override
