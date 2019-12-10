@@ -28,6 +28,7 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.manager.VolleyBallManager;
 import com.feipulai.device.manager.VolleyBallRadioManager;
+import com.feipulai.device.serial.beans.VolleyBallCheck;
 import com.feipulai.device.serial.beans.VolleyBallResult;
 import com.feipulai.device.sitpullup.SitPullLinker;
 import com.feipulai.exam.R;
@@ -566,6 +567,11 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         msg.what = UPDATE_SCORE;
         msg.obj = result;
         handler.sendMessage(msg);
+    }
+
+    @Override
+    public void checkDevice(VolleyBallCheck check) {
+
     }
 
 //    @Override

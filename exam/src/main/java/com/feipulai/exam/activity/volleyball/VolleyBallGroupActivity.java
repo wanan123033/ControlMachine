@@ -28,6 +28,7 @@ import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.manager.VolleyBallManager;
+import com.feipulai.device.serial.beans.VolleyBallCheck;
 import com.feipulai.device.serial.beans.VolleyBallResult;
 import com.feipulai.device.sitpullup.SitPullLinker;
 import com.feipulai.exam.R;
@@ -177,7 +178,12 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
                 }
                 break;
             case R.id.tv_start_test:
-                prepareForTesting();
+                if (setting.getType() == 0){
+                    prepareForTesting();
+                }else {
+                    facade.checkDevice();
+                }
+//                prepareForTesting();
                 break;
 
             case R.id.tv_stop_test:
@@ -684,4 +690,37 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
             }
         });
     }
+    @Override
+    public void checkDevice(VolleyBallCheck check) {
+        if (check.getDeviceType() == setting.getTestPattern()) {
+            if (check.getPoleNum() == 0) {
+                toastSpeak("请连接测试杆");
+            } else {
+                final Integer poleArray[] = new Integer[check.getPoleNum() / 2 * 10];
+                System.arraycopy(check.getPositionList().toArray(), 0, poleArray, 0, poleArray.length);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        boolean isTest = true;
+                        for (int i = 0 ; i < poleArray.length ; i++){
+                            if (poleArray[i] == 0){
+                                isTest = true;
+                            }else{
+                                isTest = false;
+                                break;
+                            }
+                        }
+                        if (isTest)
+                            prepareForTesting();
+                        else
+                            toastSpeak("有坏点,请自检");
+                    }
+                });
+
+            }
+        } else {
+            toastSpeak("当前项目使用设备错误，请更换");
+        }
+    }
+
 }
