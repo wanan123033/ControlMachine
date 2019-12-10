@@ -40,7 +40,6 @@ public class StandJumpRadioFacade implements RadioManager.OnRadioArrivedListener
         this.standJumpSetting = setting;
         mExecutor = Executors.newFixedThreadPool(2);
         mCurrentConnect = new int[deviceList.size()];
-
         //运行两个线程,分别处理获取设备状态和LED检录显示
         mGetDeviceStatesTask = new GetDeviceStatesTask(new GetDeviceStatesTask.OnGettingDeviceStatesListener() {
             @Override

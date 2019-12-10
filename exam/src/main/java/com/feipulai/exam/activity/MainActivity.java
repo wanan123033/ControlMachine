@@ -88,6 +88,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
         if (initState != TestConfigs.INIT_NO_MACHINE_CODE) {
             MachineCode.machineCode = machineCode;
         }
+
 //        testUpload();
     }
 

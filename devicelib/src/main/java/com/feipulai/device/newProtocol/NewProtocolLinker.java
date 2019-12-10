@@ -73,7 +73,7 @@ public class NewProtocolLinker extends SitPullLinker {
     }
 
     private void checkDevice(SargentJumpResult result) {
-        checkDevice(result.getDeviceId(), result.getFrequency(),result.getHostId());
+        checkDevice(result.getDeviceId(), result.getFrequency(), result.getHostId());
     }
 
     private void checkDevice(VolleyPairResult result) {
@@ -81,7 +81,7 @@ public class NewProtocolLinker extends SitPullLinker {
     }
 
     private void checkDevice(MedicineBallNewResult result) {
-        checkDevice(result.getDeviceId(), result.getFrequency(),result.getHostId());
+        checkDevice(result.getDeviceId(), result.getFrequency(), result.getHostId());
     }
 
     private void checkDevice(VitalCapacityResult result) {
@@ -89,6 +89,6 @@ public class NewProtocolLinker extends SitPullLinker {
     }
 
     private void checkDevice(VitalCapacityNewResult result) {
-        checkDevice(result.getDeviceId(), result.getFrequency());
+        checkDevice(result.getDeviceId(), result.getFrequency(), result.getHostId());
     }
 }

@@ -162,6 +162,8 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
 
         if (setting.getTestType() == 1) {
             tvPair.setVisibility(View.VISIBLE);
+            etPort.setEnabled(false);
+            etHostIp.setEnabled(false);
         }
     }
 

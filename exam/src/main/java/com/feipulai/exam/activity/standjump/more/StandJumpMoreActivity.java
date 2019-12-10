@@ -41,7 +41,6 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
         setNextClickStart(false);
 
         facade = new StandJumpRadioFacade(deviceDetails, standJumpSetting, this);
-
     }
 
     @Override

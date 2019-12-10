@@ -9,14 +9,8 @@ import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
-import com.feipulai.device.serial.beans.MedicineBallNewResult;
 import com.feipulai.device.serial.beans.PullUpSetFrequencyResult;
-import com.feipulai.device.serial.beans.SargentJumpResult;
 import com.feipulai.device.serial.beans.SitPushUpSetFrequencyResult;
-import com.feipulai.device.serial.beans.VitalCapacityNewResult;
-import com.feipulai.device.serial.beans.VitalCapacityResult;
-import com.feipulai.device.serial.beans.VolleyPair868Result;
-import com.feipulai.device.serial.beans.VolleyPairResult;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
 
@@ -82,34 +76,6 @@ public class SitPullLinker implements Handler.Callback {
             Log.i("james+++++", pushUpSetFrequencyResult.toString());
             checkDevice(pushUpSetFrequencyResult);
             return true;
-        }else if (machineCode == ItemDefault.CODE_MG && what == SerialConfigs.SARGENT_JUMP_SET_MORE_MATCH){
-            SargentJumpResult sargentJumpResult = (SargentJumpResult) msg.obj;
-            checkDevice(sargentJumpResult);
-            return true;
-        }
-        else if (machineCode == ItemDefault.CODE_PQ && what == SerialConfigs.VOLLEY_BALL_SET_MORE_MATCH){
-            Log.e("TAG87----",msg.obj.toString());
-            if (msg.obj instanceof  VolleyPairResult) {
-                VolleyPairResult volleyPairResult = (VolleyPairResult) msg.obj;
-                checkDevice(volleyPairResult);
-            }else {
-                VolleyPair868Result result = (VolleyPair868Result) msg.obj;
-                checkDevice(result.getHostid(),result.getFrequency());
-            }
-            return true;
-        }
-        else if (machineCode == ItemDefault.CODE_FHL && what == SerialConfigs.VITAL_CAPACITY_SET_MORE_MATCH){
-            if (msg.obj instanceof  VitalCapacityResult){
-                VitalCapacityResult fhl = (VitalCapacityResult) msg.obj;
-                checkDevice(fhl);
-            }else if (msg.obj instanceof  VitalCapacityNewResult){
-                VitalCapacityNewResult fhl = (VitalCapacityNewResult) msg.obj;
-                checkDevice(fhl);
-            }
-            return true;
-        }else if (machineCode == ItemDefault.CODE_HWSXQ && what == SerialConfigs.MEDICINE_BALL_MATCH_MORE){
-            MedicineBallNewResult mbn = (MedicineBallNewResult) msg.obj;
-            checkDevice(mbn);
         }
         return false;
     }
@@ -123,25 +89,7 @@ public class SitPullLinker implements Handler.Callback {
 
     private void checkDevice(PullUpSetFrequencyResult result) {
         checkDevice(result.getDeviceId(), result.getFrequency());
-    }
-    private void checkDevice(VitalCapacityResult result) {
-        checkDevice(result.getDeviceId(), result.getFrequency());
-    }
-    private void checkDevice(VitalCapacityNewResult result) {
-        checkDevice(result.getDeviceId(), result.getFrequency());
-    }
-
-    private void checkDevice(SargentJumpResult result) {
-        checkDevice(result.getDeviceId(), result.getFrequency());
-    }
-
-    private void checkDevice(VolleyPairResult result) {
-        checkDevice(result.getDeviceId(), result.getFrequency());
-    }
-
-    private void checkDevice(MedicineBallNewResult result) {
-        checkDevice(result.getDeviceId(), result.getFrequency());
-    }
+    } 
 
     public synchronized void checkDevice(int deviceId, int frequency) {
         Log.e("TAG115----","currentFrequency = "+currentFrequency+",frequency="+frequency+",deviceId="+deviceId+",currentDeviceId="+currentDeviceId);

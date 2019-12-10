@@ -2,11 +2,9 @@ package com.feipulai.device.led;
 
 import android.graphics.Bitmap;
 
-
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
-import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
 
@@ -47,7 +45,6 @@ public class LEDManager {
         machineCodesForLed.put(0, 0);//公共频道	0
         machineCodesForLed.put(ItemDefault.CODE_TS, 1);//跳绳计数
         machineCodesForLed.put(ItemDefault.CODE_HW, 5);//身高体重
-        machineCodesForLed.put(ItemDefault.CODE_FHL, 8);//肺活量
         machineCodesForLed.put(ItemDefault.CODE_LDTY, 4);//立定跳远
         machineCodesForLed.put(ItemDefault.CODE_YWQZ, 10);//仰卧起坐
         machineCodesForLed.put(ItemDefault.CODE_ZWTQQ, 2);//坐位体
@@ -88,7 +85,8 @@ public class LEDManager {
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, command));
 
         //调到与LED同频进行
-        RadioChannelCommand channelCommand1 = new RadioChannelCommand(hostId + SerialConfigs.sProChannels.get(machineCode) - 1);
+//        RadioChannelCommand channelCommand1 = new RadioChannelCommand(hostId + SerialConfigs.sProChannels.get(machineCode) - 1);
+        RadioChannelCommand channelCommand1 = new RadioChannelCommand(channel);
         RadioManager.getInstance().sendCommand(new ConvertCommand(channelCommand1));
     }
 
