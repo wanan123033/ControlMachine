@@ -178,9 +178,9 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
                 }
                 break;
             case R.id.tv_start_test:
-                if (setting.getType() == 0){
+                if (setting.getType() == 0) {
                     prepareForTesting();
-                }else {
+                } else {
                     facade.checkDevice();
                 }
 //                prepareForTesting();
@@ -287,6 +287,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         stuPairAdapter.setTestPosition(position);
         stuPairAdapter.notifyItemChanged(oldPosition);
         stuPairAdapter.notifyItemChanged(position);
+
         prepareForBegin();
     }
 
@@ -415,6 +416,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
     }
 
     private void prepareForBegin() {
+        state = WAIT_BEGIN;
         Student student = pairs.get(position()).getStudent();
         tvResult.setText(student.getStudentName());
         pairs.get(position()).setPenalty(0);
@@ -428,7 +430,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         displayCheckedInLED();
 
         rvTestingPairs.smoothScrollToPosition(position());
-        state = WAIT_BEGIN;
+
     }
 
     private void prepareForTesting() {
@@ -690,6 +692,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
             }
         });
     }
+
     @Override
     public void checkDevice(VolleyBallCheck check) {
         if (check.getDeviceType() == setting.getTestPattern()) {
@@ -702,10 +705,10 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
                     @Override
                     public void run() {
                         boolean isTest = true;
-                        for (int i = 0 ; i < poleArray.length ; i++){
-                            if (poleArray[i] == 0){
+                        for (int i = 0; i < poleArray.length; i++) {
+                            if (poleArray[i] == 0) {
                                 isTest = true;
-                            }else{
+                            } else {
                                 isTest = false;
                                 break;
                             }

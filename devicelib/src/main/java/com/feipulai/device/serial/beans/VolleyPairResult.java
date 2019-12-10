@@ -10,6 +10,7 @@ public class VolleyPairResult {
     private int id;
     private int frequency;
     private int state ;//等待触摸：0X00  已触摸显示成绩：0X01
+    private int hostId;
     public VolleyPairResult(byte[] data){
         if (data.length == 16){
             score = ((data[8] & 0xff) << 8) + (data[9] & 0xff);
@@ -20,6 +21,7 @@ public class VolleyPairResult {
         this.data = data;
         id = data[6]&0xff;
         frequency = data[12]&0xff;
+        hostId=data[5]&0xff;
 //		Log.i("sargent",StringUtility.bytesToHexString(data));
     }
 
@@ -53,5 +55,13 @@ public class VolleyPairResult {
 
     public byte[] getDataArr() {
         return data;
+    }
+
+    public int getHostId() {
+        return hostId;
+    }
+
+    public void setHostId(int hostId) {
+        this.hostId = hostId;
     }
 }

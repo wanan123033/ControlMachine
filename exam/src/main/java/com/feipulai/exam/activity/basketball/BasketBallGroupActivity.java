@@ -381,8 +381,6 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         resultAdapter.notifyDataSetChanged();
         DBManager.getInstance().insterMachineResult(machineResult);
         setOperationUI();
-//        DBManager.getInstance().insterMachineResult(machineResult);
-        setOperationUI();
         String time = DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital());
         if (time.charAt(0) == '0' && time.charAt(1) == '0'){
             time = time.substring(3,time.toCharArray().length);
@@ -390,6 +388,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             time = time.substring(1,time.toCharArray().length);
         }
         tvResult.setText(time);
+        ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
 //        tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital()));
     }
 

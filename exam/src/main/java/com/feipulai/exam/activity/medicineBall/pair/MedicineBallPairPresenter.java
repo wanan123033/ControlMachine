@@ -5,6 +5,8 @@ import android.os.Build;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.manager.SitPushUpManager;
+import com.feipulai.device.newProtocol.NewProtocolLinker;
+import com.feipulai.device.serial.RadioManager;
 import com.feipulai.exam.activity.medicineBall.MedicineBallSetting;
 import com.feipulai.exam.activity.pushUp.PushUpSetting;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -33,7 +35,13 @@ public class MedicineBallPairPresenter extends SitPullUpPairPresenter {
         setting = SharedPrefsUtil.loadFormSource(context, MedicineBallSetting.class);
         sitPushUpManager = new SitPushUpManager(SitPushUpManager.PROJECT_CODE_SXQ,PushUpSetting.WIRELESS_TYPE);
     }
-
+    @Override
+    public void start() {
+        RadioManager.getInstance().setOnRadioArrived(this);
+        linker = new NewProtocolLinker(machineCode, TARGET_FREQUENCY, this, SettingHelper.getSystemSetting().getHostId());
+        linker.startPair(1);
+        super.start();
+    }
     @Override
     public void changeAutoPair(boolean isAutoPair) {
         setting.setAutoPair(isAutoPair);

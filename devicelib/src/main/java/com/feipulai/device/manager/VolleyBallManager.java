@@ -3,9 +3,7 @@ package com.feipulai.device.manager;
 import android.os.SystemClock;
 import android.util.Log;
 
-import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.RadioManager;
-import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
@@ -62,7 +60,7 @@ public class VolleyBallManager {
         if (pattryType == 0) {
             Log.e("TAG===", Arrays.toString(CMD_START));
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_START));
-        }else {
+        } else {
             if (testTime == 0) {
                 volleyBallRadioManager.startCount(hostId, deviceId);
             } else {
@@ -144,7 +142,7 @@ public class VolleyBallManager {
     /**
      * 忽略点
      */
-    public void loseDot(int deviceId, int hostId,byte[] checkResult) {
+    public void loseDot(int deviceId, int hostId, byte[] checkResult) {
         byte[] cmd = new byte[]{(byte) 0xAA, 0x13, 0x0A, 0x03, 0x01, 0x00, 0x00, (byte) 0xC9, 0x00, 0x00, 0x00, 0x00, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, 0x00, 0x0d};
         cmd[5] = (byte) hostId;
         cmd[6] = (byte) deviceId;
@@ -185,10 +183,8 @@ public class VolleyBallManager {
         return sum;
     }
 
+    public void setFrequency(int targetChannel, int deviceId, int hostId) {
 
-    public void setFrequency(int originFrequency, int deviceId, int hostId) {
-        int machineCode = ItemDefault.CODE_PQ;
-        int targetChannel = 0;
         byte[] buf = new byte[17];
         buf[0] = (byte) 0xAA;
         buf[1] = 0x11;//包长
@@ -199,7 +195,6 @@ public class VolleyBallManager {
         buf[6] = (byte) (deviceId & 0xff);       //目标设备子机号
 //        buf[6] = 0;
         buf[7] = (byte) 0xc1;      //命令
-        targetChannel = SerialConfigs.sProChannels.get(machineCode) + hostId - 1;
         buf[8] = 0x00; //高字节在先
         buf[9] = 0x00;
         buf[10] = 0x00;
