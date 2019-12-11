@@ -28,6 +28,7 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.manager.VolleyBallManager;
 import com.feipulai.device.manager.VolleyBallRadioManager;
+import com.feipulai.device.newProtocol.NewProtocolLinker;
 import com.feipulai.device.serial.beans.VolleyBallCheck;
 import com.feipulai.device.serial.beans.VolleyBallResult;
 import com.feipulai.device.sitpullup.SitPullLinker;
@@ -694,7 +695,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
 
     public void changeBadDevice() {
         if (linker == null) {
-            linker = new SitPullLinker(TestConfigs.sCurrentItem.getMachineCode(), TARGET_FREQUENCY, this);
+            linker = new NewProtocolLinker(TestConfigs.sCurrentItem.getMachineCode(), TARGET_FREQUENCY, this,SettingHelper.getSystemSetting().getHostId());
             facade.setLinker(linker);
         } else {
             facade.setLinker(linker);
