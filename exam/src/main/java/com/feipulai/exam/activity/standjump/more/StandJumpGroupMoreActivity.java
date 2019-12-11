@@ -28,7 +28,9 @@ public class StandJumpGroupMoreActivity extends BaseMoreGroupActivity implements
         super.initData();
 
         setFaultEnable(jumpSetting.isPenalize());
-        setNextClickStart(false);
+        if (!jumpSetting.isPenalize()) {
+            setNextClickStart(false);
+        }
 //        setDeviceCount(jumpSetting.getTestDeviceCount());
         facade = new StandJumpRadioFacade(deviceDetails, jumpSetting, this);
     }
@@ -107,7 +109,7 @@ public class StandJumpGroupMoreActivity extends BaseMoreGroupActivity implements
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if (deviceDetails.get(deviceId - 1).getStuDevicePair().getStudent()!= null){
+        if (deviceDetails.get(deviceId - 1).getStuDevicePair().getStudent() != null) {
             toastSpeak(deviceDetails.get(deviceId - 1).getStuDevicePair().getStudent().getSpeakStuName() + "开始测试");
         }
 

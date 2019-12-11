@@ -277,9 +277,9 @@ public class DataRetrieveActivity extends BaseTitleActivity
                     ToastUtils.showShort("未选中数据上传");
                 } else {
                     if (mCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
-                        ServerMessage.uploadZCPResult(this, mCurrentItem.getItemName(), DBManager.getInstance().getUploadResultsByStuCode(mCurrentItem.getItemCode(), studentCode));
+                        ServerMessage.uploadZCPResult(this, mCurrentItem.getItemName(), DBManager.getInstance().getUploadResultsByStuCode(getItemCode(), studentCode));
                     } else {
-                        ServerMessage.uploadResult(this, DBManager.getInstance().getUploadResultsByStuCode(mCurrentItem.getItemCode(), studentCode));
+                        ServerMessage.uploadResult(this, DBManager.getInstance().getUploadResultsByStuCode(getItemCode(), studentCode));
                     }
 
                 }
