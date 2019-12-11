@@ -69,8 +69,6 @@ public class VolleyBallSettingActivity
     EditText etTestTime;
     @BindView(R.id.txt_device_versions)
     TextView txtDeviceVersions;
-    @BindView(R.id.rb_pentity)
-    CheckBox rb_pentity;
 
     private Integer[] testRound = new Integer[]{1, 2, 3};
 
@@ -114,15 +112,12 @@ public class VolleyBallSettingActivity
         cbFullSkip.setChecked(setting.isFullSkip());
         llFullSkip.setVisibility(setting.isFullSkip() ? View.VISIBLE : View.GONE);
         cbFullSkip.setOnCheckedChangeListener(this);
-        rb_pentity.setChecked(setting.isPenalize());
         etTestTime.setText(setting.getTestTime() + "");
         editMaleFull.addTextChangedListener(this);
         editFemaleFull.addTextChangedListener(this);
         etTestTime.addTextChangedListener(this);
         SerialDeviceManager.getInstance().setRS232ResiltListener(this);
         volleyBallManager.getVersions();
-
-        rb_pentity.setOnCheckedChangeListener(this);
     }
 
     @Nullable
@@ -160,7 +155,6 @@ public class VolleyBallSettingActivity
     @OnItemSelected({R.id.sp_test_no})
     public void spinnerItemSelected(Spinner spinner, int position) {
         switch (spinner.getId()) {
-
             case R.id.sp_test_no:
                 setting.setTestNo(position + 1);
                 break;
@@ -174,9 +168,6 @@ public class VolleyBallSettingActivity
             case R.id.cb_full_skip:
                 setting.setFullSkip(isChecked);
                 llFullSkip.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-                break;
-            case R.id.rb_pentity:
-                setting.setPenalize(rb_pentity.isChecked());
                 break;
         }
     }
