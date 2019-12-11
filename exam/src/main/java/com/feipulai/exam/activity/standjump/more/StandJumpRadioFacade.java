@@ -67,7 +67,7 @@ public class StandJumpRadioFacade implements RadioManager.OnRadioArrivedListener
                     if (mCurrentConnect[deviceState.getDeviceId() - 1] == 0
                             && oldState != BaseDeviceState.STATE_ERROR
                             && oldState != BaseDeviceState.STATE_CONFLICT) {
-                        Logger.i("zzs----->onStateRefreshed==========>STATE_ERROR" + mCurrentConnect[deviceState.getDeviceId() - 1]);
+//                        Logger.i("zzs----->onStateRefreshed==========>STATE_ERROR" + mCurrentConnect[deviceState.getDeviceId() - 1]);
                         deviceState.setState(BaseDeviceState.STATE_ERROR);
                         listener.refreshDeviceState(i);
                     }
@@ -115,7 +115,7 @@ public class StandJumpRadioFacade implements RadioManager.OnRadioArrivedListener
                 return;
             }
             BaseDeviceState deviceState = deviceList.get(result.getDeviceId() - 1).getStuDevicePair().getBaseDevice();
-            Logger.i("JUMP_SCORE_RESPONSE====>" + result.toString());
+//            Logger.i("JUMP_SCORE_RESPONSE====>" + result.toString());
             //状态处理
             if (mCurrentConnect[result.getDeviceId() - 1] == BaseDeviceState.STATE_CONFLICT) {
                 return;
@@ -123,7 +123,7 @@ public class StandJumpRadioFacade implements RadioManager.OnRadioArrivedListener
             mCurrentConnect[result.getDeviceId() - 1] = BaseDeviceState.STATE_FREE;
             if (deviceState.getState() == BaseDeviceState.STATE_ERROR) {
                 deviceState.setState(BaseDeviceState.STATE_FREE);
-                Logger.i("zzs----->onRadioArrived==========>STATE_FREE");
+//                Logger.i("zzs----->onRadioArrived==========>STATE_FREE");
                 listener.refreshDeviceState(result.getDeviceId() - 1);
             }
             //成绩处理

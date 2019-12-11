@@ -121,6 +121,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
             }
         }, 3000);
         setDeviceCount(setTestDeviceCount());
+
     }
 
     @Override
@@ -207,6 +208,11 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
             deviceDetails.add(detail);
         }
         initView();
+        if (deviceDetails.size() == 1) {
+            stuAdapter.setShowSelete(true);
+        } else {
+            stuAdapter.setShowSelete(false);
+        }
     }
 
     /**
@@ -250,6 +256,11 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
             deviceDetail.getStuDevicePair().setTimeResult(new String[setTestCount()]);
         }
         deviceListAdapter.notifyDataSetChanged();
+        if (deviceDetails.size() == 1) {
+            stuAdapter.setShowSelete(true);
+        } else {
+            stuAdapter.setShowSelete(false);
+        }
     }
 
     private void initView() {
@@ -514,6 +525,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                                 deviceListAdapter.notifyDataSetChanged();
                                 rvTestStu.scrollToPosition(j);
                                 stuAdapter.setTestPosition(j);
+                                stuAdapter.notifyDataSetChanged();
                                 deviceListAdapter.notifyItemChanged(index);
                                 break;
                             }
@@ -561,6 +573,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                         String.format(getString(R.string.test_speak_hint), studentList.get(stuPos).getStudentName(), testTimes + 1));
                 rvTestStu.scrollToPosition(stuPos);
                 stuAdapter.setTestPosition(stuPos);
+                stuAdapter.notifyDataSetChanged();
                 break;
             }
         }
@@ -696,7 +709,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
     private void updateResultLed(BaseStuPair baseStu, int index) {
         //todo led模式
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
-        String result = ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
+        String result = baseStu.getResultState() != RoundResult.RESULT_STATE_NORMAL ? "X" : ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
         if (deviceDetails.size() > 1) {
             int x = ResultDisplayUtils.getStringLength(result);
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 16 - x, index, false, true);
@@ -827,9 +840,10 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                             if (!isNextClickStart) {
                                 toStart(index);
                             }
+                            stuAdapter.notifyDataSetChanged();
                         }
                     }, 3000);
-
+                    deviceDetails.get(index).setRound(roundNo + 1);
                     deviceDetails.get(index).getStuDevicePair().setBaseHeight(0);
                     Logger.i("下一位测试考生：" + studentList.get(stuAdapter.getTestPosition()));
                     group.setIsTestComplete(2);
@@ -878,6 +892,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                         if (!isNextClickStart) {
                             toStart(deviceIndex);
                         }
+                        stuAdapter.notifyDataSetChanged();
                     }
                 }, 3000);
 
@@ -983,7 +998,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
 
         DBManager.getInstance().insertRoundResult(roundResult);
         Logger.i("saveResult==>insertRoundResult->" + roundResult.toString());
-        updateLastResultLed(ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()), index);
+        updateLastResultLed(roundResult.getResultState() != RoundResult.RESULT_STATE_NORMAL ? "X" : ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()), index);
         List<RoundResult> roundResultList = new ArrayList<>();
         roundResultList.add(roundResult);
         UploadResults uploadResults = new UploadResults(group.getScheduleNo()

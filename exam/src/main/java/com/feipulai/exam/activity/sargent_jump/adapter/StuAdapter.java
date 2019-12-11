@@ -6,7 +6,6 @@ import android.support.v4.content.ContextCompat;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.feipulai.exam.R;
-import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.entity.Student;
 
 import java.util.List;
@@ -21,6 +20,11 @@ public class StuAdapter extends BaseQuickAdapter<Student, BaseViewHolder> {
      * 测试位
      */
     private int testPosition = -1;
+    private boolean isShowSelete = false;
+
+    public void setShowSelete(boolean showSelete) {
+        isShowSelete = showSelete;
+    }
 
     public void setTestPosition(int testPosition) {
         this.testPosition = testPosition;
@@ -39,12 +43,15 @@ public class StuAdapter extends BaseQuickAdapter<Student, BaseViewHolder> {
         helper.setText(R.id.item_txt_stu_code, student.getStudentCode());
         helper.setText(R.id.item_txt_stu_name, student.getStudentName());
 //        CheckBox cbDeviceState = helper.getView(R.id.item_cb_device_state);
-        helper.setText(R.id.item_trackno, helper.getAdapterPosition() +1+ "");
-//        if (testPosition == helper.getLayoutPosition()) {
-//            helper.setBackgroundRes(R.id.view_content, R.drawable.group_select_bg);
-//        } else {
-//            helper.setBackgroundColor(R.id.view_content, ContextCompat.getColor(mContext, R.color.white));
-//        }
+        helper.setText(R.id.item_trackno, helper.getAdapterPosition() + 1 + "");
+        if (testPosition != -1 && isShowSelete) {
+            if (testPosition == helper.getLayoutPosition()) {
+                helper.setBackgroundRes(R.id.view_content, R.drawable.group_select_bg);
+            } else {
+                helper.setBackgroundColor(R.id.view_content, ContextCompat.getColor(mContext, R.color.white));
+            }
+        }
+
 
         helper.addOnClickListener(R.id.view_content);
     }
