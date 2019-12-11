@@ -271,8 +271,18 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                         break;
                     case R.id.txt_start://开始
                         if (pair.getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
-                            toStart(pos);
-                            updateLastResultLed("", pos);
+                            if (deviceDetails.get(pos).getStuDevicePair().getStudent()== null){
+                                toastSpeak("当前无设备可用");
+                                return;
+                            }
+                            if (isAllTest()){
+                                toastSpeak("当前分组已测试完成，请选下一组");
+                            }else {
+                                toStart(pos);
+                                updateLastResultLed("", pos);
+                            }
+                        }else {
+                            toastSpeak("当前设备异常");
                         }
 
                         break;
@@ -417,6 +427,18 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         deviceListAdapter.notifyItemChanged(index);
     }
 
+    private boolean isAllTest() {
+        for (BaseStuPair stuPair : pairList) {
+            if (!stuPair.isFullMark()) {
+                for (String s : stuPair.getTimeResult()) {
+                    if (TextUtils.isEmpty(s)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
 
     private void allTestComplete() {
         //全部次数测试完，

@@ -59,7 +59,6 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        setNextClickStart(false);
         sargentSetting = SharedPrefsUtil.loadFormSource(this, SargentSetting.class);
         if (null == sargentSetting) {
             sargentSetting = new SargentSetting();
@@ -74,6 +73,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
         runUp = sargentSetting.getRunUp();
         RadioManager.getInstance().setOnRadioArrived(resultImpl);
         sendEmpty();
+        setNextClickStart(false);
     }
 
     @Override
