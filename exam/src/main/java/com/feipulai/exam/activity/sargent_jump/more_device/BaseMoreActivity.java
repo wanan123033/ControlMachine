@@ -211,6 +211,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
         addStudent(student, index);
         deviceDetails.get(index).getStuDevicePair().setTimeResult(result);
+        deviceDetails.get(index).getStuDevicePair().setResult(-999);
         deviceListAdapter.notifyItemChanged(index);
 
         if (!isNextClickStart) {
@@ -471,8 +472,6 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                     Logger.i("考生" + pair.getStudent().toString());
                 }
                 Logger.i("设备成绩信息STATE_END==>" + deviceState.toString());
-                pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
-                pair.setCanTest(true);
                 if (isPenalize && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
 
                     if (setTestDeviceCount() == 1) {
@@ -494,6 +493,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
      * 处理结果
      */
     private synchronized void doResult(final BaseStuPair pair, final int index) {
+        broadResult(pair);
         DeviceDetail detail = deviceDetails.get(index);
         String[] timeResult = detail.getStuDevicePair().getTimeResult();
         if (detail.getRound() > timeResult.length)//防止
@@ -558,8 +558,10 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             clearHandler.sendMessageDelayed(msg, 4000);
         }
 
-        pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
         deviceListAdapter.notifyItemChanged(index);
+        pair.setCanTest(true);
+        pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+
     }
 
 
@@ -614,22 +616,22 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 roundResult.setIsLastResult(1);
                 bestResult.setIsLastResult(0);
                 DBManager.getInstance().updateRoundResult(bestResult);
-                updateLastResultLed(roundResult, index);
+                updateLastResultLed(baseStuPair, index);
             } else {
                 if (bestResult.getResultState() != RoundResult.RESULT_STATE_NORMAL) {
                     roundResult.setIsLastResult(1);
                     bestResult.setIsLastResult(0);
                     DBManager.getInstance().updateRoundResult(bestResult);
-                    updateLastResultLed(roundResult, index);
+                    updateLastResultLed(baseStuPair, index);
                 } else {
                     roundResult.setIsLastResult(0);
-                    updateLastResultLed(bestResult, index);
+                    updateLastResultLed(baseStuPair, index);
                 }
             }
         } else {
             // 第一次测试
             roundResult.setIsLastResult(1);
-            updateLastResultLed(roundResult, index);
+            updateLastResultLed(baseStuPair, index);
 
 
         }
@@ -668,7 +670,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     /**
      * LED结果展示
      */
-    private void updateLastResultLed(RoundResult roundResult, int index) {
+    private void updateLastResultLed(BaseStuPair baseStuPair, int index) {
 //        int ledMode = SettingHelper.getSystemSetting().getLedMode();
 //        String result = roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL ? "X" : ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult());
 //        if (ledMode == 0) {
@@ -701,6 +703,9 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 //            }
 //            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index, data, 0, 1, false, true);
 //        }
+
+        updateResultLed(baseStuPair, index);
+//        deviceListAdapter.notifyItemChanged(index);
     }
 
 
@@ -727,11 +732,9 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             pair.setResult(baseStu.getResult());
             pair.setFullMark(baseStu.isFullMark());
 
-            refreshDevice(index);
+//            refreshDevice(index);
 
-            updateResultLed(baseStu, index);
-            deviceListAdapter.notifyItemChanged(index);
-            broadResult(baseStu);
+
         }
 
 
@@ -841,7 +844,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             DeviceDetail detail = (DeviceDetail) msg.obj;
             detail.getStuDevicePair().setTimeResult(new String[setTestCount()]);
             detail.getStuDevicePair().setStudent(null);
-            detail.getStuDevicePair().setResult(0);
+            detail.getStuDevicePair().setResult(-999);
             deviceListAdapter.notifyDataSetChanged();
         }
     }

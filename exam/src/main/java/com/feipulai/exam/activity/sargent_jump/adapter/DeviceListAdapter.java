@@ -159,7 +159,7 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                 } else {
                     oneViewHolder.setText(R.id.txt_stu_sex, "");
                 }
-                if (item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_ONUSE) {
+//                if (item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_END) {
                     if (item.getStuDevicePair().getResult() == -999) {
                         oneViewHolder.setText(R.id.txt_test_result, "");
                     } else {
@@ -167,10 +167,11 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                                 "X" : ResultDisplayUtils.getStrResultForDisplay(item.getStuDevicePair().getResult()));
                     }
 
-                } else if (item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN
-                        || item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
-                    oneViewHolder.setText(R.id.txt_test_result, "");
-                }
+//                }
+//                   else if (item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN
+//                        || item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
+//                    oneViewHolder.setText(R.id.txt_test_result, "");
+//                }
 
                 if (item.getStuDevicePair().getTimeResult() != null) {
                     oneViewHolder.itemTxtTestResult.setText(item.getStuDevicePair().getTimeResult()[0]);

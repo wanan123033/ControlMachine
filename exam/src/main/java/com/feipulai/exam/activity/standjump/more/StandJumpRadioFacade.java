@@ -108,7 +108,7 @@ public class StandJumpRadioFacade implements RadioManager.OnRadioArrivedListener
         if (msg.what == SerialConfigs.STAND_JUMP_START) {
             mCurrentConnect[result.getDeviceId() - 1] = BaseDeviceState.STATE_FREE;
             deviceList.get(result.getDeviceId() - 1).getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
-            listener.refreshDeviceState(result.getDeviceId() - 1);
+//            listener.refreshDeviceState(result.getDeviceId() - 1);
             listener.StartDevice(result.getDeviceId());
         } else if (msg.what == SerialConfigs.STAND_JUMP_GET_STATE) {
             if (result.getDeviceId() > deviceList.size()) {

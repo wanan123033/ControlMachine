@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -438,6 +439,21 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         deviceListAdapter.notifyItemChanged(index);
     }
 
+    private void broadResult(BaseStuPair baseStuPair) {
+        if (deviceCount> 1)
+            return;
+        if (SettingHelper.getSystemSetting().isAutoBroadcast()) {
+            if (baseStuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) {
+                TtsManager.getInstance().speak(baseStuPair.getStudent().getSpeakStuName() + "犯规");
+            } else {
+
+                TtsManager.getInstance().speak(String.format(getString(R.string.speak_result), baseStuPair.getStudent().getSpeakStuName(), ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult())));
+            }
+
+
+        }
+    }
+
     private boolean isAllTest() {
         for (BaseStuPair stuPair : pairList) {
             if (!stuPair.isFullMark()) {
@@ -522,6 +538,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                                 roundNo = testTimes + 1;
                                 toastSpeak(String.format(getString(R.string.test_speak_hint), studentList.get(j).getStudentName(), testTimes + 1),
                                         String.format(getString(R.string.test_speak_hint), studentList.get(j).getStudentName(), testTimes + 1));
+                                deviceDetails.get(index).setRound(roundNo);
                                 deviceListAdapter.notifyDataSetChanged();
                                 rvTestStu.scrollToPosition(j);
                                 stuAdapter.setTestPosition(j);
@@ -733,6 +750,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
 
     //处理结果
     private void doResult(BaseStuPair pair, int deviceIndex) {
+        broadResult(pair);
         Logger.i("考生" + pair.getStudent().toString());
         //更新成绩
         String[] timeResult = deviceDetails.get(deviceIndex).getStuDevicePair().getTimeResult();
