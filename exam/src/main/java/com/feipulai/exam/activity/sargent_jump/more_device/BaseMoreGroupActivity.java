@@ -205,6 +205,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
             detail.setDeviceOpen(true);
             if (deviceCount == 1) {
                 detail.setItemType(DeviceDetail.ITEM_ONE);
+                detail.getStuDevicePair().setResult(-999);
             }
             deviceDetails.add(detail);
         }
@@ -440,7 +441,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
     }
 
     private void broadResult(BaseStuPair baseStuPair) {
-        if (deviceCount> 1)
+        if (deviceCount > 1)
             return;
         if (SettingHelper.getSystemSetting().isAutoBroadcast()) {
             if (baseStuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) {
@@ -1077,7 +1078,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
             try {
                 byte[] data = new byte[16];
                 String ledName = deviceDetails.get(index).getStuDevicePair().getStudent().getLEDStuName() + "   第" +
-                        (deviceDetails.get(index).getRound() ) + "次";
+                        (deviceDetails.get(index).getRound()) + "次";
                 byte[] strData = ledName.getBytes("GB2312");
                 System.arraycopy(strData, 0, data, 0, strData.length);
                 //todo
