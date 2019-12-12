@@ -859,6 +859,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             detail.getStuDevicePair().setTimeResult(new String[setTestCount()]);
             detail.setDeviceOpen(true);
             if (deviceCount == 1) {
+                detail.getStuDevicePair().setResult(-999);
                 detail.setItemType(DeviceDetail.ITEM_ONE);
             }
             deviceDetails.add(detail);
