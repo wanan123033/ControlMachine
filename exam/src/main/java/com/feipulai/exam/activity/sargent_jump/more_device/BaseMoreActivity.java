@@ -560,7 +560,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
         deviceListAdapter.notifyItemChanged(index);
         pair.setCanTest(true);
-        pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+//        pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
 
     }
 

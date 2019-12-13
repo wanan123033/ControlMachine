@@ -91,6 +91,11 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
         if (null == runTimerSetting) {
             runTimerSetting = new RunTimerSetting();
         }
+        if (TestConfigs.sCurrentItem.getTestNum() != 0) {
+            maxTestTimes = TestConfigs.sCurrentItem.getTestNum();
+        } else {
+            maxTestTimes = runTimerSetting.getTestTimes();
+        }
         if (runNum != Integer.parseInt(runTimerSetting.getRunNum()) || interceptPoint != runTimerSetting.getInterceptPoint()
                 || interceptWay != runTimerSetting.getInterceptWay() || settingSensor != runTimerSetting.getSensor()) {
             getSetting();

@@ -162,7 +162,6 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
      */
     private void initSpinners() {
         int maxTestNo = TestConfigs.sCurrentItem.getTestNum();
-        runTimerSetting.setTestTimes(maxTestNo);
         String[] times = {"1", "2", "3"};
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, times);

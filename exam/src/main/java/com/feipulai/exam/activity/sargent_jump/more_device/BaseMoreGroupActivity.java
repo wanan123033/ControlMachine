@@ -315,6 +315,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
 
     public void setNextClickStart(boolean nextClickStart) {
         isNextClickStart = nextClickStart;
+        deviceListAdapter.setNextClickStart(nextClickStart);
     }
 
     protected void stuSkipDialog(final Student student, final int index) {
@@ -673,8 +674,8 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 Logger.i("考生" + pair.getStudent().toString());
             }
             Logger.i("设备成绩信息STATE_END==>" + deviceState.toString());
-            pair.setCanTest(true);
-            pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+//            pair.setCanTest(true);
+//            pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
             if (isPenalize && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
 
                 if (setTestDeviceCount() == 1) {
@@ -798,14 +799,14 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 int testTimes = deviceDetails.get(deviceIndex).getRound();
                 testTimes++;
                 deviceDetails.get(deviceIndex).setRound(testTimes);
-                if (testTimes < setTestCount()) {
+                if (testTimes-1 < setTestCount()) {
                     if (pair.isFullMark() && pair.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
                         //测试下一个
                         continuousTestNext(deviceIndex);
                     } else {//继续测试同一个
                         toastSpeak(String.format(getString(R.string.test_speak_hint),
-                                pair.getStudent().getStudentName(), testTimes + 1),
-                                String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), testTimes + 1));
+                                pair.getStudent().getStudentName(), testTimes),
+                                String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), testTimes));
                         group.setIsTestComplete(2);
                         DBManager.getInstance().updateGroup(group);
                         if (!isNextClickStart) {
