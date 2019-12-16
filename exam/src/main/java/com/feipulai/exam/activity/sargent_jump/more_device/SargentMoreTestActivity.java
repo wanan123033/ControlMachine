@@ -21,6 +21,7 @@ import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
+import com.orhanobut.logger.Logger;
 
 import butterknife.OnClick;
 
@@ -259,7 +260,8 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
     });
 
     private void onResultArrived(int result, BaseStuPair stuPair) {
-        if (result < sargentSetting.getBaseHeight() * 10 || result > (sargentSetting.getBaseHeight() + 116) * 10) {
+        Logger.i("摸高"+stuPair.getStudent()+result);
+        if (result < 0 || result > (sargentSetting.getBaseHeight() + 216) * 10) {
             toastSpeak("数据异常，请重测");
             return;
         }

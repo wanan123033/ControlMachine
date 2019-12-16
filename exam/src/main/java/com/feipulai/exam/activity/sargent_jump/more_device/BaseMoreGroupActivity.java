@@ -777,7 +777,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         if (setTestPattern() == 0) {
             saveResult(pair, getRound(pair.getTimeResult()), deviceIndex);
         } else {
-            saveResult(pair, roundNo, deviceIndex);
+            saveResult(pair, getRound(pair.getTimeResult()), deviceIndex);
         }
 
         printResult(pair);
@@ -984,7 +984,8 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         Student student = baseStuPair.getStudent();
 //        PrinterManager.getInstance().print(" \n");
         PrinterManager.getInstance().print(TestConfigs.sCurrentItem.getItemName() + SettingHelper.getSystemSetting().getHostId() + "号机  " + group.getGroupNo() + "组");
-        PrinterManager.getInstance().print("序  号:" + baseStuPair.getTrackNo() + "");
+        GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(group, baseStuPair.getStudent().getStudentCode());
+        PrinterManager.getInstance().print("序  号:" + groupItem.getTrackNo() + "");
         PrinterManager.getInstance().print("考  号:" + student.getStudentCode() + "");
         PrinterManager.getInstance().print("姓  名:" + student.getStudentName() + "");
         for (int i = 0; i < baseStuPair.getTimeResult().length; i++) {

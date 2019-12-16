@@ -212,7 +212,8 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
     });
 
     private void onResultArrived(int result, BaseStuPair stuPair) {
-        if (result < sargentSetting.getBaseHeight() * 10 || result > (sargentSetting.getBaseHeight() + 116) * 10) {
+        Logger.i("摸高"+stuPair.getStudent()+result);
+        if (result < 0 || result > (sargentSetting.getBaseHeight() + 116) * 10) {
             toastSpeak("数据异常，请重测");
             return;
         }
