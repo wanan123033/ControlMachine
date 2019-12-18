@@ -267,6 +267,8 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
         }
         if (stuPair == null || stuPair.getStudent() == null)
             return;
+        stuPair.setResult(result);
+        stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
         if (sargentSetting.isFullReturn()) {
             if (stuPair.getStudent().getSex() == Student.MALE) {
                 stuPair.setFullMark(stuPair.getResult() >= Integer.parseInt(sargentSetting.getMaleFull()) * 10);
@@ -274,8 +276,6 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
                 stuPair.setFullMark(stuPair.getResult() >= Integer.parseInt(sargentSetting.getFemaleFull()) * 10);
             }
         }
-        stuPair.setResult(result);
-        stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
         updateResult(stuPair);
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, stuPair.getBaseDevice().getDeviceId()));
 
