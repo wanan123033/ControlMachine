@@ -823,10 +823,15 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 if (stuAdapter.getTestPosition() == studentList.size() - 1) {
                     //是否为最后一次测试，开启新的测试
                     if (setTestCount() > roundNo) {
-                        roundNo++;
-                        //设置测试学生，当学生有满分跳过则寻找需要测试学生
-                        stuAdapter.setTestPosition(0);
-                        loopTestNext(deviceIndex);
+                        if (isAllTest()){
+                            allTestComplete();
+                        }else {
+                            roundNo++;
+                            //设置测试学生，当学生有满分跳过则寻找需要测试学生
+                            stuAdapter.setTestPosition(0);
+                            loopTestNext(deviceIndex);
+                        }
+
                         return;
                     } else {
                         //全部次数测试完，
