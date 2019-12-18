@@ -74,9 +74,10 @@ public class VolleyBallTestFacade implements SerialDeviceManager.RS232ResiltList
                     public void beforeTick(long tick) {
 
                         if (tick != 0) {
-                            VolleyBallRadioManager.getInstance().startTime(hostId, 1, (int) tick, setting.getTestTime());
+                            if (setting.getType() == 1) {
+                                VolleyBallRadioManager.getInstance().startTime(hostId, 1, (int) tick, setting.getTestTime());
+                            }
                         }
-
                         listener.onGetReadyTimerTick(tick);
                     }
 
