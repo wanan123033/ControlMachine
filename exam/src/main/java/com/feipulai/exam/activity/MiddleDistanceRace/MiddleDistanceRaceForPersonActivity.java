@@ -7,12 +7,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.support.annotation.RequiresApi;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -153,6 +151,10 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
     VHTableView resultShowTable;
     @BindView(R.id.btn_grouping)
     ImageTextButton btnGrouping;
+    @BindView(R.id.btn_circle_delete)
+    ImageTextButton btnCircleDelete;
+    @BindView(R.id.btn_circle_add)
+    ImageTextButton btnCircleAdd;
     private String TAG = "MiddleDistanceRaceActivity";
     private final int MESSAGE_A = 1;
     private boolean isFlag = true;
@@ -272,6 +274,10 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         btnFullscreen.setImgResource(R.drawable.btn_fullscreen_selecor);
         btnGrouping.setText("分组");
         btnGrouping.setImgResource(R.mipmap.grouping);
+        btnCircleDelete.setText("减一圈");
+        btnCircleDelete.setImgResource(R.drawable.btn_delete_selecor);
+        btnCircleAdd.setText("加一圈");
+        btnCircleAdd.setImgResource(R.drawable.btn_add_selecor);
 
         schedulePosition = getIntent().getIntExtra("schedulePosition", 0);
         mItemPosition = getIntent().getIntExtra("mItemPosition", 0);
@@ -333,11 +339,23 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             titleData.add("第" + (i - 2) + "圈");
         }
 
+        //成绩列表点击、长按事件
         final VHTableAdapter tableShowAdapter = new VHTableAdapter(this, titleData, resultDataList, carryMode, digital, new VHTableAdapter.OnResultItemLongClick() {
             @Override
             public void resultListLongClick(int row, int state) {
-                Log.i("resultListLongClick", row + "---" + state);
                 resultDataList.get(row).setResultState(state);
+                resultShowTable.notifyContent();
+            }
+
+            @Override
+            public void resultListClick(int row) {
+                for (int i = 0; i < resultDataList.size(); i++) {
+                    if (row == i) {
+                        resultDataList.get(i).setSelect(true);
+                    } else {
+                        resultDataList.get(i).setSelect(false);
+                    }
+                }
                 resultShowTable.notifyContent();
             }
         });
@@ -1257,6 +1275,9 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         }
     }
 
+    /**
+     * 小组定位
+     */
     private void showInput() {
         final EditText editText = new EditText(this);
         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -1972,15 +1993,6 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             resultDataList.add(addPosition, raceResultBean);
         }
 
-//        Collections.sort(resultDataList, new Comparator<RaceResultBean>() {
-//            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-//            @Override
-//            public int compare(RaceResultBean o1, RaceResultBean o2) {
-//                return Integer.compare(o1.getVestNo(), o2.getVestNo());//按照道次升序排列
-//            }
-//        });
-
-//        Log.i(TAG, resultDataList.toString());
         resultShowTable.notifyContent();
     }
 

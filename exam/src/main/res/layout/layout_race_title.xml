@@ -30,8 +30,30 @@
         android:layout_height="35dp"
         android:layout_centerVertical="true"
         android:layout_marginEnd="30dp"
-        android:layout_toStartOf="@+id/btn_grouping"
+        android:layout_toStartOf="@+id/btn_circle_delete"
         android:background="@drawable/red_circle" />
+
+    <com.feipulai.exam.activity.MiddleDistanceRace.ImageTextButton
+        android:id="@+id/btn_circle_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="2dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="2dp"
+        android:layout_toStartOf="@+id/btn_circle_add"
+         />
+
+    <com.feipulai.exam.activity.MiddleDistanceRace.ImageTextButton
+        android:id="@+id/btn_circle_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="2dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="2dp"
+        android:layout_toStartOf="@+id/btn_grouping"
+         />
 
     <com.feipulai.exam.activity.MiddleDistanceRace.ImageTextButton
         android:id="@+id/btn_grouping"
@@ -40,9 +62,9 @@
         android:layout_centerVertical="true"
         android:layout_marginBottom="2dp"
         android:layout_marginEnd="30dp"
-        android:visibility="gone"
         android:layout_marginTop="2dp"
-        android:layout_toStartOf="@+id/btn_fullscreen" />
+        android:layout_toStartOf="@+id/btn_fullscreen"
+        android:visibility="gone" />
 
     <com.feipulai.exam.activity.MiddleDistanceRace.ImageTextButton
         android:id="@+id/btn_fullscreen"

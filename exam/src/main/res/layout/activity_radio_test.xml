@@ -69,11 +69,6 @@
             android:text="判罚"
             android:visibility="gone"
             android:background="#FFD28B"/>
-        <com.feipulai.common.view.StopUseButton
-            android:id="@+id/btn_end_test"
-            style="@style/style_rectangle_btn"
-            android:drawableTop="@drawable/ic_action_name"
-            android:text="结束测试" />
 
         <com.feipulai.common.view.StopUseButton
             android:id="@+id/btn_stop_using"

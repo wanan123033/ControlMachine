@@ -334,6 +334,11 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                 resultDataList.get(row).setResultState(state);
                 resultShowTable.notifyContent();
             }
+
+            @Override
+            public void resultListClick(int row) {
+
+            }
         });
 
         resultShowTable.setAdapter(tableShowAdapter);

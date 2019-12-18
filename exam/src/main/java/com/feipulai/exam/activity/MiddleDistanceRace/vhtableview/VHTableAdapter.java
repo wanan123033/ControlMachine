@@ -82,7 +82,11 @@ public class VHTableAdapter implements VHBaseAdapter {
         if (contentColum == 0) {
             view.setBackgroundResource(dataList.get(contentRow).getColor());
         } else {
-            view.setBackgroundResource(R.drawable.bg_shape_gray);
+            if (dataList.get(contentRow).isSelect()) {
+                view.setBackgroundResource(R.color.green_yellow);
+            } else {
+                view.setBackgroundResource(R.drawable.bg_shape_gray);
+            }
         }
 
         if (contentColum > dataList.get(contentRow).getCycle() + 2) {
@@ -124,7 +128,7 @@ public class VHTableAdapter implements VHBaseAdapter {
         view.setPadding(5, 8, 5, 8);
         ((TextView) view).setTextSize(14);
         ((TextView) view).setGravity(Gravity.CENTER);
-        //为了更灵活一些，在VHTableView没收做设置边框，在这里通过背景实现，我这里的背景边框是顺手设的，要是想美观点的话，对应的边框做一下对应的设置就好
+        //为了更灵活一些，在VHTableView没做设置边框，在这里通过背景实现，我这里的背景边框是顺手设的，要是想美观点的话，对应的边框做一下对应的设置就好
         ((TextView) view).setTextColor(context.getResources().getColor(R.color.black));
         return view;
     }
@@ -140,6 +144,7 @@ public class VHTableAdapter implements VHBaseAdapter {
     @Override
     public void OnClickContentRowItem(int row, View convertView) {
         Log.i("OnClickContentRowItem", "-----------------");
+        listener.resultListClick(row);
     }
 
     @Override
@@ -154,7 +159,7 @@ public class VHTableAdapter implements VHBaseAdapter {
      */
     private void showSingSelect(final int row) {
         //默认选中第一个
-        final String[] items = {"正常", "DQ（犯规）", "DNF（中退）", "DNS（弃权）", "DT（测试）"};
+        final String[] items = {"正常", "DQ（犯规）", "DNF（未完成）", "DNS（放弃）", "DT（测试）"};
         AlertDialog.Builder builder = new AlertDialog.Builder(context).setTitle("成绩状态（" + "姓名：" + dataList.get(row).getStudentName() + ")")
                 .setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
                     @Override
@@ -172,5 +177,7 @@ public class VHTableAdapter implements VHBaseAdapter {
 
     public interface OnResultItemLongClick {
         void resultListLongClick(int row, int state);
+
+        void resultListClick(int row);
     }
 }

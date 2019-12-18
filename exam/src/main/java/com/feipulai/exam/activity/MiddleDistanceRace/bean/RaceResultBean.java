@@ -24,6 +24,7 @@ public class RaceResultBean {
     public static int STATE_DNF=3;
     public static int STATE_DNS=4;
     public static int STATE_DT=5;
+    private boolean isSelect;
 
     public RaceResultBean() {
     }
@@ -125,6 +126,14 @@ public class RaceResultBean {
         this.resultState = resultState;
     }
 
+    public boolean isSelect() {
+        return isSelect;
+    }
+
+    public void setSelect(boolean select) {
+        isSelect = select;
+    }
+
     @Override
     public String toString() {
         return "RaceResultBean{" +
@@ -139,6 +148,7 @@ public class RaceResultBean {
                 ", resultState=" + resultState +
                 ", studentName='" + studentName + '\'' +
                 ", studentCode='" + studentCode + '\'' +
+                ", isSelect=" + isSelect +
                 '}';
     }
 }
