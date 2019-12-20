@@ -799,7 +799,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 int testTimes = deviceDetails.get(deviceIndex).getRound();
                 testTimes++;
                 deviceDetails.get(deviceIndex).setRound(testTimes);
-                if (testTimes-1 < setTestCount()) {
+                if (testTimes - 1 < setTestCount()) {
                     if (pair.isFullMark() && pair.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
                         //测试下一个
                         continuousTestNext(deviceIndex);
@@ -823,15 +823,10 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 if (stuAdapter.getTestPosition() == studentList.size() - 1) {
                     //是否为最后一次测试，开启新的测试
                     if (setTestCount() > roundNo) {
-                        if (isAllTest()){
-                            allTestComplete();
-                        }else {
-                            roundNo++;
-                            //设置测试学生，当学生有满分跳过则寻找需要测试学生
-                            stuAdapter.setTestPosition(0);
-                            loopTestNext(deviceIndex);
-                        }
-
+                        roundNo++;
+                        //设置测试学生，当学生有满分跳过则寻找需要测试学生
+                        stuAdapter.setTestPosition(0);
+                        loopTestNext(deviceIndex);
                         return;
                     } else {
                         //全部次数测试完，
@@ -898,6 +893,15 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 }
             }
         }
+
+        if (!isAllTest()) {
+            roundNo = 1;
+            stuAdapter.setTestPosition(0);
+            loopTestNext(index);
+            return;
+        }
+        //全部次数测试完，
+        allTestComplete();
     }
 
     /**
@@ -953,6 +957,15 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
             }
         }
 
+        if (!isAllTest()) {
+            roundNo = 1;
+            stuAdapter.setTestPosition(0);
+            continuousTestNext(deviceIndex);
+            return;
+        }
+        //全部次数测试完，
+        allTestComplete();
+
     }
 
     /**
@@ -979,7 +992,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         if (!SettingHelper.getSystemSetting().isAutoPrint())
             return;
         //是否已全部次数测试完成，非满分跳过
-        if (roundNo < setTestCount() && !baseStuPair.isFullMark()) {
+        if (getRound(baseStuPair.getTimeResult()) < setTestCount() && !baseStuPair.isFullMark()) {
             return;
         }
         print(baseStuPair);
