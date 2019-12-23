@@ -442,6 +442,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         }
         tvResult.setText(time);
         ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
+        ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
     }
 
     private void doGetResult(BasketballResult result) {
