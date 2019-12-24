@@ -17,7 +17,7 @@ import java.util.List;
  * Created by James on 2019/1/18 0018.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
-
+@Deprecated
 public abstract class SitUpPairPresenter2
         implements SitUpPairContract.Presenter,
         RadioManager.OnRadioArrivedListener,

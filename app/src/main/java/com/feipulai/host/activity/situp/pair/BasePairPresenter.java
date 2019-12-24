@@ -26,7 +26,7 @@ public abstract class BasePairPresenter implements SitUpPairContract.Presenter,
     private List<StuDevicePair> pairs;
     private SitUpPairContract.View view;
     private int machineCode = TestConfigs.sCurrentItem.getMachineCode();
-    private final int TARGET_FREQUENCY =SettingHelper.getSystemSetting().getUseChannel();;
+    private final int TARGET_FREQUENCY =SettingHelper.getSystemSetting().getUseChannel();
     private volatile int focusPosition;
 
     public BasePairPresenter(Context context, SitUpPairContract.View view) {

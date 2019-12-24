@@ -28,9 +28,6 @@ public class VcPairPresenter extends BasePairPresenter {
     private SitUpSetting setting;
     private SitPushUpManager sitPushUpManager;
     private int VERSION = 363;
-    public final int TARGET_FREQUENCY =SettingHelper.getSystemSetting().getUseChannel();
-    public int machineCode = TestConfigs.sCurrentItem.getMachineCode();
-    public SitPullLinker linker;
     public VcPairPresenter(Context context, SitUpPairContract.View view) {
         super(context, view);
         this.context = context;
@@ -42,15 +39,6 @@ public class VcPairPresenter extends BasePairPresenter {
         sitPushUpManager = new SitPushUpManager(SitPushUpManager.PROJECT_CODE_SIT_UP);
     }
 
-    @Override
-    public void start() {
-        super.start();
-//        stopPair();
-        RadioManager.getInstance().setOnRadioArrived(this);
-        linker = new NewProtocolLinker(machineCode, TARGET_FREQUENCY, this, SettingHelper.getSystemSetting().getHostId());
-        linker.startPair(1);
-
-    }
 
     @Override
     public void setFrequency(int deviceId, int originFrequency, int targetFrequency) {
