@@ -146,6 +146,8 @@ public class MGsonConverterFactory extends Converter.Factory {
                         return null;
                     }
                 }
+            } catch (Exception e) {
+                throw new ResponseAnalysisException(404, "返回数据异常");
             } finally {
                 value.close();
             }

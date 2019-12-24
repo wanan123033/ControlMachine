@@ -96,7 +96,7 @@ public class HttpSubscriber {
             @Override
             public void onSuccess(ScheduleBean result) {
 //                Logger.i("getScheduleAll====>" + result.toString());
-                if (result == null){
+                if (result == null) {
                     if (onRequestEndListener != null) {
                         onRequestEndListener.onFault(SCHEDULE_BIZ);
                     }
@@ -138,7 +138,7 @@ public class HttpSubscriber {
             @Override
             public void onFault(int code, String errorMsg) {
                 EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_FAULT));
-                ToastUtils.showShort(errorMsg);
+                ToastUtils.showShort("获取日程：" + errorMsg);
                 if (onRequestEndListener != null) {
                     onRequestEndListener.onFault(SCHEDULE_BIZ);
                 }
@@ -256,7 +256,7 @@ public class HttpSubscriber {
             @Override
             public void onFault(int code, String errorMsg) {
                 EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_FAULT));
-                ToastUtils.showShort(errorMsg);
+                ToastUtils.showShort("获取项目：" + errorMsg);
                 if (onRequestEndListener != null) {
                     onRequestEndListener.onFault(ITEM_BIZ);
                 }
@@ -386,7 +386,7 @@ public class HttpSubscriber {
             public void onFault(int code, String errorMsg) {
                 Logger.i("getItemStudent  onFault");
                 EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_FAULT));
-                ToastUtils.showShort(errorMsg);
+                ToastUtils.showShort("获取考生：" + errorMsg);
                 if (onRequestEndListener != null) {
                     onRequestEndListener.onFault(STUDENT_BIZ);
                 }
@@ -450,7 +450,7 @@ public class HttpSubscriber {
             public void onFault(int code, String errorMsg) {
                 Logger.i("getItemGroupAll  onFault");
                 EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_FAULT));
-                ToastUtils.showShort(errorMsg);
+                ToastUtils.showShort("获取分组" + errorMsg);
                 if (onRequestEndListener != null) {
                     onRequestEndListener.onFault(GROUP_BIZ);
                 }
