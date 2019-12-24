@@ -1,5 +1,6 @@
 package com.feipulai.exam.activity.medicineBall;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,6 +15,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
@@ -22,6 +24,7 @@ import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseActivity;
+import com.feipulai.exam.activity.medicineBall.pair.MedicineBallPairActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.BaseEvent;
@@ -34,6 +37,7 @@ import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class MedicineBallSettingActivity extends BaseActivity implements AdapterView.OnItemSelectedListener,
@@ -51,6 +55,8 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
     EditText etFullMale;
     @BindView(R.id.et_full_female)
     EditText etFullFemale;
+    @BindView(R.id.tv_match)
+    TextView tvMatch;
     private String[] spinnerItems;
     private MedicineBallSetting medicineBallSetting;
     @BindView(R.id.et_begin_point)
@@ -59,6 +65,7 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
     private SerialHandler mHandler = new SerialHandler(this);
     //3秒内检设备是否可用
     private volatile boolean isDisconnect = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,11 +130,11 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (etBeginPoint.getText().toString().length()> 0){
+                if (etBeginPoint.getText().toString().length() > 0) {
                     int number = Integer.valueOf(etBeginPoint.getText().toString());
-                    if ( number > 5000) {
+                    if (number > 5000) {
                         ToastUtils.showShort("输入范围超出（0~5000）");
-                    }else {
+                    } else {
                         SharedPrefsUtil.putValue(MedicineBallSettingActivity.this, "SXQ", "beginPoint",
                                 etBeginPoint.getText().toString());
                     }
@@ -139,6 +146,8 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
 
             }
         });
+
+        tvMatch.setVisibility(medicineBallSetting.getConnectType()== 1? View.VISIBLE :View.GONE);
     }
 
     private void initSpinners() {
@@ -157,15 +166,15 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
         }
         spTestRound.setSelection(maxTestNo - 1);
 
-        String[] deviceCount = {"1", "2", "3","4"};
+        String[] deviceCount = {"1", "2", "3", "4"};
         ArrayAdapter<String> adapter0 = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, deviceCount);
         adapter0.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spDeviceCount.setAdapter(adapter0);
         spDeviceCount.setOnItemSelectedListener(this);
-        spDeviceCount.setSelection(medicineBallSetting.getSpDeviceCount()-1);
-        spDeviceCount.setEnabled(medicineBallSetting.getConnectType() == 0 ? false:true);
-        if (medicineBallSetting.getConnectType() == 0){
+        spDeviceCount.setSelection(medicineBallSetting.getSpDeviceCount() - 1);
+        spDeviceCount.setEnabled(medicineBallSetting.getConnectType() == 0 ? false : true);
+        if (medicineBallSetting.getConnectType() == 0) {
             spDeviceCount.setSelection(0);
             spDeviceCount.setEnabled(false);
         }
@@ -235,7 +244,6 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
     }
 
 
-
     public void checkDevice(View view) {
         alertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
         alertDialog.setTitleText("终端自检中...");
@@ -245,6 +253,7 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
         //3秒自检
         mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 5000);
     }
+
     private static final int MSG_DISCONNECT = 0X101;
     SerialDeviceManager.RS232ResiltListener listener = new SerialDeviceManager.RS232ResiltListener() {
         @Override
@@ -252,6 +261,16 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
             mHandler.sendMessage(msg);
         }
     };
+
+    @OnClick({R.id.tv_match})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.tv_match:
+                startActivity(new Intent(this, MedicineBallPairActivity.class));
+                break;
+        }
+    }
+
     /**
      * 回调
      */

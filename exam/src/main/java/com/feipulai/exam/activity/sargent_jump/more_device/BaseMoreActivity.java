@@ -520,6 +520,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 msg.what = pair.getBaseDevice().getDeviceId();
                 msg.obj = detail;
                 clearHandler.sendMessageDelayed(msg, 4000);
+                pair.setCanTest(true);
+                pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
                 return;
             }
             int count = detail.getRound();
@@ -548,7 +550,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             Message msg = new Message();
             msg.obj = pair;
             ledHandler.sendMessageDelayed(msg, 3000);
-            pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
+
 
         } else {
             detail.setRound(0);
@@ -560,6 +562,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
         deviceListAdapter.notifyItemChanged(index);
         pair.setCanTest(true);
+        pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
 //        pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
 
     }

@@ -3,16 +3,12 @@ package com.feipulai.host.activity.situp.pair;
 import android.content.Context;
 import android.os.Message;
 
-import com.feipulai.common.utils.SharedPrefsUtil;
-import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.sitpullup.SitPullLinker;
-import com.feipulai.host.R;
 import com.feipulai.host.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.host.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.host.activity.jump_rope.check.CheckUtils;
 import com.feipulai.host.activity.setting.SettingHelper;
-import com.feipulai.host.activity.situp.setting.SitUpSetting;
 import com.feipulai.host.config.TestConfigs;
 
 import java.util.List;
@@ -22,25 +18,21 @@ import java.util.List;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 
-@Deprecated
-public class SitUpPairPresenter2
+public abstract class SitUpPairPresenter2
         implements SitUpPairContract.Presenter,
         RadioManager.OnRadioArrivedListener,
         SitPullLinker.SitPullPairListener {
-    private SitUpSetting setting;
     private Context context;
     private SitUpPairContract.View view;
     private volatile int focusPosition;
     private List<StuDevicePair> pairs;
-    private int machineCode = TestConfigs.sCurrentItem.getMachineCode();
-    private final int TARGET_FREQUENCY = SettingHelper.getSystemSetting().getUseChannel();;
-    private SitPullLinker linker;
-    private SitPushUpManager sitPushUpManager;
+    public int machineCode = TestConfigs.sCurrentItem.getMachineCode();
+    public final int TARGET_FREQUENCY = SettingHelper.getSystemSetting().getUseChannel();
+    public SitPullLinker linker;
+
     public SitUpPairPresenter2(Context context, SitUpPairContract.View view) {
         this.context = context;
         this.view = view;
-        setting = SharedPrefsUtil.loadFormSource(context, SitUpSetting.class);
-        sitPushUpManager = new SitPushUpManager(SitPushUpManager.PROJECT_CODE_SIT_UP);
     }
 
     @Override
@@ -48,8 +40,10 @@ public class SitUpPairPresenter2
         pairs = CheckUtils.newPairs(getDeviceSum());
         view.initView(isAutoPair(), pairs);
         RadioManager.getInstance().setOnRadioArrived(this);
-        linker = new SitPullLinker(machineCode, TARGET_FREQUENCY, this);
-        linker.startPair(1);
+        if (linker == null) {
+            linker = new SitPullLinker(machineCode, TARGET_FREQUENCY, this);
+            linker.startPair(1);
+        }
     }
 
     @Override
@@ -64,29 +58,16 @@ public class SitUpPairPresenter2
     }
 
     @Override
-    public void changeAutoPair(boolean isAutoPair) {
-        setting.setAutoPair(isAutoPair);
-    }
+    public abstract void changeAutoPair(boolean isAutoPair);
 
-    protected int getDeviceSum() {
-        return setting.getDeviceSum();
-    }
+    protected abstract int getDeviceSum();
 
-    protected boolean isAutoPair(){
-        return setting.isAutoPair();
-    }
+    protected abstract boolean isAutoPair();
 
-    public void setFrequency(int deviceId, int originFrequency, int deviceFrequency){
-        sitPushUpManager.setFrequency(SettingHelper.getSystemSetting().getUseChannel(),
-                originFrequency,
-                deviceId,
-                SettingHelper.getSystemSetting().getHostId());
-    }
+    public abstract void setFrequency(int deviceId, int originFrequency, int deviceFrequency);
 
     @Override
-    public void saveSettings(){
-        SharedPrefsUtil.save(context,setting);
-    }
+    public abstract void saveSettings();
 
     @Override
     public void stopPair() {
@@ -111,7 +92,7 @@ public class SitUpPairPresenter2
     }
 
     public synchronized void onNoPairResponseArrived() {
-        view.showToast(context.getString(R.string.no_reply_received_hint));
+        view.showToast("未收到子机回复,设置失败,请重试");
     }
 
 }
