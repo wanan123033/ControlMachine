@@ -51,7 +51,7 @@ android {
             // 修改马甲包的applicationId，即在原来的applicationId后加上配置内容
 //            manifestPlaceholders = [APP_NAME: '第一个马甲包'] // 配置马甲包的应用名称
         }
-        guiYan {//岭南
+        linnan {//岭南
             initWith(buildTypes.debug)
             applicationIdSuffix ".linnan"
             // 修改马甲包的applicationId，即在原来的applicationId后加上配置内容
