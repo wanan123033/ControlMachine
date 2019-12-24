@@ -450,7 +450,7 @@ public class HttpSubscriber {
             public void onFault(int code, String errorMsg) {
                 Logger.i("getItemGroupAll  onFault");
                 EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_FAULT));
-                ToastUtils.showShort("获取分组" + errorMsg);
+                ToastUtils.showShort("获取分组：" + errorMsg);
                 if (onRequestEndListener != null) {
                     onRequestEndListener.onFault(GROUP_BIZ);
                 }
