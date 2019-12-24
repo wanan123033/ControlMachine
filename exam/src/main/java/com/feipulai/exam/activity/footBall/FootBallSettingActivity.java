@@ -125,9 +125,10 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
         ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testRound);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTestNo.setAdapter(adapter);
-        spTestNo.setSelection(TestConfigs.getMaxTestCount(this) - 1);
+        spTestNo.setSelection(TestConfigs.sCurrentItem.getTestNum() != 0 ?TestConfigs.getMaxTestCount(this) - 1:setting.getTestNo()-1);
         // 数据库中已经指定了测试次数,就不能再设置了
         spTestNo.setEnabled(TestConfigs.sCurrentItem.getTestNum() == 0);
+
 
         cbFullSkip.setOnCheckedChangeListener(this);
         if (setting.getMaleFullScore() > 0) {
@@ -150,9 +151,10 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
         }
         rgGroupMode.setOnCheckedChangeListener(this);
         rgAccuracy.setOnCheckedChangeListener(this);
-        //设置测试次数
+        //设置测试精度
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, carryMode);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
         spCarryMode.setAdapter(adapter);
         spCarryMode.setSelection(TestConfigs.sCurrentItem.getCarryMode() > 0 ? TestConfigs.sCurrentItem.getCarryMode() - 1 : 0);
 //        viewCarryMode.setVisibility(getAccuracy() == 1 ? View.VISIBLE : View.GONE);
@@ -295,7 +297,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
         }
     }
 
-    @OnItemSelected({R.id.sp_carryMode, R.id.sp_test_mode})
+    @OnItemSelected({R.id.sp_carryMode, R.id.sp_test_mode,R.id.sp_test_no})
     public void spinnerItemSelected(Spinner spinner, int position) {
         switch (spinner.getId()) {
             case R.id.sp_carryMode:
@@ -303,6 +305,9 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
                 break;
             case R.id.sp_test_mode:
                 setting.setUseMode(position);
+                break;
+            case R.id.sp_test_no:
+                setting.setTestNo(position+1);
                 break;
         }
     }
