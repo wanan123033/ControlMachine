@@ -165,6 +165,9 @@ public class RequestSub<T> extends DisposableObserver<HttpResult<T>>
             } else if (e instanceof UnknownHostException) {//域名解析失败
                 //                ToastManager.showShortToast("域名解析失败");
                 mOnResultListener.onFault(404, "域名解析失败");
+            } else if (e instanceof ResponseAnalysisException) {//域名解析失败
+                //                ToastManager.showShortToast("域名解析失败");
+                mOnResultListener.onFault(404, e.getMessage());
             } else {
                 //                ToastManager.showShortToast("error:" + e.getMessage());
                 mOnResultListener.onFault(404, "error:" + e.getMessage());
