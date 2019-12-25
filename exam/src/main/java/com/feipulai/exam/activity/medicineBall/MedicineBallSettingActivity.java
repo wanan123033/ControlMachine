@@ -57,6 +57,8 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
     EditText etFullFemale;
     @BindView(R.id.tv_match)
     TextView tvMatch;
+    @BindView(R.id.tv_device_check)
+    TextView tvDeviceCheck;
     private String[] spinnerItems;
     private MedicineBallSetting medicineBallSetting;
     @BindView(R.id.et_begin_point)
@@ -147,7 +149,8 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
             }
         });
 
-        tvMatch.setVisibility(medicineBallSetting.getConnectType()== 1? View.VISIBLE :View.GONE);
+        tvMatch.setVisibility(medicineBallSetting.getConnectType() == 1 ? View.VISIBLE : View.GONE);
+        tvDeviceCheck.setVisibility(medicineBallSetting.getConnectType() == 0 ? View.VISIBLE : View.GONE);
     }
 
     private void initSpinners() {

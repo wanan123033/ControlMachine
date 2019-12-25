@@ -48,7 +48,7 @@ public class SitUpPairPresenter extends SitPullUpPairPresenter {
     }
     
     public void setFrequency(int deviceId, int originFrequency, int deviceFrequency) {
-        sitPushUpManager.setFrequency(ItemDefault.CODE_YWQZ,
+        sitPushUpManager.setFrequency( deviceFrequency,
                 originFrequency,
                 deviceId,
                 SettingHelper.getSystemSetting().getHostId());

@@ -122,7 +122,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         initData();
 
         mLEDManager = new LEDManager();
-        mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(),TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+        mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
 
         rvTestStu.setLayoutManager(new LinearLayoutManager(this));
@@ -182,7 +182,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机-" + SettingHelper.getSystemSetting().getTestName();
         }
 
-        return builder.setTitle(title) ;
+        return builder.setTitle(title);
     }
 
     @Override
@@ -296,8 +296,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 //
                         isStop = false;
 
-                        toastSpeak(String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getSpeakStuName(), roundNo),
-                                String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getStudentName(), roundNo));
+//                        toastSpeak(String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getSpeakStuName(), roundNo),
+//                                String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getStudentName(), roundNo));
 
                         if (testType == 1) {
                             startTest(stuPairsList.get(stuAdapter.getTestPosition()));
@@ -976,12 +976,13 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 if (testType == 1) {
                     isStop = true;
                     tvStartTest.setText("开始测试");
-                } else {
-                    //最后一次测试的成绩
-                    toastSpeak(String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getSpeakStuName(), roundNo),
-                            String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getStudentName(), roundNo));
-
                 }
+//                else {
+                //最后一次测试的成绩
+                toastSpeak(String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getSpeakStuName(), roundNo),
+                        String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getStudentName(), roundNo));
+
+//                }
                 Message msg = new Message();
                 msg.obj = stuPairsList.get(stuAdapter.getTestPosition());
                 ledHandler.sendMessageDelayed(msg, 3000);
@@ -1052,11 +1053,12 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                     if (testType == 1) {
                         isStop = true;
                         tvStartTest.setText("开始测试");
-                    } else {
-                        toastSpeak(String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getSpeakStuName(), roundNo),
-                                String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getStudentName(), roundNo));
-
                     }
+//                    else {
+                    toastSpeak(String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getSpeakStuName(), roundNo),
+                            String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getStudentName(), roundNo));
+
+//                    }
                     Message msg = new Message();
                     msg.obj = stuPairsList.get(stuAdapter.getTestPosition());
                     ledHandler.sendMessageDelayed(msg, 3000);
