@@ -46,7 +46,7 @@ public class LoginActivity extends BaseTitleActivity {
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("登录") ;
+        return builder.setTitle("登录");
     }
 
     @OnClick(R.id.btn_login)
@@ -80,11 +80,10 @@ public class LoginActivity extends BaseTitleActivity {
                 ToastUtils.showShort("登录成功");
 
                 if (!TextUtils.isEmpty(userBean.getExamName())) {
-                    SettingHelper.getSystemSetting().setUserName(editAccount.getText().toString());
                     SettingHelper.getSystemSetting().setTestName(userBean.getExamName());
-                    SettingHelper.updateSettingCache(SettingHelper.getSystemSetting());
                 }
-
+                SettingHelper.getSystemSetting().setUserName(editAccount.getText().toString());
+                SettingHelper.updateSettingCache(SettingHelper.getSystemSetting());
                 finish();
             }
 

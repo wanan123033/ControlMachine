@@ -116,7 +116,7 @@ public class ServerMessage {
      * @param uploadResultsList
      */
     public static void uploadResult(final Context context, final List<UploadResults> uploadResultsList) {
-        Logger.i("uploadResult==>" + uploadResultsList.toString());
+//        Logger.i("uploadResult==>" + uploadResultsList.toString());
         if (uploadResultsList == null || uploadResultsList.size() == 0) {
             ToastUtils.showShort("没有需要上传的成绩");
             return;

@@ -530,24 +530,16 @@ public class HttpSubscriber {
         } else {
             uploadData = uploadResultsList.subList(pageNo * 100, (pageNo + 1) * 100);
         }
-
+        Logger.i("setUploadResult===>" + pageNo);
         Observable<HttpResult<List<UploadResults>>> observable = HttpManager.getInstance().getHttpApi().uploadResult("bearer " + MyApplication.TOKEN,
                 CommonUtils.encryptQuery(UPLOAD_BIZ + "", uploadData));
 
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<List<UploadResults>>(new OnResultListener<List<UploadResults>>() {
             @Override
             public void onSuccess(List<UploadResults> result) {
-
-                if (result != null && result.size() > 0) {
-                    String toastData = "上传失败考生：";
-                    for (UploadResults uploadResults : result) {
-                        toastData += uploadResults.getStudentCode() + ",";
-                    }
-                    ToastUtils.showLong(toastData);
-                }
                 //更新上传状态
                 List<RoundResult> roundResultList = new ArrayList<>();
-                for (UploadResults uploadResults : uploadResultsList) {
+                for (UploadResults uploadResults : uploadData) {
                     if (result != null && result.contains(uploadResults)) {
                         continue;
                     }
@@ -557,10 +549,12 @@ public class HttpSubscriber {
                         roundResultList.add(roundResult);
                     }
                 }
+                Logger.i("setUploadResult===>" + pageNo + "   " + roundResultList.size() + "   更新成功");
                 DBManager.getInstance().updateRoundResult(roundResultList);
 
                 //是否是最一次上传，关闭加载窗
                 if (pageNo == pageSum - 1) {
+                    Logger.i("setUploadResult===>" + pageNo + " 上传成功");
                     ToastUtils.showShort("上传成功");
                     if (onRequestEndListener != null) {
                         onRequestEndListener.onSuccess(UPLOAD_BIZ);
@@ -568,6 +562,14 @@ public class HttpSubscriber {
 
                 } else {
                     setUploadResult(pageNo + 1, pageSum, uploadResultsList);
+                }
+
+                if (result != null && result.size() > 0) {
+                    String toastData = "上传失败考生：";
+                    for (UploadResults uploadResults : result) {
+                        toastData += uploadResults.getStudentCode() + ",";
+                    }
+                    ToastUtils.showLong(toastData);
                 }
             }
 

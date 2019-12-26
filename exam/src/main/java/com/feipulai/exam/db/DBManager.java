@@ -1236,6 +1236,7 @@ public class DBManager {
      */
     public void updateRoundResult(List<RoundResult> allScores) {
         roundResultDao.updateInTx(allScores);
+        roundResultDao.detachAll();
     }
 
     /**
