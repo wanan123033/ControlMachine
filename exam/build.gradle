@@ -123,4 +123,16 @@ dependencies {
     //    compile 'com.kelin.scrollablepanel:library:1.2.0'
     compile project(':libarcface')
     compile project(':uvccamerasdk')
+    compile project(':videolibrary')
+}
+configurations.all {
+    resolutionStrategy.eachDependency { details ->
+        def requested = details.requested
+        if (requested.group == 'com.android.support') {
+            if (!requested.name.startsWith("multidex")) {
+                //这里写你想统一的版本是多少
+                details.useVersion '26.0.1'
+            }
+        }
+    }
 }

@@ -13,7 +13,6 @@ public class RaceResultBean {
     private String itemCode;//
     private String itemName;//
     private String[] results;//不包含标题栏，{道次,姓名,最终成绩,第一圈,第二圈,第三圈,第四圈...}---成绩1ms值（存储数据用）
-//    private String[] resultsString;//包含标题栏，且全部为String,不需要转换（显示数据用）
     private int color;//颜色
     private int resultState;
     private String studentName;
@@ -28,15 +27,6 @@ public class RaceResultBean {
 
     public RaceResultBean() {
     }
-
-//    public String[] getResultsString() {
-//        return resultsString;
-//    }
-//
-//    public void setResultsString(String[] resultsString) {
-//        this.resultsString = resultsString;
-//    }
-
 
     public String getStudentName() {
         return studentName;
