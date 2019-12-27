@@ -20,6 +20,8 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
 
+import java.text.MessageFormat;
+
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 import static com.feipulai.exam.activity.medicineBall.MedicineConstant.CMD_MEDICINE_BALL_EMPTY;
@@ -199,9 +201,11 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
                 msg.what = MedicineConstant.GET_SCORE_RESPONSE;
                 mHandler.sendMessage(msg);
                 sendFree(result.getDeviceId());
-            } else if (result.getState() == 0) {
-                disposeDevice(result);
             }
+//            else if (result.getState() == 0) {
+//                disposeDevice(result);
+//            }
+            disposeDevice(result);
         }
 
         @Override
@@ -211,7 +215,10 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
 
         @Override
         public void onStarTest(int deviceId) {
-
+            Student student = deviceDetails.get(deviceId - 1).getStuDevicePair().getStudent();
+            if (student != null) {
+                toastSpeak(MessageFormat.format("请{0}开始测试", student.getStudentName()));
+            }
         }
     });
 

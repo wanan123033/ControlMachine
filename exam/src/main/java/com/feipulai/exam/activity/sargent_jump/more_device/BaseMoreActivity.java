@@ -88,7 +88,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     private void init() {
         mLEDManager = new LEDManager();
-        mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(),TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+        mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
         PrinterManager.getInstance().init();
         etInputText.setData(lvResults, this);
@@ -201,7 +201,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         }
         deviceDetails.get(index).setRound(roundResultList.size() + 1);
 
-        if (SettingHelper.getSystemSetting().getLedMode()==0){
+        if (SettingHelper.getSystemSetting().getLedMode() == 0) {
             int clertCount = 4 - deviceDetails.size();
             for (int i = clertCount; i >= 1; i--) {
                 mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), new byte[16], 0, i, false, true);
@@ -276,7 +276,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, "当前：", 0, 1, false, true);
 
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), student.getLEDStuName() + "   第" + deviceDetails.get(index).getRound() + "次", 0, 0, true, false);
-            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(),  "当前：", 0, 1, false, true);
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "当前：", 0, 1, false, true);
 
 
             RoundResult bestResult = DBManager.getInstance().queryBestScore(student.getStudentCode(), testNo);
@@ -293,10 +293,10 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                     e.printStackTrace();
                 }
                 mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, data, 0, 2, false, true);
-                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(),  data, 0, 2, false, true);
+                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 2, false, true);
             } else {
                 mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, "最好：", 0, 2, false, true);
-                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(),  "最好：", 0, 2, false, true);
+                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "最好：", 0, 2, false, true);
 
             }
         }
@@ -499,7 +499,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         if (detail.getRound() > timeResult.length)//防止
             return;
         //设置设备成绩
-        if (detail.getRound() - 1 < 0){
+        if (detail.getRound() - 1 < 0) {
             return;
         }
         timeResult[detail.getRound() - 1] = ((pair.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
@@ -520,6 +520,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 msg.what = pair.getBaseDevice().getDeviceId();
                 msg.obj = detail;
                 clearHandler.sendMessageDelayed(msg, 4000);
+                pair.setCanTest(true);
+                pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
                 return;
             }
             int count = detail.getRound();
@@ -548,7 +550,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             Message msg = new Message();
             msg.obj = pair;
             ledHandler.sendMessageDelayed(msg, 3000);
-            pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
+
 
         } else {
             detail.setRound(0);
@@ -560,10 +562,10 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
         deviceListAdapter.notifyItemChanged(index);
         pair.setCanTest(true);
+        pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
 //        pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
 
     }
-
 
 
     private void printResult(BaseStuPair baseStuPair, int index) {
@@ -741,7 +743,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     }
 
     private void broadResult(BaseStuPair baseStuPair) {
-        if (deviceCount> 1)
+        if (deviceCount > 1)
             return;
         if (SettingHelper.getSystemSetting().isAutoBroadcast()) {
             if (baseStuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) {
@@ -762,7 +764,6 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     }
 
 
-
     private void updateResultLed(BaseStuPair baseStu, int index) {
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
         String result = (baseStu.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
@@ -770,35 +771,46 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             int x = ResultDisplayUtils.getStringLength(result);
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 16 - x, index, false, true);
         } else {
-//            byte[] data = new byte[16];
-//            String str = "当前：";
-//            try {
-//                byte[] strData = str.getBytes("GB2312");
-//                System.arraycopy(strData, 0, data, 0, strData.length);
-//                byte[] resultData = result.getBytes("GB2312");
-//                System.arraycopy(resultData, 0, data, data.length - resultData.length - 1, resultData.length);
-//            } catch (UnsupportedEncodingException e) {
-//                e.printStackTrace();
-//            }
-            int length = ResultDisplayUtils.getStringLength(result);
-            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index, result, 15-length, 1, false, true);
-            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 15-length, 1, false, true);
+            byte[] data = new byte[16];
+            String str1 = "当前：";
+            try {
+                byte[] strData = str1.getBytes("GB2312");
+                System.arraycopy(strData, 0, data, 0, strData.length);
+                String res = (baseStu.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
+                byte[] resultData = res.getBytes("GB2312");
+                System.arraycopy(resultData, 0, data, data.length - resultData.length - 1, resultData.length);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index, data, 0, 1, false, true);
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 1, false, true);
 
             RoundResult bestResult = DBManager.getInstance().queryBestScore(baseStu.getStudent().getStudentCode(), testNo);
             int res = 0;
-            String data1 = "";
-            if (bestResult!= null){
+            String resultString = "";
+            if (bestResult != null) {
                 res = bestResult.getResult();
-                data1 = (bestResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(res);
+                resultString = (bestResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(res);
             }
-            if (baseStu.getResultState() == RoundResult.RESULT_STATE_NORMAL && baseStu.getResult()> res){
+            if (baseStu.getResultState() == RoundResult.RESULT_STATE_NORMAL && baseStu.getResult() > res) {
                 res = baseStu.getResult();
-                data1 = (baseStu.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(res);
+                resultString = (baseStu.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(res);
             }
 
-            int x = ResultDisplayUtils.getStringLength(data1);
-            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data1, 15-x, 2, false, true);
-            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index,data1, 15-x, 2, false, true);
+            data = new byte[16];
+            String str = "最好：";
+            try {
+                byte[] strData = str.getBytes("GB2312");
+                System.arraycopy(strData, 0, data, 0, strData.length);
+                byte[] resultData = resultString.getBytes("GB2312");
+                System.arraycopy(resultData, 0, data, data.length - resultData.length - 1, resultData.length);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index + 1, data, 0, 2, false, true);
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 2, false, true);
+
+
         }
     }
 

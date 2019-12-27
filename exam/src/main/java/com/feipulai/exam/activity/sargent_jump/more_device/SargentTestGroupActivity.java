@@ -56,6 +56,15 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        basicHeight = new int[sargentSetting.getSpDeviceCount()];
+        for (int i = 0; i < deviceState.length; i++) {
+            deviceState[i] = 0;
+        }
+    }
+
+    @Override
     public int setTestDeviceCount() {
         return sargentSetting.getSpDeviceCount();
     }

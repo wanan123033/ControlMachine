@@ -17,7 +17,6 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SystemBrightUtils;
 import com.feipulai.common.view.baseToolbar.StatusBarUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
-import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.udp.UdpLEDUtil;
@@ -101,15 +100,15 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                 roundResult.setStudentCode(student.getStudentCode());
                 String itemCode = TestConfigs.sCurrentItem.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : TestConfigs.sCurrentItem.getItemCode();
                 roundResult.setItemCode(itemCode);
-                roundResult.setResult(100 + i);
+                roundResult.setResult(1980 + i);
                 roundResult.setResultState(0);
                 roundResult.setTestTime(DateUtil.getCurrentTime() + "");
-                roundResult.setRoundNo(i);
+                roundResult.setRoundNo(i + 1);
                 roundResult.setTestNo(1);
                 roundResult.setExamType(0);
                 roundResult.setUpdateState(0);
                 roundResult.setIsLastResult(1);
-//                 roundResult.setScheduleNo("1");
+                roundResult.setScheduleNo("1");
                 if (i == 1) {
                     roundResult.setIsLastResult(1);
                 }
@@ -217,10 +216,10 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                 startActivity(new Intent(MainActivity.this, DataRetrieveActivity.class));
                 break;
             case R.id.card_print:
-                PrinterManager.getInstance().init();
-                PrinterManager.getInstance().selfCheck();
-                PrinterManager.getInstance().print("\n\n");
-//                addTestResult();
+//                PrinterManager.getInstance().init();
+//                PrinterManager.getInstance().selfCheck();
+//                PrinterManager.getInstance().print("\n\n");
+                addTestResult();
                 break;
             case R.id.card_parameter_setting:
                 startActivity(new Intent(MainActivity.this, SettingActivity.class));

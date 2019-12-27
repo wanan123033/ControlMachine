@@ -11,6 +11,8 @@ import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.PullUpSetFrequencyResult;
 import com.feipulai.device.serial.beans.SitPushUpSetFrequencyResult;
+import com.feipulai.device.serial.beans.VitalCapacityNewResult;
+import com.feipulai.device.serial.beans.VitalCapacityResult;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
 
@@ -76,8 +78,25 @@ public class SitPullLinker implements Handler.Callback {
             Log.i("james+++++", pushUpSetFrequencyResult.toString());
             checkDevice(pushUpSetFrequencyResult);
             return true;
+        }else if (machineCode == ItemDefault.CODE_FHL && what == SerialConfigs.VITAL_CAPACITY_SET_MORE_MATCH){
+            if (msg.obj instanceof VitalCapacityResult) {
+                VitalCapacityResult fhl = (VitalCapacityResult) msg.obj;
+                checkDevice(fhl);
+            } else if (msg.obj instanceof VitalCapacityNewResult) {
+                VitalCapacityNewResult fhl = (VitalCapacityNewResult) msg.obj;
+                checkDevice(fhl);
+            }
+            return true;
         }
         return false;
+    }
+
+    private void checkDevice(VitalCapacityResult result) {
+        checkDevice(result.getDeviceId(), result.getFrequency());
+    }
+
+    private void checkDevice(VitalCapacityNewResult result) {
+        checkDevice(result.getDeviceId(), result.getFrequency());
     }
 
     private void checkDevice(SitPushUpSetFrequencyResult result) {

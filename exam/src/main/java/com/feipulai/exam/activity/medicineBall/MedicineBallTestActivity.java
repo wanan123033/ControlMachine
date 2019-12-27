@@ -234,7 +234,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
             }
             setBegin(0);
             deviceState.setState(BaseDeviceState.STATE_ERROR);
-            updateDevice(deviceState);
+
 
 //            mHandler.sendEmptyMessageDelayed(DELAY,1000);
         } else {
@@ -253,7 +253,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
             }
         }
 
-
+        updateDevice(deviceState);
     }
 
 
