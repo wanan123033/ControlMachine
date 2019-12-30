@@ -335,8 +335,14 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
         if (ledMode == 0) {
             int x = ResultDisplayUtils.getStringLength(result);
-
-            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, x, index, false, true);
+            int len = ResultDisplayUtils.getStringLength(baseStu.getStudent().getStudentName());
+            StringBuilder sb = new StringBuilder();
+            sb.append(baseStu.getStudent().getStudentName());
+            for (int i = 0;i< (16-len-x);i++){
+                sb.append(" ");
+            }
+            sb.append(result);
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), sb.toString(), 0, index, false, true);
         }else {
             byte[] data = new byte[16];
             String str = "当前：";
@@ -550,4 +556,15 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     public abstract void gotoItemSetting();
 
     public abstract void sendTestCommand(BaseStuPair pair, int index);
+
+    @Override
+    public void finish() {
+        for (DeviceDetail deviceDetail :deviceDetails){
+            if (deviceDetail.getStuDevicePair().getStudent()!= null){
+                toastSpeak("测试中,不允许退出当前界面");
+                return;
+            }
+        }
+        super.finish();
+    }
 }

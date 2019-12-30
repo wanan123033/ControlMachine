@@ -70,9 +70,9 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
         ledType = SettingHelper.getSystemSetting().getLedVersion();
         rvMode.setVisibility(ledType == 0 ? View.VISIBLE : View.GONE);
 
-        ledMode = SettingHelper.getSystemSetting().getLedMode();
-        rvLed.setVisibility(ledMode == 0 ? View.GONE : View.VISIBLE);
-
+//        ledMode = SettingHelper.getSystemSetting().getLedMode();
+//        rvLed.setVisibility(ledMode == 0 ? View.GONE : View.VISIBLE);
+        rvLed.setVisibility(View.GONE);
         String[] strings = new String[]{"屏幕1连接", "屏幕2连接", "屏幕3连接", "屏幕4连接"};
         LedMoreAdapter adapter = new LedMoreAdapter(Arrays.asList(strings));
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
@@ -99,6 +99,7 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
         spShowMode.setAdapter(adapter);
         spShowMode.setSelection(ledMode == 0 ? 0 : 1);
         spShowMode.setOnItemSelectedListener(this);
+        spShowMode.setEnabled(false);
 
         String[] spinnerItems1 = {"4.1及以上", "4.1以下"};
         ArrayAdapter<String> adapter1 = new ArrayAdapter<>(this,
