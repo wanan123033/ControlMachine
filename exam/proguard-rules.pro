@@ -68,3 +68,7 @@ public static java.lang.String TABLENAME;
 public static java.lang.String TABLENAME;
 }
 -keep class **$Properties
+
+-keep public class * extends android.view.View{*;}
+
+-keep public class * implements com.kk.taurus.playerbase.player.IPlayer{*;}

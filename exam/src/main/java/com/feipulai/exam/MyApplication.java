@@ -10,6 +10,11 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.AdaptiveConfig;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.SharedPrefsConfigs;
+import com.kk.taurus.ijkplayer.IjkPlayer;
+import com.kk.taurus.playerbase.config.PlayerConfig;
+import com.kk.taurus.playerbase.config.PlayerLibrary;
+import com.kk.taurus.playerbase.record.PlayRecordManager;
+import com.kk.taurus.playerbase.window.WindowVideoView;
 
 
 public class MyApplication extends MultiDexApplication {
@@ -42,6 +47,19 @@ public class MyApplication extends MultiDexApplication {
 
         FileUtil.createAllFile();
         FileUtil.mkdirs(PATH_SPECIFICATION);
+
+        //视频播放初始化库
+        IjkPlayer.init(this);
+        //播放记录的配置
+        //开启播放记录
+        PlayerConfig.playRecord(true);
+        PlayRecordManager.setRecordConfig(
+                new PlayRecordManager.RecordConfig.Builder()
+                        .setMaxRecordCount(100)
+                        //.setRecordKeyProvider()
+                        //.setOnRecordCallBack()
+                        .build());
+
 ////        TODO 岭南IC
 //        AdaptiveConfig.initIC(AdaptiveConfig.LIN_NAN_SHI_FAN, AdaptiveConfig.DEFAULT, new char[]{0x73, 0x79, 0x6E, 0x70, 0x75, 0x62});
 

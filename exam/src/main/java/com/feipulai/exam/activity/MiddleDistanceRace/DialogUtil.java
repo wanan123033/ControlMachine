@@ -4,12 +4,21 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 
+import com.feipulai.exam.R;
+
 /**
  * created by ww on 2019/6/21.
  */
 public class DialogUtil {
 
-    private static AlertDialog dialog;
+    private Context context;
+    private AlertDialog.Builder builder;
+
+    public DialogUtil(Context context) {
+        this.context = context;
+    }
+
+    private AlertDialog dialog;
 
     public interface DialogListener {
         void onPositiveClick();
@@ -17,9 +26,8 @@ public class DialogUtil {
         void onNegativeClick();
     }
 
-
-    public static void showCommonDialog(Context context, String notice, final DialogListener dialogListener) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context).setTitle("提示")
+    public void showCommonDialog(String notice, int bitmapId, final DialogListener dialogListener) {
+        builder = new AlertDialog.Builder(context).setTitle("提示").setIcon(bitmapId)
                 .setMessage(notice).setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -33,10 +41,11 @@ public class DialogUtil {
                     }
                 });
         dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false);
         dialog.show();
     }
 
-    public static void dismiss() {
+    public void dismiss() {
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
             dialog = null;

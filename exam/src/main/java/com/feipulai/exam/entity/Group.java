@@ -44,7 +44,7 @@ public class Group {
 
     private String colorGroupName;//中长跑专用---颜色组名
     private String colorId;//中长跑专用---颜色
-    private String remark1;
+    private String remark1;//中长跑发令时刻
     private String remark2;
     private String remark3;
 

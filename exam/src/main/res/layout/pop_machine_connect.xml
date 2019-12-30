@@ -48,40 +48,54 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="主机IP地址："
-            android:textSize="16sp" />
+            android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/et_machine_ip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/edit_search_bg"
-            android:textSize="16sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="主机IP地址："
+                android:textSize="16sp" />
 
-        <TextView
+            <EditText
+                android:id="@+id/et_machine_ip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_search_bg3"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="主机端口号："
-            android:textSize="16sp" />
+            android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/et_machine_port"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/edit_search_bg2"
-            android:inputType="number"
-            android:textSize="16sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="主机端口号："
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/et_machine_port"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_search_bg2"
+                android:inputType="number"
+                android:textSize="16sp" />
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/tv_server_ip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="服务器："
+            android:text="起点上道服务器："
             android:textSize="16sp" />
 
         <EditText
@@ -93,6 +107,26 @@
             android:inputType="number"
             android:paddingStart="5dp"
             android:textSize="16sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="摄像头IP：  "
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/et_camera_ip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_search_bg3"
+                android:textSize="16sp" />
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -140,6 +174,15 @@
             android:layout_marginTop="20dp"
             android:background="@drawable/btn_background"
             android:text="开启服务器"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+        <Button
+            android:id="@+id/btn_start_camera"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/btn_background"
+            android:text="连接摄像头"
             android:textColor="@color/white"
             android:textSize="16sp" />
 

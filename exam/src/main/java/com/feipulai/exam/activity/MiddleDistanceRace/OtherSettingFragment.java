@@ -103,6 +103,7 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
     private boolean isAddFlag = true;//判断是否是编辑还是新增的标识
     private EditText mEditText;
     private AlertDialog nameFileDialog;
+    private DialogUtil dialogUtil;
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.frag_other_setting, container, false);
@@ -114,6 +115,7 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
 
 
     private void initEvent() {
+        dialogUtil = new DialogUtil(mContext);
         colorGroups = new ArrayList<>();
         chipNo = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, VEST_CHIP_NO, 2);
 
@@ -183,7 +185,7 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
         final Intent intent = new Intent();
         switch (view.getId()) {
             case R.id.btn_clear_chip:
-                DialogUtil.showCommonDialog(mContext, "是否清空芯片及颜色组所有信息", new DialogUtil.DialogListener() {
+                dialogUtil.showCommonDialog("是否清空芯片及颜色组所有信息", android.R.drawable.ic_dialog_info, new DialogUtil.DialogListener() {
                     @Override
                     public void onPositiveClick() {
                         ((MiddleRaceSettingActivity) getActivity()).setChange(true);
@@ -217,7 +219,7 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
                 mCirclePop.showAtLocation(mView, Gravity.CENTER, 0, 0);
                 break;
             case R.id.btn_import_chip:
-                DialogUtil.showCommonDialog(mContext, "当前所有芯片分组及颜色组将删除", new DialogUtil.DialogListener() {
+                dialogUtil.showCommonDialog("当前所有芯片分组及颜色组将删除", android.R.drawable.ic_dialog_info, new DialogUtil.DialogListener() {
                     @Override
                     public void onPositiveClick() {
                         DBManager.getInstance().deleteAllChip();
@@ -550,7 +552,7 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
         } else {
             text = "是否删除" + groupName + "组";
         }
-        DialogUtil.showCommonDialog(mContext, text, new DialogUtil.DialogListener() {
+        dialogUtil.showCommonDialog(text, android.R.drawable.ic_dialog_info, new DialogUtil.DialogListener() {
             @Override
             public void onPositiveClick() {
                 ((MiddleRaceSettingActivity) getActivity()).setChange(true);
