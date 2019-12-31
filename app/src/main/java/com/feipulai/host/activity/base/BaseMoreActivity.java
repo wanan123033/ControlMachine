@@ -213,6 +213,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         deviceDetails.get(pos).getStuDevicePair().setStudent(null);
         deviceDetails.get(pos).getStuDevicePair().setCanTest(true);
         deviceDetails.get(pos).getStuDevicePair().setTimeResult(new String[setTestCount()]);
+        deviceDetails.get(pos).getStuDevicePair().setCanTest(true);
         deviceListAdapter.notifyItemChanged(pos);
     }
 

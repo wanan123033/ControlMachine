@@ -31,8 +31,9 @@ public class BaseActivity extends FragmentActivity {
 
     private String mActivityName;
     public int machineCode;
-//    public int hostId;
-private long lastBroadcastTime;
+    //    public int hostId;
+    private long lastBroadcastTime;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 //        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -109,6 +110,7 @@ private long lastBroadcastTime;
             }
         });
     }
+
     public void toastSpeak(final String speakMsg, final String toastMsg) {
         runOnUiThread(new Runnable() {
             @Override
@@ -124,6 +126,7 @@ private long lastBroadcastTime;
             }
         });
     }
+
     protected static class MyHandler extends Handler {
 
         private WeakReference<BaseActivity> mWeakReference;
