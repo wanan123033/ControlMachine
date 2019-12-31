@@ -417,6 +417,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         printResult(pair);
 //        broadResult(pair);
         detail.setRound(detail.getRound() + 1);
+        pair.setCanTest(true);
         if (detail.getRound() < setTestCount()) {
             if (pair.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
                 //测试结束学生清除 ，设备设置空闲状态
