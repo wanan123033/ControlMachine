@@ -332,6 +332,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     }
 
     private void updateResultLed(BaseStuPair baseStu, int index) {
+        if (baseStu.getStudent() == null)
+            return;
         String result = ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
         if (ledMode == 0) {
@@ -454,6 +456,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         if (!SettingHelper.getSystemSetting().isAutoPrint())
             return;
         Student student = baseStuPair.getStudent();
+        if (student == null)
+            return;
 //        PrinterManager.getInstance().print(" \n");
         PrinterManager.getInstance().print(
                 String.format(getString(R.string.host_name), TestConfigs.sCurrentItem.getItemName(), SettingHelper.getSystemSetting().getHostId()));

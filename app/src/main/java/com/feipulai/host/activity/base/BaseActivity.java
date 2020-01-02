@@ -91,6 +91,7 @@ public class BaseActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         ActivityCollector.getInstance().onDestroy(this);
         Logger.d(mActivityName + ".onDestroy");
     }
