@@ -72,6 +72,7 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_LDTY, StandJumpTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_ZFP, RunTimerTestActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_WLJ, VitalTestActivity.class);
 
         TestConfigs.freedomActivity.put(ItemDefault.CODE_LDTY, StandJumpFreedomActivity.class);
         TestConfigs.freedomActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallFreeTestActivity.class);
@@ -87,6 +88,7 @@ public class TestConfigs {
         TestConfigs.machineNameMap.put(ItemDefault.CODE_FHL, MyApplication.getInstance().getString(R.string.vital_capacity));
         TestConfigs.machineNameMap.put(ItemDefault.CODE_HWSXQ, MyApplication.getInstance().getString(R.string.medicine_ball));
         TestConfigs.machineNameMap.put(ItemDefault.CODE_ZFP, MyApplication.getInstance().getString(R.string.run_time));
+        TestConfigs.machineNameMap.put(ItemDefault.CODE_WLJ, MyApplication.getInstance().getString(R.string.grip_meter));
 
         // 每个机器码对应的机器名称
         TestConfigs.itemMinScope.put(ItemDefault.CODE_ZWTQQ, -200);

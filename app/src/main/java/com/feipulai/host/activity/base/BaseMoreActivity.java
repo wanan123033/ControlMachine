@@ -19,9 +19,11 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.host.R;
+import com.feipulai.host.activity.grip_dynamometer.pair.GripPairActivity;
 import com.feipulai.host.activity.jump_rope.base.InteractUtils;
 import com.feipulai.host.activity.setting.LEDSettingActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
@@ -276,7 +278,12 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 startActivity(new Intent(this, LEDSettingActivity.class));
                 break;
             case R.id.tv_device_pair:
-                startActivity(new Intent(this, VcPairActivity.class));
+                if (machineCode == ItemDefault.CODE_WLJ){
+                    startActivity(new Intent(this, GripPairActivity.class));
+                }else {
+                    startActivity(new Intent(this, VcPairActivity.class));
+                }
+
                 break;
         }
     }

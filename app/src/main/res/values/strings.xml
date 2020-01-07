@@ -17,6 +17,7 @@
     <string name="medicine_ball">红外实心球</string>
     <string name="sit_up">仰卧起坐</string>
     <string name="run_time">红外计时</string>
+    <string name="grip_meter">握力计</string>
     <!--标题-->
     <string name="machine_select_title">设备切换</string>
     <string name="led_setting_title">显示屏设置</string>

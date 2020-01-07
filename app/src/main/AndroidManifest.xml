@@ -97,6 +97,7 @@
         <activity android:name=".activity.radio_timer.RunTimerSettingActivity" />
         <activity android:name=".activity.vccheck.VitalTestActivity" />
         <activity android:name=".activity.radio_timer.RunTimerFreeTestActivity" />
+        <activity android:name=".activity.grip_dynamometer.pair.GripPairActivity" />
     </application>
 
 </manifest>

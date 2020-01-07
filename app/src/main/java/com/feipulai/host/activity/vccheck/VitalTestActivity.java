@@ -5,6 +5,8 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 
+import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.command.ConvertCommand;
@@ -102,6 +104,11 @@ public class VitalTestActivity extends BaseMoreActivity {
             sum += data[i];
         }
         data[16] = (byte) sum;
+        if (MachineCode.machineCode == ItemDefault.CODE_WLJ){
+            data[2] = 0x0c;
+        }else {
+            data[2] = 0x09;
+        }
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
     }
 

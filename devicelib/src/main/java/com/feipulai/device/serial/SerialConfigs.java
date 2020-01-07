@@ -38,6 +38,7 @@ public class SerialConfigs {
         sProChannels.put(ItemDefault.CODE_ZFP, 41);//红外计时
         sProChannels.put(ItemDefault.CODE_LQYQ, 85);//篮球运球
         sProChannels.put(ItemDefault.CODE_ZQYQ, 95);//足球运球
+        sProChannels.put(ItemDefault.CODE_WLJ, 101);//握力计
     }
 
     public static final String[] GROUP_NAME = {"A", "B", "C"};
@@ -229,6 +230,7 @@ public class SerialConfigs {
     public static final int GPS_TIME_RESPONSE = 0x38;
     public static final int SARGENT_JUMP_SET_MORE_MATCH = 0x39;
     public static final int VOLLEY_BALL_SET_MORE_MATCH = 0x40;
+    //肺活量
     public static final int VITAL_CAPACITY_SET_MORE_MATCH = 0x41;
     public static final int VOLLEY_BALL_CHECK_MATCH = 0x42;
     public static int USE_VERSION = 363;//肺活量新版本为及以后为363
@@ -269,4 +271,7 @@ public class SerialConfigs {
     public static final int STAND_JUMP_GET_STATE = 0x64;
     public static final int STAND_JUMP_CHECK = 0x65;
     public static final int STAND_JUMP_SET_POINTS= 0x66;
+
+    //握力计
+    public static final int GRIP_SET_MORE_MATCH = 0x70;
 }
