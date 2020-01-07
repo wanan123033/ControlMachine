@@ -14,6 +14,11 @@ public class GetDeviceStatesTask implements Runnable {
     private volatile boolean mIsFinished;
     private OnGettingDeviceStatesListener listener;
     private volatile boolean mIsGettingHandState;
+    private int loopCount = 5;
+
+    public void setLoopCount(int loopCount) {
+        this.loopCount = loopCount;
+    }
 
     public GetDeviceStatesTask(OnGettingDeviceStatesListener listener) {
         this.listener = listener;
@@ -40,7 +45,7 @@ public class GetDeviceStatesTask implements Runnable {
         int deviceCount;
         try {
             while (!mIsFinished) {
-                for (i = 0; i < 3; i++) {
+                for (i = 0; i < loopCount; i++) {
                     deviceCount = listener.getDeviceCount();
                     for (j = 0; j < deviceCount; j++) {
 

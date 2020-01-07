@@ -2,7 +2,6 @@ package com.feipulai.common.jump_rope.task;
 
 import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.device.led.LEDManager;
-import com.feipulai.device.manager.JumpRopeManager;
 
 /**
  * Created by James on 2018/8/14 0014.
@@ -23,15 +22,12 @@ public class GetReadyCountDownTimer extends PreciseCountDownTimer{
 	
 	@Override
 	public void onTick(long tick){
-		
-		if(listener != null){
-			listener.beforeTick(tick);
-		}
-		
 		if(tick <= 5){
 			SoundPlayUtils.play((int)tick);
 		}
-		
+		if(listener != null){
+			listener.beforeTick(tick);
+		}
 		StringBuilder showSB = new StringBuilder();
 		for(int j = 0;j < 5;j++){
 			showSB.append(j < tick ? "●" : "○");

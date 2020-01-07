@@ -85,6 +85,7 @@ public class RunTimerDisposeManager {
         roundResult.setExamType(studentItem.getExamType());
         roundResult.setScheduleNo(studentItem.getScheduleNo());
         roundResult.setUpdateState(0);
+        roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
         RoundResult bestResult = DBManager.getInstance().queryBestScore(student.getStudentCode(), testNo);
         if (bestResult != null) {
             // 原有最好成绩犯规 或者原有最好成绩没有犯规但是现在成绩更好 //跑步时间越短越好
@@ -134,6 +135,7 @@ public class RunTimerDisposeManager {
         roundResult.setExamType(group.getExamType());
         roundResult.setScheduleNo(group.getScheduleNo());
         roundResult.setUpdateState(0);
+        roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
         RoundResult bestResult = DBManager.getInstance().queryGroupBestScore(student.getStudentCode(), group.getId());
         if (bestResult != null) {
             // 原有最好成绩犯规 或者原有最好成绩没有犯规但是现在成绩更好

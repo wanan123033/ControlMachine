@@ -16,8 +16,8 @@ import java.io.Serializable;
 @Entity
 public class RoundResult implements Serializable {
 
-	public static final int NOT_LAST_RESULT = 0;
-	public static final int LAST_RESULT = 1;
+    public static final int NOT_LAST_RESULT = 0;
+    public static final int LAST_RESULT = 1;
     public static final long DEAFULT_GROUP_ID = -1;
     public static final int RESULT_STATE_NORMAL = 1;
     public static final int RESULT_STATE_FOUL = 2;
@@ -52,24 +52,31 @@ public class RoundResult implements Serializable {
     @NotNull
     private String testTime;//测试时间  时间戳
     private String printTime;//打印时间 时间戳
-	private int stumbleCount;// 绊绳次数
+    private int stumbleCount;// 绊绳次数
     @NotNull
     private int updateState;//上传状态 0未上传 1上传
     private byte[] cycleResult;//中长跑每一圈成绩
     private Long groupId = DEAFULT_GROUP_ID;//分组id
     private String scheduleNo;  //日程编号
+    private String mtEquipment;//监控设备
     private String remark1;
     private String remark2;
     private String remark3;
 
     public final static String BEAN_KEY = "ROUNDRESULT_KEY";
 
-    @Generated(hash = 1013509578)
+
+
+    @Generated(hash = 1393632943)
+    public RoundResult() {
+    }
+
+    @Generated(hash = 118790176)
     public RoundResult(Long id, @NotNull String studentCode, @NotNull String itemCode, int machineCode,
             int roundNo, int testNo, int machineResult, int penaltyNum, int result, int resultState,
             int isLastResult, int examType, @NotNull String testTime, String printTime,
             int stumbleCount, int updateState, byte[] cycleResult, Long groupId, String scheduleNo,
-            String remark1, String remark2, String remark3) {
+            String mtEquipment, String remark1, String remark2, String remark3) {
         this.id = id;
         this.studentCode = studentCode;
         this.itemCode = itemCode;
@@ -89,13 +96,10 @@ public class RoundResult implements Serializable {
         this.cycleResult = cycleResult;
         this.groupId = groupId;
         this.scheduleNo = scheduleNo;
+        this.mtEquipment = mtEquipment;
         this.remark1 = remark1;
         this.remark2 = remark2;
         this.remark3 = remark3;
-    }
-
-    @Generated(hash = 1393632943)
-    public RoundResult() {
     }
 
     public Long getId() {
@@ -272,6 +276,14 @@ public class RoundResult implements Serializable {
 
     public void setRemark3(String remark3) {
         this.remark3 = remark3;
+    }
+
+    public String getMtEquipment() {
+        return mtEquipment;
+    }
+
+    public void setMtEquipment(String mtEquipment) {
+        this.mtEquipment = mtEquipment;
     }
 
     @Override

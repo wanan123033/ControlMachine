@@ -242,13 +242,54 @@
                     android:background="@drawable/icon_spinner_bg" />
             </LinearLayout>
 
-
-
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_40"
                 android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/style_setting_tv_title"
+                    android:text="监控绑定:" />
+
+                <LinearLayout
+                    android:layout_width="435dp"
+                    android:layout_height="35dp"
+                    android:gravity="right|center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="1dp">
+
+                    <TextView
+                        android:id="@+id/btn_monitoring_setting"
+                        style="@style/style_setting_tv_title"
+                        android:layout_width="100dp"
+                        android:layout_marginLeft="15dp"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:padding="1dp"
+                        android:text="绑定设置"
+                        android:textColor="@color/colorPrimaryDark" />
+
+                    <CheckBox
+                        android:id="@+id/cb_monitoring"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="40dp"
+                        android:button="@drawable/checkbox_switch_selected" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <View
+                style="@style/divider_gray_horizontal_style"
+                android:layout_marginTop="8dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal">
 
                 <TextView

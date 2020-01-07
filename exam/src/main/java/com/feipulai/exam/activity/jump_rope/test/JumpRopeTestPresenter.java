@@ -39,12 +39,12 @@ public class JumpRopeTestPresenter
     protected int getCountStartTime() {
         return JumpRopeManager.DEFAULT_COUNT_DOWN_TIME;
     }
-    
+
     @Override
     protected int getCountFinishTime() {
         return 10;
     }
-    
+
     @Override
     protected JumpRopeSetting getSetting() {
         return setting;
@@ -67,8 +67,17 @@ public class JumpRopeTestPresenter
 
     @Override
     protected void testCountDown(long tick) {
-        deviceManager.countDown(systemSetting.getHostId(), setting.getDeviceGroup() + 1, (int) tick, setting.getTestTime());
+        if (tick == 1) {
+            for (int i = 0; i < 10; i++) {
+                deviceManager.countDown(systemSetting.getHostId(), setting.getDeviceGroup() + 1, 1, setting.getTestTime());
+            }
+        } else {
+            deviceManager.countDown(systemSetting.getHostId(), setting.getDeviceGroup() + 1, (int) tick, setting.getTestTime());
+        }
+
+
     }
+
 
     @Override
     public void changeBadDevice() {
@@ -83,12 +92,12 @@ public class JumpRopeTestPresenter
         mLinking = false;
         facade.resumeGettingState();
     }
-    
+
     class LinkTask implements Runnable {
         @Override
         public void run() {
             while (mLinking) {
-                deviceManager.link(systemSetting.getUseChannel(),systemSetting.getHostId(), focusPosition + 1, 0x06, setting.getDeviceGroup() + 1);
+                deviceManager.link(systemSetting.getUseChannel(), systemSetting.getHostId(), focusPosition + 1, 0x06, setting.getDeviceGroup() + 1);
             }
         }
     }
@@ -132,11 +141,11 @@ public class JumpRopeTestPresenter
                 || originState.getState() == BaseDeviceState.STATE_STOP_USE) {
             return;
         }
-    
+
         // WAIT_BGIN 和 TEST_COUNTING 状态没有成绩
         if (testState == WAIT_BGIN || testState == TEST_COUNTING) {
             pair.setDeviceResult(null);
-        }else if (pair.getStudent() != null) {
+        } else if (pair.getStudent() != null) {
             IDeviceResult deviceResult = pair.getDeviceResult();
             int res = deviceResult == null ? 0 : deviceResult.getResult();
             // 成绩只能增加
@@ -163,6 +172,9 @@ public class JumpRopeTestPresenter
         originState.setState(newState);
         view.updateSpecificItem(piv);
         currentConnect[deviceId]++;
+        if (testState == WAIT_MACHINE_RESULTS || testState == WAIT_CONFIRM_RESULTS) {
+            endGetResultPairs[deviceId]++;
+        }
     }
 
     @Override

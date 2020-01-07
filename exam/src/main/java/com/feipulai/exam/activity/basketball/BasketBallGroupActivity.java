@@ -634,6 +634,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         roundResult.setTestTime(testDate);
         roundResult.setGroupId(group.getId());
         roundResult.setUpdateState(0);
+        roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
         // 重新判断最好成绩
         RoundResult bestResult = InteractUtils.getBestResult(TestCache.getInstance().getResults().get(student));
         // Log.i("james", "\nroundResult:" + roundResult.toString());
@@ -820,6 +821,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                     roundResult.setScheduleNo(group.getScheduleNo());
                     roundResult.setUpdateState(0);
                     roundResult.setGroupId(group.getId());
+                    roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
                     DBManager.getInstance().insertRoundResult(roundResult);
                     resultList.get(i).setResult(0);
                     resultAdapter.notifyDataSetChanged();

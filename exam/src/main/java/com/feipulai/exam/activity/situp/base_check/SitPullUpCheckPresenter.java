@@ -107,7 +107,7 @@ public abstract class SitPullUpCheckPresenter<Setting>
 
     private void setState(int deviceId, int deviceState, int batteryLeft) {
         if (deviceId > getDeviceSumFromSetting()
-                || mCurrentConnect[deviceId] != 0 // 状态没变,一直是连接的
+
                 ) {
             return;
         }
@@ -118,6 +118,7 @@ public abstract class SitPullUpCheckPresenter<Setting>
         }
 
         BaseDeviceState originState = pairs.get(deviceId - 1).getBaseDevice();
+        originState.setDisconnectCount(0);
         if (originState.getState() == BaseDeviceState.STATE_STOP_USE) {
             return;
         }

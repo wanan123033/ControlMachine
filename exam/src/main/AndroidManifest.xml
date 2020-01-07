@@ -219,7 +219,9 @@
         <activity android:name=".activity.volleyball.more_devices.VolleyBallMoreTestActivity" />
         <activity android:name=".activity.medicineBall.MedicineBallSelectActivity" />
         <activity android:name=".activity.volleyball.VolleyBallIndividualActivity" />
-
+        <activity
+            android:name=".activity.setting.MonitoringBindActivity"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.explain.ExplainActivity"
             android:windowSoftInputMode="stateHidden" />

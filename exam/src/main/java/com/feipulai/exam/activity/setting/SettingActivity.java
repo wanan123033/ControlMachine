@@ -20,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.feipulai.common.utils.AudioUtil;
+import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -82,6 +83,8 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     EditText editCustomChannel;
     @BindView(R.id.cb_custom_channel)
     CheckBox cbCustomChannel;
+    @BindView(R.id.cb_monitoring)
+    CheckBox cbMonitoring;
     private String[] partternList = new String[]{"个人测试", "分组测试"};
     private List<Integer> hostIdList;
     private SystemSetting systemSetting;
@@ -179,6 +182,8 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
 
         editCustomChannel.setText(systemSetting.getChannel() + "");
         cbCustomChannel.setChecked(systemSetting.isCustomChannel());
+
+        cbMonitoring.setChecked(systemSetting.isBindMonitoring());
     }
 
     @Nullable
@@ -214,31 +219,36 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     }
 
     @OnClick({R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting
-            , R.id.txt_advanced, R.id.sw_identity_mark, R.id.sw_add_student, R.id.cb_route, R.id.cb_custom_channel})
+            , R.id.txt_advanced, R.id.sw_identity_mark, R.id.sw_add_student, R.id.cb_route, R.id.cb_custom_channel, R.id.cb_monitoring, R.id.btn_monitoring_setting})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-
-            case R.id.sw_auto_broadcast:
+            case R.id.cb_monitoring: //绑定监控
+                systemSetting.setBindMonitoring(cbMonitoring.isChecked());
+                break;
+            case R.id.btn_monitoring_setting:
+                IntentUtil.gotoActivity(this, MonitoringBindActivity.class);
+                break;
+            case R.id.sw_auto_broadcast://自己播报
                 systemSetting.setAutoBroadcast(mSwAutoBroadcast.isChecked());
                 break;
-            case R.id.sw_rt_upload:
+            case R.id.sw_rt_upload://自动上传
                 systemSetting.setRtUpload(mSwRtUpload.isChecked());
                 break;
 
-            case R.id.sw_auto_print:
+            case R.id.sw_auto_print://自动打印
                 systemSetting.setAutoPrint(mSwAutoPrint.isChecked());
                 break;
 
             case R.id.sw_identity_mark:
                 systemSetting.setIdentityMark(mSwIdentityMark.isChecked());
                 break;
-            case R.id.sw_add_student:
+            case R.id.sw_add_student://添加考生
                 systemSetting.setTemporaryAddStu(mSwAddStudent.isChecked());
                 break;
-            case R.id.cb_custom_channel:
+            case R.id.cb_custom_channel://自定义信道
                 systemSetting.setCustomChannel(cbCustomChannel.isChecked());
                 break;
-            case R.id.btn_bind:
+            case R.id.btn_bind://登录
                 gotoLogin();
                 break;
 

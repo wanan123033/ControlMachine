@@ -35,7 +35,6 @@ import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LoginActivity;
-import com.feipulai.exam.activity.MiddleDistanceRace.DialogUtil;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.adapter.IndexTypeAdapter;
@@ -744,7 +743,7 @@ public class DataManageActivity
         boolean autoBackup = backupManager.autoBackup();
         Logger.i(autoBackup ? "自动备份成功" : "自动备份失败");
         DBManager.getInstance().clear();
-        com.feipulai.common.utils.SharedPrefsUtil.putValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
+        SharedPrefsUtil.putValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
         DBManager.getInstance().initDB();
         TestConfigs.init(this, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), null);
         Logger.i("数据清空完成");

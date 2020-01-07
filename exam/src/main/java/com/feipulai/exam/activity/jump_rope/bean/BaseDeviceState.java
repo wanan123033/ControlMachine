@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class BaseDeviceState implements Serializable {
 
     private static final long serialVersionUID = 5136286117736499597L;
-    
+
     // 设备状态(空闲,断开,低电量,冲突,暂停使用),这里的状态只
     // 与recyclerview的显示有关,不是设备发送回来的状态
     // 在设置adapter之前要将设备用于显示的状态确定
@@ -25,6 +25,9 @@ public class BaseDeviceState implements Serializable {
     //设备ID
     private int deviceId;
 
+
+    private int disconnectCount = 0;
+
     public BaseDeviceState() {
     }
 
@@ -32,7 +35,7 @@ public class BaseDeviceState implements Serializable {
         this.state = state;
     }
 
-    public BaseDeviceState(int state,int deviceId) {
+    public BaseDeviceState(int state, int deviceId) {
         this.state = state;
         this.deviceId = deviceId;
     }
@@ -53,6 +56,14 @@ public class BaseDeviceState implements Serializable {
         this.deviceId = deviceId;
     }
 
+    public int getDisconnectCount() {
+        return disconnectCount;
+    }
+
+    public void setDisconnectCount(int disconnectCount) {
+        this.disconnectCount = disconnectCount;
+    }
+
     @Override
     public String toString() {
         return "BaseDeviceState{" +
@@ -60,5 +71,5 @@ public class BaseDeviceState implements Serializable {
                 ", deviceId=" + deviceId +
                 '}';
     }
-    
+
 }

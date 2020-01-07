@@ -4,6 +4,8 @@ import android.text.TextUtils;
 
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.RoundResult;
 
 import java.io.Serializable;
 import java.util.List;
@@ -26,6 +28,9 @@ public class UploadResults implements Serializable {
     public final static String BEAN_KEY = "UploadResults_KEY";
     //打印成绩使用
     private long groupId;
+    private int result;
+    private String testTime;
+    private int resultStatus;
 
     public long getGroupId() {
         return groupId;
@@ -35,9 +40,6 @@ public class UploadResults implements Serializable {
         this.groupId = groupId;
     }
 
-    public UploadResults() {
-    }
-
     public UploadResults(String siteScheduleNo, String itemCode, String studentCode, String testNum, String groupNo, List<RoundResultBean> roundResultList) {
         this.siteScheduleNo = siteScheduleNo;
         this.examItemCode = itemCode;
@@ -45,6 +47,19 @@ public class UploadResults implements Serializable {
         this.testNum = testNum;
         this.groupNo = groupNo;
         this.roundResultList = roundResultList;
+        RoundResult lastResult;
+        if (TestConfigs.sCurrentItem.getLastResultMode() == 1) {
+            //最后
+            lastResult = DBManager.getInstance().queryBestFinallyScore(studentCode, Integer.valueOf(testNum));
+        } else {
+            //最好的
+            lastResult = DBManager.getInstance().queryBestScore(studentCode, Integer.valueOf(testNum));
+        }
+        if (lastResult != null) {
+            this.result = lastResult.getResult();
+            this.resultStatus = lastResult.getResultState();
+            this.testTime = lastResult.getTestTime();
+        }
     }
 
     public String getSiteScheduleNo() {

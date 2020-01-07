@@ -43,9 +43,10 @@ public abstract class AbstractRadioCheckPresenter<Setting>
     protected SystemSetting systemSetting;
     protected Setting setting;
     protected int focusPosition;
-    protected final int TARGET_FREQUENCY =  SettingHelper.getSystemSetting().getUseChannel();
+    protected final int TARGET_FREQUENCY = SettingHelper.getSystemSetting().getUseChannel();
     protected int[] mCurrentConnect;
     protected volatile boolean mLinking;
+    protected boolean isConstraintStart = false;// 是否强制启动
 
     public AbstractRadioCheckPresenter(Context context, RadioCheckContract.View<Setting> view) {
         this.view = view;
@@ -70,7 +71,12 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         RadioManager.getInstance().setOnRadioArrived(this);
         RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(TARGET_FREQUENCY)));
         facade = new GetStateLedFacade(this);
+        facade.setmGetDeviceStatesLoopCount(getDeviceStatesLoopCount());
         facade.resume();
+    }
+
+    public int getDeviceStatesLoopCount() {
+        return 5;
     }
 
     protected abstract Setting getSetting();
@@ -178,8 +184,11 @@ public abstract class AbstractRadioCheckPresenter<Setting>
                         contaisLowBattery = true;
                     }
                 } else {
-                    view.showToast("存在考生设备为非空闲状态");
-                    return;
+                    if (!isConstraintStart) {
+                        view.showToast("存在考生设备为非空闲状态");
+                        isConstraintStart = true;
+                    }
+
                 }
             }
         }
@@ -190,6 +199,11 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         students = TestCache.getInstance().getAllStudents();
         if (students == null || students.size() == 0) {
             view.showToast("不存在已配对好的考生和设备");
+            return;
+        }
+        if (isConstraintStart) {
+            view.showConstraintStartDialog(contaisLowBattery);
+            isConstraintStart = false;
             return;
         }
         if (contaisLowBattery) {
