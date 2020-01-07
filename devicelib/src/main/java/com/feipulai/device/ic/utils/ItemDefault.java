@@ -34,6 +34,7 @@ public class ItemDefault {
     public static final int CODE_TJZ = 20;    //踢毽子
     public static final int CODE_YY = 21;        //游泳
     public static final int CODE_GPS = 0xff;
+    public static final int CODE_WLJ = 22;//握力计
 
 
     public static char[] keyA = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};//默认密码
@@ -59,6 +60,7 @@ public class ItemDefault {
         HOST_IDS_MAP.put(ItemDefault.CODE_LQYQ, 10);
         HOST_IDS_MAP.put(ItemDefault.CODE_ZQYQ, 10);
         HOST_IDS_MAP.put(ItemDefault.CODE_ZCP, 15);
+        HOST_IDS_MAP.put(ItemDefault.CODE_WLJ, 10);
 
     }
 
