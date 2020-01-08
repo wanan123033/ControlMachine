@@ -17,12 +17,15 @@ import com.hikvision.netsdk.NET_DVR_CONFIG;
 import com.hikvision.netsdk.NET_DVR_DEVICEINFO_V30;
 import com.hikvision.netsdk.NET_DVR_IPPARACFG_V40;
 import com.hikvision.netsdk.NET_DVR_PREVIEWINFO;
+import com.hikvision.netsdk.NET_DVR_SDKLOCAL_CFG;
 import com.hikvision.netsdk.NET_DVR_TIME;
 import com.ww.fpl.videolibrary.play.util.PUtil;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * created by ww on 2019/12/20.
@@ -162,6 +165,7 @@ public class HkCameraManager {
         }
     }
 
+    //开始单通道预览
     private void startSinglePreview() {
         Log.i(TAG, "m_iStartChan:" + m_iStartChan);
         NET_DVR_PREVIEWINFO previewInfo = new NET_DVR_PREVIEWINFO();
@@ -169,7 +173,6 @@ public class HkCameraManager {
         previewInfo.dwStreamType = 0; // main stream
         previewInfo.bBlocked = 1;
         previewInfo.hHwnd = playView[0].getHolder();
-
 
         m_iPlayID = HCNetSDK.getInstance().NET_DVR_RealPlay_V40(m_iLogID, previewInfo, null);
         if (m_iPlayID < 0) {
@@ -319,6 +322,7 @@ public class HkCameraManager {
 
     }
 
+    //更改预览位置
     public void ChangeSurFace_Left() {
         if (m_iLogID < 0) {
             Log.e(TAG, "please login on device first");
@@ -345,6 +349,7 @@ public class HkCameraManager {
 
     }
 
+    //更改预览位置
     public void ChangeSurFace_Center() {
         if (m_iLogID < 0) {
             Log.e(TAG, "please login on device first");
@@ -384,8 +389,9 @@ public class HkCameraManager {
             return;
         }
         if (!m_bSaveRealData) {
+//            oldName = "/sdcard/" + startTime;
             oldName = PATH + startTime;
-            if (!HCNetSDKJNAInstance.getInstance().NET_DVR_SaveRealData_V30(m_iPlayID, 0x2, oldName + ".mp4")) {
+            if (!HCNetSDKJNAInstance.getInstance().NET_DVR_SaveRealData_V30(m_iPlayID, 0x1, oldName + ".mp4")) {
                 System.out.println("NET_DVR_SaveRealData_V30 failed! error: " + HCNetSDK.getInstance().NET_DVR_GetLastError());
                 return;
             } else {
@@ -410,7 +416,15 @@ public class HkCameraManager {
                 System.out.println("NET_DVR_StopSaveRealData succ!");
             }
             m_bSaveRealData = false;
-            renameFile(oldName + ".mp4", oldName + "-" + endTime + ".mp4");
+            List<String> paths = PUtil.getFilesAllName(PATH);
+            //结束录像之后对录像文件重命名，格式——“开始时间戳_结束时间戳.mp4”
+            //海康sdk会默认对大于1G的录像文件切片，以_1,_2...结尾
+            for (String pathName : paths
+                    ) {
+                if ((PATH + pathName).contains(oldName)) {
+                    renameFile(PATH + pathName, oldName, oldName + "_" + endTime);
+                }
+            }
         }
     }
 
@@ -418,15 +432,14 @@ public class HkCameraManager {
      * 释放sdk资源
      */
     public void clearSdk() {
-        boolean hasClear = HCNetSDK.getInstance().NET_DVR_Cleanup();
+        HCNetSDK.getInstance().NET_DVR_Cleanup();
         m_iLogID = -1;
         m_iPlayID = -1;
         playView = null;
         m_oNetDvrDeviceInfoV30 = null;
-        Log.e(TAG, "clearSdk---" + hasClear);
     }
 
-    private void renameFile(String oldPath, String newPath) {
+    private void renameFile(String pathName, String oldPath, String newPath) {
         if (TextUtils.isEmpty(oldPath)) {
             return;
         }
@@ -434,9 +447,8 @@ public class HkCameraManager {
         if (TextUtils.isEmpty(newPath)) {
             return;
         }
-
-        File file = new File(oldPath);
-        file.renameTo(new File(newPath));
+        File file = new File(pathName);
+        file.renameTo(new File(pathName.replace(oldPath, newPath)));
     }
 
     public void setStrIP(String strIP) {

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.media.MediaMetadataRetriever;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -12,14 +13,43 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Created by Taurus on 2018/4/19.
  */
 
 public class PUtil {
+    /**
+     * 获取本地视频时长
+     *
+     * @param videoPath
+     * @return
+     */
+    public static int getLocalVideoDuration(String videoPath) {
+        int duration;
+        try {
+            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+            mmr.setDataSource(videoPath);
+            duration = Integer.parseInt(mmr.extractMetadata
+                    (MediaMetadataRetriever.METADATA_KEY_DURATION));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+        return duration;
+    }
+
+    public static String formatTime2(long timeMillis, String pattern) {
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));//时钟时间换算需要加8
+        return sdf.format(new Date(timeMillis));
+    }
+
     /**
      * 创建文件
      *

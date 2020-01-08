@@ -77,6 +77,7 @@ import com.feipulai.exam.entity.Item;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.netUtils.CommonUtils;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.view.MiddleRace.ScrollablePanel;
 import com.kk.taurus.playerbase.assist.OnVideoViewEventHandler;
@@ -87,9 +88,12 @@ import com.orhanobut.logger.Logger;
 import com.ww.fpl.videolibrary.camera.HkCameraManager;
 import com.ww.fpl.videolibrary.play.VideoPlayWindow;
 import com.ww.fpl.videolibrary.play.play.DataInter;
+import com.ww.fpl.videolibrary.play.util.AWMp4ParserHelper;
 import com.ww.fpl.videolibrary.play.util.PUtil;
+import com.ww.fpl.videolibrary.play.util.VideoComposer;
 import com.zyyoona7.popup.EasyPopup;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -171,7 +175,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
     SurfaceView SurPlayer;
     @BindView(R.id.btn_camera)
     ImageTextButton btnCamera;
-    private String TAG = "MiddleDistanceRaceActivity";
+    private String TAG = "MiddleDistanceRaceForPersonActivity";
     private final int MESSAGE_A = 1;
     private boolean isFlag = true;
     private int mItemPosition = 0;
@@ -398,12 +402,11 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
 
         getGroupList();
 
+        initCamera();
         //连接设备弹窗
         initConnectPop();
 
         initSelectPop();
-
-        initCamera();
 
         //当上一次服务开启时间小于12小时，每次进入自动开启服务
 //        if (!TextUtils.isEmpty(server_Port) && lastServiceTime != 0 && (System.currentTimeMillis() - lastServiceTime) < 12 * 60 * 60 * 1000) {
@@ -449,15 +452,15 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                     videoPlayer.mWindowVideoView.close();
                     break;
                 case DataInter.Event.EVENT_CODE_REQUEST_SPEED_X_HALF:
-                    Log.i("eventHandler","X0.5");
+                    Log.i("eventHandler", "X0.5");
                     videoPlayer.mWindowVideoView.setSpeed((float) 0.5);
                     break;
                 case DataInter.Event.EVENT_CODE_REQUEST_SPEED_X_1:
-                    Log.i("eventHandler","X1");
+                    Log.i("eventHandler", "X1");
                     videoPlayer.mWindowVideoView.setSpeed((float) 1.0);
                     break;
                 case DataInter.Event.EVENT_CODE_REQUEST_SPEED_X_2:
-                    Log.i("eventHandler","X2");
+                    Log.i("eventHandler", "X2");
                     videoPlayer.mWindowVideoView.setSpeed((float) 2.0);
                     break;
             }
@@ -2045,24 +2048,24 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                     case 2:
                         String startTime = groupItemBeans.get(groupPosition).getGroup().getRemark1();
                         List<String> paths = PUtil.getFilesAllName(hkCamera.PATH);
-                        Log.i("timeLong", "paths---" + paths.toString());
+                        Log.i("timeLong", "paths---" + paths.toString()+"---"+startTime);
                         String[] timeLong = new String[0];
                         for (String path : paths
                                 ) {
-                            timeLong = path.replace(".mp4", "").split("-");
-                            Log.i("timeLong", "---" + timeLong.toString());
+                            timeLong = path.replace(".mp4", "").split("_");
                             if (timeLong.length == 2 && Long.parseLong(startTime) >= Long.parseLong(timeLong[0]) && Long.parseLong(startTime) <= Long.parseLong(timeLong[1])) {
                                 mDataSource.setData(hkCamera.PATH + path);
+                                mDataSource.setTitle("发令时刻：" + DateUtil.formatTime2(Long.parseLong(startTime), "yyyy/MM/dd HH:mm:ss:SSS"));
                                 break;
                             }
                         }
-                        if (mDataSource.getData().isEmpty()) {
+                        if (mDataSource.getData()==null||mDataSource.getData().isEmpty()) {
                             ToastUtils.showShort("找不到录像文件");
                             return;
                         }
-                        int seekTime=(int) (Long.parseLong(startTime)-Long.parseLong(timeLong[0]));
-                        Log.i("seekTime","-----"+seekTime);
-                        videoPlayer.activeWindowVideoView(MiddleDistanceRaceForPersonActivity.this, mDataSource,seekTime);
+                        int seekTime = (int) (Long.parseLong(startTime) - Long.parseLong(timeLong[0]));
+                        Log.i("seekTime", "-----" + seekTime);
+                        videoPlayer.activeWindowVideoView(MiddleDistanceRaceForPersonActivity.this, mDataSource, seekTime);
                         break;
                     default:
                         break;

@@ -1899,10 +1899,11 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                         String[] timeLong = new String[0];
                         for (String path : paths
                                 ) {
-                            timeLong = path.replace(".mp4", "").split("-");
+                            timeLong = path.replace(".mp4", "").split("_");
                             Log.i("timeLong", "---" + timeLong.toString());
                             if (timeLong.length == 2 && Long.parseLong(startTime) >= Long.parseLong(timeLong[0]) && Long.parseLong(startTime) <= Long.parseLong(timeLong[1])) {
                                 mDataSource.setData(hkCamera.PATH + path);
+                                mDataSource.setTitle("发令时刻：" + DateUtil.formatTime2(Long.parseLong(startTime), "yyyy/MM/dd HH:mm:ss:SSS"));
                                 break;
                             }
                         }
