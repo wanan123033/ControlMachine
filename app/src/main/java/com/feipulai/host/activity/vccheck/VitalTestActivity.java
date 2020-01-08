@@ -16,6 +16,7 @@ import com.feipulai.host.activity.base.BaseMoreActivity;
 import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.entity.DeviceDetail;
+import com.feipulai.host.entity.Item;
 import com.feipulai.host.entity.RoundResult;
 
 /**
@@ -99,16 +100,18 @@ public class VitalTestActivity extends BaseMoreActivity {
     private void command(int deviceId, int cmd) {
         byte[] data = {(byte) 0xAA, 0x12, 0x09, 0x03, 0x01, (byte) hostId, (byte) deviceId, (byte) cmd,
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, (byte) 0x00, 0x0D};
-        int sum = 0;
-        for (int i = 1; i < data.length - 2; i++) {
-            sum += data[i];
-        }
-        data[16] = (byte) sum;
+
         if (MachineCode.machineCode == ItemDefault.CODE_WLJ){
             data[2] = 0x0c;
         }else {
             data[2] = 0x09;
         }
+        int sum = 0;
+        for (int i = 1; i < data.length - 2; i++) {
+            sum += data[i];
+        }
+        data[16] = (byte) sum;
+
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
     }
 
@@ -205,6 +208,9 @@ public class VitalTestActivity extends BaseMoreActivity {
     });
 
     private void onResultArrived(int result, BaseStuPair stuPair) {
+        if (MachineCode.machineCode == ItemDefault.CODE_WLJ){
+            result = result*100;
+        }
         stuPair.setResult(result);
         stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
         updateResult(stuPair);

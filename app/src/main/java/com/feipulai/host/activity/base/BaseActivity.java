@@ -122,7 +122,7 @@ public class BaseActivity extends FragmentActivity {
                     lastBroadcastTime = tmp;
                     ToastUtils.showShort(toastMsg);
                     TtsManager.getInstance().speak(speakMsg);
-                    Logger.i(toastMsg.toString());
+                    Logger.i(toastMsg);
                 }
             }
         });

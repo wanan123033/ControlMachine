@@ -91,6 +91,9 @@ public class ResultDisplayTools {
                     result = "秒";
                 }
                 break;
+                case ItemDefault.CODE_WLJ:
+                    result = "千克";
+                    break;
             default:
                 throw new IllegalArgumentException("wrong machineCode");
 

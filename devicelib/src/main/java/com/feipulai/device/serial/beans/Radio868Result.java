@@ -279,13 +279,14 @@ public class Radio868Result {
                 break;
             case ItemDefault.CODE_WLJ:
                 if ((data[0] & 0xff) == 0xaa && data.length == 18) {
-                    if (data[7] == 1) {
+                    if (data[7] == 1|| data[7] == 2) {
                         setType(SerialConfigs.GRIP_SET_MORE_MATCH);
                     } else {
                         setType(SerialConfigs.VITAL_CAPACITY_RESULT);
                     }
+                    setResult(new VitalCapacityNewResult(data));
                 }
-                setResult(new VitalCapacityNewResult(data));
+
                 break;
             case ItemDefault.CODE_HWSXQ:
 
