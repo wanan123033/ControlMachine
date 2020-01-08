@@ -1,5 +1,7 @@
 package com.feipulai.exam.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -17,6 +19,7 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SystemBrightUtils;
 import com.feipulai.common.view.baseToolbar.StatusBarUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.udp.UdpLEDUtil;
@@ -29,6 +32,8 @@ import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.data.DataManageActivity;
 import com.feipulai.exam.activity.data.DataRetrieveActivity;
 import com.feipulai.exam.activity.explain.ExplainActivity;
+import com.feipulai.exam.activity.setting.MonitoringBean;
+import com.feipulai.exam.activity.setting.MonitoringBindActivity;
 import com.feipulai.exam.activity.setting.SettingActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
@@ -108,7 +113,8 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                 roundResult.setExamType(0);
                 roundResult.setUpdateState(0);
                 roundResult.setIsLastResult(1);
-                roundResult.setScheduleNo("1");
+                roundResult.setScheduleNo("5");
+                roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
                 if (i == 1) {
                     roundResult.setIsLastResult(1);
                 }
@@ -170,56 +176,20 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
         }
         switch (view.getId()) {
             case R.id.card_test:
-//                startActivity(new Intent(MainActivity.this, MiddleDistanceRaceActivity.class));
-                if (isSettingFinished()) {
-
-                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
-                        if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
-                            startActivity(new Intent(MainActivity.this, MiddleDistanceRaceForPersonActivity.class));
-                        } else {
-                            startActivity(new Intent(MainActivity.this, MiddleDistanceRaceActivity.class));
-                        }
-                        return;
-                    }
-//                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_MG) {
-//                        startActivity(new Intent(MainActivity.this, SargentItemSelectActivity.class));
-//                        return;
-//                    }
-//                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_PQ) {
-//                        startActivity(new Intent(MainActivity.this, VolleyballPatternSelectActivity.class));
-//                        return;
-//                    }
-//                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ) {
-//                        IntentUtil.gotoActivity(MainActivity.this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode()));
-//                        return;
-//                    }
-//                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZQYQ) {
-//                        startActivity(new Intent(this, FootBallItemSelectActivity.class));
-//                        return;
-//                    }
-//                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_FWC) {
-//                        IntentUtil.gotoActivity(this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode()));
-//                        return;
-//                    }
-                    if (TestConfigs.selectActivity.contains(TestConfigs.sCurrentItem.getMachineCode())) {
-                        IntentUtil.gotoActivity(this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode()));
-                        return;
-                    }
-                    if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
-                        startActivity(new Intent(MainActivity.this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
-                    } else {
-                        startActivity(new Intent(MainActivity.this, BaseGroupActivity.class));
-                    }
+                if (SettingHelper.getSystemSetting().isBindMonitoring()) {
+                    showBindMonitoringDialog();
+                    return;
                 }
+                gotoTestActivity();
                 break;
             case R.id.card_select:
                 startActivity(new Intent(MainActivity.this, DataRetrieveActivity.class));
                 break;
             case R.id.card_print:
-//                PrinterManager.getInstance().init();
-//                PrinterManager.getInstance().selfCheck();
-//                PrinterManager.getInstance().print("\n\n");
-                addTestResult();
+                PrinterManager.getInstance().init();
+                PrinterManager.getInstance().selfCheck();
+                PrinterManager.getInstance().print("\n\n");
+//                addTestResult();
                 break;
             case R.id.card_parameter_setting:
                 startActivity(new Intent(MainActivity.this, SettingActivity.class));
@@ -294,5 +264,55 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
     @OnClick(R.id.txt_help)
     public void onViewClicked() {
         IntentUtil.gotoActivity(this, ExplainActivity.class);
+    }
+
+
+    private void gotoTestActivity() {
+        if (isSettingFinished()) {
+
+            if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+                if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
+                    startActivity(new Intent(MainActivity.this, MiddleDistanceRaceForPersonActivity.class));
+                } else {
+                    startActivity(new Intent(MainActivity.this, MiddleDistanceRaceActivity.class));
+                }
+                return;
+            }
+            if (TestConfigs.selectActivity.contains(TestConfigs.sCurrentItem.getMachineCode())) {
+                IntentUtil.gotoActivity(this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode()));
+                return;
+            }
+            if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
+                startActivity(new Intent(MainActivity.this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
+            } else {
+                startActivity(new Intent(MainActivity.this, BaseGroupActivity.class));
+            }
+        }
+    }
+
+    private void showBindMonitoringDialog() {
+        if (SettingHelper.getSystemSetting().isBindMonitoring()) {
+            String[] monitoringArray = new String[SettingHelper.getSystemSetting().getMonitoringList().size()];
+            for (int i = 0; i < SettingHelper.getSystemSetting().getMonitoringList().size(); i++) {
+                MonitoringBean monitoringBean = SettingHelper.getSystemSetting().getMonitoringList().get(i);
+                monitoringArray[i] = "< " + monitoringBean.getMonitoringSerial() + " > - " + monitoringBean.getBindTime();
+            }
+            new AlertDialog.Builder(this).setTitle(monitoringArray.length == 0 ? "当前无绑定监控设备" : "当前绑定的监控设备")
+                    .setItems(monitoringArray, null)
+                    .setPositiveButton("去测试", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            gotoTestActivity();
+                        }
+                    })
+                    .setNegativeButton("去绑定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            IntentUtil.gotoActivity(MainActivity.this, MonitoringBindActivity.class);
+                        }
+                    })
+                    .show();
+        }
     }
 }

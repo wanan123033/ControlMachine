@@ -610,6 +610,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         roundResult.setExamType(studentItem.getExamType());
         roundResult.setScheduleNo(studentItem.getScheduleNo());
         roundResult.setUpdateState(0);
+        roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
         RoundResult bestResult = DBManager.getInstance().queryBestScore(baseStuPair.getStudent().getStudentCode(), testNo);
         if (bestResult != null) {
             // 原有最好成绩犯规 或者原有最好成绩没有犯规但是现在成绩更好

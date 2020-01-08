@@ -222,7 +222,7 @@ public class InteractUtils {
                 roundResult.setTestNo(TestCache.getInstance().getTestNoMap().get(student));
                 roundResult.setScheduleNo(studentItem.getScheduleNo());
             }
-
+            roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
             // 重新判断最好成绩
             RoundResult bestResult = InteractUtils.getBestResult(results);
             // Log.i("james", "\nroundResult:" + roundResult.toString());

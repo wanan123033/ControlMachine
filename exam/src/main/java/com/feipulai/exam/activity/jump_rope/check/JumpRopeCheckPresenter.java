@@ -37,6 +37,11 @@ public class JumpRopeCheckPresenter
 
     private ExecutorService executor = Executors.newSingleThreadExecutor();
 
+    @Override
+    public int getDeviceStatesLoopCount() {
+        return setting.getGetStateLoopCount();
+    }
+
     public JumpRopeCheckPresenter(Context context, JumpRopeCheckContract.View<JumpRopeSetting> view) {
         super(context, view);
         this.view = view;
@@ -86,7 +91,7 @@ public class JumpRopeCheckPresenter
         @Override
         public void run() {
             while (mLinking) {
-                mJumpRopeManager.link(systemSetting.getUseChannel(),systemSetting.getHostId(), focusPosition + 1, 0x06, setting.getDeviceGroup() + 1);
+                mJumpRopeManager.link(systemSetting.getUseChannel(), systemSetting.getHostId(), focusPosition + 1, 0x06, setting.getDeviceGroup() + 1);
             }
         }
     }

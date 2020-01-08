@@ -22,36 +22,41 @@ import java.util.Map;
  */
 
 public class CheckUtils {
+    public static BaseDeviceState createBaseDeviceState(int deviceId) {
+
+        BaseDeviceState state;
+        switch (TestConfigs.sCurrentItem.getMachineCode()) {
+
+            case ItemDefault.CODE_TS:
+                state = new JumpDeviceState();
+                break;
+
+            case ItemDefault.CODE_YWQZ:
+            case ItemDefault.CODE_YTXS:
+            case ItemDefault.CODE_PQ:
+            case ItemDefault.CODE_FWC:
+            case ItemDefault.CODE_LQYQ:
+            case ItemDefault.CODE_ZQYQ:
+            case ItemDefault.CODE_MG:
+            case ItemDefault.CODE_HWSXQ:
+            case ItemDefault.CODE_LDTY:
+                state = new BaseDeviceState();
+                break;
+            default:
+                throw new IllegalArgumentException("machine code not supported");
+
+        }
+        state.setState(BaseDeviceState.STATE_DISCONNECT);
+        state.setDeviceId(deviceId);
+
+        return state;
+    }
 
     public static List<StuDevicePair> newPairs(int size) {
         List<StuDevicePair> pairs = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             StuDevicePair pair = new StuDevicePair();
-            BaseDeviceState state;
-            switch (TestConfigs.sCurrentItem.getMachineCode()) {
-
-                case ItemDefault.CODE_TS:
-                    state = new JumpDeviceState();
-                    break;
-
-                case ItemDefault.CODE_YWQZ:
-                case ItemDefault.CODE_YTXS:
-                case ItemDefault.CODE_PQ:
-                case ItemDefault.CODE_FWC:
-                case ItemDefault.CODE_LQYQ:
-                case ItemDefault.CODE_ZQYQ:
-                case ItemDefault.CODE_MG:
-                case ItemDefault.CODE_HWSXQ:
-                case ItemDefault.CODE_LDTY:
-                    state = new BaseDeviceState();
-                    break;
-                default:
-                    throw new IllegalArgumentException("machine code not supported");
-
-            }
-            state.setState(BaseDeviceState.STATE_DISCONNECT);
-            state.setDeviceId(i + 1);
-            pair.setBaseDevice(state);
+            pair.setBaseDevice(createBaseDeviceState(i + 1));
             pairs.add(pair);
         }
         return pairs;

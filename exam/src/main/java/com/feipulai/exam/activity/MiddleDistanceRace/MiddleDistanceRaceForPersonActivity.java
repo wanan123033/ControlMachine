@@ -18,10 +18,8 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -1754,18 +1752,20 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
 
                         byte[] cycleResult = DataUtil.byteArray2RgbArray(resultInts);
                         roundResult.setCycleResult(cycleResult);
-
+                        roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
                         roundResult = DBManager.getInstance().insertRoundResult2(roundResult);
 
                         roundResults.add(roundResult);
 
-                        uploadResult = new UploadResults();//需要上传的成绩对象
-                        uploadResult.setGroupNo(resultBean2.getNo());
-                        uploadResult.setSiteScheduleNo(dbGroupList.getScheduleNo());
-                        uploadResult.setRoundResultList(RoundResultBean.beanCope2(roundResult));
-                        uploadResult.setStudentCode(resultBean2.getStudentCode());
-                        uploadResult.setTestNum("1");
-                        uploadResult.setExamItemCode(resultBean2.getItemCode());
+                        uploadResult = new UploadResults(dbGroupList.getScheduleNo(), resultBean2.getItemCode()
+                                , resultBean2.getStudentCode(), "1", resultBean2.getNo(), RoundResultBean.beanCope2(roundResult));//需要上传的成绩对象
+
+//                        uploadResult.setGroupNo(resultBean2.getNo());
+//                        uploadResult.setSiteScheduleNo(dbGroupList.getScheduleNo());
+//                        uploadResult.setRoundResultList(RoundResultBean.beanCope2(roundResult));
+//                        uploadResult.setStudentCode(resultBean2.getStudentCode());
+//                        uploadResult.setTestNum("1");
+//                        uploadResult.setExamItemCode(resultBean2.getItemCode());
                         uploadResults.add(uploadResult);
                     }
                 }

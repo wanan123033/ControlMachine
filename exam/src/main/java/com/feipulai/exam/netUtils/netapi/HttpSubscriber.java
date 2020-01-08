@@ -332,7 +332,8 @@ public class HttpSubscriber {
             public void onSuccess(BatchBean<List<StudentBean>> result) {
                 Set<String> supplements = new HashSet<>();// 补考考生考号集合
 //                Logger.i("getItemStudent" + result.toString());
-                if (result == null || result.getDataInfo() == null) {
+                if (result == null || result.getDataInfo() == null || result.getDataInfo().size() == 0) {
+                    ToastUtils.showShort("当前无数据下载更新");
                     if (onRequestEndListener != null)
                         onRequestEndListener.onSuccess(STUDENT_BIZ);
                     return;

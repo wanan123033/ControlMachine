@@ -436,15 +436,15 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                     videoPlayer.mWindowVideoView.close();
                     break;
                 case DataInter.Event.EVENT_CODE_REQUEST_SPEED_X_HALF:
-                    Log.i("eventHandler","X0.5");
+                    Log.i("eventHandler", "X0.5");
                     videoPlayer.mWindowVideoView.setSpeed((float) 0.5);
                     break;
                 case DataInter.Event.EVENT_CODE_REQUEST_SPEED_X_1:
-                    Log.i("eventHandler","X1");
+                    Log.i("eventHandler", "X1");
                     videoPlayer.mWindowVideoView.setSpeed((float) 1.0);
                     break;
                 case DataInter.Event.EVENT_CODE_REQUEST_SPEED_X_2:
-                    Log.i("eventHandler","X2");
+                    Log.i("eventHandler", "X2");
                     videoPlayer.mWindowVideoView.setSpeed((float) 2.0);
                     break;
             }
@@ -1599,7 +1599,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                         roundResult.setExamType(dbGroupList.getExamType());
                         roundResult.setTestTime(System.currentTimeMillis() + "");
                         roundResult.setGroupId(dbGroupList.getId());
-
+                        roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
                         byte[] cycleResult = DataUtil.byteArray2RgbArray(resultInts);
                         roundResult.setCycleResult(cycleResult);
 
@@ -1607,13 +1607,9 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
 
                         roundResults.add(roundResult);
 
-                        uploadResult = new UploadResults();//需要上传的成绩对象
-                        uploadResult.setGroupNo(resultBean2.getNo());
-                        uploadResult.setSiteScheduleNo(dbGroupList.getScheduleNo());
-                        uploadResult.setRoundResultList(RoundResultBean.beanCope2(roundResult));
-                        uploadResult.setStudentCode(resultBean2.getStudentCode());
-                        uploadResult.setTestNum("1");
-                        uploadResult.setExamItemCode(resultBean2.getItemCode());
+                        uploadResult = new UploadResults(dbGroupList.getScheduleNo(), resultBean2.getItemCode()
+                                , resultBean2.getStudentCode(), "1", resultBean2.getNo(), RoundResultBean.beanCope2(roundResult));//需要上传的成绩对象
+
                         uploadResults.add(uploadResult);
                     }
                 }
@@ -1911,8 +1907,8 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                             ToastUtils.showShort("找不到录像文件");
                             return;
                         }
-                        int seekTime=(int) (Long.parseLong(startTime)-Long.parseLong(timeLong[0]));
-                        Log.i("seekTime","-----"+seekTime);
+                        int seekTime = (int) (Long.parseLong(startTime) - Long.parseLong(timeLong[0]));
+                        Log.i("seekTime", "-----" + seekTime);
                         videoPlayer.activeWindowVideoView(MiddleDistanceRaceActivity.this, mDataSource, seekTime);
                         break;
                     default:

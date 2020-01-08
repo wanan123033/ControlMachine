@@ -87,6 +87,12 @@ public class SitPullLinker implements Handler.Callback {
                 checkDevice(fhl);
             }
             return true;
+        } else if (machineCode == ItemDefault.CODE_WLJ && what == SerialConfigs.GRIP_SET_MORE_MATCH){
+             if (msg.obj instanceof VitalCapacityNewResult) {
+                VitalCapacityNewResult fhl = (VitalCapacityNewResult) msg.obj;
+                checkDevice(fhl);
+            }
+            return true;
         }
         return false;
     }

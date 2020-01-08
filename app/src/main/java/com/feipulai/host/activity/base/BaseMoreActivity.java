@@ -19,9 +19,11 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.host.R;
+import com.feipulai.host.activity.grip_dynamometer.pair.GripPairActivity;
 import com.feipulai.host.activity.jump_rope.base.InteractUtils;
 import com.feipulai.host.activity.setting.LEDSettingActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
@@ -213,6 +215,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         deviceDetails.get(pos).getStuDevicePair().setStudent(null);
         deviceDetails.get(pos).getStuDevicePair().setCanTest(true);
         deviceDetails.get(pos).getStuDevicePair().setTimeResult(new String[setTestCount()]);
+        deviceDetails.get(pos).getStuDevicePair().setCanTest(true);
         deviceListAdapter.notifyItemChanged(pos);
     }
 
@@ -275,7 +278,12 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 startActivity(new Intent(this, LEDSettingActivity.class));
                 break;
             case R.id.tv_device_pair:
-                startActivity(new Intent(this, VcPairActivity.class));
+                if (machineCode == ItemDefault.CODE_WLJ){
+                    startActivity(new Intent(this, GripPairActivity.class));
+                }else {
+                    startActivity(new Intent(this, VcPairActivity.class));
+                }
+
                 break;
         }
     }
@@ -331,12 +339,20 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     }
 
     private void updateResultLed(BaseStuPair baseStu, int index) {
+        if (baseStu.getStudent() == null)
+            return;
         String result = ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
         if (ledMode == 0) {
             int x = ResultDisplayUtils.getStringLength(result);
-
-            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, x, index, false, true);
+            int len = ResultDisplayUtils.getStringLength(baseStu.getStudent().getStudentName());
+            StringBuilder sb = new StringBuilder();
+            sb.append(baseStu.getStudent().getStudentName());
+            for (int i = 0;i< (16-len-x);i++){
+                sb.append(" ");
+            }
+            sb.append(result);
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), sb.toString(), 0, index, false, true);
         }else {
             byte[] data = new byte[16];
             String str = "当前：";
@@ -411,6 +427,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         printResult(pair);
 //        broadResult(pair);
         detail.setRound(detail.getRound() + 1);
+        pair.setCanTest(true);
         if (detail.getRound() < setTestCount()) {
             if (pair.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
                 //测试结束学生清除 ，设备设置空闲状态
@@ -446,6 +463,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         if (!SettingHelper.getSystemSetting().isAutoPrint())
             return;
         Student student = baseStuPair.getStudent();
+        if (student == null)
+            return;
 //        PrinterManager.getInstance().print(" \n");
         PrinterManager.getInstance().print(
                 String.format(getString(R.string.host_name), TestConfigs.sCurrentItem.getItemName(), SettingHelper.getSystemSetting().getHostId()));
@@ -550,4 +569,15 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     public abstract void gotoItemSetting();
 
     public abstract void sendTestCommand(BaseStuPair pair, int index);
+
+    @Override
+    public void finish() {
+        for (DeviceDetail deviceDetail :deviceDetails){
+            if (deviceDetail.getStuDevicePair().getStudent()!= null){
+                toastSpeak("测试中,不允许退出当前界面");
+                return;
+            }
+        }
+        super.finish();
+    }
 }

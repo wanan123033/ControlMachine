@@ -13,6 +13,7 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSetting;
 import com.feipulai.exam.activity.medicineBall.MedicineBallSetting;
 import com.feipulai.exam.activity.pullup.setting.PullUpSetting;
 import com.feipulai.exam.activity.situp.setting.SitUpSetting;
@@ -44,6 +45,8 @@ public class AdvancedSettingActivity extends BaseTitleActivity
     CheckBox swMedBall;
     @BindView(R.id.sw_standjump)
     CheckBox swStandjump;
+    @BindView(R.id.sp_jump_rope_state_count)
+    Spinner spJumpRopeStateCount;
     private SystemSetting systemSetting;
     private SitUpSetting sitUpSetting;
     private PullUpSetting pullUpSetting;
@@ -51,6 +54,8 @@ public class AdvancedSettingActivity extends BaseTitleActivity
     private MedicineBallSetting medicineBallSetting;
     private StandJumpSetting standJumpSetting;
     private static final Integer[] ANGLES = {55, 65, 75};
+    private Integer[] ropeStateCount = new Integer[28];
+    private JumpRopeSetting jumpRopeSetting;
 
     @Override
     protected int setLayoutResID() {
@@ -66,6 +71,7 @@ public class AdvancedSettingActivity extends BaseTitleActivity
         volleyBallSetting = SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class);
         medicineBallSetting = SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class);
         standJumpSetting = SharedPrefsUtil.loadFormSource(this, StandJumpSetting.class);
+        jumpRopeSetting = SharedPrefsUtil.loadFormSource(this, JumpRopeSetting.class);
         String serverToken = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.DEFAULT_SERVER_TOKEN, "dGVybWluYWw6dGVybWluYWxfc2VjcmV0");
         editAppkey.setText(serverToken);
         swSitup.setOnCheckedChangeListener(this);
@@ -93,22 +99,32 @@ public class AdvancedSettingActivity extends BaseTitleActivity
                 break;
             }
         }
+
+        for (int i = 0; i < 28; i++) {
+            ropeStateCount[i] = i + 3;
+        }
+        ArrayAdapter ropeStateAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, ropeStateCount);
+        ropeStateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spJumpRopeStateCount.setAdapter(ropeStateAdapter);
+        spJumpRopeStateCount.setSelection(jumpRopeSetting.getGetStateLoopCount() - 3);
     }
 
-    @OnItemSelected({R.id.sp_situp_angle})
+    @OnItemSelected({R.id.sp_situp_angle, R.id.sp_jump_rope_state_count})
     public void spinnerItemSelected(Spinner spinner, int position) {
         switch (spinner.getId()) {
             case R.id.sp_situp_angle:
                 sitUpSetting.setAngle(ANGLES[position]);
                 break;
-
+            case R.id.sp_jump_rope_state_count:
+                jumpRopeSetting.setGetStateLoopCount(ropeStateCount[position]);
+                break;
         }
     }
 
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("高级设置") ;
+        return builder.setTitle("高级设置");
     }
 
     @Override
@@ -120,6 +136,7 @@ public class AdvancedSettingActivity extends BaseTitleActivity
         SharedPrefsUtil.save(this, volleyBallSetting);
         SharedPrefsUtil.save(this, medicineBallSetting);
         SharedPrefsUtil.save(this, standJumpSetting);
+        SharedPrefsUtil.save(this, jumpRopeSetting);
     }
 
     @Override

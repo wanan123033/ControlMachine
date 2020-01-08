@@ -13,8 +13,6 @@ import com.feipulai.device.manager.BallManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.Basketball868Result;
-import com.feipulai.device.serial.command.ConvertCommand;
-import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.device.udp.result.BasketballResult;
 import com.feipulai.exam.activity.basketball.bean.BallDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
@@ -22,7 +20,6 @@ import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
-import com.feipulai.exam.utils.ResultDisplayUtils;
 
 import org.greenrobot.eventbus.EventBus;
 

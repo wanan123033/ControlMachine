@@ -11,9 +11,11 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.feipulai.common.utils.AudioUtil;
 import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
@@ -62,7 +64,8 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     CheckBox cbCustomChannel;
     private List<Integer> hostIdList;
     private SystemSetting setting;
-
+    @BindView(R.id.sb_volume)
+    SeekBar sb_volume;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_system_setting;
@@ -105,6 +108,25 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
 
         editCustomChannel.setText(setting.getChannel() + "");
         cbCustomChannel.setChecked(setting.isCustomChannel());
+
+        sb_volume.setMax(AudioUtil.getInstance(this).getMediaMaxVolume());
+        sb_volume.setProgress(AudioUtil.getInstance(this).getMediaVolume());
+        sb_volume.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                AudioUtil.getInstance(SettingActivity.this).setMediaVolume(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
 
     @Nullable
