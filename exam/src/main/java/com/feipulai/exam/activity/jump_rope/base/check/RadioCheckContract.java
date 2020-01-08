@@ -76,6 +76,8 @@ public interface RadioCheckContract {
         void refreshPairs(List<StuDevicePair> pairs);
 
         void showLowBatteryStartDialog();
+
+        void showConstraintStartDialog(boolean contaisLowBattery);
     }
 
 }

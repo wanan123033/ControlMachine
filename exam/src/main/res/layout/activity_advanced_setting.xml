@@ -68,8 +68,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="35dp"
-                android:layout_marginTop="35dp"
+                android:layout_marginTop="20dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -83,6 +82,32 @@
 
                 <Spinner
                     android:id="@+id/sp_situp_angle"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="30dp"
+                    android:background="@drawable/icon_spinner_bg" />
+                <!--android:entries="@array/situp_angles"-->
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="@dimen/dp_10"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="跳绳获取状态次数："
+                    android:textColor="@color/black_10"
+                    android:textSize="20sp" />
+
+
+                <Spinner
+                    android:id="@+id/sp_jump_rope_state_count"
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
                     android:layout_marginLeft="30dp"
@@ -182,8 +207,8 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:layout_marginBottom="@dimen/dp_10"
+                android:layout_marginTop="10dp"
                 android:gravity="center_vertical"
                 android:padding="1dp">
 

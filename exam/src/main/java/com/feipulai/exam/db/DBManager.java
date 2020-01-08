@@ -988,7 +988,7 @@ public class DBManager {
      * @return
      */
     public StudentItem queryStuItemByStuCode(String studentCode) {
-        Log.e("TAG===","studentCode="+studentCode+",ItemCode="+TestConfigs.getCurrentItemCode()+",MachineCode="+TestConfigs.sCurrentItem.getMachineCode());
+        Log.e("TAG===", "studentCode=" + studentCode + ",ItemCode=" + TestConfigs.getCurrentItemCode() + ",MachineCode=" + TestConfigs.sCurrentItem.getMachineCode());
         return studentItemDao
                 .queryBuilder()
                 .where(StudentItemDao.Properties.StudentCode.eq(studentCode))
@@ -1302,6 +1302,25 @@ public class DBManager {
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(RoundResultDao.Properties.TestNo.eq(testNo))
                 .where(RoundResultDao.Properties.IsLastResult.eq(1))
+                .limit(1)
+                .unique();
+    }
+
+    /**
+     * 查询对应考生当前项目最后成绩(个人)
+     *
+     * @param studentCode 考号
+     * @return 对应最好成绩
+     */
+    public RoundResult queryBestFinallyScore(String studentCode, int testNo) {
+        Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
+                + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\ttestNo:" + testNo);
+        return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(RoundResultDao.Properties.TestNo.eq(testNo))
+                .orderDesc(RoundResultDao.Properties.RoundNo)
                 .limit(1)
                 .unique();
     }
@@ -2042,7 +2061,7 @@ public class DBManager {
         sqlBuf.append(" ON S." + ScheduleDao.Properties.ScheduleNo.columnName + " = I." + ItemScheduleDao.Properties.ScheduleNo.columnName);
         sqlBuf.append(" WHERE I." + GroupItemDao.Properties.ItemCode.columnName + " = '" + TestConfigs.getCurrentItemCode() + "'");
         List<Schedule> scheduleList = new ArrayList<>();
-        Log.i("sql",sqlBuf.toString());
+        Log.i("sql", sqlBuf.toString());
         Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), null);
         while (c.moveToNext()) {
             Schedule schedule = scheduleDao.readEntity(c, 0);
@@ -2400,7 +2419,7 @@ public class DBManager {
     }
 
 
-    public List<Schedule> getSchedules(){
+    public List<Schedule> getSchedules() {
         return scheduleDao.loadAll();
     }
 }

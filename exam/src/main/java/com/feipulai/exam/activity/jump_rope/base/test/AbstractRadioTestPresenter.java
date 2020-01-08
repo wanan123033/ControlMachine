@@ -43,10 +43,11 @@ public abstract class AbstractRadioTestPresenter<Setting>
     protected static final int TEST_COUNTING = 0x1;// 等待开始测试
     protected static final int TESTING = 0x2;// 测试过程中
     protected static final int WAIT_MACHINE_RESULTS = 0x3;// 测试结束,等待获取机器成绩
-    private static final int WAIT_CONFIRM_RESULTS = 0x4;// 已获取到机器成绩,等待用户点击确认成绩(此时成绩已经保存)
+    protected static final int WAIT_CONFIRM_RESULTS = 0x4;// 已获取到机器成绩,等待用户点击确认成绩(此时成绩已经保存)
     protected volatile int testState = WAIT_BGIN;
 
     protected volatile int[] currentConnect;
+    protected volatile int[] endGetResultPairs;//结束后缓存收到数据设备
     private String testDate;
     protected List<StuDevicePair> pairs;
     protected Setting setting;
@@ -74,6 +75,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
         int size = pairs.size();
         int possibleMaxDeviceId = pairs.get(size - 1).getBaseDevice().getDeviceId();
         currentConnect = new int[possibleMaxDeviceId + 1];
+        endGetResultPairs = new int[possibleMaxDeviceId + 1];
         // 记录每个设备id在recyclerview中的位置  deviceIdPIV[deviceId] = piv
         deviceIdPIV = new int[possibleMaxDeviceId + 1];
         Arrays.fill(deviceIdPIV, INVALID_PIV);
@@ -237,7 +239,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
             StuDevicePair pair = pairs.get(i);
             BaseDeviceState deviceState = pair.getBaseDevice();
             oldState = deviceState.getState();
-            if (currentConnect[deviceState.getDeviceId()] == 0
+            if ((currentConnect[deviceState.getDeviceId()] == 0 && endGetResultPairs[deviceState.getDeviceId()] == 0)
                     && oldState != BaseDeviceState.STATE_DISCONNECT
                     && oldState != BaseDeviceState.STATE_STOP_USE) {
                 deviceState.setState(BaseDeviceState.STATE_DISCONNECT);

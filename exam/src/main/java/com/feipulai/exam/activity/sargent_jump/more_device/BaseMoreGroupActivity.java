@@ -1033,6 +1033,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         roundResult.setExamType(group.getExamType());
         roundResult.setScheduleNo(group.getScheduleNo());
         roundResult.setUpdateState(0);
+        roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
         RoundResult bestResult = DBManager.getInstance().queryGroupBestScore(baseStuPair.getStudent().getStudentCode(), group.getId());
         if (bestResult != null) {
             // 原有最好成绩犯规 或者原有最好成绩没有犯规但是现在成绩更好

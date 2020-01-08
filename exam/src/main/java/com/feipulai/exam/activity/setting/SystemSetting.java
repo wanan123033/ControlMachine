@@ -3,6 +3,9 @@ package com.feipulai.exam.activity.setting;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.exam.config.TestConfigs;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 设置配置
  * Created by zzs on 2018/11/26
@@ -91,6 +94,9 @@ public class SystemSetting {
     private int channel;
     //是否使用自定义信道
     private boolean isCustomChannel;
+
+    private boolean isBindMonitoring;//是否绑定监控设备
+    private List<MonitoringBean> monitoringList = new ArrayList<>();
 
     public int getQrLength() {
         return qrLength;
@@ -228,6 +234,22 @@ public class SystemSetting {
         isCustomChannel = customChannel;
     }
 
+    public boolean isBindMonitoring() {
+        return isBindMonitoring;
+    }
+
+    public void setBindMonitoring(boolean bindMonitoring) {
+        isBindMonitoring = bindMonitoring;
+    }
+
+    public List<MonitoringBean> getMonitoringList() {
+        return monitoringList;
+    }
+
+    public void setMonitoringList(List<MonitoringBean> monitoringList) {
+        this.monitoringList = monitoringList;
+    }
+
     @Override
     public String toString() {
         return "SystemSetting{" +
@@ -279,11 +301,25 @@ public class SystemSetting {
      * @return
      */
     public int getUseChannel() {
-        if (TestConfigs.sCurrentItem != null){
+        if (TestConfigs.sCurrentItem != null) {
             return isCustomChannel ? channel : SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode()) + hostId - 1;
-        }else {
+        } else {
             return 0;
         }
 
+    }
+
+    public String getBindDeviceName() {
+        if (!isBindMonitoring) {
+            return "";
+        }
+        String bindName = "";
+        for (int i = 0; i < monitoringList.size(); i++) {
+            bindName += monitoringList.get(i).getMonitoringSerial();
+            if (i != monitoringList.size() - 1) {
+                bindName += ",";
+            }
+        }
+        return bindName;
     }
 }

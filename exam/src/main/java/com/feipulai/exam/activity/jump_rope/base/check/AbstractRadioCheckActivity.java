@@ -77,7 +77,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
         String title = TestConfigs.machineNameMap.get(machineCode)
                 + SettingHelper.getSystemSetting().getHostId() + "号机"
                 + (isTestNameEmpty ? "" : ("-" + SettingHelper.getSystemSetting().getTestName()));
-        builder.setTitle(title) ;
+        builder.setTitle(title);
 
         SystemSetting systemSetting = SettingHelper.getSystemSetting();
         if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN) {
@@ -151,7 +151,8 @@ public abstract class AbstractRadioCheckActivity<Setting>
                 getStopUseView().setText(RESUME_USE);
             }
         } else if (v == getDeleteAllView()) {// 删除所有
-            presenter.deleteAll();
+//            presenter.deleteAll();
+            showkillAllWarning();
         } else if (v == getDeleteStuView()) {// 删除考生
             presenter.deleteStudent();
         }
@@ -257,6 +258,24 @@ public abstract class AbstractRadioCheckActivity<Setting>
         }
     }
 
+    public void showkillAllWarning() {
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.warning))
+                .setContentText("是否删除全部检入考生")
+                .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                presenter.deleteAll();
+            }
+        }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+
+            }
+        }).show();
+    }
+
     @Override
     public void showLowBatteryStartDialog() {
 
@@ -275,6 +294,25 @@ public abstract class AbstractRadioCheckActivity<Setting>
             }
         }).show();
 
+    }
+
+    @Override
+    public void showConstraintStartDialog(boolean contaisLowBattery) {
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.warning))
+                .setContentText(contaisLowBattery ? "存在考生设备为非空闲状态或低电量，是否强制启动?"
+                        : "存在考生设备为非空闲状态，是否强制启动?")
+                .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                startTest();
+            }
+        }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+            }
+        }).show();
     }
 
     @Override

@@ -442,6 +442,7 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
         roundResult.setExamType(studentItem.getExamType());
         roundResult.setScheduleNo(studentItem.getScheduleNo());
         roundResult.setUpdateState(0);
+        roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
         RoundResult bestResult = DBManager.getInstance().queryBestScore(baseStuPair.getStudent().getStudentCode(), testNo);
         if (bestResult != null)
             Log.e("TAG======",bestResult.toString());
