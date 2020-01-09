@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.hcnetsdk.jna.HCNetSDKByJNA;
 import com.hcnetsdk.jna.HCNetSDKJNAInstance;
 import com.hikvision.netsdk.ExceptionCallBack;
 import com.hikvision.netsdk.HCNetSDK;
@@ -19,6 +20,7 @@ import com.hikvision.netsdk.NET_DVR_IPPARACFG_V40;
 import com.hikvision.netsdk.NET_DVR_PREVIEWINFO;
 import com.hikvision.netsdk.NET_DVR_SDKLOCAL_CFG;
 import com.hikvision.netsdk.NET_DVR_TIME;
+import com.sun.jna.Pointer;
 import com.ww.fpl.videolibrary.play.util.PUtil;
 
 import java.io.File;
@@ -71,6 +73,12 @@ public class HkCameraManager {
         }
         PUtil.createFile(PATH);
         HCNetSDK.getInstance().NET_DVR_SetLogToFile(3, PATH + "Log/", true);
+
+        //设置海康sdk，0切片（默认），1不切片
+        HCNetSDKByJNA.NET_DVR_LOCAL_GENERAL_CFG cfg = new HCNetSDKByJNA.NET_DVR_LOCAL_GENERAL_CFG();
+        cfg.byNotSplitRecordFile = 1;
+        boolean cfgFlag = HCNetSDKJNAInstance.getInstance().NET_DVR_SetSDKLocalCfg(HCNetSDKByJNA.NET_SDK_LOCAL_CFG_TYPE.NET_DVR_LOCAL_CFG_TYPE_GENERAL, cfg);
+        Log.e("cfgFlag", "------------" + cfgFlag);
         return true;
     }
 

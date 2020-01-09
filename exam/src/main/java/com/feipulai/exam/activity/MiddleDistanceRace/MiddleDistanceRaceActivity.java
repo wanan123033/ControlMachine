@@ -120,6 +120,9 @@ import static com.feipulai.exam.config.SharedPrefsConfigs.MIDDLE_RACE_NUMBER;
 import static com.feipulai.exam.config.SharedPrefsConfigs.MIDDLE_RACE_TIME_FIRST;
 import static com.feipulai.exam.config.SharedPrefsConfigs.MIDDLE_RACE_TIME_SPAN;
 import static com.feipulai.exam.config.SharedPrefsConfigs.SPAN_TIME;
+import static com.ww.fpl.videolibrary.camera.HKConfig.HK_PORT;
+import static com.ww.fpl.videolibrary.camera.HKConfig.HK_PSW;
+import static com.ww.fpl.videolibrary.camera.HKConfig.HK_USER;
 
 /**
  * @author ww
@@ -405,23 +408,25 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
     private HkCameraManager hkCamera;
     private boolean hkInit;
 
+//    private void initCamera() {
+//        camera_ip = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, CAMERA_IP, "");
+//        mDataSource = new DataSource();
+//        videoPlayer = new VideoPlayWindow(this);
+//        videoPlayer.initVideoWindow(eventHandler);
+//        hkCamera = new HkCameraManager(this, camera_ip, HK_PORT, HK_USER, HK_PSW);
+//        hkInit = hkCamera.initeSdk();
+//        if (hkInit) {
+//            hkCamera.login2HK();
+//        } else {
+//            ToastUtils.showShort("海康摄像头初始化失败");
+//        }
+//    }
+
     private void initCamera() {
         camera_ip = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, CAMERA_IP, "");
         mDataSource = new DataSource();
         videoPlayer = new VideoPlayWindow(this);
         videoPlayer.initVideoWindow(eventHandler);
-        hkCamera = new HkCameraManager(this, camera_ip, 8000, "admin", "fpl12345");
-        hkInit = hkCamera.initeSdk();
-        if (hkInit) {
-            hkCamera.login2HK();
-        } else {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    ToastUtils.showShort("海康摄像头初始化失败");
-                }
-            });
-        }
     }
 
     private OnVideoViewEventHandler eventHandler = new OnVideoViewEventHandler() {
@@ -936,10 +941,32 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
     @Override
     protected void onResume() {
         super.onResume();
+//        mHander.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                hkCamera.startPreview();
+//            }
+//        }, 1500);
         mHander.postDelayed(new Runnable() {
             @Override
             public void run() {
-                hkCamera.startPreview();
+                if (hkCamera == null) {
+                    hkCamera = new HkCameraManager(MiddleDistanceRaceActivity.this, camera_ip, HK_PORT, HK_USER, HK_PSW);
+                    hkInit = hkCamera.initeSdk();
+                    if (hkInit) {
+                        hkCamera.login2HK();
+                        mHander.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                hkCamera.startPreview();
+                            }
+                        }, 600);
+                    } else {
+                        ToastUtils.showShort("海康摄像头初始化失败");
+                    }
+                } else {
+                    hkCamera.startPreview();
+                }
             }
         }, 1500);
         firstTime = SharedPrefsUtil.getValue(this, MIDDLE_RACE, MIDDLE_RACE_TIME_FIRST, FIRST_TIME);
