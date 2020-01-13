@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.exam.R;
@@ -81,8 +83,8 @@ public class CommonPopupWindow extends Dialog {
                 @Override
                 public boolean onQueryTextChange(String newText) {
                     if (!TextUtils.isEmpty(newText)) {
-                        mAdapter.setNewData(((GroupAdapter) mAdapter).search(newText,results));
-                    }else{
+                        mAdapter.setNewData(((GroupAdapter) mAdapter).search(newText, results));
+                    } else {
                         mAdapter.setNewData(results);
                     }
                     mAdapter.notifyDataSetChanged();
@@ -91,10 +93,10 @@ public class CommonPopupWindow extends Dialog {
                 }
             });
 
-        }else {
+        } else {
             searchView.setVisibility(View.GONE);
         }
-        hideSoftKeyboard(context);
+
 
     }
 
@@ -104,9 +106,9 @@ public class CommonPopupWindow extends Dialog {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 if (onPopItemClickListener != null) {
-                    if (searchView.getVisibility() == View.VISIBLE){
+                    if (searchView.getVisibility() == View.VISIBLE) {
                         onPopItemClickListener.itemClick(results.indexOf(adapter.getData().get(position)));
-                    }else {
+                    } else {
                         onPopItemClickListener.itemClick(position);
                     }
 
@@ -124,20 +126,35 @@ public class CommonPopupWindow extends Dialog {
 
         } else {
             show();
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    hideSoftKeyboard(context);
+                }
+            });
         }
-        hideSoftKeyboard(context);
     }
 
     public interface OnPopItemClickListener {
         void itemClick(int position);
     }
 
-    public  void hideSoftKeyboard(Context context) {
+    public void hideSoftKeyboard(Context context) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         if (searchView != null)
-        imm.showSoftInput(searchView,InputMethodManager.SHOW_FORCED);
+            imm.showSoftInput(searchView, InputMethodManager.SHOW_FORCED);
 
         imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0); //强制隐藏键盘
     }
 
+
+    @Override
+    public void dismiss() {
+        View view = getCurrentFocus();
+        if (view instanceof TextView) {
+            InputMethodManager mInputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            mInputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
+        }
+        super.dismiss();
+    }
 }
