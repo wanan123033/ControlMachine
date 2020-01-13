@@ -34,8 +34,12 @@ dependencies {
     })
     compile files('libs/HCNetSDK.jar')
     compile files('libs/jna.jar')
+    //该依赖仅包含MediaPlayer解码
+    compile 'com.kk.taurus.playerbase:playerbase:3.3.5'
     //该依赖包含ijkplayer解码和MediaPlayer解码
-    compile 'cn.jiajunhui:ijkplayer:335_088_007'
+    //    compile 'cn.jiajunhui:ijkplayer:335_088_007'
+    //    compile 'cn.jiajunhui:exoplayer:335_291_009'
     //ijk官方的解码库依赖，较少格式版本且不支持HTTPS。
     compile 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.8'
+    compile 'com.googlecode.mp4parser:isoparser:1.1.21'
 }

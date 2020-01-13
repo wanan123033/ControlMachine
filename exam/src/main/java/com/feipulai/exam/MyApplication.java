@@ -7,14 +7,11 @@ import android.support.multidex.MultiDexApplication;
 import com.feipulai.common.CrashHandler;
 import com.feipulai.common.utils.FileUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
-import com.feipulai.device.AdaptiveConfig;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.SharedPrefsConfigs;
-import com.kk.taurus.ijkplayer.IjkPlayer;
 import com.kk.taurus.playerbase.config.PlayerConfig;
 import com.kk.taurus.playerbase.config.PlayerLibrary;
 import com.kk.taurus.playerbase.record.PlayRecordManager;
-import com.kk.taurus.playerbase.window.WindowVideoView;
 
 
 public class MyApplication extends MultiDexApplication {
@@ -49,7 +46,10 @@ public class MyApplication extends MultiDexApplication {
         FileUtil.mkdirs(PATH_SPECIFICATION);
 
         //视频播放初始化库
-        IjkPlayer.init(this);
+        PlayerLibrary.init(this);
+//        IjkPlayer.init(this);
+        //如果添加了'cn.jiajunhui:exoplayer:xxxx'该依赖
+//        ExoMediaPlayer.init(this);
         //播放记录的配置
         //开启播放记录
         PlayerConfig.playRecord(true);

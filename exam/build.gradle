@@ -21,6 +21,7 @@ android {
         ndk {
             abiFilters "armeabi-v7a"
         }
+
     }
     signingConfigs {
         releaseConfig {
@@ -131,7 +132,7 @@ configurations.all {
         if (requested.group == 'com.android.support') {
             if (!requested.name.startsWith("multidex")) {
                 //这里写你想统一的版本是多少
-                details.useVersion '26.0.1'
+                details.useVersion '26.1.0'
             }
         }
     }

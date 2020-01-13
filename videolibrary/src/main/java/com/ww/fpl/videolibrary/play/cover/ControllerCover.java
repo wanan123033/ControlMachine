@@ -77,6 +77,7 @@ public class ControllerCover extends BaseCover implements OnTimerUpdateListener,
     private ObjectAnimator mTopAnimator;
     private ObjectAnimator mSpeedAnimator;
     private RadioGroup rgSpeed;
+    private TextView mTvStartTime;
 
     public ControllerCover(Context context) {
         super(context);
@@ -96,6 +97,7 @@ public class ControllerCover extends BaseCover implements OnTimerUpdateListener,
         mSwitchScreen = findViewById(R.id.cover_player_controller_image_view_switch_screen);
         mSeekBar = findViewById(R.id.cover_player_controller_seek_bar);
         mBottomSeekBar = findViewById(R.id.cover_bottom_seek_bar);
+        mTvStartTime = findViewById(R.id.tv_startTime);
         rgSpeed=findViewById(R.id.rg_speed);
 
         mBackIcon.setOnClickListener(this);
@@ -140,7 +142,7 @@ public class ControllerCover extends BaseCover implements OnTimerUpdateListener,
 
         cancelTopAnimation();
         cancelBottomAnimation();
-        cancelSpeedAnimation();
+//        cancelSpeedAnimation();
 
         getGroupValue().unregisterOnGroupValueUpdateListener(mOnGroupValueUpdateListener);
         removeDelayHiddenMessage();
@@ -255,6 +257,7 @@ public class ControllerCover extends BaseCover implements OnTimerUpdateListener,
 
     private void setTitle(String text) {
         mTopTitle.setText(text);
+        mTvStartTime.setText(text);
     }
 
     private void setSwitchScreenIcon(boolean isFullScreen) {
@@ -344,38 +347,38 @@ public class ControllerCover extends BaseCover implements OnTimerUpdateListener,
         setBottomSeekBarState(!state);
     }
 
-    private void setSpeedContainerState(final boolean state) {
-        rgSpeed.clearAnimation();
-        cancelSpeedAnimation();
-        mSpeedAnimator = ObjectAnimator.ofFloat(rgSpeed,
-                "alpha", state ? 0 : 1, state ? 1 : 0).setDuration(300);
-        mSpeedAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                super.onAnimationStart(animation);
-                if (state) {
-                    rgSpeed.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                if (!state) {
-                    rgSpeed.setVisibility(View.GONE);
-                }
-            }
-        });
-        mSpeedAnimator.start();
-    }
-
-    private void cancelSpeedAnimation() {
-        if (mSpeedAnimator != null) {
-            mSpeedAnimator.cancel();
-            mSpeedAnimator.removeAllListeners();
-            mSpeedAnimator.removeAllUpdateListeners();
-        }
-    }
+//    private void setSpeedContainerState(final boolean state) {
+//        rgSpeed.clearAnimation();
+//        cancelSpeedAnimation();
+//        mSpeedAnimator = ObjectAnimator.ofFloat(rgSpeed,
+//                "alpha", state ? 0 : 1, state ? 1 : 0).setDuration(300);
+//        mSpeedAnimator.addListener(new AnimatorListenerAdapter() {
+//            @Override
+//            public void onAnimationStart(Animator animation) {
+//                super.onAnimationStart(animation);
+//                if (state) {
+//                    rgSpeed.setVisibility(View.VISIBLE);
+//                }
+//            }
+//
+//            @Override
+//            public void onAnimationEnd(Animator animation) {
+//                super.onAnimationEnd(animation);
+//                if (!state) {
+//                    rgSpeed.setVisibility(View.GONE);
+//                }
+//            }
+//        });
+//        mSpeedAnimator.start();
+//    }
+//
+//    private void cancelSpeedAnimation() {
+//        if (mSpeedAnimator != null) {
+//            mSpeedAnimator.cancel();
+//            mSpeedAnimator.removeAllListeners();
+//            mSpeedAnimator.removeAllUpdateListeners();
+//        }
+//    }
 
     private void setControllerState(boolean state) {
         if (state) {
@@ -385,7 +388,7 @@ public class ControllerCover extends BaseCover implements OnTimerUpdateListener,
         }
         setTopContainerState(state);
         setBottomContainerState(state);
-        setSpeedContainerState(state);
+//        setSpeedContainerState(state);
     }
 
     private boolean isControllerShow() {
