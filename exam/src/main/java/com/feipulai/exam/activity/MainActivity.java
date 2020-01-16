@@ -292,8 +292,10 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
 
     private void showBindMonitoringDialog() {
         if (SettingHelper.getSystemSetting().isBindMonitoring()) {
-            String[] monitoringArray = new String[SettingHelper.getSystemSetting().getMonitoringList().size()];
-            for (int i = 0; i < SettingHelper.getSystemSetting().getMonitoringList().size(); i++) {
+
+            List<MonitoringBean> monitoringBeans = SettingHelper.getSystemSetting().getMonitoringList();
+            String[] monitoringArray = new String[monitoringBeans.size()];
+            for (int i = 0; i < monitoringBeans.size(); i++) {
                 MonitoringBean monitoringBean = SettingHelper.getSystemSetting().getMonitoringList().get(i);
                 monitoringArray[i] = "< " + monitoringBean.getMonitoringSerial() + " > - " + monitoringBean.getBindTime();
             }

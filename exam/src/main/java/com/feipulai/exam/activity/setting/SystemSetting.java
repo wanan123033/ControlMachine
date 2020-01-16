@@ -1,7 +1,11 @@
 package com.feipulai.exam.activity.setting;
 
+import android.text.TextUtils;
+
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.exam.config.TestConfigs;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,12 +95,12 @@ public class SystemSetting {
     public static final int LED_VERSION_V4 = 1;
 
     //信道
-    private int channel;
+    private int channel = 1;
     //是否使用自定义信道
     private boolean isCustomChannel;
 
     private boolean isBindMonitoring;//是否绑定监控设备
-    private List<MonitoringBean> monitoringList = new ArrayList<>();
+    private String monitoringJson;
 
     public int getQrLength() {
         return qrLength;
@@ -242,12 +246,23 @@ public class SystemSetting {
         isBindMonitoring = bindMonitoring;
     }
 
-    public List<MonitoringBean> getMonitoringList() {
-        return monitoringList;
+    public String getMonitoringJson() {
+        return monitoringJson;
     }
 
-    public void setMonitoringList(List<MonitoringBean> monitoringList) {
-        this.monitoringList = monitoringList;
+    public void setMonitoringJson(String monitoringJson) {
+        this.monitoringJson = monitoringJson;
+    }
+
+    public List<MonitoringBean> getMonitoringList() {
+        List<MonitoringBean> list;
+        if (TextUtils.isEmpty(monitoringJson)) {
+            list = new ArrayList<>();
+            return list;
+        }
+        list = new Gson().fromJson(monitoringJson, new TypeToken<List<MonitoringBean>>() {
+        }.getType());
+        return list;
     }
 
     @Override
@@ -310,10 +325,12 @@ public class SystemSetting {
     }
 
     public String getBindDeviceName() {
-        if (!isBindMonitoring) {
+        List<MonitoringBean> monitoringList = getMonitoringList();
+        if (!isBindMonitoring || monitoringList == null) {
             return "";
         }
         String bindName = "";
+
         for (int i = 0; i < monitoringList.size(); i++) {
             bindName += monitoringList.get(i).getMonitoringSerial();
             if (i != monitoringList.size() - 1) {

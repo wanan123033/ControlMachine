@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,10 +47,12 @@ import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Item;
+import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.exl.ResultExlWriter;
 import com.feipulai.exam.exl.StuItemExLReader;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
+import com.feipulai.exam.utils.ImageUtil;
 import com.feipulai.exam.utils.StringChineseUtil;
 import com.feipulai.exam.view.OperateProgressBar;
 import com.github.mjdev.libaums.fs.UsbFile;
@@ -235,7 +238,8 @@ public class DataManageActivity
                         startActivityForResult(intent, REQUEST_CODE_PHOTO);
                         break;
                     case 4://头像下载
-                        ToastUtils.showShort("功能未开放，敬请期待");
+//                        ToastUtils.showShort("功能未开放，敬请期待");
+                        uploadPortrait();
                         break;
                     case 5://删除头像
                         //TODO 测试使用
@@ -562,11 +566,16 @@ public class DataManageActivity
                     Bitmap bitmap = BitmapFactory.decodeFile(jpgFile.getAbsolutePath());
                     if (bitmap == null) {
 //                        File failedFile = new File(file + File.separator + jpgFile.getName());
-//                        if (!failedFile.getParentFile().exists()) {
-//                            failedFile.getParentFile().mkdirs();
-//                        }
-//                        jpgFile.renameTo(failedFile);
+////                        if (!failedFile.getParentFile().exists()) {
+////                            failedFile.getParentFile().mkdirs();
+////                        }
+////                        jpgFile.renameTo(failedFile);
                         continue;
+                    }
+                    Student student = DBManager.getInstance().queryStudentByStuCode(jpgFile.getName().substring(0, jpgFile.getName().indexOf(".")));
+                    if (student != null && TextUtils.isEmpty(student.getPortrait())) {
+                        student.setPortrait(ImageUtil.bitmapToStrByBase64(bitmap));
+                        DBManager.getInstance().updateStudent(student);
                     }
                     bitmap = ImageUtils.alignBitmapForBgr24(bitmap);
                     if (bitmap == null) {
@@ -648,6 +657,7 @@ public class DataManageActivity
                     }
                 }).create().show();
     }
+
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -756,5 +766,62 @@ public class DataManageActivity
     //     ToastUtils.showShort("清空本地学生成绩信息完成");
     //     Logger.i("清空本地学生成绩信息完成");
     // }
+    public void uploadPortrait() {
+        final List<Student> studentList = DBManager.getInstance().getStudentByPortrait();
+        if (studentList.size() == 0) {
+            ToastUtils.showShort("当前所有考生无头像信息，请先进行名单下载");
+            return;
+        }
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                final int totalCount = studentList.size();
 
+                int successCount = 0;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.setMaxProgress(totalCount);
+                        progressDialog.show();
+                    }
+                });
+                for (int i = 0; i < totalCount; i++) {
+                    final int finalI = i;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (progressDialog != null) {
+                                progressDialog.refreshProgress(finalI);
+                            }
+                        }
+                    });
+                    Bitmap bitmap = studentList.get(i).getBitmapPortrait();
+                    if (bitmap == null) {
+                        continue;
+                    }
+                    bitmap = ImageUtils.alignBitmapForBgr24(bitmap);
+                    if (bitmap == null) {
+                        continue;
+                    }
+                    byte[] bgr24 = ImageUtils.bitmapToBgr24(bitmap);
+                    boolean success = FaceServer.getInstance().registerBgr24(DataManageActivity.this, bgr24, bitmap.getWidth(), bitmap.getHeight(),
+                            studentList.get(i).getStudentCode());
+                    if (!success) {
+                        Log.e("faceRegister", "人脸注册失败" + studentList.get(i).getStudentCode());
+                    } else {
+                        successCount++;
+                    }
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ToastUtils.showShort("头像导入成功");
+                        progressDialog.dismiss();
+                    }
+                });
+                Log.i("DataManageActivity", "run: " + executorService.isShutdown());
+            }
+        });
+
+    }
 }

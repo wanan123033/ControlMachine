@@ -16,6 +16,7 @@ import com.feipulai.device.CheckDeviceOpener;
 import com.feipulai.device.ic.NFCDevice;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.google.gson.Gson;
 import com.zkteco.android.biometric.module.idcard.meta.IDCardInfo;
 
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ public class MonitoringBindActivity extends BaseTitleActivity implements CheckDe
                 false,
                 true);
         monitoringBeans = SettingHelper.getSystemSetting().getMonitoringList();
+
         for (MonitoringBean monitoringBean : monitoringBeans) {
             monitoringBean.setSelect(false);
         }
@@ -133,7 +135,7 @@ public class MonitoringBindActivity extends BaseTitleActivity implements CheckDe
     @Override
     protected void onPause() {
         super.onPause();
-        SettingHelper.getSystemSetting().setMonitoringList(monitoringBeans);
+        SettingHelper.getSystemSetting().setMonitoringJson(new Gson().toJson(monitoringBeans));
         SettingHelper.updateSettingCache(SettingHelper.getSystemSetting());
     }
 
@@ -152,6 +154,9 @@ public class MonitoringBindActivity extends BaseTitleActivity implements CheckDe
                     }
                 }
                 bindAdapter.notifyDataSetChanged();
+                if (selectBeans.size() == 0) {
+                    cbSelectAll.setChecked(false);
+                }
                 ToastUtils.showShort("解绑成功");
             }
         }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {

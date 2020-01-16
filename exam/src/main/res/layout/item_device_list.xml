@@ -13,7 +13,7 @@
         android:background="@drawable/grey_border">
 
         <ImageView
-            android:id="@+id/iv_head"
+            android:id="@+id/item_img_portrait"
             android:layout_width="57dp"
             android:layout_height="74dp"
             android:layout_margin="10dp"
@@ -52,7 +52,7 @@
             android:id="@+id/ll_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/iv_head"
+            android:layout_below="@+id/item_img_portrait"
             android:orientation="horizontal"
             android:paddingLeft="6dp"
             android:paddingRight="10dp">

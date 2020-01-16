@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -85,7 +86,8 @@ public class BaseGroupActivity extends BaseTitleActivity {
     TextView tvStudentName;
     @BindView(R.id.tv_gender)
     TextView tvGender;
-
+    @BindView(R.id.iv_portrait)
+    ImageView imgPortrait;
     private List<BaseStuPair> stuPairsList;// 组内所有考生
     private CommonPopupWindow groupPop;
 
@@ -292,6 +294,11 @@ public class BaseGroupActivity extends BaseTitleActivity {
         tvStudentCode.setText(student.getStudentCode());
         tvStudentName.setText(student.getStudentName());
         tvGender.setText(student.getSex() == 0 ? "男" : "女");
+        if (student.getBitmapPortrait() != null) {
+            imgPortrait.setImageBitmap(student.getBitmapPortrait());
+        } else {
+            imgPortrait.setImageResource(R.mipmap.icon_head_photo);
+        }
         resultList = getResults(student.getStudentCode());
 //        InteractUtils.showStuInfo(llStuDetail, student, results);
         resultsAdapter = new ResultsAdapter(resultList);

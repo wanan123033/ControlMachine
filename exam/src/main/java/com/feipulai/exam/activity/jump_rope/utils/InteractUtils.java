@@ -2,6 +2,7 @@ package com.feipulai.exam.activity.jump_rope.utils;
 
 import android.app.Activity;
 import android.text.TextUtils;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -404,11 +405,15 @@ public class InteractUtils {
         TextView mTvStudentCode = (TextView) llStuDetail.findViewById(R.id.tv_studentCode);
         TextView mTvGender = (TextView) llStuDetail.findViewById(R.id.tv_gender);
         TextView mTvGrade = (TextView) llStuDetail.findViewById(R.id.tv_grade);
-
+        ImageView imgPortrait = llStuDetail.findViewById(R.id.iv_portrait);
         mTvStudentCode.setText(student == null ? "" : student.getStudentCode());
         mTvStudentName.setText(student == null ? "" : student.getStudentName());
         mTvGender.setText(student == null ? "" : student.getSex() == 0 ? "男" : "女");
-
+        if (student == null || TextUtils.isEmpty(student.getPortrait())) {
+            imgPortrait.setImageResource(R.mipmap.icon_head_photo);
+        } else {
+            imgPortrait.setImageBitmap(student.getBitmapPortrait());
+        }
         if (results == null || results.size() == 0) {
             mTvGrade.setText("");
         } else {

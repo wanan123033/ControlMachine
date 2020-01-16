@@ -289,7 +289,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         if (focusPosition == oldPosition) {
             view.updateSpecificItem(oldPosition);
         } else {
-            view.select(focusPosition);
+            view.select(focusPosition, false);
         }
 
         RoundResult lastResult = null;

@@ -9,6 +9,7 @@ import com.feipulai.exam.entity.GroupDao;
 import com.feipulai.exam.entity.ItemDao;
 import com.feipulai.exam.entity.MachineResultDao;
 import com.feipulai.exam.entity.RoundResultDao;
+import com.feipulai.exam.entity.StudentDao;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.greendao.database.Database;
@@ -43,6 +44,8 @@ public class DBOpenHelper extends DaoMaster.OpenHelper {
                     MigrationHelper.migrate(db, ItemDao.class);
                 case 6:
                     MigrationHelper.migrate(db, RoundResultDao.class);
+                case 7:
+                    MigrationHelper.migrate(db, StudentDao.class);
                     break;
 
             }

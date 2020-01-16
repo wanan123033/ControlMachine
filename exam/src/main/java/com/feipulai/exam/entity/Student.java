@@ -1,6 +1,9 @@
 package com.feipulai.exam.entity;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.text.TextUtils;
+import android.util.Base64;
 
 import com.feipulai.exam.utils.StringChineseUtil;
 
@@ -47,7 +50,7 @@ public class Student implements Serializable {
 
     @ToMany(joinProperties = {@JoinProperty(name = "studentCode", referencedName = "studentCode")})
     private List<StudentItem> studentItemList;
-
+    private String portrait;//头像
     @Unique
     private String remark1;
     private String remark2;
@@ -63,10 +66,15 @@ public class Student implements Serializable {
     @Generated(hash = 1943931642)
     private transient StudentDao myDao;
 
-    @Generated(hash = 35930721)
+
+    @Generated(hash = 1556870573)
+    public Student() {
+    }
+
+    @Generated(hash = 1893806068)
     public Student(Long id, @NotNull String studentCode, String studentName, int sex, String idCardNo,
-                   String icCardNo, String className, String schoolName, String downloadTime, String remark1,
-                   String remark2, String remark3) {
+            String icCardNo, String className, String schoolName, String downloadTime, String portrait,
+            String remark1, String remark2, String remark3) {
         this.id = id;
         this.studentCode = studentCode;
         this.studentName = studentName;
@@ -76,13 +84,10 @@ public class Student implements Serializable {
         this.className = className;
         this.schoolName = schoolName;
         this.downloadTime = downloadTime;
+        this.portrait = portrait;
         this.remark1 = remark1;
         this.remark2 = remark2;
         this.remark3 = remark3;
-    }
-
-    @Generated(hash = 1556870573)
-    public Student() {
     }
 
     public Long getId() {
@@ -155,6 +160,14 @@ public class Student implements Serializable {
 
     public void setDownloadTime(String downloadTime) {
         this.downloadTime = downloadTime;
+    }
+
+    public String getPortrait() {
+        return portrait;
+    }
+
+    public void setPortrait(String portrait) {
+        this.portrait = portrait;
     }
 
     public String getRemark1() {
@@ -284,6 +297,15 @@ public class Student implements Serializable {
 
         }
         return studentName;
+    }
+
+    public Bitmap getBitmapPortrait() {
+        if (TextUtils.isEmpty(portrait)) {
+            return null;
+        }
+        byte[] bytes = Base64.decode(portrait, Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        return bitmap;
     }
 
     public String getSpeakStuName() {

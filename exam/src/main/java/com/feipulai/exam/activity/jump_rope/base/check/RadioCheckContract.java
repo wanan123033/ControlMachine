@@ -61,7 +61,7 @@ public interface RadioCheckContract {
 
         void changeBadSuccess();
 
-        void select(int position);
+        void select(int position,boolean isRefreshStu);
 
         void showStuInfo(Student student, List<RoundResult> results);
 

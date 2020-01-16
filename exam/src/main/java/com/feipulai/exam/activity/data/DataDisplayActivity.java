@@ -4,7 +4,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -40,6 +42,9 @@ public class DataDisplayActivity extends BaseTitleActivity {
     TextView mTvBestResult;
     @BindView(R.id.rv_result)
     RecyclerView rvResult;
+
+    @BindView(R.id.img_portrait)
+    ImageView imgPortrait;
     private DataRetrieveBean mDataRetrieveBean;
     //    private Item mCurrentItem;
 
@@ -65,6 +70,11 @@ public class DataDisplayActivity extends BaseTitleActivity {
         mTvStuCode.setText(mDataRetrieveBean.getStudentCode());
         mTvStuName.setText(mDataRetrieveBean.getStudentName());
         mTvSex.setText(mDataRetrieveBean.getSex() == 0 ? "男" : "女");
+        if (TextUtils.isEmpty(mDataRetrieveBean.getPortrait())) {
+            imgPortrait.setImageResource(R.mipmap.icon_head_photo);
+        } else {
+            imgPortrait.setImageBitmap(mDataRetrieveBean.getBitmapPortrait());
+        }
         displayResults();
         rvResult.setLayoutManager(new LinearLayoutManager(this));
     }

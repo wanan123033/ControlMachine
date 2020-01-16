@@ -219,6 +219,10 @@ public class DBManager {
         return student;
     }
 
+    public void updateStudent(Student student) {
+        studentDao.updateInTx(student);
+    }
+
     public Student queryStudentByCode(String code) {
         Student student = studentDao.queryBuilder()
                 .where(StudentDao.Properties.StudentCode.eq(code))
@@ -416,6 +420,26 @@ public class DBManager {
                 .list();
     }
 
+    public List<Student> getStudentByPortrait() {
+        StringBuffer sqlBuf = new StringBuffer("SELECT S.* FROM " + StudentDao.TABLENAME + " S");
+        sqlBuf.append(" WHERE S." + StudentDao.Properties.StudentCode.columnName + " IN ( ");
+        sqlBuf.append(" SELECT  " + StudentItemDao.Properties.StudentCode.columnName);
+        sqlBuf.append(" FROM " + StudentItemDao.TABLENAME);
+        sqlBuf.append(" WHERE  " + StudentItemDao.Properties.ItemCode.columnName + " = ?  ");
+        sqlBuf.append(" UNION SELECT  " + GroupItemDao.Properties.StudentCode.columnName);
+        sqlBuf.append(" FROM " + GroupItemDao.TABLENAME);
+        sqlBuf.append(" WHERE  " + GroupItemDao.Properties.ItemCode.columnName + " = ?  )");
+        sqlBuf.append(" AND  S." + StudentDao.Properties.Portrait.columnName + " != '' ");
+        Logger.i("=====sql1===>" + sqlBuf.toString());
+        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{TestConfigs.getCurrentItemCode(), TestConfigs.getCurrentItemCode()});
+        List<Student> students = new ArrayList<>();
+        while (c.moveToNext()) {
+            Student student = studentDao.readEntity(c, 0);
+            students.add(student);
+        }
+        return students;
+
+    }
 //    public List<StudentItem> queryStudentByItemAndSort(String itemCode,int sort){
 //
 //    }

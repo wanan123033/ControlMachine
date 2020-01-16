@@ -231,16 +231,19 @@ public abstract class AbstractRadioCheckActivity<Setting>
                 getStopUseView().setText(STOP_USE);
             }
         }
-        select(position);
+        select(position, true);
     }
 
     @Override
-    public void select(int position) {
+    public void select(int position, boolean isRefreshStu) {
         int oldPosition = mAdapter.getSelected();
         mAdapter.setSelected(position);
         mAdapter.notifyItemChanged(oldPosition);
         mAdapter.notifyItemChanged(position);
-        presenter.showStuInfo(position);
+        if (isRefreshStu){
+            presenter.showStuInfo(position);
+        }
+
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.feipulai.exam.activity.person.adapter;
 
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -44,7 +45,11 @@ public class BaseGroupTestStuAdapter extends BaseQuickAdapter<BaseStuPair, BaseV
         } else {
             helper.setBackgroundColor(R.id.view_content, ContextCompat.getColor(mContext, R.color.white));
         }
-
+        if (TextUtils.isEmpty(pair.getStudent().getPortrait())) {
+            helper.setImageResource(R.id.item_img_portrait, R.mipmap.icon_head_photo);
+        } else {
+            helper.setImageBitmap(R.id.item_img_portrait, pair.getStudent().getBitmapPortrait());
+        }
 //        helper.addOnClickListener(R.id.view_check);
 //        if (testPosition == helper.getLayoutPosition()) {
 //            cbDeviceState.setVisibility(View.VISIBLE);

@@ -58,7 +58,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 /**
  * 个人测试基类
  */
-public abstract class BasePersonTestActivity extends BaseCheckActivity   {
+public abstract class BasePersonTestActivity extends BaseCheckActivity {
     private static final String TAG = "BasePersonTestActivity";
     @BindView(R.id.et_input_text)
     StuSearchEditText etInputText;
@@ -120,6 +120,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity   {
     private Intent serverIntent;
     private int testType = 0;//0自动 1手动
     private boolean isFault;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_base_person_test;
@@ -140,9 +141,6 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity   {
             startService(serverIntent);
         }
     }
-
-
-
 
 
     @Nullable
@@ -188,7 +186,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity   {
 
     private void init() {
         mLEDManager = new LEDManager();
-        mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(),TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+        mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
 
         PrinterManager.getInstance().init();
@@ -430,14 +428,13 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity   {
         stopService(serverIntent);
         PrinterManager.getInstance().close();
         if (TestConfigs.sCurrentItem != null) {
-            mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(),TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+            mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
             String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()) + " " + SettingHelper.getSystemSetting().getHostId();
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), title, mLEDManager.getX(title), 0, true, false);
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "菲普莱体育", 3, 3, false, true);
             mLEDManager = null;
         }
     }
-
 
 
     /**
@@ -480,13 +477,16 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity   {
             txtStuName.setText(student.getStudentName());
             txtStuSex.setText((student.getSex() == 0 ? "男" : "女"));
             txtStuCode.setText(student.getStudentCode());
+            if (student.getBitmapPortrait() != null) {
+                imgPortrait.setImageBitmap(student.getBitmapPortrait());
+            }
 
         } else {
             txtStuName.setText("");
             txtStuSex.setText("");
             txtStuCode.setText("");
             txtStuResult.setText("");
-
+            imgPortrait.setImageResource(R.mipmap.icon_head_photo);
         }
     }
 

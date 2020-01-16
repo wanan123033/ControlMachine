@@ -2,6 +2,7 @@ package com.feipulai.exam.activity.sargent_jump.adapter;
 
 import android.graphics.Color;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -139,9 +140,15 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                         Student student = item.getStuDevicePair().getStudent();
                         moreHelper.txtStuCode.setText(student.getStudentCode());
                         moreHelper.txtStuName.setText(student.getStudentName());
+                        if (TextUtils.isEmpty(item.getStuDevicePair().getStudent().getPortrait())) {
+                            moreHelper.setImageResource(R.id.item_img_portrait, R.mipmap.icon_head_photo);
+                        } else {
+                            moreHelper.setImageBitmap(R.id.item_img_portrait, item.getStuDevicePair().getStudent().getBitmapPortrait());
+                        }
                     } else {
                         moreHelper.txtStuCode.setText("");
                         moreHelper.txtStuName.setText("");
+                        moreHelper.setImageResource(R.id.item_img_portrait, R.mipmap.icon_head_photo);
                     }
                 }
 
@@ -163,7 +170,7 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                 if (item.getStuDevicePair().getResult() == -999) {
                     oneViewHolder.setText(R.id.txt_test_result, "");
                 } else if (item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_END
-                        || item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_ONUSE||
+                        || item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_ONUSE ||
                         item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN) {
                     oneViewHolder.setText(R.id.txt_test_result, item.getStuDevicePair().getResultState() == RoundResult.RESULT_STATE_FOUL ?
                             "X" : ResultDisplayUtils.getStrResultForDisplay(item.getStuDevicePair().getResult()));
@@ -218,9 +225,15 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                         Student student = item.getStuDevicePair().getStudent();
                         oneViewHolder.txtStuCode.setText(student.getStudentCode());
                         oneViewHolder.txtStuName.setText(student.getStudentName());
+                        if (TextUtils.isEmpty(student.getPortrait())) {
+                            oneViewHolder.setImageResource(R.id.item_img_portrait, R.mipmap.icon_head_photo);
+                        } else {
+                            oneViewHolder.setImageBitmap(R.id.item_img_portrait, student.getBitmapPortrait());
+                        }
                     } else {
                         oneViewHolder.txtStuCode.setText("");
                         oneViewHolder.txtStuName.setText("");
+                        oneViewHolder.setImageResource(R.id.item_img_portrait, R.mipmap.icon_head_photo);
                     }
                 }
                 break;

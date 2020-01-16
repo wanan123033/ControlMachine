@@ -246,6 +246,16 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                 systemSetting.setTemporaryAddStu(mSwAddStudent.isChecked());
                 break;
             case R.id.cb_custom_channel://自定义信道
+                if (TextUtils.isEmpty(editCustomChannel.getText().toString())) {
+                    ToastUtils.showShort("请输入自定义信道");
+                    cbCustomChannel.setChecked(false);
+                    return;
+                } else if (Integer.valueOf(editCustomChannel.getText().toString()) == 0 ||
+                        Integer.valueOf(editCustomChannel.getText().toString()) > 140) {
+                    ToastUtils.showShort("请输入自定义信道正常范围");
+                    cbCustomChannel.setChecked(false);
+                    return;
+                }
                 systemSetting.setCustomChannel(cbCustomChannel.isChecked());
                 break;
             case R.id.btn_bind://登录

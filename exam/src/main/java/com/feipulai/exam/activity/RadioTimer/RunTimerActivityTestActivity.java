@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -76,6 +77,8 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     TextView txtStuName;
     @BindView(R.id.txt_stu_sex)
     TextView txtStuSex;
+    @BindView(R.id.img_portrait)
+    ImageView imgPortrait;
     @BindView(R.id.tv_run_state)
     TextView tvRunState;
     @BindView(R.id.tv_wait_ready)
@@ -418,6 +421,11 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
         txtStuCode.setText(student.getStudentCode());
         txtStuName.setText(student.getStudentName());
         txtStuSex.setText(student.getSex() == 0 ? "男" : "女");
+        if (student.getBitmapPortrait() != null) {
+            imgPortrait.setImageBitmap(student.getBitmapPortrait());
+        } else {
+            imgPortrait.setImageResource(R.mipmap.icon_head_photo);
+        }
     }
 
 //    private void selectTestDialog(final Student student) {

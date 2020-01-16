@@ -180,7 +180,7 @@
 
                 <EditText
                     android:id="@+id/edit_custom_channel"
-                    android:layout_width="242dp"
+                    android:layout_width="200dp"
                     android:layout_height="35dp"
                     android:layout_marginLeft="30dp"
                     android:layout_toRightOf="@+id/txt_custom_channel"
@@ -192,6 +192,15 @@
                     android:maxLines="1"
                     android:paddingLeft="@dimen/dp_10" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/dp_10"
+                    android:textColor="@color/black"
+                    android:layout_toRightOf="@+id/edit_custom_channel"
+                    android:text="信道范围（1-140）" />
+
                 <CheckBox
                     android:id="@+id/cb_custom_channel"
                     android:layout_width="wrap_content"
@@ -201,7 +210,6 @@
                     android:button="@drawable/checkbox_switch_selected" />
 
             </RelativeLayout>
-
 
 
             <LinearLayout
@@ -288,8 +296,8 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
                 android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <TextView

@@ -2,6 +2,7 @@ package com.feipulai.exam.adapter;
 
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -28,6 +29,12 @@ public class VolleyBallGroupStuAdapter extends BaseQuickAdapter<StuDevicePair, B
     protected void convert(BaseViewHolder helper, StuDevicePair pair) {
         helper.setText(R.id.item_txt_stu_code, pair.getStudent().getStudentCode());
         helper.setText(R.id.item_txt_stu_name, pair.getStudent().getStudentName());
+
+        if (TextUtils.isEmpty(pair.getStudent().getPortrait())) {
+            helper.setImageResource(R.id.item_img_portrait, R.mipmap.icon_head_photo);
+        } else {
+            helper.setImageBitmap(R.id.item_img_portrait, pair.getStudent().getBitmapPortrait());
+        }
         helper.setText(R.id.item_trackno, TestCache.getInstance().getTrackNoMap().get(pair.getStudent()) + "");
         if (testPosition == helper.getLayoutPosition()) {
             helper.setBackgroundRes(R.id.view_content, R.drawable.group_select_bg);

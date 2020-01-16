@@ -23,6 +23,8 @@ public class StudentBean implements Serializable {
     private int trackNo; //道号
     private String examItemCode;
     private int machineCode;//机器代码   一个机器码可能对应多个项目代码,所以机器码不能为唯一字段
+    private String photoData;//头像
+
     public String getStudentCode() {
         return this.studentCode;
     }
@@ -134,6 +136,14 @@ public class StudentBean implements Serializable {
 
     public void setMachineCode(int machineCode) {
         this.machineCode = machineCode;
+    }
+
+    public String getPhotoData() {
+        return photoData;
+    }
+
+    public void setPhotoData(String photoData) {
+        this.photoData = photoData;
     }
 
     @Override

@@ -357,6 +357,7 @@ public class HttpSubscriber {
                     student.setClassName(studentBean.getClassName());
                     student.setStudentName(studentBean.getStudentName());
                     student.setStudentCode(studentBean.getStudentCode());
+                    student.setPortrait(studentBean.getPhotoData());
                     student.setIdCardNo(TextUtils.isEmpty(studentBean.getIdCard()) ? null : studentBean.getIdCard());
                     studentList.add(student);
                     if (ScheduleBean.SITE_EXAMTYPE == 0) {

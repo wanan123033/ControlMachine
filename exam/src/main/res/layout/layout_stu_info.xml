@@ -33,6 +33,7 @@
             android:id="@+id/tv_studentCode"
             android:layout_width="match_parent"
             android:layout_height="25dp"
+            android:paddingLeft="5dp"
             android:background="@drawable/edit_search_bg"
             android:textColor="@color/grey_A8"
             android:textSize="18sp" />

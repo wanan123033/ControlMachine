@@ -86,7 +86,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                 public void run() {
                     mUVCCamera.startPreview();
                 }
-            }, 1000);
+            }, 100);
         } else {
             mUVCCamera.stopPreview();
             isOpenCamera = false;

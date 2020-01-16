@@ -244,12 +244,27 @@ public abstract class BaseCheckActivity
 
     @Override
     public void compareStu(Student student) {
+        afrFrameLayout.setVisibility(View.GONE);
         if (student == null) {
-            afrFrameLayout.setVisibility(View.GONE);
-            toastSpeak("查无此人");
+            InteractUtils.toastSpeak(this, "该考生不存在");
             return;
         }
+        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+        if (studentItem == null) {
+            InteractUtils.toastSpeak(this, "无此项目");
+            return;
+        }
+        List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
+        if (results != null && results.size() >= TestConfigs.getMaxTestCount(this)) {
+            InteractUtils.toastSpeak(this, "该考生已测试");
+            return;
+        }
+        mStudent = student;
+        mStudentItem = studentItem;
+        mResults = results;
+        // 可以直接检录
         checkInUIThread(student);
+
     }
 
     private void checkInUIThread(Student student) {
