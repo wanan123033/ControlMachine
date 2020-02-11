@@ -209,6 +209,17 @@
             android:padding="@dimen/dp_10"
             android:layout_marginTop="@dimen/dp_10"
             android:text="肺活量模块测试" />
+
+        <TextView
+            android:layout_marginLeft="150dp"
+            android:id="@+id/btn_grip"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:background="@drawable/btn_click_bg"
+            android:gravity="center"
+            android:padding="@dimen/dp_10"
+            android:layout_marginTop="@dimen/dp_10"
+            android:text="握力计模块测试" />
     </LinearLayout>
 </ScrollView>
 
