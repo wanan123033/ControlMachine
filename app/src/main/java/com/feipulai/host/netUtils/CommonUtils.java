@@ -2,18 +2,24 @@ package com.feipulai.host.netUtils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.wifi.WifiManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.activity.setting.SettingHelper;
+import com.feipulai.host.utils.EncryptUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
 /**
@@ -23,7 +29,7 @@ import java.util.HashMap;
 
 public class CommonUtils {
 
-    @SuppressLint("HardwareIds")
+    @SuppressLint({"HardwareIds", "MissingPermission"})
     public static String getDeviceId(Context context) {
 
         String id;
@@ -38,11 +44,46 @@ public class CommonUtils {
         return id;
     }
 
+    @SuppressLint({"WifiManagerLeak", "MissingPermission"})
+    public static String getDeviceInfo() {
+        TelephonyManager phone = (TelephonyManager) MyApplication.getInstance().getSystemService(Context.TELEPHONY_SERVICE);
+        WifiManager wifi = (WifiManager) MyApplication.getInstance().getSystemService(Context.WIFI_SERVICE);
+
+        return wifi.getConnectionInfo().getMacAddress() + "," + phone.getDeviceId() + "," + getCpuName() + "," + phone.getNetworkOperator();
+    }
+
+    /**
+     * 获取CPU型号
+     *
+     * @return
+     */
+    private static String getCpuName() {
+        String str1 = "/proc/cpuinfo";
+        String str2 = "";
+        try {
+            FileReader fr = new FileReader(str1);
+            BufferedReader localBufferedReader = new BufferedReader(fr);
+            while ((str2 = localBufferedReader.readLine()) != null) {
+                if (str2.contains("Hardware")) {
+                    return str2.split(":")[1];
+                }
+            }
+            localBufferedReader.close();
+        } catch (IOException e) {
+        }
+        return null;
+    }
+
     /**
      * 获取签名数据
+     *
+     * @param params
+     * @return
      */
     public static String getSignature(@NonNull HashMap<String, String> params) {
+
         String signature = "parameData&" + "dateTime&" + "token&";
+
         if (params.get("token") != null && !"".equals(params.get("token"))) {
             signature += params.get("token") + "&";
         }
@@ -50,14 +91,19 @@ public class CommonUtils {
             signature += params.get("parameData") + "&";
         }
         signature += params.get("dateTime");
+
         signature = getMD5(signature);
         //Logger.d("signature=======" + signature);
         return signature;
     }
 
     public static String getMD5(String str) {
-        //return DigestUtils.md5Hex(str.getBytes("UTF-8"));
-        return  new String(Hex.encodeHex(DigestUtils.md5(str))) ;
+        try {
+            return DigestUtils.md5Hex(str.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            // 不可能发生
+        }
+        return null;
     }
 
     /**
@@ -68,19 +114,28 @@ public class CommonUtils {
         return gson.toJson(paramData);
     }
 
-    public static HashMap<String, String> query(Object object) {
-        HashMap<String, String> query = new HashMap<>();
-        query.put("parameData", CommonUtils.getParamData(object));//customer
-        query.put("token", MyApplication.TOKEN);
-        query.put("dateTime", System.currentTimeMillis() + "");
-        query.put("signature", CommonUtils.getSignature(query));
-        return query;
+    public static ResponseParame encryptQuery(String bizType, Object object) {
+        ResponseParame respost = new ResponseParame();
+        respost.setBizType(bizType);
+        respost.setToken(MyApplication.TOKEN);
+        respost.setMsEquipment(getDeviceInfo());
+//        Map<String, Object> signMap = new HashMap<>();
+//        signMap.put(bizType, object);
+//        respost.setSign(EncryptUtil.getSignData(signMap));
+        Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
+        respost.setSign(EncryptUtil.getSignData(gson.toJson(object)));
+        respost.setData(EncryptUtil.setEncryptData(object));
+        respost.setRequestTime(String.valueOf(System.currentTimeMillis()));
+        return respost;
     }
 
-    public static String getIp(Context context) {
-        String ipAddress = SettingHelper.getSystemSetting().getServerIp()+ "/app/";
+    public static String getIp() {
+        String ipAddress = SettingHelper.getSystemSetting().getServerIp();
+        if (TextUtils.isEmpty(ipAddress)) {
+            ipAddress = "http://syn3y6.natappfree.cc/app/";
+        }
         if (!ipAddress.startsWith("http")) {
-            ipAddress = "http://" + ipAddress;
+            ipAddress = "http://" + ipAddress + "/app/";
         }
         return ipAddress;
     }

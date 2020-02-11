@@ -23,17 +23,18 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.host.R;
-import com.feipulai.host.activity.setting.LEDSettingActivity;
 import com.feipulai.host.activity.base.BaseCheckActivity;
 import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.person.adapter.BasePersonTestResultAdapter;
+import com.feipulai.host.activity.setting.LEDSettingActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
-import com.feipulai.host.netUtils.netapi.ItemSubscriber;
+import com.feipulai.host.netUtils.UploadResultUtil;
+import com.feipulai.host.netUtils.netapi.ServerIml;
 import com.feipulai.host.utils.ResultDisplayUtils;
 import com.feipulai.host.view.StuSearchEditText;
 import com.orhanobut.logger.Logger;
@@ -410,7 +411,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         roundResult.setItemCode(itemCode);
         roundResult.setResult(baseStuPair.getResult());
         roundResult.setResultState(baseStuPair.getResultState());
-        roundResult.setTestTime(DateUtil.getCurrentTime2("yyyy-MM-dd HH:mm:ss"));
+        roundResult.setTestTime(DateUtil.getCurrentTime() + "");
         roundResult.setRoundNo(1);
         RoundResult bestResult = DBManager.getInstance().queryBestScore(baseStuPair.getStudent().getStudentCode());
         if (bestResult != null) {
@@ -460,8 +461,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             return;
         }
 
-//        new RequestBiz().setDataUpLoad(roundResult, lastResult);
-        new ItemSubscriber().setDataUpLoad(roundResult, lastResult);
+        ServerIml.uploadResult(UploadResultUtil.getUploadData(roundResult, lastResult));
 
     }
 

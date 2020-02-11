@@ -33,7 +33,7 @@ public class ResultUtils {
      * @return
      */
     public static RoundResult generateRoughResultWithRaw(Student student, Object machineResult, int arg) {
-        String testTime = DateUtil.getCurrentTime2("yyyy-MM-dd HH:mm:ss");
+        String testTime = DateUtil.getCurrentTime() + "";
         int machineCode = TestConfigs.sCurrentItem.getMachineCode();
         RoundResult result = new RoundResult();
         result.setMachineCode(machineCode);

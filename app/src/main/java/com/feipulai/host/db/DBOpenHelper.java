@@ -3,6 +3,7 @@ package com.feipulai.host.db;
 import android.content.Context;
 
 import com.feipulai.host.entity.DaoMaster;
+import com.feipulai.host.entity.RoundResultDao;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.greendao.database.Database;
@@ -26,7 +27,9 @@ public class DBOpenHelper extends DaoMaster.OpenHelper {
 
         if (oldVersion < newVersion) {
             switch (newVersion) {
-
+                case 3:
+                    MigrationHelper.migrate(db, RoundResultDao.class);
+                    break;
             }
 
         }

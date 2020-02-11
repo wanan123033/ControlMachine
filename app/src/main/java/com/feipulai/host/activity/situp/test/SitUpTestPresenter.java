@@ -138,6 +138,9 @@ public class SitUpTestPresenter
         originState.setState(newState);
         view.updateSpecificItem(piv);
         currentConnect[deviceId]++;
+        if (testState == WAIT_MACHINE_RESULTS || testState == WAIT_CONFIRM_RESULTS) {
+            endGetResultPairs[deviceId]++;
+        }
     }
 
     @Override

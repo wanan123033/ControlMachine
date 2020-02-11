@@ -23,7 +23,8 @@ import com.feipulai.host.activity.jump_rope.bean.TestCache;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.entity.RoundResult;
-import com.feipulai.host.netUtils.netapi.ItemSubscriber;
+import com.feipulai.host.netUtils.UploadResultUtil;
+import com.feipulai.host.netUtils.netapi.ServerIml;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,6 @@ public class RadioResultActivity
     private ResultDisplayAdapter mAdapter;
 
     private Handler mHandler = new MyHandler(this);
-    private ItemSubscriber itemSubscriber;
 
     @Override
     protected void handleMessage(Message msg) {
@@ -87,13 +87,12 @@ public class RadioResultActivity
         }
         // Log.i("mIsUpload", mIsUpload + "");
         if (SettingHelper.getSystemSetting().isRtUpload()) {
-            itemSubscriber = new ItemSubscriber();
             if (TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
                 ToastUtils.showShort(R.string.upload_result_hint);
             } else {
                 List<RoundResult> results = new ArrayList<>(TestCache.getInstance().getSaveResults().values());
                 if (results.size() != 0) {
-                    itemSubscriber.setDataUpLoad(results, this);
+                    ServerIml.uploadResult(this, UploadResultUtil.getUploadData(results));
                 }
             }
         }

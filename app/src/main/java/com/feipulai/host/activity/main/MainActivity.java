@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SystemBrightUtils;
@@ -27,7 +28,12 @@ import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.activity.setting.SystemSetting;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.config.TestConfigs;
+import com.feipulai.host.db.DBManager;
+import com.feipulai.host.entity.RoundResult;
+import com.feipulai.host.entity.Student;
 import com.feipulai.host.netUtils.CommonUtils;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -95,6 +101,9 @@ public class MainActivity extends BaseActivity {
         if (!TextUtils.isEmpty(systemSetting.getTestName())) {
             sb.append("-").append(systemSetting.getTestName());
         }
+        if (machineCode != SharedPrefsConfigs.DEFAULT_MACHINE_CODE) {
+            sb.append(" [ F - " + SettingHelper.getSystemSetting().getUseChannel() + " ]");
+        }
         txtMainTitle.setText(sb.toString());
         txtDeviceId.setText(CommonUtils.getDeviceId(this));
     }
@@ -127,6 +136,7 @@ public class MainActivity extends BaseActivity {
                 PrinterManager.getInstance().init();
                 PrinterManager.getInstance().selfCheck();
                 PrinterManager.getInstance().print("\n\n");
+//                addTestResult();
                 break;
             case R.id.card_parameter_setting:
                 IntentUtil.gotoActivity(MainActivity.this, SettingActivity.class);
@@ -200,4 +210,29 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    private void addTestResult() {
+        List<Student> dbStudentList = DBManager.getInstance().dumpAllStudents();
+        for (int i = 0; i < dbStudentList.size(); i++) {
+            if (i< 500) {
+                Student student = dbStudentList.get(i);
+                RoundResult roundResult = new RoundResult();
+                roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
+                roundResult.setStudentCode(student.getStudentCode());
+                String itemCode = TestConfigs.sCurrentItem.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : TestConfigs.sCurrentItem.getItemCode();
+                roundResult.setItemCode(itemCode);
+                roundResult.setResult(1980 + i);
+                roundResult.setResultState(0);
+                roundResult.setTestTime(DateUtil.getCurrentTime() + "");
+                roundResult.setRoundNo(i + 1);
+                roundResult.setTestNo(1);
+                roundResult.setUpdateState(0);
+                roundResult.setIsLastResult(1);
+                DBManager.getInstance().insertRoundResult(roundResult);
+            } else {
+                return;
+            }
+
+
+        }
+    }
 }

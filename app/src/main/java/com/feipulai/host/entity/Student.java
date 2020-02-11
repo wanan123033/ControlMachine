@@ -26,10 +26,10 @@ import java.util.List;
  */
 @Entity
 public class Student implements Serializable {
-	
-	public static final int MALE = 0;
-	public static final int FEMALE = 1;
-	
+
+    public static final int MALE = 0;
+    public static final int FEMALE = 1;
+
     private static final long serialVersionUID = 6302346624591600338L;
     @Id(autoincrement = true)
     private Long id;//学生ID
@@ -41,11 +41,11 @@ public class Student implements Serializable {
     @Unique
     private String idCardNo;//身份证号
     private String icCardNo;//IC卡号
+    private String schoolName;//学校名称
     private String className;//班级
     private String gradeName;//年级
     private String majorName;//专业
     private String facultyName;//院系
-    private String downloadTime;//下载时间  时间戳
 
     @ToMany(joinProperties = {@JoinProperty(name = "studentCode", referencedName = "studentCode")})
     @SerializedName("studenItem")
@@ -55,37 +55,42 @@ public class Student implements Serializable {
     private String remark1;
     private String remark2;
     private String remark3;
-    
+
     public final static String BEAN_KEY = "STUDENT_KEY";
-    /** Used to resolve relations */
+    /**
+     * Used to resolve relations
+     */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
-    /** Used for active entity operations. */
+    /**
+     * Used for active entity operations.
+     */
     @Generated(hash = 1943931642)
     private transient StudentDao myDao;
 
-    @Generated(hash = 2087724334)
+
+    @Generated(hash = 1556870573)
+    public Student() {
+    }
+
+    @Generated(hash = 1969904267)
     public Student(Long id, @NotNull String studentCode, String studentName, int sex, String idCardNo,
-            String icCardNo, String className, String gradeName, String majorName, String facultyName,
-            String downloadTime, String remark1, String remark2, String remark3) {
+            String icCardNo, String schoolName, String className, String gradeName, String majorName,
+            String facultyName, String remark1, String remark2, String remark3) {
         this.id = id;
         this.studentCode = studentCode;
         this.studentName = studentName;
         this.sex = sex;
         this.idCardNo = idCardNo;
         this.icCardNo = icCardNo;
+        this.schoolName = schoolName;
         this.className = className;
         this.gradeName = gradeName;
         this.majorName = majorName;
         this.facultyName = facultyName;
-        this.downloadTime = downloadTime;
         this.remark1 = remark1;
         this.remark2 = remark2;
         this.remark3 = remark3;
-    }
-
-    @Generated(hash = 1556870573)
-    public Student() {
     }
 
     public Long getId() {
@@ -160,6 +165,14 @@ public class Student implements Serializable {
         this.majorName = majorName;
     }
 
+    public String getSchoolName() {
+        return schoolName;
+    }
+
+    public void setSchoolName(String schoolName) {
+        this.schoolName = schoolName;
+    }
+
     public String getFacultyName() {
         return this.facultyName;
     }
@@ -168,13 +181,6 @@ public class Student implements Serializable {
         this.facultyName = facultyName;
     }
 
-    public String getDownloadTime() {
-        return this.downloadTime;
-    }
-
-    public void setDownloadTime(String downloadTime) {
-        this.downloadTime = downloadTime;
-    }
 
     public String getRemark1() {
         return this.remark1;
@@ -199,9 +205,11 @@ public class Student implements Serializable {
     public void setRemark3(String remark3) {
         this.remark3 = remark3;
     }
+
     public String getSpeakStuName() {
         return StringChineseUtil.toChinese(studentName);
     }
+
     public String getLEDStuName() {
         if (!TextUtils.isEmpty(studentName) && studentName.length() > 0) {
             try {
@@ -218,6 +226,7 @@ public class Student implements Serializable {
         }
         return studentName;
     }
+
     /**
      * To-many relationship, resolved on first access (and after reset).
      * Changes to to-many relations are not persisted, make changes to the target entity.
@@ -240,7 +249,9 @@ public class Student implements Serializable {
         return studentItemList;
     }
 
-    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    /**
+     * Resets a to-many relationship, making the next get call to query for a fresh result.
+     */
     @Generated(hash = 390827565)
     public synchronized void resetStudentItemList() {
         studentItemList = null;
@@ -295,7 +306,6 @@ public class Student implements Serializable {
                 ", gradeName='" + gradeName + '\'' +
                 ", majorName='" + majorName + '\'' +
                 ", facultyName='" + facultyName + '\'' +
-                ", downloadTime='" + downloadTime + '\'' +
                 ", studentItemList=" + studentItemList +
                 ", remark1='" + remark1 + '\'' +
                 ", remark2='" + remark2 + '\'' +

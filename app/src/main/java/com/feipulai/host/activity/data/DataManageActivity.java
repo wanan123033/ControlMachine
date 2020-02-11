@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,6 +17,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.feipulai.common.db.ClearDataProcess;
+import com.feipulai.common.db.DataBaseExecutor;
+import com.feipulai.common.db.DataBaseRespon;
+import com.feipulai.common.db.DataBaseTask;
 import com.feipulai.common.dbutils.BackupManager;
 import com.feipulai.common.dbutils.FileSelectActivity;
 import com.feipulai.common.exl.ExlListener;
@@ -30,13 +34,15 @@ import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseTitleActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
+import com.feipulai.host.bean.UploadResults;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.exl.ResultExlWriter;
 import com.feipulai.host.exl.StuItemExLReader;
-import com.feipulai.host.netUtils.netapi.ItemSubscriber;
+import com.feipulai.host.netUtils.UploadResultUtil;
+import com.feipulai.host.netUtils.netapi.ServerIml;
 import com.feipulai.host.view.DBDataCleaner;
 import com.feipulai.host.view.OperateProgressBar;
 import com.github.mjdev.libaums.fs.UsbFile;
@@ -208,13 +214,12 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                         break;
 
                     case 6://成绩上传
-                        List<RoundResult> resultList = DBManager.getInstance().getUploadResultsAll(false);
+                        List<RoundResult> resultList = DBManager.getInstance().getResultsAll();
                         if (resultList.size() == 0) {
                             ToastUtils.showShort(getString(R.string.item_result_already_upload));
                         } else {
                             //上传数据前先进行项目信息校验
-                            ItemSubscriber subscriber = new ItemSubscriber();
-                            subscriber.getItemAll(MyApplication.TOKEN, DataManageActivity.this, null, resultList);
+                            uploadData(resultList);
                         }
                         break;
 
@@ -252,7 +257,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == 0) {
-                            lastDownLoadTime[0] = null;
+                            lastDownLoadTime[0] = "";
                         } else {
                             lastDownLoadTime[0] = SharedPrefsUtil.getValue(DataManageActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.LAST_DOWNLOAD_TIME, "");
                         }
@@ -261,8 +266,8 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        ItemSubscriber itemSubscriber = new ItemSubscriber();
-                        itemSubscriber.getItemAll(MyApplication.TOKEN, DataManageActivity.this, lastDownLoadTime[0], null);
+                        ServerIml.downloadData(DataManageActivity.this, lastDownLoadTime[0]);
+
                     }
                 })
                 .setNegativeButton(R.string.cancel, null).show();
@@ -472,7 +477,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
     @Override
     public void onClearDBConfirmed() {
         DBManager.getInstance().clear();
-        com.feipulai.common.utils.SharedPrefsUtil.putValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
+        SharedPrefsUtil.putValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
         DBManager.getInstance().initDB();
         TestConfigs.init(this, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), null);
         Logger.i("数据清空完成");
@@ -485,5 +490,26 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
     //     ToastUtils.showShort("清空本地学生成绩信息完成");
     //     Logger.i("清空本地学生成绩信息完成");
     // }
+    public void uploadData(final List<RoundResult> resultList) {
+        DataBaseExecutor.addTask(new DataBaseTask(this, "成绩上传中，请稍后...", false) {
+            @Override
+            public DataBaseRespon executeOper() {
 
+
+                return new DataBaseRespon(true, "", UploadResultUtil.getUploadData(resultList));
+            }
+
+            @Override
+            public void onExecuteSuccess(DataBaseRespon respon) {
+                List<UploadResults> results = (List<UploadResults>) respon.getObject();
+                Log.e("UploadResults", "---------" + results.size());
+                ServerIml.uploadResult(DataManageActivity.this, results);
+            }
+
+            @Override
+            public void onExecuteFail(DataBaseRespon respon) {
+
+            }
+        });
+    }
 }

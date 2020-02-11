@@ -6,5 +6,5 @@ package com.feipulai.host.netUtils;
 public interface OnResultListener<T> {
     void onSuccess(T result);
 
-    void onFault(String errorMsg);
+    void onFault(int code, String errorMsg);
 }

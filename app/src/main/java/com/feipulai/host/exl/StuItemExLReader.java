@@ -204,9 +204,9 @@ public class StuItemExLReader extends ExlReader {
         }
         bean.setStudentCode(stuCode);
 
-        if ("男".equals(sex)) {
+        if (sex.contains("男")) {
             bean.setSex(Student.MALE);
-        } else if ("女".equals(sex)) {
+        } else if (sex.contains("女")) {
             bean.setSex(Student.FEMALE);
         } else {
             // 不男不女

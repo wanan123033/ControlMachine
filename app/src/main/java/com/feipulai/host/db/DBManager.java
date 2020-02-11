@@ -823,10 +823,10 @@ public class DBManager {
                 .list();
     }
 
-
     /**
      * 获取是否上传的成绩列表
      * (改：上传所有不需要状态判断)
+     *
      * @param upLoaded
      * @return
      */
@@ -834,17 +834,23 @@ public class DBManager {
         return roundResultDao.queryBuilder()
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
-//                .where(RoundResultDao.Properties.UpdateState.eq(upLoaded ? 1 : 0))
+                .where(RoundResultDao.Properties.UpdateState.eq(upLoaded ? 1 : 0))
                 .list();
     }
 
-    public List<RoundResult> getUploadResultsAll2() {
+    /**
+     * 获取是否上传的成绩列表
+     * (改：上传所有不需要状态判断)
+     *
+     * @return
+     */
+    public List<RoundResult> getResultsAll() {
         return roundResultDao.queryBuilder()
-//                .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
+                .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
-//                .where(RoundResultDao.Properties.UpdateState.eq(upLoaded ? 1 : 0))
                 .list();
     }
+
 
     /**
      * 添加成绩
@@ -907,23 +913,7 @@ public class DBManager {
                 .list();
     }
 
-    /**
-     * 查询对应考生当前项目最后一次成绩
-     *
-     * @param studentCode 考号
-     * @return
-     */
-    public List<RoundResult> queryFinallyRoundScoreByExamTypeList(String studentCode, int exemType) {
-        Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
-                + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\tIsLastResult:" + 1);
-        return roundResultDao.queryBuilder()
-                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
-                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
-                .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
-                .where(RoundResultDao.Properties.ExamType.eq(exemType))
-                .orderDesc(RoundResultDao.Properties.TestNo)
-                .list();
-    }
+
 
     /**
      * 查询对应考生当前项目最后一次成绩

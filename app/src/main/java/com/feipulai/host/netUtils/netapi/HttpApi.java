@@ -6,16 +6,20 @@ package com.feipulai.host.netUtils.netapi;
  */
 
 
-import com.feipulai.host.entity.Item;
-import com.feipulai.host.entity.Student;
+import com.feipulai.host.bean.BatchBean;
+import com.feipulai.host.bean.ItemBean;
+import com.feipulai.host.bean.StudentBean;
+import com.feipulai.host.bean.UploadResults;
+import com.feipulai.host.bean.UserBean;
 import com.feipulai.host.netUtils.HttpResult;
+import com.feipulai.host.netUtils.ResponseParame;
 
 import java.util.List;
-import java.util.Map;
 
 import io.reactivex.Observable;
-import retrofit2.http.FieldMap;
-import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Body;
+import retrofit2.http.Header;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
 /**
@@ -26,33 +30,33 @@ public interface HttpApi {
     /**
      * 设备绑定接口
      */
-    String DEVICE_BINDING_ACTION = "device/binding.action";
+    String DEVICE_BINDING_ACTION = "/run/deviceBind";
     /**
      * 获取项目信息接口
      */
-    String GET_ITEM_ALL_ACTION = "item/getAll.action";
+    String GET_ITEM_ALL_ACTION = " /run/downItemInfo";
     /**
      * 分页获取学生信息
      */
-    String GET_STUDENT_ACTION = "student/conditionalGet.action";
+    String GET_STUDENT_ACTION = "/run/downSiteScheduleItemStudent";
     /**
      * 成绩上传接口
      */
-    String UPLOAD_RESULT_ACTION = "student/uploadResult.action";
+    String UPLOAD_RESULT_ACTION = "/run/uploadStudentResult";
 
     @POST(DEVICE_BINDING_ACTION)
-    @FormUrlEncoded
-    Observable<HttpResult<String>> bind(@FieldMap() Map<String, String> map);
+    @Headers("Content-Type:application/json;charset=UTF-8")
+    Observable<HttpResult<UserBean>> bind(@Header("Authorization") String token, @Body ResponseParame data);
 
     @POST(GET_ITEM_ALL_ACTION)
-    @FormUrlEncoded
-    Observable<HttpResult<List<Item>>> getAll(@FieldMap() Map<String, String> map);
+    @Headers("Content-Type:application/json;charset=UTF-8")
+    Observable<HttpResult<List<ItemBean>>> getAllItem(@Header("Authorization") String token, @Body ResponseParame data);
 
     @POST(GET_STUDENT_ACTION)
-    @FormUrlEncoded
-    Observable<HttpResult<List<Student>>> getStudent(@FieldMap() Map<String, String> map);
+    @Headers("Content-Type:application/json;charset=UTF-8")
+    Observable<HttpResult<BatchBean<List<StudentBean>>>> getStudentData(@Header("Authorization") String token, @Body ResponseParame data);
 
     @POST(UPLOAD_RESULT_ACTION)
-    @FormUrlEncoded
-    Observable<HttpResult<String>> uploadResult(@FieldMap() Map<String, String> map);
+    @Headers("Content-Type:application/json;charset=UTF-8")
+    Observable<HttpResult<List<UploadResults>>> uploadResult(@Header("Authorization") String token, @Body ResponseParame data);
 }

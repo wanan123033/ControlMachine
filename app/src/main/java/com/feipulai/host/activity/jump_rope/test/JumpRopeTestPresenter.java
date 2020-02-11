@@ -64,7 +64,14 @@ public class JumpRopeTestPresenter
 
     @Override
     protected void testCountDown(long tick) {
-        deviceManager.countDown(hostId, setting.getDeviceGroup() + 1, (int) tick, setting.getTestTime());
+
+        if (tick == 1) {
+            for (int i = 0; i < 10; i++) {
+                deviceManager.countDown(hostId, setting.getDeviceGroup() + 1, 1, setting.getTestTime());
+            }
+        } else {
+            deviceManager.countDown(hostId, setting.getDeviceGroup() + 1, (int) tick, setting.getTestTime());
+        }
     }
 
     @Override
@@ -154,6 +161,9 @@ public class JumpRopeTestPresenter
         originState.setState(newState);
         view.updateSpecificItem(piv);
         currentConnect[deviceId]++;
+        if (testState == WAIT_MACHINE_RESULTS || testState == WAIT_CONFIRM_RESULTS) {
+            endGetResultPairs[deviceId]++;
+        }
     }
 
     @Override

@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -38,11 +39,13 @@ import com.feipulai.host.activity.jump_rope.base.InteractUtils;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.activity.setting.SystemSetting;
 import com.feipulai.host.adapter.DataRetrieveAdapter;
+import com.feipulai.host.bean.UploadResults;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
-import com.feipulai.host.netUtils.netapi.ItemSubscriber;
+import com.feipulai.host.netUtils.UploadResultUtil;
+import com.feipulai.host.netUtils.netapi.ServerIml;
 import com.feipulai.host.utils.ResultDisplayUtils;
 import com.feipulai.host.view.StuSearchEditText;
 import com.orhanobut.logger.Logger;
@@ -281,18 +284,10 @@ public class DataRetrieveActivity extends BaseTitleActivity
                     ToastUtils.showShort(R.string.please_no_upload_stu);
                 } else {
                     //上传数据前先进行项目信息校验
-                    ItemSubscriber subscriber = new ItemSubscriber();
-//                    subscriber.getItemAll(MyApplication.TOKEN, this, null, new ArrayList<RoundResult>());
-                    subscriber.setStudentDataUpLoad(this, roundResults);
+                    uploadData(roundResults);
                 }
                 break;
 
-//            case R.id.rb_all:
-//                if (mRbAll.isChecked()) {
-//                    setCheckStates(true, false, false, false, false);
-//                    setAllList();
-//                }
-//                break;
 
         }
     }
@@ -669,4 +664,26 @@ public class DataRetrieveActivity extends BaseTitleActivity
         unregisterReceiver(receiver);
     }
 
+    public void uploadData(final List<String> roundResults) {
+        DataBaseExecutor.addTask(new DataBaseTask(this, "获取上传数据，请稍后...", false) {
+            @Override
+            public DataBaseRespon executeOper() {
+
+
+                return new DataBaseRespon(true, "", UploadResultUtil.getUploadDataByStuCode(roundResults));
+            }
+
+            @Override
+            public void onExecuteSuccess(DataBaseRespon respon) {
+                List<UploadResults> results = (List<UploadResults>) respon.getObject();
+                Log.e("UploadResults", "---------" + results.size());
+                ServerIml.uploadResult(DataRetrieveActivity.this, results);
+            }
+
+            @Override
+            public void onExecuteFail(DataBaseRespon respon) {
+
+            }
+        });
+    }
 }

@@ -43,7 +43,7 @@ public class RoundResult implements Serializable {
     @NotNull
     private int isLastResult;//是否为最好成绩 0-不是 1-是     身高体重最后成绩即为最好成绩
     @NotNull
-    private String testTime;//测试时间  格式:yyyy-MM-dd HH:mm:ss 与考试版不相同
+    private String testTime;//测试时间  格式:时间戳
     private String printTime;//打印时间 格式:yyyy-MM-dd HH:mm:ss
     @NotNull
     private int updateState;//上传状态 0未上传 1上传
@@ -54,15 +54,32 @@ public class RoundResult implements Serializable {
     @NotNull
     private int testNo;//测试次数
     public final static String BEAN_KEY = "ROUNDRESULT_KEY";
-    @NotNull
-    private int examType;//考试类型 0.正常 1.补考，(2.缓考,现没有这功能)
 
-    @Generated(hash = 210436332)
-    public RoundResult(Long id, @NotNull String studentCode, @NotNull String itemCode,
-            int machineCode, int roundNo, int result, int weightResult, int stumbleCount,
-            int resultState, int isLastResult, @NotNull String testTime, String printTime,
-            int updateState, String remark1, String remark2, String remark3, int testNo,
-            int examType) {
+    public RoundResult(Long id, String studentCode, String itemCode, int machineCode, int roundNo, int result, int weightResult,
+                       int stumbleCount, int resultState, int isLastResult, String testTime, String printTime, int testNo) {
+        this.id = id;
+        this.studentCode = studentCode;
+        this.itemCode = itemCode;
+        this.machineCode = machineCode;
+        this.roundNo = roundNo;
+        this.result = result;
+        this.weightResult = weightResult;
+        this.stumbleCount = stumbleCount;
+        this.resultState = resultState;
+        this.isLastResult = isLastResult;
+        this.testTime = testTime;
+        this.printTime = printTime;
+        this.testNo = testNo;
+    }
+
+    @Generated(hash = 1393632943)
+    public RoundResult() {
+    }
+
+    @Generated(hash = 793205969)
+    public RoundResult(Long id, @NotNull String studentCode, @NotNull String itemCode, int machineCode, int roundNo, int result,
+            int weightResult, int stumbleCount, int resultState, int isLastResult, @NotNull String testTime, String printTime,
+            int updateState, String remark1, String remark2, String remark3, int testNo) {
         this.id = id;
         this.studentCode = studentCode;
         this.itemCode = itemCode;
@@ -80,12 +97,6 @@ public class RoundResult implements Serializable {
         this.remark2 = remark2;
         this.remark3 = remark3;
         this.testNo = testNo;
-        this.examType = examType;
-    }
-
-
-    @Generated(hash = 1393632943)
-    public RoundResult() {
     }
 
 
@@ -281,11 +292,4 @@ public class RoundResult implements Serializable {
         this.testNo = testNo;
     }
 
-    public int getExamType() {
-        return examType;
-    }
-
-    public void setExamType(int examType) {
-        this.examType = examType;
-    }
 }

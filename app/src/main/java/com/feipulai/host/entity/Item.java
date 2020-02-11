@@ -31,7 +31,7 @@ public class Item {
     private int testNum;//项目测试次数	表示一次检录的测试次数	默认1次检录测试的次数，检录次数不限
     private int carryMode;//进位方式	不取舍,四舍五入,非零进一,非零舍去  与显示成绩有关
     private int itemType;    //项目类型(计时,计数,远度,计时),但是暂时不用
-    private int fResultType;//最终成绩	int	最终成绩(0:最好成绩 1:最后一次成绩)为准     该项只在成绩上传时使用
+    private int fResultType;//最终成绩选择模式 （1.最后成绩，2.补考成绩，3.最好）
 
     private String remark1;//备注1
     private String remark2;//备注2

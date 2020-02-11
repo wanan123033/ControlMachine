@@ -30,7 +30,9 @@ import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
+import com.feipulai.host.netUtils.UploadResultUtil;
 import com.feipulai.host.netUtils.netapi.ItemSubscriber;
+import com.feipulai.host.netUtils.netapi.ServerIml;
 import com.feipulai.host.utils.ResultDisplayUtils;
 
 import java.lang.ref.WeakReference;
@@ -102,7 +104,7 @@ public class SitUpResultActivity
 
         initAdapter();
 
-        mTestTime = DateUtil.getCurrentTime2("yyyy-MM-dd HH:mm:ss");
+        mTestTime =DateUtil.getCurrentTime() + "";
 
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setTitle("保存成绩");
@@ -302,9 +304,9 @@ public class SitUpResultActivity
         if (SettingHelper.getSystemSetting().isRtUpload()) {
             //选最好成绩为最终成绩
             if (TestConfigs.sCurrentItem.getFResultType() == 0) {
-                itemSubscriber.setDataUpLoad(roundResult, bestResult);
+                ServerIml.uploadResult(UploadResultUtil.getUploadData(roundResult, bestResult));
             } else {
-                itemSubscriber.setDataUpLoad(roundResult, roundResult);
+                ServerIml.uploadResult(UploadResultUtil.getUploadData(roundResult, roundResult));
             }
         }
 

@@ -22,7 +22,9 @@ import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
+import com.feipulai.host.netUtils.UploadResultUtil;
 import com.feipulai.host.netUtils.netapi.ItemSubscriber;
+import com.feipulai.host.netUtils.netapi.ServerIml;
 import com.feipulai.host.utils.PrinterUtils;
 import com.feipulai.host.utils.ResultDisplayUtils;
 import com.feipulai.host.utils.ResultUtils;
@@ -212,7 +214,9 @@ public class HeightWeightCheckActivity
                 }
 
                 if (SettingHelper.getSystemSetting().isRtUpload()) {
-                    itemSubscriber.setDataUpLoad(mHeightResult, mHeightResult);
+//                    itemSubscriber.setDataUpLoad(mHeightResult, mHeightResult);
+                    ServerIml.uploadResult(UploadResultUtil.getUploadData(mHeightResult, mLastHeightResult));
+
 //                    itemSubscriber.setDataUpLoad(mWeightResult, mWeightResult);
                 }
 

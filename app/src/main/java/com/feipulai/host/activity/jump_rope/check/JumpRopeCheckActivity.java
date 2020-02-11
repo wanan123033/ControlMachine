@@ -222,7 +222,8 @@ public class JumpRopeCheckActivity
                 break;
 
             case R.id.btn_del_all:
-                presenter.deleteAll();
+
+                showDeleteAllWarning();
                 break;
             case R.id.btn_kill_devices:
 //                presenter.killAllDevices();
@@ -236,6 +237,24 @@ public class JumpRopeCheckActivity
     }
 
     public void showkillAllWarning() {
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.warning))
+                .setContentText("是否删除全部检入考生")
+                .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                presenter.deleteAll();
+            }
+        }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+
+            }
+        }).show();
+    }
+
+    public void showDeleteAllWarning() {
         new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.warning))
                 .setContentText(getString(R.string.clear_all_device_hint))
                 .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {

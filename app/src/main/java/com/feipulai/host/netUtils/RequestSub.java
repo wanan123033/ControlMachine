@@ -1,9 +1,7 @@
 package com.feipulai.host.netUtils;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-
-import com.orhanobut.logger.Logger;
+import android.util.Log;
 
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
@@ -11,6 +9,7 @@ import java.net.UnknownHostException;
 
 import javax.net.ssl.SSLHandshakeException;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import io.reactivex.observers.DisposableObserver;
 import retrofit2.HttpException;
 
@@ -27,8 +26,9 @@ public class RequestSub<T> extends DisposableObserver<HttpResult<T>>
      */
     private boolean showProgress = true;
     private OnResultListener mOnResultListener;
+
     private Context context;
-    private ProgressDialog progressDialog;
+    private SweetAlertDialog alertDialog;
 
     /**
      * @param mOnResultListener 成功回调监听
@@ -37,20 +37,22 @@ public class RequestSub<T> extends DisposableObserver<HttpResult<T>>
         this.mOnResultListener = mOnResultListener;
     }
 
+
     /**
      * @param mOnResultListener 成功回调监听
      * @param context           上下文
      */
     public RequestSub(OnResultListener mOnResultListener, Context context) {
         this.mOnResultListener = mOnResultListener;
-        if (context == null) {
-            return;
+        if (context!=null){
+            this.context = context;
+            alertDialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
+            alertDialog.setTitleText("正在加载中，请稍等......");
+            alertDialog.setCanceledOnTouchOutside(false);
         }
-        this.context = context;
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("正在加载中，请稍等......");
-        progressDialog.setCanceledOnTouchOutside(false);
+
     }
+
 
     /**
      * @param mOnResultListener 成功回调监听
@@ -60,23 +62,25 @@ public class RequestSub<T> extends DisposableObserver<HttpResult<T>>
     public RequestSub(OnResultListener mOnResultListener, Context context, boolean showProgress) {
         this.mOnResultListener = mOnResultListener;
         this.context = context;
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setTitle("正在连接中...");
+        alertDialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
+        alertDialog.setTitleText("正在连接中...");
         this.showProgress = showProgress;
     }
 
 
     private void showProgressDialog() {
-        if (showProgress && null != progressDialog) {
-            progressDialog.show();
+        if (showProgress && null != alertDialog) {
+            alertDialog.show();
         }
     }
 
+
     private void dismissProgressDialog() {
-        if (showProgress && null != progressDialog) {
-            progressDialog.dismiss();
+        if (showProgress && null != alertDialog) {
+            alertDialog.dismiss();
         }
     }
+
 
     /**
      * 订阅开始时调用
@@ -87,35 +91,41 @@ public class RequestSub<T> extends DisposableObserver<HttpResult<T>>
         showProgressDialog();
     }
 
+
     /**
      * 完成，隐藏ProgressDialog
      */
     @Override
     public void onComplete() {
         dismissProgressDialog();
-        progressDialog = null;
+        alertDialog = null;
     }
+
 
     @Override
     public void onNext(HttpResult<T> result) {
-        switch (result.getState()) {
-        
-            case 0:
-                mOnResultListener.onSuccess(result.getBody());
-                break;
-        
-            case -1:
-                mOnResultListener.onFault("设备未激活，请联系管理激活设备");
-                break;
-            case -2:
-                mOnResultListener.onFault("设备未绑定,请手动绑定设备");
-                break;
-            case -6:
-                mOnResultListener.onFault("成功获取该项目学生信息");
-                break;
-            default:
-                mOnResultListener.onFault(result.getMsg() + "\n错误代码:" + result.getState());
-                break;
+        if (result.getState() == 0) {
+            //result.getEncrypt() == HttpResult.ENCRYPT_TRUE ? EncryptUtil.decodeHttpData(result) :
+            mOnResultListener.onSuccess(result.getBody());
+        } else {
+            switch (result.getState()) {
+                case -1:
+                    mOnResultListener.onFault(-1, "设备未激活，请联系管理激活设备");
+                    break;
+                case -2:
+                    mOnResultListener.onFault(-2, "设备未绑定,请手动绑定设备");
+                    break;
+                case -6:
+                    mOnResultListener.onFault(-6, "成功获取该项目学生信息");
+                    break;
+                case 401:
+//                    EventBus.getDefault().post(new BaseEvent(EventConfigs.TOKEN_ERROR));
+                    break;
+                default:
+                    mOnResultListener.onFault(result.getState(), result.getMsg());
+                    break;
+            }
+
         }
     }
 
@@ -126,26 +136,53 @@ public class RequestSub<T> extends DisposableObserver<HttpResult<T>>
     @Override
     public void onError(Throwable e) {
         try {
-            String msg = "";
+
             if (e instanceof SocketTimeoutException) {//请求超时
-                msg = "网络连接超时,请检查网络";
+                mOnResultListener.onFault(404, "请求超时");
             } else if (e instanceof ConnectException) {//网络连接超时
-                msg = "网络连接错误,请检查网络";
+                //                ToastManager.showShortToast("网络连接超时");
+                mOnResultListener.onFault(404, "网络连接超时");
             } else if (e instanceof SSLHandshakeException) {//安全证书异常
-                msg = "安全证书异常";
+                //                ToastManager.showShortToast("安全证书异常");
+                mOnResultListener.onFault(404, "安全证书异常");
             } else if (e instanceof HttpException) {//请求的地址不存在
                 int code = ((HttpException) e).code();
-                msg = "请求失败";
+                if (code == 504) {
+                    //                    ToastManager.showShortToast("网络异常，请检查您的网络状态");
+                    mOnResultListener.onFault(504, "网络异常，请检查您的网络状态");
+                } else if (code == 404) {
+                    //                    ToastManager.showShortToast("请求的地址不存在");
+                    mOnResultListener.onFault(404, "请求的地址不存在");
+                } else if (code == 401) {
+                    mOnResultListener.onFault(401, "Token失效，请重新登录");
+//                    EventBus.getDefault().post(new BaseEvent(EventConfigs.TOKEN_ERROR));
+                } else {
+                    //                    ToastManager.showShortToast("请求失败");
+                    mOnResultListener.onFault(code, code + ":请求失败");
+                }
             } else if (e instanceof UnknownHostException) {//域名解析失败
-                msg =  "域名解析失败,请检查服务器地址设置";
+                //                ToastManager.showShortToast("域名解析失败");
+                mOnResultListener.onFault(404, "域名解析失败");
+            } else if (e instanceof ResponseAnalysisException) {//域名解析失败
+                //                ToastManager.showShortToast("域名解析失败");
+                mOnResultListener.onFault(404, e.getMessage());
+            } else {
+                //                ToastManager.showShortToast("error:" + e.getMessage());
+                mOnResultListener.onFault(404, "error:" + e.getMessage());
             }
-            mOnResultListener.onFault(msg + "\t" + e.getMessage());
+        } catch (Exception e2) {
+            e2.printStackTrace();
+            mOnResultListener.onFault(404, "error:" + e2.getMessage());
         } finally {
-            Logger.e("error:" + e.getMessage());
+            Log.e("RequestSub", "error:" + e.getMessage());
+//            mOnResultListener.onFault(404, "error:" + e.getMessage());
             dismissProgressDialog();
-            progressDialog = null;
+            alertDialog = null;
+
         }
+
     }
+
 
     /**
      * 当result等于0回调给调用者，否则自动显示错误信息，若错误信息为401跳转登录页面。
@@ -173,17 +210,17 @@ public class RequestSub<T> extends DisposableObserver<HttpResult<T>>
 //        }
 //    }
 
+
     /**
      * 取消ProgressDialog的时候，取消对observable的订阅，同时也取消了http请求
      */
     @Override
     public void onCancelProgress() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
+        if (alertDialog != null && alertDialog.isShowing()) {
+            alertDialog.dismiss();
         }
         if (!this.isDisposed()) {
             this.dispose();
         }
     }
-    
 }

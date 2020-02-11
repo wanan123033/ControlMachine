@@ -5,6 +5,7 @@ import android.content.Context;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.host.MyApplication;
+import com.feipulai.host.bean.UserBean;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.netUtils.CommonUtils;
@@ -16,7 +17,6 @@ import com.feipulai.host.netUtils.RequestSub;
 import java.util.HashMap;
 
 import io.reactivex.Observable;
-import io.reactivex.observers.DisposableObserver;
 
 /**
  * Created by pengjf on 2018/10/9.
@@ -25,29 +25,29 @@ import io.reactivex.observers.DisposableObserver;
 
 public class UserSubscriber {
 
-    public void bind(Object object, DisposableObserver subscriber){
-        Observable<HttpResult<String>> observable = HttpManager.getInstance().getHttpApi().bind(CommonUtils.query(object));
-        HttpManager.getInstance().toSubscribe(observable, subscriber);
-    }
 
-    public void takeBind(int hostId, Context context){
-        HashMap<String,String> parameData = new HashMap<>();
-        parameData.put("deviceNo",CommonUtils.getDeviceId(MyApplication.getInstance()));
-        parameData.put("MachineNumber",hostId + "");
+    public void takeBind(int hostId, Context context) {
+        HashMap<String, String> parameData = new HashMap<>();
+        parameData.put("deviceNo", CommonUtils.getDeviceId(MyApplication.getInstance()));
+        parameData.put("MachineNumber", hostId + "");
         parameData.put("MachineCode", TestConfigs.sCurrentItem.getMachineCode() + "");
-        bind(parameData,new RequestSub(new OnResultListener<String>(){
+        Observable<HttpResult<UserBean>> observable = HttpManager.getInstance().getHttpApi().bind("bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery("1000", parameData));
+        HttpManager.getInstance().toSubscribe(observable, new RequestSub<UserBean>(new OnResultListener<UserBean>() {
+
             @Override
-            public void onSuccess(String result){
+            public void onSuccess(UserBean result) {
                 ToastUtils.showShort("设备绑定成功");
-                MyApplication.TOKEN = result;
-                SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS,SharedPrefsConfigs.TOKEN,result);
+                MyApplication.TOKEN = result.getToken();
+                SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.TOKEN, result.getToken());
             }
 
             @Override
-            public void onFault(String errorMsg){
+            public void onFault(int code, String errorMsg) {
                 ToastUtils.showShort(errorMsg);
             }
-        },context));
+        }, context));
+
+
     }
-    
+
 }

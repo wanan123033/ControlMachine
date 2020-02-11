@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.feipulai.host.MyApplication;
+
 /**
  * Created by pengjf on 2018/3/27.
  * 网络请求工具类
