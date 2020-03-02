@@ -25,7 +25,12 @@
         android:screenOrientation="landscape"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.medicine_ball.MedicineBallSettingActivity"></activity>
+        <activity android:name=".activity.pullup.pair.PullUpPairActivity"></activity>
+        <activity android:name=".activity.pullup.check.PullUpCheckActivity"></activity>
+        <activity android:name=".activity.pullup.test.PullUpIndividualActivity"></activity>
+        <activity android:name=".activity.pullup.setting.PullUpSettingActivity"></activity>
+        <activity android:name=".activity.pullup.PullUpSelectActivity" />
+        <activity android:name=".activity.medicine_ball.MedicineBallSettingActivity" />
         <activity android:name=".activity.medicine_ball.MedicineBallFreeTestActivity" />
         <activity android:name=".activity.vccheck.pair.VcPairActivity" />
         <activity android:name=".activity.situp.pair.SitPullPairActivity" />

@@ -80,7 +80,7 @@ public class DBManager {
 
         int[] supportMachineCodes = {ItemDefault.CODE_HW, ItemDefault.CODE_TS, ItemDefault.CODE_YWQZ,
                 ItemDefault.CODE_LDTY, ItemDefault.CODE_ZWTQQ,
-                ItemDefault.CODE_HWSXQ, ItemDefault.CODE_FHL,ItemDefault.CODE_ZFP,ItemDefault.CODE_WLJ};
+                ItemDefault.CODE_HWSXQ, ItemDefault.CODE_FHL,ItemDefault.CODE_ZFP,ItemDefault.CODE_WLJ,ItemDefault.CODE_YTXS};
         for (int machineCode : supportMachineCodes) {
             //查询是否已经存在该机器码的项,如果存在就放弃,避免重复添加
             List<Item> items = itemDao.queryBuilder().where(ItemDao.Properties.MachineCode.eq(machineCode)).list();
@@ -120,7 +120,10 @@ public class DBManager {
                     insertItem(machineCode, "红外计时", "毫秒");
                     break;
                 case ItemDefault.CODE_WLJ:
-                    insertItem(machineCode, "握力计", "千克");
+                    insertItem(machineCode, "握力", "千克");
+                    break;
+                case ItemDefault.CODE_YTXS:
+                    insertItem(machineCode, "引体向上", "次");
                     break;
 
             }

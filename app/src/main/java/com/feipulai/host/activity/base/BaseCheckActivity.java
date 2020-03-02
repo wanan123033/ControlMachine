@@ -232,7 +232,7 @@ public abstract class BaseCheckActivity
         }
     }
 
-    private static class MyHandler extends Handler {
+    protected static class MyHandler extends Handler {
 
         private WeakReference<BaseCheckActivity> mReference;
 
@@ -246,11 +246,15 @@ public abstract class BaseCheckActivity
             if (activity == null) {
                 return;
             }
-            switch (msg.what) {
-                case CHECK_IN:
-                    activity.onCheckIn((Student) msg.obj);
-                    break;
-            }
+            activity.handlerMessage( msg);
+        }
+    }
+
+    protected void handlerMessage(Message msg) {
+        switch (msg.what) {
+            case CHECK_IN:
+                onCheckIn((Student) msg.obj);
+                break;
         }
     }
 

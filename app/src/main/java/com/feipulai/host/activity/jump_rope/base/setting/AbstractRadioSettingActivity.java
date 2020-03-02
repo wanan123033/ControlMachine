@@ -1,5 +1,6 @@
 package com.feipulai.host.activity.jump_rope.base.setting;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Editable;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import com.feipulai.common.utils.ToastUtils;
@@ -17,6 +19,7 @@ import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseTitleActivity;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public abstract class AbstractRadioSettingActivity
@@ -26,9 +29,11 @@ public abstract class AbstractRadioSettingActivity
         AdapterView.OnItemSelectedListener {
 
     @BindView(R.id.sp_device_num)
-    Spinner mSpDeviceNum;
+    public Spinner mSpDeviceNum;
     @BindView(R.id.et_test_time)
     EditText mNpSecond;
+    @BindView(R.id.ll_test_time)
+    public LinearLayout llTestTime;
 
     private AbstractRadioSettingPresenter presenter;
 
@@ -119,4 +124,10 @@ public abstract class AbstractRadioSettingActivity
         ToastUtils.showShort(err);
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
+    }
 }

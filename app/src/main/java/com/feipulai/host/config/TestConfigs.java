@@ -11,6 +11,7 @@ import com.feipulai.host.activity.height_weight.HeightWeightCheckActivity;
 import com.feipulai.host.activity.jump_rope.check.JumpRopeCheckActivity;
 import com.feipulai.host.activity.medicine_ball.MedicineBallFreeTestActivity;
 import com.feipulai.host.activity.medicine_ball.MedicineBallTestActivity;
+import com.feipulai.host.activity.pullup.PullUpSelectActivity;
 import com.feipulai.host.activity.radio_timer.RunTimerFreeTestActivity;
 import com.feipulai.host.activity.radio_timer.RunTimerTestActivity;
 import com.feipulai.host.activity.sitreach.SitReachTestActivity;
@@ -44,6 +45,7 @@ public class TestConfigs {
     public static final int CHECK_IN_BARCODE = 2;
     public static final int CHECK_IN_ICCARD = 3;
     public static final int UPDATE_GRIDVIEW = 0x4;
+    public static final int GROUP_PATTERN_SUCCESIVE = 0x0;
 
     public static final String DEFAULT_IP_ADDRESS = "http://192.168.0.53:8036";
     public static final Map<Integer, Class<?>> proActivity = new HashMap<>();
@@ -73,6 +75,7 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_ZFP, RunTimerTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_WLJ, VitalTestActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_YTXS, PullUpSelectActivity.class);
 
         TestConfigs.freedomActivity.put(ItemDefault.CODE_LDTY, StandJumpFreedomActivity.class);
         TestConfigs.freedomActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallFreeTestActivity.class);
@@ -89,6 +92,7 @@ public class TestConfigs {
         TestConfigs.machineNameMap.put(ItemDefault.CODE_HWSXQ, MyApplication.getInstance().getString(R.string.medicine_ball));
         TestConfigs.machineNameMap.put(ItemDefault.CODE_ZFP, MyApplication.getInstance().getString(R.string.run_time));
         TestConfigs.machineNameMap.put(ItemDefault.CODE_WLJ, MyApplication.getInstance().getString(R.string.grip_meter));
+        TestConfigs.machineNameMap.put(ItemDefault.CODE_YTXS, "引体向上");
 
         // 每个机器码对应的机器名称
         TestConfigs.itemMinScope.put(ItemDefault.CODE_ZWTQQ, -200);
