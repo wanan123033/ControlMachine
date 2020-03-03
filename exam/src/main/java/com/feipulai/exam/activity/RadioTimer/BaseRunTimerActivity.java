@@ -68,7 +68,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
     private int interceptWay;
     private int settingSensor;
     public boolean reLoad;
-
+    private boolean isBaseTime ;//是否已经计算误差时间
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,7 +141,11 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
 
             Log.i(TAG, result.toString());
             if (result.getOrder() == 1 && runTimerSetting.getInterceptWay() == 0 && !isForce) {
-                baseTimer = result.getResult();
+                if (isBaseTime){
+                    baseTimer = result.getResult();
+                    isBaseTime = true;
+                }
+
             }
             Message msg = mHandler.obtainMessage();
             msg.obj = result;
@@ -183,6 +187,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
                     //算出误差时间
                     if (runTimerSetting.getInterceptWay() == 0) {
                         baseTimer = System.currentTimeMillis() - baseTimer;
+                        isBaseTime = false;
                     }
                     disposeManager.keepTime();
                     changeState(new boolean[]{false, false, true, false, false});

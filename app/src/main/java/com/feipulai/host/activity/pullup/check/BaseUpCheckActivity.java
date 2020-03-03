@@ -231,6 +231,21 @@ public abstract class BaseUpCheckActivity<Setting>
     }
 
     @Override
+    protected void handleMessage(Message msg) {
+        switch (msg.what) {
+
+            case UPDATE_SPECIFIC_ITEM:
+                // Log.i("index", msg.arg1 + "");
+                mAdapter.notifyItemChanged(msg.arg1);
+                break;
+
+            case UPDATE_STATES:
+                mAdapter.notifyDataSetChanged();
+                break;
+        }
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         if (changBadDialog != null && changBadDialog.isShowing()) {
@@ -249,7 +264,6 @@ public abstract class BaseUpCheckActivity<Setting>
     }
 
     protected abstract RadioCheckContract.Presenter getPresenter();
-    protected abstract ListView getResultView();
 
     protected abstract void onConflictItemClicked();
 
