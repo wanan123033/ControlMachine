@@ -78,8 +78,8 @@ public abstract class BasePullUpActivity<Setting> extends BaseUpCheckActivity<Se
     }
 
     @Override
-    protected ListView getResultView() {
-        return mLvResults;
+    protected void setResultView() {
+        etSelect.setData(mLvResults,this);
     }
 
     @Override
@@ -107,14 +107,10 @@ public abstract class BasePullUpActivity<Setting> extends BaseUpCheckActivity<Se
         return mRvPairs;
     }
 
-    @Override
-    protected View getCheckInLayout() {
-        return rlCheckIn;
-    }
 
     @Override
     protected void onConflictItemClicked() {
-        // 没有这个
+
     }
 
     @Override

@@ -5,15 +5,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.feipulai.common.view.DividerItemDecoration;
 import com.feipulai.common.view.WaitDialog;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseCheckActivity;
 import com.feipulai.host.activity.base.BaseDeviceState;
@@ -23,6 +25,8 @@ import com.feipulai.host.activity.jump_rope.base.check.RadioCheckContract;
 import com.feipulai.host.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.host.activity.jump_rope.bean.TestCache;
 import com.feipulai.host.activity.setting.LEDSettingActivity;
+import com.feipulai.host.activity.setting.SettingHelper;
+import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 
@@ -44,6 +48,7 @@ public abstract class BaseUpCheckActivity<Setting>
     private CheckPairAdapter mAdapter;
     private Handler mHandler = new MyHandler(this);
     private WaitDialog changBadDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(null);// 不知道为什么,必须这么搞
@@ -51,6 +56,30 @@ public abstract class BaseUpCheckActivity<Setting>
         presenter.start();
     }
 
+
+    @Override
+    protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
+        boolean isTestNameEmpty = TextUtils.isEmpty(SettingHelper.getSystemSetting().getTestName());
+        String title = TestConfigs.machineNameMap.get(machineCode)
+                + SettingHelper.getSystemSetting().getHostId() + "号机"
+                + (isTestNameEmpty ? "" : ("-" + SettingHelper.getSystemSetting().getTestName()));
+        builder.setTitle(title);
+
+
+        builder.addRightText("项目设置", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(BaseUpCheckActivity.this, getProjectSettingActivity()));
+            }
+        }).addRightImage(R.mipmap.icon_setting, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(BaseUpCheckActivity.this, getProjectSettingActivity()));
+            }
+        });
+
+        return builder;
+    }
 
     @Override
     public void onClick(View v) {
@@ -73,13 +102,13 @@ public abstract class BaseUpCheckActivity<Setting>
             }
         } else if (v == getDeleteAllView()) {// 删除所有
 //            presenter.deleteAll();
-            showkillAllWarning();
+            showKillAllWarning();
         } else if (v == getDeleteStuView()) {// 删除考生
             presenter.deleteStudent();
         }
     }
 
-    public void showkillAllWarning() {
+    public void showKillAllWarning() {
         new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.warning))
                 .setContentText("是否删除全部检入考生")
                 .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
@@ -129,12 +158,12 @@ public abstract class BaseUpCheckActivity<Setting>
     }
 
 
-
     @Override
     public void initView(Setting setting, List<StuDevicePair> pairs) {
         mAdapter = new CheckPairAdapter(this, pairs);
         mAdapter.setOnItemClickListener(this);
         getRvPairs().setAdapter(mAdapter);
+        setResultView();
 
         getRvPairs().setLayoutManager(new GridLayoutManager(this, 5));
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this);
@@ -168,7 +197,6 @@ public abstract class BaseUpCheckActivity<Setting>
     }
 
 
-
     @Override
     public void showStuInfo(Student student, RoundResult results) {
         InteractUtils.showStuInfo(getStuDetailLayout(), student, results);
@@ -179,6 +207,7 @@ public abstract class BaseUpCheckActivity<Setting>
         changBadDialog = new WaitDialog(this);
         changBadDialog.setCanceledOnTouchOutside(false);
         changBadDialog.show();
+        changBadDialog.setTitle(getChangeBadTitle());
         changBadDialog.setTitle(getString(R.string.please_restart_device));
         changBadDialog.btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -285,8 +314,6 @@ public abstract class BaseUpCheckActivity<Setting>
 
     protected abstract View getDeleteAllView();
 
-    protected abstract View getCheckInLayout();
-
     protected abstract LinearLayout getStuDetailLayout();
 
     protected abstract String getChangeBadTitle();
@@ -294,5 +321,7 @@ public abstract class BaseUpCheckActivity<Setting>
     protected abstract Class<? extends Activity> getTestActivity();
 
     protected abstract Class<? extends Activity> getPairActivity();
+
+    protected abstract void setResultView();
 
 }
