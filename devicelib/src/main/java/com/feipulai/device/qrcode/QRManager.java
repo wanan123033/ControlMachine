@@ -61,7 +61,15 @@ public class QRManager {
 	}
 	
 	public void startScan(){
-		IOPower.getInstance().setBarcodetrig(0);
+		for (int i = 0; i < 3; i++) {
+			IOPower.getInstance().setBarcodetrig(0);
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
 	}
 	
 	public void stopScan(){

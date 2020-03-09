@@ -1,7 +1,6 @@
 package com.feipulai.exam.utils;
 
 import com.feipulai.common.utils.ResultDisplayTools;
-import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.Item;
 import com.feipulai.exam.entity.RoundResult;
@@ -18,6 +17,7 @@ public class ResultDisplayUtils {
     //private static final int SSWR = 0x01;
     //private static final int FLSQ = 0x02;
     //private static final int FLJW = 0x03;
+
 
     /**
      * 当前测试项目成绩转换为显示格式
@@ -81,6 +81,7 @@ public class ResultDisplayUtils {
     public static String getQualifiedUnit(Item item) {
         return ResultDisplayTools.getQualifiedUnit(item.getMachineCode(), item.getUnit(), 0);
     }
+
     public static String setResultState(int state) {
 
         switch (state) {
@@ -99,6 +100,7 @@ public class ResultDisplayUtils {
 
     /**
      * 获取字符长度含中文标点数字等
+     *
      * @param value
      * @return
      */
