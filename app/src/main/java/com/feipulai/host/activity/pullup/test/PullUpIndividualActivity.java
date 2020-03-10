@@ -17,6 +17,7 @@ import com.feipulai.device.serial.beans.PullUpStateResult;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BaseStuPair;
+import com.feipulai.host.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.host.activity.person.BasePersonTestActivity;
 import com.feipulai.host.activity.pullup.setting.PullUpSettingActivity;
 import com.feipulai.host.activity.setting.LEDSettingActivity;
@@ -90,16 +91,32 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
     public void sendTestCommand(BaseStuPair stuPair) {
 
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE, stuPair.getBaseDevice().getDeviceId()));
-        prepareForTesting();
+        prepareForBegin();
     }
 
-    private void prepareForTesting() {
+    private void prepareForBegin() {
         if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_DISCONNECT) {
             toastSpeak("设备未连接,不能开始测试");
             return;
         }
-        facade.startTest();
+//        facade.startTest();
+        state = WAIT_BEGIN;
+
+        setTextViewsVisibility(true,true,false,false,false);
+    }
+
+    @Override
+    public void pullStart() {
         state = TESTING;
+        facade.startTest();
+    }
+
+    @Override
+    public void pullStop() {
+        state = WAIT_CONFIRM;
+        setTextViewsVisibility(false,false,false,false,false);
+        facade.stopTest();
+        updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END));
     }
 
     @Override
@@ -119,12 +136,26 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
 
     @Override
     public void onGetReadyTimerTick(long tick) {
-
+        tickInUI(tick + "");
     }
+
 
     @Override
     public void onGetReadyTimerFinish() {
+        tickInUI("开始");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setTextViewsVisibility(false,false,true,false,true);
+            }
+        });
+    }
 
+    @Override
+    public void pullAbandon() {
+        facade.abandonTest();
+        state = WAIT_BEGIN;
+        prepareForBegin();
     }
 
     @Override
@@ -207,10 +238,10 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
         }
     }
 
-
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void finish() {
+        super.finish();
+        handler.removeCallbacks(null);
         facade.stopTotally();
     }
 }

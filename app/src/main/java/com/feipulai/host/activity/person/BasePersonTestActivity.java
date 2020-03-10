@@ -88,6 +88,16 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     LinearLayout viewSkip;
     @BindView(R.id.tv_device_pair)
     public TextView tvDevicePair;
+    @BindView(R.id.tv_start_test)
+    TextView tvStartTest;
+    @BindView(R.id.tv_exit_test)
+    TextView tvExitTest;
+    @BindView(R.id.tv_stop_test)
+    TextView tvStopTest;
+    @BindView(R.id.tv_time_count)
+    TextView tvTimeCount;
+    @BindView(R.id.tv_abandon_test)
+    TextView tvAbandonTest;
     //成绩
     private String[] result;
     private List<String> resultList = new ArrayList<>();
@@ -147,7 +157,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 
     private void init() {
         mLEDManager = new LEDManager();
-        mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(),TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+        mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
 
         PrinterManager.getInstance().init();
@@ -217,7 +227,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         addStudent(student);
     }
 
-    @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting})
+    @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting,
+            R.id.tv_start_test, R.id.tv_exit_test, R.id.tv_stop_test, R.id.tv_abandon_test})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
@@ -236,9 +247,46 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 }
 
                 break;
+            case R.id.tv_start_test:
+                setTextViewsVisibility(false,false,false,true,true);
+                pullStart();
+                break;
+            case R.id.tv_exit_test:
+                pullExit();
+                break;
+            case R.id.tv_stop_test:
+                pullStop();
+                break;
+            case R.id.tv_abandon_test:
+                pullAbandon();
+                break;
         }
     }
 
+    public void pullAbandon() {
+
+    }
+
+    public void pullStop() {
+
+    }
+
+    private void pullExit() {
+
+    }
+
+    public void pullStart() {
+
+    }
+
+    public void tickInUI(final String msg) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tvTimeCount.setText(msg);
+            }
+        });
+    }
 
     public void toLedSetting() {
         if (pair.getBaseDevice().getState() != BaseDeviceState.STATE_NOT_BEGAIN
@@ -256,7 +304,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         super.onDestroy();
         PrinterManager.getInstance().close();
         if (TestConfigs.sCurrentItem != null) {
-            mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(),TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+            mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
             String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()) + " " + SettingHelper.getSystemSetting().getHostId();
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), title, mLEDManager.getX(title), 0, true, false);
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), getString(R.string.fairplay), 3, 3, false, true);
@@ -600,6 +648,26 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 activity.adapter.notifyDataSetChanged();
             }
 
+        }
+    }
+
+    //    TextView tvStartTest;
+//    @BindView(R.id.tv_exit_test)
+//    TextView tvExitTest;
+//    @BindView(R.id.tv_stop_test)
+//    TextView tvStopTest;
+//    @BindView(R.id.tv_time_count)
+//    TextView tvTimeCount;
+//    @BindView(R.id.tv_abandon_test)
+//    TextView tvAbandonTest;
+    public void setTextViewsVisibility(boolean start, boolean exit, boolean stop, boolean count, boolean abandon) {
+        tvStartTest.setVisibility(start ? View.VISIBLE : View.GONE);
+        tvExitTest.setVisibility(exit ? View.VISIBLE : View.GONE);
+        tvStopTest.setVisibility(stop ? View.VISIBLE : View.GONE);
+        tvTimeCount.setVisibility(count ? View.VISIBLE : View.GONE);
+        tvAbandonTest.setVisibility(abandon ? View.VISIBLE : View.GONE);
+        if (stop){
+            txtStuResult.setText("");
         }
     }
 }

@@ -159,7 +159,10 @@ public class PullUpCheckPresenter extends AbstractRadioCheckPresenter<PullUpSett
 
     @Override
     protected void endTest() {
-        deviceManager.endTest(1);
+        for (StuDevicePair pair: pairs) {
+            deviceManager.endTest(pair.getBaseDevice().getDeviceId());
+        }
+
     }
 
     @Override

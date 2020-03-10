@@ -71,7 +71,9 @@ public class PullUpTestPresenter
 
     @Override
     protected void testCountDown(long tick) {
-        deviceManager.startTest(1,(int) tick, setting.getTestTime(),0);
+        for (StuDevicePair pair: pairs) {
+            deviceManager.startTest(pair.getBaseDevice().getDeviceId(),(int) tick, setting.getTestTime(),0);
+        }
     }
 
     @Override
