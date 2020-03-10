@@ -33,7 +33,7 @@ import com.feipulai.host.entity.Student;
 import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-
+@Deprecated
 public abstract class BaseUpCheckActivity<Setting>
         extends BaseCheckActivity
         implements RadioCheckContract.View<Setting>,

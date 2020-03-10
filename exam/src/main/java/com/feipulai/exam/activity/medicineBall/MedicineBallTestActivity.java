@@ -168,6 +168,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
                     basePair.setStudent(activity.student);
                     basePair.setBaseDevice(new BaseDeviceState(BaseDeviceState.STATE_END, 1));
                     int beginPoint = Integer.parseInt(SharedPrefsUtil.getValue(activity, "SXQ", "beginPoint", "0"));
+                    Logger.i("result ===实心球" + result.getResult()+"sweepPoint"+result.getSweepPoint());
                     if (result.getSweepPoint() < 2) {
                         activity.showValidResult(result.getResult() * 10 + beginPoint * 10, result.isFault(), basePair);
                     } else {

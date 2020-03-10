@@ -28,6 +28,7 @@
         <activity android:name=".activity.pullup.pair.PullUpPairActivity"></activity>
         <activity android:name=".activity.pullup.check.PullUpCheckActivity"></activity>
         <activity android:name=".activity.pullup.test.PullUpIndividualActivity"></activity>
+        <activity android:name=".activity.pullup.test.PullUpTestActivity"></activity>
         <activity android:name=".activity.pullup.setting.PullUpSettingActivity"></activity>
         <activity android:name=".activity.pullup.PullUpSelectActivity" />
         <activity android:name=".activity.medicine_ball.MedicineBallSettingActivity" />

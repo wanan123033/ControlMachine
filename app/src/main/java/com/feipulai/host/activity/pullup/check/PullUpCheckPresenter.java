@@ -9,6 +9,7 @@ import com.feipulai.device.manager.PullUpManager;
 import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.PullUpStateResult;
+import com.feipulai.device.serial.beans.SitPushUpStateResult;
 import com.feipulai.device.sitpullup.SitPullLinker;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.jump_rope.base.InteractUtils;
@@ -22,51 +23,22 @@ import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.utils.ResultDisplayUtils;
+import com.orhanobut.logger.Logger;
 
 import java.util.Locale;
 
 public class PullUpCheckPresenter extends AbstractRadioCheckPresenter<PullUpSetting>
-        implements SitPullLinker.SitPullPairListener{
+        implements SitPullLinker.SitPullPairListener {
 
-    private final PullUpManager deviceManager;
-    private int endPosition;
-    private SitPullLinker linker;
     private int machineCode = TestConfigs.sCurrentItem.getMachineCode();
-    public PullUpCheckPresenter(Context context, RadioCheckContract.View view) {
+    private SitPullLinker linker;
+    private final PullUpManager deviceManager;
+    private int countForSetAngle = 20;
+
+    public PullUpCheckPresenter(Context context, RadioCheckContract.View<PullUpSetting> view) {
         super(context, view);
         setting = SharedPrefsUtil.loadFormSource(context, PullUpSetting.class);
         deviceManager = new PullUpManager();
-    }
-    @Override
-    public void onNoPairResponseArrived() {
-        view.showToast(context.getString(R.string.no_reply_received_hint));
-    }
-
-    @Override
-    public void onNewDeviceConnect() {
-        cancelChangeBad();
-        view.changeBadSuccess();
-    }
-
-    @Override
-    public void setFrequency(int deviceId, int frequency, int targetFrequency) {
-        if (linker == null) {
-            linker = new SitPullLinker(machineCode, TARGET_FREQUENCY, this);
-        }
-        facade.pause();
-        linker.startPair(focusPosition + 1);
-        view.showChangeBadDialog();
-        mLinking = true;
-    }
-
-    @Override
-    protected PullUpSetting getSetting() {
-        return setting;
-    }
-
-    @Override
-    protected int getDeviceSumFromSetting() {
-        return setting.getDeviceSum();
     }
 
     @Override
@@ -82,41 +54,13 @@ public class PullUpCheckPresenter extends AbstractRadioCheckPresenter<PullUpSett
         }
     }
 
-    @Override
-    protected String getStringToShow(BaseDeviceState deviceState, int position) {
-        if (pairs.get(position).getStudent() == null) {
-            return null;
-        }
-        StuDevicePair stuPair = pairs.get(position);
-        String studentName = InteractUtils.getStrWithLength(stuPair.getStudent().getStudentName(), 6);
-        return String.format(Locale.CHINA, "%-3d", deviceState.getDeviceId()) + studentName;
+    public synchronized void onNewDeviceConnect() {
+        cancelChangeBad();
+        view.changeBadSuccess();
     }
 
-    @Override
-    protected void endTest() {
-        deviceManager.endTest(1);
-    }
-
-    @Override
-    protected void onDeviceDisconnect(int position) {
-
-    }
-
-    @Override
-    public void onGettingState(int position) {
-        deviceManager.getState(position + 1);
-    }
-
-    @Override
-    public void onRadioArrived(Message msg) {
-        if (mLinking && linker.onRadioArrived(msg)) {
-            return;
-        }
-        int what = msg.what;
-         if (machineCode == ItemDefault.CODE_YTXS && what == SerialConfigs.PULL_UP_GET_STATE) {
-            PullUpStateResult stateResult = (PullUpStateResult) msg.obj;
-            setState(stateResult);
-        }
+    public synchronized void onNoPairResponseArrived() {
+        view.showToast(context.getString(R.string.no_reply_received_hint));
     }
 
     @Override
@@ -139,7 +83,32 @@ public class PullUpCheckPresenter extends AbstractRadioCheckPresenter<PullUpSett
         facade.resume();
     }
 
+    @Override
+    public void onRadioArrived(Message msg) {
+        if (mLinking && linker.onRadioArrived(msg)) {
+            return;
+        }
+        int what = msg.what;
+        if (machineCode == ItemDefault.CODE_YWQZ && what == SerialConfigs.SIT_UP_GET_STATE) {
+            SitPushUpStateResult stateResult = (SitPushUpStateResult) msg.obj;
+            setState(stateResult);
+        } else if (machineCode == ItemDefault.CODE_YTXS && what == SerialConfigs.PULL_UP_GET_STATE) {
+            PullUpStateResult stateResult = (PullUpStateResult) msg.obj;
+            setState(stateResult);
+        } else if (machineCode == ItemDefault.CODE_FWC && what == SerialConfigs.PUSH_UP_GET_STATE) {
+            SitPushUpStateResult stateResult = (SitPushUpStateResult) msg.obj;
+            Logger.i("SitPushUpStateResult===" + stateResult.toString());
+            setState(stateResult);
+        }
+    }
+
+//    public abstract void setFrequency(int deviceId, int originFrequency, int deviceFrequency);
+
     private void setState(PullUpStateResult stateResult) {
+        setState(stateResult.getDeviceId(), stateResult.getState(), stateResult.getBatteryLeft());
+    }
+
+    private void setState(SitPushUpStateResult stateResult) {
         setState(stateResult.getDeviceId(), stateResult.getState(), stateResult.getBatteryLeft());
     }
 
@@ -166,5 +135,52 @@ public class PullUpCheckPresenter extends AbstractRadioCheckPresenter<PullUpSett
             view.updateSpecificItem(deviceId - 1);
         }
         mCurrentConnect[deviceId]++;
+    }
+
+    @Override
+    protected String getStringToShow(BaseDeviceState deviceState, int position) {
+        if (pairs.get(position).getStudent() == null) {
+            return null;
+        }
+        StuDevicePair stuPair = pairs.get(position);
+        String studentName = InteractUtils.getStrWithLength(stuPair.getStudent().getStudentName(), 6);
+        return String.format(Locale.CHINA, "%-3d", deviceState.getDeviceId()) + studentName;
+    }
+
+    @Override
+    protected PullUpSetting getSetting() {
+        return setting;
+    }
+
+    @Override
+    protected int getDeviceSumFromSetting() {
+        return setting.getDeviceSum();
+    }
+
+    @Override
+    protected void endTest() {
+        deviceManager.endTest(1);
+    }
+
+    @Override
+    protected void onDeviceDisconnect(int position) {
+    }
+
+    @Override
+    public void onGettingState(int position) {
+        deviceManager.getState(position + 1);
+
+    }
+
+
+    public void setFrequency(int deviceId, int originFrequency, int deviceFrequency) {
+        deviceManager.setFrequency(
+                originFrequency,
+                deviceId,
+                SettingHelper.getSystemSetting().getHostId());
+    }
+
+    public void dealConflict() {
+        pairs.get(focusPosition).getBaseDevice().setState(BaseDeviceState.STATE_STOP_USE);
     }
 }

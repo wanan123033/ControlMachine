@@ -22,6 +22,7 @@ public class PullUpPairPresenter extends BasePairPresenter {
     private Context context;
     private PullUpSetting setting;
     private PullUpManager pullUpManager;
+
     public PullUpPairPresenter(Context context, SitUpPairContract.View view) {
         super(context, view);
         this.context = context;
@@ -35,9 +36,8 @@ public class PullUpPairPresenter extends BasePairPresenter {
 
     @Override
     public void setFrequency(int deviceId, int originFrequency, int targetFrequency) {
-        pullUpManager.setFrequency(SettingHelper.getSystemSetting().getUseChannel(),
-                originFrequency,
-                deviceId);
+        pullUpManager.setFrequency(originFrequency,
+                deviceId, SettingHelper.getSystemSetting().getUseChannel());
     }
 
     @Override
@@ -47,7 +47,7 @@ public class PullUpPairPresenter extends BasePairPresenter {
 
     @Override
     public void saveSettings() {
-        SharedPrefsUtil.save(context,setting);
+        SharedPrefsUtil.save(context, setting);
     }
 
     @Override
