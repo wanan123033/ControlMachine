@@ -235,6 +235,7 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                         oneViewHolder.txtStuName.setText("");
                         oneViewHolder.setImageResource(R.id.img_portrait, R.mipmap.icon_head_photo);
                     }
+
                 }
                 break;
         }
