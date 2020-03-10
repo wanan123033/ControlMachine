@@ -34,7 +34,15 @@ public class NFCDevice{
 		if(isOpen){
 			return;
 		}
-		IOPower.getInstance().setICCardPwr(1);
+		for (int i = 0; i < 3; i++) {
+			IOPower.getInstance().setICCardPwr(1);
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
 		call_s8 = new function_S8(activity);
 		mExecutor = Executors.newSingleThreadExecutor();
 		isShutDown = false;

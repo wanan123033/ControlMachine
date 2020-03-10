@@ -54,7 +54,15 @@ public class IDCardDevice {
 		if (isOpen) {
 			return;
 		}
-		IOPower.getInstance().setIdentityPwr(1);
+		for (int i = 0; i < 3; i++) {
+			IOPower.getInstance().setIdentityPwr(1);
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
 		try {
 			startIDCardReader(context);
 			mExecutor = Executors.newSingleThreadExecutor();

@@ -226,15 +226,16 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                         oneViewHolder.txtStuCode.setText(student.getStudentCode());
                         oneViewHolder.txtStuName.setText(student.getStudentName());
                         if (TextUtils.isEmpty(student.getPortrait())) {
-                            oneViewHolder.setImageResource(R.id.item_img_portrait, R.mipmap.icon_head_photo);
+                            oneViewHolder.setImageResource(R.id.img_portrait, R.mipmap.icon_head_photo);
                         } else {
-                            oneViewHolder.setImageBitmap(R.id.item_img_portrait, student.getBitmapPortrait());
+                            oneViewHolder.setImageBitmap(R.id.img_portrait, student.getBitmapPortrait());
                         }
                     } else {
                         oneViewHolder.txtStuCode.setText("");
                         oneViewHolder.txtStuName.setText("");
-                        oneViewHolder.setImageResource(R.id.item_img_portrait, R.mipmap.icon_head_photo);
+                        oneViewHolder.setImageResource(R.id.img_portrait, R.mipmap.icon_head_photo);
                     }
+
                 }
                 break;
         }
