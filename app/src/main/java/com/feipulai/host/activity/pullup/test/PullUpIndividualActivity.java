@@ -101,7 +101,8 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
         }
 //        facade.startTest();
         state = WAIT_BEGIN;
-
+        pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
+        updateDevice(pair.getBaseDevice());
         setTextViewsVisibility(true,true,false,false,false);
     }
 
@@ -227,7 +228,9 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
 
             case PullUpManager.STATE_FREE:
                 cbDeviceState.setChecked(true);
-                pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+                if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_ERROR){
+                    pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+                }
                 break;
 
             case UPDATE_SCORE:

@@ -328,7 +328,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 sendTestCommand(pair);
             }
             setShowLed(pair);
-
+            txtStuResult.setText("");
             Logger.i("addStudent:" + student.toString());
             Logger.i("addStudent:当前考生进行第" + testNo + "次的第" + roundNo + "轮测试");
         } else {
