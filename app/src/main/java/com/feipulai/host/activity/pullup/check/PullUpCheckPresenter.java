@@ -180,7 +180,7 @@ public class PullUpCheckPresenter extends AbstractRadioCheckPresenter<PullUpSett
         deviceManager.setFrequency(
                 originFrequency,
                 deviceId,
-                SettingHelper.getSystemSetting().getHostId());
+                deviceFrequency);
     }
 
     public void dealConflict() {
