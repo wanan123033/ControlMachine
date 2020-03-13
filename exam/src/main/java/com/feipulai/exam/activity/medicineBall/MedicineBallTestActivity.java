@@ -57,7 +57,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
 
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
         setTestType(1);
-//        sendCheck();
+        sendCheck();
         sendFree();
     }
 
@@ -76,7 +76,6 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
 //        //零点距离
 //        mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
 //                SerialConfigs.CMD_MEDICINE_BALL_SET_START_POINT));
-
     }
 
 
@@ -196,15 +195,15 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
     }
 
     private void sendCheck() {
-//        checkService.scheduleAtFixedRate(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (!checkFlag){
-//                    mHandler.sendEmptyMessage(UPDATEDEVICE);
-//                }
-//            }
-//        },5000,5000,TimeUnit.MILLISECONDS);
-        mHandler.sendEmptyMessage(UPDATEDEVICE);
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!checkFlag){
+                    updateDevice(new BaseDeviceState(BaseDeviceState.STATE_ERROR,1));
+                }
+            }
+        },4000);
     }
 
     private void sendFree() {

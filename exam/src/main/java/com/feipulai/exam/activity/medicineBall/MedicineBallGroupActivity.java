@@ -60,7 +60,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
         if (medicineBallSetting.isPenalize()) {
             setFaultEnable(true);
         }
-//        sendCheck();
+        sendCheck();
         sendFree();
     }
 
@@ -173,16 +173,14 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
     }
 
     private void sendCheck() {
-//        checkService.scheduleAtFixedRate(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (!checkFlag){
-//                    mHandler.sendEmptyMessage(UPDATEDEVICE);
-//                }
-//
-//            }
-//        },200,5000,TimeUnit.MILLISECONDS);
-        mHandler.sendEmptyMessage(UPDATEDEVICE);
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!checkFlag){
+                    updateDevice(new BaseDeviceState(BaseDeviceState.STATE_ERROR,1));
+                }
+            }
+        },4000);
     }
 
     /**
