@@ -38,6 +38,7 @@ public class RunTimerDisposeManager {
         this.mContext = mContext;
         mLEDManager = new RunLEDManager();
         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId());
+        PrinterManager.getInstance().init();
     }
 
     protected void printResult(Student student, List<String> results, int current, int max, int groupNo) {
