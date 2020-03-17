@@ -52,7 +52,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
      */
     public int testState = 0;
     private boolean isForce;//强制开始
-    private boolean isAuto;
+//    private boolean isAuto;
     /**
      * 跑到数量
      */
@@ -195,13 +195,13 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
 
                     break;
                 case 4://获取到结果
-                    if (!isAuto){
-                        changeState(new boolean[]{false, false, true, false, false});
-                        isAuto = true;
-                    }else {
-                        changeState(new boolean[]{false, false, true, true, false});
-                    }
-
+//                    if (!isAuto){
+//                        changeState(new boolean[]{false, false, true, false, false});
+//                        isAuto = true;
+//                    }else {
+//                        changeState(new boolean[]{false, false, true, true, false});
+//                    }
+                    changeState(new boolean[]{false, false, true, true, false});
                     break;
 
 
@@ -466,13 +466,13 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
 
     public void waitStart() {
         isForce = false;
-        isAuto = false ;
+//        isAuto = false ;
         deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc2, (byte) 0x00, (byte) 0x00)));
     }
 
     public void forceStart() {
         isForce = true;
-        isAuto = true;
+//        isAuto = true;
         deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc4, (byte) 0x00, (byte) 0x00)));
 
     }
