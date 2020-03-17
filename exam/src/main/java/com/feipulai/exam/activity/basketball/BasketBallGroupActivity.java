@@ -268,7 +268,11 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
     public void getDeviceStatus(int status) {
         switch (status) {
             case 1:
-                state = WAIT_FREE;
+                if (isExistTestPlace()) {
+                    state = WAIT_CHECK_IN;
+                } else {
+                    state = WAIT_FREE;
+                }
                 txtDeviceStatus.setText("空闲");
                 break;
             case 2:
@@ -315,7 +319,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
     public void getResult(BasketballResult result) {
 //        timerUtil.stop();
         //非测试不做处理
-        if (state == WAIT_FREE || state == WAIT_CHECK_IN) {
+        if (state == WAIT_FREE || state == WAIT_CHECK_IN||TextUtils.isEmpty(testDate)) {
             return;
         }
         pairs.get(position()).setDeviceResult(result);
@@ -535,20 +539,21 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
 
                 break;
             case R.id.tv_confirm://确定
-                timerUtil.stop();
+
                 if (state == WAIT_CONFIRM || state == WAIT_BEGIN) {
+                    timerUtil.stop();
 //                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
                     ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
                     ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 1);
                 }
                 if (state != TESTING) {
+                    timerUtil.stop();
                     tvResult.setText("");
                     if (group.getIsTestComplete() == Group.FINISHED) {
                         toastSpeak("分组考生全部测试完成，请选择下一组");
                     } else {
                         onResultConfirmed();
                     }
-
                 }
                 break;
             case R.id.txt_finish_test:

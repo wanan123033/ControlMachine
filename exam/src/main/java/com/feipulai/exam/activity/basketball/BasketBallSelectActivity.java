@@ -8,13 +8,12 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.exam.activity.SubItemsSelectActivity;
 import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.entity.Item;
 
 public class BasketBallSelectActivity
-        extends SubItemsSelectActivity
-{
-    protected void initData()
-    {
+        extends SubItemsSelectActivity {
+    protected void initData() {
         super.initData();
         this.itemList.clear();
         this.itemList.add(new Item("有线模式"));
@@ -24,11 +23,11 @@ public class BasketBallSelectActivity
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                BasketBallSetting setting =  SharedPrefsUtil.loadFormSource(BasketBallSelectActivity.this, BasketBallSetting.class);
+                BasketBallSetting setting = SharedPrefsUtil.loadFormSource(BasketBallSelectActivity.this, BasketBallSetting.class);
                 setting.setTestType(position);
-                if (SettingHelper.getSystemSetting().getTestPattern() == 0) {
+                if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
                     IntentUtil.gotoActivity(BasketBallSelectActivity.this, BasketballIndividualActivity.class);
-                }else{
+                } else {
                     IntentUtil.gotoActivity(BasketBallSelectActivity.this, BaseGroupActivity.class);
                 }
                 SharedPrefsUtil.save(BasketBallSelectActivity.this, setting);
@@ -37,5 +36,7 @@ public class BasketBallSelectActivity
         });
     }
 
-    protected void toastSpeak(String paramString) {}
+    @Override
+    protected void toastSpeak(String paramString) {
+    }
 }

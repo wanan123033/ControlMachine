@@ -38,4 +38,9 @@ public class FootBallItemSelectActivity extends SubItemsSelectActivity {
             }
         });
     }
+
+    @Override
+    protected void toastSpeak(String msg) {
+
+    }
 }

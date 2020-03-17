@@ -357,7 +357,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
     @Override
     public void getResult(BasketballResult result) {
         //非测试不做处理
-        if (state == WAIT_FREE || state == WAIT_CHECK_IN) {
+        if (state == WAIT_FREE || state == WAIT_CHECK_IN||TextUtils.isEmpty(testDate)) {
             return;
         }
         pairs.get(0).setDeviceResult(result);

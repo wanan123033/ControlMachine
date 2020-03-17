@@ -181,7 +181,17 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                 }
             }
         });
-
+        if (setting.getTestType() == 0) {
+            ballManager.setRadioStopTime(SettingHelper.getSystemSetting().getHostId());
+            cbNear.setVisibility(View.GONE);
+            cbFar.setVisibility(View.GONE);
+            cbLed.setVisibility(View.GONE);
+        } else {
+            ballManager.setRadioFreeStates(SettingHelper.getSystemSetting().getHostId());
+            cbNear.setVisibility(View.VISIBLE);
+            cbFar.setVisibility(View.GONE);
+            cbLed.setVisibility(View.VISIBLE);
+        }
         fristCheckTest();
 
 
@@ -264,8 +274,12 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
     public void getDeviceStatus(int status) {
         switch (status) {
             case 1:
-                state = WAIT_FREE;
                 txtDeviceStatus.setText("空闲");
+                if (isExistTestPlace()) {
+                    state = WAIT_CHECK_IN;
+                } else {
+                    state = WAIT_FREE;
+                }
                 break;
             case 2:
                 state = WAIT_BEGIN;
@@ -342,7 +356,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
     @Override
     public void getResult(BasketballResult result) {
         //非测试不做处理
-        if (state == WAIT_FREE || state == WAIT_CHECK_IN) {
+        if (state == WAIT_FREE || state == WAIT_CHECK_IN || TextUtils.isEmpty(testDate)) {
             return;
         }
         switch (useMode) {
@@ -371,10 +385,10 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
 
         }
         String time = DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital());
-        if (time.charAt(0) == '0' && time.charAt(1) == '0'){
-            time = time.substring(3,time.toCharArray().length);
-        }else if (time.charAt(0) == '0'){
-            time = time.substring(1,time.toCharArray().length);
+        if (time.charAt(0) == '0' && time.charAt(1) == '0') {
+            time = time.substring(3, time.toCharArray().length);
+        } else if (time.charAt(0) == '0') {
+            time = time.substring(1, time.toCharArray().length);
         }
         tvResult.setText(time);
         ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
@@ -470,10 +484,10 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
             tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital()));
 
             String time = DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital());
-            if (time.charAt(0) == '0' && time.charAt(1) == '0'){
-                time = time.substring(3,time.toCharArray().length);
-            }else if (time.charAt(0) == '0'){
-                time = time.substring(1,time.toCharArray().length);
+            if (time.charAt(0) == '0' && time.charAt(1) == '0') {
+                time = time.substring(3, time.toCharArray().length);
+            } else if (time.charAt(0) == '0') {
+                time = time.substring(1, time.toCharArray().length);
             }
             ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
 
@@ -527,7 +541,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                         } else {
                             toastSpeak("存在未连接设备，请配对");
                         }
-                   
+
                     } else {
                         toastSpeak("该考生已全部测试完成");
                     }
@@ -916,10 +930,10 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         switch (testResult.getResultState()) {
             case RoundResult.RESULT_STATE_NORMAL:
                 String time = ResultDisplayUtils.getStrResultForDisplay(testResult.getResult());
-                if (time.charAt(0) == '0' && time.charAt(1) == '0'){
-                    time = time.substring(3,time.toCharArray().length);
-                }else if (time.charAt(0) == '0'){
-                    time = time.substring(1,time.toCharArray().length);
+                if (time.charAt(0) == '0' && time.charAt(1) == '0') {
+                    time = time.substring(3, time.toCharArray().length);
+                } else if (time.charAt(0) == '0') {
+                    time = time.substring(1, time.toCharArray().length);
                 }
                 ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, testResult.getPenalizeNum() + "", Paint.Align.CENTER);
                 break;

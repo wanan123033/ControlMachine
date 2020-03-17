@@ -393,7 +393,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         Log.i(TAG, "getResult:" + result.toString());
 
         //非测试不做处理
-        if (state == WAIT_FREE || state == WAIT_CHECK_IN) {
+        if (state == WAIT_FREE || state == WAIT_CHECK_IN||TextUtils.isEmpty(testDate)) {
             return;
         }
 

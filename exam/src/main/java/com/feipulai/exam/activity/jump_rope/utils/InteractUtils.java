@@ -139,10 +139,13 @@ public class InteractUtils {
                         groupNo = "";
                         testNo = TestCache.getInstance().getTestNoMap().get(student) + "";
                     }
-                    UploadResults uploadResult = new UploadResults(scheduleNo,
-                            TestConfigs.getCurrentItemCode(), student.getStudentCode()
-                            , testNo, groupNo, RoundResultBean.beanCope(roundResultList));
-                    uploadResults.add(uploadResult);
+                    if (roundResultList!=null&&roundResultList.size()!=0){
+                        UploadResults uploadResult = new UploadResults(scheduleNo,
+                                TestConfigs.getCurrentItemCode(), student.getStudentCode()
+                                , testNo, groupNo, RoundResultBean.beanCope(roundResultList));
+                        uploadResults.add(uploadResult);
+                    }
+
                 }
                 Logger.i("自动上传成绩:" + uploadResults.toString());
                 ServerMessage.uploadResult(/*null,*/ uploadResults);

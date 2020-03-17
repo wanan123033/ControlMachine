@@ -641,6 +641,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 activity.pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
                 activity.pair.setStudent(null);
                 activity.refreshTxtStu(null);
+                activity.txtStuResult.setText("请检入");
                 activity.result = null;
                 activity.result = new String[1];
                 activity.resultList.clear();
