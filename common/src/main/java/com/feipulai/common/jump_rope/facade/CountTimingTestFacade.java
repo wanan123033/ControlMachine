@@ -43,6 +43,10 @@ public class CountTimingTestFacade {
         mExecutor.execute(mGetDeviceStatesTask);
     }
 
+    public void resetLed() {
+        mLEDManager.showString(builder.hostId, "测试准备", 3, 0, false, true);
+    }
+
     // 重置任务
     private void reset() {
         //Log.i("builder",builder.toString());
@@ -73,9 +77,9 @@ public class CountTimingTestFacade {
                             boolean needUpdateScore = (builder.testTime - tick) % 3 == 0;
                             byte[] data = new byte[16];
                             try {
-                                byte[] resultData =DateUtil.formatTime(tick * 1000, "mm:ss").getBytes("GB2312");
+                                byte[] resultData = DateUtil.formatTime(tick * 1000, "mm:ss").getBytes("GB2312");
                                 int srcX = mLEDManager.getX(DateUtil.formatTime(tick * 1000, "mm:ss"));
-                                System.arraycopy(resultData, 0, data, srcX-1, resultData.length);
+                                System.arraycopy(resultData, 0, data, srcX - 1, resultData.length);
                             } catch (UnsupportedEncodingException e) {
                                 e.printStackTrace();
                             }

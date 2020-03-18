@@ -212,6 +212,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
             finishTest();
         } else {
             view.enableStartTest(true);
+            facade.resetLed();
         }
     }
 

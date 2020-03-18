@@ -139,7 +139,7 @@ public class InteractUtils {
                         groupNo = "";
                         testNo = TestCache.getInstance().getTestNoMap().get(student) + "";
                     }
-                    if (roundResultList!=null&&roundResultList.size()!=0){
+                    if (roundResultList != null && roundResultList.size() != 0) {
                         UploadResults uploadResult = new UploadResults(scheduleNo,
                                 TestConfigs.getCurrentItemCode(), student.getStudentCode()
                                 , testNo, groupNo, RoundResultBean.beanCope(roundResultList));
@@ -311,7 +311,7 @@ public class InteractUtils {
                     } else {
                         line = isGroupMode
                                 ? String.format(Locale.CHINA, "%-4d%-10s%-4s", trackNo, studentName,
-                                ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult(), false))
+                                getPrintResultState(roundResult))
                                 : String.format(Locale.CHINA, "    %-10s%-4s", studentName,
                                 "X");
                     }
