@@ -1,5 +1,6 @@
 package com.feipulai.host.entity;
 
+import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BaseStuPair;
 
@@ -7,7 +8,9 @@ import com.feipulai.host.activity.base.BaseStuPair;
  * Created by pengjf on 2019/7/31.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
-public class DeviceDetail {
+public class DeviceDetail implements MultiItemEntity {
+
+
     public DeviceDetail(){
         baseStuPair = new BaseStuPair();
         baseStuPair.setCanTest(true);
@@ -49,5 +52,16 @@ public class DeviceDetail {
 
     public void setRound(int round) {
         this.round = round;
+    }
+    public static final int ITEM_ONE = 1;
+    public static final int ITEM_MORE = 2;
+    private int itemType = ITEM_MORE;
+
+    public void setItemType(int itemType) {
+        this.itemType = itemType;
+    }
+    @Override
+    public int getItemType() {
+        return itemType;
     }
 }

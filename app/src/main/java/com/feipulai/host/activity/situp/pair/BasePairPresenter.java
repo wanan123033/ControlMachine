@@ -21,12 +21,12 @@ public abstract class BasePairPresenter implements SitUpPairContract.Presenter,
         RadioManager.OnRadioArrivedListener,
         SitPullLinker.SitPullPairListener{
 
-    private SitPullLinker linker;
+    public SitPullLinker linker;
     private Context context;
     private List<StuDevicePair> pairs;
     private SitUpPairContract.View view;
-    private int machineCode = TestConfigs.sCurrentItem.getMachineCode();
-    private final int TARGET_FREQUENCY =SettingHelper.getSystemSetting().getUseChannel();
+    public int machineCode = TestConfigs.sCurrentItem.getMachineCode();
+    public final int TARGET_FREQUENCY =SettingHelper.getSystemSetting().getUseChannel();
     private volatile int focusPosition;
 
     public BasePairPresenter(Context context, SitUpPairContract.View view) {

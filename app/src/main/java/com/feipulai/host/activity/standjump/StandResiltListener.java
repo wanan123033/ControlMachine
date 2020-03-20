@@ -28,7 +28,7 @@ import static com.feipulai.device.serial.beans.JumpSelfCheckResult.NEED_CHANGE;
  */
 public class StandResiltListener implements SerialDeviceManager.RS232ResiltListener {
     /***测试状态  UN_STARTED 未测试，START_TEST准备状态 WAIT_RESULT开始测试  TEST_END 测试结束，成功获取成绩*/
-    enum TestState {
+    public enum TestState {
         UN_STARTED, START_TEST, WAIT_RESULT, TEST_END
     }
 

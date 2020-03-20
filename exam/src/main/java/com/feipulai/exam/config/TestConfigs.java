@@ -224,7 +224,9 @@ public class TestConfigs {
             SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, newItemCode);
             sCurrentItem = itemList.get(0);
             Logger.i("sCurrentItem:" + sCurrentItem.toString());
+
             return INIT_SUCCESS;
+
         }
         if (machineCode == ItemDefault.CODE_ZCP) {
             sCurrentItem = itemList.get(0);

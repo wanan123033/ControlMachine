@@ -16,14 +16,14 @@
         <ImageView
             android:layout_width="128dp"
             android:layout_height="38dp"
-            android:layout_marginLeft="29dp"
+            android:layout_marginLeft="30dp"
             android:src="@mipmap/icon_test_logo" />
 
         <com.feipulai.host.view.StuSearchEditText
             android:id="@+id/et_input_text"
-            android:layout_width="360dp"
+            android:layout_width="410dp"
             android:layout_height="35dp"
-            android:layout_marginLeft="170dp"
+            android:layout_marginLeft="150dp"
             android:layout_marginRight="3dp" />
 
 
@@ -31,7 +31,7 @@
             android:id="@+id/txt_led_setting"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="51dp"
+            android:layout_marginLeft="30dp"
             android:layout_toLeftOf="@+id/tv_start_test"
             android:background="@color/colorAccent"
             android:drawableLeft="@mipmap/icon_led_setting"
@@ -67,9 +67,9 @@
 
     <ListView
         android:id="@+id/lv_results"
-        android:layout_width="321dp"
+        android:layout_width="330dp"
         android:layout_height="260dp"
-        android:layout_marginLeft="330dp"
+        android:layout_marginLeft="310dp"
         android:layout_marginTop="40dp"
         android:background="@drawable/bg_white_radius_10"
         android:divider="@color/sbc_header_text"

@@ -238,7 +238,7 @@ public class HttpSubscriber {
                         }
                     });
                     if (onRequestEndListener != null) {
-                        if (initState == TestConfigs.INIT_SUCCESS) {
+                        if (initState == TestConfigs.INIT_SUCCESS && TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
                             onRequestEndListener.onSuccess(ITEM_BIZ);
                         } else {
                             onRequestEndListener.onFault(ITEM_BIZ);

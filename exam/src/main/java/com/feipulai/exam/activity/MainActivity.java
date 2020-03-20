@@ -87,7 +87,12 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                 .DEFAULT_MACHINE_CODE);
         String itemCode = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
         // Logger.i("machineCode:" + machineCode);
-        int initState = TestConfigs.init(this, machineCode, itemCode, null);
+        int initState = TestConfigs.init(this, machineCode, itemCode, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                showTestName();
+            }
+        });
         showTestName();
         if (initState != TestConfigs.INIT_NO_MACHINE_CODE) {
             MachineCode.machineCode = machineCode;
@@ -152,7 +157,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
         if (!TextUtils.isEmpty(systemSetting.getTestName())) {
             sb.append("-").append(systemSetting.getTestName());
         }
-        if (machineCode != SharedPrefsConfigs.DEFAULT_MACHINE_CODE) {
+        if (TestConfigs.sCurrentItem != null) {
             sb.append(" [ F - " + SettingHelper.getSystemSetting().getUseChannel() + " ]");
         }
         txtMainTitle.setText(sb.toString());

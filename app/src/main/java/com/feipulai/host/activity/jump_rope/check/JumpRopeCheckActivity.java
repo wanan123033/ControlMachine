@@ -222,12 +222,12 @@ public class JumpRopeCheckActivity
                 break;
 
             case R.id.btn_del_all:
+                showkillAllWarning();
 
-                showDeleteAllWarning();
                 break;
             case R.id.btn_kill_devices:
 //                presenter.killAllDevices();
-                showkillAllWarning();
+                showDeleteAllWarning();
                 break;
 
 //            case R.id.tv_project_setting:

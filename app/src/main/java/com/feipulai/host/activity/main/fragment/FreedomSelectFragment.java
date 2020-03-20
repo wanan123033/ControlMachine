@@ -51,7 +51,7 @@ public class FreedomSelectFragment extends BaseFragment implements DialogInterfa
         RecyclerView recyclerView = findView(R.id.rv_item);
         GridLayoutManager layoutManager = new GridLayoutManager(mContext, 12);
         recyclerView.setLayoutManager(layoutManager);
-        TupleAdapter adapter = new TupleAdapter(mTupleList);
+        TupleAdapter adapter = new TupleAdapter(mTupleList,true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
 

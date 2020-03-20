@@ -13,6 +13,7 @@ import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseTitleActivity;
 import com.feipulai.host.activity.main.fragment.FiancoSelectFragment;
 import com.feipulai.host.activity.main.fragment.FreedomSelectFragment;
+import com.feipulai.host.activity.setting.SettingHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +69,7 @@ public class MachineSelectActivity extends BaseTitleActivity {
 
         tabLayout.setupWithViewPager(viewPager);
         viewPager.setOffscreenPageLimit(2);
+        tabLayout.getTabAt(SettingHelper.getSystemSetting().isFreedomTest() ? 1 : 0).select();
     }
 
     @Nullable

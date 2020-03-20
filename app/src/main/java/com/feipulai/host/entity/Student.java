@@ -1,6 +1,9 @@
 package com.feipulai.host.entity;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.text.TextUtils;
+import android.util.Base64;
 
 import com.feipulai.common.utils.StringChineseUtil;
 import com.google.gson.annotations.SerializedName;
@@ -37,6 +40,7 @@ public class Student implements Serializable {
     @NotNull
     private String studentCode;//考号
     private String studentName;//姓名
+    private String portrait;//头像
     private int sex;//性别 0-男  1-女
     @Unique
     private String idCardNo;//身份证号
@@ -73,13 +77,14 @@ public class Student implements Serializable {
     public Student() {
     }
 
-    @Generated(hash = 1969904267)
-    public Student(Long id, @NotNull String studentCode, String studentName, int sex, String idCardNo,
-            String icCardNo, String schoolName, String className, String gradeName, String majorName,
-            String facultyName, String remark1, String remark2, String remark3) {
+    @Generated(hash = 1230306058)
+    public Student(Long id, @NotNull String studentCode, String studentName, String portrait, int sex,
+            String idCardNo, String icCardNo, String schoolName, String className, String gradeName,
+            String majorName, String facultyName, String remark1, String remark2, String remark3) {
         this.id = id;
         this.studentCode = studentCode;
         this.studentName = studentName;
+        this.portrait = portrait;
         this.sex = sex;
         this.idCardNo = idCardNo;
         this.icCardNo = icCardNo;
@@ -204,6 +209,22 @@ public class Student implements Serializable {
 
     public void setRemark3(String remark3) {
         this.remark3 = remark3;
+    }
+
+    public String getPortrait() {
+        return portrait;
+    }
+
+    public void setPortrait(String portrait) {
+        this.portrait = portrait;
+    }
+    public Bitmap getBitmapPortrait() {
+        if (TextUtils.isEmpty(portrait)) {
+            return null;
+        }
+        byte[] bytes = Base64.decode(portrait, Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        return bitmap;
     }
 
     public String getSpeakStuName() {

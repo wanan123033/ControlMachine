@@ -1,4 +1,4 @@
-package com.feipulai.host.activity.standjump;
+package com.feipulai.host.activity.standjump.Freedom;
 
 import android.os.Handler;
 import android.os.Message;
@@ -11,6 +11,8 @@ import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.freedom.BaseFreedomTestActivity;
+import com.feipulai.host.activity.standjump.StandJumpSettingActivity;
+import com.feipulai.host.activity.standjump.StandResiltListener;
 import com.orhanobut.logger.Logger;
 
 import java.lang.ref.WeakReference;

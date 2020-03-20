@@ -1,6 +1,5 @@
 package com.feipulai.host.activity.standjump;
 
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
@@ -58,7 +57,6 @@ public class StandJumpTestActivity extends BasePersonTestActivity implements Sta
     public void onViewClicked(View view) {
         super.onViewClicked(view);
         if (view.getId() == R.id.tv_free_test) {
-            startActivity(new Intent(this, StandJumpFaceIDActivity.class));
             finish();
         }
     }

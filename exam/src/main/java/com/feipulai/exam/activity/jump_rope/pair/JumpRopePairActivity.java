@@ -65,7 +65,7 @@ public class JumpRopePairActivity extends BaseTitleActivity
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, SerialConfigs.GROUP_NAME);
         mSpGroup.setAdapter(adapter);
         mSpGroup.setSelection(setting.getDeviceGroup());
-
+        mSpGroup.setEnabled(false);
         boolean isAutoPair = setting.isAutoPair();
         mSwAutoPair.setChecked(isAutoPair);
 

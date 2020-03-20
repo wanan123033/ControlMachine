@@ -15,20 +15,5 @@
         android:textColor="#e0ffffff"
         android:textSize="45sp" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:id="@+id/ll_image"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:orientation="vertical">
-
-
-        </LinearLayout>
-
-    </ScrollView>
 
 </RelativeLayout>

@@ -1,10 +1,12 @@
 package com.feipulai.host.netUtils.netapi;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.host.MyApplication;
+import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.bean.UserBean;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.config.TestConfigs;
@@ -38,6 +40,10 @@ public class UserSubscriber {
             public void onSuccess(UserBean result) {
                 ToastUtils.showShort("设备绑定成功");
                 MyApplication.TOKEN = result.getToken();
+                if (!TextUtils.isEmpty(result.getExamName())) {
+                    SettingHelper.getSystemSetting().setTestName(result.getExamName());
+                }
+                SettingHelper.updateSettingCache(SettingHelper.getSystemSetting());
                 SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.TOKEN, result.getToken());
             }
 

@@ -62,6 +62,10 @@ public class Item {
     public Item() {
     }
 
+    public Item(String itemName) {
+        this.itemName = itemName;
+    }
+
     public Long getId() {
         return this.id;
     }

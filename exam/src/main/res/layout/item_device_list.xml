@@ -16,6 +16,7 @@
             android:id="@+id/item_img_portrait"
             android:layout_width="57dp"
             android:layout_height="74dp"
+            android:scaleType="fitXY"
             android:layout_margin="10dp"
             android:background="@color/white" />
 

@@ -8,21 +8,24 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- <uses-permission android:name="android.permission.WRITE_SETTINGS"/> -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" /> -->
+    <!-- <uses-permission android:name="android.permission.WRITE_SETTINGS" /> -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" /> <!-- 系统设置 -->
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" /> <!-- vibrator -->
-    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:screenOrientation="landscape"
+        android:largeHeap="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".activity.pullup.pair.PullUpPairActivity"></activity>
@@ -38,17 +41,22 @@
         <activity
             android:name=".activity.SplashScreenActivity"
             android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen">
+            android:theme="@style/AppTheme.SplashScreenTheme">
             <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-
                 <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
-                <!-- <category android:name="android.intent.category.HOME" /> -->
+                <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.main.MainActivity" />
+        <activity android:name=".activity.main.MainActivity">
+            <intent-filter>
+                <action android:name="com.feipulai.exam.MainActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity android:name=".activity.main.MachineSelectActivity" />
         <activity android:name=".activity.main.SubItemsSelectActivity" /> <!-- <activity android:name=".activity.ItemSelectActivity"/> -->
         <activity android:name=".activity.setting.SettingActivity" />
@@ -81,12 +89,15 @@
             android:name=".activity.standjump.StandJumpTestActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name=".activity.standjump.StandJumpFreedomActivity"
+            android:name=".activity.standjump.Freedom.StandJumpFreedomActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.standjump.StandJumpSettingActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity android:name=".activity.standjump.StandJumpFaceIDActivity" />
+        <activity android:name=".activity.standjump.StandJumpSelectActivity" />
+        <activity android:name=".activity.standjump.more.StandJumpMoreActivity" />
+        <activity android:name=".activity.standjump.more.StandJumpPairActivity" />
+        <activity android:name=".activity.standjump.Freedom.StandJumpRadioFreedomActivity" />
         <activity android:name=".activity.data.DataRetrieveActivity" />
         <activity android:name=".activity.base.BaseItemSettingActivity" /> <!-- vital capacity -->
         <activity android:name=".activity.vccheck.FreeTestActivity" />

@@ -57,7 +57,7 @@ public class FiancoSelectFragment extends BaseFragment implements DialogInterfac
         RecyclerView recyclerView = findView(R.id.rv_item);
         GridLayoutManager layoutManager = new GridLayoutManager(mContext, 12);
         recyclerView.setLayoutManager(layoutManager);
-        TupleAdapter adapter = new TupleAdapter(mTupleList);
+        TupleAdapter adapter = new TupleAdapter(mTupleList, false);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
 

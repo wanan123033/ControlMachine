@@ -27,6 +27,22 @@
         android:textColor="@color/white"
         android:textSize="20dp" />
 
+    <TextView
+        android:id="@+id/txt_device_pair"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_marginRight="20dp"
+        android:layout_toLeftOf="@+id/txt_led_setting"
+        android:background="@color/colorAccent"
+        android:drawablePadding="6dp"
+        android:gravity="center"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:text="设备配对"
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        android:visibility="gone" />
+
     <CheckBox
         android:id="@+id/cb_device_state"
         android:layout_width="140dp"

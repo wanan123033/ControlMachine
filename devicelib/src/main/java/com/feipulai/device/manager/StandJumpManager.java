@@ -97,6 +97,12 @@ public class StandJumpManager {
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
+    /**
+     * 设置空闲
+     *
+     * @param hostId
+     * @param deviceId
+     */
     public static void setLeisure(int hostId, int deviceId) {
         byte[] cmd = new byte[]{(byte) 0xAA, 0x15, 0x02, 0x03, 0x01, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0D};
         cmd[5] = (byte) (hostId & 0xff);

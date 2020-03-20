@@ -1,6 +1,7 @@
 package com.feipulai.host.netUtils.netapi;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.text.TextUtils;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
@@ -104,13 +105,35 @@ public class ItemSubscriber {
                 }
 
                 DBManager.getInstance().freshAllItems(itemList);
-                int initState = TestConfigs.init(context,
-                        TestConfigs.sCurrentItem.getMachineCode(),
-                        TestConfigs.sCurrentItem.getItemCode(),
-                        null);
+//                int initState = TestConfigs.init(context,
+//                        TestConfigs.sCurrentItem.getMachineCode(),
+//                        TestConfigs.sCurrentItem.getItemCode(),
+//                        null);
+                int initState = TestConfigs.init(context, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
+                            ToastUtils.showShort("当前考点无此项目，请重新选择项目");
+                            if (onRequestEndListener != null) {
+                                onRequestEndListener.onFault(DWON_ITEL_ALL);
+                            }
+                            return;
+                        }
+                        if (onRequestEndListener != null)
+                            onRequestEndListener.onSuccess(DWON_ITEL_ALL);
+                    }
+                });
+
 
                 if (initState == TestConfigs.INIT_MULTI_ITEM_CODE) {
                     ToastUtils.showShort("请处理项目信息后重新操作");
+                    return;
+                }
+                if (TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
+                    ToastUtils.showShort("服务器未添加该测试项目");
+                    if (onRequestEndListener != null) {
+                        onRequestEndListener.onFault(DWON_ITEL_ALL);
+                    }
                     return;
                 }
                 if (onRequestEndListener != null) {
@@ -134,9 +157,11 @@ public class ItemSubscriber {
         }));
     }
 
+    public int size = 0;
+    private List<String> stuList = new ArrayList<>();
 
     // 获取学生信息
-    public void getStudentData(int pageNo, final String lastDownLoadTime) {
+    public void getStudentData(final int pageNo, final String lastDownLoadTime) {
 
         HashMap<String, Object> parameData = new HashMap<>();
         parameData.put("batch", pageNo);
@@ -150,18 +175,27 @@ public class ItemSubscriber {
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<BatchBean<List<StudentBean>>>(new OnResultListener<BatchBean<List<StudentBean>>>() {
             @Override
             public void onSuccess(BatchBean<List<StudentBean>> result) {
-
+                if (pageNo == 1) {
+                    size = 0;
+                    stuList.clear();
+                }
                 if (result == null || result.getDataInfo() == null || result.getDataInfo().size() == 0) {
                     ToastUtils.showShort("当前无数据下载更新");
                     if (onRequestEndListener != null)
                         onRequestEndListener.onSuccess(DWON_STAUENT_DATA);
                     return;
                 }
+                size += result.getDataInfo().size();
+                Logger.i("下载考生数量====》" + size);
                 final List<Student> studentList = new ArrayList<>();
                 final List<StudentItem> studentItemList = new ArrayList<>();
 
                 for (StudentBean studentBean : result.getDataInfo()) {
-
+                    if (!stuList.contains(studentBean.getIdCard())) {
+                        stuList.add(studentBean.getIdCard());
+                    } else {
+                        Logger.i("重复考生====》" + studentBean.toString());
+                    }
 //                    Logger.i("getItemStudent" + studentBean.toString());
                     Student student = new Student();
                     student.setSex(studentBean.getGender());

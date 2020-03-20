@@ -25,6 +25,14 @@ public class StandJumpSetting {
      */
     private int pointsScope;
 
+    private int[] testPointsArray = new int[]{3, 3, 3, 3};
+    private int[] pointsScopeArray = new int[4];
+
+    //就否自动配对
+    private boolean autoPair = true;
+    //测试模式 0 有线 1 无线
+    private int testType = 0;
+    public final static int TEST_RADIO = 1;
 
     public int getPointsScope() {
         return pointsScope;
@@ -56,6 +64,38 @@ public class StandJumpSetting {
 
     public void setTestPoints(int testPoints) {
         this.testPoints = testPoints;
+    }
+
+    public boolean isAutoPair() {
+        return autoPair;
+    }
+
+    public void setAutoPair(boolean autoPair) {
+        this.autoPair = autoPair;
+    }
+
+    public int getTestType() {
+        return testType;
+    }
+
+    public void setTestType(int testType) {
+        this.testType = testType;
+    }
+
+    public int[] getTestPointsArray() {
+        return testPointsArray;
+    }
+
+    public void setTestPointsArray(int[] testPointsArray) {
+        this.testPointsArray = testPointsArray;
+    }
+
+    public int[] getPointsScopeArray() {
+        return pointsScopeArray;
+    }
+
+    public void setPointsScopeArray(int[] pointsScopeArray) {
+        this.pointsScopeArray = pointsScopeArray;
     }
 
     @Override

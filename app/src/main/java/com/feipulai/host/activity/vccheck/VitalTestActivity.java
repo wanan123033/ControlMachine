@@ -16,7 +16,6 @@ import com.feipulai.host.activity.base.BaseMoreActivity;
 import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.entity.DeviceDetail;
-import com.feipulai.host.entity.Item;
 import com.feipulai.host.entity.RoundResult;
 
 /**
@@ -28,11 +27,12 @@ public class VitalTestActivity extends BaseMoreActivity {
     private static final String TAG = "VitalTestActivity";
     private int[] deviceState = new int[4];
     private int[] powerState = new int[4];
-    private int[] tempPower = {-1,-1,-1,-1};
+    private int[] tempPower = {-1, -1, -1, -1};
     private final int SEND_EMPTY = 1;
     private final int GET_SCORE_RESPONSE = 2;
     int hostId = SettingHelper.getSystemSetting().getHostId();
-    private int frequency = SettingHelper.getSystemSetting().getUseChannel();;
+    private int frequency = SettingHelper.getSystemSetting().getUseChannel();
+    ;
     //    private int velocity = SerialConfigs.VITAL_VELOCITY;
     private int VERSION = 363;
 
@@ -50,6 +50,11 @@ public class VitalTestActivity extends BaseMoreActivity {
     @Override
     public void gotoItemSetting() {
 
+    }
+
+    @Override
+    public int setTestDeviceCount() {
+        return MAX_DEVICE_COUNT;
     }
 
     @Override
@@ -101,9 +106,9 @@ public class VitalTestActivity extends BaseMoreActivity {
         byte[] data = {(byte) 0xAA, 0x12, 0x09, 0x03, 0x01, (byte) hostId, (byte) deviceId, (byte) cmd,
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, (byte) 0x00, 0x0D};
 
-        if (MachineCode.machineCode == ItemDefault.CODE_WLJ){
+        if (MachineCode.machineCode == ItemDefault.CODE_WLJ) {
             data[2] = 0x0c;
-        }else {
+        } else {
             data[2] = 0x09;
         }
         int sum = 0;
@@ -132,7 +137,7 @@ public class VitalTestActivity extends BaseMoreActivity {
                 }
                 deviceState[i] -= 1;
 
-                if (tempPower[i] != powerState[i]){
+                if (tempPower[i] != powerState[i]) {
                     deviceDetails.get(i).getStuDevicePair().setPower(powerState[i]);
                     updateDevice(baseDevice);
                     tempPower[i] = powerState[i];
@@ -157,9 +162,9 @@ public class VitalTestActivity extends BaseMoreActivity {
 
     private WirelessVitalListener resultImpl = new WirelessVitalListener(new WirelessVitalListener.WirelessListener() {
         @Override
-        public void onResult(int deviceId, int state, int result,int power) {
+        public void onResult(int deviceId, int state, int result, int power) {
             deviceState[deviceId - 1] = 5;
-            powerState[deviceId-1] = power;
+            powerState[deviceId - 1] = power;
             if (result > 0 && state == 4) {
                 Message msg = mHandler.obtainMessage();
                 msg.what = GET_SCORE_RESPONSE;
@@ -208,8 +213,8 @@ public class VitalTestActivity extends BaseMoreActivity {
     });
 
     private void onResultArrived(int result, BaseStuPair stuPair) {
-        if (MachineCode.machineCode == ItemDefault.CODE_WLJ){
-            result = result*100;
+        if (MachineCode.machineCode == ItemDefault.CODE_WLJ) {
+            result = result * 100;
         }
         stuPair.setResult(result);
         stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);

@@ -44,6 +44,8 @@ public abstract class BaseFreedomTestActivity extends BaseTitleActivity {
     @BindView(R.id.txt_start_test)
     TextView txtStartTest;
     public boolean isStartTest = false;
+    @BindView(R.id.txt_device_pair)
+    public  TextView txtDevicePair;
     private ClearHandler clearHandler = new ClearHandler(this);
     private BaseStuPair baseStuPair;
     private LEDManager mLEDManager;
@@ -56,7 +58,7 @@ public abstract class BaseFreedomTestActivity extends BaseTitleActivity {
     @Override
     protected void initData() {
         mLEDManager = new LEDManager();
-        mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(),TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+        mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
     }
 
@@ -65,7 +67,7 @@ public abstract class BaseFreedomTestActivity extends BaseTitleActivity {
         super.onDestroy();
         PrinterManager.getInstance().close();
         if (TestConfigs.sCurrentItem != null) {
-            mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(),SettingHelper.getSystemSetting().getUseChannel(),TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+            mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
             String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()) + " " + SettingHelper.getSystemSetting().getHostId();
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), title, mLEDManager.getX(title), 0, true, false);
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), getString(R.string.fairplay), 3, 3, false, true);
@@ -181,6 +183,7 @@ public abstract class BaseFreedomTestActivity extends BaseTitleActivity {
         PrinterManager.getInstance().print(" \n");
 
     }
+
 
     /**
      * i清理学生信息
