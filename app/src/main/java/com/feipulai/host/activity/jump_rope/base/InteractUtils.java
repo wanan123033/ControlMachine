@@ -18,6 +18,7 @@ import com.feipulai.host.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.host.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.host.activity.jump_rope.bean.TestCache;
 import com.feipulai.host.activity.jump_rope.setting.JumpRopeSetting;
+import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
@@ -25,6 +26,7 @@ import com.feipulai.host.entity.Student;
 import com.feipulai.host.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
 
+import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -187,12 +189,8 @@ public class InteractUtils {
             }
             RoundResult saveResult = saveResults.get(student);
             String displayResult = ResultDisplayUtils.getStrResultForDisplay(saveResult.getResult());
-            PrinterManager.getInstance().print("\n");
-
             String machineName = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode());
-            machineName = InteractUtils.getStrWithLength(machineName, 6);
-            String title = String.format(Locale.CHINA, "     %-8s%d号机", machineName, hostId);
-            PrinterManager.getInstance().print(title);
+            PrinterManager.getInstance().print(MessageFormat.format("{0}{1}号机", machineName, hostId));
             PrinterManager.getInstance().print("考  号:" + pair.getStudent().getStudentCode());
             PrinterManager.getInstance().print("姓  名:" + pair.getStudent().getStudentName());
 
@@ -208,7 +206,6 @@ public class InteractUtils {
 
                 default:
                     PrinterManager.getInstance().print("成  绩:" + displayResult);
-                    PrinterManager.getInstance().print("最好成绩:" + displayBestResult);
             }
 
             saveResult.setPrintTime(printTime);
@@ -219,7 +216,7 @@ public class InteractUtils {
 
             PrinterManager.getInstance().print("打印时间:" + printTime);
         }
-        PrinterManager.getInstance().print("\n\n\n\n");
+
         Logger.i("成绩打印完成");
     }
 

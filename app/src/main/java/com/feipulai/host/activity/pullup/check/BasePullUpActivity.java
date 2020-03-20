@@ -238,8 +238,6 @@ public class BasePullUpActivity extends BaseCheckActivity implements RadioCheckC
     }
 
 
-
-
     @Override
     public void updateSpecificItem(int index) {
         Message msg = Message.obtain();
@@ -331,6 +329,11 @@ public class BasePullUpActivity extends BaseCheckActivity implements RadioCheckC
     public void startTest() {
         Intent intent = new Intent(this, PullUpTestActivity.class);
         startActivityForResult(intent, 1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        presenter.refreshEveryThing();
     }
 
     @Override

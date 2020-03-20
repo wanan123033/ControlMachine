@@ -247,7 +247,7 @@
                         android:background="@drawable/bg_count_text"
                         android:gravity="center"
                         android:padding="5dp"
-                        android:textSize="40sp"
+                        android:textSize="28sp"
                         android:visibility="gone" />
 
                     <TextView

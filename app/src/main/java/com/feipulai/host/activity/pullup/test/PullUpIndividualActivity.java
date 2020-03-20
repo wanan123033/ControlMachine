@@ -36,7 +36,7 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
     private static final int TESTING = 0x2;
     private static final int WAIT_CONFIRM = 0x3;
     private static final int UPDATE_SCORE = 0x3;
-
+    private boolean isStoped;
     @Override
     protected void initData() {
         facade = new PullUpTestFacade(SettingHelper.getSystemSetting().getHostId(), this);
@@ -110,6 +110,7 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
     public void pullStart() {
         state = TESTING;
         facade.startTest();
+        isStoped = false;
     }
 
     @Override
@@ -118,6 +119,8 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
         setTextViewsVisibility(false,false,false,false,false);
         facade.stopTest();
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END));
+        pair.setResult(0);
+        isStoped = true;
     }
 
     @Override
@@ -234,9 +237,12 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
                 break;
 
             case UPDATE_SCORE:
-                PullUpStateResult result = (PullUpStateResult) msg.obj;
-                pair.setResult(result.getResult());
-                updateResult(pair);
+                if (!isStoped){
+                    PullUpStateResult result = (PullUpStateResult) msg.obj;
+                    pair.setResult(result.getResult());
+                    updateResult(pair);
+                }
+
                 break;
         }
     }
