@@ -216,7 +216,7 @@ public class InteractUtils {
 
             PrinterManager.getInstance().print("打印时间:" + printTime);
         }
-
+        PrinterManager.getInstance().print("\n\n");
         Logger.i("成绩打印完成");
     }
 

@@ -22,6 +22,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 import static com.feipulai.host.activity.medicine_ball.MedicineConstant.END_TEST;
 import static com.feipulai.host.activity.medicine_ball.MedicineConstant.GET_SCORE_RESPONSE;
 import static com.feipulai.host.activity.medicine_ball.MedicineConstant.SELF_CHECK_RESPONSE;
@@ -41,7 +43,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
     private boolean checkFlag = false;
     private boolean startFlag;
     private ScheduledExecutorService executorService;
-
+    SweetAlertDialog alertDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -172,6 +174,9 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
             }
             if (testState == TestState.WAIT_RESULT && startFlag) {
                 toastSpeak("开始测试");
+                if (alertDialog!= null &&alertDialog.isShowing()){
+                    alertDialog.dismiss();
+                }
                 startFlag = false;
                 setBegin(0);
             }
@@ -209,6 +214,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
      * 所以轮询查看是否需要开始测试
      */
     private synchronized void decideBegin() {
+        checkDevice();
         executorService = Executors.newSingleThreadScheduledExecutor();
         executorService.scheduleAtFixedRate(new Runnable() {
             @Override
@@ -224,7 +230,13 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
         }, 0, 1000, TimeUnit.MILLISECONDS);
 
     }
+    public void checkDevice() {
+        alertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+        alertDialog.setTitleText("终端自检中...");
+        alertDialog.setCancelable(false);
+        alertDialog.show();
 
+    }
 
     private MedicineBallResultImpl resultImpl = new MedicineBallResultImpl(new MedicineBallResultImpl.MainThreadDisposeListener() {
         @Override

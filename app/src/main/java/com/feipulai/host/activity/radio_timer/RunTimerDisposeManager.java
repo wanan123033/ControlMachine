@@ -43,16 +43,12 @@ public class RunTimerDisposeManager {
     }
 
     protected void printResult(Student student, int results) {
-
-
         PrinterManager.getInstance().print(TestConfigs.sCurrentItem.getItemName() + SettingHelper.getSystemSetting().getHostId() + "号机");
-
         PrinterManager.getInstance().print("学籍号:" + student.getStudentCode());
         PrinterManager.getInstance().print("姓  名:" + student.getStudentName());
-
         PrinterManager.getInstance().print("成绩："+ ResultDisplayUtils.getStrResultForDisplay(results));
         PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()));
-
+        PrinterManager.getInstance().print("\n");
     }
 
 

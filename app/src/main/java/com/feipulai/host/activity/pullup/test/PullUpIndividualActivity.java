@@ -17,7 +17,6 @@ import com.feipulai.device.serial.beans.PullUpStateResult;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BaseStuPair;
-import com.feipulai.host.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.host.activity.person.BasePersonTestActivity;
 import com.feipulai.host.activity.pullup.setting.PullUpSettingActivity;
 import com.feipulai.host.activity.setting.LEDSettingActivity;
@@ -36,7 +35,7 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
     private static final int TESTING = 0x2;
     private static final int WAIT_CONFIRM = 0x3;
     private static final int UPDATE_SCORE = 0x3;
-    private boolean isStoped;
+    private boolean isStopped;
     @Override
     protected void initData() {
         facade = new PullUpTestFacade(SettingHelper.getSystemSetting().getHostId(), this);
@@ -110,7 +109,7 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
     public void pullStart() {
         state = TESTING;
         facade.startTest();
-        isStoped = false;
+        isStopped = false;
     }
 
     @Override
@@ -120,7 +119,7 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
         facade.stopTest();
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END));
         pair.setResult(0);
-        isStoped = true;
+        isStopped = true;
     }
 
     @Override
@@ -150,6 +149,7 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                setShowLed(pair);
                 setTextViewsVisibility(false,false,true,false,true);
             }
         });
@@ -237,10 +237,10 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
                 break;
 
             case UPDATE_SCORE:
-                if (!isStoped){
+                if (!isStopped){
                     PullUpStateResult result = (PullUpStateResult) msg.obj;
                     pair.setResult(result.getResult());
-                    updateResult(pair);
+//                    updateResult(pair);
                 }
 
                 break;

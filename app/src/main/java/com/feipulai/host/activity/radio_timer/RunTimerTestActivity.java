@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -169,17 +170,22 @@ public class RunTimerTestActivity extends BaseRunTimerActivity {
     View.OnClickListener backListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (llFirst.getVisibility() == View.VISIBLE) {
-                finish();
-            } else {
-                llFirst.setVisibility(View.VISIBLE);
-                rlSecond.setVisibility(View.GONE);
-                getToolbar().getRightView(0).setVisibility(View.VISIBLE);
-                getToolbar().getRightView(1).setVisibility(View.VISIBLE);
-                stopRun();
-            }
+            getBack();
         }
     };
+
+    private void getBack() {
+        if (llFirst.getVisibility() == View.VISIBLE) {
+            finish();
+        } else {
+            llFirst.setVisibility(View.VISIBLE);
+            rlSecond.setVisibility(View.GONE);
+            getToolbar().getRightView(0).setVisibility(View.VISIBLE);
+            getToolbar().getRightView(1).setVisibility(View.VISIBLE);
+            stopRun();
+            initView();
+        }
+    }
 
     @Override
     protected void onResume() {
@@ -451,5 +457,13 @@ public class RunTimerTestActivity extends BaseRunTimerActivity {
 
     }
 
-
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode){
+            case KeyEvent.KEYCODE_BACK:
+                getBack();
+                return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 }

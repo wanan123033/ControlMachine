@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
+import android.view.View;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.serial.SerialConfigs;
@@ -26,6 +27,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 import static com.feipulai.exam.activity.medicineBall.MedicineConstant.END_TEST;
 import static com.feipulai.exam.activity.medicineBall.MedicineConstant.GET_SCORE_RESPONSE;
 import static com.feipulai.exam.activity.medicineBall.MedicineConstant.SELF_CHECK_RESPONSE;
@@ -44,6 +47,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
     private static final int UPDATEDEVICE = 0X1001;
     private ScheduledExecutorService checkService;
     private Student student;
+    private SweetAlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -249,6 +253,9 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
             if (testState == TestState.WAIT_RESULT && startFlag) {
                 toastSpeak("开始测试");
                 startFlag = false;
+                if (alertDialog!= null &&alertDialog.isShowing()){
+                    alertDialog.dismiss();
+                }
                 setBegin(0);
             }
         }
@@ -317,6 +324,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
      * 所以轮询查看是否需要开始测试
      */
     private void decideBegin() {
+        checkDevice();
         executorService = Executors.newSingleThreadScheduledExecutor();
         executorService.scheduleAtFixedRate(new Runnable() {
             @Override
@@ -333,6 +341,14 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
             }
         }, 500, 500, TimeUnit.MILLISECONDS);
 
+
+    }
+
+    public void checkDevice() {
+        alertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+        alertDialog.setTitleText("终端自检中...");
+        alertDialog.setCancelable(false);
+        alertDialog.show();
 
     }
 
