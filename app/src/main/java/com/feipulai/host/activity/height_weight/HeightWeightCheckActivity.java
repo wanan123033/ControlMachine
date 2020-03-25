@@ -149,7 +149,7 @@ public class HeightWeightCheckActivity
         }
         mStudent = student;
         prepareForTest();
-        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), mStudent.getStudentName(), mLEDManager.getX(mStudent.getLEDStuName()), 0, true, false);
+        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), mStudent.getStudentName(), mLEDManager.getX(mStudent.getLEDStuName()), 0, true, true);
 
     }
 
