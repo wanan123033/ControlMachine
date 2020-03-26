@@ -33,7 +33,6 @@
             android:layout_marginStart="60dp"
             android:background="@drawable/edit_search_bg"
             android:imeOptions="actionGo"
-            android:maxLines="1"
             android:paddingStart="10dp"
             android:singleLine="true" />
 
@@ -42,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="35dp"
             android:layout_marginStart="20dp"
-            android:background="@drawable/btn_click_bg_selected"
+            android:background="@drawable/btn_background"
             android:text="添加"
             android:textColor="@color/white"
             android:textSize="16sp" />
@@ -85,7 +84,7 @@
             android:layout_height="35dp"
             android:layout_marginEnd="20dp"
             android:layout_toStartOf="@+id/btn_sure"
-            android:background="@drawable/btn_click_bg_selected"
+            android:background="@drawable/btn_background"
             android:text="取消"
             android:textColor="@color/white"
             android:textSize="16sp" />
@@ -96,7 +95,7 @@
             android:layout_height="35dp"
             android:layout_alignParentRight="true"
             android:layout_marginEnd="20dp"
-            android:background="@drawable/btn_click_bg_selected"
+            android:background="@drawable/btn_background"
             android:text="确定"
             android:textColor="@color/white"
             android:textSize="16sp" />
