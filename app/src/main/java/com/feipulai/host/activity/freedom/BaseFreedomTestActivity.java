@@ -171,14 +171,13 @@ public abstract class BaseFreedomTestActivity extends BaseTitleActivity {
     private void printResult(@NonNull BaseStuPair baseStuPair) {
         if (!SettingHelper.getSystemSetting().isAutoPrint())
             return;
-        PrinterManager.getInstance().print(" \n");
         PrinterManager.getInstance().print(
-                String.format(getString(R.string.host_name), TestConfigs.sCurrentItem.getItemName(), SettingHelper.getSystemSetting().getHostId()) + "\n");
+                String.format(getString(R.string.host_name), TestConfigs.sCurrentItem.getItemName(), SettingHelper.getSystemSetting().getHostId()));
         PrinterManager.getInstance().print(
                 String.format(getString(R.string.print_result_stu_result), (baseStuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) ?
-                        getString(R.string.foul) : ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult())) + "\n");
+                        getString(R.string.foul) : ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult())) );
         PrinterManager.getInstance().print(
-                String.format(getString(R.string.print_result_time), TestConfigs.df.format(Calendar.getInstance().getTime())) + "\n");
+                String.format(getString(R.string.print_result_time), TestConfigs.df.format(Calendar.getInstance().getTime())) );
         PrinterManager.getInstance().print(" \n");
         PrinterManager.getInstance().print(" \n");
 

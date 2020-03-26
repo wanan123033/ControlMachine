@@ -35,7 +35,7 @@ public class ItemDefault {
     public static final int CODE_YY = 21;        //游泳
     public static final int CODE_GPS = 0xff;
     public static final int CODE_WLJ = 22;//握力计
-
+    public static final int CODE_JGCJ = 24;//激光测距
 
     public static char[] keyA = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};//默认密码
     public static final byte[] ctrlW = {(byte) 0xff, (byte) 0x07, (byte) 0x80, (byte) 69};//密码控制区
