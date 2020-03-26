@@ -39,6 +39,11 @@ public class FileUtil {
         return (int) (freeSpace * 1.0d / totalSpace * 100);
     }
 
+    public static long getFreeSpaceStorage() {
+        File file = Environment.getExternalStorageDirectory();
+        return file.getFreeSpace();
+    }
+
     /**
      * 单位换算
      *

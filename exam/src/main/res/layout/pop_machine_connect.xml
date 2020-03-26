@@ -13,7 +13,6 @@
         android:background="@drawable/bg_edittext"
         android:orientation="vertical"
         android:padding="20dp">
-
         <RadioGroup
             android:id="@+id/rg_machine_version"
             android:layout_width="wrap_content"
