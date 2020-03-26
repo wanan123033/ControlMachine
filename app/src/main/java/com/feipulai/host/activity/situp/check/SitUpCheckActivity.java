@@ -26,6 +26,7 @@ import com.feipulai.host.activity.base.BaseCheckActivity;
 import com.feipulai.host.activity.jump_rope.adapter.CheckPairAdapter;
 import com.feipulai.host.activity.jump_rope.base.InteractUtils;
 import com.feipulai.host.activity.jump_rope.base.check.RadioCheckContract;
+import com.feipulai.host.activity.jump_rope.base.result.RadioResultActivity;
 import com.feipulai.host.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.host.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.host.activity.jump_rope.bean.TestCache;
@@ -200,7 +201,15 @@ public class SitUpCheckActivity
         TestCache.getInstance().clear();
         presenter.finishGetStateAndDisplay();
     }
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (resultCode) {
+            case RadioResultActivity.BACK_TO_CHECK:
+                // 一切从头再来
+                presenter.refreshEveryThing();
+                break;
+        }
+    }
     @Override
     public void initView(SitUpSetting setting, List<StuDevicePair> pairs) {
         etSelect.setData(mLvResults, this);

@@ -149,8 +149,8 @@ public class HeightWeightCheckActivity
         }
         mStudent = student;
         prepareForTest();
-        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), mStudent.getStudentName(), mLEDManager.getX(mStudent.getLEDStuName()), 0, true, false);
-
+        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), mStudent.getLEDStuName(), mLEDManager.getX(mStudent.getLEDStuName()), 0, true, true);
+        toastSpeak(mStudent.getSpeakStuName() + "请准备");
     }
 
     @Override

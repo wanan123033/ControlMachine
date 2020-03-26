@@ -252,6 +252,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 pullStart();
                 break;
             case R.id.tv_exit_test:
+                pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
                 pullExit();
                 break;
             case R.id.tv_stop_test:
@@ -322,8 +323,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             pair.setStudent(student);
             refreshTxtStu(student);
             txtStuResult.setText("");
-            toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), roundNo)
-                    , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), roundNo));
+            toastSpeak(pair.getStudent().getSpeakStuName() + "请准备");
             if (testType == 0) {
                 sendTestCommand(pair);
             }
@@ -551,18 +551,18 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
      *
      * @param stuPair
      */
-    private void setShowLed(BaseStuPair stuPair) {
-        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), stuPair.getStudent().getStudentName(), mLEDManager.getX(stuPair.getStudent().getLEDStuName()), 0, true, false);
-        if (stuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) {
-
-            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), String.format(getString(R.string.speak_foul), stuPair.getStudent().getSpeakStuName())
-                    , mLEDManager.getX(String.format(getString(R.string.speak_foul), stuPair.getStudent().getSpeakStuName())), 2, false, true);
-
-        } else {
-            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), ResultDisplayUtils.getStrResultForDisplay(stuPair.getResult())
-                    , mLEDManager.getX(ResultDisplayUtils.getStrResultForDisplay(stuPair.getResult())), 2, false, true);
-
-        }
+    public void setShowLed(BaseStuPair stuPair) {
+        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), stuPair.getStudent().getStudentName(), mLEDManager.getX(stuPair.getStudent().getLEDStuName()), 0, true, true);
+//        if (stuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) {
+//
+//            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), String.format(getString(R.string.speak_foul), stuPair.getStudent().getSpeakStuName())
+//                    , mLEDManager.getX(String.format(getString(R.string.speak_foul), stuPair.getStudent().getSpeakStuName())), 2, false, true);
+//
+//        } else {
+//            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), ResultDisplayUtils.getStrResultForDisplay(stuPair.getResult())
+//                    , mLEDManager.getX(ResultDisplayUtils.getStrResultForDisplay(stuPair.getResult())), 2, false, true);
+//
+//        }
 
     }
 
@@ -603,23 +603,23 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     }
 
 
-    private static class LedHandler extends Handler {
-
-        private WeakReference<BasePersonTestActivity> mActivityWeakReference;
-
-        public LedHandler(BasePersonTestActivity activity) {
-            mActivityWeakReference = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            BasePersonTestActivity activity = mActivityWeakReference.get();
-            activity.setShowLed((BaseStuPair) msg.obj);
-
-        }
-
-    }
+//    private static class LedHandler extends Handler {
+//
+//        private WeakReference<BasePersonTestActivity> mActivityWeakReference;
+//
+//        public LedHandler(BasePersonTestActivity activity) {
+//            mActivityWeakReference = new WeakReference<>(activity);
+//        }
+//
+//        @Override
+//        public void handleMessage(Message msg) {
+//            super.handleMessage(msg);
+//            BasePersonTestActivity activity = mActivityWeakReference.get();
+//            activity.setShowLed((BaseStuPair) msg.obj);
+//
+//        }
+//
+//    }
 
     /**
      * i清理学生信息

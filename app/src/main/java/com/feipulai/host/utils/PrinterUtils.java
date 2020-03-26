@@ -42,15 +42,11 @@ public class PrinterUtils {
         String printTime = TestConfigs.df.format(Calendar.getInstance().getTime());
         int hostId = SettingHelper.getSystemSetting().getHostId();
 
-        PrinterManager.getInstance().print(" \n");
-        PrinterManager.getInstance().print(TestConfigs.machineNameMap.get(machineCode) + hostId + "号机\n");
-        PrinterManager.getInstance().print("考  号:" + student.getStudentCode() + "\n");
-        PrinterManager.getInstance().print("姓  名:" + student.getStudentName() + "\n");
-
-
-        result.setPrintTime(printTime);
-
-        DBManager.getInstance().updateRoundResult(result);
+        PrinterManager.getInstance().print(TestConfigs.machineNameMap.get(machineCode) + hostId + "号机");
+        PrinterManager.getInstance().print("考  号:" + student.getStudentCode());
+        PrinterManager.getInstance().print("姓  名:" + student.getStudentName());
+//        result.setPrintTime(printTime);
+//        DBManager.getInstance().updateRoundResult(result);
 
 
         switch (machineCode) {
@@ -58,8 +54,8 @@ public class PrinterUtils {
                 String heightResult = ResultDisplayUtils.getStrResultForDisplay(result.getResult(), HWConfigs.HEIGHT_ITEM);
                 PrinterManager.getInstance().print("身  高:" + heightResult);
                 PrinterManager.getInstance().print("体  重:" + ResultDisplayUtils.getStrResultForDisplay(weightResult.getResult(), HWConfigs.WEIGHT_ITEM));
-                weightResult.setPrintTime(printTime);
-                DBManager.getInstance().updateRoundResult(weightResult);
+//                weightResult.setPrintTime(printTime);
+//                DBManager.getInstance().updateRoundResult(weightResult);
                 break;
 
             default:
