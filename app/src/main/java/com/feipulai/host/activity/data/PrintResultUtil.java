@@ -2,6 +2,8 @@ package com.feipulai.host.activity.data;
 
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.printer.PrinterManager;
+import com.feipulai.host.MyApplication;
+import com.feipulai.host.R;
 import com.feipulai.host.activity.height_weight.HWConfigs;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.TestConfigs;
@@ -32,40 +34,39 @@ public class PrintResultUtil {
 
         for (String s : stuCodeList) {
             //如果测试过,显示成绩
-            List<RoundResult> roundResults = DBManager.getInstance().queryResultsByStudentCode(s);
+            RoundResult roundResults = DBManager.getInstance().queryBestScore(s);
 
             PrinterManager.getInstance().print(TestConfigs.sCurrentItem.getItemName() + SettingHelper.getSystemSetting().getHostId() + "号机");
             Student student = DBManager.getInstance().queryStudentByStuCode(s);
             PrinterManager.getInstance().print("考  号:" + s);
             PrinterManager.getInstance().print("姓  名:" + student.getStudentName());
-            for (int i = 0; i < roundResults.size(); i++) {
-                RoundResult result = roundResults.get(i);
-                String printResult = "第" + i + 1 + "次:" + getPrintResultState(result);
-                // 跳绳需要打印绊绳次数
-                switch (TestConfigs.sCurrentItem.getMachineCode()) {
-                    case ItemDefault.CODE_TS:
-                        PrinterManager.getInstance().print(printResult + "(中断:" + result.getStumbleCount() + ")");
-                        break;
+//            for (int i = 0; i < roundResults.size(); i++) {
+//                RoundResult result = roundResults.get(i);
+            String printResult = String.format(MyApplication.getInstance().getString(R.string.print_result_stu_result), getPrintResultState(roundResults));
+            // 跳绳需要打印绊绳次数
+            switch (TestConfigs.sCurrentItem.getMachineCode()) {
+                case ItemDefault.CODE_TS:
+                    PrinterManager.getInstance().print(printResult + "(中断:" + roundResults.getStumbleCount() + ")");
+                    break;
 
-                    case ItemDefault.CODE_YWQZ:
-                    case ItemDefault.CODE_YTXS:
-                    case ItemDefault.CODE_PQ:
+                case ItemDefault.CODE_YWQZ:
+                case ItemDefault.CODE_YTXS:
+                case ItemDefault.CODE_PQ:
 //                        PrinterManager.getInstance().print(printResult + "(判罚:" + result.getPenalty() + ")");
-                        break;
-                    case ItemDefault.CODE_LQYQ:
-                    case ItemDefault.CODE_ZQYQ:
+                    break;
+                case ItemDefault.CODE_LQYQ:
+                case ItemDefault.CODE_ZQYQ:
 //                        PrinterManager.getInstance().print(printResult + "(违例:" + result.getPenalty() + ")");
-                        break;
-                    case ItemDefault.CODE_HW:
-                        PrinterManager.getInstance().print(printResult);
-                        PrinterManager.getInstance().print("身  高:" + ResultDisplayUtils.getStrResultForDisplay(result.getResult(), HWConfigs.HEIGHT_ITEM));
-                        PrinterManager.getInstance().print("体  重:" + ResultDisplayUtils.getStrResultForDisplay(result.getWeightResult(), HWConfigs.WEIGHT_ITEM));
-                        break;
-                    default:
-                        PrinterManager.getInstance().print(printResult);
-
-                }
+                    break;
+                case ItemDefault.CODE_HW:
+                    PrinterManager.getInstance().print(printResult);
+                    PrinterManager.getInstance().print("身  高:" + ResultDisplayUtils.getStrResultForDisplay(roundResults.getResult(), HWConfigs.HEIGHT_ITEM));
+                    PrinterManager.getInstance().print("体  重:" + ResultDisplayUtils.getStrResultForDisplay(roundResults.getWeightResult(), HWConfigs.WEIGHT_ITEM));
+                    break;
+                default:
+                    PrinterManager.getInstance().print(printResult);
             }
+//            }
             PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()) + "\n");
             PrinterManager.getInstance().print("\n");
 

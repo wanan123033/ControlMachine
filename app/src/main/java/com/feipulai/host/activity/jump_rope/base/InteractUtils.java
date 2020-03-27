@@ -209,13 +209,14 @@ public class InteractUtils {
                     PrinterManager.getInstance().print("成  绩:" + displayResult);
             }
 
-            saveResult.setPrintTime(printTime);
-            bestResult.setPrintTime(printTime);
+//            saveResult.setPrintTime(printTime);
+//            bestResult.setPrintTime(printTime);
 
-            DBManager.getInstance().updateRoundResult(saveResult);
-            DBManager.getInstance().updateRoundResult(bestResult);
+//            DBManager.getInstance().updateRoundResult(saveResult);
+//            DBManager.getInstance().updateRoundResult(bestResult);
 
             PrinterManager.getInstance().print("打印时间:" + printTime);
+            PrinterManager.getInstance().print("\n");
         }
         PrinterManager.getInstance().print("\n\n");
         Logger.i("成绩打印完成");

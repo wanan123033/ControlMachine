@@ -124,7 +124,6 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
     @Override
     public void gotoItemSetting() {
         startActivity(new Intent(this, SitReachSettingActivity.class));
-        finish();
     }
 
     @Override

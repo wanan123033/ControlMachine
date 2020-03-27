@@ -295,10 +295,10 @@ public class SitUpResultActivity
         DBManager.getInstance().insertRoundResult(roundResult);
 
         if (SettingHelper.getSystemSetting().isAutoPrint()) {
-            mPrintTime = TestConfigs.df.format(Calendar.getInstance().getTime());
-            roundResult.setPrintTime(mPrintTime);
+//            mPrintTime = TestConfigs.df.format(Calendar.getInstance().getTime());
+//            roundResult.setPrintTime(mPrintTime);
             printResult(pair, result);
-            DBManager.getInstance().updateRoundResult(roundResult);
+//            DBManager.getInstance().updateRoundResult(roundResult);
         }
 
         if (SettingHelper.getSystemSetting().isRtUpload()) {

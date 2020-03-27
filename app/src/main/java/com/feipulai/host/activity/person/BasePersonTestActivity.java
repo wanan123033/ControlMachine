@@ -323,8 +323,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             pair.setStudent(student);
             refreshTxtStu(student);
             txtStuResult.setText("");
-            toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), roundNo)
-                    , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), roundNo));
+            toastSpeak(pair.getStudent().getSpeakStuName() + "请准备");
             if (testType == 0) {
                 sendTestCommand(pair);
             }

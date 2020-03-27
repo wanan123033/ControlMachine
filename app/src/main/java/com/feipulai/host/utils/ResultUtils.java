@@ -64,6 +64,14 @@ public class ResultUtils {
         return result;
     }
 
+    private static void switchIsLastResult(RoundResult roundResult, RoundResult currentBestResult) {
+        roundResult.setIsLastResult(1);
+        if (currentBestResult != null) {
+            currentBestResult.setIsLastResult(0);
+            DBManager.getInstance().updateRoundResult(currentBestResult);
+        }
+    }
+
     /**
      * 保存轮次成绩到数据库
      *
@@ -82,18 +90,10 @@ public class ResultUtils {
         } else if (currentBestResult == null  // 目前没有最好成绩,当前成绩就是最好成绩
                 || currentBestResult.getResultState() == RoundResult.RESULT_STATE_FOUL // 原有的最好成绩犯规
                 || currentBestResult.getResult() <= result// 原有最好成绩比当前成绩差
-                ) {
+        ) {
             switchIsLastResult(roundResult, currentBestResult);
         }
         DBManager.getInstance().insertRoundResult(roundResult);
-    }
-
-    private static void switchIsLastResult(RoundResult roundResult, RoundResult currentBestResult) {
-        roundResult.setIsLastResult(1);
-        if (currentBestResult != null) {
-            currentBestResult.setIsLastResult(0);
-            DBManager.getInstance().updateRoundResult(currentBestResult);
-        }
     }
 
     private static void checkResultRange(RoundResult roundResult) {

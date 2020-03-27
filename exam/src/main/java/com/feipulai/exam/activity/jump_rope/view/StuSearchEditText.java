@@ -2,6 +2,7 @@ package com.feipulai.exam.activity.jump_rope.view;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -104,11 +105,12 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
                         imgDelete.setVisibility(INVISIBLE);
                         return;
                     }
+                    imgDelete.setVisibility(VISIBLE);
                     //外接扫描不实时查
                     if (SettingHelper.getSystemSetting().getCheckTool() == 3) {
                         return;
                     }
-                    imgDelete.setVisibility(VISIBLE);
+
                     if (length == 18) {
                         //精确搜索身份证
                         Student student = DBManager.getInstance().queryStudentByIDCode(str);
@@ -140,36 +142,31 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
         etInputText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                String text = v.getText().toString().trim();
-                if (TextUtils.isEmpty(text)) {
+
+                if (actionId == EditorInfo.IME_ACTION_GO
+                        || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+                    String text = v.getText().toString().trim();
+                    if (TextUtils.isEmpty(text)) {
+                        return true;
+                    }
+//                    mStudentList = DBManager.getInstance().fuzzyQueryByStuCode(etInputText.getText().toString(), 20, 0);
+//                    if (mStudentList == null || mStudentList.size() == 0) {
+//                        mLvResults.setVisibility(View.GONE);
+//                    } else {
+//                        SearchResultAdapter adapter = new SearchResultAdapter(getContext(), mStudentList);
+//                        mLvResults.setAdapter(adapter);
+//                        mLvResults.setVisibility(View.VISIBLE);
+//                    }
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            search();
+                        }
+                    }, 200);
+
                     return true;
                 }
-                if (actionId == EditorInfo.IME_ACTION_GO || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    mStudentList = DBManager.getInstance().fuzzyQueryByStuCode(etInputText.getText().toString(), 20, 0);
-                    if (mStudentList == null || mStudentList.size() == 0) {
-                        mLvResults.setVisibility(View.GONE);
-                    } else {
-                        SearchResultAdapter adapter = new SearchResultAdapter(getContext(), mStudentList);
-                        mLvResults.setAdapter(adapter);
-                        mLvResults.setVisibility(View.VISIBLE);
-                    }
-                    search();
-//                    if (mStudentList != null && mStudentList.size() > 0) {
-//                        for (Student student : mStudentList) {
-//                            if (text.equals(student.getStudentCode()) || text.equals(student.getIdCardNo())) {
-//                                // 找到已有的,检录
-//                                check(student);
-//                                return true;
-//                            }
-//                        }
-//                    }
-//                    // 添加考生,检录
-//                    Student student = new Student();
-//                    student.setStudentCode(text);
-//                    check(student);
-
-                }
-                return true;
+                return false;
             }
         });
     }
@@ -178,7 +175,12 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
         if (listener != null) {
             listener.onInputCheck(student);
         }
-        etInputText.setText("");
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                etInputText.setText("");
+            }
+        }, 100);
     }
 
     public void setResultView(ListView listView) {

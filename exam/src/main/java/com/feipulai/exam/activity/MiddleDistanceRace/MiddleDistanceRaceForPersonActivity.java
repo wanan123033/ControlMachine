@@ -36,6 +36,7 @@ import com.feipulai.common.db.DataBaseRespon;
 import com.feipulai.common.db.DataBaseTask;
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.DateUtil;
+import com.feipulai.common.utils.FileUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.utils.SharedPrefsUtil;
@@ -92,6 +93,7 @@ import com.ww.fpl.videolibrary.play.util.VideoComposer;
 import com.zyyoona7.popup.EasyPopup;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -271,7 +273,6 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
 
     @Override
     protected int setLayoutResID() {
-//        rootView = LayoutInflater.from(this).inflate(R.layout.activity_middle_distance_race3, null);
         return R.layout.activity_middle_distance_race3;
     }
 
@@ -289,8 +290,6 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         mContext = this;
         instance = this;
 
-        //布局加载完成后在进行初始化耗时操作
-//        rootView.getViewTreeObserver().addOnGlobalLayoutListener(this);
         dialogUtil = new DialogUtil(mContext);
 
         height = DisplayUtil.getScreenHightPx(this);
@@ -374,7 +373,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         }
 
         //成绩列表点击、长按事件
-        final VHTableAdapter tableShowAdapter = new VHTableAdapter(this, titleData, resultDataList, carryMode, digital, new VHTableAdapter.OnResultItemLongClick() {
+        final VHTableAdapter tableShowAdapter = new VHTableAdapter(mContext, titleData, resultDataList, carryMode, digital, new VHTableAdapter.OnResultItemLongClick() {
             @Override
             public void resultListLongClick(int row, int state) {
                 resultDataList.get(row).setResultState(state);
@@ -416,11 +415,34 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
 //        }
     }
 
+    private double freeTime;
+    private double freeSpace;
+
     private void initCamera() {
         camera_ip = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, CAMERA_IP, "");
         mDataSource = new DataSource();
         videoPlayer = new VideoPlayWindow(this);
         videoPlayer.initVideoWindow(eventHandler);
+
+        //检查存储空间大小，给予提示，录像15M/sec
+        freeSpace = new BigDecimal((float) FileUtil.getFreeSpaceStorage() / (1024 * 1024 * 1024)).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        freeTime = new BigDecimal(freeSpace * 1024 / (15 * 60)).setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue();
+        //当可用空间支持录像时长小于9小时给出提示
+        if (freeTime < 9) {
+            showSpaceNotice();
+        }
+    }
+
+    private void showSpaceNotice() {
+        dialogUtil.showCommonDialog("本机剩余存储空间" + freeSpace + "G,仅支持录像" + freeTime + "小时", android.R.drawable.ic_dialog_info, new DialogUtil.DialogListener() {
+            @Override
+            public void onPositiveClick() {
+            }
+
+            @Override
+            public void onNegativeClick() {
+            }
+        });
     }
 
     private OnVideoViewEventHandler eventHandler = new OnVideoViewEventHandler() {
@@ -902,6 +924,10 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             btnSure.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (groupIngStudents.isEmpty()) {
+                        groupPop.dismiss();
+                        return;
+                    }
                     Group group = new Group();
                     group.setIsTestComplete(0);
                     group.setItemCode(itemCode);

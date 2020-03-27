@@ -189,6 +189,7 @@ public class HkCameraManager {
         }
         Log.i(TAG, "开启预览" + "---" + m_iLogID);
         Toast.makeText(activity, "摄像头已开启", Toast.LENGTH_SHORT).show();
+
     }
 
     private void stopSinglePreview() {
