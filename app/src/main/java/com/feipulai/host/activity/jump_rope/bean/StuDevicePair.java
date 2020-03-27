@@ -14,7 +14,8 @@ public class StuDevicePair implements Serializable {
     private BaseDeviceState baseDevice;
     //成绩
 	private IDeviceResult deviceResult;
-	
+	private long startTime;
+	private long endTime;
 	public IDeviceResult getDeviceResult(){
 		return deviceResult;
 	}
@@ -47,5 +48,20 @@ public class StuDevicePair implements Serializable {
 				", deviceResult=" + deviceResult +
 				'}';
 	}
-	
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
+    public long getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(long endTime) {
+        this.endTime = endTime;
+    }
 }

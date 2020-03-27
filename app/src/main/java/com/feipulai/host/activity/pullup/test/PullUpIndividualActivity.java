@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.WaitDialog;
@@ -118,6 +119,7 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
         setTextViewsVisibility(false,false,false,false,false);
         facade.stopTest();
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END));
+        pair.setEndTime(DateUtil.getCurrentTime());
         pair.setResult(0);
         isStopped = true;
     }
@@ -150,6 +152,7 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
             @Override
             public void run() {
                 setShowLed(pair);
+                pair.setStartTime(DateUtil.getCurrentTime());
                 setTextViewsVisibility(false,false,true,false,true);
             }
         });

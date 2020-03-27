@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
@@ -147,6 +148,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity implements Sta
                         break;
 
                     case UPDATE_RESULT:
+                        activity.pair.setEndTime(DateUtil.getCurrentTime());
                         activity.updateResult((BaseStuPair) msg.obj);
                         break;
                 }
@@ -182,7 +184,6 @@ public class StandJumpTestActivity extends BasePersonTestActivity implements Sta
 //            toastSpeak("测量垫已损坏,请更换测量垫");
 //        }
         if (isCheckDevice && standResiltListener.getTestState() == StandResiltListener.TestState.START_TEST) {
-
             //开始测试
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
         }
@@ -193,6 +194,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity implements Sta
         isDisconnect = false;
         //检测通过可以发送测试指令
         toastSpeak(getString(R.string.start_test));
+        pair.setStartTime(DateUtil.getCurrentTime());
     }
 
     @Override

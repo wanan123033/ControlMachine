@@ -3,6 +3,7 @@ package com.feipulai.host.activity.standjump.more;
 import android.content.Intent;
 import android.view.View;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.manager.StandJumpManager;
@@ -74,6 +75,7 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        pair.setStartTime(DateUtil.getCurrentTime());
         StandJumpManager.startTest(SettingHelper.getSystemSetting().getHostId(), pair.getBaseDevice().getDeviceId());
     }
 
@@ -117,6 +119,7 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                stuPair.setEndTime(DateUtil.getCurrentTime());
                 updateResult(stuPair);
             }
         });

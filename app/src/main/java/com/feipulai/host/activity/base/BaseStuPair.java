@@ -23,6 +23,8 @@ public class BaseStuPair implements Serializable {
     private boolean canTest;
     private int baseHeight;
     private int power = 60;//电量状态
+    private long startTime;
+    private long endTime;
     public BaseStuPair(int result, int resultState, Student student, BaseDeviceState baseDevice) {
         this.result = result;
         this.resultState = resultState;
@@ -97,5 +99,21 @@ public class BaseStuPair implements Serializable {
 
     public void setPower(int power) {
         this.power = power;
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
+    public long getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(long endTime) {
+        this.endTime = endTime;
     }
 }

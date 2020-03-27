@@ -99,7 +99,7 @@ public class InteractUtils {
      *
      * @param pairs 考生设备配对信息
      */
-    public static void saveResults(List<StuDevicePair> pairs, String testDate) {
+    public static void saveResults(List<StuDevicePair> pairs) {
         Map<Student, RoundResult> saveResults = new HashMap<>(pairs.size() * 2);
         Map<Student, RoundResult> bestResults = new HashMap<>(pairs.size() * 2);
         for (StuDevicePair pair : pairs) {
@@ -117,7 +117,8 @@ public class InteractUtils {
             roundResult.setItemCode(TestConfigs.getCurrentItemCode());
             roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
             roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
-            roundResult.setTestTime(testDate);
+            roundResult.setTestTime(pair.getStartTime()+"");
+            roundResult.setPrintTime(pair.getEndTime()+"");
             roundResult.setRoundNo(1);
 
             switch (TestConfigs.sCurrentItem.getMachineCode()) {

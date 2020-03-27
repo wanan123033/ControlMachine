@@ -5,6 +5,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
@@ -71,6 +72,7 @@ public class VitalTestActivity extends BaseMoreActivity {
         pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
         updateDevice(pair.getBaseDevice());
         int id = pair.getBaseDevice().getDeviceId();
+        pair.setStartTime(DateUtil.getCurrentTime());
         sendStart((byte) id);
     }
 
@@ -220,7 +222,7 @@ public class VitalTestActivity extends BaseMoreActivity {
         stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
         updateResult(stuPair);
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, stuPair.getBaseDevice().getDeviceId()));
-
+        stuPair.setEndTime(DateUtil.getCurrentTime());
     }
 
     @Override

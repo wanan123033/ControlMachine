@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -283,6 +284,8 @@ public class RunTimerTestActivity extends BaseRunTimerActivity {
                         baseStuPair.setStudent(runStudent.getStudent());
                         baseStuPair.setResult(runStudent.getOriginalMark());
                         baseStuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
+                        baseStuPair.setStartTime(startTime);
+                        baseStuPair.setEndTime(DateUtil.getCurrentTime());
                         disposeManager.saveResult(baseStuPair);
                         if (SettingHelper.getSystemSetting().isAutoPrint()) {
                             disposeManager.printResult(runStudent.getStudent(), runStudent.getOriginalMark());

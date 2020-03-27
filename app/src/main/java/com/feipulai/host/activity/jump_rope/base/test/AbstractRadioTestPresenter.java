@@ -45,7 +45,6 @@ public abstract class AbstractRadioTestPresenter<Setting>
 
     protected volatile int[] currentConnect;
     protected volatile int[] endGetResultPairs;//结束后缓存收到数据设备
-    private String testDate;
     protected List<StuDevicePair> pairs;
     protected Setting setting;
     protected Context context;
@@ -114,7 +113,6 @@ public abstract class AbstractRadioTestPresenter<Setting>
     @Override
     public void startTest() {
         Logger.i("开始测试,测试考生设备信息:" + pairs.toString());
-        testDate = DateUtil.getCurrentTime() + "";
         resetDevices();
         view.setViewForStart();
         facade.start();
@@ -153,7 +151,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
     }
 
     private void saveResults() {
-        InteractUtils.saveResults(pairs, testDate);
+        InteractUtils.saveResults(pairs);
     }
 
     @Override
@@ -209,6 +207,9 @@ public abstract class AbstractRadioTestPresenter<Setting>
 
     @Override
     public void onGetReadyTimerFinish() {
+        for (StuDevicePair pair : pairs) {
+            pair.setStartTime(DateUtil.getCurrentTime());
+        }
         view.enableStopUse(true);
         view.tickInUI(context.getString(R.string.begin));
     }
@@ -225,6 +226,9 @@ public abstract class AbstractRadioTestPresenter<Setting>
 
     @Override
     public void onTestingTimerFinish() {
+        for (StuDevicePair pair : pairs) {
+            pair.setEndTime(DateUtil.getCurrentTime());
+        }
         view.tickInUI(context.getString(R.string.finish));
         testState = WAIT_MACHINE_RESULTS;
         view.showWaitFinalResultDialog(true);

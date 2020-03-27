@@ -460,7 +460,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         roundResult.setItemCode(itemCode);
         roundResult.setResult(baseStuPair.getResult());
         roundResult.setResultState(baseStuPair.getResultState());
-        roundResult.setTestTime(DateUtil.getCurrentTime() + "");
+        roundResult.setTestTime(baseStuPair.getStartTime() + "");
+        roundResult.setPrintTime(baseStuPair.getEndTime() + "");
         roundResult.setRoundNo(1);
         RoundResult bestResult = DBManager.getInstance().queryBestScore(baseStuPair.getStudent().getStudentCode());
         if (bestResult != null) {

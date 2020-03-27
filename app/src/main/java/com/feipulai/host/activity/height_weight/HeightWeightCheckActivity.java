@@ -9,6 +9,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.feipulai.common.tts.TtsManager;
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.serial.SerialConfigs;
@@ -72,7 +73,8 @@ public class HeightWeightCheckActivity
     private RoundResult mLastHeightResult;
     private RoundResult mLastWeightResult;
     private ItemSubscriber itemSubscriber;
-
+    private long startTime;
+    private long endTime;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_height_weight_check;
@@ -131,7 +133,7 @@ public class HeightWeightCheckActivity
         txtStuSex.setText(mStudent.getSex() == Student.MALE ? R.string.male : R.string.female);
         txtStuCode.setText(mStudent.getStudentCode());
         txtStuName.setText(mStudent.getStudentName());
-
+        startTime = DateUtil.getCurrentTime();
     }
 
     @Override
@@ -200,7 +202,9 @@ public class HeightWeightCheckActivity
         switch (msg.what) {
             case SerialConfigs.HEIGHT_WEIGHT_RESULT:
                 HeightWeightResult result = (HeightWeightResult) msg.obj;
-
+                endTime = DateUtil.getCurrentTime();
+                mWeightResult.setTestTime(startTime+"");
+                mWeightResult.setPrintTime(endTime+"");
                 mHeightResult = ResultUtils.generateRoughResultWithRaw(mStudent, result, 1);
                 mWeightResult = ResultUtils.generateRoughResultWithRaw(mStudent, result, 2);
                 mHeightResult.setWeightResult(mWeightResult.getResult());

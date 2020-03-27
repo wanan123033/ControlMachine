@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.serial.SerialConfigs;
@@ -177,6 +178,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
                 if (alertDialog!= null &&alertDialog.isShowing()){
                     alertDialog.dismiss();
                 }
+                pair.setStartTime(DateUtil.getCurrentTime());
                 startFlag = false;
                 setBegin(0);
             }
@@ -194,7 +196,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
             updateDevice(stuPair.getBaseDevice());
             // 发送结束命令
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_STOP));
-
+            pair.setEndTime(DateUtil.getCurrentTime());
             testState = TestState.UN_STARTED;
         }
     }

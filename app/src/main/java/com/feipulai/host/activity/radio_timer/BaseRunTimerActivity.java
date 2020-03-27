@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.RunTimerConnectState;
@@ -65,6 +66,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
     private int interceptWay;
     private int settingSensor;
     public boolean reLoad;
+    public long startTime;//开始时间
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -175,6 +177,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
                     disposeManager.keepTime();
                     changeState(new boolean[]{false, false, true, false, false});
                     keepTime();
+                    startTime = DateUtil.getCurrentTime();
                     break;
                 case 4://获取到结果
 //                    if (!isAuto){
