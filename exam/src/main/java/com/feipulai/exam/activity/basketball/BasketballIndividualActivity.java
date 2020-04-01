@@ -53,6 +53,7 @@ import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -1001,6 +1002,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         if (result != null) {
             scoreResultList.add(result);
         }
+        result.setTestTime(TestConfigs.df.format(new Date()));
         InteractUtils.showStuInfo(llStuDetail, student, scoreResultList);
         tvResult.setText(student.getStudentName());
         state = WAIT_CHECK_IN;

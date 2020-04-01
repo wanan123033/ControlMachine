@@ -423,6 +423,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
 
         tvResult.setText("准备");
         testDate = System.currentTimeMillis() + "";
+
         facade.startTest();
         state = TESTING;
     }

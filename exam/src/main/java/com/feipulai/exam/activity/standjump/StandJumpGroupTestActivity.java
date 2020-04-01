@@ -19,6 +19,7 @@ import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
 
 import java.lang.ref.WeakReference;
+import java.util.Date;
 
 /**
  * 立定跳远分组模式
@@ -101,6 +102,7 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
     @Override
     public void startTest(BaseStuPair stuPair) {
         baseStuPair = stuPair;
+        baseStuPair.setStartTime(TestConfigs.df.format(new Date()));
 //        sendCheck();
 //        //开始测试
 //        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));

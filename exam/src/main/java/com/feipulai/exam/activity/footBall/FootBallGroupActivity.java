@@ -56,6 +56,7 @@ import com.orhanobut.logger.Logger;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -114,6 +115,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
     private BallManager ballManager;
     private BasketBallRadioFacade facade;
     private long timerDate;
+    private String startTime; //开始时间
 
     @Override
     protected int setLayoutResID() {
@@ -538,6 +540,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                             ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, pairs.get(position()).getStudent().getLEDStuName(), Paint.Align.CENTER);
                             timerUtil.stop();
                             ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
+                            startTime = TestConfigs.df.format(new Date());
                         } else {
                             toastSpeak("存在未连接设备，请配对");
                         }
@@ -868,7 +871,8 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                     roundResult.setResult(0);
                     roundResult.setMachineResult(0);
                     roundResult.setResultState(testResult.getResultState());
-                    roundResult.setTestTime(System.currentTimeMillis() + "");
+                    roundResult.setTestTime(startTime);
+                    roundResult.setEndTime(TestConfigs.df.format(new Date()));
                     roundResult.setRoundNo(resultList.get(i).getRoundNo());
                     roundResult.setTestNo(1);
                     roundResult.setExamType(group.getExamType());

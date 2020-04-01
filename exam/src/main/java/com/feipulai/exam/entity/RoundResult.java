@@ -3,6 +3,7 @@ package com.feipulai.exam.entity;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.NotNull;
 
 import java.io.Serializable;
@@ -51,7 +52,8 @@ public class RoundResult implements Serializable {
     private int examType;//考试类型 0.正常 1.补考，(2.缓考,现没有这功能)
     @NotNull
     private String testTime;//测试时间  时间戳
-    private String printTime;//打印时间 时间戳
+//    private String printTime;//w打印时间 时间戳
+    private String endTime;//结束时间 时间戳
     private int stumbleCount;// 绊绳次数
     @NotNull
     private int updateState;//上传状态 0未上传 1上传
@@ -71,10 +73,11 @@ public class RoundResult implements Serializable {
     public RoundResult() {
     }
 
-    @Generated(hash = 118790176)
+    @Keep
+    @Generated(hash = 1001432630)
     public RoundResult(Long id, @NotNull String studentCode, @NotNull String itemCode, int machineCode,
             int roundNo, int testNo, int machineResult, int penaltyNum, int result, int resultState,
-            int isLastResult, int examType, @NotNull String testTime, String printTime,
+            int isLastResult, int examType, @NotNull String testTime,  String endTime,
             int stumbleCount, int updateState, byte[] cycleResult, Long groupId, String scheduleNo,
             String mtEquipment, String remark1, String remark2, String remark3) {
         this.id = id;
@@ -90,7 +93,7 @@ public class RoundResult implements Serializable {
         this.isLastResult = isLastResult;
         this.examType = examType;
         this.testTime = testTime;
-        this.printTime = printTime;
+        this.endTime = endTime;
         this.stumbleCount = stumbleCount;
         this.updateState = updateState;
         this.cycleResult = cycleResult;
@@ -207,11 +210,11 @@ public class RoundResult implements Serializable {
     }
 
     public String getPrintTime() {
-        return this.printTime;
+        return this.endTime;
     }
 
     public void setPrintTime(String printTime) {
-        this.printTime = printTime;
+        this.endTime = printTime;
     }
 
     public int getStumbleCount() {
@@ -297,5 +300,13 @@ public class RoundResult implements Serializable {
                 ", resultState=" + resultState +
                 ", isLastResult=" + isLastResult +
                 '}';
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
     }
 }

@@ -62,6 +62,7 @@ import com.orhanobut.logger.Logger;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -445,9 +446,10 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
                 false);
 
         tvResult.setText("准备");
-        testDate = System.currentTimeMillis() + "";
+        testDate = TestConfigs.df.format(new Date());
         facade.startTest();
         state = TESTING;
+
     }
 
     private void prepareForConfirmResult() {

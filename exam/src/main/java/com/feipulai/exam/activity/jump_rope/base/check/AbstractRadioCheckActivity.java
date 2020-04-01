@@ -137,6 +137,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
             startActivity(new Intent(this, LEDSettingActivity.class));
         } else if (v == getStartTestView()) {// 开始测试
             presenter.startTest();
+
         } else if (v == getPairView()) {// 设备配对
             startActivity(new Intent(this, getPairActivity()));
         } else if (v == getChangeBadView()) {// 故障更换

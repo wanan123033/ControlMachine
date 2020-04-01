@@ -60,8 +60,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
 
-;
-
 public class BaseGroupActivity extends BaseTitleActivity {
 
     @BindView(R.id.sp_schedule)

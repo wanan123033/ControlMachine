@@ -36,6 +36,7 @@ import com.feipulai.exam.view.ResultPopWindow;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -76,6 +77,8 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
     private int select;
     private List<RunStudent> tempGroup = new ArrayList<>();
     private SoundPlayUtils playUtils;
+    private String startTime;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_group_run_timer2;
@@ -238,6 +241,7 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
             case R.id.tv_force_start://强制启动
                 playUtils.play(15);//播放枪声
                 forceStart();
+                startTime = TestConfigs.df.format(new Date());
                 break;
             case R.id.tv_wait_ready://预备
                 playUtils.play(14);
@@ -370,7 +374,7 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
     private void confirmResult() {
         for (RunStudent runStudent : mList) {
             if (runStudent.getStudent() != null && !TextUtils.isEmpty(runStudent.getMark())) {
-                disposeManager.saveGroupResult(runStudent.getStudent(), runStudent.getOriginalMark(), currentTestTime + 1, group);
+                disposeManager.saveGroupResult(runStudent.getStudent(), runStudent.getOriginalMark(), currentTestTime + 1, group,startTime);
                 List<RoundResult> resultList = DBManager.getInstance().queryGroupRound(runStudent.getStudent().getStudentCode(), group.getId() + "");
                 List<String> list = new ArrayList<>();
                 for (RoundResult result : resultList) {

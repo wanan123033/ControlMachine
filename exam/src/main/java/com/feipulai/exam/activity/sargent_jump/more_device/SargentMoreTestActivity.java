@@ -23,6 +23,8 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
 
+import java.util.Date;
+
 import butterknife.OnClick;
 
 import static com.feipulai.exam.activity.sargent_jump.Constants.CMD_SARGENT_JUMP_EMPTY;
@@ -110,7 +112,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
 
     @Override
     protected void sendTestCommand(BaseStuPair pair, int index) {
-
+        pair.setStartTime(TestConfigs.df.format(new Date()));
         pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
         updateDevice(pair.getBaseDevice());
         int id = pair.getBaseDevice().getDeviceId();

@@ -44,6 +44,7 @@ import com.orhanobut.logger.Logger;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -436,7 +437,7 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
         roundResult.setPenaltyNum(baseStuPair.getPenaltyNum());
         roundResult.setResultState(1);
 //        roundResult.setTestTime(TestConfigs.df.format(Calendar.getInstance().getTime()));
-        roundResult.setTestTime(System.currentTimeMillis() + "");
+        roundResult.setTestTime(baseStuPair.getStartTime());
         roundResult.setRoundNo(baseStuPair.getRoundNo() + 1);
         roundResult.setTestNo(testNo);
         roundResult.setExamType(studentItem.getExamType());
@@ -470,7 +471,7 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
             roundResult.setIsLastResult(1);
             updateLastResultLed(roundResult, index);
         }
-
+        roundResult.setEndTime(TestConfigs.df.format(new Date()));
 
         DBManager.getInstance().insertRoundResult(roundResult);
         Logger.i("saveResult==>insertRoundResult->" + roundResult.toString());

@@ -17,6 +17,8 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
 
+import java.util.Date;
+
 import static com.feipulai.exam.activity.sargent_jump.Constants.CMD_SARGENT_JUMP_EMPTY;
 import static com.feipulai.exam.activity.sargent_jump.Constants.CMD_SARGENT_JUMP_START;
 import static com.feipulai.exam.activity.sargent_jump.Constants.GET_SCORE_RESPONSE;
@@ -87,6 +89,7 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
     public void toStart(int pos) {
         BaseStuPair pair = deviceDetails.get(pos).getStuDevicePair();
         pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
+        pair.setStartTime(TestConfigs.df.format(new Date()));
         updateDevice(pair.getBaseDevice());
         byte[] cmd = CMD_SARGENT_JUMP_START;
         cmd[4] = (byte) pair.getBaseDevice().getDeviceId();

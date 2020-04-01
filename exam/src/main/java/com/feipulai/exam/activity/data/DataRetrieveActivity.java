@@ -452,7 +452,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
                     PrinterManager.getInstance().print(String.format("第 %1$d 次：", i + 1));
                 }
             }
-            PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()) + "\n");
+//            PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()) + "\n");
             PrinterManager.getInstance().print("\n");
 
 

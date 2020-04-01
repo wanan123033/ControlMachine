@@ -38,6 +38,8 @@ public class BaseStuPair implements Serializable {
     private int roundNo;  //轮次
     private boolean LEDupdate = true;
     private int time;
+    private String testTime; //测试当前轮次的开始时间
+    private String startTime; // 开始时间
 
     public BaseStuPair(int result, int resultState, Student student, BaseDeviceState baseDevice) {
         this.result = result;
@@ -201,5 +203,21 @@ public class BaseStuPair implements Serializable {
 
     public void setTime(int time) {
         this.time = time;
+    }
+
+    public String getTestTime() {
+        return testTime;
+    }
+
+    public void setTestTime(String testTime) {
+        this.testTime = testTime;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
     }
 }

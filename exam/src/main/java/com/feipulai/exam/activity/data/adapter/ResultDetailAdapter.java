@@ -56,7 +56,7 @@ public class ResultDetailAdapter extends BaseQuickAdapter<RoundResult, ResultDet
         String displayStr;
         if (!isHW) {
             viewHolder.mTvTimes.setText(roundResult.getRoundNo() + "");
-            viewHolder.mTvTestTime.setText(TestConfigs.df.format(new Date(Long.valueOf(roundResult.getTestTime()))));
+            viewHolder.mTvTestTime.setText(roundResult.getTestTime());
             displayStr = ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult());
             viewHolder.mTvResult.setText(setResult(roundResult.getResultState(), displayStr));
         } else {
@@ -67,7 +67,7 @@ public class ResultDetailAdapter extends BaseQuickAdapter<RoundResult, ResultDet
                     + ""
                     + ResultDisplayUtils.getStrResultForDisplay(weightResult.getResult(), HWConfigs.WEIGHT_ITEM);
             viewHolder.mTvTimes.setText(roundResult.getRoundNo() + "");
-            viewHolder.mTvTestTime.setText(TestConfigs.df.format(new Date(Long.valueOf(roundResult.getTestTime()))));
+            viewHolder.mTvTestTime.setText(roundResult.getTestTime());
             viewHolder.mTvResult.setText(setResult(heightResult.getResultState(), displayStr));
         }
         if (viewHolder.getLayoutPosition() == 0 || getData().get(viewHolder.getLayoutPosition()).getExamType() != getData().get(viewHolder.getLayoutPosition() - 1).getExamType()) {
@@ -76,6 +76,7 @@ public class ResultDetailAdapter extends BaseQuickAdapter<RoundResult, ResultDet
         } else {
             viewHolder.mViewHead.setVisibility(View.GONE);
         }
+        viewHolder.mTvEndTime.setText(roundResult.getEndTime());
         viewHolder.mTvResult.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -156,6 +157,8 @@ public class ResultDetailAdapter extends BaseQuickAdapter<RoundResult, ResultDet
         TextView mTvStatus;
         @BindView(R.id.item_view_head)
         LinearLayout mViewHead;
+        @BindView(R.id.tv_end_time)
+        TextView mTvEndTime;
 
 
         public ViewHolder(View view) {

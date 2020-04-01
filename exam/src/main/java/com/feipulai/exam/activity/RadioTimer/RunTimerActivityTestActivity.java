@@ -39,6 +39,7 @@ import com.feipulai.exam.view.StuSearchEditText;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -99,6 +100,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     //当前测试次数
     private int currentTestTime = 0;
     private SoundPlayUtils playUtils;
+    private String startTime;
 
     @Override
     protected int setLayoutResID() {
@@ -263,9 +265,9 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
                 }
                 llFirst.setVisibility(View.GONE);
                 rlSecond.setVisibility(View.VISIBLE);
-
                 getToolbar().getRightView(0).setVisibility(View.GONE);
                 getToolbar().getRightView(1).setVisibility(View.GONE);
+                startTime = TestConfigs.df.format(new Date());
                 break;
 //            case R.id.tv_project_setting:
 //                startActivity(new Intent(this, RunTimerSettingActivity.class));
@@ -305,7 +307,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
                 markConfirm();
                 for (RunStudent runStudent : mList) {
                     if (runStudent.getStudent() != null) {
-                        disposeManager.saveResult(runStudent.getStudent(), runStudent.getOriginalMark(), currentTestTime, testNo + 1);
+                        disposeManager.saveResult(runStudent.getStudent(), runStudent.getOriginalMark(), currentTestTime, testNo + 1,startTime);
                         List<RoundResult> resultList = DBManager.getInstance().queryResultsByStudentCode(runStudent.getStudent().getStudentCode());
                         List<String> list = new ArrayList<>();
                         for (RoundResult result : resultList) {

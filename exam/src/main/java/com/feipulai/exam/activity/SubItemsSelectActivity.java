@@ -83,7 +83,7 @@ public class SubItemsSelectActivity extends BaseTitleActivity {
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("项目选择") ;
+        return builder.setTitle("项目选择");
     }
 
 }

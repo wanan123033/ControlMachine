@@ -24,6 +24,7 @@ import com.feipulai.exam.config.TestConfigs;
 import com.orhanobut.logger.Logger;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public abstract class AbstractRadioTestPresenter<Setting>
@@ -108,7 +109,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
     @Override
     public void startTest() {
         Logger.i("开始测试,测试考生设备信息:" + pairs.toString());
-        testDate = System.currentTimeMillis() + "";
+        testDate = TestConfigs.df.format(new Date());
         resetDevices();
         view.setViewForStart();
         facade.start();

@@ -75,7 +75,7 @@ public class PrintResultUtil {
 
                 }
             }
-            PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()) + "\n");
+//            PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()) + "\n");
             PrinterManager.getInstance().print("\n");
 
 

@@ -23,6 +23,7 @@ import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
 
 import java.lang.ref.WeakReference;
+import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -116,6 +117,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
         else
             baseDevice = new BaseDeviceState(BaseDeviceState.STATE_FREE, 1);
         baseStuPair.setBaseDevice(baseDevice);
+        baseStuPair.setStartTime(TestConfigs.df.format(new Date()));
         updateDevice(baseDevice);
     }
 

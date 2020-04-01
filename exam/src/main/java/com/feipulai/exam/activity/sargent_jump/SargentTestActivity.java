@@ -30,6 +30,7 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.view.WaitDialog;
 import com.orhanobut.logger.Logger;
 
+import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -204,6 +205,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
             }
         }
         testState = TestState.WAIT_RESULT;
+        baseStuPair.setStartTime(TestConfigs.df.format(new Date()));
     }
 
     @Override

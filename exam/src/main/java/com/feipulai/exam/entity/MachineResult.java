@@ -3,6 +3,7 @@ package com.feipulai.exam.entity;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.NotNull;
 
 import java.io.Serializable;
@@ -32,7 +33,8 @@ public class MachineResult implements Serializable {
     @NotNull
     private int result;////成绩      单位为"毫米(mm)"、"毫秒(ms)"、"克(g)"、"次","毫升"（中长跑最终成绩）
     private long groupId = RoundResult.DEAFULT_GROUP_ID;
-
+    private String startTime; //开始时间
+    @Keep
     @Generated(hash = 2124802525)
     public MachineResult(Long id, @NotNull String studentCode, int roundNo, int testNo,
                          @NotNull String itemCode, int machineCode, int result, long groupId) {
@@ -44,10 +46,25 @@ public class MachineResult implements Serializable {
         this.machineCode = machineCode;
         this.result = result;
         this.groupId = groupId;
+//        this.startTime = startTime;
     }
 
     @Generated(hash = 1551746015)
     public MachineResult() {
+    }
+
+    @Generated(hash = 1436811938)
+    public MachineResult(Long id, @NotNull String studentCode, int roundNo, int testNo,
+            @NotNull String itemCode, int machineCode, int result, long groupId, String startTime) {
+        this.id = id;
+        this.studentCode = studentCode;
+        this.roundNo = roundNo;
+        this.testNo = testNo;
+        this.itemCode = itemCode;
+        this.machineCode = machineCode;
+        this.result = result;
+        this.groupId = groupId;
+        this.startTime = startTime;
     }
 
     public Long getId() {
@@ -112,5 +129,13 @@ public class MachineResult implements Serializable {
 
     public void setGroupId(long groupId) {
         this.groupId = groupId;
+    }
+
+    public String getStartTime() {
+        return this.startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
     }
 }
