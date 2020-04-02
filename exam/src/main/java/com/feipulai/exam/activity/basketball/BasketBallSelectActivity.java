@@ -16,8 +16,8 @@ public class BasketBallSelectActivity
     protected void initData() {
         super.initData();
         this.itemList.clear();
-        this.itemList.add(new Item("有线模式"));
-        this.itemList.add(new Item("无线模式"));
+        this.itemList.add(new Item("有线运球模式"));
+        this.itemList.add(new Item("无线运球模式"));
         this.itemList.add(new Item("往返运球投篮模式"));
         this.itemList.add(new Item("投篮模式"));
         this.adapter.notifyDataSetChanged();
@@ -28,7 +28,19 @@ public class BasketBallSelectActivity
                 BasketBallSetting setting = SharedPrefsUtil.loadFormSource(BasketBallSelectActivity.this, BasketBallSetting.class);
                 setting.setTestType(position);
                 if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
-                    IntentUtil.gotoActivity(BasketBallSelectActivity.this, BasketballIndividualActivity.class);
+                    switch (position){
+                        case 0:
+                        case 1:
+                            IntentUtil.gotoActivity(BasketBallSelectActivity.this, BasketballIndividualActivity.class);
+                            break;
+                        case 2:
+                            IntentUtil.gotoActivity(BasketBallSelectActivity.this, DribbleShootActivityActivity.class);
+                            break;
+                        case 3:
+                            IntentUtil.gotoActivity(BasketBallSelectActivity.this, BasketBallShootActivity.class);
+                            break;
+                    }
+
                 } else {
                     IntentUtil.gotoActivity(BasketBallSelectActivity.this, BaseGroupActivity.class);
                 }

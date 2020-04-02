@@ -14,7 +14,6 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
-
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
@@ -28,7 +27,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.medicineBall.more_device.BallGroupMoreActivity"></activity>
+        <activity android:name=".activity.basketball.ShootSettingActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden"></activity>
+        <activity android:name=".activity.basketball.DribbleShootActivityActivity" />
+        <activity android:name=".activity.basketball.BasketBallShootActivity" />
+        <activity android:name=".activity.medicineBall.more_device.BallGroupMoreActivity" />
         <activity android:name=".activity.medicineBall.more_device.MedicineBallMoreActivity" />
         <activity android:name=".activity.medicineBall.pair.MedicineBallPairActivity" />
         <activity android:name=".activity.volleyball.more_devices.VolleyBallPairActivity" />

@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="horizontal">
+
+    <include layout="@layout/layout_stu_info" />
+
+    <View
+        android:layout_width="8dp"
+        android:layout_height="match_parent"
+        android:background="@color/grey_light" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/ll_individual_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal" />
+
+                <TextView
+                    android:id="@+id/tv_pair"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:background="@color/colorAccent"
+                    android:gravity="center"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:text="设备配对"
+                    android:textColor="@color/white"
+                    android:textSize="20dp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#313131">
+
+                <CheckBox
+                    android:id="@+id/cb_near"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="15dp"
+                    android:button="@null"
+                    android:clickable="false"
+                    android:drawablePadding="15dp"
+                    android:drawableRight="@drawable/cb_device_state"
+                    android:enabled="false"
+                    android:text="近红外"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+                <CheckBox
+                    android:id="@+id/cb_far"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/cb_near"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:button="@null"
+                    android:clickable="false"
+                    android:drawablePadding="15dp"
+                    android:drawableRight="@drawable/cb_device_state"
+                    android:enabled="false"
+                    android:text="远红外"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+                <CheckBox
+                    android:id="@+id/cb_led"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/cb_far"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:button="@null"
+                    android:clickable="false"
+                    android:drawablePadding="15dp"
+                    android:drawableRight="@drawable/cb_device_state"
+                    android:enabled="false"
+                    android:text="显示屏"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_result"
+                    android:layout_width="300dp"
+                    android:layout_height="160dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="30dp"
+                    android:background="@mipmap/icon_test_result_bg"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="61sp" />
+
+                <TextView
+                    android:id="@+id/txt_device_status"
+                    android:layout_width="120dp"
+                    android:layout_height="45dp"
+                    android:background="@color/grey_light"
+                    android:gravity="center"
+                    android:text="空闲"
+                    android:textColor="@color/white"
+                    android:textSize="18dp" />
+
+
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="76dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:id="@+id/txt_waiting"
+                    android:layout_width="120dp"
+                    android:layout_height="45dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/selector_blue_grey_press"
+                    android:gravity="center"
+                    android:text="等待发令"
+                    android:textColor="@color/white"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:id="@+id/txt_illegal_return"
+                    android:layout_width="120dp"
+                    android:layout_height="45dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/selector_blue_grey_press"
+                    android:gravity="center"
+                    android:text="违规返回"
+                    android:textColor="@color/white"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:id="@+id/txt_continue_run"
+                    android:layout_width="120dp"
+                    android:layout_height="45dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/selector_blue_grey_press"
+                    android:gravity="center"
+                    android:text="继续运行"
+                    android:textColor="@color/white"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:id="@+id/txt_stop_timing"
+                    android:layout_width="120dp"
+                    android:layout_height="45dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/selector_blue_grey_press"
+                    android:gravity="center"
+                    android:text="停止计时"
+                    android:textColor="@color/white"
+                    android:textSize="18dp" />
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_state"
+                    android:layout_width="match_parent"
+                    android:layout_marginLeft="@dimen/dp_15"
+                    android:layout_marginRight="@dimen/dp_15"
+                    android:layout_height="60dp"
+                    android:background="#313131"
+                    android:overScrollMode="never"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/dp_20"
+                    android:layout_alignParentBottom="true"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/tv_led_setting"
+                        android:layout_width="120dp"
+                        android:layout_height="45dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/selector_blue_grey_press"
+                        android:gravity="center"
+                        android:text="外接屏幕"
+                        android:textColor="@color/white"
+                        android:textSize="18dp" />
+
+                    <TextView
+                        android:id="@+id/tv_print"
+                        android:layout_width="120dp"
+                        android:layout_height="45dp"
+                        android:layout_marginLeft="30dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/selector_blue_grey_press"
+                        android:gravity="center"
+                        android:text="打印"
+                        android:textColor="@color/white"
+                        android:textSize="18dp" />
+
+                    <TextView
+                        android:id="@+id/tv_confirm"
+                        android:layout_width="120dp"
+                        android:layout_height="45dp"
+                        android:layout_marginLeft="30dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/selector_blue_grey_press"
+                        android:gravity="center"
+                        android:text="确定成绩"
+                        android:textColor="@color/white"
+                        android:textSize="18dp" />
+
+                    <TextView
+                        android:id="@+id/txt_finish_test"
+                        android:layout_width="120dp"
+                        android:layout_height="45dp"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/selector_blue_grey_press"
+                        android:gravity="center"
+                        android:text="结束测试"
+                        android:textColor="@color/white"
+                        android:textSize="18dp" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/lv_results"
+            android:layout_width="321dp"
+            android:layout_height="260dp"
+            android:layout_marginLeft="190dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/bg_white_radius_10"
+            android:divider="@color/sbc_header_text"
+            android:dividerHeight="1dp"
+            android:paddingBottom="@dimen/dp_10"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="@dimen/dp_10"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+</LinearLayout>
