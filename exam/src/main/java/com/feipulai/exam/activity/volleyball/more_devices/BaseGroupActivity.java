@@ -48,6 +48,7 @@ import com.orhanobut.logger.Logger;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -543,7 +544,7 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
         roundResult.setResult(baseStuPair.getResult());
         roundResult.setMachineResult(baseStuPair.getResult());
         roundResult.setResultState(baseStuPair.getResultState());
-        roundResult.setTestTime(System.currentTimeMillis() + "");
+        roundResult.setTestTime(baseStuPair.getStartTime());
         roundResult.setRoundNo(roundNo);
         roundResult.setTestNo(1);
         roundResult.setGroupId(group.getId());
@@ -576,7 +577,7 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
             roundResult.setIsLastResult(1);
             updateLastResultLed(roundResult, index);
         }
-
+        roundResult.setEndTime(TestConfigs.df.format(new Date()));
         DBManager.getInstance().insertRoundResult(roundResult);
         Logger.i("saveResult==>insertRoundResult->" + roundResult.toString());
 

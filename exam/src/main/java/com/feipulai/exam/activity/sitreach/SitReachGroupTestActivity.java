@@ -16,6 +16,7 @@ import com.feipulai.exam.config.TestConfigs;
 import com.orhanobut.logger.Logger;
 
 import java.lang.ref.WeakReference;
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -106,6 +107,7 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
     @Override
     public void startTest(BaseStuPair stuPair) {
         baseStuPair = stuPair;
+        baseStuPair.setStartTime(TestConfigs.df.format(new Date()));
         Logger.i(TAG + ":startTest ->发送开始测试");
         sitReachResiltListener.setTestState(SitReachResiltListener.TestState.WAIT_RESULT);
         resultRunnable.setTestState(sitReachResiltListener.getTestState());

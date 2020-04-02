@@ -52,6 +52,7 @@ import com.orhanobut.logger.Logger;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -111,6 +112,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
     private BallManager ballManager;
     private BasketBallRadioFacade facade;
     private long timerDate;
+    private String startTime;  //开始时间
 
     @Override
     protected int setLayoutResID() {
@@ -478,6 +480,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                             ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, pairs.get(position()).getStudent().getLEDStuName(), Paint.Align.CENTER);
                             timerUtil.stop();
                             ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
+                            startTime = TestConfigs.df.format(new Date());
                         } else {
                             toastSpeak("存在未连接设备，请配对");
                         }
@@ -637,6 +640,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         roundResult.setScheduleNo(group.getScheduleNo());
         roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
         roundResult.setTestTime(testDate);
+        roundResult.setEndTime(TestConfigs.df.format(new Date()));
         roundResult.setGroupId(group.getId());
         roundResult.setUpdateState(0);
         roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());

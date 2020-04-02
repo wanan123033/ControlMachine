@@ -24,6 +24,7 @@ import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.view.DividerItemDecoration;
 
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -76,6 +77,8 @@ public abstract class AbstractRadioTestActivity<Setting>
     private MyHandler mHandler = new MyHandler(this);
     private SweetAlertDialog sweetAlertDialog;
     private RTResultAdapter mAdapter;
+    private String startDate; //开始时间
+    private String endDate; //结束时间
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,6 +173,7 @@ public abstract class AbstractRadioTestActivity<Setting>
 
             case R.id.btn_start_test:
                 presenter.startTest();
+                startDate = TestConfigs.df.format(new Date());
                 break;
 
             case R.id.btn_confirm_results:
@@ -177,6 +181,7 @@ public abstract class AbstractRadioTestActivity<Setting>
                 break;
 
             case R.id.btn_finish_test:
+                endDate = TestConfigs.df.format(new Date());
                 presenter.finishTest();
                 break;
         }

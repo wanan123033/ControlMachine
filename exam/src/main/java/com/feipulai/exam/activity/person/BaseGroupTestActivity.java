@@ -47,9 +47,11 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -693,7 +695,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         roundResult.setMachineResult(baseStuPair.getResult());
         roundResult.setResultState(baseStuPair.getResultState());
 //        roundResult.setTestTime(TestConfigs.df.format(Calendar.getInstance().getTime()));
-        roundResult.setTestTime(System.currentTimeMillis() + "");
+        roundResult.setTestTime(baseStuPair.getStartTime());
         roundResult.setRoundNo(roundNo);
         roundResult.setTestNo(1);
         roundResult.setGroupId(group.getId());
@@ -726,7 +728,9 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             roundResult.setIsLastResult(1);
             updateLastResultLed(roundResult);
         }
-
+        //生成结束时间
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        roundResult.setEndTime(sdf.format(new Date()));
         DBManager.getInstance().insertRoundResult(roundResult);
         Logger.i("saveResult==>insertRoundResult->" + roundResult.toString());
 
@@ -907,7 +911,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 PrinterManager.getInstance().print(String.format("第%1$d次：", i + 1) + "");
             }
         }
-        PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()) + "");
+//        PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()) + "");
         PrinterManager.getInstance().print(" \n");
     }
 

@@ -54,6 +54,7 @@ import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -114,6 +115,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
     private BallManager ballManager;
     private BasketBallRadioFacade facade;
     private long timerDate;
+    private String startTime;
 
     @Override
     protected int setLayoutResID() {
@@ -381,7 +383,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
      * 开始
      */
     private void doTriggerStart() {
-        testDate = System.currentTimeMillis() + "";
+        testDate = TestConfigs.df.format(new Date());
         timerUtil.startTime(10);
         state = TESTING;
         txtDeviceStatus.setText("计时");
@@ -693,6 +695,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                         ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, pairs.get(0).getStudent().getLEDStuName(), Paint.Align.CENTER);
                         timerUtil.stop();
                         ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
+                        startTime = TestConfigs.df.format(new Date());
                     } else {
                         toastSpeak("存在未连接设备，请配对");
                     }
@@ -913,7 +916,8 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                     roundResult.setResult(0);
                     roundResult.setMachineResult(0);
                     roundResult.setResultState(testResult.getResultState());
-                    roundResult.setTestTime(System.currentTimeMillis() + "");
+                    roundResult.setTestTime(testDate);
+                    roundResult.setEndTime(TestConfigs.df.format(new Date()));
                     roundResult.setRoundNo(resultList.get(i).getRoundNo());
                     roundResult.setTestNo(testNo);
                     roundResult.setExamType(mStudentItem.getExamType());

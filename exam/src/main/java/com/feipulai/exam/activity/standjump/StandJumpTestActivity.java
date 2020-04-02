@@ -19,6 +19,7 @@ import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
 
 import java.lang.ref.WeakReference;
+import java.util.Date;
 
 /**
  * 立定跳远个人模式
@@ -86,6 +87,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE));
 //        isDisconnect = true;
 //        mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
+        baseStuPair.setStartTime(TestConfigs.df.format(new Date()));
     }
 
     @Override

@@ -54,6 +54,7 @@ import com.feipulai.exam.view.WaitDialog;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -409,7 +410,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
                 false, false);
 
         tvResult.setText("准备");
-        testDate = System.currentTimeMillis() + "";
+        testDate = TestConfigs.df.format(new Date());
         facade.startTest(0);
         state = TESTING;
     }

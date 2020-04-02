@@ -22,6 +22,7 @@ import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -70,7 +71,7 @@ public class RunTimerDisposeManager {
         }
     }
 
-    protected void saveResult(Student student, int result, int currentTestTime, int testNo) {
+    protected void saveResult(Student student, int result, int currentTestTime, int testNo,String startTime) {
         //TODO 修改测试次数
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
         RoundResult roundResult = new RoundResult();
@@ -80,7 +81,7 @@ public class RunTimerDisposeManager {
         roundResult.setResult(result);
         roundResult.setMachineResult(result);
         roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
-        roundResult.setTestTime(System.currentTimeMillis() + "");
+        roundResult.setTestTime(startTime);
         roundResult.setRoundNo(currentTestTime);
         roundResult.setTestNo(testNo);
         roundResult.setExamType(studentItem.getExamType());
@@ -102,7 +103,7 @@ public class RunTimerDisposeManager {
             // 第一次测试
             roundResult.setIsLastResult(1);
         }
-
+        roundResult.setEndTime(TestConfigs.df.format(new Date()));
         DBManager.getInstance().insertRoundResult(roundResult);
 
         List<RoundResult> roundResultList = new ArrayList<>();
@@ -121,7 +122,7 @@ public class RunTimerDisposeManager {
      * @param currentTestTime
      * @param group
      */
-    public void saveGroupResult(Student student, int result, int currentTestTime, Group group) {
+    public void saveGroupResult(Student student, int result, int currentTestTime, Group group,String startTime) {
         RoundResult roundResult = new RoundResult();
         roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
         roundResult.setStudentCode(student.getStudentCode());
@@ -129,7 +130,8 @@ public class RunTimerDisposeManager {
         roundResult.setResult(result);
         roundResult.setMachineResult(result);
         roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
-        roundResult.setTestTime(System.currentTimeMillis() + "");
+        roundResult.setTestTime(startTime);
+        roundResult.setEndTime(TestConfigs.df.format(new Date()));
         roundResult.setRoundNo(currentTestTime);
         roundResult.setTestNo(1);
         roundResult.setGroupId(group.getId());

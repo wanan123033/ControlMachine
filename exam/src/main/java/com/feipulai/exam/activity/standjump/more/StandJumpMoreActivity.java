@@ -19,6 +19,8 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
 
+import java.util.Date;
+
 import butterknife.OnClick;
 
 /**
@@ -100,6 +102,7 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
             e.printStackTrace();
         }
         StandJumpManager.startTest(SettingHelper.getSystemSetting().getHostId(), pair.getBaseDevice().getDeviceId());
+        pair.setStartTime(TestConfigs.df.format(new Date()));
     }
 
     @Override

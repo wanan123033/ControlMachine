@@ -22,6 +22,7 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 
 import java.lang.ref.WeakReference;
+import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -93,6 +94,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
     public void startTest(BaseStuPair baseStuPair) {
         startFlag = true;
         this.baseStuPair = baseStuPair;
+        this.baseStuPair.setStartTime(TestConfigs.df.format(new Date()));
         mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                 SerialConfigs.CMD_MEDICINE_BALL_FAST_EMPTY));
         testState = TestState.UN_STARTED;

@@ -24,9 +24,11 @@ import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
 import com.feipulai.exam.activity.volleyball.VolleyBallSettingActivity;
 import com.feipulai.exam.bean.DeviceDetail;
+import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
 
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -240,6 +242,7 @@ public class VolleyBallMoreTestActivity extends BaseVolleyBallMoreActivity {
     private PreStartTimeRunnable runable;
 
     private void startTime(final DeviceDetail deviceDetail, final int pos) {
+        deviceDetail.getStuDevicePair().setStartTime(TestConfigs.df.format(new Date()));
         try {
             runable = new PreStartTimeRunnable(this, deviceDetail);
             runable.setListener(new PreStartTimeRunnable.TimeListener() {

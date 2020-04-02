@@ -203,6 +203,7 @@ public class InteractUtils {
             }
             roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
             roundResult.setTestTime(testDate);
+            roundResult.setEndTime(TestConfigs.df.format(new Date()));
 
             if (results == null) {
                 results = new ArrayList<>();
@@ -371,6 +372,7 @@ public class InteractUtils {
 
                     }
                     result.setPrintTime(printTimeLong);
+                    result.setEndTime(printTimeLong);
                 }
                 DBManager.getInstance().updateRoundResult(resultList);
             }
