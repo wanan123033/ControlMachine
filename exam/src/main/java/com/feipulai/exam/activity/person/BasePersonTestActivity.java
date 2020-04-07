@@ -645,8 +645,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         roundResult.setResult(baseStuPair.getResult());
         roundResult.setMachineResult(baseStuPair.getResult());
         roundResult.setResultState(baseStuPair.getResultState());
-//        roundResult.setTestTime(TestConfigs.df.format(Calendar.getInstance().getTime()));
-        roundResult.setTestTime(baseStuPair.getStartTime());
+        roundResult.setTestTime(baseStuPair.getTestTime());
+        roundResult.setEndTime(baseStuPair.getEndTime());
         roundResult.setRoundNo(roundNo);
         roundResult.setTestNo(testNo);
         roundResult.setExamType(studentItem.getExamType());

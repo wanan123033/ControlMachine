@@ -83,7 +83,7 @@ public class RoundResultBean implements Serializable {
             roundResultBeans.add(new RoundResultBean(roundResult.getId(), roundResult.getStudentCode(), roundResult.getItemCode(), roundResult.getMachineCode()
                     , roundResult.getRoundNo(), roundResult.getTestNo(), roundResult.getMachineResult(),
                     roundResult.getPenaltyNum(), roundResult.getResult(), roundResult.getResultState()
-                    , roundResult.getIsLastResult(), roundResult.getExamType(), roundResult.getTestTime(), roundResult.getPrintTime()
+                    , roundResult.getIsLastResult(), roundResult.getExamType(), roundResult.getTestTime(), roundResult.getEndTime()
                     , roundResult.getStumbleCount(), roundResult.getUpdateState(), roundResult.getGroupId(), roundResult.getScheduleNo(), roundResult.getMtEquipment(),
                     roundResult.getRemark1(), roundResult.getRemark2(), roundResult.getRemark3()));
         }
@@ -98,7 +98,7 @@ public class RoundResultBean implements Serializable {
         roundResultBeans.add(new RoundResultBean(roundResult.getId(), roundResult.getStudentCode(), roundResult.getItemCode(), roundResult.getMachineCode()
                 , roundResult.getRoundNo(), roundResult.getTestNo(), roundResult.getMachineResult(),
                 roundResult.getPenaltyNum(), roundResult.getResult(), roundResult.getResultState()
-                , roundResult.getIsLastResult(), roundResult.getExamType(), roundResult.getTestTime(), roundResult.getPrintTime()
+                , roundResult.getIsLastResult(), roundResult.getExamType(), roundResult.getTestTime(), roundResult.getEndTime()
                 , roundResult.getStumbleCount(), roundResult.getUpdateState(), roundResult.getGroupId(), roundResult.getScheduleNo(), roundResult.getMtEquipment(),
                 roundResult.getRemark1(), roundResult.getRemark2(), roundResult.getRemark3()));
         return roundResultBeans;
@@ -110,7 +110,7 @@ public class RoundResultBean implements Serializable {
             roundResults.add(new RoundResult(roundResult.getId(), roundResult.getStudentCode(), roundResult.getItemCode(), roundResult.getMachineCode()
                     , roundResult.getRoundNo(), roundResult.getTestNo(), roundResult.getMachineResult(),
                     roundResult.getPenalty(), roundResult.getResult(), roundResult.getIsFoul()
-                    , roundResult.getResultType(), roundResult.getExamState(), roundResult.getTestTime(), roundResult.getPrintTime()
+                    , roundResult.getResultType(), roundResult.getExamState(), roundResult.getTestTime(), "", roundResult.getPrintTime()
                     , roundResult.getStumbleCount(), roundResult.getUpdateState(), null, roundResult.getGroupId(), roundResult.getScheduleNo(), roundResult.getMtEquipment(),
                     roundResult.getRemark1(), roundResult.getRemark2(), roundResult.getRemark3()));
         }

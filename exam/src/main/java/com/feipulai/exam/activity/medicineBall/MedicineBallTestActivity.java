@@ -8,6 +8,7 @@ import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
@@ -253,6 +254,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
                 deviceState.setState(BaseDeviceState.STATE_ONUSE);
             }
             if (testState == TestState.WAIT_RESULT && startFlag) {
+                pair.setTestTime(DateUtil.getCurrentTime()+"");
                 toastSpeak("开始测试");
                 startFlag = false;
                 if (alertDialog!= null &&alertDialog.isShowing()){
@@ -267,6 +269,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
 
 
     private void onResultArrived(int result, boolean fault, BaseStuPair stuPair) {
+        stuPair.setEndTime(DateUtil.getCurrentTime()+"");
         if (testState == TestState.WAIT_RESULT) {
             if (medicineBallSetting.isFullReturn()) {
                 if (stuPair.getStudent().getSex() == Student.MALE) {
@@ -341,7 +344,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
                     executorService.shutdown();
                 }
             }
-        }, 500, 500, TimeUnit.MILLISECONDS);
+        }, 10, 500, TimeUnit.MILLISECONDS);
 
 
     }

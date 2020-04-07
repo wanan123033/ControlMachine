@@ -46,7 +46,7 @@ public class SargentItemSelectActivity extends BaseTitleActivity {
         itemList = new ArrayList<>();
         itemList.add(new Item("有线模式-旧"));
         itemList.add(new Item("无线模式-旧"));
-        itemList.add(new Item("无线(一对多)模式"));
+        itemList.add(new Item("新版模式(一对多)"));
         rvSubitems.setLayoutManager(new LinearLayoutManager(this));
         adapter = new SubItemsSelectAdapter(itemList);
         rvSubitems.setAdapter(adapter);

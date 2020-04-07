@@ -6,6 +6,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.MedicineBallNewResult;
@@ -148,6 +149,7 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
 
     @Override
     protected void sendTestCommand(BaseStuPair pair, int index) {
+        pair.setTestTime(DateUtil.getCurrentTime()+"");
         pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
         updateDevice(pair.getBaseDevice());
         int id = pair.getBaseDevice().getDeviceId();
@@ -257,6 +259,7 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
                 stuPair.setFullMark(result >= Integer.parseInt(setting.getFemaleFull()) * 10);
             }
         }
+        stuPair.setEndTime(DateUtil.getCurrentTime()+"");
         stuPair.setResult(result);
         updateResult(stuPair);
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, stuPair.getBaseDevice().getDeviceId()));

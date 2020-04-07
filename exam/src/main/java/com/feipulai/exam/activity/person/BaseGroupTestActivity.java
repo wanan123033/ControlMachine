@@ -694,8 +694,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         roundResult.setResult(baseStuPair.getResult());
         roundResult.setMachineResult(baseStuPair.getResult());
         roundResult.setResultState(baseStuPair.getResultState());
-//        roundResult.setTestTime(TestConfigs.df.format(Calendar.getInstance().getTime()));
-        roundResult.setTestTime(baseStuPair.getStartTime());
+        roundResult.setEndTime(baseStuPair.getEndTime());
+        roundResult.setTestTime(baseStuPair.getTestTime());
         roundResult.setRoundNo(roundNo);
         roundResult.setTestNo(1);
         roundResult.setGroupId(group.getId());

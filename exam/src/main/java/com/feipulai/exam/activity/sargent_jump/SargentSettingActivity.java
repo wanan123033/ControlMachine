@@ -1,6 +1,7 @@
 package com.feipulai.exam.activity.sargent_jump;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -42,6 +43,7 @@ import com.feipulai.exam.config.TestConfigs;
 import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -68,10 +70,20 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
     RadioButton rbRecycle;
     @BindView(R.id.rg_model)
     RadioGroup rgModel;
-//    @BindView(R.id.cb_wireless)
+    //    @BindView(R.id.cb_wireless)
 //    CheckBox cbWireless;
     @BindView(R.id.tv_match)
     TextView tvMatch;
+    @BindView(R.id.sp_test_id)
+    Spinner spTestId;
+    @BindView(R.id.tv_device_check)
+    TextView tvDeviceCheck;
+    @BindView(R.id.tv_light_minus)
+    TextView tvLightMinus;
+    @BindView(R.id.tv_light_add)
+    TextView tvLightAdd;
+    @BindView(R.id.ll_light)
+    LinearLayout llLight;
     private SargentSetting sargentSetting;
     private String[] spinnerItems;
     private RadioManager radioManager;
@@ -97,7 +109,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("项目设置") ;
+        return builder.setTitle("项目设置");
     }
 
     private void init() {
@@ -176,7 +188,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
 //        cbWireless.setChecked(sargentSetting.getType() == 1);
 //        cbWireless.setVisibility(sargentSetting.getType() == 1 ? View.VISIBLE : View.GONE);
 //        cbWireless.setOnCheckedChangeListener(this);
-        tvMatch.setVisibility(sargentSetting.getType() == 2 ? View.VISIBLE:View.GONE);
+        tvMatch.setVisibility(sargentSetting.getType() == 2 ? View.VISIBLE : View.GONE);
         radioManager = RadioManager.getInstance();
         radioManager.init();
         radioManager.setOnRadioArrived(this);
@@ -200,15 +212,15 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
         spTestRound.setSelection(maxTestNo - 1);
         sargentSetting.setTestTimes(maxTestNo);
 
-        String[] deviceCount = {"1", "2", "3","4"};
+        String[] deviceCount = {"1", "2", "3", "4"};
         ArrayAdapter<String> adapter0 = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, deviceCount);
         adapter0.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spDeviceCount.setAdapter(adapter0);
         spDeviceCount.setOnItemSelectedListener(this);
-        spDeviceCount.setSelection(sargentSetting.getSpDeviceCount()-1);
+        spDeviceCount.setSelection(sargentSetting.getSpDeviceCount() - 1);
         spDeviceCount.setEnabled(true);
-        if (sargentSetting.getType()!=2){
+        if (sargentSetting.getType() != 2) {
             spDeviceCount.setSelection(0);
             spDeviceCount.setEnabled(false);
         }
@@ -219,6 +231,12 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
             int testPattern = sargentSetting.getTestPattern();
             rgModel.check(testPattern == 0 ? R.id.rb_continue : R.id.rb_recycle);
         }
+
+        ArrayAdapter<String> adapter1 = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, deviceCount);
+        adapter0.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spTestId.setAdapter(adapter1);
+        spTestId.setOnItemSelectedListener(this);
     }
 
     @Override
@@ -257,7 +275,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
                 sargentSetting.setTestTimes(position + 1);
                 break;
             case R.id.sp_device_count:
-                sargentSetting.setSpDeviceCount(position+1);
+                sargentSetting.setSpDeviceCount(position + 1);
                 break;
         }
     }
@@ -286,7 +304,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
         EventBus.getDefault().post(new BaseEvent(EventConfigs.ITEM_SETTING_UPDATE));
     }
 
-    @OnClick({R.id.tv_match})
+    @OnClick({R.id.tv_match,R.id.tv_light_minus, R.id.tv_light_add})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_match:
@@ -303,9 +321,13 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
                         mHandler.sendEmptyMessageDelayed(3, 10 * 1000);
                     }
 
-                }else if (sargentSetting.getType() == 2){
+                } else if (sargentSetting.getType() == 2) {
                     startActivity(new Intent(SargentSettingActivity.this, SargentPairActivity.class));
                 }
+                break;
+            case R.id.tv_light_minus:
+                break;
+            case R.id.tv_light_add:
                 break;
 
         }
@@ -372,4 +394,8 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
             return false;
         }
     });
+
+
+
+
 }

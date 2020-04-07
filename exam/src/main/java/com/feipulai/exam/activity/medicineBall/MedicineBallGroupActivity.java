@@ -7,6 +7,7 @@ import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
@@ -107,6 +108,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
             baseDevice = new BaseDeviceState(BaseDeviceState.STATE_FREE, 1);
         baseStuPair.setBaseDevice(baseDevice);
         updateDevice(baseDevice);
+        baseStuPair.setTestTime(DateUtil.getCurrentTime()+"");
     }
 
     @Override
@@ -231,6 +233,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
 
 
     private void onResultArrived(int result, boolean fault, BaseStuPair stuPair) {
+        stuPair.setEndTime(DateUtil.getCurrentTime()+"");
         if (testState == TestState.WAIT_RESULT) {
             if (medicineBallSetting.isFullReturn()) {
                 if (baseStuPair.getStudent().getSex() == Student.MALE) {

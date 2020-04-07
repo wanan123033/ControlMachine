@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.MedicineBallNewResult;
@@ -105,6 +106,7 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
     public void toStart(int pos) {
         BaseStuPair pair = deviceDetails.get(pos).getStuDevicePair();
         pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
+        pair.setTestTime(DateUtil.getCurrentTime()+"");
         updateDevice(pair.getBaseDevice());
         sendStart((byte) pair.getBaseDevice().getDeviceId());
     }
@@ -170,6 +172,7 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
     }
 
     private void onResultArrived(int result, BaseStuPair stuPair) {
+        stuPair.setEndTime(DateUtil.getCurrentTime()+"");
         if (result < beginPoint * 10 || result > 5000 * 10) {
             toastSpeak("数据异常，请重测");
             return;

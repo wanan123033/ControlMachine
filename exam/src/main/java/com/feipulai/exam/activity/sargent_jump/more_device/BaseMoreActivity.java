@@ -604,8 +604,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         roundResult.setResult(baseStuPair.getResult());
         roundResult.setMachineResult(baseStuPair.getResult());
         roundResult.setResultState(baseStuPair.getResultState());
-//        roundResult.setTestTime(TestConfigs.df.format(Calendar.getInstance().getTime()));
-        roundResult.setTestTime(System.currentTimeMillis() + "");
+        roundResult.setTestTime(baseStuPair.getTestTime());
+        roundResult.setEndTime(baseStuPair.getEndTime());
         roundResult.setRoundNo(deviceDetails.get(index).getRound());
         roundResult.setTestNo(testNo);
         roundResult.setExamType(studentItem.getExamType());
@@ -639,9 +639,6 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
 
         }
-        roundResult.setTestTime(baseStuPair.getStartTime());
-        roundResult.setEndTime(TestConfigs.df.format(new Date()));
-
         DBManager.getInstance().insertRoundResult(roundResult);
         Logger.i("saveResult==>insertRoundResult->" + roundResult.toString());
         List<RoundResult> roundResultList = new ArrayList<>();
