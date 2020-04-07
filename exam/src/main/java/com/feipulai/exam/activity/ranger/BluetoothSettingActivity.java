@@ -1,11 +1,16 @@
 package com.feipulai.exam.activity.ranger;
 
 import android.bluetooth.BluetoothDevice;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.ranger.adapter.BluetoothListAdapter;
@@ -17,14 +22,22 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class BluetoothSettingActivity extends BaseTitleActivity implements BaseQuickAdapter.OnItemChildClickListener {
+public class BluetoothSettingActivity extends BaseTitleActivity implements AdapterView.OnItemClickListener {
 
     private List<BluetoothDevice> devices = new ArrayList<>();
     private BluetoothListAdapter adapter;
     private SppUtils utils;
 
     @BindView(R.id.rv_bluetooth)
-    RecyclerView rv_bluetooth;
+    ListView rv_bluetooth;
+
+    @Nullable
+    @Override
+    protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
+        builder.setTitle("蓝牙设置");
+        return super.setToolbar(builder);
+    }
+
     @Override
     protected int setLayoutResID() {
         return R.layout.dialog_bluetooth;
@@ -33,7 +46,7 @@ public class BluetoothSettingActivity extends BaseTitleActivity implements BaseQ
     @Override
     protected void initData() {
         utils = BluetoothManager.getSpp(getApplicationContext());
-        adapter = new BluetoothListAdapter(devices);
+        adapter = new BluetoothListAdapter(devices,getApplicationContext());
         rv_bluetooth.setAdapter(adapter);
         utils.setOnDeviceCallBack(new SppUtils.OnDeviceCallBack() {
             @Override
@@ -58,7 +71,7 @@ public class BluetoothSettingActivity extends BaseTitleActivity implements BaseQ
             }
         });
 
-        adapter.setOnItemChildClickListener(this);
+        rv_bluetooth.setOnItemClickListener(this);
     }
 
     @OnClick({R.id.btn_search})
@@ -67,9 +80,10 @@ public class BluetoothSettingActivity extends BaseTitleActivity implements BaseQ
         utils.startDiscovery();
     }
 
-    @Override
-    public void onItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
-        BluetoothDevice item = adapter.getItem(i);
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        BluetoothDevice item = adapter.getItem(position);
+        utils.connect(item.getAddress());
     }
 }

@@ -2,11 +2,14 @@ package com.feipulai.exam.activity.ranger.adapter;
 
 
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.feipulai.exam.R;
 
@@ -15,16 +18,45 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class BluetoothListAdapter extends BaseQuickAdapter<BluetoothDevice,BluetoothListAdapter.ViewHolder> {
+public class BluetoothListAdapter extends BaseAdapter {
 
-    public BluetoothListAdapter(@Nullable List<BluetoothDevice> data) {
-        super(R.layout.item_bluetooth,data);
+    private List<BluetoothDevice> data;
+    private Context context;
+
+    public BluetoothListAdapter(@Nullable List<BluetoothDevice> data, Context context) {
+        this.data = data;
+        this.context = context;
+
+    }
+    @Override
+    public int getCount() {
+        return data.size();
     }
 
     @Override
-    protected void convert(ViewHolder viewHolder, BluetoothDevice bluetoothDevice) {
-        viewHolder.tv_mac.setText(bluetoothDevice.getAddress());
-        viewHolder.tv_name.setText(bluetoothDevice.getName());
+    public BluetoothDevice getItem(int position) {
+        return data.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder holder = null;
+        if (convertView == null){
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_bluetooth,parent,false);
+            holder = new ViewHolder(convertView);
+            convertView.setTag(holder);
+        }else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+        BluetoothDevice device = getItem(position);
+        holder.tv_name.setText(device.getName());
+        holder.tv_mac.setText(device.getAddress());
+        return convertView;
     }
 
     static class ViewHolder extends BaseViewHolder {

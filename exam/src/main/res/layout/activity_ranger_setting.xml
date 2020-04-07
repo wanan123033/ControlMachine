@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/icon_white_bg">
+    <LinearLayout
+        android:layout_width="600dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/btn_bg_white"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingBottom="20dp"
+        android:paddingLeft="30dp"
+        android:paddingRight="20dp"
+        android:paddingTop="20dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        <TextView
+            android:id="@+id/tv_throw"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_toLeftOf="@+id/tv_start_test"
+            android:background="@drawable/btn_click_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="投掷设置" />
+        <TextView
+            android:id="@+id/tv_staJump"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_toLeftOf="@+id/tv_start_test"
+            android:background="@drawable/btn_click_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="跳远设置" />
+        <TextView
+            android:id="@+id/tv_bluetooth"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_toLeftOf="@+id/tv_start_test"
+            android:background="@drawable/btn_click_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="蓝牙设置" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="测 试 次  数：" />
+
+            <Spinner
+                android:id="@+id/sp_test_no"
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="50dp"
+                android:background="@drawable/icon_spinner_bg" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="项 目 设  置：" />
+
+            <Spinner
+                android:id="@+id/sp_item"
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="50dp"
+                android:background="@drawable/icon_spinner_bg" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="成绩精确度：" />
+
+            <Spinner
+                android:id="@+id/sp_result"
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="50dp"
+                android:background="@drawable/icon_spinner_bg" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="启用板距功能：" />
+
+            <CheckBox
+                android:id="@+id/cb_full_skip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:button="@drawable/checkbox_switch_selected" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:text="自动测试时间间隔(0--手动):" />
+
+            <EditText
+                android:id="@+id/et_test_time"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="4" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:text="秒"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>
