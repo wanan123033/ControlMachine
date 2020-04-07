@@ -679,8 +679,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             updateLastResultLed(roundResult);
         }
         //生成结束时间
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        roundResult.setEndTime(sdf.format(new Date()));
+        roundResult.setEndTime(System.currentTimeMillis()+"");
         DBManager.getInstance().insertRoundResult(roundResult);
         Logger.i("saveResult==>insertRoundResult->" + roundResult.toString());
         List<RoundResult> roundResultList = new ArrayList<>();

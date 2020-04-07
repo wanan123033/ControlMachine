@@ -410,7 +410,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
                 false, false);
 
         tvResult.setText("准备");
-        testDate = TestConfigs.df.format(new Date());
+        testDate = System.currentTimeMillis()+"";
         facade.startTest(0);
         state = TESTING;
     }

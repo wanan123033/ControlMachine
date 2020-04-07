@@ -242,7 +242,7 @@ public class VolleyBallMoreTestActivity extends BaseVolleyBallMoreActivity {
     private PreStartTimeRunnable runable;
 
     private void startTime(final DeviceDetail deviceDetail, final int pos) {
-        deviceDetail.getStuDevicePair().setStartTime(TestConfigs.df.format(new Date()));
+        deviceDetail.getStuDevicePair().setStartTime(System.currentTimeMillis()+"");
         try {
             runable = new PreStartTimeRunnable(this, deviceDetail);
             runable.setListener(new PreStartTimeRunnable.TimeListener() {

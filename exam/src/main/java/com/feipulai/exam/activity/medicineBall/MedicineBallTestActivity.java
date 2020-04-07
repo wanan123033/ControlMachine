@@ -117,7 +117,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
         else
             baseDevice = new BaseDeviceState(BaseDeviceState.STATE_FREE, 1);
         baseStuPair.setBaseDevice(baseDevice);
-        baseStuPair.setStartTime(TestConfigs.df.format(new Date()));
+        baseStuPair.setStartTime(System.currentTimeMillis()+"");
         updateDevice(baseDevice);
     }
 

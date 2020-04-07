@@ -102,7 +102,7 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
     @Override
     public void startTest(BaseStuPair stuPair) {
         baseStuPair = stuPair;
-        baseStuPair.setStartTime(TestConfigs.df.format(new Date()));
+        baseStuPair.setStartTime(System.currentTimeMillis()+"");
 //        sendCheck();
 //        //开始测试
 //        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));

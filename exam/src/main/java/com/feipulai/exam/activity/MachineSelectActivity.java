@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -55,6 +56,7 @@ public class MachineSelectActivity extends BaseTitleActivity
         mTupleList.add(new Tuple(ItemDefault.CODE_ZCP, "中长跑", R.mipmap.icon_middle_distance_race, 3));
         mTupleList.add(new Tuple(ItemDefault.CODE_LQYQ, "篮球运球", R.mipmap.icon_basketball, 3));
         mTupleList.add(new Tuple(ItemDefault.CODE_ZQYQ, "足球运球", R.mipmap.icon_football, 3));
+        mTupleList.add(new Tuple(ItemDefault.CODE_JGCJ, "激光测距", R.mipmap.icon_football, 3));
         RecyclerView recyclerView = findViewById(R.id.rv_item);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 12);
         recyclerView.setLayoutManager(layoutManager);
@@ -83,6 +85,7 @@ public class MachineSelectActivity extends BaseTitleActivity
 
     private void setCurrentItem(int machineCode) {
         List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(machineCode);
+        Log.e("TAG",itemList.size()+"------");
         if (itemList.size() == 1 || machineCode == ItemDefault.CODE_ZCP) {
             int init = TestConfigs.init(this, machineCode, null, this);
             if (init == TestConfigs.INIT_SUCCESS) {

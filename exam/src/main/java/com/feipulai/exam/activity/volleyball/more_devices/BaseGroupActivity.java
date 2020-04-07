@@ -577,7 +577,7 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
             roundResult.setIsLastResult(1);
             updateLastResultLed(roundResult, index);
         }
-        roundResult.setEndTime(TestConfigs.df.format(new Date()));
+        roundResult.setEndTime(System.currentTimeMillis()+"");
         DBManager.getInstance().insertRoundResult(roundResult);
         Logger.i("saveResult==>insertRoundResult->" + roundResult.toString());
 

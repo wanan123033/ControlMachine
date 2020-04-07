@@ -267,7 +267,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
                 rlSecond.setVisibility(View.VISIBLE);
                 getToolbar().getRightView(0).setVisibility(View.GONE);
                 getToolbar().getRightView(1).setVisibility(View.GONE);
-                startTime = TestConfigs.df.format(new Date());
+                startTime = System.currentTimeMillis()+"";
                 break;
 //            case R.id.tv_project_setting:
 //                startActivity(new Intent(this, RunTimerSettingActivity.class));

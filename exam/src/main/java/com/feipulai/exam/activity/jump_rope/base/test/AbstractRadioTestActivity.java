@@ -173,7 +173,7 @@ public abstract class AbstractRadioTestActivity<Setting>
 
             case R.id.btn_start_test:
                 presenter.startTest();
-                startDate = TestConfigs.df.format(new Date());
+                startDate = System.currentTimeMillis()+"";
                 break;
 
             case R.id.btn_confirm_results:
@@ -181,7 +181,7 @@ public abstract class AbstractRadioTestActivity<Setting>
                 break;
 
             case R.id.btn_finish_test:
-                endDate = TestConfigs.df.format(new Date());
+                endDate = System.currentTimeMillis()+"";
                 presenter.finishTest();
                 break;
         }

@@ -102,7 +102,7 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
             e.printStackTrace();
         }
         StandJumpManager.startTest(SettingHelper.getSystemSetting().getHostId(), pair.getBaseDevice().getDeviceId());
-        pair.setStartTime(TestConfigs.df.format(new Date()));
+        pair.setStartTime(System.currentTimeMillis()+"");
     }
 
     @Override

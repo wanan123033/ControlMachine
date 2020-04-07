@@ -40,6 +40,7 @@ public class BaseStuPair implements Serializable {
     private int time;
     private String testTime; //测试当前轮次的开始时间
     private String startTime; // 开始时间
+    private String endTime; // 结束时间
 
     public BaseStuPair(int result, int resultState, Student student, BaseDeviceState baseDevice) {
         this.result = result;

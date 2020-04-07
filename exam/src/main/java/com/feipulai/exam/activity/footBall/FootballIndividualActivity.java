@@ -383,7 +383,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
      * 开始
      */
     private void doTriggerStart() {
-        testDate = TestConfigs.df.format(new Date());
+        testDate = System.currentTimeMillis()+"";
         timerUtil.startTime(10);
         state = TESTING;
         txtDeviceStatus.setText("计时");
@@ -695,7 +695,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                         ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, pairs.get(0).getStudent().getLEDStuName(), Paint.Align.CENTER);
                         timerUtil.stop();
                         ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
-                        startTime = TestConfigs.df.format(new Date());
+                        startTime = System.currentTimeMillis()+"";
                     } else {
                         toastSpeak("存在未连接设备，请配对");
                     }
@@ -917,7 +917,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                     roundResult.setMachineResult(0);
                     roundResult.setResultState(testResult.getResultState());
                     roundResult.setTestTime(testDate);
-                    roundResult.setEndTime(TestConfigs.df.format(new Date()));
+                    roundResult.setEndTime(System.currentTimeMillis()+"");
                     roundResult.setRoundNo(resultList.get(i).getRoundNo());
                     roundResult.setTestNo(testNo);
                     roundResult.setExamType(mStudentItem.getExamType());

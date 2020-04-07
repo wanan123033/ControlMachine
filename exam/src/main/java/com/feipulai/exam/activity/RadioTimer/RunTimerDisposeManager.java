@@ -103,7 +103,7 @@ public class RunTimerDisposeManager {
             // 第一次测试
             roundResult.setIsLastResult(1);
         }
-        roundResult.setEndTime(TestConfigs.df.format(new Date()));
+        roundResult.setEndTime(System.currentTimeMillis()+"");
         DBManager.getInstance().insertRoundResult(roundResult);
 
         List<RoundResult> roundResultList = new ArrayList<>();
@@ -131,7 +131,7 @@ public class RunTimerDisposeManager {
         roundResult.setMachineResult(result);
         roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
         roundResult.setTestTime(startTime);
-        roundResult.setEndTime(TestConfigs.df.format(new Date()));
+        roundResult.setEndTime(System.currentTimeMillis()+"");
         roundResult.setRoundNo(currentTestTime);
         roundResult.setTestNo(1);
         roundResult.setGroupId(group.getId());

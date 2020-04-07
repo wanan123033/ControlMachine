@@ -104,7 +104,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
         sitReachResiltListener.setTestState(SitReachResiltListener.TestState.WAIT_RESULT);
         resultRunnable.setTestState(sitReachResiltListener.getTestState());
         statesRunnable.setTestState(sitReachResiltListener.getTestState());
-        baseStuPair.setStartTime(TestConfigs.df.format(new Date()));
+        baseStuPair.setStartTime(System.currentTimeMillis()+"");
         if (SerialDeviceManager.getInstance() != null) {
             //开始测试
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_START));

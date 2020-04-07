@@ -203,7 +203,7 @@ public class InteractUtils {
             }
             roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
             roundResult.setTestTime(testDate);
-            roundResult.setEndTime(TestConfigs.df.format(new Date()));
+            roundResult.setEndTime(System.currentTimeMillis()+"");
 
             if (results == null) {
                 results = new ArrayList<>();

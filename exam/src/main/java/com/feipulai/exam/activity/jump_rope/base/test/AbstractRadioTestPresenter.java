@@ -109,7 +109,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
     @Override
     public void startTest() {
         Logger.i("开始测试,测试考生设备信息:" + pairs.toString());
-        testDate = TestConfigs.df.format(new Date());
+        testDate = System.currentTimeMillis()+"";
         resetDevices();
         view.setViewForStart();
         facade.start();

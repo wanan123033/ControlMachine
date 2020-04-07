@@ -446,7 +446,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
                 false);
 
         tvResult.setText("准备");
-        testDate = TestConfigs.df.format(new Date());
+        testDate = System.currentTimeMillis()+"";
         facade.startTest();
         state = TESTING;
 
