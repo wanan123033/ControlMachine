@@ -31,7 +31,7 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".activity.basketball.ShootSettingActivity"
             android:windowSoftInputMode="adjustPan|stateHidden"></activity>
-        <activity android:name=".activity.basketball.DribbleShootActivityActivity" />
+        <activity android:name=".activity.basketball.DribbleShootActivity" />
         <activity android:name=".activity.basketball.BasketBallShootActivity" />
         <activity android:name=".activity.medicineBall.more_device.BallGroupMoreActivity" />
         <activity android:name=".activity.medicineBall.more_device.MedicineBallMoreActivity" />

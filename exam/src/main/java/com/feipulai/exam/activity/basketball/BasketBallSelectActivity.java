@@ -36,7 +36,7 @@ public class BasketBallSelectActivity
                             IntentUtil.gotoActivity(BasketBallSelectActivity.this, BasketballIndividualActivity.class);
                             break;
                         case 2:
-                            IntentUtil.gotoActivity(BasketBallSelectActivity.this, DribbleShootActivityActivity.class);
+                            IntentUtil.gotoActivity(BasketBallSelectActivity.this, DribbleShootActivity.class);
                             break;
                         case 3:
                             IntentUtil.gotoActivity(BasketBallSelectActivity.this, BasketBallShootActivity.class);

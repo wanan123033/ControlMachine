@@ -43,6 +43,8 @@ import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.text.MessageFormat;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -95,7 +97,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
     private int match;
     private int frequency;
     private SweetAlertDialog alertDialog;
-
+    private int deviceId ;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_sargent_setting;
@@ -248,6 +250,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
         adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTestId.setAdapter(adapter1);
         spTestId.setOnItemSelectedListener(this);
+        deviceId = spTestId.getSelectedItemPosition() + 1;
     }
 
     @Override
@@ -287,6 +290,9 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
                 break;
             case R.id.sp_device_count:
                 sargentSetting.setSpDeviceCount(position + 1);
+                break;
+            case R.id.sp_test_id:
+                deviceId = spTestId.getSelectedItemPosition() + 1;
                 break;
         }
     }
@@ -337,26 +343,28 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
                 }
                 break;
             case R.id.tv_light_minus:
-
+                RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
+                        setLight(false, deviceId)));
                 break;
             case R.id.tv_light_add:
-
+                RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
+                        setLight(true, deviceId)));
                 break;
             case R.id.tv_device_check:
-
+                RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
+                        check_self( deviceId)));
                 break;
             case R.id.tv_accuracy_use:
-                int deviceId = spTestId.getSelectedItemPosition() + 1;
                 Logger.i("基础高度：" + sargentSetting.getBaseHeight() + "设备号：" + deviceId);
                 RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
-                        CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight(), deviceId)));
+                        setBaseHeight(sargentSetting.getBaseHeight(), deviceId)));
                 break;
 
         }
     }
 
     //离地高度设置范围为0-255
-    public byte[] CMD_SARGENT_JUMP_GET_SET_0(int offGroundDistance, int deviceId) {
+    public byte[] setBaseHeight(int offGroundDistance, int deviceId) {
         byte[] data = {0X54, 0X44, 00, 0X0D, 01, 0x01, 01, 0x05, 00, 00, 0x00, 0x27, 0x0d};
         data[4] = (byte) deviceId;
         data[8] = (byte) ((offGroundDistance >> 8) & 0xff);// 次低位
@@ -367,6 +375,36 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
             sum += data[i] & 0xff;
         }
         data[10] = (byte) sum;
+        return data;
+    }
+
+    public byte[] setLight(boolean up, int deviceId) {
+        byte[] data;
+        if (up){
+            data = Constants.CMD_SARGENT_JUMP_LIGHT_UP;
+        }else {
+            data = Constants.CMD_SARGENT_JUMP_LIGHT_DOWN;
+        }
+
+        data[4] = (byte) deviceId;
+
+        int sum = 0;
+        for (int i = 2; i < 10; i++) {
+            sum += data[i] & 0xff;
+        }
+        data[10] = (byte) sum;
+        return data;
+    }
+
+    public byte[] check_self( int deviceId) {
+        byte[] data = Constants.CMD_SARGENT_JUMP_CHECK_SELF;
+        data[4] = (byte) deviceId;
+
+        int sum = 0;
+        for (int i = 2; i < 8; i++) {
+            sum += data[i] & 0xff;
+        }
+        data[8] = (byte) sum;
         return data;
     }
 
@@ -387,6 +425,16 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
                     mHandler.sendEmptyMessage(2);
                 }
 
+                break;
+
+            case SerialConfigs.SARGENT_JUMP_CHECK:
+                SargentJumpResult jumpResult = (SargentJumpResult) msg.obj;
+                byte[] incorrectPoles = jumpResult.getIncorrectPoles();
+                for (int i = 0;i< incorrectPoles.length;i++){
+                    if (incorrectPoles[i] == 1){
+                        toastSpeak(MessageFormat.format("第{0}对杆出现异常", i + 1));
+                    }
+                }
                 break;
         }
     }
@@ -433,10 +481,4 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
     });
 
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
-    }
 }

@@ -26,7 +26,7 @@ import butterknife.OnClick;
 /**
  * 运球投篮测试个人模式
  */
-public class DribbleShootActivityActivity extends BaseShootActivity {
+public class DribbleShootActivity extends BaseShootActivity {
 
     @BindView(R.id.iv_portrait)
     ImageView ivPortrait;

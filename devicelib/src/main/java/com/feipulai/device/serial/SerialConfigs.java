@@ -275,4 +275,6 @@ public class SerialConfigs {
 
     //握力计
     public static final int GRIP_SET_MORE_MATCH = 0x70;
+    public static final int SARGENT_JUMP_CHECK = 0x71;
+
 }
