@@ -39,6 +39,7 @@ import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
+import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -84,6 +85,10 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
     TextView tvLightAdd;
     @BindView(R.id.ll_light)
     LinearLayout llLight;
+    @BindView(R.id.ll_check)
+    LinearLayout llCheck;
+    @BindView(R.id.tv_accuracy_use)
+    TextView tvAccuracyUse;
     private SargentSetting sargentSetting;
     private String[] spinnerItems;
     private RadioManager radioManager;
@@ -193,6 +198,12 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
         radioManager.init();
         radioManager.setOnRadioArrived(this);
         initSpinners();
+
+        if (sargentSetting.getType() != 2) {
+            llLight.setVisibility(View.GONE);
+            llCheck.setVisibility(View.GONE);
+            tvAccuracyUse.setVisibility(View.GONE);
+        }
     }
 
     private void initSpinners() {
@@ -234,7 +245,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
 
         ArrayAdapter<String> adapter1 = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, deviceCount);
-        adapter0.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTestId.setAdapter(adapter1);
         spTestId.setOnItemSelectedListener(this);
     }
@@ -304,7 +315,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
         EventBus.getDefault().post(new BaseEvent(EventConfigs.ITEM_SETTING_UPDATE));
     }
 
-    @OnClick({R.id.tv_match,R.id.tv_light_minus, R.id.tv_light_add})
+    @OnClick({R.id.tv_match, R.id.tv_light_minus, R.id.tv_light_add, R.id.tv_device_check, R.id.tv_accuracy_use})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_match:
@@ -326,11 +337,37 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
                 }
                 break;
             case R.id.tv_light_minus:
+
                 break;
             case R.id.tv_light_add:
+
+                break;
+            case R.id.tv_device_check:
+
+                break;
+            case R.id.tv_accuracy_use:
+                int deviceId = spTestId.getSelectedItemPosition() + 1;
+                Logger.i("基础高度：" + sargentSetting.getBaseHeight() + "设备号：" + deviceId);
+                RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
+                        CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight(), deviceId)));
                 break;
 
         }
+    }
+
+    //离地高度设置范围为0-255
+    public byte[] CMD_SARGENT_JUMP_GET_SET_0(int offGroundDistance, int deviceId) {
+        byte[] data = {0X54, 0X44, 00, 0X0D, 01, 0x01, 01, 0x05, 00, 00, 0x00, 0x27, 0x0d};
+        data[4] = (byte) deviceId;
+        data[8] = (byte) ((offGroundDistance >> 8) & 0xff);// 次低位
+        data[9] = (byte) (offGroundDistance & 0xff);// 最低位
+
+        int sum = 0;
+        for (int i = 2; i < 10; i++) {
+            sum += data[i] & 0xff;
+        }
+        data[10] = (byte) sum;
+        return data;
     }
 
     @Override
@@ -396,6 +433,10 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
     });
 
 
-
-
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
+    }
 }

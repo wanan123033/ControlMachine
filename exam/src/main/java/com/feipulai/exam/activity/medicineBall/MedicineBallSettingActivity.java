@@ -243,7 +243,7 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
     protected void onPause() {
         super.onPause();
         SharedPrefsUtil.save(this, medicineBallSetting);
-        SerialDeviceManager.getInstance().close();
+        mHandler.removeCallbacks(null);
     }
 
 
