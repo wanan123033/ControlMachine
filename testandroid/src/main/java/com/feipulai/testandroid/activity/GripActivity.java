@@ -1,25 +1,24 @@
 package com.feipulai.testandroid.activity;
 
-import android.os.Bundle;
-import android.os.Message;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.MachineCode;
-import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
-import com.feipulai.device.serial.command.ConvertCommand;
-import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.testandroid.R;
 import com.feipulai.testandroid.base.BaseMvpActivity;
+import com.feipulai.testandroid.utils.ToastUtil;
+
+import java.math.BigDecimal;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class GripActivity extends BaseMvpActivity<GripPresenter> {
+public class GripActivity extends BaseMvpActivity<GripPresenter> implements GripContract.View{
     @BindView(R.id.btn_pair)
     TextView btnPair;
     @BindView(R.id.btn_pair_res)
@@ -32,14 +31,8 @@ public class GripActivity extends BaseMvpActivity<GripPresenter> {
     EditText etValue;
     @BindView(R.id.btn_adjust)
     TextView btnAdjust;
-    private int currentFrequency;
     private int TARGET_FREQUENCY;
-    private int currentDeviceId = 1;
-    private final int NO_PAIR_RESPONSE_ARRIVED = 1;
-    private final int GET_SCORE_RESPONSE = 2;
-    private final int SEND_EMPTY = 3;
-    private static final String TAG = "GripActivity";
-
+    private int check;
     @Override
     public int getLayoutId() {
         return R.layout.activity_vc_pair;
@@ -50,33 +43,31 @@ public class GripActivity extends BaseMvpActivity<GripPresenter> {
         MachineCode.machineCode = ItemDefault.CODE_WLJ;
         TARGET_FREQUENCY = SerialConfigs.sProChannels.get(ItemDefault.CODE_WLJ) + 1 - 1;
         ButterKnife.bind(this);
-
-        presenter = new GripPresenter();
+        presenter = new GripPresenter(TARGET_FREQUENCY,this);
         presenter.attachView(this);
         presenter.sendEmpty();
-
     }
 
     @Override
     public void showLoading() {
-
+        btnPairRes.setText("正在匹配");
     }
 
     @Override
     public void hideLoading() {
-
+        btnPairRes.setText("匹配成功");
     }
 
     @Override
-    public void onError(Throwable throwable) {
-
+    public void setGripResult(int result){
+        BigDecimal bigDecimal = new BigDecimal(result/1000.0);
+        double round = bigDecimal.setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue();
+        btnVc.setText(round+"kg");
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
+    public void onError(String err) {
+        ToastUtil.show(this,err);
     }
 
     @OnClick({R.id.btn_pair, R.id.btn_test, R.id.btn_adjust})
@@ -89,10 +80,25 @@ public class GripActivity extends BaseMvpActivity<GripPresenter> {
                 presenter.test();
                 break;
             case R.id.btn_adjust:
-                presenter.verify();
+                String ad = etValue.getText().toString().trim();
+                if (TextUtils.isEmpty(ad)) {
+                    ToastUtil.show(this, "必须输入校准值");
+                    return;
+                }
+                double d = Double.valueOf(ad);
+                check = (int) (d*10);
+                if (check<= 0){
+                    ToastUtil.show(this, "校准值必须大于0");
+                    return;
+                }
+                presenter.verify(check);
                 break;
         }
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.detachView();
+    }
 }

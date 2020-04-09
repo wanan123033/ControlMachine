@@ -62,7 +62,7 @@
             android:layout_height="50dp"
             android:gravity="center"
             android:layout_marginLeft="40dp"
-            android:inputType="number"
+            android:inputType="numberDecimal"
             android:hint="请输入校准值"
             android:text=""/>
 

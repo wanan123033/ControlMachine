@@ -2,10 +2,13 @@ package com.feipulai.testandroid.activity;
 
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.device.manager.GripManager;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
+import com.feipulai.device.serial.beans.VitalCapacityNewResult;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.testandroid.base.BasePresenter;
@@ -15,34 +18,48 @@ import com.feipulai.testandroid.base.BasePresenter;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 public class GripPresenter extends BasePresenter implements GripContract.Presenter {
-    private final int SEND_EMPTY = 1;
-    private final int GET_SCORE_RESPONSE = 2;
+    private static final int SEND_EMPTY = 1;
+    private static final int GET_SCORE_RESPONSE = 2;
+    public static final int NO_PAIR_RESPONSE_ARRIVED = 3;
+    public static final int PAIR_RESPONSE_ARRIVED = 4;
     int hostId = 1;
-    private int frequency = 109;
-    GripPresenter() {
+    private int currentFrequency;
+    private int TARGET_FREQUENCY;
+    private GripContract.View view;
+    public int currentDeviceId;
+    private final GripManager gripManager;
+    private int check;
+    GripPresenter(int targetFrequency,GripContract.View view) {
+        currentDeviceId = 1;
+        this.view = view;
+        TARGET_FREQUENCY = targetFrequency;
         RadioManager.getInstance().setOnRadioArrived(resultImpl);
-        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(frequency)));
+        gripManager = new GripManager();
+//        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(targetFrequency)));
     }
 
     @Override
     public void sendEmpty() {
         command(1, 0x02);
-        mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 1000);
+        mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 2000);
     }
 
     @Override
     public void deviceMatch() {
-
+        currentFrequency = 0;
+        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(0)));
+        view.showLoading();
     }
 
     @Override
     public void test() {
-
+        command(1, 0x03);
     }
 
     @Override
-    public void verify() {
-
+    public void verify(int check) {
+        this.check = check;
+        command(1, 0x07);
     }
 
     private WirelessVitalListener resultImpl = new WirelessVitalListener(new WirelessVitalListener.WirelessListener() {
@@ -65,7 +82,43 @@ public class GripPresenter extends BasePresenter implements GripContract.Present
         @Override
         public void onStop() {
         }
+
+        @Override
+        public void checkDevice(VitalCapacityNewResult result) {
+            checkPair(result.getDeviceId(), result.getFrequency());
+        }
     });
+
+    //验证配对
+    private void checkPair(int deviceId, int frequency) {
+        Log.e("TAG115----","currentFrequency = "+currentFrequency+",frequency="+frequency+",deviceId="+deviceId+",currentDeviceId="+currentDeviceId);
+        if (currentFrequency == 0) {
+            // 0频段接收到的结果,肯定是设备的开机广播
+            if (frequency == TARGET_FREQUENCY && deviceId == currentDeviceId) {
+                onNewDeviceConnect();
+                setFrequency(currentDeviceId, frequency, TARGET_FREQUENCY);
+            } else {
+                setFrequency(currentDeviceId, frequency, TARGET_FREQUENCY);
+                currentFrequency = TARGET_FREQUENCY;
+                // 那个铁盒子就是有可能等这么久才收到回复
+                mHandler.sendEmptyMessageDelayed(NO_PAIR_RESPONSE_ARRIVED, 5000);
+            }
+        } else if (currentFrequency == TARGET_FREQUENCY) {
+            //在主机的目的频段收到的,肯定是设置频段后收到的设备广播
+            if (deviceId == currentDeviceId && frequency == TARGET_FREQUENCY) {
+                onNewDeviceConnect();
+            }
+        }
+    }
+
+    private void setFrequency(int currentDeviceId, int frequency, int target_frequency) {
+        gripManager.setGrip(target_frequency,1,1);
+    }
+
+    public synchronized void onNewDeviceConnect() {
+        mHandler.removeMessages(NO_PAIR_RESPONSE_ARRIVED);
+        mHandler.sendEmptyMessage(PAIR_RESPONSE_ARRIVED);
+    }
 
     /**
      * 新版本一对多控制命令
@@ -79,6 +132,11 @@ public class GripPresenter extends BasePresenter implements GripContract.Present
         }else {
             data[2] = 0x09;
         }
+        if (cmd == 0x07) {
+            data[12] = (byte) ((check >> 8) & 0xff);// 高位
+            data[13] = (byte) (check & 0xff);// 低位
+        }
+
         int sum = 0;
         for (int i = 1; i < data.length - 2; i++) {
             sum += data[i];
@@ -94,10 +152,19 @@ public class GripPresenter extends BasePresenter implements GripContract.Present
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case GET_SCORE_RESPONSE:
-
+                    VcWrapper result = (VcWrapper) msg.obj;
+                    view.setGripResult((result.getResult()*100));
                     break;
                 case SEND_EMPTY:
                     sendEmpty();
+                    break;
+                case NO_PAIR_RESPONSE_ARRIVED:
+                    RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(0)));
+                    currentFrequency = 0;
+                    view.onError("配对失败");
+                    break;
+                case PAIR_RESPONSE_ARRIVED:
+                    view.hideLoading();
                     break;
             }
 
@@ -105,4 +172,9 @@ public class GripPresenter extends BasePresenter implements GripContract.Present
         }
     });
 
+    @Override
+    public void detachView() {
+        super.detachView();
+        mHandler.removeCallbacksAndMessages(null);
+    }
 }

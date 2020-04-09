@@ -17,9 +17,9 @@ public interface BaseView {
 
     /**
      * 数据获取失败
-     * @param throwable
+     * @param
      */
-    void onError(Throwable throwable);
+    void onError(String string);
 
 
 }

@@ -61,14 +61,20 @@ public class WirelessVitalListener implements RadioManager.OnRadioArrivedListene
                 }
 
             break;
+            case SerialConfigs.GRIP_SET_MORE_MATCH:
+                if (msg.obj instanceof VitalCapacityNewResult) {
+                    VitalCapacityNewResult fhl = (VitalCapacityNewResult) msg.obj;
+                    listener.checkDevice(fhl);
+                }
+                break;
         }
     }
-
 
     interface WirelessListener {
 
         void onResult(int id, int state, int result, int power);
 
         void onStop();
+        void checkDevice(VitalCapacityNewResult result);
     }
 }

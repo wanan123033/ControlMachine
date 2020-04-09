@@ -15,13 +15,14 @@ public interface GripContract {
         @Override
         void hideLoading();
 
+        void setGripResult(int result);
     }
 
     interface Presenter {
         void sendEmpty();
         void deviceMatch();
         void test();
-        void verify();
+        void verify(int check);
     }
 
 

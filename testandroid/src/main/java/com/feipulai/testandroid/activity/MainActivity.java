@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(this, VcPairActivity.class));
                 break;
             case R.id.btn_grip:
-                startActivity(new Intent(this, VcPairActivity.class));
+                startActivity(new Intent(this, GripActivity.class));
                 break;
         }
     }

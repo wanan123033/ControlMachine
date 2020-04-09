@@ -1,8 +1,5 @@
 package com.feipulai.device.serial.beans;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by James on 2018/5/7 0007.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
