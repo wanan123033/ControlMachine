@@ -1,4 +1,4 @@
-package com.feipulai.exam.spputils;
+package com.feipulai.device.spputils;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
@@ -212,7 +212,9 @@ public class SppUtils {
         startService();
     }
 
-
+    public boolean isConnected(){
+        return isConnected;
+    }
 
     /*判断手机蓝牙是否可用*/
     public boolean isBluetoothAvailable() {
@@ -289,6 +291,8 @@ public class SppUtils {
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
         mChatService.connect(device);
     }
+
+
     public void connect(Intent data) {
         String address = data.getExtras().getString(SppState.EXTRA_DEVICE_ADDRESS);
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);

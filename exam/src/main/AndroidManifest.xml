@@ -6,6 +6,9 @@
     <!-- 测试完成后，您自己的apAPP_KEYpSECRET_KEYtKey 请在 SynthActivity 和 MiniActivity 中修改 -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.UPDATE_DEVICE_STATS" />
+    
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
@@ -233,6 +236,7 @@
         <activity android:name=".activity.ranger.RangerSettingActivity" />
         <activity android:name=".activity.ranger.RangerTestActivity" />
         <activity android:name=".activity.ranger.BluetoothSettingActivity" />
+        <receiver android:name="com.feipulai.device.spputils.SppReciver" />
     </application>
 
 </manifest>

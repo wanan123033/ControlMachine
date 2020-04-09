@@ -1,4 +1,4 @@
-package com.feipulai.exam.spputils;
+package com.feipulai.device.spputils;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -273,6 +272,7 @@ public class SppService {
                 //这是一个阻塞调用，只会在连接成功或异常时返回
                 mmSocket.connect();
             } catch (IOException e) {
+                e.printStackTrace();
                 try {
                     mmSocket.close();
                 } catch (IOException e2) {

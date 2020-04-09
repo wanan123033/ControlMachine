@@ -15,7 +15,7 @@
  */
 
 
-package com.feipulai.exam.spputils;
+package com.feipulai.device.spputils;
 
 public class SppState {
     //当前连接状态

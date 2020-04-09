@@ -196,9 +196,9 @@
                     android:layout_height="0dp"
                     android:layout_marginBottom="@dimen/sp_12"
                     android:layout_weight="1"
-                    android:background="@drawable/btn_background"
+                    android:background="@drawable/btn_bg_blue"
                     android:gravity="center"
-                    android:text="开始"
+                    android:text="测距"
                     android:textColor="@color/white"
                     android:textSize="22sp"
                     android:visibility="gone" />
@@ -208,11 +208,47 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:background="@drawable/btn_background"
+                    android:background="@drawable/btn_bg_blue"
                     android:gravity="center"
                     android:text="跳过"
                     android:textColor="@color/white"
                     android:textSize="22sp" />
+                <TextView
+                    android:id="@+id/txt_commit"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="@dimen/sp_12"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_bg_blue"
+                    android:gravity="center"
+                    android:text="确定"
+                    android:textColor="@color/white"
+                    android:textSize="22sp"
+                    android:visibility="gone" />
+                <TextView
+                    android:id="@+id/txt_pf"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="@dimen/sp_12"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_bg_blue"
+                    android:gravity="center"
+                    android:text="判罚"
+                    android:textColor="@color/white"
+                    android:textSize="22sp"
+                    android:visibility="gone" />
+                <TextView
+                    android:id="@+id/txt_fg"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="@dimen/sp_12"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_bg_blue"
+                    android:gravity="center"
+                    android:text="犯规"
+                    android:textColor="@color/white"
+                    android:textSize="22sp"
+                    android:visibility="gone" />
 
                 <!--<TextView
                     android:id="@+id/txt_stu_fault"

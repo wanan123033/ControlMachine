@@ -15,6 +15,7 @@ public class BaseStuPair implements Serializable {
     private static final long serialVersionUID = -5114314856313860680L;
     //成绩
     private int result;
+    private double result2;
     private int resultState = 0;//成绩状态 //是否犯规 0:未检录 1:正常 2:犯规 3:中退 4:弃权 5:测试  -99已测试（循环测试区分使用）
 
     private boolean isFullMark;
@@ -220,5 +221,13 @@ public class BaseStuPair implements Serializable {
 
     public void setEndTime(String endTime) {
         this.endTime = endTime;
+    }
+
+    public void setResult2(double result2) {
+        this.result2 = result2;
+    }
+
+    public double getResult2() {
+        return result2;
     }
 }

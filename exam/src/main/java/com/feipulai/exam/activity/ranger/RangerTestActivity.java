@@ -2,15 +2,58 @@ package com.feipulai.exam.activity.ranger;
 
 
 import android.content.Intent;
+import android.util.Log;
 
-import com.feipulai.exam.activity.person.BasePersonTestActivity;
+import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.device.spputils.OnDataReceivedListener;
+import com.feipulai.device.spputils.SppState;
+import com.feipulai.device.spputils.SppUtils;
+import com.feipulai.device.spputils.beans.RangerResult;
 import com.feipulai.exam.activity.person.BaseStuPair;
 
-public class RangerTestActivity extends BasePersonTestActivity {
+public class RangerTestActivity extends BaseTestActivity {
+    SppUtils utils;
+    RangerSetting setting;
+
+    @Override
+    protected void initData() {
+        super.initData();
+        setting = SharedPrefsUtil.loadFormSource(getApplicationContext(),RangerSetting.class);
+        utils = BluetoothManager.getSpp(this);
+        utils.setupService();
+        utils.startService();
+        utils.setOnDataReceivedListener(new OnDataReceivedListener() {
+            @Override
+            protected void onResult(byte[] datas) {
+                onResults(datas);
+            }
+        });
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(!utils.isBluetoothEnabled()) {
+            //开启蓝牙
+            utils.enable();
+        } else {
+            //开启服务
+            if(!utils.isServiceAvailable()) {
+                utils.setupService();
+                utils.startService();
+            }
+        }
+
+        //循环获取状态
+    }
 
     @Override
     public void sendTestCommand(BaseStuPair baseStuPair) {
-
+        byte[] bytes = new byte[]{0x5A ,0x33 ,0x34 ,0x30 ,0x39 ,0x33 ,0x03,0x0d,0x0a};
+        utils.send(bytes,false);
+        bytes = new byte[]{0x43 ,0x30 ,0x36 ,0x37 ,0x03,0x0d ,0x0a};
+        utils.send(bytes, false);
     }
 
     @Override
@@ -31,5 +74,24 @@ public class RangerTestActivity extends BasePersonTestActivity {
     @Override
     public boolean isResultFullReturn(int sex, int result) {
         return false;
+    }
+
+    private void onResults(byte[] datas) {
+        RangerResult result = new RangerResult(datas);
+        double result1 = result.getResult();
+        if (result.getType() == 1){
+            pair.setResult2(result1);
+            updateResult(pair);
+        }
+
+    }
+    public void onDestroy() {
+        super.onDestroy();
+        //断开蓝牙连接
+        if(utils.getServiceState() == SppState.STATE_CONNECTED) {
+            utils.disconnect();
+        }
+        //停止服务
+        utils.stopService();
     }
 }

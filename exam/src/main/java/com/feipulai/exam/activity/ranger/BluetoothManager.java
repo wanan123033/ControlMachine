@@ -2,7 +2,8 @@ package com.feipulai.exam.activity.ranger;
 
 import android.content.Context;
 
-import com.feipulai.exam.spputils.SppUtils;
+import com.feipulai.device.spputils.SppUtils;
+
 
 public class BluetoothManager {
     private static SppUtils spp;

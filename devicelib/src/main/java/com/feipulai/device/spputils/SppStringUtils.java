@@ -1,4 +1,4 @@
-package com.feipulai.exam.spputils;
+package com.feipulai.device.spputils;
 
 /**
  * Created by chen on 2018/1/16.
