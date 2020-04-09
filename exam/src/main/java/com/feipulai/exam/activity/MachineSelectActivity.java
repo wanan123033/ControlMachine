@@ -56,7 +56,7 @@ public class MachineSelectActivity extends BaseTitleActivity
         mTupleList.add(new Tuple(ItemDefault.CODE_ZCP, "中长跑", R.mipmap.icon_middle_distance_race, 3));
         mTupleList.add(new Tuple(ItemDefault.CODE_LQYQ, "篮球运球", R.mipmap.icon_basketball, 3));
         mTupleList.add(new Tuple(ItemDefault.CODE_ZQYQ, "足球运球", R.mipmap.icon_football, 3));
-        mTupleList.add(new Tuple(ItemDefault.CODE_JGCJ, "激光测距", R.mipmap.icon_football, 3));
+//        mTupleList.add(new Tuple(ItemDefault.CODE_JGCJ, "激光测距", R.mipmap.icon_football, 3));
         RecyclerView recyclerView = findViewById(R.id.rv_item);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 12);
         recyclerView.setLayoutManager(layoutManager);

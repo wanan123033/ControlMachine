@@ -10,10 +10,10 @@ import android.widget.Toast;
 
 
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.spputils.SppUtils;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.ranger.adapter.BluetoothListAdapter;
-import com.feipulai.exam.spputils.SppUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ public class BluetoothSettingActivity extends BaseTitleActivity implements Adapt
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
         builder.setTitle("蓝牙设置");
-        return super.setToolbar(builder);
+        return builder;
     }
 
     @Override
@@ -47,6 +47,7 @@ public class BluetoothSettingActivity extends BaseTitleActivity implements Adapt
         utils = BluetoothManager.getSpp(getApplicationContext());
         adapter = new BluetoothListAdapter(devices,getApplicationContext());
         rv_bluetooth.setAdapter(adapter);
+        utils.setupService();
         utils.setOnDeviceCallBack(new SppUtils.OnDeviceCallBack() {
             @Override
             public void onDeviceCallBack(BluetoothDevice device) {
@@ -75,6 +76,7 @@ public class BluetoothSettingActivity extends BaseTitleActivity implements Adapt
 
     @OnClick({R.id.btn_search})
     public void onClick(View view){
+        utils.cancelDiscovery();
         devices.clear();
         utils.startDiscovery();
     }

@@ -1790,7 +1790,7 @@ public class DBManager {
                     List<RoundResult> saveResult = entity.getValue();
                     UploadResults uploadResults = new UploadResults(group.getScheduleNo(),
                             itemCode, saveResult.get(0).getStudentCode(), "1",
-                            group.getGroupNo() + "", RoundResultBean.beanCope(saveResult));
+                            group, RoundResultBean.beanCope(saveResult,group));
                     uploadResultsList.add(uploadResults);
                 }
             }
@@ -1870,7 +1870,7 @@ public class DBManager {
                         UploadResults uploadResults = new UploadResults(
                                 TextUtils.equals(testEntity.getValue().get(0).getScheduleNo(), "-1") ? "" : testEntity.getValue().get(0).getScheduleNo(),
                                 itemCode, testEntity.getValue().get(0).getStudentCode(), testEntity.getKey() + "",
-                                "", RoundResultBean.beanCope(entity.getValue()));
+                                null, RoundResultBean.beanCope(entity.getValue()));
                         uploadResultsList.add(uploadResults);
                     }
                 }
@@ -1884,7 +1884,7 @@ public class DBManager {
 
                     UploadResults uploadResults = new UploadResults(group.getScheduleNo(),
                             itemCode, saveResult.get(0).getStudentCode(), "1",
-                            group.getGroupNo() + "", RoundResultBean.beanCope(saveResult));
+                            group, RoundResultBean.beanCope(saveResult,group));
                     uploadResults.setGroupId(group.getId());
                     uploadResultsList.add(uploadResults);
                 }
@@ -1968,7 +1968,7 @@ public class DBManager {
                         UploadResults uploadResults = new UploadResults(
                                 TextUtils.equals(testEntity.getValue().get(0).getScheduleNo(), "-1") ? "" : testEntity.getValue().get(0).getScheduleNo(),
                                 TestConfigs.getCurrentItemCode(), stu.getStudentCode(), testEntity.getKey() + "",
-                                "", RoundResultBean.beanCope(entity.getValue()));
+                                null, RoundResultBean.beanCope(entity.getValue()));
                         uploadResultsList.add(uploadResults);
                     }
                 }
@@ -1982,7 +1982,7 @@ public class DBManager {
 
                     UploadResults uploadResults = new UploadResults(group.getScheduleNo(),
                             TestConfigs.getCurrentItemCode(), stu.getStudentCode(), "1",
-                            group.getGroupNo() + "", RoundResultBean.beanCope(saveResult));
+                            group, RoundResultBean.beanCope(saveResult,group));
                     uploadResultsList.add(uploadResults);
                 }
             }
@@ -2051,13 +2051,13 @@ public class DBManager {
         Log.i("queryCurrentSchedules", items.toString());
         List<ItemSchedule> itemSchedules = new ArrayList<>();
         for (Item item : items
-                ) {
+        ) {
             itemSchedules.addAll(itemScheduleDao.queryBuilder().where(ItemScheduleDao.Properties.ItemCode.eq(item.getItemCode())).list());
         }
 
         List<Schedule> schedules = new ArrayList<>();
         for (ItemSchedule schedule : itemSchedules
-                ) {
+        ) {
             schedules.addAll(scheduleDao.queryBuilder().where(ScheduleDao.Properties.ScheduleNo.eq(schedule.getScheduleNo())).list());
         }
 

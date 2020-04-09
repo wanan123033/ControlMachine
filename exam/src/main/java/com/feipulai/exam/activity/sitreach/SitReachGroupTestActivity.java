@@ -107,7 +107,7 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
     @Override
     public void startTest(BaseStuPair stuPair) {
         baseStuPair = stuPair;
-        baseStuPair.setStartTime(System.currentTimeMillis()+"");
+        baseStuPair.setTestTime(System.currentTimeMillis()+"");
         Logger.i(TAG + ":startTest ->发送开始测试");
         sitReachResiltListener.setTestState(SitReachResiltListener.TestState.WAIT_RESULT);
         resultRunnable.setTestState(sitReachResiltListener.getTestState());

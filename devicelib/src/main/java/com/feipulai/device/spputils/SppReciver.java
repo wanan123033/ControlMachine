@@ -1,4 +1,4 @@
-package com.feipulai.exam.spputils;
+package com.feipulai.device.spputils;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -15,10 +15,9 @@ public class SppReciver extends BroadcastReceiver {
     private String TAG = "SppReciver";
     private Context context;
 
-
+    public SppReciver(){}
     public SppReciver(Context context) {
         this.context = context;
-
     }
     @Override
     public void onReceive(Context context, Intent intent) {

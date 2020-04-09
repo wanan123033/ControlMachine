@@ -972,7 +972,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
             String testNo = "1";
             UploadResults uploadResult = new UploadResults(scheduleNo,
                     TestConfigs.getCurrentItemCode(), student.getStudentCode()
-                    , testNo, groupNo, RoundResultBean.beanCope(roundResultList));
+                    , testNo, group, RoundResultBean.beanCope(roundResultList,group));
             uploadResults.add(uploadResult);
             Logger.i("自动上传成绩:" + uploadResults.toString());
             ServerMessage.uploadResult(uploadResults);

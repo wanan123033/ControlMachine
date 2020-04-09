@@ -87,7 +87,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE));
 //        isDisconnect = true;
 //        mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
-        baseStuPair.setStartTime(System.currentTimeMillis()+"");
+        baseStuPair.setTestTime(System.currentTimeMillis()+"");
     }
 
     @Override

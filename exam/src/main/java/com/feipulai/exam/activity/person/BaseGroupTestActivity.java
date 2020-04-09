@@ -738,7 +738,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         roundResultList.add(roundResult);
         UploadResults uploadResults = new UploadResults(group.getScheduleNo()
                 , TestConfigs.getCurrentItemCode(), baseStuPair.getStudent().getStudentCode()
-                , "1", group.getGroupNo() + "", RoundResultBean.beanCope(roundResultList));
+                , "1", group , RoundResultBean.beanCope(roundResultList,group));
 
         uploadResult(uploadResults);
 

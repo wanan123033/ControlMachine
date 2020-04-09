@@ -146,7 +146,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
         title = TestConfigs.machineNameMap.get(machineCode)
                 + SettingHelper.getSystemSetting().getHostId() + "号机"
                 + (isTestNameEmpty ? "" : ("-" + SettingHelper.getSystemSetting().getTestName()));
-        return builder.setTitle(title) .addRightText("外接屏幕", new View.OnClickListener() {
+        return builder.setTitle(title).addRightText("外接屏幕", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isConfigurableNow()) {
@@ -402,7 +402,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
             List<UploadResults> uploadResults = new ArrayList<>();
             uploadResults.add(new UploadResults(scheduleNo,
                     TestConfigs.getCurrentItemCode(), student.getStudentCode()
-                    , testNo, "", RoundResultBean.beanCope(roundResultList)));
+                    , testNo, null, RoundResultBean.beanCope(roundResultList)));
             Logger.i("自动上传成绩:" + uploadResults.toString());
             ServerMessage.uploadResult(uploadResults);
         }

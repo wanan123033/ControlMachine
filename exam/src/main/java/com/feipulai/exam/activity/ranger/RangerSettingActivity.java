@@ -1,6 +1,5 @@
 package com.feipulai.exam.activity.ranger;
 
-import android.content.Intent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -33,11 +32,17 @@ public class RangerSettingActivity extends BaseTitleActivity {
     public void onClick(View view){
         switch (view.getId()){
             case R.id.tv_throw:
+                ThrowSettingDialog dialog = new ThrowSettingDialog(this);
+                dialog.show();
                 break;
             case R.id.tv_staJump:
+                JumpSettingDialog dialog1 = new JumpSettingDialog(this);
+                dialog1.show();
                 break;
             case R.id.tv_bluetooth:
-                startActivity(new Intent(this,BluetoothSettingActivity.class));
+                BluetoothSettingDialog dialog2 = new BluetoothSettingDialog(this);
+                dialog2.show();
+//                startActivity(new Intent(this,BluetoothSettingActivity.class));
                 break;
         }
     }

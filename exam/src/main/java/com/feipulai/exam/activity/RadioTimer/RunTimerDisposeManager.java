@@ -109,7 +109,7 @@ public class RunTimerDisposeManager {
         List<RoundResult> roundResultList = new ArrayList<>();
         roundResultList.add(roundResult);
         UploadResults uploadResults = new UploadResults(studentItem.getScheduleNo(), TestConfigs.getCurrentItemCode(),
-                student.getStudentCode(), testNo + "", "", RoundResultBean.beanCope(roundResultList));
+                student.getStudentCode(), testNo + "", null, RoundResultBean.beanCope(roundResultList));
 
         uploadResult(uploadResults);
     }
@@ -162,7 +162,7 @@ public class RunTimerDisposeManager {
         roundResultList.add(roundResult);
         UploadResults uploadResults = new UploadResults(group.getScheduleNo()
                 , TestConfigs.getCurrentItemCode(), student.getStudentCode()
-                , "1", group.getGroupNo() + "", RoundResultBean.beanCope(roundResultList));
+                , "1", group , RoundResultBean.beanCope(roundResultList,group));
 
         uploadResult(uploadResults);
 

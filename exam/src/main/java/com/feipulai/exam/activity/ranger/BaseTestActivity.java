@@ -1,4 +1,4 @@
-package com.feipulai.exam.activity.person;
+package com.feipulai.exam.activity.ranger;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -20,7 +20,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.feipulai.common.tts.TtsManager;
-import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
@@ -29,6 +28,8 @@ import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
+import com.feipulai.exam.activity.person.BaseDeviceState;
+import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.RoundResultBean;
@@ -47,21 +48,15 @@ import com.orhanobut.logger.Logger;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-/**
- * 个人测试基类
- */
-public abstract class BasePersonTestActivity extends BaseCheckActivity {
+public abstract class BaseTestActivity extends BaseCheckActivity {
     private static final String TAG = "BasePersonTestActivity";
     @BindView(R.id.et_input_text)
     StuSearchEditText etInputText;
@@ -89,6 +84,12 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     TextView txtStuResult;
     @BindView(R.id.txt_start_test)
     TextView txtStartTest;
+    @BindView(R.id.txt_commit)
+    TextView txtCommit;
+    @BindView(R.id.txt_fg)
+    TextView txtFg;
+    @BindView(R.id.txt_pf)
+    TextView txtPf;
     @BindView(R.id.tv_base_height)
     TextView tvBaseHeight;
     @BindView(R.id.txt_stu_skip)
@@ -121,12 +122,12 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     private ClearHandler clearHandler = new ClearHandler(this);
     private LedHandler ledHandler = new LedHandler(this);
     private Intent serverIntent;
-    private int testType = 0;//0自动 1手动
+    private int testType = 1;//0自动 1手动
     private boolean isFault;
 
     @Override
     protected int setLayoutResID() {
-        return R.layout.activity_base_person_test;
+        return R.layout.activity_base_test;
     }
 
     @Override
@@ -359,7 +360,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             case R.id.txt_start_test:
 
                 if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
-                    pair.setTestTime(DateUtil.getCurrentTime() + "");
+                    updateTestBtnState();
                     sendTestCommand(pair);
                 }
 
@@ -461,7 +462,6 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), roundNo)
                     , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), roundNo));
             if (testType == 0) {
-                pair.setTestTime(DateUtil.getCurrentTime() + "");
                 sendTestCommand(pair);
             }
             setShowLed(pair);
@@ -493,6 +493,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             txtStuResult.setText("");
             imgPortrait.setImageResource(R.mipmap.icon_head_photo);
         }
+        updateInitBtnState();
     }
 
 
@@ -593,7 +594,6 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             ledHandler.sendMessageDelayed(msg, 2000);
             pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
             if (testType != 1) {
-                pair.setTestTime(DateUtil.getCurrentTime() + "");
                 sendTestCommand(pair);
             }
 
@@ -650,8 +650,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         roundResult.setMachineResult(baseStuPair.getResult());
         roundResult.setResultState(baseStuPair.getResultState());
         roundResult.setTestTime(baseStuPair.getTestTime());
-        //生成结束时间
-        roundResult.setEndTime(System.currentTimeMillis() + "");
+        roundResult.setEndTime(baseStuPair.getEndTime());
         roundResult.setRoundNo(roundNo);
         roundResult.setTestNo(testNo);
         roundResult.setExamType(studentItem.getExamType());
@@ -683,13 +682,14 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             roundResult.setIsLastResult(1);
             updateLastResultLed(roundResult);
         }
-
+        //生成结束时间
+        roundResult.setEndTime(System.currentTimeMillis()+"");
         DBManager.getInstance().insertRoundResult(roundResult);
         Logger.i("saveResult==>insertRoundResult->" + roundResult.toString());
         List<RoundResult> roundResultList = new ArrayList<>();
         roundResultList.add(roundResult);
         UploadResults uploadResults = new UploadResults(studentItem.getScheduleNo(), TestConfigs.getCurrentItemCode(),
-                baseStuPair.getStudent().getStudentCode(), testNo + "", null, RoundResultBean.beanCope(roundResultList));
+                baseStuPair.getStudent().getStudentCode(), testNo + "", "", RoundResultBean.beanCope(roundResultList));
 
 
         uploadResult(uploadResults);
@@ -839,16 +839,16 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 
     private static class LedHandler extends Handler {
 
-        private WeakReference<BasePersonTestActivity> mActivityWeakReference;
+        private WeakReference<BaseTestActivity> mActivityWeakReference;
 
-        public LedHandler(BasePersonTestActivity activity) {
+        public LedHandler(BaseTestActivity activity) {
             mActivityWeakReference = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            BasePersonTestActivity activity = mActivityWeakReference.get();
+            BaseTestActivity activity = mActivityWeakReference.get();
             activity.setShowLed((BaseStuPair) msg.obj);
 
         }
@@ -860,16 +860,16 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
      */
     private static class ClearHandler extends Handler {
 
-        private WeakReference<BasePersonTestActivity> mActivityWeakReference;
+        private WeakReference<BaseTestActivity> mActivityWeakReference;
 
-        public ClearHandler(BasePersonTestActivity activity) {
+        public ClearHandler(BaseTestActivity activity) {
             mActivityWeakReference = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            BasePersonTestActivity activity = mActivityWeakReference.get();
+            BaseTestActivity activity = mActivityWeakReference.get();
             Logger.i("ClearHandler:清理学生信息");
             if (activity != null) {
                 activity.pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
@@ -884,4 +884,19 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 
         }
     }
+    protected void updateInitBtnState(){
+        txtStartTest.setVisibility(View.VISIBLE);
+        txtStuSkip.setVisibility(View.VISIBLE);
+        txtCommit.setVisibility(View.GONE);
+        txtPf.setVisibility(View.GONE);
+        txtFg.setVisibility(View.GONE);
+    }
+    protected void updateTestBtnState(){
+        txtStartTest.setVisibility(View.VISIBLE);
+        txtStuSkip.setVisibility(View.VISIBLE);
+        txtCommit.setVisibility(View.GONE);
+        txtPf.setVisibility(View.GONE);
+        txtFg.setVisibility(View.GONE);
+    }
+
 }

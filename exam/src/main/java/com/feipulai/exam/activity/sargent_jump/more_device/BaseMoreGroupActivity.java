@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.tts.TtsManager;
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -292,6 +293,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                             if (isAllTest()) {
                                 toastSpeak("当前分组已测试完成，请选下一组");
                             } else {
+                                deviceDetails.get(pos).getStuDevicePair().setTestTime(DateUtil.getCurrentTime() + "");
                                 toStart(pos);
                                 updateLastResultLed("", pos);
                             }
@@ -547,6 +549,12 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                                 stuAdapter.setTestPosition(j);
                                 stuAdapter.notifyDataSetChanged();
                                 deviceListAdapter.notifyItemChanged(index);
+                                if (!isNextClickStart) {
+                                    deviceDetails.get(index).getStuDevicePair().setTestTime(DateUtil.getCurrentTime() + "");
+                                    toStart(index);
+                                    if (deviceCount > 1)
+                                        updateLastResultLed("", index);
+                                }
                                 break;
                             }
                         }
@@ -594,6 +602,12 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 rvTestStu.scrollToPosition(stuPos);
                 stuAdapter.setTestPosition(stuPos);
                 stuAdapter.notifyDataSetChanged();
+                if (!isNextClickStart) {
+                    deviceDetails.get(stuPos).getStuDevicePair().setTestTime(DateUtil.getCurrentTime() + "");
+                    toStart(stuPos);
+                    if (deviceCount > 1)
+                        updateLastResultLed("", stuPos);
+                }
                 break;
             }
         }
@@ -811,6 +825,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                         group.setIsTestComplete(2);
                         DBManager.getInstance().updateGroup(group);
                         if (!isNextClickStart) {
+                            deviceDetails.get(deviceIndex).getStuDevicePair().setTestTime(DateUtil.getCurrentTime() + "");
                             toStart(deviceIndex);
                             updateLastResultLed("", deviceIndex);
                         }
@@ -880,6 +895,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                             rvTestStu.scrollToPosition(stuAdapter.getTestPosition());
                             updateLastResultLed("", index);
                             if (!isNextClickStart) {
+                                deviceDetails.get(index).getStuDevicePair().setTestTime(DateUtil.getCurrentTime() + "");
                                 toStart(index);
                             }
                             stuAdapter.notifyDataSetChanged();
@@ -941,6 +957,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                         rvTestStu.scrollToPosition(stuAdapter.getTestPosition());
                         updateLastResultLed("", deviceIndex);
                         if (!isNextClickStart) {
+                            deviceDetails.get(deviceIndex).getStuDevicePair().setTestTime(DateUtil.getCurrentTime() + "");
                             toStart(deviceIndex);
                         }
                         stuAdapter.notifyDataSetChanged();
@@ -1066,7 +1083,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         roundResultList.add(roundResult);
         UploadResults uploadResults = new UploadResults(group.getScheduleNo()
                 , TestConfigs.getCurrentItemCode(), baseStuPair.getStudent().getStudentCode()
-                , "1", group.getGroupNo() + "", RoundResultBean.beanCope(roundResultList));
+                , "1", group, RoundResultBean.beanCope(roundResultList, group));
 
         uploadResult(uploadResults);
     }
