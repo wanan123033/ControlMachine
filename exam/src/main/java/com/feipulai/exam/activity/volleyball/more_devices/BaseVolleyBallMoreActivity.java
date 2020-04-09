@@ -437,7 +437,7 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
         roundResult.setPenaltyNum(baseStuPair.getPenaltyNum());
         roundResult.setResultState(1);
 //        roundResult.setTestTime(TestConfigs.df.format(Calendar.getInstance().getTime()));
-        roundResult.setTestTime(baseStuPair.getStartTime());
+        roundResult.setTestTime(baseStuPair.getTestTime());
         roundResult.setRoundNo(baseStuPair.getRoundNo() + 1);
         roundResult.setTestNo(testNo);
         roundResult.setExamType(studentItem.getExamType());
@@ -478,7 +478,7 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
         List<RoundResult> roundResultList = new ArrayList<>();
         roundResultList.add(roundResult);
         UploadResults uploadResults = new UploadResults(studentItem.getScheduleNo(), TestConfigs.getCurrentItemCode(),
-                baseStuPair.getStudent().getStudentCode(), testNo + "", "", RoundResultBean.beanCope(roundResultList));
+                baseStuPair.getStudent().getStudentCode(), testNo + "", null, RoundResultBean.beanCope(roundResultList));
 
         uploadResult(uploadResults);
 

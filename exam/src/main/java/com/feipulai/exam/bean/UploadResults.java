@@ -5,7 +5,10 @@ import android.text.TextUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.RoundResult;
+
+import org.greenrobot.greendao.annotation.NotNull;
 
 import java.io.Serializable;
 import java.util.List;
@@ -21,7 +24,9 @@ public class UploadResults implements Serializable {
     private String examItemCode;//项目代码
     private String studentCode; //准考证号
     private String testNum;//测试次数
-    private String groupNo;  //组号
+    private String groupNo = "";  //组号
+    private int groupType;//分组性别（0.男子 1.女子 2.混合）
+    private String sortName;//组别
     private String hostNumber = SettingHelper.getSystemSetting().getHostId() + "";
     private String machineCode = TestConfigs.sCurrentItem.getMachineCode() + "";
     private List<RoundResultBean> roundResultList;
@@ -40,12 +45,17 @@ public class UploadResults implements Serializable {
         this.groupId = groupId;
     }
 
-    public UploadResults(String siteScheduleNo, String itemCode, String studentCode, String testNum, String groupNo, List<RoundResultBean> roundResultList) {
+    public UploadResults(String siteScheduleNo, String itemCode, String studentCode, String testNum, Group group, List<RoundResultBean> roundResultList) {
         this.siteScheduleNo = siteScheduleNo;
         this.examItemCode = itemCode;
         this.studentCode = studentCode;
         this.testNum = testNum;
-        this.groupNo = groupNo;
+        if (group != null) {
+            this.groupNo = group.getGroupNo() + "";
+            this.groupType = group.getGroupType();
+            this.sortName = group.getSortName();
+        }
+
         this.roundResultList = roundResultList;
         RoundResult lastResult;
         if (TestConfigs.sCurrentItem.getLastResultMode() == 1) {

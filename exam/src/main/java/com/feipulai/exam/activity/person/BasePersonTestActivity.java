@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.feipulai.common.tts.TtsManager;
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
@@ -358,6 +359,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             case R.id.txt_start_test:
 
                 if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
+                    pair.setTestTime(DateUtil.getCurrentTime() + "");
                     sendTestCommand(pair);
                 }
 
@@ -459,6 +461,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), roundNo)
                     , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), roundNo));
             if (testType == 0) {
+                pair.setTestTime(DateUtil.getCurrentTime() + "");
                 sendTestCommand(pair);
             }
             setShowLed(pair);
@@ -590,6 +593,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             ledHandler.sendMessageDelayed(msg, 2000);
             pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
             if (testType != 1) {
+                pair.setTestTime(DateUtil.getCurrentTime() + "");
                 sendTestCommand(pair);
             }
 
@@ -646,7 +650,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         roundResult.setMachineResult(baseStuPair.getResult());
         roundResult.setResultState(baseStuPair.getResultState());
         roundResult.setTestTime(baseStuPair.getTestTime());
-        roundResult.setEndTime(baseStuPair.getEndTime());
+        //生成结束时间
+        roundResult.setEndTime(System.currentTimeMillis() + "");
         roundResult.setRoundNo(roundNo);
         roundResult.setTestNo(testNo);
         roundResult.setExamType(studentItem.getExamType());
@@ -678,14 +683,13 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             roundResult.setIsLastResult(1);
             updateLastResultLed(roundResult);
         }
-        //生成结束时间
-        roundResult.setEndTime(System.currentTimeMillis()+"");
+
         DBManager.getInstance().insertRoundResult(roundResult);
         Logger.i("saveResult==>insertRoundResult->" + roundResult.toString());
         List<RoundResult> roundResultList = new ArrayList<>();
         roundResultList.add(roundResult);
         UploadResults uploadResults = new UploadResults(studentItem.getScheduleNo(), TestConfigs.getCurrentItemCode(),
-                baseStuPair.getStudent().getStudentCode(), testNo + "", "", RoundResultBean.beanCope(roundResultList));
+                baseStuPair.getStudent().getStudentCode(), testNo + "", null, RoundResultBean.beanCope(roundResultList));
 
 
         uploadResult(uploadResults);

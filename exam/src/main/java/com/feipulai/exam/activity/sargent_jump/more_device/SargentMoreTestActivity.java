@@ -110,7 +110,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
 
     @Override
     protected void sendTestCommand(BaseStuPair pair, int index) {
-        pair.setStartTime(TestConfigs.df.format(new Date()));
+        pair.setTestTime(TestConfigs.df.format(new Date()));
         pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
         updateDevice(pair.getBaseDevice());
         int id = pair.getBaseDevice().getDeviceId();

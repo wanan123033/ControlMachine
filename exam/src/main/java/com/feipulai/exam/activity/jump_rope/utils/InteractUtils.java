@@ -124,25 +124,25 @@ public class InteractUtils {
             } else {
                 List<UploadResults> uploadResults = new ArrayList<>();
                 for (Student student : TestCache.getInstance().getAllStudents()) {
-                    String groupNo;
+                    Group upGroup;
                     String scheduleNo;
                     String testNo;
                     List<RoundResult> roundResultList = TestCache.getInstance().getResults().get(student);
                     if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN) {
                         Group group = TestCache.getInstance().getGroup();
-                        groupNo = group.getGroupNo() + "";
+                        upGroup = group ;
                         scheduleNo = group.getScheduleNo();
                         testNo = "1";
                     } else {
                         StudentItem studentItem = TestCache.getInstance().getStudentItemMap().get(student);
                         scheduleNo = studentItem.getScheduleNo();
-                        groupNo = "";
+                        upGroup =null;
                         testNo = TestCache.getInstance().getTestNoMap().get(student) + "";
                     }
                     if (roundResultList != null && roundResultList.size() != 0) {
                         UploadResults uploadResult = new UploadResults(scheduleNo,
                                 TestConfigs.getCurrentItemCode(), student.getStudentCode()
-                                , testNo, groupNo, RoundResultBean.beanCope(roundResultList));
+                                , testNo, upGroup, RoundResultBean.beanCope(roundResultList,upGroup));
                         uploadResults.add(uploadResult);
                     }
 

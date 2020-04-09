@@ -95,7 +95,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
     public void startTest(BaseStuPair baseStuPair) {
         startFlag = true;
         this.baseStuPair = baseStuPair;
-        this.baseStuPair.setStartTime(System.currentTimeMillis()+"");
+        this.baseStuPair.setTestTime(System.currentTimeMillis()+"");
         mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                 SerialConfigs.CMD_MEDICINE_BALL_FAST_EMPTY));
         testState = TestState.UN_STARTED;

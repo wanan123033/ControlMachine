@@ -77,8 +77,6 @@ public abstract class AbstractRadioTestActivity<Setting>
     private MyHandler mHandler = new MyHandler(this);
     private SweetAlertDialog sweetAlertDialog;
     private RTResultAdapter mAdapter;
-    private String startDate; //开始时间
-    private String endDate; //结束时间
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,7 +171,6 @@ public abstract class AbstractRadioTestActivity<Setting>
 
             case R.id.btn_start_test:
                 presenter.startTest();
-                startDate = System.currentTimeMillis()+"";
                 break;
 
             case R.id.btn_confirm_results:
@@ -181,7 +178,6 @@ public abstract class AbstractRadioTestActivity<Setting>
                 break;
 
             case R.id.btn_finish_test:
-                endDate = System.currentTimeMillis()+"";
                 presenter.finishTest();
                 break;
         }

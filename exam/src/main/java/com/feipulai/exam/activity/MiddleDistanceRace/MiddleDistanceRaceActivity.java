@@ -1661,7 +1661,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                         roundResults.add(roundResult);
 
                         uploadResult = new UploadResults(dbGroupList.getScheduleNo(), resultBean2.getItemCode()
-                                , resultBean2.getStudentCode(), "1", resultBean2.getNo(), RoundResultBean.beanCope2(roundResult));//需要上传的成绩对象
+                                , resultBean2.getStudentCode(), "1",dbGroupList, RoundResultBean.beanCope2(roundResult,dbGroupList));//需要上传的成绩对象
 
                         uploadResults.add(uploadResult);
                     }

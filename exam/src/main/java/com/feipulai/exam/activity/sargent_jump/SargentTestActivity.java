@@ -205,7 +205,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
             }
         }
         testState = TestState.WAIT_RESULT;
-        baseStuPair.setStartTime(TestConfigs.df.format(new Date()));
+        baseStuPair.setTestTime(TestConfigs.df.format(new Date()));
     }
 
     @Override

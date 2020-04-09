@@ -39,7 +39,6 @@ public class BaseStuPair implements Serializable {
     private boolean LEDupdate = true;
     private int time;
     private String testTime; //测试当前轮次的开始时间
-    private String startTime; // 开始时间
     private String endTime; // 结束时间
 
     public BaseStuPair(int result, int resultState, Student student, BaseDeviceState baseDevice) {
@@ -214,13 +213,6 @@ public class BaseStuPair implements Serializable {
         this.testTime = testTime;
     }
 
-    public String getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
-    }
 
     public String getEndTime() {
         return endTime;

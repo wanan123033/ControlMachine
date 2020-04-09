@@ -644,7 +644,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         List<RoundResult> roundResultList = new ArrayList<>();
         roundResultList.add(roundResult);
         UploadResults uploadResults = new UploadResults(studentItem.getScheduleNo(), TestConfigs.getCurrentItemCode(),
-                baseStuPair.getStudent().getStudentCode(), testNo + "", "", RoundResultBean.beanCope(roundResultList));
+                baseStuPair.getStudent().getStudentCode(), testNo + "", null, RoundResultBean.beanCope(roundResultList));
 
 
         uploadResult(uploadResults);

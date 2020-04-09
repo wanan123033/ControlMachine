@@ -82,7 +82,7 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
     public void toStart(int pos) {
         BaseStuPair pair = deviceDetails.get(pos).getStuDevicePair();
         pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
-        pair.setStartTime(System.currentTimeMillis()+"");
+        pair.setTestTime(System.currentTimeMillis()+"");
         updateDevice(pair.getBaseDevice());
         byte[] cmd = CMD_SARGENT_JUMP_START;
         cmd[4] = (byte) pair.getBaseDevice().getDeviceId();

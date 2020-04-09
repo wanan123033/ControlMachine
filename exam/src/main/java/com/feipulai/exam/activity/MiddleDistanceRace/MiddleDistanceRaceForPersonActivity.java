@@ -1783,7 +1783,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                         roundResults.add(roundResult);
 
                         uploadResult = new UploadResults(dbGroupList.getScheduleNo(), resultBean2.getItemCode()
-                                , resultBean2.getStudentCode(), "1", resultBean2.getNo(), RoundResultBean.beanCope2(roundResult));//需要上传的成绩对象
+                                , resultBean2.getStudentCode(), "1", dbGroupList, RoundResultBean.beanCope2(roundResult,dbGroupList));//需要上传的成绩对象
 
 //                        uploadResult.setGroupNo(resultBean2.getNo());
 //                        uploadResult.setSiteScheduleNo(dbGroupList.getScheduleNo());

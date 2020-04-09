@@ -544,7 +544,7 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
         roundResult.setResult(baseStuPair.getResult());
         roundResult.setMachineResult(baseStuPair.getResult());
         roundResult.setResultState(baseStuPair.getResultState());
-        roundResult.setTestTime(baseStuPair.getStartTime());
+        roundResult.setTestTime(baseStuPair.getTestTime());
         roundResult.setRoundNo(roundNo);
         roundResult.setTestNo(1);
         roundResult.setGroupId(group.getId());
@@ -585,7 +585,7 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
         roundResultList.add(roundResult);
         UploadResults uploadResults = new UploadResults(group.getScheduleNo()
                 , TestConfigs.getCurrentItemCode(), baseStuPair.getStudent().getStudentCode()
-                , "1", group.getGroupNo() + "", RoundResultBean.beanCope(roundResultList));
+                , "1", group , RoundResultBean.beanCope(roundResultList,group));
 
         uploadResult(uploadResults);
     }
