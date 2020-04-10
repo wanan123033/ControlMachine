@@ -21,6 +21,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class BluetoothSettingDialog extends AlertDialog.Builder implements AdapterView.OnItemClickListener {
+
     @BindView(R.id.rv_bluetooth)
     ListView rv_bluetooth;
 
@@ -69,7 +70,6 @@ public class BluetoothSettingDialog extends AlertDialog.Builder implements Adapt
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         BluetoothDevice item = adapter.getItem(position);
-
         utils.connect(item.getAddress());
     }
     @OnClick({R.id.btn_search})

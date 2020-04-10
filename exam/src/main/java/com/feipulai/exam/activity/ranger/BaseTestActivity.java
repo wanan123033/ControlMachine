@@ -28,6 +28,7 @@ import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
+import com.feipulai.exam.activity.base.PenalizeDialog;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
@@ -56,7 +57,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-public abstract class BaseTestActivity extends BaseCheckActivity {
+public abstract class BaseTestActivity extends BaseCheckActivity implements PenalizeDialog.PenalizeListener {
     private static final String TAG = "BasePersonTestActivity";
     @BindView(R.id.et_input_text)
     StuSearchEditText etInputText;
@@ -223,7 +224,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
         txtStartTest.setText(isBegin == 0 ? "暂停测试" : "开始测试");
     }
 
-    private void refreshDevice() {
+    public void refreshDevice() {
         if (pair.getBaseDevice() != null) {
             if (pair.getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
                 cbDeviceState.setChecked(true);
@@ -344,7 +345,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
         addStudent(student);
     }
 
-    @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting, R.id.img_AFR})
+    @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting, R.id.img_AFR,R.id.txt_pf})
 //R.id.txt_stu_fault
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -365,9 +366,9 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
                 }
 
                 break;
-//            case R.id.txt_stu_fault:
-//                showPenalize();
-//                break;
+            case R.id.txt_pf:
+                showPenalize();
+                break;
             case R.id.img_AFR:
 //                gotoUVCFaceCamera();
                 showAFR();
@@ -477,7 +478,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
     /**
      * 加载学生信息
      */
-    private void refreshTxtStu(@NonNull Student student) {
+    public void refreshTxtStu(@NonNull Student student) {
         if (student != null) {
             txtStuName.setText(student.getStudentName());
             txtStuSex.setText((student.getSex() == 0 ? "男" : "女"));
@@ -612,24 +613,10 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
      * 展示判罚
      */
     private void showPenalize() {
-        SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
-        alertDialog.setTitleText(getString(R.string.confirm_result));
-        alertDialog.setCancelable(false);
-        alertDialog.setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-            @Override
-            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                sweetAlertDialog.dismissWithAnimation();
-                doResult();
-            }
-        }).setCancelText(getString(R.string.foul)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-            @Override
-            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                sweetAlertDialog.dismissWithAnimation();
-                pair.setResultState(RoundResult.RESULT_STATE_FOUL);
-                updateResult(pair);
-                doResult();
-            }
-        }).show();
+        PenalizeDialog dialog = new PenalizeDialog(this);
+        dialog.setPenalizeListener(this);
+        dialog.setMinMaxValue(-1,1);
+        dialog.show();
     }
 
     /**
@@ -689,7 +676,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
         List<RoundResult> roundResultList = new ArrayList<>();
         roundResultList.add(roundResult);
         UploadResults uploadResults = new UploadResults(studentItem.getScheduleNo(), TestConfigs.getCurrentItemCode(),
-                baseStuPair.getStudent().getStudentCode(), testNo + "", "", RoundResultBean.beanCope(roundResultList));
+                baseStuPair.getStudent().getStudentCode(), testNo + "", null, RoundResultBean.beanCope(roundResultList));
 
 
         uploadResult(uploadResults);
@@ -837,6 +824,21 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
 
     }
 
+    @Override
+    public void penalize(int value) {
+
+    }
+
+    @Override
+    public void dismisson(DialogInterface dialog) {
+        dialog.dismiss();
+    }
+
+    @Override
+    public boolean getPenalize() {
+        return true;
+    }
+
     private static class LedHandler extends Handler {
 
         private WeakReference<BaseTestActivity> mActivityWeakReference;
@@ -892,11 +894,11 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
         txtFg.setVisibility(View.GONE);
     }
     protected void updateTestBtnState(){
-        txtStartTest.setVisibility(View.VISIBLE);
-        txtStuSkip.setVisibility(View.VISIBLE);
-        txtCommit.setVisibility(View.GONE);
-        txtPf.setVisibility(View.GONE);
-        txtFg.setVisibility(View.GONE);
+        txtStartTest.setVisibility(View.GONE);
+        txtStuSkip.setVisibility(View.GONE);
+        txtCommit.setVisibility(View.VISIBLE);
+        txtPf.setVisibility(View.VISIBLE);
+        txtFg.setVisibility(View.VISIBLE);
     }
 
 }

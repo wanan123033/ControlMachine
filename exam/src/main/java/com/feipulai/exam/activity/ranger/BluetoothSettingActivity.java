@@ -47,7 +47,6 @@ public class BluetoothSettingActivity extends BaseTitleActivity implements Adapt
         utils = BluetoothManager.getSpp(getApplicationContext());
         adapter = new BluetoothListAdapter(devices,getApplicationContext());
         rv_bluetooth.setAdapter(adapter);
-        utils.setupService();
         utils.setOnDeviceCallBack(new SppUtils.OnDeviceCallBack() {
             @Override
             public void onDeviceCallBack(BluetoothDevice device) {

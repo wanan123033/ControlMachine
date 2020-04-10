@@ -226,6 +226,7 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
                 break;
             case R.id.tv_wait_start://等待发令
                 waitStart();
+                startTime = System.currentTimeMillis()+"";
                 if (currentTestTime >= maxTestTimes) {
                     isOverTimes = true;
                 } else {
@@ -241,7 +242,6 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
             case R.id.tv_force_start://强制启动
                 playUtils.play(15);//播放枪声
                 forceStart();
-                startTime = System.currentTimeMillis()+"";
                 break;
             case R.id.tv_wait_ready://预备
                 playUtils.play(14);

@@ -81,6 +81,7 @@
                 android:paddingRight="8dp"
                 android:text="外接屏幕"
                 android:textColor="@color/white"
+                android:visibility="gone"
                 android:textSize="20dp" />
 
             <TextView
