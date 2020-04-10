@@ -14,4 +14,5 @@ public abstract class BaseMvpActivity<T extends BasePresenter> extends BaseActiv
         }
         super.onDestroy();
     }
+    
 }

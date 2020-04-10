@@ -153,7 +153,7 @@ public class GripPresenter extends BasePresenter implements GripContract.Present
             switch (msg.what) {
                 case GET_SCORE_RESPONSE:
                     VcWrapper result = (VcWrapper) msg.obj;
-                    view.setGripResult((result.getResult()*100));
+                    view.setResult((result.getResult()*100));
                     break;
                 case SEND_EMPTY:
                     sendEmpty();

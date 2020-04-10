@@ -38,7 +38,10 @@ public class RunTimerDisposeManager {
     public RunTimerDisposeManager(Context mContext) {
         this.mContext = mContext;
         mLEDManager = new RunLEDManager();
-        mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId());
+        int hostId = SettingHelper.getSystemSetting().getHostId();
+        String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
+                + " " + hostId;
+        mLEDManager.resetLEDScreen(hostId,title);
         PrinterManager.getInstance().init();
     }
 

@@ -215,8 +215,8 @@ public class RunLEDManager {
      *
      * @param hostId 主机号
      */
-    public void resetLEDScreen(int hostId) {
-        showString(hostId,"50米跑 "+hostId,getX("50米跑"+hostId),0,true,false);
+    public void resetLEDScreen(int hostId,String title) {
+        showString(hostId,title+hostId,getX(title+hostId),0,true,false);
         showString(hostId, "菲普莱体育", 3, 3, false, true);
     }
 
