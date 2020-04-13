@@ -1,5 +1,6 @@
 package com.feipulai.exam.activity.sargent_jump;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -97,7 +98,12 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
     private int match;
     private int frequency;
     private SweetAlertDialog alertDialog;
-    private int deviceId ;
+    private int deviceId;
+    private static final int CAN_BE_IGNORE = 0XA2;
+    private int ignoreDeviceId;
+    private int flagBad;
+    private Context mContext;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_sargent_setting;
@@ -109,7 +115,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
         if (sargentSetting == null) {
             sargentSetting = new SargentSetting();
         }
-
+        mContext = this;
         init();
     }
 
@@ -352,7 +358,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
                 break;
             case R.id.tv_device_check:
                 RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
-                        check_self( deviceId)));
+                        check_self(deviceId)));
                 break;
             case R.id.tv_accuracy_use:
                 Logger.i("基础高度：" + sargentSetting.getBaseHeight() + "设备号：" + deviceId);
@@ -380,9 +386,9 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
 
     public byte[] setLight(boolean up, int deviceId) {
         byte[] data;
-        if (up){
+        if (up) {
             data = Constants.CMD_SARGENT_JUMP_LIGHT_UP;
-        }else {
+        } else {
             data = Constants.CMD_SARGENT_JUMP_LIGHT_DOWN;
         }
 
@@ -396,7 +402,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
         return data;
     }
 
-    public byte[] check_self( int deviceId) {
+    public byte[] check_self(int deviceId) {
         byte[] data = Constants.CMD_SARGENT_JUMP_CHECK_SELF;
         data[4] = (byte) deviceId;
 
@@ -430,13 +436,38 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
             case SerialConfigs.SARGENT_JUMP_CHECK:
                 SargentJumpResult jumpResult = (SargentJumpResult) msg.obj;
                 byte[] incorrectPoles = jumpResult.getIncorrectPoles();
-                for (int i = 0;i< incorrectPoles.length;i++){
-                    if (incorrectPoles[i] == 1){
+                boolean check = true;
+                flagBad = 0;
+                for (int i = 0; i < incorrectPoles.length; i++) {
+                    if (incorrectPoles[i] == 1) {
                         toastSpeak(MessageFormat.format("第{0}对杆出现异常", i + 1));
+                        check = false;
+                        flagBad++;
                     }
                 }
-                break;
+                if (!check && flagBad < 6) {
+                    mHandler.sendEmptyMessage(CAN_BE_IGNORE);
+                    ignoreDeviceId = jumpResult.getDeviceId();
+                } else if (check && flagBad > 5) {
+                    toastSpeak("当前设备坏点数超过5点");
+                } else if (check) {
+                    toastSpeak("当前设备正常");
+                } else
+                    break;
         }
+    }
+
+    private void ignoreBad(int deviceId) {
+        byte[] data = Constants.CMD_SARGENT_JUMP_IGNORE_BREAK_POINT;
+        data[4] = (byte) deviceId;
+
+        int sum = 0;
+        for (int i = 2; i < 8; i++) {
+            sum += data[i] & 0xff;
+        }
+        data[8] = (byte) sum;
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
+                data));
     }
 
     private int sum(byte[] cmd) {
@@ -473,6 +504,23 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
                         ToastUtils.showShort("匹配失败");
                         alertDialog.dismiss();
                     }
+                    break;
+                case CAN_BE_IGNORE:
+                    new SweetAlertDialog(mContext, SweetAlertDialog.WARNING_TYPE)
+                            .setTitleText(mContext.getString(com.feipulai.common.R.string.clear_dialog_title))
+                            .setContentText("检查到有坏点" + flagBad + "个是否忽略")
+                            .setConfirmText("忽略").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismissWithAnimation();
+                            ignoreBad(ignoreDeviceId);
+                        }
+                    }).setCancelText("否").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismissWithAnimation();
+                        }
+                    }).show();
                     break;
             }
 

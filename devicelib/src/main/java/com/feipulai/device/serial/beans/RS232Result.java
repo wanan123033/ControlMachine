@@ -286,12 +286,7 @@ public class RS232Result {
                             break;
 
                         case 0x04:
-                            if (data.length == 24){//摸高自检
-                                setType(SerialConfigs.SARGENT_JUMP_CHECK);
-                            }else {
-                                setType(SerialConfigs.SARGENT_JUMP_GET_SCORE_RESPONSE);
-
-                            }
+                            setType(SerialConfigs.SARGENT_JUMP_GET_SCORE_RESPONSE);
                             setResult(new SargentJumpResult(data));
                             break;
 
