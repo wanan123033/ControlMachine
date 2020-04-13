@@ -17,6 +17,7 @@ import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.LogUtils;
 import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.device.serial.RadioManager;
 import com.feipulai.exam.BuildConfig;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
@@ -53,6 +54,7 @@ public class SplashScreenActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         // 这里是否还需要延时需要再测试后再修改
+        RadioManager.getInstance().init();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

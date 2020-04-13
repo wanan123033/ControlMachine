@@ -2156,7 +2156,7 @@ public class DBManager {
         sqlBuf.append(" AND I." + GroupItemDao.Properties.GroupType.columnName + " =  " + group.getGroupType());
         sqlBuf.append(" AND I." + GroupItemDao.Properties.SortName.columnName + " = '" + group.getSortName() + "'");
         sqlBuf.append(" AND I." + GroupItemDao.Properties.GroupNo.columnName + " =  " + group.getGroupNo());
-//        sqlBuf.append(" ORDER BY " + GroupItemDao.Properties.TrackNo.columnName + " ASC ");
+        sqlBuf.append(" ORDER BY " + GroupItemDao.Properties.TrackNo.columnName + " ASC ");
 
         Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), null);
 
