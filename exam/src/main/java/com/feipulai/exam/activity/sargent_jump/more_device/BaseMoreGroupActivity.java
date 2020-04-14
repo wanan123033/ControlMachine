@@ -385,6 +385,10 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                         stuAdapter.setTestPosition(i);
                         stuAdapter.notifyDataSetChanged();
                         roundNo++;
+                        if (!isNextClickStart) {
+                            deviceDetails.get(index).getStuDevicePair().setTestTime(DateUtil.getCurrentTime() + "");
+                            toStart(index);
+                        }
                     }
                     return;
                 }
@@ -404,6 +408,10 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 deviceListAdapter.notifyItemChanged(index);
                 stuAdapter.setTestPosition(i);
                 stuAdapter.notifyDataSetChanged();
+                if (!isNextClickStart) {
+                    deviceDetails.get(index).getStuDevicePair().setTestTime(DateUtil.getCurrentTime() + "");
+                    toStart(index);
+                }
             }
 
             return;

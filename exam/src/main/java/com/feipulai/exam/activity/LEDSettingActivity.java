@@ -1,6 +1,7 @@
 package com.feipulai.exam.activity;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
@@ -125,25 +126,32 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
 
     @OnClick({R.id.btn_led_connect, R.id.btn_led_self, R.id.img_led_luminance_munus, R.id.img_led_luminance_add})
     public void onViewClicked(View view) {
-        String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
-                + " " + hostId;
+
         switch (view.getId()) {
             case R.id.btn_led_connect:
-                if (flag == 0) {
-                    runLEDManager.link(hostId);
-                    runLEDManager.resetLEDScreen(hostId,title);
-                } else {
-                    if (SettingHelper.getSystemSetting().getLedVersion() == 0) {
-                        mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), hostId, 1);
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
+                                + " " + hostId;
+                        if (flag == 0) {
+                            runLEDManager.link(hostId);
+                            runLEDManager.resetLEDScreen(hostId,title);
+                        } else {
+                            if (SettingHelper.getSystemSetting().getLedVersion() == 0) {
+                                mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), hostId, 1);
 
-                        mLEDManager.showSubsetString(hostId, 1, title, 0, true, false, LEDManager.MIDDLE);
-                        mLEDManager.showSubsetString(hostId, 1, "菲普莱体育", 3, 3, false, true);
-                    } else {
-                        mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), hostId);
-                        mLEDManager.showString(hostId, title, 0, true, false, LEDManager.MIDDLE);
-                        mLEDManager.showString(hostId, "菲普莱体育", 3, 3, false, true);
+                                mLEDManager.showSubsetString(hostId, 1, title, 0, true, false, LEDManager.MIDDLE);
+                                mLEDManager.showSubsetString(hostId, 1, "菲普莱体育", 3, 3, false, true);
+                            } else {
+                                mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), hostId);
+                                mLEDManager.showString(hostId, title, 0, true, false, LEDManager.MIDDLE);
+                                mLEDManager.showString(hostId, "菲普莱体育", 3, 3, false, true);
+                            }
+                        }
                     }
-                }
+                });
+
                 break;
 
             case R.id.btn_led_self:

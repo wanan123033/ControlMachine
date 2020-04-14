@@ -148,7 +148,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity implements Sta
                         break;
 
                     case UPDATE_RESULT:
-                        activity.pair.setEndTime(DateUtil.getCurrentTime());
+
                         activity.updateResult((BaseStuPair) msg.obj);
                         break;
                 }

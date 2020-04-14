@@ -325,6 +325,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             txtStuResult.setText("");
             toastSpeak(pair.getStudent().getSpeakStuName() + "请准备");
             if (testType == 0) {
+                pair.setStartTime(DateUtil.getCurrentTime());
                 sendTestCommand(pair);
             }
             setShowLed(pair);
@@ -402,6 +403,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 resultList.addAll(Arrays.asList(result));
                 adapter.notifyDataSetChanged();
                 pair.setTimeResult(result);
+                pair.setEndTime(DateUtil.getCurrentTime());
                 //保存成绩
                 saveResult(pair);
                 printResult(pair);

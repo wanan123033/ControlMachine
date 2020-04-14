@@ -68,7 +68,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        RadioManager.getInstance().init();
+
         StatusBarUtil.setImmersiveTransparentStatusBar(this);//设置沉浸式透明状态栏 配合使用
 
         //配置网络
