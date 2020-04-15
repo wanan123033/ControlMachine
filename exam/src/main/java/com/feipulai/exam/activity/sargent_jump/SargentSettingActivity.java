@@ -2,7 +2,6 @@ package com.feipulai.exam.activity.sargent_jump;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -47,9 +46,13 @@ import org.greenrobot.eventbus.EventBus;
 import java.text.MessageFormat;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
+
+import static com.feipulai.device.manager.SargentJumpMore.CMD_SARGENT_JUMP_CHECK_SELF;
+import static com.feipulai.device.manager.SargentJumpMore.CMD_SARGENT_JUMP_IGNORE_BREAK_POINT;
+import static com.feipulai.device.manager.SargentJumpMore.CMD_SARGENT_JUMP_LIGHT_DOWN;
+import static com.feipulai.device.manager.SargentJumpMore.CMD_SARGENT_JUMP_LIGHT_UP;
 
 public class SargentSettingActivity extends BaseTitleActivity implements CompoundButton.OnCheckedChangeListener, AdapterView.OnItemSelectedListener, RadioGroup.OnCheckedChangeListener, RadioManager.OnRadioArrivedListener {
     @BindView(R.id.cb_run_up)
@@ -387,9 +390,9 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
     public byte[] setLight(boolean up, int deviceId) {
         byte[] data;
         if (up) {
-            data = Constants.CMD_SARGENT_JUMP_LIGHT_UP;
+            data = CMD_SARGENT_JUMP_LIGHT_UP;
         } else {
-            data = Constants.CMD_SARGENT_JUMP_LIGHT_DOWN;
+            data = CMD_SARGENT_JUMP_LIGHT_DOWN;
         }
 
         data[4] = (byte) deviceId;
@@ -403,7 +406,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
     }
 
     public byte[] check_self(int deviceId) {
-        byte[] data = Constants.CMD_SARGENT_JUMP_CHECK_SELF;
+        byte[] data = CMD_SARGENT_JUMP_CHECK_SELF;
         data[4] = (byte) deviceId;
 
         int sum = 0;
@@ -458,7 +461,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
     }
 
     private void ignoreBad(int deviceId) {
-        byte[] data = Constants.CMD_SARGENT_JUMP_IGNORE_BREAK_POINT;
+        byte[] data = CMD_SARGENT_JUMP_IGNORE_BREAK_POINT;
         data[4] = (byte) deviceId;
 
         int sum = 0;

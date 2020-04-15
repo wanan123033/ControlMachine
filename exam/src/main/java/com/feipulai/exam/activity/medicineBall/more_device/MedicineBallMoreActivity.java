@@ -31,9 +31,9 @@ import java.text.MessageFormat;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-import static com.feipulai.exam.activity.medicineBall.MedicineConstant.CMD_MEDICINE_BALL_EMPTY;
-import static com.feipulai.exam.activity.medicineBall.MedicineConstant.CMD_MEDICINE_BALL_SET_EMPTY;
-import static com.feipulai.exam.activity.medicineBall.MedicineConstant.CMD_MEDICINE_BALL_START;
+import static com.feipulai.device.manager.MedicineBallMore.CMD_MEDICINE_BALL_EMPTY;
+import static com.feipulai.device.manager.MedicineBallMore.CMD_MEDICINE_BALL_SET_EMPTY;
+import static com.feipulai.device.manager.MedicineBallMore.CMD_MEDICINE_BALL_START;
 import static com.feipulai.exam.activity.medicineBall.MedicineConstant.GET_SCORE_RESPONSE;
 
 public class MedicineBallMoreActivity extends BaseMoreActivity {
