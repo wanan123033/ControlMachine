@@ -45,6 +45,7 @@ public class RS232Result {
                 break;
 
             case ItemDefault.CODE_ZFP:
+            case ItemDefault.CODE_LQYQ:
                 if (data[data.length - 1] == 0x0d) {//包尾 ==0xd
                     switch (data[6]) {
                         case (byte) 0xc1://参数设置
@@ -99,7 +100,7 @@ public class RS232Result {
                         && data[3] == 0x10  //[02] [03]：长度高字节0x00   低字节0x10
                         && data[5] == 0x08//[05]：项目编号   5—仰卧起坐    8—俯卧撑
                         && data[14] == 0x27 && data[15] == 0x0d//[14] [15]：包尾高字节0x27   低字节0x0d
-                        ) {
+                ) {
                     // 仰卧起坐
                     int sum = 0;
                     //0b 命令(获取数据)不需要校验
@@ -286,12 +287,7 @@ public class RS232Result {
                             break;
 
                         case 0x04:
-                            if (data.length == 24){//摸高自检
-                                setType(SerialConfigs.SARGENT_JUMP_CHECK);
-                            }else {
-                                setType(SerialConfigs.SARGENT_JUMP_GET_SCORE_RESPONSE);
-
-                            }
+                            setType(SerialConfigs.SARGENT_JUMP_GET_SCORE_RESPONSE);
                             setResult(new SargentJumpResult(data));
                             break;
 

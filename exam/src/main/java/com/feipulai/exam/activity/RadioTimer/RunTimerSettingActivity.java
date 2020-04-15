@@ -186,10 +186,10 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         if (carryMode != 0) {
             spMarkDegree.setEnabled(false);
             spMarkDegree.setSelection(carryMode - 1);
+            runTimerSetting.setMarkDegree(carryMode);
         } else {
             spMarkDegree.setSelection(runTimerSetting.getMarkDegree() - 1);
         }
-        runTimerSetting.setMarkDegree(carryMode);
 
         String[] interceptItems = {"红外拦截触发", "发令传感器触发"};
         ArrayAdapter<String> adapter1 = new ArrayAdapter<>(this,

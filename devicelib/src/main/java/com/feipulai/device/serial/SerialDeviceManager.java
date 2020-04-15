@@ -39,6 +39,7 @@ public class SerialDeviceManager {
         machinBaudrate.put(ItemDefault.CODE_MG,9600);
         machinBaudrate.put(ItemDefault.CODE_FWC,9600);
         machinBaudrate.put(ItemDefault.CODE_GPS, 9600);
+        machinBaudrate.put(ItemDefault.CODE_LQYQ, 9600);
     }
 
     private SerialDeviceManager() {

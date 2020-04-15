@@ -277,4 +277,21 @@ public class SerialConfigs {
     public static final int GRIP_SET_MORE_MATCH = 0x70;
     public static final int SARGENT_JUMP_CHECK = 0x71;
 
+
+    /**红外计时
+     * @param cmd   控制
+     * @param mark  key
+     * @param value value
+     * @return
+     */
+    public static byte[] cmd(byte cmd, byte mark, byte value) {
+        byte[] setting = {(byte) 0xBB, 0x0C, (byte) 0xA0, 0x00, (byte) 0xA1, 0x00, cmd, mark, value, 0x00, 0x00, 0x0D};
+        int sum = 0;
+        for (int i = 0; i < 9; i++) {
+            sum += setting[i];
+        }
+        setting[10] = (byte) sum;
+        return setting;
+    }
+
 }

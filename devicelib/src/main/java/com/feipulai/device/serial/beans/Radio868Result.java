@@ -154,6 +154,10 @@ public class Radio868Result {
                                 setType(SerialConfigs.SARGENT_JUMP_EMPTY_RESPONSE);
                                 setResult(new SargentJumpResult(data));
                                 break;
+                            case 0x04:
+                                setType(SerialConfigs.SARGENT_JUMP_CHECK);
+                                setResult(new SargentJumpResult(data));
+                                break;
                         }
                     }
                 }
@@ -279,7 +283,7 @@ public class Radio868Result {
                 break;
             case ItemDefault.CODE_WLJ:
                 if ((data[0] & 0xff) == 0xaa && data.length == 18) {
-                    if (data[7] == 1|| data[7] == 2) {
+                    if (data[7] == 1 || data[7] == 2) {
                         setType(SerialConfigs.GRIP_SET_MORE_MATCH);
                     } else {
                         setType(SerialConfigs.VITAL_CAPACITY_RESULT);
