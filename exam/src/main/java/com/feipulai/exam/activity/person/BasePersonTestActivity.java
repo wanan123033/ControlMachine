@@ -512,6 +512,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     }
 
     private void stuSkipDialog() {
+        if (pair.getStudent() == null) {
+            return;
+        }
         new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
                 .setTitleText("是否跳过" + pair.getStudent().getStudentName() + "考生测试")
                 .setConfirmText("确认").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
@@ -543,6 +546,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
      */
     public void updateDevice(@NonNull BaseDeviceState deviceState) {
         Logger.i("updateDevice==>" + deviceState.toString());
+        if (pair.getStudent() == null) {
+            return;
+        }
         if (pair.getBaseDevice() != null) {
             pair.getBaseDevice().setState(deviceState.getState());
             //状态为测试已结束
@@ -612,6 +618,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
      * 展示判罚
      */
     private void showPenalize() {
+        if (pair.getStudent() == null) {
+            return;
+        }
         SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
         alertDialog.setTitleText(getString(R.string.confirm_result));
         alertDialog.setCancelable(false);
@@ -638,6 +647,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
      * @param baseStuPair 当前设备
      */
     private void saveResult(@NonNull BaseStuPair baseStuPair) {
+        if (baseStuPair.getStudent() == null) {
+            return;
+        }
         Logger.i("saveResult==>" + baseStuPair.toString());
         if (baseStuPair.getStudent() == null)
             return;
@@ -722,6 +734,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
      * @param baseStu
      */
     public synchronized void updateResult(@NonNull BaseStuPair baseStu) {
+
         if (null != pair.getBaseDevice()) {
             pair.setResultState(baseStu.getResultState());
             pair.setResult(baseStu.getResult());
@@ -737,6 +750,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
      * 播报结果
      */
     private void broadResult(@NonNull BaseStuPair baseStuPair) {
+        if (baseStuPair.getStudent() == null) {
+            return;
+        }
         if (SettingHelper.getSystemSetting().isAutoBroadcast()) {
             if (baseStuPair.getResultState() == RoundResult.RESULT_STATE_FOUL) {
                 TtsManager.getInstance().speak(baseStuPair.getStudent().getSpeakStuName() + "犯规");
@@ -755,7 +771,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
      * @param stuPair
      */
     private void setShowLed(BaseStuPair stuPair) {
-
+        if (stuPair.getStudent() == null) {
+            return;
+        }
         mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), stuPair.getStudent().getLEDStuName() + "   第" + roundNo + "次", 0, 0, true, false);
         mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "当前：", 0, 1, false, true);
         RoundResult bestResult = DBManager.getInstance().queryBestScore(stuPair.getStudent().getStudentCode(), testNo);
@@ -821,6 +839,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             return;
         }
         Student student = baseStuPair.getStudent();
+        if (student == null) {
+            return;
+        }
 //        PrinterManager.getInstance().print("\n");
         PrinterManager.getInstance().print(TestConfigs.sCurrentItem.getItemName() + SettingHelper.getSystemSetting().getHostId() + "号机");
         PrinterManager.getInstance().print("考  号:" + student.getStudentCode());
