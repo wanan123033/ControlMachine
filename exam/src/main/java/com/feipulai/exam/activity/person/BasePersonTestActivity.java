@@ -47,11 +47,8 @@ import com.orhanobut.logger.Logger;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -647,9 +644,6 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
      * @param baseStuPair 当前设备
      */
     private void saveResult(@NonNull BaseStuPair baseStuPair) {
-        if (baseStuPair.getStudent() == null) {
-            return;
-        }
         Logger.i("saveResult==>" + baseStuPair.toString());
         if (baseStuPair.getStudent() == null)
             return;

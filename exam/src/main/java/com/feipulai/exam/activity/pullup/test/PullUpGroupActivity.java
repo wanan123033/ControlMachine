@@ -519,12 +519,14 @@ public class PullUpGroupActivity extends BaseTitleActivity
                     public void onClick(DialogInterface dialog, int which) {
                         int value = -1 * numberPicker.getValue();
                         if (value != pairs.get(position()).getPenalty()) {
+                            Logger.i("初始成绩："+ResultDisplayUtils.getStrResultForDisplay(pairs.get(position()).getDeviceResult().getResult())+"判罚"+value);
                             ledManager.showString(systemSetting.getHostId(), "判罚:" + ResultDisplayUtils.getStrResultForDisplay(value), 1, 2, false, false);
                             ledManager.showString(systemSetting.getHostId(),
                                     "最终:" + ResultDisplayUtils.getStrResultForDisplay(pairs.get(position()).getDeviceResult().getResult() + value),
                                     1, 3, false, true);
                         }
                         pairs.get(position()).setPenalty(value);
+
                         ToastUtils.showShort("判罚成功");
                     }
                 })

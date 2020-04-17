@@ -45,7 +45,6 @@ public class BaseActivity extends FragmentActivity {
         EventBus.getDefault().register(this);
         //知晓当前是在哪一个Activity
         mActivityName = getClass().getSimpleName();
-        Logger.d(mActivityName + ".onCreateView");
         //未捕获异常处理,重启防止崩溃
         //Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler(this));
         ActivityCollector.getInstance().onCreate(this);
@@ -65,19 +64,16 @@ public class BaseActivity extends FragmentActivity {
 
     @Override
     protected void onRestart() {
-        Logger.d(mActivityName + ".onRestart");
         super.onRestart();
     }
 
     @Override
     protected void onStart() {
-        Logger.d(mActivityName + ".onStart");
         super.onStart();
     }
 
     @Override
     protected void onResume() {
-        Logger.d(mActivityName + ".onResume");
         super.onResume();
 
         // 机器信息为依据,显示title 在onResume方法设置标题避免设置中进行设置名称后未更新标题
@@ -90,13 +86,11 @@ public class BaseActivity extends FragmentActivity {
 
     @Override
     protected void onPause() {
-        Logger.d(mActivityName + ".onPause");
         super.onPause();
     }
 
     @Override
     protected void onStop() {
-        Logger.d(mActivityName + ".onStop");
         super.onStop();
     }
 
@@ -105,7 +99,6 @@ public class BaseActivity extends FragmentActivity {
         super.onDestroy();
         ActivityCollector.getInstance().onDestroy(this);
         EventBus.getDefault().unregister(this);
-        Logger.d(mActivityName + ".onDestroy");
     }
 
     protected void toastSpeak(final String msg) {

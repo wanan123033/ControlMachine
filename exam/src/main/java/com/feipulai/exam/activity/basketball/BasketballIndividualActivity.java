@@ -314,12 +314,14 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 txtDeviceStatus.setText("空闲");
                 break;
             case 2:
+                Logger.i("篮球运球等待");
                 state = WAIT_BEGIN;
                 txtDeviceStatus.setText("等待");
                 tvResult.setText(ResultDisplayUtils.getStrResultForDisplay(0));
                 break;
             case 3:
                 state = TESTING;
+                Logger.i("篮球运球计时");
                 txtDeviceStatus.setText("计时");
 //                testDate = System.currentTimeMillis() + "";
                 break;
@@ -749,6 +751,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 return;
             }
             int penalizeNum = testResult.getPenalizeNum();
+            Logger.i("原始成绩:"+penalizeNum +"判罚:"+punishType);
             if (punishType >= 0) {//+
                 testResult.setPenalizeNum(penalizeNum + 1);
             } else {//-
@@ -969,12 +972,10 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             if (bestResult != null) {
                 bestResult.setIsLastResult(0);
                 DBManager.getInstance().updateRoundResult(bestResult);
-                Logger.i("更新成绩:" + bestResult.toString());
             }
         }
 
         DBManager.getInstance().insertRoundResult(roundResult);
-        Logger.i("保存成绩:" + roundResult.toString());
         //获取所有成绩设置为非最好成绩
         List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(mStudentItem);
         TestCache.getInstance().getResults().put(student, results);

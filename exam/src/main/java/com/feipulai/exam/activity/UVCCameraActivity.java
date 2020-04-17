@@ -27,6 +27,7 @@ import com.feipulai.exam.R;
 import com.lgh.uvccamera.UVCCameraProxy;
 import com.lgh.uvccamera.callback.ConnectCallback;
 import com.lgh.uvccamera.callback.PreviewCallback;
+import com.orhanobut.logger.Logger;
 import com.ww.fpl.libarcface.faceserver.CompareResult;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.libarcface.model.DrawInfo;
@@ -109,7 +110,7 @@ public class UVCCameraActivity extends AppCompatActivity implements PreviewCallb
                 16, 1, FaceEngine.ASF_FACE_RECOGNITION | FaceEngine.ASF_FACE_DETECT | FaceEngine.ASF_LIVENESS);
         VersionInfo versionInfo = new VersionInfo();
         faceEngine.getVersion(versionInfo);
-        Log.i(TAG, "initEngine:  init: " + afCode + "  version:" + versionInfo);
+        Logger.i(TAG, "initEngine:  init: " + afCode + "  version:" + versionInfo);
 
         if (afCode != ErrorInfo.MOK) {
             Toast.makeText(this, getString(R.string.init_failed, afCode), Toast.LENGTH_SHORT).show();

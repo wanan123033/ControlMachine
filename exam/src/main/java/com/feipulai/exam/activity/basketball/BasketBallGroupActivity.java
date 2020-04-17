@@ -52,7 +52,6 @@ import com.orhanobut.logger.Logger;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -655,10 +654,8 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             if (bestResult != null) {
                 bestResult.setIsLastResult(0);
                 DBManager.getInstance().updateRoundResult(bestResult);
-                Logger.i("更新成绩:" + bestResult.toString());
             }
         }
-        Logger.i("保存成绩:" + roundResult.toString());
         DBManager.getInstance().insertRoundResult(roundResult);
         //获取所有成绩设置为非最好成绩
         List<RoundResult> results = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");
@@ -683,6 +680,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                 return;
             }
             int penalizeNum = testResult.getPenalizeNum();
+            Logger.i("原始成绩:"+penalizeNum +"判罚:"+punishType);
             if (punishType >= 0) {//+
                 testResult.setPenalizeNum(penalizeNum + 1);
             } else {//-

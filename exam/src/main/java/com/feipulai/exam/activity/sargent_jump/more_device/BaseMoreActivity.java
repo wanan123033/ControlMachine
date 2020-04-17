@@ -46,7 +46,6 @@ import com.orhanobut.logger.Logger;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -451,7 +450,6 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     }
 
     public synchronized void updateDevice(@NonNull BaseDeviceState deviceState) {
-        Logger.i("updateDevice==>" + deviceState.toString());
         int deviceId = deviceState.getDeviceId();
         BaseStuPair pair = null;
         int index = 0;
@@ -469,10 +467,6 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             pair.getBaseDevice().setState(deviceState.getState());
             //状态为测试已结束
             if (deviceState.getState() == BaseDeviceState.STATE_END) {
-                if (pair.getStudent() != null) {
-                    Logger.i("考生" + pair.getStudent().toString());
-                }
-                Logger.i("设备成绩信息STATE_END==>" + deviceState.toString());
                 if (isPenalize && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
 
                     if (setTestDeviceCount() == 1) {

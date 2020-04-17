@@ -2,6 +2,7 @@ package com.feipulai.exam.activity.jump_rope.test;
 
 import android.content.Context;
 import android.os.Message;
+import android.util.Log;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.manager.JumpRopeManager;
@@ -14,6 +15,7 @@ import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.JumpDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSetting;
+import com.orhanobut.logger.Logger;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -183,7 +185,7 @@ public class JumpRopeTestPresenter
             return;
         }
         JumpRopeResult result = (JumpRopeResult) msg.obj;
-        // Log.i("JumpRopeResult", result.toString());
+        Logger.i("JumpRopeResult===>"+ result.toString());
         if (!mLinking) {
             setDeviceState(result);
         } else {

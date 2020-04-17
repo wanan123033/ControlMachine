@@ -8,6 +8,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.serial.RadioManager;
@@ -205,7 +206,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
             }
         }
         testState = TestState.WAIT_RESULT;
-        baseStuPair.setTestTime(TestConfigs.df.format(new Date()));
+        baseStuPair.setTestTime(DateUtil.getCurrentTime()+"");
     }
 
     @Override
@@ -355,7 +356,6 @@ public class SargentTestActivity extends BasePersonTestActivity {
     public void onEventMainThread(BaseEvent baseEvent) {
         switch (baseEvent.getTagInt()) {
             case EventConfigs.ITEM_SETTING_UPDATE:
-                Log.i(TAG, "ITEM_SETTING_UPDATE");
                 initData();
                 if (checkService != null) {
                     checkService.shutdown();

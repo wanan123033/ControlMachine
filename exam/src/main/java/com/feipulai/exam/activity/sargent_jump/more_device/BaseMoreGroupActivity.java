@@ -347,7 +347,6 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         }
         //跳过成绩保存
         if (studentList == null || studentList.size() == 0 || stuAdapter.getTestPosition() == -1) {
-            Logger.i("TestPosition" + stuAdapter.getTestPosition());
             return;
         }
         if (deviceDetails.get(index).getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_ERROR)
@@ -696,7 +695,6 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
             if (pair.getStudent() != null) {
                 Logger.i("考生" + pair.getStudent().toString());
             }
-            Logger.i("设备成绩信息STATE_END==>" + deviceState.toString());
 //            pair.setCanTest(true);
 //            pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
             if (isPenalize && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
@@ -911,7 +909,6 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                     }, 3000);
                     deviceDetails.get(index).setRound(roundNo + 1);
                     deviceDetails.get(index).getStuDevicePair().setBaseHeight(0);
-                    Logger.i("下一位测试考生：" + studentList.get(stuAdapter.getTestPosition()));
                     group.setIsTestComplete(2);
                     DBManager.getInstance().updateGroup(group);
                     return;

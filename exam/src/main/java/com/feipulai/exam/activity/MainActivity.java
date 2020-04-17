@@ -44,7 +44,6 @@ import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.netUtils.CommonUtils;
-import com.orhanobut.logger.Logger;
 
 import java.util.List;
 
@@ -86,7 +85,6 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
         machineCode = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, SharedPrefsConfigs
                 .DEFAULT_MACHINE_CODE);
         String itemCode = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
-        // Logger.i("machineCode:" + machineCode);
         int initState = TestConfigs.init(this, machineCode, itemCode, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -217,7 +215,6 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
 
     @OnClick(R.id.img_code)
     public void onCodeClicked(View view) {
-        Logger.i("imgH===>" + imgCode.getHeight());
         if (imgCode.getHeight() <= 55) {
             imgCode.setImageResource(R.mipmap.icon_code_big);
         } else {

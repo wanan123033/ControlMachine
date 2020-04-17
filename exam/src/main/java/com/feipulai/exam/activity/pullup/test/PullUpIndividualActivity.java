@@ -285,7 +285,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
     private void onResultConfirmed() {
         StuDevicePair pair = pairs.get(0);
         int result = pair.getDeviceResult().getResult() + pair.getPenalty();
-
+        Logger.i("引体向上成绩："+ResultDisplayUtils.getStrResultForDisplay(result));
         if (systemSetting.isAutoBroadcast()) {
 
             TtsManager.getInstance().speak(String.format(getString(R.string.speak_result), pair.getStudent().getSpeakStuName(),
@@ -531,6 +531,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
                                     1, 3, false, true);
                         }
                         pairs.get(0).setPenalty(value);
+                        Logger.i("判罚："+value);
                         toastSpeak("判罚成功");
                     }
                 })

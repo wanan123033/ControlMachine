@@ -268,7 +268,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
         StuDevicePair pair = pairs.get(position());
         Student student = pair.getStudent();
         List<RoundResult> roundResults = testCache.getResults().get(student);
-
+        Logger.i("成绩："+ResultDisplayUtils.getStrResultForDisplay(roundResults.get(roundResults.size() - 1).getResult()));
         if (systemSetting.isAutoBroadcast()) {
 
             TtsManager.getInstance().speak(

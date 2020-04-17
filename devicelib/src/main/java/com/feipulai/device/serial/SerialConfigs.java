@@ -277,21 +277,14 @@ public class SerialConfigs {
     public static final int GRIP_SET_MORE_MATCH = 0x70;
     public static final int SARGENT_JUMP_CHECK = 0x71;
 
+    //坐位体前屈
+    public static final int SIT_REACH_FREQUENCY = 0x72;
+    public static final int SIT_REACH_PARAMETER = 0x73;
+    public static final int SIT_REACH_START = 0x74;
+    public static final int SIT_REACH_END = 0x75;
+    public static final int SIT_REACH_VERSION = 0x76;
+    public static final int SIT_REACH_GET_STATE = 0x77;
 
-    /**红外计时
-     * @param cmd   控制
-     * @param mark  key
-     * @param value value
-     * @return
-     */
-    public static byte[] cmd(byte cmd, byte mark, byte value) {
-        byte[] setting = {(byte) 0xBB, 0x0C, (byte) 0xA0, 0x00, (byte) 0xA1, 0x00, cmd, mark, value, 0x00, 0x00, 0x0D};
-        int sum = 0;
-        for (int i = 0; i < 9; i++) {
-            sum += setting[i];
-        }
-        setting[10] = (byte) sum;
-        return setting;
-    }
+
 
 }

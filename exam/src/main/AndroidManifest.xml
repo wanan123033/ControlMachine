@@ -6,11 +6,8 @@
     <!-- 测试完成后，您自己的apAPP_KEYpSECRET_KEYtKey 请在 SynthActivity 和 MiniActivity 中修改 -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
     <uses-permission android:name="android.permission.UPDATE_DEVICE_STATS" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
@@ -34,9 +31,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".activity.sitreach.more_device.pair.SitReachPairActivity"></activity>
+        <activity android:name=".activity.sitreach.more_device.SitReachMoreActivity" />
         <activity
             android:name=".activity.basketball.ShootSettingActivity"
-            android:windowSoftInputMode="adjustPan|stateHidden"></activity>
+            android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity android:name=".activity.basketball.DribbleShootActivity" />
         <activity android:name=".activity.basketball.BasketBallShootActivity" />
         <activity android:name=".activity.medicineBall.more_device.BallGroupMoreActivity" />
@@ -239,6 +238,7 @@
         <activity android:name=".activity.ranger.RangerSettingActivity" />
         <activity android:name=".activity.ranger.RangerTestActivity" />
         <activity android:name=".activity.ranger.BluetoothSettingActivity" />
+
         <activity android:name=".utils.bluetooth.BlueToothListActivity" />
         <activity
             android:name=".activity.data.ThermometerSearchActivity"

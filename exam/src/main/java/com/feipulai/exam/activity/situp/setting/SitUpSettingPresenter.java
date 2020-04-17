@@ -21,7 +21,6 @@ public class SitUpSettingPresenter extends AbstractRadioSettingPresenter {
         super(context, view);
         this.context = context;
         setting = SharedPrefsUtil.loadFormSource(context, SitUpSetting.class);
-        Logger.i("entering SitUpSetting:" + setting.toString());
     }
 
     @Override

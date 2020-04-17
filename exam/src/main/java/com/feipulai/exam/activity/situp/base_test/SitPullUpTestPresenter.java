@@ -17,7 +17,6 @@ import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.Student;
-import com.orhanobut.logger.Logger;
 
 /**
  * Created by James on 2019/1/22 0022.
@@ -79,7 +78,6 @@ public abstract class SitPullUpTestPresenter<Setting>
             setState(stateResult);
         } else if (machineCode == ItemDefault.CODE_FWC && what == SerialConfigs.PUSH_UP_GET_STATE) {
             SitPushUpStateResult stateResult = (SitPushUpStateResult) msg.obj;
-            Logger.i("SitPushUpStateResult===" + stateResult.toString());
             setState(stateResult);
         }
     }
