@@ -292,7 +292,48 @@
             <View
                 style="@style/divider_gray_horizontal_style"
                 android:layout_marginTop="8dp" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
+                <TextView
+                    style="@style/style_setting_tv_title"
+                    android:text="体温检查:" />
+
+                <LinearLayout
+                    android:layout_width="435dp"
+                    android:layout_height="35dp"
+                    android:gravity="right|center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="1dp">
+
+                    <TextView
+                        android:id="@+id/btn_thermometer"
+                        style="@style/style_setting_tv_title"
+                        android:layout_width="120dp"
+                        android:layout_marginLeft="15dp"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:padding="1dp"
+                        android:text="体温枪连接"
+                        android:textColor="@color/colorPrimaryDark" />
+
+                    <CheckBox
+                        android:id="@+id/cb_thermometer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="40dp"
+                        android:button="@drawable/checkbox_switch_selected" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <View
+                style="@style/divider_gray_horizontal_style"
+                android:layout_marginTop="8dp" />
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

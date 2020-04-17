@@ -161,4 +161,21 @@ public class StudentItem {
     public void setRemark3(String remark3) {
         this.remark3 = remark3;
     }
+
+
+    public static String setResultState(int state) {
+
+        switch (state) {
+            case RoundResult.RESULT_STATE_NORMAL:
+                return "正常";
+            case RoundResult.RESULT_STATE_FOUL:
+                return "补考";
+            case RoundResult.RESULT_STATE_BACK:
+                return "缓考";
+            case RoundResult.RESULT_STATE_WAIVE:
+                return "放弃";
+            default:
+                return "正常";
+        }
+    }
 }

@@ -101,6 +101,8 @@ public class SystemSetting {
 
     private boolean isBindMonitoring;//是否绑定监控设备
     private String monitoringJson;
+    //是否启用体温计
+    private boolean isStartThermometer = false;
 
     public int getQrLength() {
         return qrLength;
@@ -252,6 +254,14 @@ public class SystemSetting {
 
     public void setMonitoringJson(String monitoringJson) {
         this.monitoringJson = monitoringJson;
+    }
+
+    public boolean isStartThermometer() {
+        return isStartThermometer;
+    }
+
+    public void setStartThermometer(boolean startThermometer) {
+        isStartThermometer = startThermometer;
     }
 
     public List<MonitoringBean> getMonitoringList() {

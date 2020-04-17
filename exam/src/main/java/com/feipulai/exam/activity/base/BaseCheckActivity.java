@@ -1,5 +1,7 @@
 package com.feipulai.exam.activity.base;
 
+import android.bluetooth.BluetoothDevice;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -8,6 +10,10 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.feipulai.common.utils.DateUtil;
+import com.feipulai.common.utils.HandlerUtil;
+import com.feipulai.common.utils.IntentUtil;
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.CheckDeviceOpener;
 import com.feipulai.device.ic.ICCardDealer;
@@ -24,14 +30,31 @@ import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
+import com.feipulai.exam.entity.StudentThermometer;
+import com.feipulai.exam.netUtils.CommonUtils;
+import com.feipulai.exam.utils.StringChineseUtil;
+import com.feipulai.exam.utils.bluetooth.BlueBindBean;
+import com.feipulai.exam.utils.bluetooth.BlueToothHelper;
+import com.feipulai.exam.utils.bluetooth.BlueToothListActivity;
+import com.feipulai.exam.utils.bluetooth.ClientManager;
 import com.feipulai.exam.view.AddStudentDialog;
+import com.inuker.bluetooth.library.connect.listener.BleConnectStatusListener;
+import com.inuker.bluetooth.library.connect.response.BleConnectResponse;
+import com.inuker.bluetooth.library.connect.response.BleNotifyResponse;
+import com.inuker.bluetooth.library.model.BleGattProfile;
+import com.inuker.bluetooth.library.utils.BluetoothLog;
+import com.inuker.bluetooth.library.utils.ByteUtils;
 import com.orhanobut.logger.Logger;
 import com.zkteco.android.biometric.module.idcard.meta.IDCardInfo;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.UUID;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+
+import static com.inuker.bluetooth.library.Constants.REQUEST_SUCCESS;
+import static com.inuker.bluetooth.library.Constants.STATUS_CONNECTED;
 
 /**
  * Created by James on 2018/5/24 0024.
@@ -46,12 +69,17 @@ public abstract class BaseCheckActivity
     private static final int STUDENT_CODE = 0x0;
     private static final int ID_CARD_NO = 0x1;
     private static final int CHECK_IN = 0x0;
+    private static final int CHECK_THERMOMETER = 0x1;
     private Student mStudent;
     private StudentItem mStudentItem;
     private List<RoundResult> mResults;
 
     private FrameLayout afrFrameLayout;
     private BaseAFRFragment afrFragment;
+    private BlueBindBean blueBindBean;
+    private volatile boolean isStartThermometer = false;
+    private SweetAlertDialog thermometerDialog;
+    private SweetAlertDialog thermometerOpenDialog;
 
     public void setOpenDevice(boolean openDevice) {
         isOpenDevice = openDevice;
@@ -99,7 +127,73 @@ public abstract class BaseCheckActivity
                     checkTool == SystemSetting.CHECK_TOOL_ICCARD,
                     checkTool == SystemSetting.CHECK_TOOL_QR);
         }
+        if (SettingHelper.getSystemSetting().isStartThermometer()) {
+            blueBindBean = BlueToothHelper.getBlueBind();
+            LogUtil.logDebugMessage("蓝牙连接信息===》" + blueBindBean.toString());
+            if (!TextUtils.isEmpty(blueBindBean.getBluetoothMac())) {
+                ClientManager.connectDevice(blueBindBean.getBluetoothMac(), bleConnectResponse);
+                ClientManager.getClient().registerConnectStatusListener(blueBindBean.getBluetoothMac(), mConnectStatusListener);
+            } else {
+                //提示未连接蓝牙体温计
+                showThermometerOpenDialog();
+            }
+
+        }
         super.onResume();
+    }
+
+    private final BleConnectResponse bleConnectResponse = new BleConnectResponse() {
+        @Override
+        public void onResponse(int code, BleGattProfile bleGattProfile) {
+            if (code == REQUEST_SUCCESS) {
+                //设置读取
+                ClientManager.getGattProfile(bleGattProfile);
+                openBlueThermometerRead();
+                if (thermometerOpenDialog != null && thermometerOpenDialog.isShowing()) {
+                    thermometerOpenDialog.dismissWithAnimation();
+                }
+            } else {
+                LogUtil.logDebugMessage("蓝牙连接断开");
+                //提示打开体温计或去连接设备
+                showThermometerOpenDialog();
+            }
+        }
+    };
+
+    //蓝牙连接状态
+    private final BleConnectStatusListener mConnectStatusListener = new BleConnectStatusListener() {
+        @Override
+        public void onConnectStatusChanged(String mac, int status) {
+            if (status != STATUS_CONNECTED && !TextUtils.isEmpty(blueBindBean.getBluetoothMac())) {
+                LogUtil.logDebugMessage("蓝牙连接状态断开");
+                ClientManager.connectDevice(blueBindBean.getBluetoothMac(), bleConnectResponse);
+            }
+
+        }
+    };
+    private BleNotifyResponse mNotifyRsp = new BleNotifyResponse() {
+        @Override
+        public void onNotify(UUID service, UUID character, byte[] value) {
+            HandlerUtil.sendMessage(mHandler, CHECK_THERMOMETER, value);
+        }
+
+        @Override
+        public void onResponse(int code) {
+            if (code == REQUEST_SUCCESS) {
+                LogUtil.logDebugMessage("蓝牙体温计读取连接成功");
+                //"success");
+            } else {
+                LogUtil.logDebugMessage("蓝牙体温计读取连接失败");
+                //"failed");
+            }
+        }
+    };
+
+
+    private void openBlueThermometerRead() {
+
+        ClientManager.getClient().notify(blueBindBean.getBluetoothMac(), UUID.fromString(blueBindBean.getServerUUID())
+                , UUID.fromString(blueBindBean.getCharacterUUID()), mNotifyRsp);
     }
 
     private void initAFR() {
@@ -143,6 +237,12 @@ public abstract class BaseCheckActivity
         super.onDestroy();
         if (isOpenDevice) {
             CheckDeviceOpener.getInstance().destroy();
+        }
+        if (SettingHelper.getSystemSetting().isStartThermometer()) {
+            if (!TextUtils.isEmpty(blueBindBean.getBluetoothMac())) {
+                ClientManager.getClient().disconnect(blueBindBean.getBluetoothMac());
+                ClientManager.getClient().unregisterConnectStatusListener(blueBindBean.getBluetoothMac(), mConnectStatusListener);
+            }
         }
     }
 
@@ -279,7 +379,14 @@ public abstract class BaseCheckActivity
     public void onEventMainThread(BaseEvent baseEvent) {
         super.onEventMainThread(baseEvent);
         if (baseEvent.getTagInt() == EventConfigs.TEMPORARY_ADD_STU) {
-            onCheckIn((Student) baseEvent.getData());
+            mStudent = (Student) baseEvent.getData();
+            mStudentItem = DBManager.getInstance().queryStuItemByStuCode(mStudent.getStudentCode());
+            if (SettingHelper.getSystemSetting().isStartThermometer()) {
+                showThermometerDialog();
+            } else {
+                onCheckIn(mStudent);
+            }
+
         }
     }
 
@@ -296,7 +403,20 @@ public abstract class BaseCheckActivity
         } else {
             StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
             if (studentItem != null) {
-                onCheckIn(student);
+                mStudent = student;
+                mStudentItem = studentItem;
+                if (SettingHelper.getSystemSetting().isStartThermometer()) {
+                    //是否已保存测量体温
+                    StudentThermometer thermometer = DBManager.getInstance().getThermometer(studentItem);
+                    if (thermometer == null) {
+                        showThermometerDialog();
+                    } else {
+                        onCheckIn(mStudent);
+                    }
+
+                } else {
+                    onCheckIn(mStudent);
+                }
             } else {
                 toastSpeak("无此项目");
             }
@@ -319,7 +439,65 @@ public abstract class BaseCheckActivity
             }
             switch (msg.what) {
                 case CHECK_IN:
-                    activity.onCheckIn(activity.mStudent);
+                    if (SettingHelper.getSystemSetting().isStartThermometer()) {
+                        StudentThermometer thermometer = DBManager.getInstance().getThermometer(activity.mStudentItem);
+                        if (thermometer == null) {
+                            activity.showThermometerDialog();
+                        } else {
+                            activity.onCheckIn(activity.mStudent);
+                        }
+
+                    } else {
+                        activity.onCheckIn(activity.mStudent);
+                    }
+
+                    break;
+                case CHECK_THERMOMETER:
+
+                    byte[] value = (byte[]) msg.obj;
+                    LogUtil.logDebugMessage("蓝牙返回数据===》" + activity.isStartThermometer);
+                    if (activity.isStartThermometer == true) {
+                        LogUtil.logDebugMessage("蓝牙返回数据校验===》" + StringChineseUtil.byteToString(value));
+                        if (value.length < 4) {
+                            //|| value[1] + value[2] != value[3]
+                            activity.toastSpeak("体温枪异常，请再次测量体温");
+                            return;
+                        }
+
+                        String getThermometer = Long.parseLong(String.format("%02X", value[1]) + String.format("%02X", value[2]), 16) + "";
+                        if (getThermometer.length() < 3) {
+                            activity.toastSpeak("请规范使用体温枪重新测量");
+                            return;
+                        }
+                        String thermometer = getThermometer.substring(0, 2) + "." + getThermometer.substring(2);
+                        LogUtil.logDebugMessage("蓝牙返回数据===》" + thermometer);
+                        activity.isStartThermometer = false;
+                        String contentText = activity.mStudent.getStudentName() + ":" + thermometer + "℃";
+                        //添加体温记录
+                        StudentThermometer studentThermometer = new StudentThermometer();
+                        studentThermometer.setStudentCode(activity.mStudent.getStudentCode());
+                        studentThermometer.setExamType(activity.mStudentItem.getExamType());
+                        studentThermometer.setThermometer(Double.valueOf(thermometer));
+                        studentThermometer.setItemCode(TestConfigs.getCurrentItemCode());
+                        studentThermometer.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
+                        studentThermometer.setMeasureTime(DateUtil.getCurrentTime() + "");
+                        DBManager.getInstance().insterThermometer(studentThermometer);
+
+                        activity.thermometerDialog.showCancelButton(false)
+                                .setTitleText("测量完成")
+                                .setContentText(contentText).changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                        activity.toastSpeak(activity.mStudent.getSpeakStuName() + thermometer + "℃");
+                        try {
+                            Thread.sleep(1000);
+                            activity.thermometerDialog.dismissWithAnimation();
+                            activity.onCheckIn(activity.mStudent);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+
                     break;
             }
         }
@@ -344,6 +522,58 @@ public abstract class BaseCheckActivity
                         sweetAlertDialog.dismissWithAnimation();
                     }
                 }).show();
+            }
+        });
+    }
+
+    private void showThermometerDialog() {
+        isStartThermometer = true;
+        thermometerDialog = new SweetAlertDialog(BaseCheckActivity.this, SweetAlertDialog.WARNING_TYPE)
+                .setTitleText(getString(R.string.thermometer_dialog_title))
+                .setContentText(getString(R.string.thermometer_dialog_msg))
+
+                .setConfirmText(getString(R.string.cancel)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        isStartThermometer = false;
+                        sweetAlertDialog.dismissWithAnimation();
+                    }
+                });
+        thermometerDialog.show();
+        thermometerDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                isStartThermometer = false;
+            }
+        });
+    }
+
+    private void showThermometerOpenDialog() {
+        if (thermometerOpenDialog == null) {
+            thermometerOpenDialog = new SweetAlertDialog(BaseCheckActivity.this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText(getString(R.string.dialog_warm_prompt))
+                    .setContentText(getString(R.string.thermometer_open_dialog_msg))
+
+                    .setConfirmText("去连接").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismissWithAnimation();
+                            IntentUtil.gotoActivity(BaseCheckActivity.this, BlueToothListActivity.class);
+                        }
+                    }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismissWithAnimation();
+                        }
+                    });
+        }
+        if (!thermometerOpenDialog.isShowing()) {
+            thermometerOpenDialog.show();
+        }
+        thermometerOpenDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                thermometerOpenDialog = null;
             }
         });
     }

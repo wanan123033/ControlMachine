@@ -36,4 +36,20 @@ public class StringChineseUtil {
         Matcher m = pattern.matcher(fileName);
         return m.matches();
     }
+
+    public static String byteToString(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+
+        if (!isEmpty(bytes)) {
+            for (int i = 0; i < bytes.length; i++) {
+                sb.append(String.format("%02X", bytes[i]));
+            }
+        }
+
+        return sb.toString();
+    }
+    public static boolean isEmpty(byte[] bytes) {
+        return bytes == null || bytes.length == 0;
+    }
+
 }
