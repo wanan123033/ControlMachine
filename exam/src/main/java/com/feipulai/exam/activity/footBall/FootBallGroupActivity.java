@@ -178,6 +178,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 if (!isConfigurableNow()) {
+                    // 测试信息
                     resultAdapter.setSelectPosition(position);
                     resultAdapter.notifyDataSetChanged();
                 }
