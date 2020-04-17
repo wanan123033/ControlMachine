@@ -157,7 +157,7 @@ public class BlueToothListActivity extends BaseTitleActivity {
         @Override
         public void onDeviceFounded(SearchResult device) {
             BluetoothLog.w("MainActivity.onDeviceFounded " + device.device.getAddress());
-            if (!mDevices.contains(device)&&device.getName().contains(filtrateDeviceName)) {
+            if (!mDevices.contains(device)) {
                 mDevices.add(device);
                 Collections.sort(mDevices, new Comparator<SearchResult>() {
                     @Override

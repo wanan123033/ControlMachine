@@ -1002,7 +1002,6 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         if (result != null) {
             scoreResultList.add(result);
         }
-        result.setTestTime(System.currentTimeMillis()+"");
         InteractUtils.showStuInfo(llStuDetail, student, scoreResultList);
         tvResult.setText(student.getStudentName());
         state = WAIT_CHECK_IN;
