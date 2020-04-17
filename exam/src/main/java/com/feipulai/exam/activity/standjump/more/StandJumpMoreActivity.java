@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.view.View;
 
 import com.feipulai.common.utils.IntentUtil;
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.manager.StandJumpManager;
 import com.feipulai.device.serial.RadioManager;
@@ -101,8 +102,17 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        LogUtil.logDebugMessage("sendTestCommand");
         StandJumpManager.startTest(SettingHelper.getSystemSetting().getHostId(), pair.getBaseDevice().getDeviceId());
-        pair.setTestTime(System.currentTimeMillis()+"");
+        pair.setTestTime(System.currentTimeMillis() + "");
+    }
+
+    @Override
+    public void stuSkip(int pos) {
+        super.stuSkip(pos);
+        LogUtil.logDebugMessage("stuSkip");
+        StandJumpManager.endTest(SettingHelper.getSystemSetting().getHostId(), pos+1);
+        StandJumpManager.setLeisure(SettingHelper.getSystemSetting().getHostId(), pos+1);
     }
 
     @Override
@@ -162,6 +172,9 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
             Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+        if (deviceDetails.get(deviceId - 1).getStuDevicePair().getStudent() == null) {
+            return;
         }
         toastSpeak(deviceDetails.get(deviceId - 1).getStuDevicePair().getStudent().getSpeakStuName() + "开始测试");
 
