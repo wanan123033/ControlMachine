@@ -196,7 +196,7 @@ public class JumpRopeCheckActivity
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
-                ((JumpRopeCheckPresenter) presenter).changeBadDevice(false);
+//                ((JumpRopeCheckPresenter) presenter).changeBadDevice(false);
             }
         }).show();
 
