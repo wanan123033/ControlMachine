@@ -67,7 +67,6 @@ public class JumpRopeSettingPresenter extends AbstractRadioSettingPresenter {
     @Override
     protected void saveSettings() {
         SharedPrefsUtil.save(context, setting);
-        Logger.i("jumprope setting changed:" + setting.toString());
     }
 
 }

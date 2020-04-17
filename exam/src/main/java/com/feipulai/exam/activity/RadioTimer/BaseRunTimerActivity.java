@@ -8,11 +8,10 @@ import android.os.Message;
 import android.util.Log;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
-import com.feipulai.device.serial.SerialConfigs;
+import com.feipulai.device.manager.RunTimerManager;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.RunTimerConnectState;
 import com.feipulai.device.serial.beans.RunTimerResult;
-import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.BaseEvent;
@@ -126,11 +125,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
         interceptWay = runTimerSetting.getInterceptWay();
         settingSensor = runTimerSetting.getSensor();
         int hostId = SettingHelper.getSystemSetting().getHostId();
-        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.cmd((byte) 0xc1, (byte) 0x01, (byte) runNum)));//跑道数
-        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.cmd((byte) 0xc1, (byte) 0x02, (byte) hostId)));//主机号
-        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.cmd((byte) 0xc1, (byte) 0x04, (byte) interceptPoint)));//拦截点
-        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.cmd((byte) 0xc1, (byte) 0x05, (byte) (interceptWay + 1))));//触发方式
-        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.cmd((byte) 0xc1, (byte) 0x08, (byte) settingSensor)));//传感器信道
+        RunTimerManager.cmdSetting(runNum,hostId,interceptPoint,interceptWay,settingSensor);
         maxTestTimes = runTimerSetting.getTestTimes();
     }
 
@@ -176,7 +171,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
                 case 2://等待计时
                     if (isOverTimes) {
                         toastSpeak("已经超过测试次数");
-                        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.cmd((byte) 0xc5, (byte) 0x00, (byte) 0x00)));
+                        RunTimerManager.stopRun();
                     }
                     changeState(new boolean[]{false, true, false, false, true});
                     if (baseTimer == 0 && runTimerSetting.getInterceptWay() == 0) {//红外拦截
@@ -454,14 +449,15 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
     public void waitStart() {
         isForce = false;
 //        isAuto = false ;
-        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.cmd((byte) 0xc2, (byte) 0x00, (byte) 0x00)));
+//        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.cmd((byte) 0xc2, (byte) 0x00, (byte) 0x00)));
+        RunTimerManager.waitStart();
     }
 
     public void forceStart() {
         isForce = true;
 //        isAuto = true;
-        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.cmd((byte) 0xc4, (byte) 0x00, (byte) 0x00)));
-
+//        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.cmd((byte) 0xc4, (byte) 0x00, (byte) 0x00)));
+        RunTimerManager.forceStart();
     }
 
     public void faultBack() {
@@ -470,11 +466,12 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
 
     public void markConfirm() {
         mHandler.removeMessages(TIME_UPDATE);
-        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.cmd((byte) 0xc5, (byte) 0x00, (byte) 0x00)));
+//        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.cmd((byte) 0xc5, (byte) 0x00, (byte) 0x00)));
+        RunTimerManager.stopRun();
     }
 
     public void stopRun() {
-        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.cmd((byte) 0xc5, (byte) 0x00, (byte) 0x00)));
+        RunTimerManager.stopRun();
     }
 
     private void showConfirm() {
@@ -482,7 +479,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.cmd((byte) 0xc8, (byte) 0x00, (byte) 0x00)));
+                        RunTimerManager.illegalBack();
                         mHandler.sendEmptyMessageDelayed(ILLEGAL_BACK, 100);
                         dialog.dismiss();
                     }

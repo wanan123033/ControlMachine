@@ -31,6 +31,7 @@ public class SitReachSetting {
      * 分组测试模式 0 连续 1 循环
      */
     private int testPattern = 0;
+    private boolean autoPair;
 
     public int getTestPattern() {
         return testPattern;
@@ -90,5 +91,13 @@ public class SitReachSetting {
                 ", womenFull=" + womenFull +
                 ", testPattern=" + testPattern +
                 '}';
+    }
+
+    public boolean isAutoPair() {
+        return autoPair;
+    }
+
+    public void setAutoPair(boolean autoPair) {
+        this.autoPair = autoPair;
     }
 }

@@ -153,7 +153,6 @@ public class IndividualCheckFragment
 
     @Override
     public void onICCardFound(NFCDevice nfcd) {
-        long startTime = System.currentTimeMillis();
         ICCardDealer icCardDealer = new ICCardDealer(nfcd);
         StuInfo stuInfo = icCardDealer.IC_ReadStuInfo();
 
@@ -163,7 +162,6 @@ public class IndividualCheckFragment
             return;
         }
 
-        Logger.i("处理IC卡时间:" + (System.currentTimeMillis() - startTime) + "ms");
         Logger.i("iccard readInfo:" + stuInfo.toString());
         boolean needAdd = checkQulification(stuInfo.getStuCode(), STUDENT_CODE);
         if (needAdd) {

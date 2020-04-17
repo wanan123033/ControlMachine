@@ -353,7 +353,11 @@ public class Radio868Result {
                 }
 
                 break;
+            case ItemDefault.CODE_ZWTQQ:
+                if ((data[0] & 0xff) == 0xaa && (data[1] & 0xff) == data.length ) {
 
+                }
+                break;
         }
     }
 

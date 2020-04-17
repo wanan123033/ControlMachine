@@ -54,7 +54,6 @@ import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -487,7 +486,6 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
             testRoundResult.setPenaltyNum(testResult.getPenalizeNum());
             testRoundResult.setResult(pResult);
             testRoundResult.setMachineResult(result.getResult());
-            Logger.i("拦截更新成绩" + testRoundResult.toString());
             //更新成绩，
             DBManager.getInstance().updateRoundResult(testRoundResult);
             //获取所有成绩设置为非最好成绩
@@ -823,6 +821,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                 return;
             }
             int penalizeNum = testResult.getPenalizeNum();
+            Logger.i("原始成绩:"+penalizeNum +"判罚:"+punishType);
             if (punishType >= 0) {//+
                 testResult.setPenalizeNum(penalizeNum + 1);
             } else {//-

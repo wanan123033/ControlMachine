@@ -44,7 +44,6 @@ import com.orhanobut.logger.Logger;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -570,7 +569,6 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
     }
 
     public synchronized void updateDevice(@NonNull BaseDeviceState deviceState) {
-        Logger.i("updateDevice==>" + deviceState.toString());
         int deviceId = deviceState.getDeviceId();
         BaseStuPair pair = null;
         int index = 0;

@@ -433,7 +433,6 @@ public class DBManager {
         sqlBuf.append(" FROM " + GroupItemDao.TABLENAME);
         sqlBuf.append(" WHERE  " + GroupItemDao.Properties.ItemCode.columnName + " = ?  )");
         sqlBuf.append(" AND  S." + StudentDao.Properties.Portrait.columnName + " != '' ");
-        Logger.i("=====sql1===>" + sqlBuf.toString());
         Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{TestConfigs.getCurrentItemCode(), TestConfigs.getCurrentItemCode()});
         List<Student> students = new ArrayList<>();
         while (c.moveToNext()) {
@@ -503,7 +502,6 @@ public class DBManager {
         sqlBuf.append(" WHERE  " + GroupItemDao.Properties.ItemCode.columnName + " = ?  )");
         if (limit != -1)
             sqlBuf.append(" limit " + offset + "," + limit);
-        Logger.i("=====sql1===>" + sqlBuf.toString());
         Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{itemCode, itemCode});
         List<Student> students = new ArrayList<>();
         while (c.moveToNext()) {
@@ -611,7 +609,6 @@ public class DBManager {
      * @return
      */
     public Map<String, Object> getChooseStudentCount(String itemCode, boolean isTested, boolean isUnTested, boolean isUpload, boolean isUnUpload) {
-        Logger.i("zzs===>" + isTested + "---" + isUnTested + "---" + isUpload + "---" + isUnUpload);
 
         StringBuffer sqlBuf = new StringBuffer("SELECT COUNT(*) AS STU_COUNT,");
 
@@ -667,7 +664,6 @@ public class DBManager {
         sqlBuf.append("  R." + RoundResultDao.Properties.ItemCode.columnName + " = '" + itemCode + "'");
         sqlBuf.append(")  ");
 
-        Logger.i("=====sql1===>" + sqlBuf.toString());
         Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{itemCode, itemCode});
 
         Map<String, Object> countMap = new HashMap<>();
@@ -710,7 +706,6 @@ public class DBManager {
         sqlBuf.append(" FROM " + GroupItemDao.TABLENAME);
         sqlBuf.append(" WHERE  " + GroupItemDao.Properties.ItemCode.columnName + " = ?  ) ");
 
-        Logger.i("=====sql1===>" + sqlBuf.toString());
         Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{itemCode, itemCode});
 
         Map<String, Object> countMap = new HashMap<>();
@@ -885,8 +880,6 @@ public class DBManager {
         List<Item> itemList = new ArrayList<>();
         Item item = null;
         while (c.moveToNext()) {
-            String itemcode = c.getString(c.getColumnIndex(ItemDao.Properties.ItemCode.columnName));
-            Logger.i("itemcode:" + itemcode);
             item = itemDao.readEntity(c, 0);
             itemList.add(item);
         }
@@ -1703,7 +1696,6 @@ public class DBManager {
      * @return
      */
     public List<UploadResults> getUploadResultsAll(String itemCode) {
-        Logger.i("zzzzzzzzzzzzzzzzzz");
         //查成绩表去重学生号  条件当前项目未上传成绩
         //获取根据考生号 获取考生当前项目未上传生所有成绩
         //根据成绩分组id 分配上传成绩内容（按分组、日程）
@@ -1795,7 +1787,6 @@ public class DBManager {
                 }
             }
         }
-        Logger.i("zzzzzzzzzzzzzzzzzz");
         return uploadResultsList;
     }
 

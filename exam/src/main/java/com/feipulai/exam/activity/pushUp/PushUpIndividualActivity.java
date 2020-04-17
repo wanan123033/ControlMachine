@@ -322,7 +322,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
     private void onResultConfirmed() {
         StuDevicePair pair = pairs.get(0);
         int result = pair.getDeviceResult().getResult() + pair.getPenalty();
-
+        Logger.i("俯卧撑成绩："+result);
         if (systemSetting.isAutoBroadcast()) {
             TtsManager.getInstance().speak(String.format(getString(R.string.speak_result), pair.getStudent().getSpeakStuName(), ResultDisplayUtils.getStrResultForDisplay(result)));
         }

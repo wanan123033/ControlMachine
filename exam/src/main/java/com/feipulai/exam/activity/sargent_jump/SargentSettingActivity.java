@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.manager.SargentJumpMore;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.SargentJumpResult;
@@ -48,11 +49,6 @@ import java.text.MessageFormat;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
-
-import static com.feipulai.device.manager.SargentJumpMore.CMD_SARGENT_JUMP_CHECK_SELF;
-import static com.feipulai.device.manager.SargentJumpMore.CMD_SARGENT_JUMP_IGNORE_BREAK_POINT;
-import static com.feipulai.device.manager.SargentJumpMore.CMD_SARGENT_JUMP_LIGHT_DOWN;
-import static com.feipulai.device.manager.SargentJumpMore.CMD_SARGENT_JUMP_LIGHT_UP;
 
 public class SargentSettingActivity extends BaseTitleActivity implements CompoundButton.OnCheckedChangeListener, AdapterView.OnItemSelectedListener, RadioGroup.OnCheckedChangeListener, RadioManager.OnRadioArrivedListener {
     @BindView(R.id.cb_run_up)
@@ -352,70 +348,22 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
                 }
                 break;
             case R.id.tv_light_minus:
-                RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
-                        setLight(false, deviceId)));
+                SargentJumpMore.lightDown(deviceId);
                 break;
             case R.id.tv_light_add:
-                RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
-                        setLight(true, deviceId)));
+                SargentJumpMore.lightUp(deviceId);
                 break;
             case R.id.tv_device_check:
-                RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
-                        check_self(deviceId)));
+                SargentJumpMore.checkSelf(deviceId);
                 break;
             case R.id.tv_accuracy_use:
                 Logger.i("基础高度：" + sargentSetting.getBaseHeight() + "设备号：" + deviceId);
-                RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
-                        setBaseHeight(sargentSetting.getBaseHeight(), deviceId)));
+                SargentJumpMore.setBaseHeight(sargentSetting.getBaseHeight(),deviceId);
                 break;
 
         }
     }
 
-    //离地高度设置范围为0-255
-    public byte[] setBaseHeight(int offGroundDistance, int deviceId) {
-        byte[] data = {0X54, 0X44, 00, 0X0D, 01, 0x01, 01, 0x05, 00, 00, 0x00, 0x27, 0x0d};
-        data[4] = (byte) deviceId;
-        data[8] = (byte) ((offGroundDistance >> 8) & 0xff);// 次低位
-        data[9] = (byte) (offGroundDistance & 0xff);// 最低位
-
-        int sum = 0;
-        for (int i = 2; i < 10; i++) {
-            sum += data[i] & 0xff;
-        }
-        data[10] = (byte) sum;
-        return data;
-    }
-
-    public byte[] setLight(boolean up, int deviceId) {
-        byte[] data;
-        if (up) {
-            data = CMD_SARGENT_JUMP_LIGHT_UP;
-        } else {
-            data = CMD_SARGENT_JUMP_LIGHT_DOWN;
-        }
-
-        data[4] = (byte) deviceId;
-
-        int sum = 0;
-        for (int i = 2; i < 10; i++) {
-            sum += data[i] & 0xff;
-        }
-        data[10] = (byte) sum;
-        return data;
-    }
-
-    public byte[] check_self(int deviceId) {
-        byte[] data = CMD_SARGENT_JUMP_CHECK_SELF;
-        data[4] = (byte) deviceId;
-
-        int sum = 0;
-        for (int i = 2; i < 8; i++) {
-            sum += data[i] & 0xff;
-        }
-        data[8] = (byte) sum;
-        return data;
-    }
 
     @Override
     public void onRadioArrived(Message msg) {
@@ -460,18 +408,6 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
         }
     }
 
-    private void ignoreBad(int deviceId) {
-        byte[] data = CMD_SARGENT_JUMP_IGNORE_BREAK_POINT;
-        data[4] = (byte) deviceId;
-
-        int sum = 0;
-        for (int i = 2; i < 8; i++) {
-            sum += data[i] & 0xff;
-        }
-        data[8] = (byte) sum;
-        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
-                data));
-    }
 
     private int sum(byte[] cmd) {
         int sum = 0;
@@ -516,7 +452,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
                             sweetAlertDialog.dismissWithAnimation();
-                            ignoreBad(ignoreDeviceId);
+                            SargentJumpMore.ignoreBad(ignoreDeviceId);
                         }
                     }).setCancelText("否").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override

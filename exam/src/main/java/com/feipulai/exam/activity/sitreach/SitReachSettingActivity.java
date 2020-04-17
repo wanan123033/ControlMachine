@@ -31,7 +31,6 @@ import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
-import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -347,7 +346,6 @@ public class SitReachSettingActivity extends BaseTitleActivity implements Compou
                         activity.isDisconnect = false;
                         isDialogShow = false;
                         activity.toastSpeak("设备连接成功");
-                        Logger.i("空命令回复:");
                         break;
                 }
                 if (!isDialogShow && activity.alertDialog != null && activity.alertDialog.isShowing()) {

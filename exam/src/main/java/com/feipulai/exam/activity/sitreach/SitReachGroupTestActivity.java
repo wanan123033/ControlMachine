@@ -16,7 +16,6 @@ import com.feipulai.exam.config.TestConfigs;
 import com.orhanobut.logger.Logger;
 
 import java.lang.ref.WeakReference;
-import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -176,7 +175,6 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
 
     @Override
     public void getDeviceState(BaseDeviceState deviceState) {
-        Logger.i(TAG + ":getDeviceState--->" + deviceState.toString());
         BaseDeviceState state = new BaseDeviceState();
         state.setState(deviceState.getState());
         Message msg = mHandler.obtainMessage();
@@ -247,7 +245,6 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
                         activity.updateTestResult((BaseStuPair) msg.obj);
                         break;
                     case MSG_DISCONNECT:
-                        Logger.i(TAG + ":1MSG_DISCONNECT:" + activity.isDisconnect);
                         if (activity.isDisconnect) {
                             // 判断2次提示时间
                             if (!activity.isDestroyed() && (System.currentTimeMillis() - activity.disconnectTime) > 30000) {

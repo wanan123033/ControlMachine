@@ -27,8 +27,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import cn.pedant.SweetAlert.SweetAlertDialog;
-
 import static com.feipulai.exam.activity.medicineBall.MedicineConstant.END_TEST;
 import static com.feipulai.exam.activity.medicineBall.MedicineConstant.GET_SCORE_RESPONSE;
 import static com.feipulai.exam.activity.medicineBall.MedicineConstant.SELF_CHECK_RESPONSE;

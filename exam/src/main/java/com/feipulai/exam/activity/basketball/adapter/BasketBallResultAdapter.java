@@ -8,11 +8,9 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.feipulai.common.utils.DateUtil;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.basketball.result.BasketBallTestResult;
-import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.MachineResult;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.utils.ResultDisplayUtils;

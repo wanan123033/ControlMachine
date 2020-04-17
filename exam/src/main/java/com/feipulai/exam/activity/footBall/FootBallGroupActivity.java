@@ -731,6 +731,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                 return;
             }
             int penalizeNum = testResult.getPenalizeNum();
+            Logger.i("原始成绩:"+penalizeNum +"判罚:"+punishType);
             if (punishType >= 0) {//+
                 testResult.setPenalizeNum(penalizeNum + 1);
             } else {//-

@@ -560,6 +560,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             allTestComplete();
             return;
         }
+
         resultList.clear();
         resultList.addAll(Arrays.asList(stuPairsList.get(stuAdapter.getTestPosition()).getTimeResult()));
         testResultAdapter.notifyDataSetChanged();
@@ -597,6 +598,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
      * @param deviceState
      */
     public void updateDevice(@NonNull BaseDeviceState deviceState) {
+        Logger.i("updateDevice："+deviceState);
         if (stuAdapter == null || stuAdapter.getTestPosition() == -1)
             return;
 
@@ -636,8 +638,6 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         resultList.addAll(Arrays.asList(stuPairsList.get(stuAdapter.getTestPosition()).getTimeResult()));
         testResultAdapter.notifyDataSetChanged();
 
-        Logger.i("考生" + pair.getStudent().toString());
-        Logger.i("设备成绩信息STATE_END==>" + deviceState.toString());
         //保存成绩
         saveResult(pair);
         printResult(pair);
@@ -991,7 +991,6 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 Message msg = new Message();
                 msg.obj = stuPairsList.get(stuAdapter.getTestPosition());
                 ledHandler.sendMessageDelayed(msg, 3000);
-                Logger.i("addStudent:" + stuPairsList.get(i).getStudent().toString());
                 Logger.i("addStudent:当前考生进行第" + 1 + "次的第" + roundNo + "轮测试");
                 group.setIsTestComplete(2);
                 DBManager.getInstance().updateGroup(group);
@@ -1067,7 +1066,6 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                     Message msg = new Message();
                     msg.obj = stuPairsList.get(stuAdapter.getTestPosition());
                     ledHandler.sendMessageDelayed(msg, 3000);
-                    Logger.i("下一位测试考生：" + stuPairsList.get(stuAdapter.getTestPosition()).getStudent());
 //                    resultList.clear();
 //                    resultList.addAll(Arrays.asList(stuPairsList.get(stuAdapter.getTestPosition()).getTimeResult()));
 //                    testResultAdapter.notifyDataSetChanged();

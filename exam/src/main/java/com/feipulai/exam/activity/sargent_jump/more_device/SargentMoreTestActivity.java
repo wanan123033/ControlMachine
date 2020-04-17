@@ -10,7 +10,6 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.manager.SargentJumpMore;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.SargentJumpResult;
-import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
@@ -28,8 +27,6 @@ import java.util.Date;
 
 import butterknife.OnClick;
 
-import static com.feipulai.device.manager.SargentJumpMore.CMD_SARGENT_JUMP_EMPTY;
-import static com.feipulai.device.manager.SargentJumpMore.CMD_SARGENT_JUMP_START;
 import static com.feipulai.exam.activity.sargent_jump.Constants.GET_SCORE_RESPONSE;
 
 /**
@@ -124,13 +121,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
     }
 
     private void sendStart(byte id) {
-        byte[] cmd = CMD_SARGENT_JUMP_START;
-        cmd[4] = id;
-        cmd[6] = 0x01;
-        cmd[7] = 0x03;
-        cmd[8] = (byte) sum(cmd, 8);
-        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
-                cmd));
+        SargentJumpMore.sendStart(id);
     }
 
 
@@ -156,14 +147,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
 
         }
         for (DeviceDetail detail : deviceDetails) {
-            byte[] cmd = CMD_SARGENT_JUMP_EMPTY;
-            cmd[4] = (byte) detail.getStuDevicePair().getBaseDevice().getDeviceId();
-            cmd[6] = 0x01;
-            cmd[7] = 0x02;
-            cmd[8] = (byte) sum(cmd, 8);
-//            SargentJumpMore.getCmdBytes(cmd,cmd[4],cmd[6],cmd[7]);
-            RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
-                    cmd));
+            SargentJumpMore.sendEmpty(detail.getStuDevicePair().getBaseDevice().getDeviceId());
         }
         mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 1000);
 

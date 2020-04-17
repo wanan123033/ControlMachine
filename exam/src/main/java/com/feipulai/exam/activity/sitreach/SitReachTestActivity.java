@@ -18,7 +18,6 @@ import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
 
 import java.lang.ref.WeakReference;
-import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -50,7 +49,6 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Logger.i(TAG + ":SitReachTest:TestCount->" + setTestCount());
     }
 
     @Override
@@ -59,7 +57,6 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
         if (reachSetting == null) {
             reachSetting = new SitReachSetting();
         }
-        Logger.i(TAG + ":reachSetting ->" + reachSetting.toString());
 
     }
 
@@ -170,7 +167,6 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
 
     @Override
     public void getDeviceState(BaseDeviceState deviceState) {
-        Logger.i(TAG + ":getDeviceState--->" + deviceState.toString());
         BaseDeviceState state = new BaseDeviceState();
         state.setState(deviceState.getState());
         Message msg = mHandler.obtainMessage();
@@ -199,14 +195,12 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
 
     @Override
     public void EndDevice(boolean isFoul, int result) {
-        Logger.i(TAG + ":EndDevice--->");
         resultRunnable.setTestState(sitReachResiltListener.getTestState());
         statesRunnable.setTestState(sitReachResiltListener.getTestState());
     }
 
     @Override
     public void AgainTest(BaseDeviceState deviceState) {
-        Logger.i(TAG + ":AgainTest--->");
         resultRunnable.setTestState(sitReachResiltListener.getTestState());
         statesRunnable.setTestState(sitReachResiltListener.getTestState());
         toastSpeak("设备错误重测");
@@ -219,7 +213,6 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
 
     @Override
     public void ready(int deviveId) {
-        Logger.i(TAG + ":ready--->");
         mHandler.sendEmptyMessageDelayed(TOAST_SPEAK, 1000);
     }
 

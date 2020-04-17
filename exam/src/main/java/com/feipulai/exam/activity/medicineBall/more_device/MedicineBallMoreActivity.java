@@ -8,9 +8,9 @@ import android.view.View;
 
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.device.manager.MedicineBallMore;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.MedicineBallNewResult;
-import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.medicineBall.MedicineBallSetting;
 import com.feipulai.exam.activity.medicineBall.MedicineBallSettingActivity;
@@ -31,9 +31,6 @@ import java.text.MessageFormat;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-import static com.feipulai.device.manager.MedicineBallMore.CMD_MEDICINE_BALL_EMPTY;
-import static com.feipulai.device.manager.MedicineBallMore.CMD_MEDICINE_BALL_SET_EMPTY;
-import static com.feipulai.device.manager.MedicineBallMore.CMD_MEDICINE_BALL_START;
 import static com.feipulai.exam.activity.medicineBall.MedicineConstant.GET_SCORE_RESPONSE;
 
 public class MedicineBallMoreActivity extends BaseMoreActivity {
@@ -102,12 +99,9 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
 
         }
         for (DeviceDetail detail : deviceDetails) {
-            byte[] cmd = CMD_MEDICINE_BALL_EMPTY;
-            cmd[5] = (byte) SettingHelper.getSystemSetting().getHostId();
-            cmd[6] = (byte) detail.getStuDevicePair().getBaseDevice().getDeviceId();
-            cmd[19] = (byte) sum(cmd, 19);
-            RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
-                    cmd));
+            int hostId =  SettingHelper.getSystemSetting().getHostId();
+            int deviceId = detail.getStuDevicePair().getBaseDevice().getDeviceId();
+            MedicineBallMore.sendGetState(hostId,deviceId);
         }
         mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 1000);
     }
@@ -159,29 +153,11 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
 
 
     private void sendStart(byte id) {
-        byte[] cmd = CMD_MEDICINE_BALL_START;
-        cmd[5] = (byte) SettingHelper.getSystemSetting().getHostId();
-        cmd[6] = id;
-        cmd[19] = (byte) sum(cmd, 19);
-        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
-                cmd));
-    }
-
-    private int sum(byte[] cmd, int end) {
-        int sum = 0;
-        for (int i = 1; i < end; i++) {
-            sum += cmd[i] & 0xff;
-        }
-        return sum;
+        MedicineBallMore.sendStart(SettingHelper.getSystemSetting().getHostId(),id);
     }
 
     private void sendFree(int deviceId) {
-        byte[] cmd = CMD_MEDICINE_BALL_SET_EMPTY;
-        cmd[5] = (byte) SettingHelper.getSystemSetting().getHostId();
-        cmd[6] = (byte) deviceId;
-        cmd[19] = (byte) sum(cmd, 19);
-        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
-                cmd));
+        MedicineBallMore.sendEmpty(SettingHelper.getSystemSetting().getHostId(),deviceId);
     }
 
     private boolean isInCorrect;

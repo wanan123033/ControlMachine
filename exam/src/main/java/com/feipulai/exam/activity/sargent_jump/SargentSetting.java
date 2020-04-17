@@ -114,4 +114,20 @@ public class SargentSetting {
     public void setAutoPair(boolean autoPair) {
         isAutoPair = autoPair;
     }
+
+    @Override
+    public String toString() {
+        return "SargentSetting{" +
+                "type=" + type +
+                ", isAutoPair=" + isAutoPair +
+                ", runUp=" + runUp +
+                ", maleFull='" + maleFull + '\'' +
+                ", isFullReturn=" + isFullReturn +
+                ", testTimes=" + testTimes +
+                ", spDeviceCount=" + spDeviceCount +
+                ", testPattern=" + testPattern +
+                ", femaleFull='" + femaleFull + '\'' +
+                ", baseHeight=" + baseHeight +
+                '}';
+    }
 }

@@ -19,7 +19,6 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.utils.ResultDisplayUtils;
-import com.orhanobut.logger.Logger;
 
 import java.util.Locale;
 
@@ -90,7 +89,6 @@ public abstract class SitPullUpCheckPresenter<Setting>
             setState(stateResult);
         } else if (machineCode == ItemDefault.CODE_FWC && what == SerialConfigs.PUSH_UP_GET_STATE) {
             SitPushUpStateResult stateResult = (SitPushUpStateResult) msg.obj;
-            Logger.i("SitPushUpStateResult===" + stateResult.toString());
             setState(stateResult);
         }
     }

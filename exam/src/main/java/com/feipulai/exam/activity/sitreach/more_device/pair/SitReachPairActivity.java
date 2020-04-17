@@ -1,0 +1,12 @@
+package com.feipulai.exam.activity.sitreach.more_device.pair;
+
+import com.feipulai.exam.activity.situp.base_pair.SitPullPairActivity;
+import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairPresenter;
+
+public class SitReachPairActivity extends SitPullPairActivity {
+
+    @Override
+    public SitPullUpPairPresenter getPresenter() {
+        return new MorePairPresenter(this,this);
+    }
+}

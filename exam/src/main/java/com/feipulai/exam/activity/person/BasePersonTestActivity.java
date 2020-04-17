@@ -47,11 +47,8 @@ import com.orhanobut.logger.Logger;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -518,7 +515,6 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
-                Logger.i("stuSkip:" + pair.getStudent().toString());
                 //测试结束学生清除 ，设备设置空闲状态
                 roundNo = 1;
                 clearHandler.sendEmptyMessageDelayed(0, 0);
@@ -542,15 +538,11 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
      * @param deviceState
      */
     public void updateDevice(@NonNull BaseDeviceState deviceState) {
-        Logger.i("updateDevice==>" + deviceState.toString());
+        Logger.i("testState："+deviceState);
         if (pair.getBaseDevice() != null) {
             pair.getBaseDevice().setState(deviceState.getState());
             //状态为测试已结束
             if (deviceState.getState() == BaseDeviceState.STATE_END) {
-                if (pair.getStudent() != null) {
-                    Logger.i("考生" + pair.getStudent().toString());
-                }
-                Logger.i("设备成绩信息STATE_END==>" + deviceState.toString());
                 if (isFault && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
                     showPenalize();
                 } else {
@@ -638,7 +630,6 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
      * @param baseStuPair 当前设备
      */
     private void saveResult(@NonNull BaseStuPair baseStuPair) {
-        Logger.i("saveResult==>" + baseStuPair.toString());
         if (baseStuPair.getStudent() == null)
             return;
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(baseStuPair.getStudent().getStudentCode());
@@ -869,8 +860,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            Logger.i("清理学生");
             BasePersonTestActivity activity = mActivityWeakReference.get();
-            Logger.i("ClearHandler:清理学生信息");
             if (activity != null) {
                 activity.pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
                 activity.pair.setStudent(null);
