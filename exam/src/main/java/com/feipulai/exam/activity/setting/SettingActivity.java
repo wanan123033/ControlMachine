@@ -406,10 +406,4 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     }
 
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        butterknife.ButterKnife.bind(this);
-    }
 }
