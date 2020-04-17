@@ -37,6 +37,7 @@ import com.feipulai.exam.activity.LoginActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.netUtils.HttpManager;
+import com.feipulai.exam.utils.bluetooth.BlueToothListActivity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,6 +86,8 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     CheckBox cbCustomChannel;
     @BindView(R.id.cb_monitoring)
     CheckBox cbMonitoring;
+    @BindView(R.id.cb_thermometer)
+    CheckBox cbThermometer;
     private String[] partternList = new String[]{"个人测试", "分组测试"};
     private List<Integer> hostIdList;
     private SystemSetting systemSetting;
@@ -184,6 +187,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         cbCustomChannel.setChecked(systemSetting.isCustomChannel());
 
         cbMonitoring.setChecked(systemSetting.isBindMonitoring());
+        cbThermometer.setChecked(systemSetting.isStartThermometer());
     }
 
     @Nullable
@@ -219,9 +223,16 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     }
 
     @OnClick({R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting
-            , R.id.txt_advanced, R.id.sw_identity_mark, R.id.sw_add_student, R.id.cb_route, R.id.cb_custom_channel, R.id.cb_monitoring, R.id.btn_monitoring_setting})
+            , R.id.txt_advanced, R.id.sw_identity_mark, R.id.sw_add_student, R.id.cb_route, R.id.cb_custom_channel, R.id.cb_monitoring,
+            R.id.btn_monitoring_setting, R.id.btn_thermometer, R.id.cb_thermometer})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            case R.id.btn_thermometer:
+                IntentUtil.gotoActivity(this, BlueToothListActivity.class);
+                break;
+            case R.id.cb_thermometer:
+                systemSetting.setStartThermometer(cbThermometer.isChecked());
+                break;
             case R.id.cb_monitoring: //绑定监控
                 systemSetting.setBindMonitoring(cbMonitoring.isChecked());
                 break;

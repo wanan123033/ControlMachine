@@ -75,6 +75,8 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
     @Override
     public void stuSkip() {
         standResiltListener.setTestState(StandResiltListener.TestState.UN_STARTED);
+        //结束测试 发送结束指令
+        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_END_JUMP));
     }
 
     @Override

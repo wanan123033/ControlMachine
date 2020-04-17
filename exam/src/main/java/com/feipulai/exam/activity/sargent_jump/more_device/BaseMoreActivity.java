@@ -394,7 +394,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 }).setNegativeButton("取消", null).show();
     }
 
-    private void stuSkip(int pos) {
+    public void stuSkip(int pos) {
         deviceDetails.get(pos).getStuDevicePair().setStudent(null);
         deviceDetails.get(pos).getStuDevicePair().setCanTest(true);
         deviceDetails.get(pos).getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_FREE);
@@ -533,9 +533,9 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                                 deviceDetails.get(index).getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
                                 deviceDetails.get(index).getStuDevicePair().setResult(-999);
                                 deviceListAdapter.notifyItemChanged(index);
-                                sendTestCommand(pair, index);
                             }
                         }, 3000);
+                        sendTestCommand(pair, index);
                     } else {
                         sendTestCommand(pair, index);
                     }
@@ -723,7 +723,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             }
 
         }
-        if (null != pair.getBaseDevice()) {
+        if (null != pair.getBaseDevice() && pair.getStudent() != null) {
             pair.setResultState(baseStu.getResultState());
             pair.setResult(baseStu.getResult());
             pair.setFullMark(baseStu.isFullMark());
@@ -897,7 +897,6 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     public abstract void gotoItemSetting();
 
     protected abstract void sendTestCommand(BaseStuPair pair, int index);
-
     @Override
     protected void onDestroy() {
         super.onDestroy();

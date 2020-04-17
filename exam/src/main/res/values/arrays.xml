@@ -34,8 +34,8 @@
         <item>成绩上传</item>
         <item>成绩导出</item>
         <item>模版导出</item>
-        <!--<item>成绩删除</item>-->
-
+        <item>体温查看</item>
+        <item>体温导出</item>
     </array>
 
     <array name="check_tool">

@@ -75,6 +75,7 @@ public abstract class AbstractRadioTestActivity<Setting>
 
     @Override
     protected void initData() {
+        getToolbar().getLeftView(0).setVisibility(View.GONE);
         presenter = getPresenter();
         presenter.start();
     }
@@ -89,7 +90,7 @@ public abstract class AbstractRadioTestActivity<Setting>
             title = String.format(getString(R.string.host_name), TestConfigs.machineNameMap.get(machineCode), SettingHelper.getSystemSetting().getHostId())
                     + "-" + SettingHelper.getSystemSetting().getTestName();
         }
-
+        builder.setBackButton(-1);
         return builder.setTitle(title);
     }
 

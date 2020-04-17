@@ -239,7 +239,14 @@
         <activity android:name=".activity.ranger.RangerTestActivity" />
         <activity android:name=".activity.ranger.BluetoothSettingActivity" />
 
+        <activity android:name=".utils.bluetooth.BlueToothListActivity" />
+        <activity
+            android:name=".activity.data.ThermometerSearchActivity"
+            android:windowSoftInputMode="stateHidden" />
+
         <receiver android:name="com.feipulai.device.spputils.SppReciver" />
+
+        <service android:name="com.inuker.bluetooth.library.BluetoothService" />
     </application>
 
 </manifest>

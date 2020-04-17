@@ -9,6 +9,7 @@ import com.feipulai.common.utils.FileUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.SharedPrefsConfigs;
+import com.feipulai.exam.utils.bluetooth.BlueToothHelper;
 import com.kk.taurus.playerbase.config.PlayerConfig;
 import com.kk.taurus.playerbase.config.PlayerLibrary;
 import com.kk.taurus.playerbase.record.PlayRecordManager;
@@ -38,6 +39,7 @@ public class MyApplication extends MultiDexApplication {
         instance = this;
         CrashHandler.getInstance().init(this);
         SettingHelper.init(this);
+        BlueToothHelper.init(this);
         TOKEN = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.TOKEN, "");
         //默认打开WiFi，虹软sdk需要读物唯一标识，某些机器WiFi断开情况下读不到
 //        NetUtil.openWifi(this);

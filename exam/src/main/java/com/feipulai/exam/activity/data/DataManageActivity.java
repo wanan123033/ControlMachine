@@ -28,6 +28,7 @@ import com.feipulai.common.dbutils.BackupManager;
 import com.feipulai.common.dbutils.FileSelectActivity;
 import com.feipulai.common.exl.ExlListener;
 import com.feipulai.common.utils.FileUtil;
+import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -51,6 +52,7 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.exl.ResultExlWriter;
 import com.feipulai.exam.exl.StuItemExLReader;
+import com.feipulai.exam.exl.ThermometerExlWriter;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ImageUtil;
 import com.feipulai.exam.utils.StringChineseUtil;
@@ -69,6 +71,8 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNav
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.CommonPagerTitleView;
+
+import org.apache.poi.ss.formula.functions.T;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -95,6 +99,7 @@ public class DataManageActivity
     private static final int REQUEST_CODE_EXPORT = 4;
     private static final int REQUEST_CODE_PHOTO = 5;
     private static final int REQUEST_CODE_EXPORT_TEMPLATE = 6;
+    private static final int REQUEST_CODE_EXPORT_THERMIMETER = 7;
     @BindView(R.id.grid_viewpager)
     GridViewPager gridViewpager;
     @BindView(R.id.indicator_container)
@@ -148,7 +153,7 @@ public class DataManageActivity
         String[] typeName = getResources().getStringArray(R.array.data_admin);
         int[] typeRes = new int[]{R.mipmap.icon_data_import, R.mipmap.icon_group_import, R.mipmap.icon_data_down, R.mipmap.icon_position_import, R.mipmap.icon_position_down, R.mipmap.icon_delete_position
                 , R.mipmap.icon_data_backup, R.mipmap.icon_data_restore, R.mipmap.icon_data_look, R.mipmap.icon_data_clear, R.mipmap.icon_result_upload,
-                R.mipmap.icon_result_import, R.mipmap.icon_template_export};
+                R.mipmap.icon_result_import, R.mipmap.icon_template_export, R.mipmap.icon_thermometer, R.mipmap.icon_result_import};
         for (int i = 0; i < typeName.length; i++) {
             TypeListBean bean = new TypeListBean();
             bean.setName(typeName[i]);
@@ -305,7 +310,14 @@ public class DataManageActivity
                         intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
                         startActivityForResult(intent, REQUEST_CODE_EXPORT_TEMPLATE);
                         break;
-
+                    case 13://体温查询
+                        IntentUtil.gotoActivity(DataManageActivity.this, ThermometerSearchActivity.class);
+                        break;
+                    case 14://体温导出
+                        intent.setClass(DataManageActivity.this, FileSelectActivity.class);
+                        intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
+                        startActivityForResult(intent, REQUEST_CODE_EXPORT_THERMIMETER);
+                        break;
                 }
             }
         });
@@ -427,11 +439,6 @@ public class DataManageActivity
                         break;
 
                     case ExlListener.EXEL_READ_FAIL:
-                        OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
-                        ToastUtils.showShort(reason);
-                        isProcessingData = false;
-                        break;
-
                     case ExlListener.EXEL_WRITE_SUCCESS:
                         OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
                         ToastUtils.showShort(reason);
@@ -494,6 +501,12 @@ public class DataManageActivity
 
 
                 break;
+
+            case REQUEST_CODE_EXPORT_THERMIMETER:
+                showExportThermometerFileNameDialog();
+
+                break;
+
             case REQUEST_CODE_BACKUP:
                 showBackupFileNameDialog();
                 break;
@@ -708,6 +721,48 @@ public class DataManageActivity
         });
     }
 
+    private void showExportThermometerFileNameDialog() {
+
+        createFileNameDialog(new EditDialog.OnConfirmClickListener() {
+            @Override
+            public void OnClickListener(Dialog dialog, String content) {
+                OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在导出学生体温...");
+                String text = content.toString().trim();
+                if (StringChineseUtil.patternFileName(text)) {
+                    OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
+                    ToastUtils.showShort("文件创建失败,请确保输入文件名合法(中文、字母、数字和下划线),且不存在已有文件");
+                    return;
+                }
+                UsbFile targetFile;
+                try {
+                    targetFile = FileSelectActivity.sSelectedFile.createFile(text + ".xls");
+                    new ThermometerExlWriter(new ExlListener() {
+                        @Override
+                        public void onExlResponse(int responseCode, final String reason) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //关闭等待窗口
+                                    OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
+                                    ToastUtils.showShort(reason);
+                                    isProcessingData = false;
+                                }
+                            });
+
+                        }
+                    }).writeExelData(targetFile);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
+                    ToastUtils.showShort("文件创建失败,请确保路径目录不存在已有文件");
+                    Logger.i("文件创建失败,Exel导出失败");
+                }
+            }
+        });
+    }
+
+
     private void showBackupFileNameDialog() {
 
         createFileNameDialog(new EditDialog.OnConfirmClickListener() {
@@ -760,12 +815,6 @@ public class DataManageActivity
         ToastUtils.showShort("数据清空完成");
     }
 
-    // @Override
-    // public void onClearResultsConfirmed() {
-    //     DBManager.getInstance().deleteItemResult();
-    //     ToastUtils.showShort("清空本地学生成绩信息完成");
-    //     Logger.i("清空本地学生成绩信息完成");
-    // }
     public void uploadPortrait() {
         final List<Student> studentList = DBManager.getInstance().getStudentByPortrait();
         if (studentList.size() == 0) {

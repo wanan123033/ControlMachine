@@ -34,6 +34,8 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentDao;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.entity.StudentItemDao;
+import com.feipulai.exam.entity.StudentThermometer;
+import com.feipulai.exam.entity.StudentThermometerDao;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.greendao.database.Database;
@@ -71,6 +73,7 @@ public class DBManager {
     private static MachineResultDao machineResultDao;
     private static ChipGroupDao chipGroupDao;
     private static ChipInfoDao chipInfoDao;
+    private static StudentThermometerDao thermometerDao;
     private static Database db;
     private static DaoSession daoSession;
     public static DBOpenHelper helper;
@@ -107,10 +110,11 @@ public class DBManager {
         machineResultDao = daoSession.getMachineResultDao();
         chipGroupDao = daoSession.getChipGroupDao();
         chipInfoDao = daoSession.getChipInfoDao();
+        thermometerDao = daoSession.getStudentThermometerDao();
         int[] supportMachineCodes = {/*ItemDefault.CODE_HW, */ItemDefault.CODE_TS, ItemDefault.CODE_YWQZ, ItemDefault.CODE_YTXS,
                 ItemDefault.CODE_LDTY, ItemDefault.CODE_ZWTQQ,
                 ItemDefault.CODE_HWSXQ, ItemDefault.CODE_FHL, ItemDefault.CODE_ZFP,
-                ItemDefault.CODE_PQ, ItemDefault.CODE_MG, ItemDefault.CODE_FWC, ItemDefault.CODE_LQYQ, ItemDefault.CODE_ZQYQ, ItemDefault.CODE_ZCP,ItemDefault.CODE_JGCJ
+                ItemDefault.CODE_PQ, ItemDefault.CODE_MG, ItemDefault.CODE_FWC, ItemDefault.CODE_LQYQ, ItemDefault.CODE_ZQYQ, ItemDefault.CODE_ZCP, ItemDefault.CODE_JGCJ
         };
         for (int machineCode : supportMachineCodes) {
             //查询是否已经存在该机器码的项,如果存在就放弃,避免重复添加
@@ -175,7 +179,7 @@ public class DBManager {
 //                    insertMiddleRaceItem(machineCode, "1000米", "分'秒");
                     break;
                 case ItemDefault.CODE_JGCJ:
-                    insertItem(machineCode,"激光测距", "米");
+                    insertItem(machineCode, "激光测距", "米");
                     break;
 
             }
@@ -1782,7 +1786,7 @@ public class DBManager {
                     List<RoundResult> saveResult = entity.getValue();
                     UploadResults uploadResults = new UploadResults(group.getScheduleNo(),
                             itemCode, saveResult.get(0).getStudentCode(), "1",
-                            group, RoundResultBean.beanCope(saveResult,group));
+                            group, RoundResultBean.beanCope(saveResult, group));
                     uploadResultsList.add(uploadResults);
                 }
             }
@@ -1875,7 +1879,7 @@ public class DBManager {
 
                     UploadResults uploadResults = new UploadResults(group.getScheduleNo(),
                             itemCode, saveResult.get(0).getStudentCode(), "1",
-                            group, RoundResultBean.beanCope(saveResult,group));
+                            group, RoundResultBean.beanCope(saveResult, group));
                     uploadResults.setGroupId(group.getId());
                     uploadResultsList.add(uploadResults);
                 }
@@ -1973,7 +1977,7 @@ public class DBManager {
 
                     UploadResults uploadResults = new UploadResults(group.getScheduleNo(),
                             TestConfigs.getCurrentItemCode(), stu.getStudentCode(), "1",
-                            group, RoundResultBean.beanCope(saveResult,group));
+                            group, RoundResultBean.beanCope(saveResult, group));
                     uploadResultsList.add(uploadResults);
                 }
             }
@@ -2418,6 +2422,31 @@ public class DBManager {
                 .buildDelete().executeDeleteWithoutDetachingEntities();
     }
 
+    /**********************************体温********************************************************/
+    public void insterThermometer(StudentThermometer thermometer) {
+        thermometerDao.insertOrReplace(thermometer);
+    }
+
+    public List<StudentThermometer> getThermometerList(StudentItem studentItem) {
+        return thermometerDao.queryBuilder().where(StudentThermometerDao.Properties.StudentCode.eq(studentItem.getStudentCode()))
+                .where(StudentThermometerDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(StudentThermometerDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode())).list();
+    }
+
+    public StudentThermometer getThermometer(StudentItem studentItem) {
+        return thermometerDao.queryBuilder().where(StudentThermometerDao.Properties.StudentCode.eq(studentItem.getStudentCode()))
+                .where(StudentThermometerDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(StudentThermometerDao.Properties.ExamType.eq(studentItem.getExamType()))
+                .where(StudentThermometerDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .limit(1).unique();
+    }
+
+
+    public List<StudentThermometer> getItemThermometerList() {
+        return thermometerDao.queryBuilder()
+                .where(StudentThermometerDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(StudentThermometerDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode())).list();
+    }
     /********************************************多表操作**********************************************************************/
 
     /**
