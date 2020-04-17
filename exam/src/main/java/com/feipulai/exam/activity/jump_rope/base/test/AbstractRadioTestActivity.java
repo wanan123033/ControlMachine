@@ -104,12 +104,15 @@ public abstract class AbstractRadioTestActivity<Setting>
         String title = TestConfigs.machineNameMap.get(machineCode)
                 + SettingHelper.getSystemSetting().getHostId() + "号机"
                 + (isTestNameEmpty ? "" : ("-" + SettingHelper.getSystemSetting().getTestName()));
+
+        builder.setBackButton(-1);
         return builder.setTitle(title);
     }
 
     @Override
     protected void initData() {
         ButterKnife.bind(this);
+        getToolbar().getLeftView(0).setVisibility(View.GONE);
     }
 
     protected abstract AbstractRadioTestPresenter<Setting> getPresenter();
