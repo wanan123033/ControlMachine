@@ -36,6 +36,7 @@ import com.feipulai.exam.activity.pushUp.PushPatternSelectActivity;
 import com.feipulai.exam.activity.pushUp.PushUpSetting;
 import com.feipulai.exam.activity.pushUp.PushUpSettingActivity;
 import com.feipulai.exam.activity.pushUp.check.PushUpCheckActivity;
+import com.feipulai.exam.activity.ranger.RangerMoreActivity;
 import com.feipulai.exam.activity.ranger.RangerTestActivity;
 import com.feipulai.exam.activity.sargent_jump.SargentGroupActivity;
 import com.feipulai.exam.activity.sargent_jump.SargentItemSelectActivity;
@@ -400,6 +401,7 @@ public class TestConfigs {
 
         TestConfigs.groupActivity.put(ItemDefault.CODE_LQYQ, BasketBallGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_ZQYQ, FootBallGroupActivity.class);
+        TestConfigs.groupActivity.put(ItemDefault.CODE_JGCJ, RangerMoreActivity.class);
         // 每个机器码对应的机器名称
         TestConfigs.machineNameMap.put(ItemDefault.CODE_ZWTQQ, "坐位体前屈");
         TestConfigs.machineNameMap.put(ItemDefault.CODE_LDTY, "立定跳远");

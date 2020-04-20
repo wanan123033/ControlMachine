@@ -113,6 +113,10 @@ public class SppUtils {
     private IntentFilter mBondStateFilter;
     private IntentFilter mScanFilter;
     private OnDeviceCallBack onDeviceCallBack;
+
+    /**
+     * 扫描回调
+     */
     public interface OnDeviceCallBack{
         void onDeviceCallBack(BluetoothDevice device);
     }
@@ -497,9 +501,15 @@ public class SppUtils {
     }
 
 
+    public void close(){
+        if (isBluetoothEnabled()){
+            getBluetoothAdapter().disable();
+        }
+    }
 
 
-
-
+    public void unregisterRecvier(){
+        mContext.unregisterReceiver(mReciver);
+    }
 
 }

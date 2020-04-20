@@ -1,17 +1,23 @@
 package com.feipulai.exam.activity.ranger;
 
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.device.spputils.OnDataReceivedListener;
+import com.feipulai.device.spputils.SppUtils;
+import com.feipulai.device.spputils.beans.RangerResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.TextChangeListener;
+import com.feipulai.exam.activity.ranger.bluetooth.BluetoothManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,6 +39,8 @@ public class ThrowSettingDialog extends AlertDialog.Builder {
     EditText et_m;
 
     RangerSetting setting;
+
+    String[] items = {"铅球","铁饼","链球","标枪","其他"};
 
     public ThrowSettingDialog(@NonNull Context context) {
         super(context);
@@ -77,14 +85,49 @@ public class ThrowSettingDialog extends AlertDialog.Builder {
                 afterTextChanged1(s,id);
             }
         });
+
+        ArrayAdapter adapter = new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,items);
+        sp_item.setAdapter(adapter);
     }
 
     @OnClick({R.id.tv_stand,R.id.tv_CC})
     public void onClick(View view){
         switch (view.getId()){
             case R.id.tv_stand:
+                switch (sp_item.getSelectedItemPosition()){
+                    case 0:
+                        et_stand.setText("1068");
+                        et_stand.setSelection(4);
+                        break;
+                    case 1:
+                        et_stand.setText("1250");
+                        et_stand.setSelection(4);
+                        break;
+                    case 2:
+                        et_stand.setText("1068");
+                        et_stand.setSelection(4);
+                        break;
+                    case 3:
+                        et_stand.setText("8000");
+                        et_stand.setSelection(4);
+                        break;
+                    case 4:
+                        et_stand.setText("0");
+                        et_stand.setSelection(1);
+                        break;
+                }
                 break;
             case R.id.tv_CC:
+                SppUtils spp = BluetoothManager.getSpp(getContext());
+                spp.setOnDataReceivedListener(new OnDataReceivedListener() {
+                    @Override
+                    protected void onResult(byte[] datas) {
+                        onResults(datas);
+                    }
+                });
+                spp.send(new byte[]{0x5A, 0x33, 0x34, 0x30, 0x39, 0x33, 0x03, 0x0d, 0x0a},false);
+                spp.send(new byte[]{0x43, 0x30, 0x36, 0x37, 0x03, 0x0d, 0x0a},false);
+
                 break;
         }
     }
@@ -92,6 +135,29 @@ public class ThrowSettingDialog extends AlertDialog.Builder {
     @OnItemSelected({R.id.sp_item})
     public void spinnerItemSelected(Spinner spinner, int position) {
         setting.setItemType(position);
+        switch (position){
+            case 0:
+                et_stand.setText("1068");
+                et_stand.setSelection(4);
+                break;
+            case 1:
+                et_stand.setText("1250");
+                et_stand.setSelection(4);
+                break;
+            case 2:
+                et_stand.setText("1068");
+                et_stand.setSelection(4);
+                break;
+            case 3:
+                et_stand.setText("8000");
+                et_stand.setSelection(4);
+                break;
+            case 4:
+                et_stand.setText("0");
+                et_stand.setSelection(1);
+                break;
+        }
+
     }
 
     public void afterTextChanged1(Editable s,int id) {
@@ -111,7 +177,15 @@ public class ThrowSettingDialog extends AlertDialog.Builder {
             case R.id.et_m:
                 setting.setMiao(Integer.parseInt(et_m.getText().toString()));
                 break;
+        }
+    }
+
+    private void onResults(byte[] datas) {
+        RangerResult result = new RangerResult(datas);
+        double result1 = result.getResult();
+        if (result.getType() == 1){
 
         }
+
     }
 }

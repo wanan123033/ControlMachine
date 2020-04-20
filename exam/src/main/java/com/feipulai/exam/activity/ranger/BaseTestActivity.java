@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -57,7 +58,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-public abstract class BaseTestActivity extends BaseCheckActivity implements PenalizeDialog.PenalizeListener {
+public abstract class BaseTestActivity extends BaseCheckActivity {
     private static final String TAG = "BasePersonTestActivity";
     @BindView(R.id.et_input_text)
     StuSearchEditText etInputText;
@@ -116,7 +117,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity implements Pena
     /**
      * 当前测试次数位
      */
-    private int testNo = 1;
+    protected int testNo = 1;
     private int roundNo = 1;
     private LEDManager mLEDManager;
     //清理学生信息
@@ -305,14 +306,6 @@ public abstract class BaseTestActivity extends BaseCheckActivity implements Pena
 //            selectTestDialog(student);
             toastSpeak("该考生已测试完成");
             return;
-        } else if (roundResultList != null) {
-            for (RoundResult roundResult : roundResultList) {
-                if (roundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && isResultFullReturn(student.getSex(), roundResult.getResult())) {
-                    toastSpeak("满分");
-                    return;
-                }
-
-            }
         }
         //是否有成绩，没有成绩查底该项目是否有成绩，没有成绩测试次数为1，有成绩测试次数+1
         if (roundResultList.size() == 0) {
@@ -345,7 +338,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity implements Pena
         addStudent(student);
     }
 
-    @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting, R.id.img_AFR,R.id.txt_pf})
+    @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting, R.id.img_AFR,R.id.txt_pf,R.id.txt_fg,R.id.txt_commit})
 //R.id.txt_stu_fault
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -359,12 +352,11 @@ public abstract class BaseTestActivity extends BaseCheckActivity implements Pena
                 }
                 break;
             case R.id.txt_start_test:
-
+                Log.e("TAG----",pair.getBaseDevice().getState()+"");
                 if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
-                    updateTestBtnState();
                     sendTestCommand(pair);
+                    pair.setTestTime(System.currentTimeMillis()+"");
                 }
-
                 break;
             case R.id.txt_pf:
                 showPenalize();
@@ -373,8 +365,20 @@ public abstract class BaseTestActivity extends BaseCheckActivity implements Pena
 //                gotoUVCFaceCamera();
                 showAFR();
                 break;
+            case R.id.txt_fg:
+                pair.setResultState(2);
+                updateResult(pair);
+                break;
+            case R.id.txt_commit:
+                confrim();
+                result[testNo - 1] = ResultDisplayUtils.getStrResultForDisplay(pair.getResult());
+                adapter.setNewData(Arrays.asList(result));
+                testNo++;
+                break;
         }
     }
+
+    protected abstract void confrim();
 
 
 //    private void penalize(){
@@ -492,6 +496,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity implements Pena
             txtStuSex.setText("");
             txtStuCode.setText("");
             txtStuResult.setText("");
+            adapter.setNewData(new ArrayList<String>());
             imgPortrait.setImageResource(R.mipmap.icon_head_photo);
         }
         updateInitBtnState();
@@ -565,7 +570,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity implements Pena
 
     }
 
-    private boolean doResult() {
+    public boolean doResult() {
         //ResultDisplayUtils.getStrResultForDisplay(pair.getResult())
         result[roundNo - 1] = ((pair.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(pair.getResult()));
         resultList.clear();
@@ -612,19 +617,14 @@ public abstract class BaseTestActivity extends BaseCheckActivity implements Pena
     /**
      * 展示判罚
      */
-    private void showPenalize() {
-        PenalizeDialog dialog = new PenalizeDialog(this);
-        dialog.setPenalizeListener(this);
-        dialog.setMinMaxValue(-1,1);
-        dialog.show();
-    }
+    public abstract void showPenalize();
 
     /**
      * 保存测试成绩
      *
      * @param baseStuPair 当前设备
      */
-    private void saveResult(@NonNull BaseStuPair baseStuPair) {
+    public void saveResult(@NonNull BaseStuPair baseStuPair) {
         Logger.i("saveResult==>" + baseStuPair.toString());
         if (baseStuPair.getStudent() == null)
             return;
@@ -633,6 +633,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity implements Pena
         roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
         roundResult.setStudentCode(baseStuPair.getStudent().getStudentCode());
         roundResult.setItemCode(TestConfigs.getCurrentItemCode());
+        Log.e("TAG----","baseStuPair.getResult()="+baseStuPair.getResult());
         roundResult.setResult(baseStuPair.getResult());
         roundResult.setMachineResult(baseStuPair.getResult());
         roundResult.setResultState(baseStuPair.getResultState());
@@ -681,7 +682,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity implements Pena
 
         uploadResult(uploadResults);
 
-
+        ToastUtils.showLong("保存成功");
     }
 
     /**
@@ -715,7 +716,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity implements Pena
             pair.setFullMark(baseStu.isFullMark());
             txtStuResult.setText(((baseStu.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult())));
             refreshDevice();
-            updateResultLed(((baseStu.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult())));
+//            updateResultLed(((baseStu.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult())));
         }
     }
 
@@ -824,20 +825,6 @@ public abstract class BaseTestActivity extends BaseCheckActivity implements Pena
 
     }
 
-    @Override
-    public void penalize(int value) {
-
-    }
-
-    @Override
-    public void dismisson(DialogInterface dialog) {
-        dialog.dismiss();
-    }
-
-    @Override
-    public boolean getPenalize() {
-        return true;
-    }
 
     private static class LedHandler extends Handler {
 
@@ -899,6 +886,12 @@ public abstract class BaseTestActivity extends BaseCheckActivity implements Pena
         txtCommit.setVisibility(View.VISIBLE);
         txtPf.setVisibility(View.VISIBLE);
         txtFg.setVisibility(View.VISIBLE);
+    }
+
+    public void setScore(int result){
+        this.result[testNo - 1] = result+"";
+        pair.setResult(result);
+        updateResult(pair);
     }
 
 }

@@ -1,8 +1,8 @@
 package com.feipulai.exam.activity.ranger;
 
 public class RangerSetting {
-    private int testNo = 2; //测试次数
-    private int accuracy; //成绩精确度  2:小数点后两位 3:小数点后三位
+    private int testNo = 1; //测试次数
+    private int accuracy = 2; //成绩精确度  2:小数点后两位 3:小数点后三位
     private boolean penglize; //是否启用板距
     private int autoTestTime; //自动测试时间间隔
     private int itemType; //项目类型  {"跳高","撑竿跳高","跳远","立定跳远","三级跳远","标枪","铅球","铁饼","链球"};
@@ -25,6 +25,7 @@ public class RangerSetting {
     private int fen2;    //分
     private int miao2;   //秒
     private int distance; //两点之间的距离
+    private int testPattern; //分组测试模式 0连续 1循环
 
     public int getTestNo() {
         return testNo;
@@ -177,4 +178,13 @@ public class RangerSetting {
     public void setDistance(int distance) {
         this.distance = distance;
     }
+
+
+    public int getTestPattern() {
+        return testPattern;
+    }
+    public void setTestPattern(int testPattern) {
+        this.testPattern = testPattern;
+    }
+
 }

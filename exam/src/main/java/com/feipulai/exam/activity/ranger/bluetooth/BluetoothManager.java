@@ -1,4 +1,4 @@
-package com.feipulai.exam.activity.ranger;
+package com.feipulai.exam.activity.ranger.bluetooth;
 
 import android.content.Context;
 
@@ -6,7 +6,7 @@ import com.feipulai.device.spputils.SppUtils;
 
 
 public class BluetoothManager {
-    private static SppUtils spp;
+    public static SppUtils spp;
     public static synchronized SppUtils getSpp(Context context){
         if (spp == null){
             spp = new SppUtils(context);

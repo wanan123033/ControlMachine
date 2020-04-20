@@ -1,4 +1,4 @@
-package com.feipulai.exam.activity.ranger.adapter;
+package com.feipulai.exam.activity.ranger.bluetooth;
 
 
 import android.bluetooth.BluetoothDevice;
@@ -10,13 +10,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.chad.library.adapter.base.BaseViewHolder;
+
 import com.feipulai.exam.R;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class BluetoothListAdapter extends BaseAdapter {
 
@@ -59,15 +57,14 @@ public class BluetoothListAdapter extends BaseAdapter {
         return convertView;
     }
 
-    static class ViewHolder extends BaseViewHolder {
-        @BindView(R.id.tv_name)
+    static class ViewHolder {
         TextView tv_name;
-        @BindView(R.id.tv_mac)
+
         TextView tv_mac;
 
         public ViewHolder(View view) {
-            super(view);
-            ButterKnife.bind(this,view);
+            tv_name = view.findViewById(R.id.tv_name);
+            tv_mac = view.findViewById(R.id.tv_mac);
         }
     }
 }

@@ -11,7 +11,7 @@ public class RangerResult {
     private double vertical; //垂直角
     private double level; //水平角
     private String jsUnit; //角度单位
-    private double result; //水平距离
+    private int result; //水平距离
     private int backlight; //回光强度
     private int frame; //菱镜常数
 
@@ -22,15 +22,16 @@ public class RangerResult {
             String string = new String(result,"ASCII");
             String[] split = string.split("\\+");
             if (split.length >= 5) {
+                Log.e("TAG----",string);
                 id = split[0].getBytes()[0];
                 String[] ms = split[1].split("m");
                 slantRange = Double.parseDouble(ms[0]) / 1000.0;
-                unit = "m";
+                unit = "cm";
                 vertical = Double.parseDouble(ms[1]) / 10000.0;
                 level = Double.parseDouble(split[2].replace("d", "")) / 10000.0;
                 String[] ss = split[3].split("t");
-                this.result = Double.parseDouble(ss[0]) / 1000.0;
-                Log.e("TAG----","result="+this.result+"米");
+                this.result = Integer.parseInt(ss[0]);
+                Log.e("TAG----","result="+this.result+"mm");
                 backlight = Integer.parseInt(ss[1]);
                 frame = Integer.parseInt(split[5].substring(0, 2));
                 Log.e("TAG----", string);
@@ -65,7 +66,7 @@ public class RangerResult {
         return jsUnit;
     }
 
-    public double getResult() {
+    public int getResult() {
         return result;
     }
 

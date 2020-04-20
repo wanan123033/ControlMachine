@@ -13,6 +13,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -144,6 +145,7 @@ public class SppService {
             mSecureAcceptThread.kill();
             mSecureAcceptThread = null;
         }
+
         setState(SppState.STATE_NONE);
     }
 
@@ -246,7 +248,7 @@ public class SppService {
         }
     }
     private class ConnectThread extends Thread {
-        private final BluetoothSocket mmSocket;
+        private BluetoothSocket mmSocket;
         private final BluetoothDevice mmDevice;
         private String mSocketType;
 
@@ -275,8 +277,8 @@ public class SppService {
                 e.printStackTrace();
                 try {
                     mmSocket.close();
-                } catch (IOException e2) {
-
+                } catch (IOException e1) {
+                    e1.printStackTrace();
                 }
                 connectionFailed();
                 return;

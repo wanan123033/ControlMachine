@@ -1,25 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    android:orientation="horizontal">
-
-    <include
-        layout="@layout/stu_info_layout"
-        android:layout_width="250dp"
-        android:layout_height="match_parent" />
-
-    <View
-        android:layout_width="8dp"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_list"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/grey_light" />
-
-
-
+        android:layout_weight="3"/>
     <RelativeLayout
         android:id="@+id/rl"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:layout_weight="1">
 
         <LinearLayout
             android:id="@+id/ll_seach"
@@ -34,10 +26,11 @@
                 android:layout_marginLeft="15dp"
                 android:src="@mipmap/icon_test_logo" />
 
-            <com.feipulai.exam.view.StuSearchEditText
-                android:id="@+id/et_input_text"
+            <TextView
+                android:id="@+id/tv_group_name"
                 android:layout_width="360dp"
                 android:layout_height="35dp"
+                android:background="@drawable/icon_test_result_bg"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="3dp" />
 
@@ -189,7 +182,7 @@
                 android:background="@color/white"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:padding="8dp">
+                android:padding="15dp">
 
                 <TextView
                     android:id="@+id/txt_start_test"
@@ -218,7 +211,7 @@
                     android:id="@+id/txt_commit"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginBottom="@dimen/sp_12"
                     android:layout_weight="1"
                     android:background="@drawable/btn_bg_blue"
                     android:gravity="center"
@@ -230,7 +223,7 @@
                     android:id="@+id/txt_pf"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginBottom="@dimen/sp_12"
                     android:layout_weight="1"
                     android:background="@drawable/btn_bg_blue"
                     android:gravity="center"
@@ -242,7 +235,7 @@
                     android:id="@+id/txt_fg"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginBottom="@dimen/sp_12"
                     android:layout_weight="1"
                     android:background="@drawable/btn_bg_blue"
                     android:gravity="center"
@@ -292,4 +285,3 @@
             android:visibility="gone"/>
     </RelativeLayout>
 </LinearLayout>
-

@@ -1,5 +1,7 @@
 package com.feipulai.exam.activity.ranger;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -10,9 +12,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
-import com.feipulai.device.spputils.beans.RangerResult;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.ranger.bluetooth.BluetoothSettingDialog;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -36,6 +39,12 @@ public class RangerSettingActivity extends BaseTitleActivity implements Compound
     private String[] testNos = {"1","2","3"};
     private String[] results = {"精确到小数点后两位","精确到小数点后三位"};
 
+    @Nullable
+    @Override
+    protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
+        return builder.setTitle("设置");
+    }
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_ranger_setting;
@@ -55,6 +64,19 @@ public class RangerSettingActivity extends BaseTitleActivity implements Compound
 
         cbFullSkip.setOnCheckedChangeListener(this);
         etTestTime.addTextChangedListener(this);
+
+        int testNo = setting.getTestNo();
+        boolean penglize = setting.isPenglize();
+        int autoTestTime = setting.getAutoTestTime();
+        int accuracy = setting.getAccuracy();
+        int itemType = setting.getItemType();
+
+        sp_test_no.setSelection(testNo - 1);
+        cbFullSkip.setChecked(penglize);
+        etTestTime.setText(String.valueOf(autoTestTime));
+        sp_result.setSelection(accuracy - 2);
+        sp_item.setSelection(itemType);
+        etTestTime.setSelection(String.valueOf(autoTestTime).length());
     }
 
     @OnClick({R.id.tv_throw,R.id.tv_staJump,R.id.tv_bluetooth})
@@ -108,7 +130,19 @@ public class RangerSettingActivity extends BaseTitleActivity implements Compound
 
     @Override
     public void afterTextChanged(Editable s) {
-        int autoTestTime =Integer.parseInt(etTestTime.getText().toString());
-        setting.setAutoTestTime(autoTestTime);
+        if (etTestTime.getText().length() > 0) {
+            try {
+                int autoTestTime = Integer.parseInt(etTestTime.getText().toString());
+                setting.setAutoTestTime(autoTestTime);
+            }catch (NumberFormatException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void finish() {
+        SharedPrefsUtil.save(getApplicationContext(),setting);
+        super.finish();
     }
 }

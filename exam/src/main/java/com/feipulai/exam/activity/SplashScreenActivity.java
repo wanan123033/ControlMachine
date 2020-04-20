@@ -89,7 +89,9 @@ public class SplashScreenActivity extends BaseActivity {
 
     private static final int ACTION_REQUEST_PERMISSIONS = 0x001;
     private static final String[] NEEDED_PERMISSIONS = new String[]{
-            Manifest.permission.READ_PHONE_STATE
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
     };
     private FaceEngine faceEngine = new FaceEngine();
 

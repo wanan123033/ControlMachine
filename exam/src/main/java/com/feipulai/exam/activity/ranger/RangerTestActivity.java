@@ -1,35 +1,48 @@
 package com.feipulai.exam.activity.ranger;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.spputils.OnDataReceivedListener;
-import com.feipulai.device.spputils.SppState;
 import com.feipulai.device.spputils.SppUtils;
 import com.feipulai.device.spputils.beans.RangerResult;
+import com.feipulai.exam.activity.base.PenalizeDialog;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
+import com.feipulai.exam.activity.ranger.bluetooth.BluetoothManager;
 
-public class RangerTestActivity extends BaseTestActivity {
+public class RangerTestActivity extends BaseTestActivity  implements PenalizeDialog.PenalizeListener{
+    private static final int GET_BLUETOOTH = 222;
+    private static final int TEST = 333;
     SppUtils utils;
     RangerSetting setting;
 
     private final Handler handler = new Handler(Looper.getMainLooper()){
         @Override
         public void handleMessage(Message msg) {
-            boolean connected = utils.isConnected();
-            if (!connected){
-                pair.getBaseDevice().setState(BaseDeviceState.STATE_ERROR);
-            }else {
-                pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+            if (msg.what == GET_BLUETOOTH) {
+                boolean connected = utils.isConnected();
+                if (!connected) {
+                    pair.getBaseDevice().setState(BaseDeviceState.STATE_ERROR);
+                } else {
+                    pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+                }
+                refreshDevice();
+                handler.sendEmptyMessageDelayed(GET_BLUETOOTH, 500);
+            }else if (msg.what == TEST){
+                BaseStuPair pair = (BaseStuPair) msg.obj;
+                if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
+                    sendTestCommand(pair);
+                    pair.setTestTime(System.currentTimeMillis()+"");
+                }
             }
-            refreshDevice();
-            handler.sendEmptyMessageDelayed(222,500);
         }
     };
 
@@ -38,14 +51,26 @@ public class RangerTestActivity extends BaseTestActivity {
         super.initData();
         setting = SharedPrefsUtil.loadFormSource(getApplicationContext(),RangerSetting.class);
         utils = BluetoothManager.getSpp(this);
-        utils.setupService();
-        utils.startService();
-        utils.setOnDataReceivedListener(new OnDataReceivedListener() {
-            @Override
-            protected void onResult(byte[] datas) {
-                onResults(datas);
-            }
-        });
+        if (utils.isBluetoothEnabled()) {
+            utils.setupService();
+            utils.startService();
+            utils.setOnDataReceivedListener(new OnDataReceivedListener() {
+                @Override
+                protected void onResult(byte[] datas) {
+                    onResults(datas);
+                }
+            });
+        }else {
+            utils.enable();
+            utils.setupService();
+            utils.startService();
+            utils.setOnDataReceivedListener(new OnDataReceivedListener() {
+                @Override
+                protected void onResult(byte[] datas) {
+                    onResults(datas);
+                }
+            });
+        }
     }
 
     @Override
@@ -63,25 +88,43 @@ public class RangerTestActivity extends BaseTestActivity {
         }
 
         //循环获取蓝牙状态
-        handler.sendEmptyMessageDelayed(222,500);
+        handler.sendEmptyMessageDelayed(GET_BLUETOOTH,500);
     }
 
     @Override
     public void sendTestCommand(BaseStuPair baseStuPair) {
-        if (utils.isConnected()) {
-            byte[] bytes = new byte[]{0x5A, 0x33, 0x34, 0x30, 0x39, 0x33, 0x03, 0x0d, 0x0a};
-            utils.send(bytes, false);
-            bytes = new byte[]{0x43, 0x30, 0x36, 0x37, 0x03, 0x0d, 0x0a};
-            utils.send(bytes, false);
-            updateTestBtnState();
+        if (testNo > setting.getTestNo()){
+            ToastUtils.showLong("测试已完成");
+            stuSkip();
+            return;
+        }
+        Log.e("TAG----",pair.getStudent()+"--"+utils.isConnected());
+        if (baseStuPair.getStudent() != null) {
+            if (utils.isConnected()) {
+
+                byte[] bytes = new byte[]{0x5A, 0x33, 0x34, 0x30, 0x39, 0x33, 0x03, 0x0d, 0x0a};
+                utils.send(bytes, false);
+                bytes = new byte[]{0x43, 0x30, 0x36, 0x37, 0x03, 0x0d, 0x0a};
+                utils.send(bytes, false);
+                if (testNo < setting.getTestNo() && setting.getAutoTestTime() > 0){  //开启自动测距
+                    Message msg = Message.obtain();
+                    msg.obj = baseStuPair;
+                    msg.what = TEST;
+                    handler.sendMessageDelayed(msg,setting.getAutoTestTime() * 1000);
+                    return;
+                }
+                updateTestBtnState();
+            } else {
+                ToastUtils.showLong("请先连接激光测距仪");
+            }
         }else {
-            ToastUtils.showLong("请先连接激光测距仪");
+            ToastUtils.showLong("请添加学生测试");
         }
     }
 
     @Override
     public int setTestCount() {
-        return 2;
+        return setting.getTestNo();
     }
 
     @Override
@@ -92,9 +135,8 @@ public class RangerTestActivity extends BaseTestActivity {
     @Override
     public void stuSkip() {
         pair.setStudent(null);
-        pair.setResult2(0.0);
+        pair.setResult(0);
         refreshTxtStu(null);
-
     }
 
     @Override
@@ -102,22 +144,61 @@ public class RangerTestActivity extends BaseTestActivity {
         return false;
     }
 
+    @Override
+    protected void confrim() {
+        saveResult(pair);
+        updateInitBtnState();
+        Log.e("TAG----","testNo="+testNo+",setting.getTestNo()="+setting.getTestNo());
+
+        if (testNo == setting.getTestNo() + 1){
+            testNo = 1;
+            stuSkip();
+        }
+    }
+
     private void onResults(byte[] datas) {
         RangerResult result = new RangerResult(datas);
-        double result1 = result.getResult();
+        int result1 = result.getResult();
         if (result.getType() == 1){
-            pair.setResult2(result1);
-            updateResult(pair);
+            setScore(result1);
         }
 
     }
     public void onDestroy() {
         super.onDestroy();
         //断开蓝牙连接
-        if(utils.getServiceState() == SppState.STATE_CONNECTED){
+        if (utils.isConnected()){
             utils.disconnect();
         }
         //停止服务
         utils.stopService();
+        handler.removeMessages(GET_BLUETOOTH);
+        utils = null;
+        BluetoothManager.spp = null;
+    }
+
+    @Override
+    public void showPenalize() {
+        if (setting.isPenglize()) {
+            PenalizeDialog dialog = new PenalizeDialog(this);
+            dialog.setPenalizeListener(this);
+            dialog.setMinMaxValue(-1, 1);
+            dialog.show();
+        }
+    }
+    @Override
+    public void penalize(int value) {
+        pair.setResult(pair.getResult()+value*100);
+        updateResult(pair);
+    }
+
+    @Override
+    public void dismisson(DialogInterface dialog) {
+        dialog.dismiss();
+    }
+
+    @Override
+    public boolean getPenalize() {
+        return true;
     }
 }

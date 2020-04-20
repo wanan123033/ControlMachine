@@ -1,4 +1,4 @@
-package com.feipulai.exam.activity.ranger;
+package com.feipulai.exam.activity.ranger.bluetooth;
 
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothDevice;
@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import com.feipulai.device.spputils.SppUtils;
 import com.feipulai.exam.R;
-import com.feipulai.exam.activity.ranger.adapter.BluetoothListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +19,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class BluetoothSettingDialog extends AlertDialog.Builder implements AdapterView.OnItemClickListener {
-
+public class BluetoothSettingDialog extends AlertDialog.Builder implements AdapterView.OnItemClickListener, View.OnClickListener {
     @BindView(R.id.rv_bluetooth)
     ListView rv_bluetooth;
 
