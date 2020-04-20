@@ -92,9 +92,12 @@ public class SitReachSettingActivity extends BaseTitleActivity implements Compou
         ArrayAdapter spTestRoundAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testRound);
         spTestRoundAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTestRound.setAdapter(spTestRoundAdapter);
-        ArrayAdapter spDeviceCountAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{"1"});
+
+        ArrayAdapter spDeviceCountAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{"1","2","3","4"});
         spDeviceCountAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spDeviceCount.setAdapter(spDeviceCountAdapter);
+        spDeviceCount.setSelection(reachSetting.getTestDeviceCount()-1);
+
         if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
             rgTestPattern.setVisibility(View.GONE);
         } else {
@@ -147,14 +150,16 @@ public class SitReachSettingActivity extends BaseTitleActivity implements Compou
         }
     }
 
-    @OnItemSelected({R.id.sp_test_round})
+    @OnItemSelected({R.id.sp_test_round,R.id.sp_device_count})
     public void spinnerItemSelected(Spinner spinner, int position) {
         switch (spinner.getId()) {
             case R.id.sp_test_round:
                 reachSetting.setTestCount(position + 1);
                 EventBus.getDefault().post(new BaseEvent(EventConfigs.UPDATE_TEST_COUNT));
                 break;
-
+            case R.id.sp_device_count:
+                reachSetting.setTestDeviceCount(position+1);
+                break;
         }
     }
 
@@ -165,7 +170,7 @@ public class SitReachSettingActivity extends BaseTitleActivity implements Compou
             isCheckSetting();
         }
         SharedPrefsUtil.save(this, reachSetting);
-        if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
+        if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN && reachSetting.getTestType()!=SitReachSetting.WIRELESS_TYPE) {
             startActivity(new Intent(this, SitReachTestActivity.class));
         }
         SerialDeviceManager.getInstance().close();

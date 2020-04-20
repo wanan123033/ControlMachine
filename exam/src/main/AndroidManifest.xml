@@ -9,10 +9,11 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.UPDATE_DEVICE_STATS" />
 
-    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
@@ -36,7 +37,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.sitreach.more_device.pair.SitReachPairActivity"></activity>
+        <activity android:name=".activity.sitreach.more_device.SitReachMoreGroupActivity"></activity>
+        <activity android:name=".activity.sitreach.more_device.pair.SitReachPairActivity" />
         <activity android:name=".activity.sitreach.more_device.SitReachMoreActivity" />
         <activity
             android:name=".activity.basketball.ShootSettingActivity"
@@ -154,6 +156,9 @@
             android:name=".activity.sitreach.SitReachGroupTestActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
+            android:name=".activity.sitreach.SitReachSelectActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
             android:name=".activity.sitreach.SitReachSettingActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
@@ -243,12 +248,10 @@
         <activity android:name=".activity.ranger.RangerSettingActivity" />
         <activity android:name=".activity.ranger.RangerTestActivity" />
         <activity android:name=".activity.ranger.BluetoothSettingActivity" />
-
         <activity android:name=".utils.bluetooth.BlueToothListActivity" />
         <activity
             android:name=".activity.data.ThermometerSearchActivity"
             android:windowSoftInputMode="stateHidden" />
-
         <activity android:name=".activity.ranger.RangerMoreActivity" />
 
         <receiver android:name="com.feipulai.device.spputils.SppReciver" />

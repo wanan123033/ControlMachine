@@ -355,7 +355,28 @@ public class Radio868Result {
                 break;
             case ItemDefault.CODE_ZWTQQ:
                 if ((data[0] & 0xff) == 0xaa && (data[1] & 0xff) == data.length ) {
-
+                    setResult(new SitReachWirelessResult(data));
+                    switch (data[7]) {
+                        case 0x01://配对//设置参数
+                        case 0x02:
+                            setType(SerialConfigs.SIT_REACH_FREQUENCY);
+                            break;
+                        case 0x03://查询
+                            setType(SerialConfigs.SIT_REACH_GET_STATE);
+                            break;
+                        case 0x04://开始
+                            setType(SerialConfigs.SIT_REACH_START);
+                            break;
+                        case 0x05://结束
+                            setType(SerialConfigs.SIT_REACH_END);
+                            break;
+                        case 0x06:
+                            setType(SerialConfigs.SIT_REACH_LEISURE);
+                            break;
+                        case 0x07://版本号
+                            setType(SerialConfigs.SIT_REACH_VERSION);
+                            break;
+                    }
                 }
                 break;
         }
