@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
     <ListView
         android:id="@+id/rv_bluetooth"
         android:layout_width="match_parent"
-        android:layout_height="320dp"/>
-    <Button
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+    <TextView
         android:id="@+id/btn_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/btn_bg_blue"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="22sp"
+        android:padding="@dimen/dp_10"
+        android:layout_margin="@dimen/dp_10"
         android:text="搜索设备"/>
 </LinearLayout>

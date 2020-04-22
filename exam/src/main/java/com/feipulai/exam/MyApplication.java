@@ -10,6 +10,7 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.utils.bluetooth.BlueToothHelper;
+import com.orhanobut.logger.examlogger.LogUtils;
 import com.kk.taurus.playerbase.config.PlayerConfig;
 import com.kk.taurus.playerbase.config.PlayerLibrary;
 import com.kk.taurus.playerbase.record.PlayRecordManager;
@@ -73,6 +74,8 @@ public class MyApplication extends MultiDexApplication {
 //         }
 //         LeakCanary.install(this);
         // Normal app init code...
+
+        LogUtils.initLogger(true);
     }
 
     public static MyApplication getInstance() {

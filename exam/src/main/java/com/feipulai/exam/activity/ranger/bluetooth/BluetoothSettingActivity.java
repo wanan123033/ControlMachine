@@ -1,19 +1,20 @@
 package com.feipulai.exam.activity.ranger.bluetooth;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.bluetooth.BluetoothDevice;
-import android.content.Context;
 import android.os.ParcelUuid;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.spputils.SppUtils;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.ranger.RangerSetting;
 import com.feipulai.exam.utils.Toast;
 import com.feipulai.exam.view.OperateProgressBar;
@@ -22,32 +23,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class BluetoothSettingDialog extends AlertDialog.Builder implements AdapterView.OnItemClickListener, View.OnClickListener {
+public class BluetoothSettingActivity extends BaseTitleActivity implements AdapterView.OnItemClickListener{
     @BindView(R.id.rv_bluetooth)
     ListView rv_bluetooth;
-
-    BluetoothListAdapter adapter;
-    List<BluetoothDevice> devices = new ArrayList<>();
-    SppUtils utils;
-    private BluetoothDevice device;
     private RangerSetting setting;
+    private BluetoothListAdapter adapter;
+    private List<BluetoothDevice> devices;
+    private SppUtils utils;
+    private BluetoothDevice device;
 
-    public BluetoothSettingDialog(Context context) {
-        super(context);
-        View view = LayoutInflater.from(context).inflate(R.layout.dialog_bluetooth,null,false);
-        ButterKnife.bind(this,view);
-        setView(view);
-        setTitle("蓝牙设置");
-        setIcon(android.R.drawable.ic_dialog_info);
-        setCancelable(false);
-        setting = SharedPrefsUtil.loadFormSource(context,RangerSetting.class);
-        adapter = new BluetoothListAdapter(devices,context);
+    @Nullable
+    @Override
+    protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
+        return builder.setTitle("蓝牙设置");
+    }
+
+    @Override
+    protected int setLayoutResID() {
+        return R.layout.dialog_bluetooth;
+    }
+
+    @Override
+    protected void initData() {
+        devices = new ArrayList<>();
+        setting = SharedPrefsUtil.loadFormSource(this, RangerSetting.class);
+        adapter = new BluetoothListAdapter(devices,this);
         rv_bluetooth.setAdapter(adapter);
-        utils = BluetoothManager.getSpp(context);
-
+        utils = BluetoothManager.getSpp(this);
         utils.setOnDeviceCallBack(new SppUtils.OnDeviceCallBack() {
             @Override
             public void onDeviceCallBack(BluetoothDevice device) {
@@ -59,20 +63,20 @@ public class BluetoothSettingDialog extends AlertDialog.Builder implements Adapt
 
         utils.setBluetoothConnectionListener(new SppUtils.BluetoothConnectionListener() {
             public void onDeviceConnected(String name, String address) {
-                OperateProgressBar.removeLoadingUiIfExist((Activity) getContext());
-                Toast.showToast(getContext(), "连接成功 "+name, Toast.LENGTH_SHORT);
+                OperateProgressBar.removeLoadingUiIfExist(BluetoothSettingActivity.this);
+                Toast.showToast(getApplicationContext(), "连接成功 "+name, Toast.LENGTH_SHORT);
                 setting.setBluetoothName(name);
                 setting.setBluetoothMac(address);
-                SharedPrefsUtil.save(getContext(),setting);
+                SharedPrefsUtil.save(getApplicationContext(),setting);
             }
 
             public void onDeviceDisconnected() {
-                Toast.showToast(getContext(), "断开连接", Toast.LENGTH_SHORT);
+                Toast.showToast(getApplicationContext(), "断开连接", Toast.LENGTH_SHORT);
 //                utils.connect(device.getAddress());
             }
 
             public void onDeviceConnectionFailed() {
-                Toast.showToast(getContext(), "请试着重启一下蓝牙再试一次", Toast.LENGTH_SHORT);
+                Toast.showToast(getApplicationContext(), "请试着重启一下蓝牙再试一次", Toast.LENGTH_SHORT);
 
                 utils.connect(device.getAddress());
             }
@@ -80,17 +84,15 @@ public class BluetoothSettingDialog extends AlertDialog.Builder implements Adapt
 
         rv_bluetooth.setOnItemClickListener(this);
     }
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        BluetoothDevice item = adapter.getItem(position);
-        device = item;
+        device = adapter.getItem(position);
         ParcelUuid[] uuids = device.getUuids();
         for (ParcelUuid uuid : uuids){
             Log.e("TAG----",uuid.getUuid().toString());
         }
-        OperateProgressBar.showLoadingUi((Activity) getContext(),"正在连接中...");
-        utils.connect(item.getAddress());
+        OperateProgressBar.showLoadingUi(this,"正在连接中...");
+        utils.connect(device.getAddress());
     }
     @OnClick({R.id.btn_search})
     public void onClick(View view){

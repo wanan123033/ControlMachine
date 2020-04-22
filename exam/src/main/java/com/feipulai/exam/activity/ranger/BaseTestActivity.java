@@ -107,9 +107,9 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
     //    @BindView(R.id.txt_stu_fault)
 //    TextView txtStuFault;
     //成绩
-    private String[] result;
-    private List<String> resultList = new ArrayList<>();
-    private BasePersonTestResultAdapter adapter;
+    protected String[] result;
+    protected List<String> resultList = new ArrayList<>();
+    protected BasePersonTestResultAdapter adapter;
     /**
      * 当前设备
      */
@@ -118,7 +118,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
      * 当前测试次数位
      */
     protected int testNo = 1;
-    private int roundNo = 1;
+    protected int roundNo = 1;
     private LEDManager mLEDManager;
     //清理学生信息
     private ClearHandler clearHandler = new ClearHandler(this);
@@ -178,7 +178,6 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
                     }
                 });
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -334,7 +333,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
         }
         resultList.clear();
         resultList.addAll(Arrays.asList(result));
-        adapter.notifyDataSetChanged();
+        adapter.setNewData(resultList);
         addStudent(student);
     }
 
@@ -371,9 +370,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
                 break;
             case R.id.txt_commit:
                 confrim();
-                result[testNo - 1] = ResultDisplayUtils.getStrResultForDisplay(pair.getResult());
-                adapter.setNewData(Arrays.asList(result));
-                testNo++;
+
                 break;
         }
     }
@@ -454,6 +451,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
     public int baseHeight;
 
     private void addStudent(Student student) {
+
         baseHeight = 0;
         if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_MG && runUp == 0) {
             setBaseHeight(0);
@@ -490,16 +488,23 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
             if (student.getBitmapPortrait() != null) {
                 imgPortrait.setImageBitmap(student.getBitmapPortrait());
             }
-
+            resultList.clear();
+            resultList.addAll(Arrays.asList(result));
+            adapter.notifyDataSetChanged();
         } else {
             txtStuName.setText("");
             txtStuSex.setText("");
             txtStuCode.setText("");
             txtStuResult.setText("");
-            adapter.setNewData(new ArrayList<String>());
+
+            Log.e("TAG---","清理数据");
+            result = new String[setTestCount()];
+            adapter.setNewData(Arrays.asList(result));
+            Log.e("TAG----","adapter.getCount="+adapter.getItemCount());
             imgPortrait.setImageResource(R.mipmap.icon_head_photo);
         }
         updateInitBtnState();
+
     }
 
 
@@ -889,7 +894,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
     }
 
     public void setScore(int result){
-        this.result[testNo - 1] = result+"";
+        this.result[roundNo - 1] = result+"";
         pair.setResult(result);
         updateResult(pair);
     }

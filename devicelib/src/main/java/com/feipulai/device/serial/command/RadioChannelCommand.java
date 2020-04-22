@@ -24,7 +24,7 @@ public class RadioChannelCommand extends Command{
 	}
 	
 	@Override
-	byte[] getCommand(){
+	public byte[] getCommand(){
 		return cmd;
 	}
 	

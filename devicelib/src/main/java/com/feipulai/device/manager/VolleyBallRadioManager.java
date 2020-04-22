@@ -3,7 +3,9 @@ package com.feipulai.device.manager;
 import android.os.SystemClock;
 
 import com.feipulai.device.serial.RadioManager;
+import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 public class VolleyBallRadioManager {
     private static VolleyBallRadioManager radioManager;
@@ -27,6 +29,7 @@ public class VolleyBallRadioManager {
         cmd[6] = (byte)  deviceId;
         cmd[13] = (byte) sum(cmd,13);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,cmd));
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---排球停止计数指令");
     }
     /**
      * 停止计时
@@ -39,6 +42,7 @@ public class VolleyBallRadioManager {
         cmd[6] = (byte)  deviceId;
         cmd[13] = (byte) sum(cmd,13);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,cmd));
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---排球停止计时指令");
     }
 
     /**
@@ -51,7 +55,7 @@ public class VolleyBallRadioManager {
         cmd[5] = (byte) hostId;
         cmd[6] = (byte)  deviceId;
         cmd[12] = (byte) sum(cmd,12);
-
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---排球空闲指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
 
         try {
@@ -74,6 +78,7 @@ public class VolleyBallRadioManager {
         cmd[5] = (byte) hostId;
         cmd[6] = (byte)  deviceId;
         cmd[13] = (byte) sum(cmd,13);
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---排球开始计数指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,cmd));
     }
     /**
@@ -91,6 +96,7 @@ public class VolleyBallRadioManager {
         cmd[14] = (byte) (timeSum / 0x0100);
         cmd[15] = (byte) (timeSum % 0x0100);
         cmd[16] = (byte) sum(cmd,16);
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---排球预备计时指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,cmd));
         SystemClock.sleep(100);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,cmd));
@@ -108,6 +114,7 @@ public class VolleyBallRadioManager {
         cmd[5] = (byte) hostId;
         cmd[6] = (byte) deviceId;
         cmd[12] = (byte) sum(cmd,12);
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---排球获取状态指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -121,6 +128,7 @@ public class VolleyBallRadioManager {
         cmd[5] = (byte) hostId;
         cmd[6] = (byte) deviceId;
         cmd[12] = (byte) sum(cmd,12);
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---排球自检指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,cmd));
     }
     private int sum(byte[] cmd, int index) {

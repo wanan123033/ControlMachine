@@ -15,6 +15,8 @@ import com.feipulai.device.spputils.beans.RangerResult;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.ranger.bluetooth.BluetoothManager;
+import com.feipulai.exam.utils.Toast;
+import com.feipulai.exam.view.OperateProgressBar;
 
 public class RangerMoreActivity extends BaseMoreTestActivity {
     private RangerSetting setting;
@@ -74,7 +76,29 @@ public class RangerMoreActivity extends BaseMoreTestActivity {
                 utils.startService();
             }
         }
+        if (setting.getBluetoothName() != null && setting.getBluetoothMac() != null && !utils.isConnected()){
+            OperateProgressBar.showLoadingUi(this,"正在重连蓝牙:"+setting.getBluetoothName());
+            utils.connect(setting.getBluetoothMac());
+            utils.setBluetoothConnectionListener(new SppUtils.BluetoothConnectionListener() {
+                @Override
+                public void onDeviceConnected(String name, String address) {
+                    OperateProgressBar.removeLoadingUiIfExist(RangerMoreActivity.this);
+                    Toast.showToast(getApplicationContext(),"已连接 "+name,Toast.LENGTH_LONG);
+                }
 
+                @Override
+                public void onDeviceDisconnected() {
+                    OperateProgressBar.removeLoadingUiIfExist(RangerMoreActivity.this);
+                    Toast.showToast(getApplicationContext(),"连接断开",Toast.LENGTH_LONG);
+                }
+
+                @Override
+                public void onDeviceConnectionFailed() {
+                    OperateProgressBar.removeLoadingUiIfExist(RangerMoreActivity.this);
+                    Toast.showToast(getApplicationContext(),"连接失败,请重启蓝牙",Toast.LENGTH_LONG);
+                }
+            });
+        }
         //循环获取蓝牙状态
         handler.sendEmptyMessageDelayed(GET_BLUETOOTH,500);
     }
@@ -99,6 +123,10 @@ public class RangerMoreActivity extends BaseMoreTestActivity {
 
     @Override
     public void startTest(BaseStuPair stuPair) {
+        if (roundNo > setting.getTestNo()){
+            ToastUtils.showLong("测试已完成");
+            return;
+        }
         if (utils.isConnected()) {
             byte[] bytes = new byte[]{0x5A, 0x33, 0x34, 0x30, 0x39, 0x33, 0x03, 0x0d, 0x0a};
             utils.send(bytes, false);
@@ -128,6 +156,11 @@ public class RangerMoreActivity extends BaseMoreTestActivity {
     }
 
     @Override
+    protected void commitTest() {
+        updatePair(pair.getBaseDevice(), pair, false);
+    }
+
+    @Override
     protected void showPenalize() {
         showPenalize(pair.getBaseDevice(),pair);
     }
@@ -150,7 +183,7 @@ public class RangerMoreActivity extends BaseMoreTestActivity {
     @Override
     public void penalize(int value) {
         pair.setResult(pair.getResult()+value*100);
-        updatePair(pair.getBaseDevice(), pair, false);
+
     }
 
     @Override

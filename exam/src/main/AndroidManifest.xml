@@ -250,6 +250,7 @@
             android:windowSoftInputMode="stateHidden" />
 
         <activity android:name=".activity.ranger.RangerMoreActivity" />
+        <activity android:name=".activity.ranger.bluetooth.BluetoothSettingActivity" />
 
         <receiver android:name="com.feipulai.device.spputils.SppReciver" />
 

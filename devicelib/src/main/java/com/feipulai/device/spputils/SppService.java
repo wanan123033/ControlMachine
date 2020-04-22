@@ -205,6 +205,9 @@ public class SppService {
                 } catch (IOException e) {
                     Log.e(TAG+"+e",e.toString());
                     break;
+                }catch (NullPointerException e){
+                    e.printStackTrace();
+                    break;
                 }
 
                 if (socket != null) {
@@ -282,6 +285,9 @@ public class SppService {
                 }
                 connectionFailed();
                 return;
+            }catch (NullPointerException e){
+                connectionFailed();
+                return;
             }
 
             // Reset the ConnectThread because we're done
@@ -295,7 +301,7 @@ public class SppService {
             try {
                 mmSocket.close();
                 Log.e(TAG,"ConnectThread: mmSocket.close()");
-            } catch (IOException e) {
+            } catch (Exception e) {
 
             }
         }

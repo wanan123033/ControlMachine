@@ -17,10 +17,16 @@ import com.feipulai.exam.activity.base.PenalizeDialog;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.ranger.bluetooth.BluetoothManager;
+import com.feipulai.exam.utils.ResultDisplayUtils;
+import com.feipulai.exam.utils.Toast;
+import com.feipulai.exam.view.OperateProgressBar;
+
+import java.util.Arrays;
 
 public class RangerTestActivity extends BaseTestActivity  implements PenalizeDialog.PenalizeListener{
     private static final int GET_BLUETOOTH = 222;
     private static final int TEST = 333;
+    private static final int SKIP_STU = 444;
     SppUtils utils;
     RangerSetting setting;
 
@@ -42,6 +48,10 @@ public class RangerTestActivity extends BaseTestActivity  implements PenalizeDia
                     sendTestCommand(pair);
                     pair.setTestTime(System.currentTimeMillis()+"");
                 }
+            }else if (msg.what == SKIP_STU){
+                roundNo = 1;
+                testNo = 1;
+                stuSkip();
             }
         }
     };
@@ -70,7 +80,9 @@ public class RangerTestActivity extends BaseTestActivity  implements PenalizeDia
                     onResults(datas);
                 }
             });
+
         }
+
     }
 
     @Override
@@ -86,16 +98,38 @@ public class RangerTestActivity extends BaseTestActivity  implements PenalizeDia
                 utils.startService();
             }
         }
+        if (setting.getBluetoothName() != null && setting.getBluetoothMac() != null && !utils.isConnected()){
+            OperateProgressBar.showLoadingUi(this,"正在重连蓝牙:"+setting.getBluetoothName());
+            utils.connect(setting.getBluetoothMac());
+            utils.setBluetoothConnectionListener(new SppUtils.BluetoothConnectionListener() {
+                @Override
+                public void onDeviceConnected(String name, String address) {
+                    OperateProgressBar.removeLoadingUiIfExist(RangerTestActivity.this);
+                    Toast.showToast(getApplicationContext(),"已连接 "+name,Toast.LENGTH_LONG);
+                }
 
+                @Override
+                public void onDeviceDisconnected() {
+                    OperateProgressBar.removeLoadingUiIfExist(RangerTestActivity.this);
+                    Toast.showToast(getApplicationContext(),"连接断开",Toast.LENGTH_LONG);
+                }
+
+                @Override
+                public void onDeviceConnectionFailed() {
+                    OperateProgressBar.removeLoadingUiIfExist(RangerTestActivity.this);
+                    Toast.showToast(getApplicationContext(),"连接失败,请重启蓝牙",Toast.LENGTH_LONG);
+                }
+            });
+        }
         //循环获取蓝牙状态
         handler.sendEmptyMessageDelayed(GET_BLUETOOTH,500);
     }
 
     @Override
     public void sendTestCommand(BaseStuPair baseStuPair) {
-        if (testNo > setting.getTestNo()){
+        Log.e("TAG-----","roundNo = "+roundNo);
+        if (roundNo > setting.getTestNo()){
             ToastUtils.showLong("测试已完成");
-            stuSkip();
             return;
         }
         Log.e("TAG----",pair.getStudent()+"--"+utils.isConnected());
@@ -106,7 +140,7 @@ public class RangerTestActivity extends BaseTestActivity  implements PenalizeDia
                 utils.send(bytes, false);
                 bytes = new byte[]{0x43, 0x30, 0x36, 0x37, 0x03, 0x0d, 0x0a};
                 utils.send(bytes, false);
-                if (testNo < setting.getTestNo() && setting.getAutoTestTime() > 0){  //开启自动测距
+                if (roundNo < setting.getTestNo() && setting.getAutoTestTime() > 0){  //开启自动测距
                     Message msg = Message.obtain();
                     msg.obj = baseStuPair;
                     msg.what = TEST;
@@ -118,6 +152,8 @@ public class RangerTestActivity extends BaseTestActivity  implements PenalizeDia
                 ToastUtils.showLong("请先连接激光测距仪");
             }
         }else {
+            resultList.clear();
+            rvTestResult.getAdapter().notifyDataSetChanged();
             ToastUtils.showLong("请添加学生测试");
         }
     }
@@ -135,7 +171,7 @@ public class RangerTestActivity extends BaseTestActivity  implements PenalizeDia
     @Override
     public void stuSkip() {
         pair.setStudent(null);
-        pair.setResult(0);
+        pair.setTimeResult(new String[setTestCount()]);
         refreshTxtStu(null);
     }
 
@@ -149,10 +185,15 @@ public class RangerTestActivity extends BaseTestActivity  implements PenalizeDia
         saveResult(pair);
         updateInitBtnState();
         Log.e("TAG----","testNo="+testNo+",setting.getTestNo()="+setting.getTestNo());
-
-        if (testNo == setting.getTestNo() + 1){
-            testNo = 1;
-            stuSkip();
+        result[testNo - 1] = ResultDisplayUtils.getStrResultForDisplay(pair.getResult());
+        adapter.setNewData(Arrays.asList(result));
+        testNo++;
+        roundNo++;
+        if (roundNo > setting.getTestNo()){
+            ToastUtils.showLong("测试已完成");
+            handler.removeMessages(SKIP_STU);
+            handler.sendEmptyMessageDelayed(SKIP_STU,3000);
+            return;
         }
     }
 
@@ -171,6 +212,7 @@ public class RangerTestActivity extends BaseTestActivity  implements PenalizeDia
             utils.disconnect();
         }
         //停止服务
+        utils.unregisterRecvier();
         utils.stopService();
         handler.removeMessages(GET_BLUETOOTH);
         utils = null;
@@ -188,7 +230,7 @@ public class RangerTestActivity extends BaseTestActivity  implements PenalizeDia
     }
     @Override
     public void penalize(int value) {
-        pair.setResult(pair.getResult()+value*100);
+        pair.setResult(pair.getResult()+value*1000);
         updateResult(pair);
     }
 

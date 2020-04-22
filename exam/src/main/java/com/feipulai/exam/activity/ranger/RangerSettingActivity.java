@@ -1,5 +1,6 @@
 package com.feipulai.exam.activity.ranger;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Editable;
@@ -15,7 +16,7 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
-import com.feipulai.exam.activity.ranger.bluetooth.BluetoothSettingDialog;
+import com.feipulai.exam.activity.ranger.bluetooth.BluetoothSettingActivity;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -91,9 +92,9 @@ public class RangerSettingActivity extends BaseTitleActivity implements Compound
                 dialog1.show();
                 break;
             case R.id.tv_bluetooth:
-                BluetoothSettingDialog dialog2 = new BluetoothSettingDialog(this);
-                dialog2.show();
-//                startActivity(new Intent(this,BluetoothSettingActivity.class));
+//                BluetoothSettingDialog dialog2 = new BluetoothSettingDialog(this);
+//                dialog2.show();
+                startActivity(new Intent(this, BluetoothSettingActivity.class));
                 break;
         }
     }

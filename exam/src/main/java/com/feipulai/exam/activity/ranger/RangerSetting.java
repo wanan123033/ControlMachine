@@ -27,6 +27,9 @@ public class RangerSetting {
     private int distance; //两点之间的距离
     private int testPattern; //分组测试模式 0连续 1循环
 
+    private String bluetoothName;
+    private String bluetoothMac;
+
     public int getTestNo() {
         return testNo;
     }
@@ -187,4 +190,19 @@ public class RangerSetting {
         this.testPattern = testPattern;
     }
 
+    public String getBluetoothName() {
+        return bluetoothName;
+    }
+
+    public void setBluetoothName(String bluetoothName) {
+        this.bluetoothName = bluetoothName;
+    }
+
+    public String getBluetoothMac() {
+        return bluetoothMac;
+    }
+
+    public void setBluetoothMac(String bluetoothMac) {
+        this.bluetoothMac = bluetoothMac;
+    }
 }

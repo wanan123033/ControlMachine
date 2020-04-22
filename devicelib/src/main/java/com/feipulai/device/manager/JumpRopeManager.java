@@ -1,8 +1,10 @@
 package com.feipulai.device.manager;
 
 import com.feipulai.device.serial.RadioManager;
+import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 /**
  * Created by James on 2018/3/8 0008.
@@ -36,7 +38,9 @@ public class JumpRopeManager {
      */
     public void link(int channel, int hostId, int handId, int handPower, int handGroup) {
         //Log.i("JumpRopePairActivity","setFrequency(0)");
-        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(0)));
+        RadioChannelCommand commod = new RadioChannelCommand(0);
+        LogUtils.normal(commod.getCommand().length+"---"+ StringUtility.bytesToHexString(commod.getCommand())+"---跳绳配对手柄指令");
+        RadioManager.getInstance().sendCommand(new ConvertCommand(commod));
         //设置手柄
         //Log.i("JumpRopePairActivity","setJumpRope");
         setJumpRope(hostId, handId, handPower, handGroup);
@@ -60,6 +64,7 @@ public class JumpRopeManager {
         }
         cmd[10] = (byte) (sum & 0xff);
         //Log.i("setJumpRope",StringUtility.bytesToHexString(cmd));
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---跳绳配对手柄指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 

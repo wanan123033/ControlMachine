@@ -91,7 +91,7 @@ public abstract class BaseMoreTestActivity extends BaseCheckActivity implements 
     /**
      * 当前测试次数位
      */
-    private int roundNo = 1;
+    protected int roundNo = 1;
     /**
      * 是否停止测试
      */
@@ -329,6 +329,7 @@ public abstract class BaseMoreTestActivity extends BaseCheckActivity implements 
                 studentSkip();
                 break;
             case R.id.txt_commit:
+                commitTest();
                 break;
             case R.id.txt_penglize:
                 showPenalize();
@@ -341,6 +342,8 @@ public abstract class BaseMoreTestActivity extends BaseCheckActivity implements 
 //                break;
         }
     }
+
+    protected abstract void commitTest();
 
     protected abstract void showPenalize();
 
