@@ -11,6 +11,8 @@ import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.PullUpSetFrequencyResult;
 import com.feipulai.device.serial.beans.SitPushUpSetFrequencyResult;
+import com.feipulai.device.serial.beans.SitReachResult;
+import com.feipulai.device.serial.beans.SitReachWirelessResult;
 import com.feipulai.device.serial.beans.VitalCapacityNewResult;
 import com.feipulai.device.serial.beans.VitalCapacityResult;
 import com.feipulai.device.serial.command.ConvertCommand;
@@ -91,6 +93,13 @@ public class SitPullLinker implements Handler.Callback {
              if (msg.obj instanceof VitalCapacityNewResult) {
                 VitalCapacityNewResult fhl = (VitalCapacityNewResult) msg.obj;
                 checkDevice(fhl);
+            }
+            return true;
+        }
+        else if (machineCode == ItemDefault.CODE_ZWTQQ && (what == SerialConfigs.SIT_REACH_FREQUENCY) ){
+            if (msg.obj instanceof SitReachWirelessResult) {
+                SitReachWirelessResult result = (SitReachWirelessResult) msg.obj;
+                checkDevice(result.getDeviceId(),result.getFrequency());
             }
             return true;
         }

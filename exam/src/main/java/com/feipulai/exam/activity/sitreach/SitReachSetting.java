@@ -32,7 +32,11 @@ public class SitReachSetting {
      */
     private int testPattern = 0;
     private boolean autoPair;
-
+    private int testType;
+    //有线
+    public static final int WIRED_TYPE = 0;
+    //无线
+    public static final int WIRELESS_TYPE = 1;
     public int getTestPattern() {
         return testPattern;
     }
@@ -99,5 +103,13 @@ public class SitReachSetting {
 
     public void setAutoPair(boolean autoPair) {
         this.autoPair = autoPair;
+    }
+
+    public int getTestType() {
+        return testType;
+    }
+
+    public void setTestType(int testType) {
+        this.testType = testType;
     }
 }

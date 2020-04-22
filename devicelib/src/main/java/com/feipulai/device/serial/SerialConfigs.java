@@ -279,12 +279,11 @@ public class SerialConfigs {
 
     //坐位体前屈
     public static final int SIT_REACH_FREQUENCY = 0x72;
-    public static final int SIT_REACH_PARAMETER = 0x73;
     public static final int SIT_REACH_START = 0x74;
     public static final int SIT_REACH_END = 0x75;
     public static final int SIT_REACH_VERSION = 0x76;
     public static final int SIT_REACH_GET_STATE = 0x77;
-
+    public static final int SIT_REACH_LEISURE = 0x78;
 
 
 }
