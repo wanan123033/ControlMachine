@@ -354,7 +354,7 @@ public class Radio868Result {
 
                 break;
             case ItemDefault.CODE_ZWTQQ:
-                if ((data[0] & 0xff) == 0xaa && (data[1] & 0xff) == data.length ) {
+                if ((data[0] & 0xff) == 0xaa && (data.length == 21 )) {
                     setResult(new SitReachWirelessResult(data));
                     switch (data[7]) {
                         case 0x01://配对//设置参数
