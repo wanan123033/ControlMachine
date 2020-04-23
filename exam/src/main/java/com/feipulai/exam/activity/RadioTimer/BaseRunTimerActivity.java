@@ -79,6 +79,8 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
     private void init() {
         deviceManager = SerialDeviceManager.getInstance();
         deviceManager.setRS232ResiltListener(runTimerListener);
+        promoteTimes.put("startIntercept", 0);
+        promoteTimes.put("endIntercept", 0);
         getSetting();
     }
 
@@ -254,20 +256,20 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
         } else {//关于连接状态
             if (interceptPoint == 1) {//起始点拦截
                 if (connectState.getStartIntercept() == 0) {
-                    if (promoteTimes.get("startIntercept") == null || promoteTimes.get("startIntercept") == 0) {
+                    if (promoteTimes.get("startIntercept") == 2) {
                         toastSpeak("起点拦截器异常");
-                        promoteTimes.put("startIntercept", 1);
                     }
+                    promoteTimes.put("startIntercept", promoteTimes.get("startIntercept")+1);
                 } else {
                     promoteTimes.put("startIntercept", 0);
                 }
 
             } else {//终点拦截
                 if (connectState.getEndIntercept() == 0) {
-                    if (promoteTimes.get("endIntercept") == null || promoteTimes.get("endIntercept") == 0) {
+                    if (promoteTimes.get("endIntercept") == 2) {
                         toastSpeak("终点拦截器异常");
-                        promoteTimes.put("endIntercept", 1);
                     }
+                    promoteTimes.put("endIntercept", promoteTimes.get("endIntercept")+1);
                 } else {
                     promoteTimes.put("endIntercept", 0);
                 }

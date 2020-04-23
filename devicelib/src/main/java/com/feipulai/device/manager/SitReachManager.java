@@ -89,6 +89,7 @@ public class SitReachManager {
      *
      */
     public void startTest(int hostId, int deviceId) {
+        //AA 15 04 03 01 03 01 04 00 00 00 00 00 00 00 00 00 00 00 25 0D
         byte[] buf = new byte[21];
         buf[0] = (byte) 0xAA;//包头
         buf[1] = 0x15;    //包长
@@ -148,8 +149,8 @@ public class SitReachManager {
         buf[1] = 0x15;    //包长
         buf[2] = (byte) (projectCode & 0xff); //项目编号
         buf[3] = 0x03;     //子机
-        buf[4] = (byte) 0x01;   //本设备编号（主机）
-        buf[5] = (byte) (hostId & 0xff);
+        buf[4] = (byte) 0x01;   //本设备
+        buf[5] = (byte) (hostId & 0xff);//主机号
         buf[6] = (byte) (deviceId & 0xff);
         buf[7] = 0x03;      //命令
         buf[8] = 0x00;  //高字节在先
@@ -174,6 +175,7 @@ public class SitReachManager {
      * 结束测试
      */
     public void endTest(int deviceId ,int hostId) {
+        //AA 15 04 03 01 03 01 05 00 00 00 00 00 00 00 00 00 00 00 26 0D
         byte[] buf = new byte[21];
         buf[0] = (byte) 0xAA;//包头
         buf[1] = 0x15;    //包长
@@ -207,6 +209,7 @@ public class SitReachManager {
      * @param hostId
      */
     public void setEmpty(int deviceId ,int hostId){
+        //AA 15 04 03 01 03 01 06 00 00 00 00 00 00 00 00 00 00 00 27 0D
         byte[] buf = new byte[21];
         buf[0] = (byte) 0xAA;//包头
         buf[1] = 0x15;    //包长

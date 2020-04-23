@@ -52,7 +52,6 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -1050,7 +1049,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         roundResult.setMachineResult(baseStuPair.getResult());
         roundResult.setResultState(baseStuPair.getResultState());
         roundResult.setTestTime(baseStuPair.getTestTime());
-        roundResult.setEndTime(baseStuPair.getEndTime());
+        roundResult.setEndTime(DateUtil.getCurrentTime()+"");
         roundResult.setRoundNo(roundNo);
         roundResult.setTestNo(1);
         roundResult.setGroupId(group.getId());
