@@ -35,7 +35,7 @@ public class SitReachMoreActivity extends BaseMoreActivity {
     private SitReachManager manager;
     private static final String TAG = "SitReachMoreActivity";
     private boolean backFlag = false;//推杆返回
-    private boolean [] resultUpdate ;//成绩更新
+    private boolean [] resultUpdate  ;//成绩更新
 
     @Override
     protected void initData() {
@@ -62,6 +62,7 @@ public class SitReachMoreActivity extends BaseMoreActivity {
         for (int i = 0; i < deviceState.length; i++) {
 
             deviceState[i] = 0;//连续5次检测不到认为掉线
+            resultUpdate[i] = true;
         }
         RadioManager.getInstance().setOnRadioArrived(sitReachRadio);
         getState();
@@ -185,6 +186,7 @@ public class SitReachMoreActivity extends BaseMoreActivity {
                     break;
                 case GET_RESULT:
                     SitReachWirelessResult result = (SitReachWirelessResult) msg.obj;
+                    setTxtEnable(result.getDeviceId(),false);
                     for (DeviceDetail detail : deviceDetails) {
                         if (detail.getStuDevicePair().getBaseDevice().getDeviceId() == result.getDeviceId()) {
                             onResultArrived(result.getCapacity(), detail.getStuDevicePair());
@@ -219,6 +221,13 @@ public class SitReachMoreActivity extends BaseMoreActivity {
                 sendFree(result.getDeviceId());
                 backFlag = false;
                 resultUpdate[result.getDeviceId()-1] = true;//标记可以下次测试
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setTxtEnable(result.getDeviceId(),true);
+                    }
+                });
+
             }
         }
 
@@ -229,7 +238,7 @@ public class SitReachMoreActivity extends BaseMoreActivity {
 
         @Override
         public void onStarTest(int deviceId) {
-
+            toastSpeak("开始测试");
         }
     });
 
@@ -248,5 +257,11 @@ public class SitReachMoreActivity extends BaseMoreActivity {
         stuPair.setResult(result);
         updateResult(stuPair);
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, stuPair.getBaseDevice().getDeviceId()));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RadioManager.getInstance().setOnRadioArrived(null);
     }
 }

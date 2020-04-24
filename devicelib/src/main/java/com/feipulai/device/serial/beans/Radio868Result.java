@@ -190,6 +190,8 @@ public class Radio868Result {
             case ItemDefault.CODE_LQYQ:
             case ItemDefault.CODE_ZQYQ:
                 if (data[0] == (byte) 0xAA && data[data.length - 1] == 0x0D && data[2] == 0x0d) {
+                    if (verifySum(data,1,data.length-2)!= data[data.length-2])
+                        return;
                     setResult(new Basketball868Result(data));
                     switch (data[7]) {
                         case 0x01://0频配对返回
@@ -355,6 +357,8 @@ public class Radio868Result {
                 break;
             case ItemDefault.CODE_ZWTQQ:
                 if ((data[0] & 0xff) == 0xaa && (data.length == 21 )) {
+                    if (verifySum(data,1,data.length-2)!= data[data.length-2])
+                        return;
                     setResult(new SitReachWirelessResult(data));
                     switch (data[7]) {
                         case 0x01://配对//设置参数
@@ -405,5 +409,19 @@ public class Radio868Result {
             b = (byte) (b >> 1);
         }
         return array;
+    }
+
+    /**
+     * 和校验
+     * @param data
+     * @return
+     */
+    private byte verifySum(byte [] data,int index,int end){
+        byte sum = 0;
+        for (int i = index;i< end;i++){
+            sum += data[i];
+        }
+
+        return sum;
     }
 }

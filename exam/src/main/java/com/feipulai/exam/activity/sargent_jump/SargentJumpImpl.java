@@ -78,7 +78,7 @@ public class SargentJumpImpl implements SerialDeviceManager.RS232ResiltListener,
                 SargentJumpResult result = (SargentJumpResult) msg.obj;
                 if (result != null) {
                     jumpListener.onFree(result.getDeviceId());
-                    Log.i("SargentJumpImpl","score:"+result.getScore()+"state:"+result.getState()+"id:"+result.getDeviceId());
+                    Logger.i("SargentJumpImpl","score:"+result.getScore()+"state:"+result.getState()+"id:"+result.getDeviceId());
 
                     if (result.getState() == 1 ) {//因为一个成绩会轮询查到多次
                         if (showRes[result.getDeviceId()-1]){

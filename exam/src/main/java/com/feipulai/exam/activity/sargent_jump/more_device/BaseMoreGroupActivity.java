@@ -320,6 +320,10 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         deviceListAdapter.setNextClickStart(nextClickStart);
     }
 
+    public void setTxtEnable(int deviceId,boolean enable){
+        deviceListAdapter.setTxtStartEnable(deviceId,enable);
+    }
+
     protected void stuSkipDialog(final Student student, final int index) {
         new AlertDialog.Builder(this).setMessage("是否跳过" + student.getStudentName() + "考生测试")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {

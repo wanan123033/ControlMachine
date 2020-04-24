@@ -484,6 +484,10 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         refreshDevice(index);
     }
 
+    public void setTxtEnable(int deviceId,boolean enable){
+        deviceListAdapter.setTxtStartEnable(deviceId,enable);
+    }
+
     /**
      * 处理结果
      */

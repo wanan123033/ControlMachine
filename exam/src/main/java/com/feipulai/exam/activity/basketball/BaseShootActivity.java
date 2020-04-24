@@ -37,6 +37,7 @@ public abstract class BaseShootActivity extends BaseTitleActivity
     protected void initData() {
         individualCheckFragment = new IndividualCheckFragment();
         individualCheckFragment.setOnIndividualCheckInListener(this);
+
     }
 
     @Override

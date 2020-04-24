@@ -259,4 +259,11 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
             }
         }).show();
     }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mHandler.removeCallbacksAndMessages(null);
+    }
 }

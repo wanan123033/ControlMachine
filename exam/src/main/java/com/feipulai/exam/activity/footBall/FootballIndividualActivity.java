@@ -181,6 +181,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
             cbFar.setVisibility(View.VISIBLE);
             cbLed.setVisibility(View.VISIBLE);
         }
+        testDate = DateUtil.getCurrentTime()+"";
     }
 
 
