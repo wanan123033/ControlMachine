@@ -906,6 +906,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                         roundResult.setResult(testResult.getResult());
                         roundResult.setPenaltyNum(testResult.getPenalizeNum());
                         roundResult.setResultState(testResult.getResultState());
+                        roundResult.setEndTime(DateUtil.getCurrentTime()+"");
                         updateResult.add(roundResult);
                     }
 
@@ -1023,6 +1024,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         roundResult.setTestNo(TestCache.getInstance().getTestNoMap().get(student));
         roundResult.setExamType(mStudentItem.getExamType());
         roundResult.setScheduleNo(mStudentItem.getScheduleNo());
+        roundResult.setEndTime(DateUtil.getCurrentTime()+"");
         roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
         roundResult.setTestTime(testDate);
         roundResult.setUpdateState(0);

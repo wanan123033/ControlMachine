@@ -692,6 +692,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         roundResult.setExamType(group.getExamType());
         roundResult.setScheduleNo(group.getScheduleNo());
         roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
+        roundResult.setEndTime(DateUtil.getCurrentTime()+"");
         roundResult.setTestTime(testDate);
         roundResult.setGroupId(group.getId());
         roundResult.setUpdateState(0);
@@ -863,6 +864,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                         roundResult.setUpdateState(0);
                         roundResult.setResult(testResult.getResult());
                         roundResult.setPenaltyNum(testResult.getPenalizeNum());
+                        roundResult.setEndTime(DateUtil.getCurrentTime()+"");
                         roundResult.setResultState(testResult.getResultState());
                         updateResult.add(roundResult);
                     }

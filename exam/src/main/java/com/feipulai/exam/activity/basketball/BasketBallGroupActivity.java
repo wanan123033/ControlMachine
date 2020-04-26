@@ -811,6 +811,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                         roundResult.setUpdateState(0);
                         roundResult.setResult(testResult.getResult());
                         roundResult.setPenaltyNum(testResult.getPenalizeNum());
+                        roundResult.setEndTime(DateUtil.getCurrentTime()+"");
                         roundResult.setResultState(testResult.getResultState());
                         updateResult.add(roundResult);
                     }
@@ -825,6 +826,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                     roundResult.setMachineResult(0);
                     roundResult.setResultState(testResult.getResultState());
                     roundResult.setTestTime(System.currentTimeMillis() + "");
+                    roundResult.setEndTime(DateUtil.getCurrentTime()+"");
                     roundResult.setRoundNo(resultList.get(i).getRoundNo());
                     roundResult.setTestNo(1);
                     roundResult.setExamType(group.getExamType());
