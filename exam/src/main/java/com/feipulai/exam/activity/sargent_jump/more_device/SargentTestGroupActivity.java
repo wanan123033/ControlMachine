@@ -141,7 +141,7 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
 
         @Override
         public void onFree(int deviceId) {
-            deviceState[deviceId-1] = 1;
+            deviceState[deviceId-1] = 3;
         }
 
         @Override

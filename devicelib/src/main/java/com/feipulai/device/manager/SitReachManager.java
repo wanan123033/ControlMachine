@@ -52,7 +52,7 @@ public class SitReachManager {
      *
      * 多行编辑 快捷键 Alt+ j
      */
-    public void setFrequency(int targetChannel, int originFrequency, int deviceId, int hostId) {
+    public void setFrequency(int targetChannel, int deviceId, int hostId) {
 
         byte[] buf = new byte[21];
         buf[0] = (byte) 0xAA;//包头
@@ -71,10 +71,10 @@ public class SitReachManager {
         buf[13] = 0x04;
         buf[14] = (byte) (hostId & 0xff);
         buf[15] = (byte) (deviceId & 0xff);
-        buf[16] = 4;
+        buf[16] = 0;
         buf[17] = 0;
         buf[18] = 0;
-        for (int i = 2; i < 19; i++) {
+        for (int i = 1; i < 19; i++) {
             buf[19] += buf[i] & 0xff;
         }
         buf[20] = 0x0d;   //包尾
@@ -89,6 +89,7 @@ public class SitReachManager {
      *
      */
     public void startTest(int hostId, int deviceId) {
+        //AA 15 04 03 01 03 01 04 00 00 00 00 00 00 00 00 00 00 00 25 0D
         byte[] buf = new byte[21];
         buf[0] = (byte) 0xAA;//包头
         buf[1] = 0x15;    //包长
@@ -103,29 +104,23 @@ public class SitReachManager {
         buf[10] = 0x00;
         buf[11] = 0x00;
         buf[12] = 0x00;
-        buf[13] = 0x04;
+        buf[13] = 0x00;
         buf[14] = 0x00;
         buf[15] = 0x00;
         buf[16] = 0x00;
         buf[17] = 0x00;
         buf[18] = 0x00;
-        for (int i = 2; i < 19; i++) {
+        for (int i = 1; i < 19; i++) {
             buf[19] += buf[i] & 0xff;
         }
         buf[20] = 0x0d;   //包尾
         wrapAndSend(buf);
     }
 
-    /**
-     * @param deviceId 子机id
-     */
-    public void getState(int deviceId) {
-        getState(deviceId, 65);
-    }
+
 
     /**
      * @param deviceId 子机id
-     *  俯卧撑不使用该字节,填0
      *  【0】0xAA ：包头
      *  【1】0x15 ：包长
      *  【2】0x04 ：项目编号
@@ -154,22 +149,22 @@ public class SitReachManager {
         buf[1] = 0x15;    //包长
         buf[2] = (byte) (projectCode & 0xff); //项目编号
         buf[3] = 0x03;     //子机
-        buf[4] = (byte) 0x01;   //本设备编号（主机）
-        buf[5] = (byte) (hostId & 0xff);
+        buf[4] = (byte) 0x01;   //本设备
+        buf[5] = (byte) (hostId & 0xff);//主机号
         buf[6] = (byte) (deviceId & 0xff);
-        buf[7] = 0x02;      //命令
+        buf[7] = 0x03;      //命令
         buf[8] = 0x00;  //高字节在先
         buf[9] = 0x00;
         buf[10] = 0x00;
         buf[11] = 0x00;
         buf[12] = 0x00;
-        buf[13] = 0x04;
+        buf[13] = 0x00;
         buf[14] = 0x00;
         buf[15] = 0x00;
         buf[16] = 0x00;
         buf[17] = 0x00;
         buf[18] = 0x00;
-        for (int i = 2; i < 19; i++) {
+        for (int i = 1; i < 19; i++) {
             buf[19] += buf[i] & 0xff;
         }
         buf[20] = 0x0d;   //包尾
@@ -180,6 +175,7 @@ public class SitReachManager {
      * 结束测试
      */
     public void endTest(int deviceId ,int hostId) {
+        //AA 15 04 03 01 03 01 05 00 00 00 00 00 00 00 00 00 00 00 26 0D
         byte[] buf = new byte[21];
         buf[0] = (byte) 0xAA;//包头
         buf[1] = 0x15;    //包长
@@ -200,7 +196,7 @@ public class SitReachManager {
         buf[16] = 0x00;
         buf[17] = 0x00;
         buf[18] = 0x00;
-        for (int i = 2; i < 19; i++) {
+        for (int i = 1; i < 19; i++) {
             buf[19] += buf[i] & 0xff;
         }
         buf[20] = 0x0d;   //包尾
@@ -213,6 +209,7 @@ public class SitReachManager {
      * @param hostId
      */
     public void setEmpty(int deviceId ,int hostId){
+        //AA 15 04 03 01 03 01 06 00 00 00 00 00 00 00 00 00 00 00 27 0D
         byte[] buf = new byte[21];
         buf[0] = (byte) 0xAA;//包头
         buf[1] = 0x15;    //包长
@@ -227,13 +224,13 @@ public class SitReachManager {
         buf[10] = 0x00;
         buf[11] = 0x00;
         buf[12] = 0x00;
-        buf[13] = 0x04;
+        buf[13] = 0x00;
         buf[14] = 0x00;
         buf[15] = 0x00;
         buf[16] = 0x00;
         buf[17] = 0x00;
         buf[18] = 0x00;
-        for (int i = 2; i < 19; i++) {
+        for (int i = 1; i < 19; i++) {
             buf[19] += buf[i] & 0xff;
         }
         buf[20] = 0x0d;   //包尾
@@ -258,13 +255,13 @@ public class SitReachManager {
         buf[10] = 0x00;
         buf[11] = 0x00;
         buf[12] = 0x00;
-        buf[13] = 0x04;
+        buf[13] = 0x00;
         buf[14] = 0x00;
         buf[15] = 0x00;
         buf[16] = 0x00;
         buf[17] = 0x00;
         buf[18] = 0x00;
-        for (int i = 2; i < 19; i++) {
+        for (int i = 1; i < 19; i++) {
             buf[19] += buf[i] & 0xff;
         }
         buf[20] = 0x0d;   //包尾

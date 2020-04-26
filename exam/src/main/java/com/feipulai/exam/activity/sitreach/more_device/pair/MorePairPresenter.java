@@ -47,7 +47,7 @@ public class MorePairPresenter extends SitPullUpPairPresenter {
 
     @Override
     public void setFrequency(int deviceId, int originFrequency, int deviceFrequency) {
-        manager.setFrequency(deviceId,originFrequency,deviceFrequency, SettingHelper.getSystemSetting().getHostId());
+        manager.setFrequency(deviceFrequency,deviceId, SettingHelper.getSystemSetting().getHostId());
     }
 
     @Override

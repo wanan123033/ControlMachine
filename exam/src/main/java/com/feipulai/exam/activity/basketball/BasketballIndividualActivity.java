@@ -178,7 +178,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         prepareForCheckIn();
         state = WAIT_FREE;
         setOperationUI();
-
+        testDate = DateUtil.getCurrentTime()+"";
 
     }
 

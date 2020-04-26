@@ -38,7 +38,7 @@ public class SargentJumpMore {
         byte[] cmd = CMD_SARGENT_JUMP_EMPTY;
         cmd[4] = (byte) deviceId;
         cmd[6] = 0x01;
-        cmd[7] = 0x03;
+        cmd[7] = 0x02;
         cmd[8] = (byte) sum(cmd, 8);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                 cmd));

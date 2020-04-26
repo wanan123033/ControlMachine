@@ -68,7 +68,7 @@
                     android:drawablePadding="15dp"
                     android:drawableRight="@drawable/cb_device_state"
                     android:enabled="false"
-                    android:text="近红外"
+                    android:text="起点"
                     android:textColor="@color/white"
                     android:textSize="20sp" />
 
@@ -85,7 +85,7 @@
                     android:drawablePadding="15dp"
                     android:drawableRight="@drawable/cb_device_state"
                     android:enabled="false"
-                    android:text="远红外"
+                    android:text="折返点1"
                     android:textColor="@color/white"
                     android:textSize="20sp" />
 
@@ -102,7 +102,7 @@
                     android:drawablePadding="15dp"
                     android:drawableRight="@drawable/cb_device_state"
                     android:enabled="false"
-                    android:text="显示屏"
+                    android:text="折返点2"
                     android:textColor="@color/white"
                     android:textSize="20sp" />
 

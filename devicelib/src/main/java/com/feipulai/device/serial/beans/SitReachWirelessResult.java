@@ -8,7 +8,13 @@ public class SitReachWirelessResult {
     public SitReachWirelessResult(byte[] data) {
         power = (data[18] & 0xff);
         deviceId = (data[6] & 0xff);
-        capacity = ((data[13] & 0xff) << 8) + (data[14] & 0xff);
+        if (data[13] != 0xff){
+            boolean isNegative = (data[13] & 0x40) == 0x40;
+            capacity = (data[13] & 0x3f) * 256 + (data[14] & 0xff);
+            if (isNegative){
+                capacity = -capacity;
+            }
+        }
         state = (data[12] & 0xff);
         index = (data[7] & 0xff);
         hostId = data[5];

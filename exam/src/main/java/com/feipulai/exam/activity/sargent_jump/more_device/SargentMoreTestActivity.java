@@ -6,6 +6,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.manager.SargentJumpMore;
 import com.feipulai.device.serial.RadioManager;
@@ -22,9 +23,6 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
-
-import java.util.Date;
-
 import butterknife.OnClick;
 
 import static com.feipulai.exam.activity.sargent_jump.Constants.GET_SCORE_RESPONSE;
@@ -108,7 +106,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
 
     @Override
     protected void sendTestCommand(BaseStuPair pair, int index) {
-        pair.setTestTime(TestConfigs.df.format(new Date()));
+        pair.setTestTime(DateUtil.getCurrentTime()+"");
         pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
         updateDevice(pair.getBaseDevice());
         int id = pair.getBaseDevice().getDeviceId();
@@ -183,7 +181,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
 
         @Override
         public void onFree(int deviceId) {
-            deviceState[deviceId-1] = 1;
+            deviceState[deviceId-1] = 3;
         }
 
         @Override
@@ -236,6 +234,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
         if (stuPair == null || stuPair.getStudent() == null)
             return;
         stuPair.setResult(result);
+        stuPair.setEndTime(DateUtil.getCurrentTime()+"");
         stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
         if (sargentSetting.isFullReturn()) {
             if (stuPair.getStudent().getSex() == Student.MALE) {

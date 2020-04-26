@@ -34,7 +34,8 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
     private int testCount = 1;
     private boolean isNextClickStart = true;
     private boolean isGroup;
-
+    private int deviceId;
+    private boolean enable = true;
     public void setNextClickStart(boolean nextClickStart) {
         isNextClickStart = nextClickStart;
     }
@@ -59,6 +60,12 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
 
     public void setTestCount(int testCount) {
         this.testCount = testCount;
+    }
+
+    public void setTxtStartEnable(int deviceId,boolean enable){
+        this.deviceId = deviceId;
+        this.enable = enable;
+        notifyItemChanged(deviceId-1);
     }
 
     @Override
@@ -151,7 +158,9 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                         moreHelper.setImageResource(R.id.item_img_portrait, R.mipmap.icon_head_photo);
                     }
                 }
-
+                if (item.getStuDevicePair().getBaseDevice().getDeviceId() == deviceId){
+                    moreHelper.txtStart.setEnabled(enable);
+                }
                 break;
 
             case DeviceDetail.ITEM_ONE:
@@ -212,6 +221,7 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                 } else {
                     oneViewHolder.txtPunish.setVisibility(View.GONE);
                 }
+
                 oneViewHolder.addOnClickListener(R.id.txt_skip).addOnClickListener(R.id.txt_start);
                 oneViewHolder.addOnClickListener(R.id.txt_punish);
                 if (item.getStuDevicePair() != null) {
@@ -236,6 +246,10 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                         oneViewHolder.setImageResource(R.id.img_portrait, R.mipmap.icon_head_photo);
                     }
 
+                }
+
+                if (item.getStuDevicePair().getBaseDevice().getDeviceId() == deviceId){
+                    oneViewHolder.txtStart.setEnabled(enable);
                 }
                 break;
         }
