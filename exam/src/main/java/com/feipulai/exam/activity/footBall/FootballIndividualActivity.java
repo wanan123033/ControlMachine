@@ -756,6 +756,9 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                 if (state != TESTING && pairs.get(0).getStudent() != null) {
                     tvResult.setText("");
                     txtDeviceStatus.setText("空闲");
+                    if (TextUtils.isEmpty(testDate)) {
+                        testDate = DateUtil.getCurrentTime() + "";
+                    }
                     onResultConfirmed();
                 }
                 break;

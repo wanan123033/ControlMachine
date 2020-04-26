@@ -916,3 +916,4 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         }
     }
 }
+

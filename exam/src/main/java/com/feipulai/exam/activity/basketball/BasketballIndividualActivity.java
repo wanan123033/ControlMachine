@@ -178,7 +178,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         prepareForCheckIn();
         state = WAIT_FREE;
         setOperationUI();
-        testDate = DateUtil.getCurrentTime()+"";
+        testDate = DateUtil.getCurrentTime() + "";
 
     }
 
@@ -360,7 +360,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
     @Override
     public void getResult(BasketballResult result) {
         //非测试不做处理
-        if (state == WAIT_FREE || state == WAIT_CHECK_IN||TextUtils.isEmpty(testDate)) {
+        if (state == WAIT_FREE || state == WAIT_CHECK_IN || TextUtils.isEmpty(testDate)) {
             return;
         }
         pairs.get(0).setDeviceResult(result);
@@ -440,7 +440,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             time = time.substring(1, time.toCharArray().length);
         }
         tvResult.setText(time);
-        if (machineResultList.size()==1){
+        if (machineResultList.size() == 1) {
             ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
         }
         ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
@@ -682,6 +682,9 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 if (state != TESTING && pairs.get(0).getStudent() != null) {
                     tvResult.setText("");
                     txtDeviceStatus.setText("空闲");
+                    if (TextUtils.isEmpty(testDate)) {
+                        testDate = DateUtil.getCurrentTime() + "";
+                    }
                     onResultConfirmed();
                 }
                 break;
@@ -751,7 +754,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 return;
             }
             int penalizeNum = testResult.getPenalizeNum();
-            Logger.i("原始成绩:"+penalizeNum +"判罚:"+punishType);
+            Logger.i("原始成绩:" + penalizeNum + "判罚:" + punishType);
             if (punishType >= 0) {//+
                 testResult.setPenalizeNum(penalizeNum + 1);
             } else {//-
