@@ -554,6 +554,9 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                     if (group.getIsTestComplete() == Group.FINISHED) {
                         toastSpeak("分组考生全部测试完成，请选择下一组");
                     } else {
+                        if (TextUtils.isEmpty(testDate)) {
+                            testDate = DateUtil.getCurrentTime() + "";
+                        }
                         onResultConfirmed();
                     }
                 }
