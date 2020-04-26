@@ -267,7 +267,9 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 TestCache.getInstance().getResults().put(student,
                         results != null ? results
                                 : new ArrayList<RoundResult>(TestConfigs.getMaxTestCount(this)));
-                testNo = 1;
+
+                RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
+                testNo = testRoundResult == null ? 1 : testRoundResult.getTestNo()+1;
             } else {
                 TestCache.getInstance().getResults().put(student, results);
                 //是否有成绩，没有成绩查底该项目是否有成绩，没有成绩测试次数为1，有成绩测试次数+1
@@ -834,7 +836,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                         roundResult.setMachineResult(testResult.getSelectMachineResult());
                         roundResult.setResult(testResult.getResult());
                         roundResult.setPenaltyNum(testResult.getPenalizeNum());
-                        roundResult.setEndTime(DateUtil.getCurrentTime()+"");
+                        roundResult.setEndTime(DateUtil.getCurrentTime() + "");
                         roundResult.setResultState(testResult.getResultState());
                         updateResult.add(roundResult);
                     }
@@ -854,7 +856,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                     roundResult.setTestNo(testNo);
                     roundResult.setExamType(mStudentItem.getExamType());
                     roundResult.setScheduleNo(mStudentItem.getScheduleNo());
-                    roundResult.setEndTime(DateUtil.getCurrentTime()+"");
+                    roundResult.setEndTime(DateUtil.getCurrentTime() + "");
                     roundResult.setUpdateState(0);
                     roundResult.setIsLastResult(0);
                     roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
@@ -965,7 +967,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
         roundResult.setTestTime(testDate);
         roundResult.setUpdateState(0);
-        roundResult.setEndTime(DateUtil.getCurrentTime()+"");
+        roundResult.setEndTime(DateUtil.getCurrentTime() + "");
         roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
         // 重新判断最好成绩
         RoundResult bestResult = DBManager.getInstance().queryBestScore(student.getStudentCode(), TestCache.getInstance().getTestNoMap().get(student));

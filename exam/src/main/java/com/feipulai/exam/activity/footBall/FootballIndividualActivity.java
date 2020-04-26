@@ -271,7 +271,8 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                 TestCache.getInstance().getResults().put(student,
                         results != null ? results
                                 : new ArrayList<RoundResult>(TestConfigs.getMaxTestCount(this)));
-                testNo = 1;
+                RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
+                testNo = testRoundResult == null ? 1 : testRoundResult.getTestNo()+1;
             } else {
                 TestCache.getInstance().getResults().put(student, results);
                 //是否有成绩，没有成绩查底该项目是否有成绩，没有成绩测试次数为1，有成绩测试次数+1
