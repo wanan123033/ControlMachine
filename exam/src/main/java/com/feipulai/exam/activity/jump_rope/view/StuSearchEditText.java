@@ -151,6 +151,8 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
                     if (TextUtils.isEmpty(v.getText().toString().trim())) {
                         return true;
                     }
+                    LogUtil.logDebugMessage("KEYCODE_ENTER======>");
+                    etInputText.setText("");
 //                    mStudentList = DBManager.getInstance().fuzzyQueryByStuCode(etInputText.getText().toString(), 20, 0);
 //                    if (mStudentList == null || mStudentList.size() == 0) {
 //                        mLvResults.setVisibility(View.GONE);
