@@ -238,7 +238,7 @@ public class HttpSubscriber {
                         }
                     });
                     if (onRequestEndListener != null) {
-                        if (initState == TestConfigs.INIT_SUCCESS && TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
+                        if (initState == TestConfigs.INIT_SUCCESS && !TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
                             onRequestEndListener.onSuccess(ITEM_BIZ);
                         } else {
                             onRequestEndListener.onFault(ITEM_BIZ);
@@ -413,7 +413,7 @@ public class HttpSubscriber {
 //                Logger.i("getItemGroupAll====>" + result.toString());
                 if (result == null || result.getDataInfo() == null) {
                     if (onRequestEndListener != null)
-                        onRequestEndListener.onSuccess(STUDENT_BIZ);
+                        onRequestEndListener.onSuccess(GROUP_BIZ);
                     return;
                 }
                 final List<Group> groupList = new ArrayList<>();

@@ -145,10 +145,11 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
 
                 if (actionId == EditorInfo.IME_ACTION_GO
                         || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    String text = v.getText().toString().trim();
+                    final String text = v.getText().toString().trim();
                     if (TextUtils.isEmpty(text)) {
                         return true;
                     }
+                    etInputText.setText("");
 //                    mStudentList = DBManager.getInstance().fuzzyQueryByStuCode(etInputText.getText().toString(), 20, 0);
 //                    if (mStudentList == null || mStudentList.size() == 0) {
 //                        mLvResults.setVisibility(View.GONE);
@@ -160,7 +161,7 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            search();
+                            search(text);
                         }
                     }, 200);
 
@@ -209,8 +210,8 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
         boolean onInputCheck(Student student);
     }
 
-    public void search() {
-        mStudentList = DBManager.getInstance().fuzzyQueryByStuCode(etInputText.getText().toString(), 20, 0);
+    public void search(String text) {
+        mStudentList = DBManager.getInstance().fuzzyQueryByStuCode(text, 20, 0);
         if (mStudentList == null || mStudentList.size() == 0) {
             mLvResults.setVisibility(View.GONE);
         } else {
@@ -220,7 +221,7 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
         }
         if (mStudentList != null && mStudentList.size() > 0) {
             for (Student student : mStudentList) {
-                if (etInputText.getText().toString().equals(student.getStudentCode()) || etInputText.getText().toString().equals(student.getIdCardNo())) {
+                if (text.equals(student.getStudentCode()) || text.equals(student.getIdCardNo())) {
                     // 找到已有的,检录
                     check(student);
                     return;
@@ -229,7 +230,7 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
         }
         // 添加考生,检录
         Student student = new Student();
-        student.setStudentCode(etInputText.getText().toString());
+        student.setStudentCode(text);
         check(student);
     }
 
@@ -240,7 +241,7 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
                 etInputText.setText("");
                 break;
             case R.id.txt_search:
-                search();
+                search(etInputText.getText().toString());
                 break;
         }
     }

@@ -554,6 +554,9 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                     if (group.getIsTestComplete() == Group.FINISHED) {
                         toastSpeak("分组考生全部测试完成，请选择下一组");
                     } else {
+                        if (TextUtils.isEmpty(testDate)) {
+                            testDate = DateUtil.getCurrentTime() + "";
+                        }
                         onResultConfirmed();
                     }
                 }
@@ -808,6 +811,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                         roundResult.setUpdateState(0);
                         roundResult.setResult(testResult.getResult());
                         roundResult.setPenaltyNum(testResult.getPenalizeNum());
+                        roundResult.setEndTime(DateUtil.getCurrentTime()+"");
                         roundResult.setResultState(testResult.getResultState());
                         updateResult.add(roundResult);
                     }
@@ -822,6 +826,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                     roundResult.setMachineResult(0);
                     roundResult.setResultState(testResult.getResultState());
                     roundResult.setTestTime(System.currentTimeMillis() + "");
+                    roundResult.setEndTime(DateUtil.getCurrentTime()+"");
                     roundResult.setRoundNo(resultList.get(i).getRoundNo());
                     roundResult.setTestNo(1);
                     roundResult.setExamType(group.getExamType());

@@ -100,6 +100,12 @@ public class CommonPopupWindow extends Dialog {
 
     }
 
+    public void updateAdapter(BaseQuickAdapter adapter){
+        results.clear();
+        results.addAll(adapter.getData());
+        mAdapter.notifyDataSetChanged();
+    }
+
     private void setAdapter(BaseQuickAdapter adapter) {
 
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
