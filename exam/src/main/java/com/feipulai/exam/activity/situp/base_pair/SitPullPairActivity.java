@@ -14,6 +14,7 @@ import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.jump_rope.adapter.DevicePairAdapter;
 import com.feipulai.exam.view.DividerItemDecoration;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.util.List;
 
@@ -76,6 +77,7 @@ public abstract class SitPullPairActivity extends BaseTitleActivity
 
     @Override
     public void onItemClick(int position) {
+        LogUtils.operation("更改了设备ID deviceId 在配对");
         presenter.changeFocusPosition(position);
     }
 
@@ -109,6 +111,7 @@ public abstract class SitPullPairActivity extends BaseTitleActivity
     public void btnOnClick(View v) {
         switch (v.getId()) {
             case R.id.sw_auto_pair:
+                LogUtils.operation("勾选了自动匹配");
                 presenter.changeAutoPair(mSwAutoPair.isChecked());
                 break;
         }
@@ -121,6 +124,7 @@ public abstract class SitPullPairActivity extends BaseTitleActivity
     @Override
     protected void onPause() {
         super.onPause();
+        LogUtils.life("SitPullPairActivity onPause");
         presenter.saveSettings();
         presenter.stopPair();
     }

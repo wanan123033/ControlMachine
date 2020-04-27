@@ -54,6 +54,7 @@ import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.WaitDialog;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -185,6 +186,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
     @Override
     protected void onRestart() {
         super.onRestart();
+        LogUtils.life("VolleyBallIndividualActivity onRestart");
         facade.setVolleySetting(setting);
 
     }
@@ -192,12 +194,14 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
     @Override
     protected void onPause() {
         super.onPause();
+        LogUtils.life("VolleyBallIndividualActivity onPause");
         facade.stopTotally();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        LogUtils.life("VolleyBallIndividualActivity onResume");
         if (facade == null) {
             facade = new VolleyBallTestFacade(SettingHelper.getSystemSetting().getHostId(), setting, this);
         } else {
@@ -223,6 +227,13 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
             return;
         }
 
+        if (student != null)
+            LogUtils.operation("排球检入到学生:"+student.toString());
+        if (studentItem != null)
+            LogUtils.operation("排球检入到学生StudentItem:"+studentItem.toString());
+        if (results != null)
+            LogUtils.operation("排球检入到学生成绩:"+results.size()+"----"+results.toString());
+
         pairs.get(0).setStudent(student);
         TestCache.getInstance().init();
         TestCache.getInstance().getAllStudents().add(student);
@@ -239,6 +250,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
             TestCache.getInstance().getResults().put(student, results);
             RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
             int testNo = testRoundResult == null ? 1 : testRoundResult.getTestNo() + 1;
+            LogUtils.operation("当前考生:stuCode="+student.getStudentCode()+"---testNo="+testNo);
             TestCache.getInstance().getTestNoMap().put(student, testNo);
         }
 
@@ -270,6 +282,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         switch (view.getId()) {
 
             case R.id.tv_led_setting:
+                LogUtils.operation("排球点击了外接屏幕");
                 if (isConfigurableNow()) {
                     startActivity(new Intent(this, LEDSettingActivity.class));
                 } else {
@@ -278,6 +291,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
                 break;
 
             case R.id.tv_start_test:
+                LogUtils.operation("排球点击了开始测试");
                 if (setting.getType() == 0){
                     prepareForTesting();
                 }else {
@@ -287,18 +301,21 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
                 break;
 
             case R.id.tv_stop_test:
+                LogUtils.operation("排球点击了结束测试");
                 facade.stopTest();
                 SoundPlayUtils.play(12);
                 prepareForConfirmResult();
                 break;
 
             case R.id.tv_print:
+                LogUtils.operation("排球点击了打印");
                 TestCache testCache = TestCache.getInstance();
                 InteractUtils.printResults(null, testCache.getAllStudents(), testCache.getResults(),
                         TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
                 break;
 
             case R.id.tv_confirm:
+                LogUtils.operation("排球点击了确定");
                 tvResult.setText("");
                 InteractUtils.saveResults(pairs, testDate);
                 onResultConfirmed();
@@ -308,23 +325,28 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
                 break;
 
             case R.id.tv_punish:
+                LogUtils.operation("排球点击了判罚");
                 showPenalizeDialog(pairs.get(0).getDeviceResult().getResult());
                 break;
 
             case R.id.tv_abandon_test:
+                LogUtils.operation("排球点击了放弃测试");
                 facade.abandonTest();
                 state = WAIT_BEGIN;
                 prepareForBegin();
                 break;
 
             case R.id.tv_finish_test:
+                LogUtils.operation("排球点击了测试完成");
                 prepareForCheckIn();
                 break;
 
             case R.id.tv_exit_test:
+                LogUtils.operation("排球点击了退出测试");
                 prepareForCheckIn();
                 break;
             case R.id.tv_pair:
+                LogUtils.operation("排球点击了设备配对");
                 changeBadDevice();
                 break;
 
@@ -359,6 +381,9 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
             } else {
                 fullSkip = result >= setting.getFemaleFullScore();
             }
+        }
+        if (hasRemain && !fullSkip){
+            LogUtils.operation("排球当前考生进入下一轮测试:stuCode = "+student.getStudentCode());
         }
         return hasRemain && !fullSkip;
     }
@@ -484,17 +509,22 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
 
         switch (msg.what) {
             case VolleyBallManager.VOLLEY_BALL_DISCONNECT:
+                LogUtils.operation("排球设备断开连接...");
                 cbDeviceState.setChecked(false);
                 pairs.get(0).getBaseDevice().setState(BaseDeviceState.STATE_DISCONNECT);
                 break;
 
             case VolleyBallManager.VOLLEY_BALL_CONNECT:
+                LogUtils.operation("排球设备已连接...");
                 cbDeviceState.setChecked(true);
                 pairs.get(0).getBaseDevice().setState(BaseDeviceState.STATE_FREE);
                 break;
 
             case UPDATE_SCORE:
+
                 VolleyBallResult result = (VolleyBallResult) msg.obj;
+                if (result != null)
+                    LogUtils.operation("排球设备更新成绩:"+result.toString());
                 pairs.get(0).setDeviceResult(result);
                 String displayResult = ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult());
                 tvResult.setText(displayResult);
@@ -534,6 +564,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
 
     @Override
     public void finish() {
+        LogUtils.life(getClass().getName()+" finish");
         if (!isConfigurableNow()) {
             toastSpeak("测试中,不允许退出当前界面");
             return;
@@ -647,6 +678,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         int value = -1 * numberPicker.getValue();
+                        LogUtils.operation("排球点击了判罚:"+value);
                         if (value != pairs.get(0).getPenalty()) {
                             String displayInLed = "成绩:" + ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult());
                             ledManager.showString(SettingHelper.getSystemSetting().getHostId(), displayInLed, 1, 1, false, true);

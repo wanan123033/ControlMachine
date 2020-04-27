@@ -33,6 +33,7 @@ import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -160,6 +161,7 @@ public class InteractUtils {
      * @param testDate 测试时间
      */
     public static void saveResults(List<StuDevicePair> pairs, String testDate) {
+        LogUtils.operation("保存成绩开始----");
         for (StuDevicePair pair : pairs) {
             Student student = pair.getStudent();
             int state = pair.getBaseDevice().getState();
@@ -246,6 +248,7 @@ public class InteractUtils {
             Logger.i("保存成绩:" + roundResult.toString());
 
             DBManager.getInstance().insertRoundResult(roundResult);
+            LogUtils.operation("保存成绩:"+roundResult.toString());
         }
         ToastUtils.showShort("成绩保存成功");
     }
@@ -271,7 +274,7 @@ public class InteractUtils {
     public static void printResults(Group group, List<Student> students,
                                     Map<Student, List<RoundResult>> results,
                                     int testNo, Map<Student, Integer> trackNoMap) {
-        Logger.i("成绩打印开始");
+        LogUtils.operation("成绩打印开始...");
         String title;
         SystemSetting systemSetting = SettingHelper.getSystemSetting();
         boolean isGroupMode = systemSetting.getTestPattern() == SystemSetting.GROUP_PATTERN;

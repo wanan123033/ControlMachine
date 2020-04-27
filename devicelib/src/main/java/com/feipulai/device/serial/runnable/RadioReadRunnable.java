@@ -6,6 +6,8 @@ import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialPorter;
 import com.feipulai.device.serial.beans.ConverterVersion;
 import com.feipulai.device.serial.beans.Radio868Result;
+import com.feipulai.device.serial.beans.StringUtility;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +35,7 @@ public class RadioReadRunnable extends SerialReadRunnable{
 			mInputStream.read(readLength,0,1);
 			if((readLength[0] & 0xff) != 0xa5){
 				//Log.e("dddd","read wrong packet head: readLength[0]= " + readLength[0]);
+				LogUtils.all(readLength.length+"---"+ StringUtility.bytesToHexString(readLength)+"---协议头错误,已过滤");
 				return;
 			}
 
@@ -43,6 +46,7 @@ public class RadioReadRunnable extends SerialReadRunnable{
 			mInputStream.read(readLength,1,1);
 			if((readLength[1] & 0xff) != 0x5a){
 				//Log.e("dddd","read wrong packet head: readLength[0]= " + readLength[1]);
+				LogUtils.all(readLength.length+"---"+ StringUtility.bytesToHexString(readLength)+"---协议头错误,已过滤");
 				return;
 			}
 
@@ -74,7 +78,7 @@ public class RadioReadRunnable extends SerialReadRunnable{
 			if((packetEnd[0] & 0xff) != 0xaa || (packetEnd[1] & 0xff) != 0x55){
 				//如果这之前有数据写入,会被丢弃,这里直接返回即可
 				//直接返回的话,就可能存在无法找到正确的协议头,导致连续丢帧
-				//throwData();
+//				throwData();
 				return;
 			}
 			// 工厂模式

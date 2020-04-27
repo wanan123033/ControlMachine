@@ -18,6 +18,7 @@ import com.feipulai.exam.entity.RunStudent;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -157,7 +158,7 @@ public class RunTimerDisposeManager {
             // 第一次测试
             roundResult.setIsLastResult(1);
         }
-
+        LogUtils.operation("红外计时保存成绩:"+roundResult.toString());
         DBManager.getInstance().insertRoundResult(roundResult);
 
 

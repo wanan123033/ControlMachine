@@ -5,8 +5,10 @@ import android.graphics.Bitmap;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
+import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -77,17 +79,20 @@ public class LEDManager {
         }
         //先切到0频道
         RadioChannelCommand channelCommand = new RadioChannelCommand(0);
+        LogUtils.normal(channelCommand.getCommand().length+"---"+StringUtility.bytesToHexString(channelCommand.getCommand())+"---LED切频指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(channelCommand));
 
         //连接LED屏
         byte[] command = {(byte) 0xaa, 0x00, (byte) 0xa1, 0x00, 0x00, (byte) 0xa1, 0x00, 0x01, 4, 0x0d};
         command[1] = (byte) (machineCodesForLed.get(machineCode) & 0xff);
         command[6] = (byte) (hostId & 0xff);
+        LogUtils.normal(command.length+"---"+StringUtility.bytesToHexString(command)+"---LED连接指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, command));
 
         //调到与LED同频进行
 //        RadioChannelCommand channelCommand1 = new RadioChannelCommand(hostId + SerialConfigs.sProChannels.get(machineCode) - 1);
         RadioChannelCommand channelCommand1 = new RadioChannelCommand(channel);
+        LogUtils.normal(channelCommand1.getCommand().length+"---"+StringUtility.bytesToHexString(channelCommand1.getCommand())+"---LED同频指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(channelCommand1));
     }
 
@@ -113,6 +118,7 @@ public class LEDManager {
         }
         //先切到0频道
         RadioChannelCommand channelCommand = new RadioChannelCommand(0);
+        LogUtils.normal(channelCommand.getCommand().length+"---"+StringUtility.bytesToHexString(channelCommand.getCommand())+"---LED切频指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(channelCommand));
 
         //连接LED屏
@@ -126,9 +132,10 @@ public class LEDManager {
         }
 
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, command));
-
+        LogUtils.normal(command.length+"---"+StringUtility.bytesToHexString(command)+"---LED连接指令");
         //调到与LED同频进行
         RadioChannelCommand channelCommand1 = new RadioChannelCommand(channel);
+        LogUtils.normal(channelCommand1.getCommand().length+"---"+StringUtility.bytesToHexString(channelCommand1.getCommand())+"---LED同频指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(channelCommand1));
     }
 
@@ -148,6 +155,7 @@ public class LEDManager {
             return;
         }
         byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xA6, 0x0D};
+        LogUtils.normal(cmd.length+"---"+StringUtility.bytesToHexString(cmd)+"---LED自检指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -157,6 +165,7 @@ public class LEDManager {
         }
         byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xA6, 0x0D};
         cmd[4] = (byte) (ledId & 0xff);
+        LogUtils.normal(cmd.length+"---"+StringUtility.bytesToHexString(cmd)+"---LED自检指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -193,6 +202,7 @@ public class LEDManager {
         byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xa5, 0x01, (byte)
                 0x00, 0x00, 0x00};
         cmd[4] = (byte) (ledId & 0xff);
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---LED频清空LED显示屏指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -313,6 +323,7 @@ public class LEDManager {
         System.arraycopy(data, 0, cmd, 11, data.length);
         cmd[11 + data.length] = 0x00;
         cmd[12 + data.length] = 0x00;
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---LED频显示字符指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd)/*,CMD_SEND_INTERVAL*/);
 
     }
@@ -383,6 +394,7 @@ public class LEDManager {
         byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xa4, (byte) 0xbb,
                 (byte) 0x0d};
         cmd[4] = (byte) (ledId & 0xff);
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---LED频增加亮度指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -415,6 +427,7 @@ public class LEDManager {
         byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xa4, (byte) 0xaa,
                 (byte) 0x0d};
         cmd[4] = (byte) (ledId & 0xff);
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---LED频减少亮度指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -430,6 +443,7 @@ public class LEDManager {
         }
         byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xa4, 0x00, (byte)
                 0x0d};
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---LED频亮度最暗指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 

@@ -9,11 +9,13 @@ import com.feipulai.device.manager.PullUpManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.PullUpStateResult;
+import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.device.sitpullup.SitPullLinker;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.utils.ResultDisplayUtils;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,6 +44,8 @@ public class PullUpTestFacade implements RadioManager.OnRadioArrivedListener,
     public PullUpTestFacade(int hostId, Listener listener) {
         this.hostId = hostId;
         TARGET_FREQUENCY =  SettingHelper.getSystemSetting().getUseChannel();
+        RadioChannelCommand command = new RadioChannelCommand(TARGET_FREQUENCY);
+        LogUtils.normal(command.getCommand().length+"---"+ StringUtility.bytesToHexString(command.getCommand())+"---引体向上切频指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(TARGET_FREQUENCY)));
         this.listener = listener;
         executor = Executors.newCachedThreadPool();

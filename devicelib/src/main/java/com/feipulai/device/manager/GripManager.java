@@ -1,8 +1,10 @@
 package com.feipulai.device.manager;
 
 import com.feipulai.device.serial.RadioManager;
+import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 /**
  * Created by pengjf on 2020/1/7.
@@ -45,7 +47,10 @@ public class GripManager {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        RadioChannelCommand command = new RadioChannelCommand(targetChannel);
+        LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---握力计设置参数指令");
+        LogUtils.normal(command.getCommand().length+"---"+ StringUtility.bytesToHexString(command.getCommand())+"---握力计切换到指定频道指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
-        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(targetChannel)));
+        RadioManager.getInstance().sendCommand(new ConvertCommand(command));
     }
 }

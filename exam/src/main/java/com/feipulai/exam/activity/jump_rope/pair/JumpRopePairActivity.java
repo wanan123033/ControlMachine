@@ -17,6 +17,7 @@ import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.jump_rope.adapter.DevicePairAdapter;
 import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSetting;
 import com.feipulai.exam.view.DividerItemDecoration;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.util.List;
 
@@ -84,6 +85,7 @@ public class JumpRopePairActivity extends BaseTitleActivity
     @Override
     protected void onResume() {
         super.onResume();
+        LogUtils.life("JumpRopePairActivity onResume");
         presenter.resumePair();
     }
 
@@ -136,6 +138,7 @@ public class JumpRopePairActivity extends BaseTitleActivity
     public void btnOnClick(View v) {
         switch (v.getId()) {
             case R.id.sw_auto_pair:
+                LogUtils.operation("跳绳配对勾选了自动匹配");
                 presenter.changeAutoPair(mSwAutoPair.isChecked());
                 break;
         }
@@ -144,6 +147,7 @@ public class JumpRopePairActivity extends BaseTitleActivity
     @Override
     protected void onPause() {
         super.onPause();
+        LogUtils.life("JumpRopePairActivity onPause");
         presenter.pausePair();
         presenter.saveSettings();
     }
@@ -151,6 +155,7 @@ public class JumpRopePairActivity extends BaseTitleActivity
     @Override
     protected void onStop() {
         super.onStop();
+        LogUtils.life("JumpRopePairActivity onStop");
         presenter.stopPair();
     }
 

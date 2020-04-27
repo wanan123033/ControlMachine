@@ -17,6 +17,7 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,12 @@ public abstract class BaseShootActivity extends BaseTitleActivity
 
     @Override
     public void onIndividualCheckIn(Student student, StudentItem studentItem, List<RoundResult> results) {
+        if (student != null)
+            LogUtils.operation("篮球检入到学生:"+student.toString());
+        if (studentItem != null)
+            LogUtils.operation("篮球检入到学生StudentItem:"+studentItem.toString());
+        if (results != null)
+            LogUtils.operation("篮球检入到学生成绩:"+results.size()+"----"+results.toString());
         if (state == WAIT_FREE || state == WAIT_CHECK_IN) {
 
             pairs.get(0).setStudent(student);
@@ -50,6 +57,7 @@ public abstract class BaseShootActivity extends BaseTitleActivity
                 if (isFullSkip(result.getResult(), result.getResultState())) {
                     toastSpeak("满分");
                     pairs.get(0).setStudent(null);
+                    LogUtils.operation("篮球该学生已满分跳过测试:"+result.getStudentCode());
                     return;
                 }
             }
@@ -84,6 +92,7 @@ public abstract class BaseShootActivity extends BaseTitleActivity
      */
     private void startProjectSetting() {
         if (!isConfigurableNow()) {
+            LogUtils.operation("跳转至篮球项目设置界面");
             IntentUtil.gotoActivityForResult(this, ShootSettingActivity.class, 1);
         } else {
             toastSpeak("测试中,不允许修改设置");
@@ -94,8 +103,9 @@ public abstract class BaseShootActivity extends BaseTitleActivity
      * 是否是使用中
      */
     private boolean isConfigurableNow() {
-
-        return !(state == WAIT_FREE || state == WAIT_CHECK_IN || state == WAIT_BEGIN);
+        boolean flag = !(state == WAIT_FREE || state == WAIT_CHECK_IN || state == WAIT_BEGIN);
+        LogUtils.operation("篮球isConfigurableNow(是否是使用中) = "+flag);
+        return flag;
     }
 
     protected abstract void updateStudent(Student student);

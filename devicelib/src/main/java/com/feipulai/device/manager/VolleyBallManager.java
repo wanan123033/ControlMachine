@@ -45,7 +45,7 @@ public class VolleyBallManager {
     // 主机下发，测量杆收到会原样回复(0x44变化为0x55)。主机每5秒发送一次，用于检查测量杆连接是否正常。
     public void emptyCommand() {
         if (pattryType == 0) {
-            Logger.t(LogUtils.NORMAL_TAG).i(EMPTY.length+ "---" + StringUtility.bytesToHexString(EMPTY)+"---排球空指令");
+            LogUtils.normal(EMPTY.length+ "---" + StringUtility.bytesToHexString(EMPTY)+"---排球空指令");
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, EMPTY));
         }
 
@@ -54,7 +54,7 @@ public class VolleyBallManager {
 
     public void startTest() {
         if (pattryType == 0) {
-            Logger.t(LogUtils.NORMAL_TAG).i(CMD_START.length+ "---" + StringUtility.bytesToHexString(CMD_START)+"---排球开始指令");
+            LogUtils.normal(CMD_START.length+ "---" + StringUtility.bytesToHexString(CMD_START)+"---排球开始指令");
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_START));
 
         }
@@ -62,7 +62,7 @@ public class VolleyBallManager {
 
     public void startTest(int hostId, int deviceId, int time, int testTime) {
         if (pattryType == 0) {
-            Logger.t(LogUtils.NORMAL_TAG).i(CMD_START.length+ "---" + StringUtility.bytesToHexString(CMD_START)+"---排球开始指令");
+            LogUtils.normal(CMD_START.length+ "---" + StringUtility.bytesToHexString(CMD_START)+"---排球开始指令");
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_START));
         } else {
             if (testTime == 0) {
@@ -75,7 +75,7 @@ public class VolleyBallManager {
 
     public void stopTest() {
         if (pattryType == 0) {
-            Logger.t(LogUtils.NORMAL_TAG).i(CMD_END.length + "---" + StringUtility.bytesToHexString(CMD_END) + "---排球结束指令");
+            LogUtils.normal(CMD_END.length + "---" + StringUtility.bytesToHexString(CMD_END) + "---排球结束指令");
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_END));
         }
     }
@@ -83,7 +83,7 @@ public class VolleyBallManager {
     public void stopTest(int hostId, int deviceId, int timeSum) {
         if (pattryType == 0) {
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_END));
-            Logger.t(LogUtils.NORMAL_TAG).i(CMD_END.length + "---" + StringUtility.bytesToHexString(CMD_END) + "---排球结束指令");
+            LogUtils.normal(CMD_END.length + "---" + StringUtility.bytesToHexString(CMD_END) + "---排球结束指令");
         }else {
             if (timeSum == 0) {
                 volleyBallRadioManager.stopCount(hostId, deviceId);
@@ -101,7 +101,7 @@ public class VolleyBallManager {
 
     public void getScore() {
         if (pattryType == 0) {
-            Logger.t(LogUtils.NORMAL_TAG).i(CMD_GET_SCORE.length + "---" + StringUtility.bytesToHexString(CMD_GET_SCORE) + "---排球获取成绩指令");
+            LogUtils.normal(CMD_GET_SCORE.length + "---" + StringUtility.bytesToHexString(CMD_GET_SCORE) + "---排球获取成绩指令");
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_GET_SCORE));
         }
     }
@@ -109,7 +109,7 @@ public class VolleyBallManager {
     public void getScore(int hostId, int deviceId) {
         if (pattryType == 0) {
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_GET_SCORE));
-            Logger.t(LogUtils.NORMAL_TAG).i(CMD_GET_SCORE.length + "---" + StringUtility.bytesToHexString(CMD_GET_SCORE) + "---排球获取成绩指令");
+            LogUtils.normal(CMD_GET_SCORE.length + "---" + StringUtility.bytesToHexString(CMD_GET_SCORE) + "---排球获取成绩指令");
 
         }else {
             volleyBallRadioManager.getState(hostId, deviceId);
@@ -119,7 +119,7 @@ public class VolleyBallManager {
     public void checkDevice(int hostId, int deviceId) {
         if (pattryType == 0) {
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, CMD_CHECK));
-            Logger.t(LogUtils.NORMAL_TAG).i(CMD_CHECK.length + "---" + StringUtility.bytesToHexString(CMD_CHECK) + "---排球自检指令");
+            LogUtils.normal(CMD_CHECK.length + "---" + StringUtility.bytesToHexString(CMD_CHECK) + "---排球自检指令");
         }else {
             VolleyBallRadioManager.getInstance().selfCheck(hostId, deviceId);
         }

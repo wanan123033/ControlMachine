@@ -10,6 +10,7 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
+import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BasePersonTestActivity;
@@ -17,6 +18,7 @@ import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.Date;
@@ -76,11 +78,13 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
     public void stuSkip() {
         standResiltListener.setTestState(StandResiltListener.TestState.UN_STARTED);
         //结束测试 发送结束指令
+        LogUtils.normal(SerialConfigs.CMD_END_JUMP.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_END_JUMP)+"---跳远结束测试指令");
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_END_JUMP));
     }
 
     @Override
     public void sendTestCommand(BaseStuPair baseStuPair) {
+        LogUtils.operation("立定跳远开始测试:"+baseStuPair.toString());
         sendCheck();
         standResiltListener.setTestState(StandResiltListener.TestState.START_TEST);
 //        //开始测试
@@ -107,6 +111,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
                 || standResiltListener.getTestState() == StandResiltListener.TestState.START_TEST) {
             toastSpeak("测试中,不允许修改设置");
         } else {
+            LogUtils.operation("跳转至StandJumpSettingActivity");
             startActivity(new Intent(this, StandJumpSettingActivity.class));
             finish();
         }
@@ -128,7 +133,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
+        LogUtils.life("StandJumpTestActivity onResume");
 //        updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
         SerialDeviceManager.getInstance().setRS232ResiltListener(standResiltListener);
         sendCheck();
@@ -142,7 +147,10 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        LogUtils.life("StandJumpTestActivity onPause");
         //结束测试 发送结束指令
+        LogUtils.normal(SerialConfigs.CMD_END_JUMP.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_END_JUMP)+"---跳远结束测试指令");
+
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_END_JUMP));
         SerialDeviceManager.getInstance().close();
     }
@@ -154,6 +162,8 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
         isDisconnect = true;
         if (SerialDeviceManager.getInstance() != null) {
             //测量垫自检,校验连接是否正常
+            LogUtils.normal(SerialConfigs.CMD_SELF_CHECK_JUMP.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_SELF_CHECK_JUMP)+"---跳远自检指令");
+
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SELF_CHECK_JUMP));
             mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
         }
@@ -205,15 +215,19 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
                         ToastUtils.showShort("设备错误,考生请重测");
                         activity.sendCheck();
                         //开始测试
+                        LogUtils.normal(SerialConfigs.CMD_START_JUMP.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_START_JUMP)+"---跳远开始测试指令");
+
                         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
                         //设置当前设置为空闲状态
                         activity.updateDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE));
                         break;
                     case UPDATE_DEVICE:
+                        LogUtils.operation("立定跳远更新设备状态:"+msg.obj.toString());
                         activity.updateDevice((BaseDeviceState) msg.obj);
                         break;
 
                     case UPDATE_RESULT:
+                        LogUtils.operation("立定跳远更新设备成绩:"+msg.obj.toString());
                         activity.updateResult((BaseStuPair) msg.obj);
                         break;
                     case TOAST_SPEAK:
@@ -269,6 +283,8 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
             if (isCheckDevice && standResiltListener.getTestState() == StandResiltListener.TestState.START_TEST) {
 
                 //开始测试
+                LogUtils.normal(SerialConfigs.CMD_START_JUMP.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_START_JUMP)+"---跳远开始测试指令");
+
                 SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
             }
 //            if (!isCheckDevice) {

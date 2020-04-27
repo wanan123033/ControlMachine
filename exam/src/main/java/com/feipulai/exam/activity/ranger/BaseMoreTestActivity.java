@@ -1,6 +1,5 @@
 package com.feipulai.exam.activity.ranger;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -61,7 +60,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public abstract class BaseMoreTestActivity extends BaseCheckActivity implements PenalizeDialog.PenalizeListener {
     @BindView(R.id.txt_group_name)

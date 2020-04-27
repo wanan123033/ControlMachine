@@ -64,6 +64,7 @@ public class SerialDeviceManager {
     public synchronized void sendCommand(ConvertCommand convertCommand) {
 	    ensureInterval();
         mSerialPorter.sendCommand(convertCommand);
+
     }
 
     public synchronized void sendCommandForLed(ConvertCommand convertCommand) {

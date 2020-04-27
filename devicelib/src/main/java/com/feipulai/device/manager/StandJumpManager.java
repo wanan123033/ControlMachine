@@ -1,8 +1,10 @@
 package com.feipulai.device.manager;
 
 import com.feipulai.device.serial.RadioManager;
+import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 /**
  * Created by zzs on  2019/11/12
@@ -32,8 +34,11 @@ public class StandJumpManager {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---立定跳远设置参数指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
-        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(targetChannel)));
+        RadioChannelCommand command = new RadioChannelCommand(targetChannel);
+        LogUtils.normal(command.getCommand().length+"---"+ StringUtility.bytesToHexString(command.getCommand())+"---立定跳远切频指令");
+        RadioManager.getInstance().sendCommand(new ConvertCommand(command));
     }
 
     /**
@@ -50,6 +55,7 @@ public class StandJumpManager {
         cmd[12] = (byte) ((points >> 8) & 0xff);// 次低位
         cmd[13] = (byte) (points & 0xff);// 最低位
         cmd[19] = (byte) sum(cmd, 19);
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---立定跳远设置使用长度指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -67,6 +73,7 @@ public class StandJumpManager {
         cmd[12] = (byte) ((points >> 8) & 0xff);// 次低位
         cmd[13] = (byte) (points & 0xff);// 最低位
         cmd[19] = (byte) sum(cmd, 19);
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---立定跳远设置使用长度指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -80,6 +87,7 @@ public class StandJumpManager {
         cmd[5] = (byte) (hostId & 0xff);
         cmd[6] = (byte) (deviceId & 0xff);
         cmd[19] = (byte) sum(cmd, 19);
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---立定跳远开始测试指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -94,6 +102,7 @@ public class StandJumpManager {
         cmd[5] = (byte) (hostId & 0xff);
         cmd[6] = (byte) (deviceId & 0xff);
         cmd[19] = (byte) sum(cmd, 19);
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---立定跳远结束测试指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -108,6 +117,7 @@ public class StandJumpManager {
         cmd[5] = (byte) (hostId & 0xff);
         cmd[6] = (byte) (deviceId & 0xff);
         cmd[19] = (byte) sum(cmd, 19);
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---立定跳远空闲指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -116,6 +126,7 @@ public class StandJumpManager {
         cmd[5] = (byte) (hostId & 0xff);
         cmd[6] = (byte) (deviceId & 0xff);
         cmd[19] = (byte) sum(cmd, 19);
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---立定跳远获取版本信息指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -124,6 +135,7 @@ public class StandJumpManager {
         cmd[5] = (byte) (hostId & 0xff);
         cmd[6] = (byte) (deviceId & 0xff);
         cmd[19] = (byte) sum(cmd, 19);
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---立定跳远自检指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 

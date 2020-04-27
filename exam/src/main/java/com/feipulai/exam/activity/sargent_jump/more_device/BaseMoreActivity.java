@@ -42,6 +42,7 @@ import com.feipulai.exam.service.UploadService;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.StuSearchEditText;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -451,6 +452,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     public synchronized void updateDevice(@NonNull BaseDeviceState deviceState) {
         int deviceId = deviceState.getDeviceId();
+        if (deviceState != null)
+            LogUtils.operation("更新设备状态:deviceId="+deviceId+",deviceState="+deviceState.toString());
         BaseStuPair pair = null;
         int index = 0;
         for (int i = 0; i < deviceCount; i++) {
@@ -591,7 +594,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     }
 
     private void saveResult(BaseStuPair baseStuPair, int index) {
-        Logger.i("saveResult==>" + baseStuPair.toString());
+        LogUtils.operation("保存成绩:" + baseStuPair.toString());
         if (baseStuPair.getStudent() == null)
             return;
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(baseStuPair.getStudent().getStudentCode());
@@ -638,7 +641,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
         }
         DBManager.getInstance().insertRoundResult(roundResult);
-        Logger.i("saveResult==>insertRoundResult->" + roundResult.toString());
+        LogUtils.operation("保存成绩:" + roundResult.toString());
         List<RoundResult> roundResultList = new ArrayList<>();
         roundResultList.add(roundResult);
         UploadResults uploadResults = new UploadResults(studentItem.getScheduleNo(), TestConfigs.getCurrentItemCode(),

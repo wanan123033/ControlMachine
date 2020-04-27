@@ -23,6 +23,7 @@ import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.view.DividerItemDecoration;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -137,10 +138,12 @@ public abstract class AbstractRadioTestActivity<Setting>
         switch (view.getId()) {
 
             case R.id.btn_change_bad:
+                LogUtils.operation("点击了故障更换");
                 presenter.changeBadDevice();
                 break;
 
             case R.id.btn_stop_using:
+                LogUtils.operation("点击了暂停使用");
                 String text = btnStopUsing.getText().toString().trim();
                 if (text.equals(RESUME_USE)) {
                     presenter.resumeUse();
@@ -152,6 +155,7 @@ public abstract class AbstractRadioTestActivity<Setting>
                 break;
 
             case R.id.btn_restart:
+                LogUtils.operation("点击了重新开始");
                 new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.warning))
                         .setContentText(getString(R.string.restart_confirm_hint))
                         .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
@@ -169,18 +173,22 @@ public abstract class AbstractRadioTestActivity<Setting>
                 break;
 
             case R.id.btn_quit_test:
+                LogUtils.operation("点击了停止测试");
                 showQuitDialog();
                 break;
 
             case R.id.btn_start_test:
+                LogUtils.operation("点击了开始测试");
                 presenter.startTest();
                 break;
 
             case R.id.btn_confirm_results:
+                LogUtils.operation("点击了确认成绩");
                 presenter.confirmResults();
                 break;
 
             case R.id.btn_finish_test:
+                LogUtils.operation("点击了测试完成");
                 presenter.finishTest();
                 break;
         }
@@ -269,6 +277,7 @@ public abstract class AbstractRadioTestActivity<Setting>
 
     @Override
     public void finish() {
+        LogUtils.life("AbstractRadioTestActivity finish");
         RadioManager.getInstance().setOnRadioArrived(null);
         setResult(RadioResultActivity.BACK_TO_CHECK);
         super.finish();
@@ -320,6 +329,7 @@ public abstract class AbstractRadioTestActivity<Setting>
                 break;
 
             case UPDATE_STATES:
+                LogUtils.operation("更新设备状态...");
                 mAdapter.notifyDataSetChanged();
                 break;
 
@@ -328,6 +338,7 @@ public abstract class AbstractRadioTestActivity<Setting>
                 break;
 
             case SHOW_WAIT_DIALOG:
+                LogUtils.operation("获取最终成绩...");
 //                mProgressDialog = new ProgressDialog(this);
 //                mProgressDialog.setTitle("获取最终成绩中");
 //                mProgressDialog.setCancelable(false);

@@ -52,6 +52,7 @@ import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.PrintResultUtil;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -164,6 +165,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         //获取分组学生数据
         TestCache.getInstance().init();
         pairs = CheckUtils.newPairs(((List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu")).size());
+        LogUtils.operation("足球获取到分组学生:"+pairs.size()+"---"+pairs.toString());
         CheckUtils.groupCheck(pairs);
 
         rvTestingPairs.setLayoutManager(new LinearLayoutManager(this));
@@ -212,12 +214,14 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
 
     @Override
     protected void onPause() {
+        LogUtils.life("FootBallGroupActivity onPause");
         super.onPause();
         facade.pause();
     }
 
     @Override
     protected void onDestroy() {
+        LogUtils.life("FootBallGroupActivity onDestroy");
         super.onDestroy();
         facade.finish();
         facade = null;
@@ -226,6 +230,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
 
     @Override
     public void finish() {
+        LogUtils.life("FootBallGroupActivity finish");
         if (isConfigurableNow()) {
             toastSpeak("测试中,不允许退出当前界面");
             return;
@@ -275,6 +280,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
 
     @Override
     public void getDeviceStatus(int status) {
+        LogUtils.operation("足球获取到设备状态值:"+status);
         switch (status) {
             case 1:
                 txtDeviceStatus.setText("空闲");
@@ -316,6 +322,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
 
     @Override
     public void triggerStart(BasketballResult result) {
+        LogUtils.operation("足球开始计时:useMode="+useMode+",result="+result.toString());
         Log.i(TAG, "triggerStart:" + result.toString());
         switch (useMode) {
             case 0://单拦截
@@ -358,6 +365,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
 
     @Override
     public void getResult(BasketballResult result) {
+        LogUtils.operation("足球获取到结果数据:useMode="+useMode+",state="+state+",result="+result);
         //非测试不做处理
         if (state == WAIT_FREE || state == WAIT_CHECK_IN || TextUtils.isEmpty(testDate)) {
             return;
@@ -466,6 +474,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
 
     @Override
     public void getStatusStop(BasketballResult result) {
+        LogUtils.operation("足球停止计时:state = "+state+",result = "+result);
         //非测试不做处理
         if (state == WAIT_FREE || state == WAIT_CHECK_IN || state == WAIT_CONFIRM) {
             return;
@@ -535,6 +544,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_waiting://等待发令
+                LogUtils.operation("足球点击了等待发令");
                 if ((state == WAIT_CHECK_IN || state == WAIT_CONFIRM || state == WAIT_STOP)) {
                     if (isExistTestPlace()) {
                         if ((setting.getTestType() == 1 && facade.isDeviceNormal()) || setting.getTestType() == 0) {
@@ -553,9 +563,11 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                 }
                 break;
             case R.id.txt_illegal_return://违例返回
+                LogUtils.operation("足球点击了违例返回");
                 showIllegalReturnDialog();
                 break;
             case R.id.txt_continue_run://继续运行
+                LogUtils.operation("足球点击了继续运行");
                 if (setting.getTestType() == 0) {
                     ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 3);
                 } else {
@@ -571,32 +583,41 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                 }
                 break;
             case R.id.txt_stop_timing://停止计时
+                LogUtils.operation("足球点击了停止计时");
                 ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
 
                 break;
             case R.id.tv_punish_add: //违例+
+                LogUtils.operation("足球点击了违例+");
                 setPunish(1);
                 break;
             case R.id.tv_punish_subtract://违例-
+                LogUtils.operation("足球点击了违例-");
                 setPunish(-1);
                 break;
             case R.id.tv_foul://犯规
+                LogUtils.operation("足球点击了犯规");
                 setResultState(RoundResult.RESULT_STATE_FOUL);
                 break;
             case R.id.tv_inBack://中退
+                LogUtils.operation("足球点击了中退");
                 setResultState(RoundResult.RESULT_STATE_BACK);
                 break;
             case R.id.tv_abandon://放弃 ;
+                LogUtils.operation("足球点击了放弃");
                 setResultState(RoundResult.RESULT_STATE_WAIVE);
                 break;
             case R.id.tv_normal://正常
+                LogUtils.operation("足球点击了正常");
                 setResultState(RoundResult.RESULT_STATE_NORMAL);
                 break;
             case R.id.tv_print://打印
+                LogUtils.operation("足球点击了打印");
                 showPrintDialog();
 
                 break;
             case R.id.tv_confirm://确定
+                LogUtils.operation("足球点击了确定");
                 timerUtil.stop();
                 if (state == WAIT_CONFIRM || state == WAIT_BEGIN) {
                     ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
@@ -616,6 +637,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                 }
                 break;
             case R.id.txt_finish_test:
+                LogUtils.operation("足球点击了跳过");
                 if (state == TESTING) {
                     toastSpeak("测试中,不允许跳过本次测试");
                 } else {
@@ -711,7 +733,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                 Logger.i("更新成绩:" + bestResult.toString());
             }
         }
-
+        LogUtils.operation("足球确认保存成绩:result = "+ roundResult.getResult()+"---"+roundResult.toString());
         DBManager.getInstance().insertRoundResult(roundResult);
         //获取所有成绩设置为非最好成绩
         List<RoundResult> results = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");
@@ -990,6 +1012,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
      * 等待
      */
     private void prepareForBegin() {
+        LogUtils.operation("足球考生:"+pairs.get(position()).getStudent().getSpeakStuName()+"进行第"+roundNo+"轮测试");
         Student student = pairs.get(position()).getStudent();
         tvResult.setText(student.getStudentName());
         state = WAIT_CHECK_IN;
@@ -1153,6 +1176,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
      * 全部次数测试完
      */
     private void allTestComplete() {
+        LogUtils.operation("足球分组模式测试完成");
         //全部次数测试完，
         toastSpeak("分组考生全部测试完成，请选择下一组");
         group.setIsTestComplete(1);
@@ -1183,6 +1207,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
             for (RoundResult roundResult : roundResultList) {
                 //成绩是否存在满分跳过
                 if (isFullSkip(roundResult.getResult(), roundResult.getResultState())) {
+                    LogUtils.operation("足球考生:" + studentCode + "第" + roundNo + "轮已满分,跳过测试");
                     isSkip = true;
                 }
             }
@@ -1215,6 +1240,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                     testResult.setResultState(-999);
                     testResult.setMachineResultList(null);
                     resultAdapter.notifyDataSetChanged();
+                    LogUtils.operation("足球考生"+student.getStudentName()+"第"+testNo+"次,第"+roundNo+"轮已违规");
                 }
                 state = WAIT_CONFIRM;
                 ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());

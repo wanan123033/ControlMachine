@@ -28,6 +28,7 @@ import com.feipulai.common.view.dialog.DialogUtils;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
+import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.device.udp.UdpLEDUtil;
@@ -38,6 +39,7 @@ import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.netUtils.HttpManager;
 import com.feipulai.exam.utils.bluetooth.BlueToothListActivity;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -329,8 +331,9 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         if (!TextUtils.isEmpty(editCustomChannel.getText().toString().trim())) {
             systemSetting.setChannel(Integer.valueOf(editCustomChannel.getText().toString().trim()));
         }
-        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(
-                systemSetting.getUseChannel())));
+        RadioChannelCommand command = new RadioChannelCommand(systemSetting.getUseChannel());
+        LogUtils.normal(command.getCommand().length+"---"+ StringUtility.bytesToHexString(command.getCommand())+"---切频指令");
+        RadioManager.getInstance().sendCommand(new ConvertCommand(command));
 
         HttpManager.resetManager();
         SettingHelper.updateSettingCache(systemSetting);

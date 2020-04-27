@@ -61,7 +61,7 @@ public class BallManager {
     public void sendSetStopStatus(int hostId) {
         if (patternType == 0) {
             byte[] buf = UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS();
-            LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---篮球停止工作状态指令");
+            LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---篮足球停止工作状态指令");
             UdpClient.getInstance().send(buf);
         } else {
             setRadioStopTime(hostId);
@@ -81,7 +81,7 @@ public class BallManager {
         if (patternType == 0) {
             byte[] buf = UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(showType, UdpLEDUtil.getLedByte(data, rightTest, align));
             UdpClient.getInstance().send(buf);
-            LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---篮球显示屏指令");
+            LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---篮足球显示屏指令");
         } else {
             try {
                 byte[] showData = new byte[10];
@@ -118,7 +118,7 @@ public class BallManager {
         if (patternType == 0) {
             byte[] buf = UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(showType, UdpLEDUtil.getLedByte(data, align));
             UdpClient.getInstance().send(buf);
-            LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---篮球显示屏指令");
+            LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---篮足球显示屏指令");
         } else {
             setLedShowData(hostId, data, showType, align);
         }
@@ -139,7 +139,7 @@ public class BallManager {
         if (patternType == 0) {
             byte[] buf = UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(status);
             UdpClient.getInstance().send(buf);
-            LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---篮球设置工作状态指令");
+            LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---篮足球设置工作状态指令");
         } else {
             switch (status) {
                 case 1:
@@ -167,7 +167,7 @@ public class BallManager {
             UdpClient.getInstance().setHostIpPost(hostIp, post);
             byte[] buf = UDPBasketBallConfig.BASKETBALL_CMD_GET_STATUS;
             UdpClient.getInstance().send(buf);
-            LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---篮球设置工作状态指令");
+            LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---篮足球设置工作状态指令");
         } else {
             getRadioState(hostId, deviceId);
         }
@@ -184,7 +184,7 @@ public class BallManager {
             UdpClient.getInstance().setHostIpPost(hostIp, post);
             byte[] buf = UDPBasketBallConfig.BASKETBALL_CMD_SET_BLOCKERTIME(interceptSecond);
             UdpClient.getInstance().send(buf);
-            LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---篮球设置拦截器拦截时间指令");
+            LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---篮足球设置拦截器拦截时间指令");
         } else {
             setSettingParameter(hostId, sensitivity, interceptSecond, precision);
         }
@@ -201,7 +201,7 @@ public class BallManager {
             UdpClient.getInstance().setHostIpPost(hostIp, post);
             byte[] buf = UDPBasketBallConfig.BASKETBALL_CMD_SET_T(sensitivity);
             UdpClient.getInstance().send(buf);
-            LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---篮球设置拦截器灵敏度指令");
+            LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---篮足球设置拦截器灵敏度指令");
         } else {
             setSettingParameter(hostId, sensitivity, interceptSecond, precision);
         }
@@ -215,7 +215,7 @@ public class BallManager {
             UdpClient.getInstance().setHostIpPost(hostIp, post);
             byte[] buf = UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(precision);
             UdpClient.getInstance().send(buf);
-            LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---篮球设置精度指令");
+            LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---篮足球设置精度指令");
         } else {
             setSettingParameter(hostId, sensitivity, interceptSecond, precision);
         }
@@ -231,7 +231,7 @@ public class BallManager {
         cmd[18] = (byte) sum(cmd, 18);
 
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---");
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---篮足球设置参数");
     }
 
     /**
@@ -328,7 +328,7 @@ public class BallManager {
         byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x03, 0x01, 0x00, 0x01, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
         cmd[5] = (byte) hostId;
         cmd[18] = (byte) sum(cmd, 18);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---");
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---篮足球");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -370,7 +370,7 @@ public class BallManager {
         byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x03, 0x01, 0x00, 0x01, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
         cmd[5] = (byte) hostId;
         cmd[18] = (byte) sum(cmd, 18);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---");
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---篮足球设置空闲指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -381,7 +381,7 @@ public class BallManager {
         byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x02, 0x01, 0x00, 0x00, 0x9, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
         cmd[5] = (byte) hostId;
         cmd[18] = (byte) sum(cmd, 18);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---");
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---篮足球暂停走表(显示屏)指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 

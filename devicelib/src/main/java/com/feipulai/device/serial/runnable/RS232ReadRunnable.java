@@ -2,7 +2,6 @@ package com.feipulai.device.serial.runnable;
 
 import android.os.Message;
 
-
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.SerialPorter;
@@ -15,6 +14,7 @@ import com.feipulai.device.serial.parser.RS232Parser;
 import com.feipulai.device.serial.parser.RunTimerParser;
 import com.feipulai.device.serial.parser.VCParser;
 import com.feipulai.device.serial.parser.VolleyBallParser;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +38,7 @@ public class RS232ReadRunnable extends SerialReadRunnable {
             }
             RS232Parser parser = null;
             if (MachineCode.machineCode == -1) {
+                LogUtils.all("当前测试项目代码为-1,指令过滤");
                 return;
             }
             switch (MachineCode.machineCode) {

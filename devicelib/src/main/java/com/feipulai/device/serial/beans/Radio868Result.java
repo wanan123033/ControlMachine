@@ -6,6 +6,7 @@ import android.util.Log;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.SerialConfigs;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import static com.feipulai.device.serial.SerialConfigs.JUMPROPE_RESPONSE;
 
@@ -21,6 +22,7 @@ public class Radio868Result {
     public Radio868Result(byte[] data) {
         Log.i("james", StringUtility.bytesToHexString(data));
         if (MachineCode.machineCode == -1) {
+            LogUtils.all(data.length+"---"+StringUtility.bytesToHexString(data)+"---当前测试项目代码为-1");
             return;
         }
         // 不处理其他非当前测试项目的噪音信息

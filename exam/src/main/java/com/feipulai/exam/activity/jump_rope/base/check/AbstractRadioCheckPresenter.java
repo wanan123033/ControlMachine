@@ -7,6 +7,7 @@ import com.feipulai.common.jump_rope.task.OnGetStateWithLedListener;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.serial.RadioManager;
+import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
@@ -21,6 +22,7 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +71,9 @@ public abstract class AbstractRadioCheckPresenter<Setting>
             // view.showStuInfo(student, TestCache.getInstance().getResults().get(student));
         }
         RadioManager.getInstance().setOnRadioArrived(this);
-        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(TARGET_FREQUENCY)));
+        RadioChannelCommand command = new RadioChannelCommand(TARGET_FREQUENCY);
+        LogUtils.normal(command.getCommand().length+"---"+ StringUtility.bytesToHexString(command.getCommand())+"---切频指令");
+        RadioManager.getInstance().sendCommand(new ConvertCommand(command));
         facade = new GetStateLedFacade(this);
         facade.setmGetDeviceStatesLoopCount(getDeviceStatesLoopCount());
         facade.resume();

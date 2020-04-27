@@ -52,6 +52,7 @@ import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.WaitDialog;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -208,6 +209,12 @@ public class PushUpIndividualActivity extends BaseTitleActivity
 
     @Override
     public void onIndividualCheckIn(Student student, StudentItem studentItem, List<RoundResult> results) {
+        if (student != null)
+            LogUtils.operation("俯卧撑检入到学生:"+student.toString());
+        if (studentItem != null)
+            LogUtils.operation("俯卧撑检入到学生StudentItem:"+studentItem.toString());
+        if (results != null)
+            LogUtils.operation("俯卧撑检入到学生成绩:"+results.size()+"----"+results.toString());
         if (state != WAIT_CHECK_IN) {
             toastSpeak("当前考生还未完成测试,拒绝检录");
             return;
@@ -258,6 +265,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
         switch (view.getId()) {
 
             case R.id.tv_led_setting:
+                LogUtils.operation("俯卧撑点击了外接屏幕");
                 if (isConfigurableNow()) {
                     startActivity(new Intent(this, LEDSettingActivity.class));
                 } else {
@@ -266,10 +274,12 @@ public class PushUpIndividualActivity extends BaseTitleActivity
                 break;
 
             case R.id.tv_start_test:
+                LogUtils.operation("俯卧撑点击了开始测试");
                 prepareForTesting();
                 break;
 
             case R.id.tv_stop_test:
+                LogUtils.operation("俯卧撑点击了结束测试");
                 facade.stopTest();
                 SoundPlayUtils.play(12);
                 prepareForConfirmResult();
@@ -282,12 +292,14 @@ public class PushUpIndividualActivity extends BaseTitleActivity
                 break;
 
             case R.id.tv_print:
+                LogUtils.operation("俯卧撑点击了打印");
                 TestCache testCache = TestCache.getInstance();
                 InteractUtils.printResults(null, testCache.getAllStudents(), testCache.getResults(),
                         TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
                 break;
 
             case R.id.tv_confirm:
+                LogUtils.operation("俯卧撑点击了确认");
                 tvResult.setText("");
                 pairs.get(0).getDeviceResult().setResult(pairs.get(0).getDeviceResult().getResult() - intervalCount);
 
@@ -300,19 +312,23 @@ public class PushUpIndividualActivity extends BaseTitleActivity
 //                break;
 
             case R.id.tv_abandon_test:
+                LogUtils.operation("俯卧撑点击了放弃测试");
                 facade.abandonTest();
                 state = WAIT_BEGIN;
                 prepareForBegin();
                 break;
 
             case R.id.tv_finish_test:
+                LogUtils.operation("俯卧撑点击了跳过测试");
                 prepareForCheckIn();
                 break;
 
             case R.id.tv_exit_test:
+                LogUtils.operation("俯卧撑点击了退出测试");
                 prepareForCheckIn();
                 break;
             case R.id.tv_device_pair:
+                LogUtils.operation("俯卧撑点击了配对");
                 changeBadDevice();
                 break;
 
@@ -322,7 +338,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
     private void onResultConfirmed() {
         StuDevicePair pair = pairs.get(0);
         int result = pair.getDeviceResult().getResult() + pair.getPenalty();
-        Logger.i("俯卧撑成绩："+result);
+        LogUtils.operation("俯卧撑成绩确认："+result);
         if (systemSetting.isAutoBroadcast()) {
             TtsManager.getInstance().speak(String.format(getString(R.string.speak_result), pair.getStudent().getSpeakStuName(), ResultDisplayUtils.getStrResultForDisplay(result)));
         }
@@ -347,6 +363,10 @@ public class PushUpIndividualActivity extends BaseTitleActivity
             } else {
                 fullSkip = result >= setting.getFemaleFullScore();
             }
+        }
+
+        if (hasRemain && !fullSkip){
+            LogUtils.operation("俯卧撑当前考生进入下一轮测试:stuCode = "+student.getStudentCode());
         }
         return hasRemain && !fullSkip;
     }
@@ -388,6 +408,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
     private void prepareForBegin() {
         TestCache testCache = TestCache.getInstance();
         Student student = pairs.get(0).getStudent();
+        LogUtils.operation("俯卧撑等待开始测试:"+student.toString());
         InteractUtils.showStuInfo(llStuDetail, student, testCache.getResults().get(student));
 
         tvResult.setText(student.getStudentName());
@@ -400,6 +421,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
     }
 
     private void prepareForTesting() {
+        LogUtils.operation("俯卧撑开始测试");
         if (pairs.get(0).getBaseDevice().getState() == BaseDeviceState.STATE_DISCONNECT) {
             toastSpeak("设备未连接,不能开始测试");
             return;
@@ -416,6 +438,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
     }
 
     private void prepareForConfirmResult() {
+        LogUtils.operation("俯卧撑确认成绩");
         state = WAIT_CONFIRM;
         prepareView(true, false, false, false,
                 false, true, false, false,
@@ -449,7 +472,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
             uploadResults.add(new UploadResults(scheduleNo,
                     TestConfigs.getCurrentItemCode(), student.getStudentCode()
                     , testNo, null, RoundResultBean.beanCope(roundResultList)));
-            Logger.i("自动上传成绩:" + uploadResults.toString());
+            LogUtils.operation("自动上传成绩:" + uploadResults.toString());
             ServerMessage.uploadResult(uploadResults);
         }
     }
@@ -459,16 +482,19 @@ public class PushUpIndividualActivity extends BaseTitleActivity
 
         switch (msg.what) {
             case SitPushUpManager.STATE_DISCONNECT:
+                LogUtils.operation("俯卧撑设备已断开...");
                 cbDeviceState.setChecked(false);
                 pairs.get(0).getBaseDevice().setState(BaseDeviceState.STATE_DISCONNECT);
                 break;
 
             case SitPushUpManager.STATE_FREE:
+                LogUtils.operation("俯卧撑设备空闲中...");
                 cbDeviceState.setChecked(true);
                 pairs.get(0).getBaseDevice().setState(BaseDeviceState.STATE_FREE);
                 break;
 
             case UPDATE_SCORE:
+                LogUtils.operation("俯卧撑设备更新成绩中...");
                 SitPushUpStateResult result = (SitPushUpStateResult) msg.obj;
                 intervalCount = msg.arg1;
                 pairs.get(0).setDeviceResult(result);
@@ -510,6 +536,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
 
     @Override
     public void finish() {
+        LogUtils.life("PushUpIndividualActivity finish");
         if (!isConfigurableNow()) {
             toastSpeak("测试中,不允许退出当前界面");
             return;

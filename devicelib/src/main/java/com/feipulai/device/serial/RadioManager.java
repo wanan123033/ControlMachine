@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 /**
  * Created by James on 2018/11/8 0008.
@@ -53,10 +54,9 @@ public class RadioManager{
 	// 这个地方必须锁住,万恶之源
 	public synchronized void sendCommand(ConvertCommand convertCommand){
 		ensureInterval();
-
 		mSerialPorter.sendCommand(convertCommand);
 	}
-	
+
 	private void ensureInterval(){
 		try{
 			//Thread.sleep(RADIO_INTERVAL);

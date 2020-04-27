@@ -37,6 +37,7 @@ import com.feipulai.exam.view.CommonPopupWindow;
 import com.feipulai.exam.view.ResultPopWindow;
 import com.feipulai.exam.view.StuSearchEditText;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -211,6 +212,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        LogUtils.life("RunTimerActivityTestActivity onResume");
         if (reLoad) {
             initView();
         }
@@ -258,6 +260,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_start:
+                LogUtils.operation("红外计时点击了开始");
                 if (mList.get(0).getStudent() == null) {
                     ToastUtils.showShort("请先添加学生");
                     return;
@@ -272,9 +275,11 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
 //                startActivity(new Intent(this, RunTimerSettingActivity.class));
 //                break;
             case R.id.btn_led:
+                LogUtils.operation("红外计时点击了外接屏幕");
                 startActivity(new Intent(this, LEDSettingActivity.class));
                 break;
             case R.id.tv_wait_start://等待发令
+                LogUtils.operation("红外计时点击了等待发令");
                 waitStart();
                 if (currentTestTime >= maxTestTimes) {
                     isOverTimes = true;
@@ -290,18 +295,22 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
                 playUtils.play(13);
                 break;
             case R.id.tv_force_start://强制启动
+                LogUtils.operation("红外计时点击了强制启动");
                 playUtils.play(15);
                 forceStart();
                 break;
             case R.id.tv_fault_back://违规返回
+                LogUtils.operation("红外计时点击了违规返回");
                 faultBack();
 
                 break;
             case R.id.tv_wait_ready:
+                LogUtils.operation("红外计时点击了预备");
                 playUtils.play(14);
                 changeState(new boolean[]{false, true, false, false, false});
                 break;
             case R.id.tv_mark_confirm://成绩确认
+                LogUtils.operation("红外计时点击了确认成绩");
                 currentTestTime++;
                 markConfirm();
                 for (RunStudent runStudent : mList) {
@@ -366,11 +375,18 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
         List<RoundResult> roundResultList = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(student.getStudentCode(), studentItem.getExamType());
         //保存成绩，并测试轮次大于测试轮次次数
+        if (student != null)
+            LogUtils.operation("红外计时检入到学生:"+student.toString());
+        if (studentItem != null)
+            LogUtils.operation("红外计时检入到学生StudentItem:"+studentItem.toString());
+        if (roundResultList != null)
+            LogUtils.operation("红外计时检入到学生成绩:"+roundResultList.size()+"----"+roundResultList.toString());
         if (roundResultList != null && roundResultList.size() >= maxTestTimes) {
             //已测试，不重测
 //            roundNo = roundResult.getRoundNo();
 //            selectTestDialog(student);
             toastSpeak("该考生所有轮次已全部测试完成");
+            LogUtils.operation("红外计时已考完:stuCode="+student.getStudentCode());
             return;
         }
 
@@ -391,6 +407,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     }
 
     private void addStudent(Student student) {
+        LogUtils.operation("添加学生信息:"+student.toString());
         if (testState != 2 && testState != 3 && testState != 4) {
             currentTestTime = 0;
             for (int i = 0; i < runNum; i++) {

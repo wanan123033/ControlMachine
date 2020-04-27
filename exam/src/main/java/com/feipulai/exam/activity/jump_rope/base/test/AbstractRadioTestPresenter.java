@@ -22,6 +22,7 @@ import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.TestConfigs;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -108,7 +109,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
 
     @Override
     public void startTest() {
-        Logger.i("开始测试,测试考生设备信息:" + pairs.toString());
+        LogUtils.operation("开始测试,测试考生设备信息:" + pairs.toString());
         testDate = System.currentTimeMillis()+"";
         resetDevices();
         view.setViewForStart();
@@ -120,12 +121,14 @@ public abstract class AbstractRadioTestPresenter<Setting>
 
     @Override
     public void stopNow() {
+        LogUtils.operation("结束测试,测试考生设备信息:" + pairs.toString());
         facade.stopTotally();
         handlerThread.quit();
     }
 
     @Override
     public void quitTest() {
+        LogUtils.operation("退出测试,测试考生设备信息:" + pairs.toString());
         stopNow();
         resetDevices();
         view.quitTest();
@@ -133,6 +136,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
 
     @Override
     public void restartTest() {
+        LogUtils.operation("重新测试,测试考生设备信息:" + pairs.toString());
         facade.stop();
         resetDeviceResults();
         testState = WAIT_BGIN;
@@ -161,7 +165,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
 
             case FINAL_RESULT_GOT:
                 if (checkFinalResults()) {
-                    Logger.i("获取到最终成绩,考生设备信息:" + pairs.toString());
+                    LogUtils.operation("获取到最终成绩,考生设备信息:" + pairs.toString());
                     testState = WAIT_CONFIRM_RESULTS;
                     onMachineResultArrived();
                     view.showForConfirmResults();
@@ -179,7 +183,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
     public void confirmResults() {
         onResultConfirmed();
         resetDevices();
-        Logger.i("用户手动点击确认成绩,考生设备信息:" + pairs.toString());
+        LogUtils.operation("用户手动点击确认成绩,考生设备信息:" + pairs.toString());
         // view.tickInUI("");
 
         for (StuDevicePair pair : pairs) {
@@ -195,7 +199,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
 
     @Override
     public void saveResults() {
-        Logger.i("保存成绩,考生设备信息:" + pairs.toString());
+        LogUtils.operation("保存成绩,考生设备信息:" + pairs.toString());
         // 必须在状态切换之前保存成绩
         InteractUtils.saveResults(pairs, testDate);
         InteractUtils.uploadResults();
@@ -297,7 +301,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
         view.tickInUI("结束");
         testState = WAIT_MACHINE_RESULTS;
         view.showWaitFinalResultDialog(true);
-        Logger.i("计时结束,测试考生设备信息:" + pairs.toString());
+        LogUtils.operation("计时结束,测试考生设备信息:" + pairs.toString());
         handler.sendEmptyMessageDelayed(FINAL_RESULT_GOT, 2000);
     }
 

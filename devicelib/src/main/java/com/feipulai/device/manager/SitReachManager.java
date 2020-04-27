@@ -2,8 +2,10 @@ package com.feipulai.device.manager;
 
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialDeviceManager;
+import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 /**
  * Created by James on 2018/5/14 0014.
@@ -78,9 +80,11 @@ public class SitReachManager {
             buf[19] += buf[i] & 0xff;
         }
         buf[20] = 0x0d;   //包尾
-
+        LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---设置参数指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
-        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(targetChannel)));
+        RadioChannelCommand command1 = new RadioChannelCommand(targetChannel);
+        LogUtils.normal(command1.getCommand().length+"---"+ StringUtility.bytesToHexString(command1.getCommand())+"---切频指令");
+        RadioManager.getInstance().sendCommand(new ConvertCommand(command1));
     }
 
 
@@ -114,6 +118,7 @@ public class SitReachManager {
             buf[19] += buf[i] & 0xff;
         }
         buf[20] = 0x0d;   //包尾
+        LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---开始指令");
         wrapAndSend(buf);
     }
 
@@ -168,6 +173,7 @@ public class SitReachManager {
             buf[19] += buf[i] & 0xff;
         }
         buf[20] = 0x0d;   //包尾
+        LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---获取状态指令");
         wrapAndSend(buf);
     }
 
@@ -200,6 +206,7 @@ public class SitReachManager {
             buf[19] += buf[i] & 0xff;
         }
         buf[20] = 0x0d;   //包尾
+        LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---结束测试指令");
         wrapAndSend(buf);
     }
 
@@ -234,6 +241,7 @@ public class SitReachManager {
             buf[19] += buf[i] & 0xff;
         }
         buf[20] = 0x0d;   //包尾
+        LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---设备空闲指令");
         wrapAndSend(buf);
     }
 
@@ -265,6 +273,7 @@ public class SitReachManager {
             buf[19] += buf[i] & 0xff;
         }
         buf[20] = 0x0d;   //包尾
+        LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---获取版本信息指令");
         wrapAndSend(buf);
     }
 

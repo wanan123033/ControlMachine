@@ -34,6 +34,7 @@ import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.view.CommonPopupWindow;
 import com.feipulai.exam.view.ResultPopWindow;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,6 +86,7 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LogUtils.life("RunTimerActivityGroupActivity onCreate");
         ButterKnife.bind(this);
         initView();
         playUtils = SoundPlayUtils.init(this);
@@ -104,7 +106,10 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
         rvTimer.setAdapter(mAdapter);
         group = (Group) TestConfigs.baseGroupMap.get("group");
         pairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
-
+        if (group != null)
+            LogUtils.operation("红外计时获取到分组信息:"+group.toString());
+        if (pairs != null)
+            LogUtils.operation("红外计时获取到分组信息:"+pairs.toString());
         mAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
@@ -164,6 +169,7 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (mList.get(position) != null) {
+
                             mList.get(position).setStudent(null);
                             mAdapter.notifyDataSetChanged();
                         }
@@ -221,9 +227,11 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
 //                startActivity(new Intent(this, RunTimerSettingActivity.class));
 //                break;
             case R.id.btn_led:
+                LogUtils.operation("红外计时点击了外接屏幕");
                 startActivity(new Intent(this, LEDSettingActivity.class));
                 break;
             case R.id.tv_wait_start://等待发令
+                LogUtils.operation("红外计时点击了等待发令");
                 waitStart();
                 startTime = System.currentTimeMillis()+"";
                 if (currentTestTime >= maxTestTimes) {
@@ -239,17 +247,21 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
                 playUtils.play(13);//播放各就各位
                 break;
             case R.id.tv_force_start://强制启动
+                LogUtils.operation("红外计时点击了强制启动");
                 playUtils.play(15);//播放枪声
                 forceStart();
                 break;
             case R.id.tv_wait_ready://预备
+                LogUtils.operation("红外计时点击了预备");
                 playUtils.play(14);
                 changeState(new boolean[]{false, true, false, false,false});
                 break;
             case R.id.tv_fault_back://违规返回
+                LogUtils.operation("红外计时点击了违规返回");
                 faultBack();
                 break;
             case R.id.tv_mark_confirm://成绩确认
+                LogUtils.operation("红外计时点击了成绩确认");
                 markConfirm();
                 group.setIsTestComplete(2);
                 confirmResult();
@@ -340,6 +352,7 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
                         queryGroupRound(tempGroup.get(i).getStudent().getStudentCode(), group.getId() + "").size();
                 if (size < maxTestTimes) {
                     mList.get(i).setStudent(tempGroup.get(i).getStudent());
+                    LogUtils.operation("红外计时已在准备的学生:"+tempGroup.get(i).getStudent().toString());
                 } else {
                     List<RoundResult> roundResults = DBManager.getInstance().
                             queryGroupRound(tempGroup.get(i).getStudent().getStudentCode(), group.getId() + "");
@@ -401,6 +414,12 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
 //        RoundResult roundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
         List<RoundResult> roundResult = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(student.getStudentCode(), studentItem.getExamType());
+        if (student != null)
+            LogUtils.operation("红外计时检入到学生:"+student.toString());
+        if (studentItem != null)
+            LogUtils.operation("红外计时检入到学生StudentItem:"+studentItem.toString());
+        if (roundResult != null)
+            LogUtils.operation("红外计时检入到学生成绩:"+roundResult.size()+"----"+roundResult.toString());
         if (roundResult != null) {
 //            selectTestDialog(student);
             return;

@@ -101,6 +101,7 @@ public class JumpRopeManager {
     public void endTest(int hostId, int handGroup) {
         // AA/项目号(01)/A2(手柄)/主机号/颜色/A4(命令)/0D
         byte cmd[] = {(byte) 0xaa, 0x01, (byte) 0xa2, (byte) (hostId & 0xff), (byte) (handGroup & 0xff), (byte) 0xa4, 0x0d};
+        LogUtils.normal(cmd.length+"---"+StringUtility.bytesToHexString(cmd)+"---跳绳结束测试指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -113,6 +114,7 @@ public class JumpRopeManager {
             sum += cmd[i] & 0xff;
         }
         cmd[10] = (byte) (sum & 0xff);
+        LogUtils.normal(cmd.length+"---"+StringUtility.bytesToHexString(cmd)+"---跳绳开始指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -134,6 +136,7 @@ public class JumpRopeManager {
             sum += cmd[i] & 0xff;
         }
         cmd[10] = (byte) (sum & 0xff);
+        LogUtils.normal(cmd.length+"---"+StringUtility.bytesToHexString(cmd)+"---跳绳倒计时指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -175,6 +178,7 @@ public class JumpRopeManager {
             sum += cmd[i] & 0xff;
         }
         cmd[8] = (byte) (sum & 0xff);
+        LogUtils.normal(cmd.length+"---"+StringUtility.bytesToHexString(cmd)+"---跳绳清除指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 

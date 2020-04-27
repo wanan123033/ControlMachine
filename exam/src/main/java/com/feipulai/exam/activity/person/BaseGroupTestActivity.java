@@ -42,6 +42,7 @@ import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.service.UploadService;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -118,9 +119,11 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LogUtils.life("BaseGroupTestActivity onCreate");
         ButterKnife.bind(this);
         PrinterManager.getInstance().init();
         group = (Group) TestConfigs.baseGroupMap.get("group");
+        LogUtils.operation("获取到分组信息:"+group.toString());
         initData();
 
         mLEDManager = new LEDManager();
@@ -598,6 +601,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
      * @param deviceState
      */
     public void updateDevice(@NonNull BaseDeviceState deviceState) {
+        LogUtils.operation("更新设备状态:"+deviceState);
         Logger.i("updateDevice："+deviceState);
         if (stuAdapter == null || stuAdapter.getTestPosition() == -1)
             return;
@@ -686,7 +690,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
      * @param baseStuPair 当前设备
      */
     private void saveResult(@NonNull BaseStuPair baseStuPair) {
-        Logger.i("saveResult==>" + baseStuPair.toString());
+        LogUtils.operation("保存成绩:" + baseStuPair.toString());
         RoundResult roundResult = new RoundResult();
         roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
         roundResult.setStudentCode(baseStuPair.getStudent().getStudentCode());
@@ -732,7 +736,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         roundResult.setEndTime(sdf.format(new Date()));
         DBManager.getInstance().insertRoundResult(roundResult);
-        Logger.i("saveResult==>insertRoundResult->" + roundResult.toString());
+        LogUtils.operation("保存成绩:" + roundResult.toString());
 
         List<RoundResult> roundResultList = new ArrayList<>();
         roundResultList.add(roundResult);

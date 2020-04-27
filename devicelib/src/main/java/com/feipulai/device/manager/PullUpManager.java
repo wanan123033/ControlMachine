@@ -6,6 +6,7 @@ import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 /**
  * Created by James on 2018/5/14 0014.
@@ -56,15 +57,20 @@ public class PullUpManager{
 		//Logger.i(StringUtility.bytesToHexString(buf));
 		//先切到通信频段
 		Log.i("james","originFrequency:" + originFrequency);
-		RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(originFrequency)));
+		RadioChannelCommand command = new RadioChannelCommand(originFrequency);
+		LogUtils.normal(command.getCommand().length+"---"+StringUtility.bytesToHexString(command.getCommand())+"---引体向上切频指令");
+		RadioManager.getInstance().sendCommand(new ConvertCommand(command));
 		Log.i("james",StringUtility.bytesToHexString(buf));
 		try{
 			Thread.sleep(500);
 		}catch(InterruptedException e){
 			e.printStackTrace();
 		}
+		LogUtils.normal(buf.length+"---"+StringUtility.bytesToHexString(buf)+"---引体向上设置频率指令");
 		RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,buf));
-		RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(channel)));
+		command = new RadioChannelCommand(channel);
+		LogUtils.normal(command.getCommand().length+"---"+StringUtility.bytesToHexString(command.getCommand())+"---引体向上切频指令");
+		RadioManager.getInstance().sendCommand(new ConvertCommand(command));
 	}
 	
 	/**
@@ -98,6 +104,7 @@ public class PullUpManager{
 		}
 		buf[13] = (byte)(buf[13] & 0xff);
 		//Log.i(TAG,StringUtility.bytesToHexString(buf));
+		LogUtils.normal(buf.length+"---"+StringUtility.bytesToHexString(buf)+"---引体向上开始指令");
 		RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,buf));
 	}
 	
@@ -123,6 +130,7 @@ public class PullUpManager{
 		}
 		buf[13] = (byte)(buf[13] & 0xff);
 		//Logger.i(StringUtility.bytesToHexString(buf));
+		LogUtils.normal(buf.length+"---"+StringUtility.bytesToHexString(buf)+"---引体向上获取状态指令");
 		RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,buf));
 	}
 	
@@ -148,6 +156,7 @@ public class PullUpManager{
 		}
 		buf[13] = (byte)(buf[13] & 0xff);
 		//Log.i(TAG,StringUtility.bytesToHexString(buf));
+		LogUtils.normal(buf.length+"---"+StringUtility.bytesToHexString(buf)+"---引体向上结束测试指令");
 		RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,buf));
 	}
 	
@@ -169,6 +178,7 @@ public class PullUpManager{
 		buf[13] = (byte)(buf[13] & 0xff);
 		Log.i("",StringUtility.bytesToHexString(buf));
 		//Log.i(TAG,StringUtility.bytesToHexString(buf));
+		LogUtils.normal(buf.length+"---"+StringUtility.bytesToHexString(buf)+"---引体向上获取版本指令");
 		RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,buf));
 	}
 	

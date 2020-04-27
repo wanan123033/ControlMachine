@@ -17,6 +17,7 @@ import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.SitPushUpSetFrequencyResult;
+import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.host.R;
@@ -26,6 +27,7 @@ import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.SharedPrefsConfigs;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -77,7 +79,9 @@ public class SitUpPairActivity extends BaseActivity implements BaseQuickAdapter.
 		
 		mSitPushUpManager = new SitPushUpManager(SitPushUpManager.PROJECT_CODE_SIT_UP);
 		// 完全被动地等待接收终端的开机信息
-		RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(0)));
+		RadioChannelCommand command = new RadioChannelCommand(0);
+		LogUtils.normal(command.getCommand()+"---"+ StringUtility.bytesToHexString(command.getCommand())+"---切频指令");
+		RadioManager.getInstance().sendCommand(new ConvertCommand(command));
 		mCurrentFrequency = 0;
 		
 		mRvPairs.setLayoutManager(new GridLayoutManager(this,5));
@@ -120,7 +124,9 @@ public class SitUpPairActivity extends BaseActivity implements BaseQuickAdapter.
 		mAdapter.setSelectItem(mCurrentPosition);
 		mPairs.get(mCurrentPosition).getBaseDevice().setState(BaseDeviceState.STATE_DISCONNECT);
 		mAdapter.notifyDataSetChanged();
-		RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(0)));
+		RadioChannelCommand command = new RadioChannelCommand(0);
+		LogUtils.normal(command.getCommand()+"---"+ StringUtility.bytesToHexString(command.getCommand())+"---切频指令");
+		RadioManager.getInstance().sendCommand(new ConvertCommand(command));
 		mCurrentFrequency = 0;
 	}
 	
@@ -168,7 +174,9 @@ public class SitUpPairActivity extends BaseActivity implements BaseQuickAdapter.
 	private void onNoPairResponseArrived(){
 		//5s以后在主机的目的频没有收到任何东西,切到0频
 		if(mCurrentFrequency == mTargetFrequency){
-			RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(0)));
+			RadioChannelCommand command = new RadioChannelCommand(0);
+			LogUtils.normal(command.getCommand()+"---"+ StringUtility.bytesToHexString(command.getCommand())+"---切频指令");
+			RadioManager.getInstance().sendCommand(new ConvertCommand(command));
 			mCurrentFrequency = 0;
 		}
 	}
@@ -189,7 +197,9 @@ public class SitUpPairActivity extends BaseActivity implements BaseQuickAdapter.
 				//在主机的目的频段收到的,肯定是设置频段后收到的设备广播
 				if(result.getDeviceId() == mCurrentPosition + 1 && result.getFrequency() == mTargetFrequency){
 					onNewDeviceConnect();
-					RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(0)));
+					RadioChannelCommand command = new RadioChannelCommand(0);
+					LogUtils.normal(command.getCommand()+"---"+ StringUtility.bytesToHexString(command.getCommand())+"---切频指令");
+					RadioManager.getInstance().sendCommand(new ConvertCommand(command));
 					mCurrentFrequency = 0;
 				}
 			}

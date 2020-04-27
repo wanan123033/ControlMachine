@@ -30,6 +30,7 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.view.WaitDialog;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.util.Date;
 import java.util.concurrent.Executors;
@@ -79,8 +80,10 @@ public class SargentTestActivity extends BasePersonTestActivity {
         // 0 显示 原地起跳 1 隐藏 助跑
         setBaseHeightVisible(runUp);
         if (sargentSetting.getType() == 0) {
+            byte[] buf = SerialConfigs.CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight());
+            LogUtils.normal(buf.length+"---"+StringUtility.bytesToHexString(buf)+"摸高0点设置指令");
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
-                    SerialConfigs.CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight())));
+                    buf));
         }
         sendEmpty();
 
@@ -110,6 +113,8 @@ public class SargentTestActivity extends BasePersonTestActivity {
             @Override
             public void onClick(View v) {
                 if (sargentSetting.getType() == 1) {
+                    RadioChannelCommand command = new RadioChannelCommand(0);
+                    LogUtils.normal(command.getCommand().length+"---"+StringUtility.bytesToHexString(command.getCommand())+"---摸高切频指令");
                     RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(0)));
                     currentFrequency = 0 ;
                     showChangeBadDialog();
@@ -130,6 +135,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        LogUtils.normal(SerialConfigs.CMD_SARGENT_JUMP_GET_SCORE.length+"---"+StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_GET_SCORE)+"---摸高获取成绩指令");
                         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,SerialConfigs.CMD_SARGENT_JUMP_GET_SCORE ));
                         dialog.dismiss();
                     }
@@ -142,6 +148,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
             @Override
             public void run() {
                 check++;
+                LogUtils.normal(SerialConfigs.CMD_SARGENT_JUMP_EMPTY.length+"---"+StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_EMPTY)+"摸高空指令");
                 if (sargentSetting.getType() == 0) {
                     SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                             SerialConfigs.CMD_SARGENT_JUMP_EMPTY));
@@ -167,6 +174,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
         }
         this.baseStuPair = baseStuPair;
         testState = TestState.UN_STARTED;
+        LogUtils.normal(SerialConfigs.CMD_SARGENT_JUMP_EMPTY.length+"---"+StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_EMPTY)+"摸高空指令");
         if (sargentSetting.getType() == 0) {
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                     SerialConfigs.CMD_SARGENT_JUMP_EMPTY));
@@ -186,17 +194,21 @@ public class SargentTestActivity extends BasePersonTestActivity {
 
         if (isConnect) {
             if (!isSetBase) {
+                byte[] buf = SerialConfigs.CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight());
+                LogUtils.normal(buf.length+"---"+StringUtility.bytesToHexString(buf)+"摸高0点设置指令");
                 if (sargentSetting.getType() == 0) {
                     SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
-                            SerialConfigs.CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight())));
+                            buf));
                 } else {
                     RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
-                            SerialConfigs.CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight())));
+                            buf));
                 }
                 isSetBase = true;
             }
 //                    updateDevice(new BaseDeviceState(BaseDeviceState.STATE_ONUSE, 1));
             toastSpeak("开始测试");
+            LogUtils.normal(SerialConfigs.CMD_SARGENT_JUMP_START.length+"---"+StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_START)+"摸高开始测试指令");
+
             if (sargentSetting.getType() == 0) {
                 SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                         SerialConfigs.CMD_SARGENT_JUMP_START));
@@ -252,9 +264,12 @@ public class SargentTestActivity extends BasePersonTestActivity {
 
                     cmd[8] = (byte) (frequency);
                     cmd[13] = (byte) (sum(cmd) & 0xff);
-                    Log.i("match", "cmd:" + StringUtility.bytesToHexString(cmd));
+                    LogUtils.normal(cmd.length+"---" + StringUtility.bytesToHexString(cmd)+"---摸高设置参数指令");
+
                     RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
-                    RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(frequency)));
+                    RadioChannelCommand command = new RadioChannelCommand(frequency);
+                    LogUtils.normal(command.getCommand().length+"---" + StringUtility.bytesToHexString(command.getCommand())+"---摸高切频指令");
+                    RadioManager.getInstance().sendCommand(new ConvertCommand(command));
                     currentFrequency = frequency;
                 case MATCH_SUCCESS:
                     ToastUtils.showShort("配对成功");
@@ -330,6 +345,8 @@ public class SargentTestActivity extends BasePersonTestActivity {
             updateResult(stuPair);
             updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, 1));
             // 发送结束命令
+            LogUtils.normal(SerialConfigs.CMD_SARGENT_JUMP_STOP.length+"---"+StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_STOP)+"摸高结束测试指令");
+
             if (sargentSetting.getType() == 0) {
                 SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SARGENT_JUMP_STOP));
             } else {
@@ -399,7 +416,9 @@ public class SargentTestActivity extends BasePersonTestActivity {
         public void onMatch(SargentJumpResult match) {
             int fre = match.getFrequency();
             if (currentFrequency != frequency) {
-                RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(fre)));
+                RadioChannelCommand command = new RadioChannelCommand(fre);
+                LogUtils.normal(command.getCommand().length+"---" + StringUtility.bytesToHexString(command.getCommand())+"---摸高切频指令");
+                RadioManager.getInstance().sendCommand(new ConvertCommand(command));
                 mHandler.sendEmptyMessageDelayed(SET_MATCH, 600);
                 currentFrequency = fre;
             } else {

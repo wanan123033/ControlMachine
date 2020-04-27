@@ -65,6 +65,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         view.initView(setting, pairs);
         // 分组模式检录
         RadioManager.getInstance().setOnRadioArrived(this);
+
         RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(TARGET_FREQUENCY)));
         facade = new GetStateLedFacade(this);
         mLEDManager.resetLEDScreen(hostId, machineName);// 重新设置LED屏

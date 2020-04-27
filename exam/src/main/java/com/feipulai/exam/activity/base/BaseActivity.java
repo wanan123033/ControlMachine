@@ -16,6 +16,7 @@ import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -102,6 +103,7 @@ public class BaseActivity extends FragmentActivity {
     }
 
     protected void toastSpeak(final String msg) {
+        LogUtils.operation("页面提示:"+msg);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

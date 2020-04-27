@@ -190,6 +190,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
 
     @Override
     protected void onDestroy() {
+        LogUtils.life("BaseGroupActivity onDestroy");
         super.onDestroy();
     }
 
@@ -242,6 +243,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
             getGroupList(scheduleText);
             txtGroupName.setText("请选择项目分组");
         }
+        LogUtils.operation("分组模式获取Schedules(日程):"+scheduleList.toString());
     }
 
     /**
@@ -252,6 +254,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
         List<Group> dbGroupList = DBManager.getInstance().getGroupByScheduleNo(scheduleNo);
         groupList.addAll(dbGroupList);
         groupAdapter.notifyDataSetChanged();
+        LogUtils.operation("分组模式获取groupList(日程分组):"+groupList.toString());
         groupPop.updateAdapter(groupAdapter);
     }
 
@@ -265,6 +268,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
         txtGroupName.setText(sb.toString());
         groupAdapter.setTestPosition(position);
         updateStudents(groupList.get(position));
+        LogUtils.operation("分组模式选择分组:"+groupList.get(position).toString());
     }
 
     /**
@@ -282,8 +286,10 @@ public class BaseGroupActivity extends BaseTitleActivity {
         stuAdapter.notifyDataSetChanged();
         showLed(stuPairsList);
         if (stuPairsList.size() > 0) {
+            LogUtils.operation("分组模式获取分组学生:"+stuPairsList.toString());
             showStuInfo(stuPairsList.get(0).getStudent());
         }
+
     }
 
     /**
@@ -649,6 +655,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
     }
 
     protected void onPause() {
+        LogUtils.life("BaseGroupActivity onPause");
         super.onPause();
         if (ledThread != null) {
             ledThread.interrupt();

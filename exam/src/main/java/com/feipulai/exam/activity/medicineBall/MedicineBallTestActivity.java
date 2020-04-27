@@ -21,6 +21,7 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.Executors;
@@ -49,6 +50,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LogUtils.life("MedicineBallTestActivity onCreate");
         init();
     }
 
@@ -70,6 +72,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        LogUtils.life("MedicineBallTestActivity onResume");
         mSerialManager.setRS232ResiltListener(resultImpl);
         //设置基点
 //        mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
@@ -305,6 +308,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        LogUtils.life("MedicineBallTestActivity onDestroy");
         mHandler.removeCallbacksAndMessages(null);
         if (executorService != null && !executorService.isShutdown())
             executorService.shutdown();
@@ -342,6 +346,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
 
     @Override
     public void gotoItemSetting() {
+        LogUtils.operation("实心球跳转MedicineBallSettingActivity");
         startActivity(new Intent(this, MedicineBallSettingActivity.class));
     }
 

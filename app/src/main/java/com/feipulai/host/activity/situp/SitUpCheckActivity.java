@@ -27,6 +27,7 @@ import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.SitPushUpSetFrequencyResult;
 import com.feipulai.device.serial.beans.SitPushUpStateResult;
+import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.host.R;
@@ -44,6 +45,7 @@ import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.utils.ResultDisplayUtils;
 import com.feipulai.host.view.StuSearchEditText;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
@@ -204,7 +206,10 @@ public class SitUpCheckActivity
         ProgressDialog dialog = ProgressDialog.show(this, "加载模块中...", "加载模块中...");
 
         RadioManager.getInstance().setOnRadioArrived(this);
-        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(mTargetFrequency)));
+        RadioChannelCommand command = new RadioChannelCommand(mTargetFrequency);
+        LogUtils.normal(command.getCommand().length+"---" + StringUtility.bytesToHexString(command.getCommand())+"---切频指令");
+
+        RadioManager.getInstance().sendCommand(new ConvertCommand(command));
         mCurrentFrequency = mTargetFrequency;
 
         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.sCurrentItem.getItemName());
@@ -300,7 +305,10 @@ public class SitUpCheckActivity
                 mCheckingTasksFacade.pause();
                 mLinking = true;
                 mCurrentFrequency = 0;
-                RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(0)));
+                RadioChannelCommand command = new RadioChannelCommand(0);
+                LogUtils.normal(command.getCommand().length+"---" + StringUtility.bytesToHexString(command.getCommand())+"---切频指令");
+
+                RadioManager.getInstance().sendCommand(new ConvertCommand(command));
                 show();
                 break;
 
@@ -487,7 +495,9 @@ public class SitUpCheckActivity
 
                 case NO_PAIR_RESPONSE_ARRIVED:
                     if (activity.mLinking) {
-                        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(0)));
+                        RadioChannelCommand command = new RadioChannelCommand(0);
+                        LogUtils.normal(command.getCommand().length+"---" + StringUtility.bytesToHexString(command.getCommand())+"---切频指令");
+                        RadioManager.getInstance().sendCommand(new ConvertCommand(command));
                         activity.mCurrentFrequency = 0;
                     }
                     break;
@@ -512,6 +522,8 @@ public class SitUpCheckActivity
             // 0频段接收到的结果,肯定是设备的开机广播
             if (result.getFrequency() == mTargetFrequency && result.getDeviceId() == mCurrentPosition + 1) {
                 mCurrentFrequency = mTargetFrequency;
+                RadioChannelCommand command = new RadioChannelCommand(mTargetFrequency);
+                LogUtils.normal(command.getCommand().length+"---"+StringUtility.bytesToHexString(command.getCommand())+"---切频指令");
                 RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(mTargetFrequency)));
                 onNewDeviceConnect();
             } else {
@@ -534,6 +546,8 @@ public class SitUpCheckActivity
         mCurrentConnect[mPairs.get(mCurrentPosition).getBaseDevice().getDeviceId()]++;
         updateSpecificItem(mCurrentPosition);
         mHandler.sendEmptyMessage(DISMISS_DIALOG);
+        RadioChannelCommand command = new RadioChannelCommand(mTargetFrequency);
+        LogUtils.normal(command.getCommand().length+"---"+StringUtility.bytesToHexString(command.getCommand())+"---切频指令onNewDeviceConnect");
         RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(mTargetFrequency)));
         mCheckingTasksFacade.resume();
     }
@@ -547,7 +561,9 @@ public class SitUpCheckActivity
             @Override
             public void onClick(View v) {
                 mLinking = false;
-                RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(mTargetFrequency)));
+                RadioChannelCommand command = new RadioChannelCommand(mTargetFrequency);
+                LogUtils.normal(command.getCommand().length+"---"+StringUtility.bytesToHexString(command.getCommand())+"---切频指令show");
+                RadioManager.getInstance().sendCommand(new ConvertCommand(command));
                 mWaitDialog.dismiss();
                 mCheckingTasksFacade.resume();
             }

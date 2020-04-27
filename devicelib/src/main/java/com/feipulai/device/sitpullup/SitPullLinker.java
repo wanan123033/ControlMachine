@@ -13,10 +13,12 @@ import com.feipulai.device.serial.beans.PullUpSetFrequencyResult;
 import com.feipulai.device.serial.beans.SitPushUpSetFrequencyResult;
 import com.feipulai.device.serial.beans.SitReachResult;
 import com.feipulai.device.serial.beans.SitReachWirelessResult;
+import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.beans.VitalCapacityNewResult;
 import com.feipulai.device.serial.beans.VitalCapacityResult;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 public class SitPullLinker implements Handler.Callback {
 
@@ -46,7 +48,9 @@ public class SitPullLinker implements Handler.Callback {
             mHandler = new Handler(handlerThread.getLooper(), this);
         }
         currentFrequency = 0;
-        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(0)));
+        RadioChannelCommand command = new RadioChannelCommand(0);
+        LogUtils.normal(command.getCommand().length+"---"+ StringUtility.bytesToHexString(command.getCommand())+"---切0频指令");
+        RadioManager.getInstance().sendCommand(new ConvertCommand(command));
     }
 
     public void cancelPair() {
@@ -55,7 +59,9 @@ public class SitPullLinker implements Handler.Callback {
             handlerThread.quit();
         }
         handlerThread = null;
-        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(TARGET_FREQUENCY)));
+        RadioChannelCommand command = new RadioChannelCommand(TARGET_FREQUENCY);
+        LogUtils.normal(command.getCommand().length+"---"+ StringUtility.bytesToHexString(command.getCommand())+"---切频指令");
+        RadioManager.getInstance().sendCommand(new ConvertCommand(command));
         currentFrequency = TARGET_FREQUENCY;
     }
 

@@ -1,7 +1,9 @@
 package com.feipulai.device.manager;
 
 import com.feipulai.device.serial.RadioManager;
+import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 /**
  * Created by pengjf on 2020/4/15.
@@ -22,6 +24,7 @@ public class SargentJumpMore {
         cmd[6] = 0x01;
         cmd[7] = 0x03;
         cmd[8] = (byte) sum(cmd, 8);
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---摸高开始测试指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                 cmd));
     }
@@ -40,6 +43,7 @@ public class SargentJumpMore {
         cmd[6] = 0x01;
         cmd[7] = 0x02;
         cmd[8] = (byte) sum(cmd, 8);
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---摸高空指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                 cmd));
     }
@@ -65,6 +69,7 @@ public class SargentJumpMore {
         byte[] cmd = CMD_SARGENT_JUMP_CHECK_SELF;
         cmd[4] = (byte) deviceId;
         cmd[8] = (byte) sum(cmd, 8);
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---摸高自检指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                 cmd));
     }
@@ -73,6 +78,7 @@ public class SargentJumpMore {
         byte[] cmd = CMD_SARGENT_JUMP_IGNORE_BREAK_POINT;
         cmd[4] = (byte) deviceId;
         cmd[8] = (byte) sum(cmd, 8);
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---摸高0点设置指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                 cmd));
     }
@@ -89,7 +95,7 @@ public class SargentJumpMore {
             sum += data[i] & 0xff;
         }
         data[10] = (byte) sum;
-
+        LogUtils.normal(data.length+"---"+ StringUtility.bytesToHexString(data)+"---摸高设置高度范围指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                 data));
     }

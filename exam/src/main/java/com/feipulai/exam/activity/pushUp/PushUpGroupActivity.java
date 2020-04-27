@@ -53,6 +53,7 @@ import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.WaitDialog;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -138,6 +139,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
 
         TestCache.getInstance().init();
         pairs = CheckUtils.newPairs(((List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu")).size());
+        LogUtils.operation("俯卧撑获取到分组信息:"+pairs.toString());
         CheckUtils.groupCheck(pairs);
 
         rvTestingPairs.setLayoutManager(new LinearLayoutManager(this));
@@ -206,6 +208,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
         switch (view.getId()) {
 
             case R.id.tv_led_setting:
+                LogUtils.operation("俯卧撑点击了外接屏幕");
                 if (isConfigurableNow()) {
                     startActivity(new Intent(this, LEDSettingActivity.class));
                 } else {
@@ -214,10 +217,12 @@ public class PushUpGroupActivity extends BaseTitleActivity
                 break;
 
             case R.id.tv_start_test:
+                LogUtils.operation("俯卧撑点击了开始测试");
                 prepareForTesting();
                 break;
 
             case R.id.tv_stop_test:
+                LogUtils.operation("俯卧撑点击了结束测试");
                 facade.stopTest();
                 SoundPlayUtils.play(12);
                 prepareForConfirmResult();
@@ -230,20 +235,24 @@ public class PushUpGroupActivity extends BaseTitleActivity
                 break;
 
             case R.id.tv_print:
+                LogUtils.operation("俯卧撑点击了打印");
                 TestCache testCache = TestCache.getInstance();
                 InteractUtils.printResults(group, testCache.getAllStudents(), testCache.getResults(),
                         TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
                 break;
 
             case R.id.tv_confirm:
+                LogUtils.operation("俯卧撑点击了成绩确认");
                 onResultConfirmed();
                 break;
 
             case R.id.tv_abandon_test:
+                LogUtils.operation("俯卧撑点击了放弃测试");
                 facade.abandonTest();
                 prepareForBegin();
                 break;
             case R.id.tv_device_pair:
+                LogUtils.operation("俯卧撑点击了设备配对");
                 changeBadDevice();
                 break;
         }
@@ -430,6 +439,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
         tvResult.setText(student.getStudentName());
 
         List<RoundResult> results = TestCache.getInstance().getResults().get(student);
+        LogUtils.operation("俯卧撑当前测试考生:"+student.toString()+"---当前已有成绩results = "+results.toString());
 
         prepareView(true,
                 results == null || results.size() < TestConfigs.getMaxTestCount(this),
@@ -447,7 +457,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
             ToastUtils.showShort("设备未连接,不能开始测试");
             return;
         }
-
+        LogUtils.operation("俯卧撑当前测试考生:stuCode="+pairs.get(position()).getStudent().getStudentCode()+",开始测试");
         prepareView(false, false,
                 true, false, true, false,
                 false);
@@ -470,16 +480,19 @@ public class PushUpGroupActivity extends BaseTitleActivity
 
         switch (msg.what) {
             case SitPushUpManager.STATE_DISCONNECT:
+                LogUtils.operation("俯卧撑设备断开连接...");
                 cbDeviceState.setChecked(false);
                 pairs.get(position()).getBaseDevice().setState(BaseDeviceState.STATE_DISCONNECT);
                 break;
 
             case SitPushUpManager.STATE_FREE:
+                LogUtils.operation("俯卧撑设备空闲中...");
                 cbDeviceState.setChecked(true);
                 pairs.get(position()).getBaseDevice().setState(BaseDeviceState.STATE_FREE);
                 break;
 
             case UPDATE_SCORE:
+                LogUtils.operation("俯卧撑设备更新成绩中...");
                 SitPushUpStateResult result = (SitPushUpStateResult) msg.obj;
                 intervalCount = msg.arg1;
                 pairs.get(position()).setDeviceResult(result);
@@ -522,6 +535,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
 
     @Override
     public void finish() {
+        LogUtils.life("PushUpGroupActivity finish");
         if (!isConfigurableNow()) {
             ToastUtils.showShort("测试中,不允许退出当前界面");
             return;
@@ -603,6 +617,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
     @Override
     public void onItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
         if (isConfigurableNow()) {
+            LogUtils.operation("俯卧撑更换了考生测试:"+pairs.get(i).getStudent().toString());
             stuPairAdapter.setTestPosition(i);
             stuPairAdapter.notifyDataSetChanged();
             prepareForBegin();

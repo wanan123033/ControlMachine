@@ -8,12 +8,14 @@ import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.JumpScore;
 import com.feipulai.device.serial.beans.JumpSelfCheckResult;
+import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.RoundResult;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import static com.feipulai.device.serial.SerialConfigs.JUMP_SCORE_RESPONSE;
 import static com.feipulai.device.serial.SerialConfigs.JUMP_SELF_CHECK_RESPONSE;
@@ -154,6 +156,8 @@ public class StandResiltListener implements SerialDeviceManager.RS232ResiltListe
 
                     handlerInterface.getResult(stuPair);
                     //结束测试 发送结束指令
+                    LogUtils.normal(SerialConfigs.CMD_END_JUMP.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_END_JUMP)+"---跳远结束测试指令");
+
                     SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_END_JUMP));
                     handlerInterface.EndDevice(jumpScore.isFoul(), jumpScore.getScore());
                     //更新设置状态为已结束

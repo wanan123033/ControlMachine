@@ -23,6 +23,10 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
+
+import java.util.Date;
+
 import butterknife.OnClick;
 
 import static com.feipulai.exam.activity.sargent_jump.Constants.GET_SCORE_RESPONSE;
@@ -57,6 +61,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        LogUtils.life("SargentMoreTestActivity onResume");
         sargentSetting = SharedPrefsUtil.loadFormSource(this, SargentSetting.class);
         if (null == sargentSetting) {
             sargentSetting = new SargentSetting();
@@ -106,6 +111,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
 
     @Override
     protected void sendTestCommand(BaseStuPair pair, int index) {
+        LogUtils.operation("摸高开始测试:index="+index+",pair="+pair);
         pair.setTestTime(DateUtil.getCurrentTime()+"");
         pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
         updateDevice(pair.getBaseDevice());
@@ -199,6 +205,8 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
             switch (msg.what) {
                 case GET_SCORE_RESPONSE:
                     SargentJumpResult result = (SargentJumpResult) msg.obj;
+                    if (result != null)
+                        LogUtils.operation("摸高更新成绩:score="+result.getScore()+",result="+result.toString());
                     for (DeviceDetail detail : deviceDetails) {
                         if (detail.getStuDevicePair().getBaseDevice().getDeviceId() == result.getDeviceId()) {
                             int dbResult = result.getScore() * 10;
@@ -226,7 +234,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
     });
 
     private void onResultArrived(int result, BaseStuPair stuPair) {
-        Logger.i("摸高"+stuPair.getStudent()+result);
+        LogUtils.operation("摸高成绩更新:"+stuPair.getStudent()+"---"+result);
         if (result < 0 || result > (sargentSetting.getBaseHeight() + 216) * 10) {
             toastSpeak("数据异常，请重测");
             return;
@@ -252,11 +260,13 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        LogUtils.life("SargentMoreTestActivity onStop");
         mHandler.removeCallbacksAndMessages(null);
     }
 
     @OnClick({R.id.tv_device_pair})
     public void onClick(View view) {
+        LogUtils.operation("摸高跳转至SargentPairActivity");
         startActivity(new Intent(this, SargentPairActivity.class));
     }
 }

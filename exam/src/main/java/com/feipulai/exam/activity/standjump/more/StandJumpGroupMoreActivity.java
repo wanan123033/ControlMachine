@@ -10,6 +10,7 @@ import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.standjump.StandJumpSetting;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.Student;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 /**
  * Created by zzs on  2019/11/14
@@ -43,7 +44,7 @@ public class StandJumpGroupMoreActivity extends BaseMoreGroupActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-
+        LogUtils.life("StandJumpGroupMoreActivity onResume");
         jumpSetting = SharedPrefsUtil.loadFormSource(this, StandJumpSetting.class);
         if (jumpSetting != null) {
             facade.setStandJumpSetting(jumpSetting);
@@ -56,13 +57,16 @@ public class StandJumpGroupMoreActivity extends BaseMoreGroupActivity implements
 
     @Override
     public void toStart(int pos) {
-        StandJumpManager.setLeisure(SettingHelper.getSystemSetting().getHostId(), deviceDetails.get(pos).getStuDevicePair().getBaseDevice().getDeviceId());
+        int deviceId = deviceDetails.get(pos).getStuDevicePair().getBaseDevice().getDeviceId();
+        Student student = deviceDetails.get(pos).getStuDevicePair().getStudent();
+        LogUtils.operation("立定跳远开始测试:deviceId="+deviceId+",student="+student.toString());
+        StandJumpManager.setLeisure(SettingHelper.getSystemSetting().getHostId(), deviceId);
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        StandJumpManager.startTest(SettingHelper.getSystemSetting().getHostId(), deviceDetails.get(pos).getStuDevicePair().getBaseDevice().getDeviceId());
+        StandJumpManager.startTest(SettingHelper.getSystemSetting().getHostId(), deviceId);
     }
 
     @Override

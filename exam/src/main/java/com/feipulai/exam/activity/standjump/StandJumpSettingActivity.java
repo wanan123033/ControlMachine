@@ -30,6 +30,7 @@ import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.JumpSelfCheckResult;
 import com.feipulai.device.serial.beans.StandJumpResult;
+import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
@@ -40,6 +41,7 @@ import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -325,6 +327,8 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
             case R.id.tv_device_check:
                 checkDialog();
                 if (standSetting.getTestType() == 0) {
+                    LogUtils.normal(SerialConfigs.CMD_SELF_CHECK_JUMP.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_SELF_CHECK_JUMP)+"---跳远自检指令");
+
                     SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SELF_CHECK_JUMP));
                 } else {
                     StandJumpManager.checkDevice(SettingHelper.getSystemSetting().getHostId(), deviceId);
@@ -347,9 +351,12 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
                 alertDialog.setCancelable(false);
                 alertDialog.show();
                 isSetPoints = false;
+
                 if (standSetting.getTestType() == 0) {
                     standSetting.setTestPoints(testPoints);
-                    SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.SET_CMD_SARGENT_JUMP_SETTING_POINTS(scope - 42)));
+                    byte[] buk = SerialConfigs.SET_CMD_SARGENT_JUMP_SETTING_POINTS(scope - 42);
+                    LogUtils.normal(buk.length+"---"+ StringUtility.bytesToHexString(buk)+"---跳远点数设置指令");
+                    SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, buk));
                 } else {
                     StandJumpManager.setPoints(SettingHelper.getSystemSetting().getHostId(), deviceId, scope - 42);
                 }

@@ -58,6 +58,7 @@ import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.WaitDialog;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -133,6 +134,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         setting = SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class);
 
         group = (Group) TestConfigs.baseGroupMap.get("group");
+        LogUtils.operation("排球获取到分组信息:"+group.toString());
         String type = "男女混合";
         if (group.getGroupType() == Group.MALE) {
             type = "男子";
@@ -143,6 +145,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
 
         TestCache.getInstance().init();
         pairs = CheckUtils.newPairs(((List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu")).size());
+        LogUtils.operation("排球获取分组信息:"+pairs.size()+"---"+pairs.toString());
         CheckUtils.groupCheck(pairs);
 
         rvTestingPairs.setLayoutManager(new LinearLayoutManager(this));
@@ -162,6 +165,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
 
     @Override
     protected void onRestart() {
+        LogUtils.life("VolleyBallGroupActivity onRestart");
         super.onRestart();
         facade.setVolleySetting(setting);
     }
@@ -172,6 +176,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         switch (view.getId()) {
 
             case R.id.tv_led_setting:
+                LogUtils.operation("排球点击了外接屏幕");
                 if (isConfigurableNow()) {
                     startActivity(new Intent(this, LEDSettingActivity.class));
                 } else {
@@ -179,6 +184,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
                 }
                 break;
             case R.id.tv_start_test:
+                LogUtils.operation("排球点击了开始测试");
                 if (setting.getType() == 0) {
                     prepareForTesting();
                 } else {
@@ -188,30 +194,36 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
                 break;
 
             case R.id.tv_stop_test:
+                LogUtils.operation("排球点击了结束测试");
                 facade.stopTest();
                 SoundPlayUtils.play(12);
                 prepareForConfirmResult();
                 break;
 
             case R.id.tv_print:
+                LogUtils.operation("排球点击了打印");
                 TestCache testCache = TestCache.getInstance();
                 InteractUtils.printResults(group, testCache.getAllStudents(), testCache.getResults(),
                         TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
                 break;
 
             case R.id.tv_confirm:
+                LogUtils.operation("排球点击了确认");
                 onResultConfirmed();
                 break;
 
             case R.id.tv_punish:
+                LogUtils.operation("排球点击了判罚");
                 showPenalizeDialog(pairs.get(position()).getDeviceResult().getResult());
                 break;
 
             case R.id.tv_abandon_test:
+                LogUtils.operation("排球点击了放弃测试");
                 facade.abandonTest();
                 prepareForBegin();
                 break;
             case R.id.tv_pair:
+                LogUtils.operation("排球点击了设备配对");
                 changeBadDevice();
                 break;
         }
@@ -602,6 +614,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
                         }
                         pairs.get(position()).setPenalty(value);
                         ToastUtils.showShort("判罚成功");
+                        LogUtils.operation("排球判罚成功:value="+value);
                     }
                 })
                 .setNegativeButton("取消", null).show();

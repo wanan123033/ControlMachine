@@ -16,6 +16,7 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import static com.feipulai.exam.activity.sargent_jump.Constants.GET_SCORE_RESPONSE;
 
@@ -80,6 +81,7 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
         pair.setTestTime(System.currentTimeMillis()+"");
         updateDevice(pair.getBaseDevice());
         SargentJumpMore.sendStart(pair.getBaseDevice().getDeviceId());
+        LogUtils.operation("摸高开始测试:deviceId="+pair.getBaseDevice().getDeviceId()+",pair="+pair.toString());
     }
 
 
@@ -158,6 +160,8 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
             switch (msg.what) {
                 case GET_SCORE_RESPONSE:
                     SargentJumpResult result = (SargentJumpResult) msg.obj;
+                    if (result != null)
+                        LogUtils.operation("摸高更新设备成绩:"+result.toString());
                     for (DeviceDetail detail : deviceDetails) {
                         if (detail.getStuDevicePair().getBaseDevice().getDeviceId() == result.getDeviceId()) {
                             int dbResult = result.getScore() * 10;
@@ -184,7 +188,7 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
     });
 
     private void onResultArrived(int result, BaseStuPair stuPair) {
-        Logger.i("摸高"+stuPair.getStudent()+result);
+        LogUtils.operation("摸高更新成绩:"+stuPair.getStudent()+"---"+result);
         if (result < 0 || result > (sargentSetting.getBaseHeight() + 116) * 10) {
             toastSpeak("数据异常，请重测");
             return;
@@ -208,11 +212,13 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        LogUtils.life("SargentTestGroupActivity onStop");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        LogUtils.life("SargentTestGroupActivity onDestroy");
         mHandler.removeCallbacksAndMessages(null);
     }
 }

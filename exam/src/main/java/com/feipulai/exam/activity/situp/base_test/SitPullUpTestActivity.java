@@ -12,6 +12,7 @@ import android.widget.NumberPicker;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.jump_rope.base.test.AbstractRadioTestActivity;
 import com.feipulai.exam.view.WaitDialog;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import butterknife.OnClick;
 
@@ -26,6 +27,7 @@ public abstract class SitPullUpTestActivity<Setting>
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		LogUtils.life("SitPullUpTestActivity onCreate");
 		presenter = (SitPullUpTestPresenter<Setting>) super.presenter;
 	}
 	
@@ -55,6 +57,7 @@ public abstract class SitPullUpTestActivity<Setting>
 				.setPositiveButton("确定", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
+						LogUtils.operation("当前考生被判罚:"+numberPicker.getValue());
 						presenter.penalize(-1 * numberPicker.getValue());
 					}
 				})

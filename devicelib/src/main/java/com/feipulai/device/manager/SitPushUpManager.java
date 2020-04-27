@@ -2,8 +2,10 @@ package com.feipulai.device.manager;
 
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialDeviceManager;
+import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 /**
  * Created by James on 2018/5/14 0014.
@@ -117,6 +119,8 @@ public class SitPushUpManager {
         //Logger.i(StringUtility.bytesToHexString(buf));
         //先切到通信频段
         //Log.i("james","originFrequency:" + originFrequency);
+        RadioChannelCommand command = new RadioChannelCommand(originFrequency);
+        LogUtils.normal(command.getCommand().length+"---"+StringUtility.bytesToHexString(command.getCommand())+"---仰卧起坐俯卧撑切频指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(originFrequency)));
         //Log.i("james",StringUtility.bytesToHexString(buf));
         try {
@@ -124,8 +128,11 @@ public class SitPushUpManager {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        LogUtils.normal(buf.length+"---"+StringUtility.bytesToHexString(buf)+"---仰卧起坐俯卧撑设置参数指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
-        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(targetChannel)));
+        RadioChannelCommand command1 = new RadioChannelCommand(targetChannel);
+        LogUtils.normal(command1.getCommand().length+"---"+StringUtility.bytesToHexString(command1.getCommand())+"---仰卧起坐俯卧撑切频指令");
+        RadioManager.getInstance().sendCommand(new ConvertCommand(command1));
     }
 
     /**
@@ -156,15 +163,20 @@ public class SitPushUpManager {
         //Logger.i(StringUtility.bytesToHexString(buf));
         //先切到通信频段
         //Log.i("james","originFrequency:" + originFrequency);
-        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(originFrequency)));
+        RadioChannelCommand command = new RadioChannelCommand(originFrequency);
+        LogUtils.normal(command.getCommand().length+"---"+ StringUtility.bytesToHexString(command.getCommand())+"---肺活量切频指令");
+        RadioManager.getInstance().sendCommand(new ConvertCommand(command));
         //Log.i("james",StringUtility.bytesToHexString(buf));
         try {
             Thread.sleep(300);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---肺活量设置参数指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
-        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(targetChannel)));
+        RadioChannelCommand command1 = new RadioChannelCommand(targetChannel);
+        LogUtils.normal(command1.getCommand().length+"---"+ StringUtility.bytesToHexString(command1.getCommand())+"---肺活量切频指令");
+        RadioManager.getInstance().sendCommand(new ConvertCommand(command1));
     }
 
     /**
@@ -203,8 +215,11 @@ public class SitPushUpManager {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---肺活量设置参数指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
-        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(targetChannel)));
+        RadioChannelCommand command1 = new RadioChannelCommand(targetChannel);
+        LogUtils.normal(command1.getCommand().length+"---"+ StringUtility.bytesToHexString(command1.getCommand())+"---肺活量切频指令");
+        RadioManager.getInstance().sendCommand(new ConvertCommand(command1));
     }
 
     /**
@@ -239,15 +254,20 @@ public class SitPushUpManager {
         //Logger.i(StringUtility.bytesToHexString(buf));
         //先切到通信频段
         //Log.i("james","originFrequency:" + originFrequency);
-        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(originFrequency)));
+        RadioChannelCommand command = new RadioChannelCommand(originFrequency);
+        LogUtils.normal(command.getCommand().length+"---"+ StringUtility.bytesToHexString(command.getCommand())+"---摸高切频指令");
+        RadioManager.getInstance().sendCommand(new ConvertCommand(command));
         //Log.i("james",StringUtility.bytesToHexString(buf));
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---摸高设置参数指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
-        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(targetChannel)));
+        RadioChannelCommand command1 = new RadioChannelCommand(targetChannel);
+        LogUtils.normal(command1.getCommand().length+"---"+ StringUtility.bytesToHexString(command1.getCommand())+"---摸高切频指令");
+        RadioManager.getInstance().sendCommand(new ConvertCommand(command1));
     }
 
     /**
@@ -292,7 +312,10 @@ public class SitPushUpManager {
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
+        LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---实心球设置参数指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
+        RadioChannelCommand command1 = new RadioChannelCommand(targetChannel);
+        LogUtils.normal(command1.getCommand().length+"---"+ StringUtility.bytesToHexString(command1.getCommand())+"---实心球切频指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(targetChannel)));
     }
 
@@ -324,6 +347,10 @@ public class SitPushUpManager {
             cmd[13] += cmd[i] & 0xff;
         }
         //Log.i("james",StringUtility.bytesToHexString(cmd));
+        if (cmd[5] == 5)
+            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---仰卧起坐开始测试指令");
+        else if (cmd[5] == 8)
+            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---俯卧撑开始测试指令");
         wrapAndSend(cmd);
     }
 
@@ -365,6 +392,10 @@ public class SitPushUpManager {
         for (int i = 2; i < 13; i++) {
             cmd[13] += cmd[i] & 0xff;
         }
+        if (cmd[5] == 5)
+            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---仰卧起坐获取状态指令");
+        else if (cmd[5] == 8)
+            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---俯卧撑获取状态指令");
         //Log.i("james",StringUtility.bytesToHexString(cmd));
         wrapAndSend(cmd);
     }
@@ -388,6 +419,10 @@ public class SitPushUpManager {
             cmd[13] += cmd[i] & 0xff;
         }
         //Log.i("james",StringUtility.bytesToHexString(cmd));
+        if (cmd[5] == 5)
+            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---仰卧起坐结束测试指令");
+        else if (cmd[5] == 8)
+            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---俯卧撑结束测试指令");
         wrapAndSend(cmd);
     }
 
@@ -411,6 +446,10 @@ public class SitPushUpManager {
             cmd[13] += cmd[i] & 0xff;
         }
         //Log.i("james",StringUtility.bytesToHexString(cmd));
+        if (cmd[5] == 5)
+            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---仰卧起坐获取版本信息指令");
+        else if (cmd[5] == 8)
+            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---俯卧撑获取版本信息指令");
         wrapAndSend(cmd);
     }
 
@@ -437,6 +476,10 @@ public class SitPushUpManager {
         for (int i = 2; i < 13; i++) {
             cmd[13] += cmd[i] & 0xff;
         }
+        if (cmd[5] == 5)
+            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---仰卧起坐设置计数角度命令指令");
+        else if (cmd[5] == 8)
+            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---俯卧撑设置计数角度命令指令");
         wrapAndSend(cmd);
     }
 

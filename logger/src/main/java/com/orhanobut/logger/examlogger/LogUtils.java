@@ -16,6 +16,7 @@ public class LogUtils {
     public static final String UNNORMAL_TAG = "UNNORMAL_TAG";    //被过滤的指令日志
     public static final String NORMAL_TAG = "NORMAL_TAG";       //正常日志
     public static final String OPERATION_TAG = "OPERATION_TAG"; //操作日志TAG
+    public static final String LIFE_TAG = "LIFE_TAG"; //生命周期日志TAG
 
     public static void initLogger(final boolean isConsole) {
         Logger.addLogAdapter(new AndroidLogAdapter() {
@@ -38,8 +39,23 @@ public class LogUtils {
         // 保存操作日志
         String exam_operation = Environment.getExternalStorageDirectory() + "/logger/" + "exam_operation_" + logFileName;
         Logger.addLogAdapter(new DiskLogAdapter(new OperaLogAdapter(exam_operation)));
+
+        // 保存Activity生命周期日志
+        String exam_life = Environment.getExternalStorageDirectory() + "/logger/" + "exam_life_" + logFileName;
+        Logger.addLogAdapter(new DiskLogAdapter(new LifeLogAdapter(exam_life)));
     }
     public static void normal(String message){
         Logger.t(LogUtils.NORMAL_TAG).i(message);
+    }
+
+    public static void operation(String message) {
+        Logger.t(LogUtils.OPERATION_TAG).i(message);
+    }
+    public static void life(String message) {
+        Logger.t(LogUtils.LIFE_TAG).i(message);
+    }
+
+    public static void all(String message) {
+        Logger.t(LogUtils.ALL_TAG).i(message);
     }
 }

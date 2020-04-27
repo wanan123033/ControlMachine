@@ -11,6 +11,7 @@ import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.entity.Item;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 public class FootBallItemSelectActivity extends SubItemsSelectActivity {
 
@@ -30,8 +31,10 @@ public class FootBallItemSelectActivity extends SubItemsSelectActivity {
                 setting.setTestType(position);
                 SharedPrefsUtil.save(FootBallItemSelectActivity.this,setting);
                 if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
+                    LogUtils.operation("跳转至FootballIndividualActivity");
                     IntentUtil.gotoActivity(FootBallItemSelectActivity.this, FootballIndividualActivity.class);
                 } else {
+                    LogUtils.operation("跳转至BaseGroupActivity");
                     IntentUtil.gotoActivity(FootBallItemSelectActivity.this, BaseGroupActivity.class);
                 }
                 finish();
