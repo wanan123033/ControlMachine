@@ -153,7 +153,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
             }
         } else if (v == getDeleteAllView()) {// 删除所有
 //            presenter.deleteAll();
-            showkillAllWarning();
+            showDeleteAllWarning();
         } else if (v == getDeleteStuView()) {// 删除考生
             presenter.deleteStudent();
         }
@@ -262,7 +262,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
         }
     }
 
-    public void showkillAllWarning() {
+    public void showDeleteAllWarning() {
         new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.warning))
                 .setContentText("是否删除全部检入考生")
                 .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
