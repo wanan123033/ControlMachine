@@ -33,7 +33,7 @@ import static com.feipulai.exam.activity.sargent_jump.Constants.GET_SCORE_RESPON
 public class SargentMoreTestActivity extends BaseMoreActivity {
     private static final String TAG = "SargentMoreTestActivity";
     private SargentSetting sargentSetting;
-
+    private final static int MAX_DISCONNECT = 3;
     private int[] deviceState = {};
     //SARGENT JUMP
 
@@ -181,7 +181,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
 
         @Override
         public void onFree(int deviceId) {
-            deviceState[deviceId-1] = 3;
+            deviceState[deviceId-1] = MAX_DISCONNECT;
         }
 
         @Override

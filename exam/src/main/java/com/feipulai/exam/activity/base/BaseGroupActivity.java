@@ -252,6 +252,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
         List<Group> dbGroupList = DBManager.getInstance().getGroupByScheduleNo(scheduleNo);
         groupList.addAll(dbGroupList);
         groupAdapter.notifyDataSetChanged();
+        groupPop.updateAdapter(groupAdapter);
     }
 
     // 选择分组
