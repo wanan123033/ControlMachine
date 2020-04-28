@@ -523,7 +523,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     startActivity(new Intent(this, StandJumpGroupMoreActivity.class));
                     return;
                 }
-                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZQYQ
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZWTQQ
                         && SharedPrefsUtil.loadFormSource(this, SitReachSetting.class).getTestType() == 1) {
                     startActivity(new Intent(this, SitReachMoreGroupActivity.class));
                     return;
