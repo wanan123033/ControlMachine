@@ -1,5 +1,7 @@
 package com.feipulai.device.serial.beans;
 
+import com.orhanobut.logger.examlogger.LogUtils;
+
 /**
  * Created by James on 2018/5/17 0017.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
@@ -29,6 +31,8 @@ public class SitPushUpVersionResult {
 		deviceId = data[4] & 0xff;
 		version = (data[8] >>> 4) + "." + (data[8] & 0x0f) + "." + (data[9] & 0xff);
 		publishDay = (2000 + (data[10] & 0xff)) + "" + String.format("%02d",(data[11] & 0xff)) + String.format("%02d",(data[12] & 0xff));
+		LogUtils.normal("仰卧起坐俯卧撑返回设备版本数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+
 	}
 	
 	public int getDeviceId(){
@@ -53,5 +57,14 @@ public class SitPushUpVersionResult {
 	
 	public void setPublishDay(String publishDay){
 		this.publishDay = publishDay;
+	}
+
+	@Override
+	public String toString() {
+		return "SitPushUpVersionResult{" +
+				"deviceId=" + deviceId +
+				", version='" + version + '\'' +
+				", publishDay='" + publishDay + '\'' +
+				'}';
 	}
 }

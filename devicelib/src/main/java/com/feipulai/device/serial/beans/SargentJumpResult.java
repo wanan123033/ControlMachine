@@ -1,5 +1,9 @@
 package com.feipulai.device.serial.beans;
 
+import com.orhanobut.logger.examlogger.LogUtils;
+
+import java.util.Arrays;
+
 /**
  * Created by James on 2018/5/7 0007.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
@@ -34,7 +38,9 @@ public class SargentJumpResult{
 		    hostId = data[11];
         }
 //		Log.i("sargent",StringUtility.bytesToHexString(data));
-	}
+        LogUtils.normal("立定跳远返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+
+    }
 	
 	public int getScore(){
 		return score;
@@ -86,5 +92,17 @@ public class SargentJumpResult{
 
     public byte[] getIncorrectPoles() {
         return incorrectPoles;
+    }
+
+    @Override
+    public String toString() {
+        return "SargentJumpResult{" +
+                "score=" + score +
+                ", id=" + id +
+                ", frequency=" + frequency +
+                ", state=" + state +
+                ", hostId=" + hostId +
+                ", incorrectPoles=" + Arrays.toString(incorrectPoles) +
+                '}';
     }
 }

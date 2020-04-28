@@ -1,5 +1,7 @@
 package com.feipulai.device.serial.beans;
 
+import com.orhanobut.logger.examlogger.LogUtils;
+
 import java.util.Arrays;
 
 /**
@@ -32,6 +34,7 @@ public class BaseVolleyReceiveZl {
     private byte[] result = new byte[5]; //对管自检结果，每对对管占一位，0 正常，1 异常；
 
     public BaseVolleyReceiveZl(byte[] data){
+
         tou = data[0];
         chang = data[1];
         item_code = data[2];
@@ -82,6 +85,8 @@ public class BaseVolleyReceiveZl {
                 wei = data[20];
                 break;
         }
+
+        LogUtils.normal("排球返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
     }
 
     public byte getTou() {

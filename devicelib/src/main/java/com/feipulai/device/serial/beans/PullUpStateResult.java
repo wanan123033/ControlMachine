@@ -1,5 +1,7 @@
 package com.feipulai.device.serial.beans;
 
+import com.orhanobut.logger.examlogger.LogUtils;
+
 /**
  * Created by James on 2018/5/16 0016.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
@@ -40,6 +42,8 @@ public class PullUpStateResult implements IDeviceResult{
 		state = data[10] & 0xff;
 		batteryLeft = data[11] & 0xff;
 		interval = data[12] & 0xff;
+		LogUtils.normal("引体向上返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+
 	}
 
 	public PullUpStateResult(){
@@ -101,5 +105,17 @@ public class PullUpStateResult implements IDeviceResult{
 	@Override
 	public void setResult(int result){
 		totalCountNum = result;
+	}
+
+	@Override
+	public String toString() {
+		return "PullUpStateResult{" +
+				"deviceId=" + deviceId +
+				", validCountNum=" + validCountNum +
+				", totalCountNum=" + totalCountNum +
+				", state=" + state +
+				", batteryLeft=" + batteryLeft +
+				", interval=" + interval +
+				'}';
 	}
 }

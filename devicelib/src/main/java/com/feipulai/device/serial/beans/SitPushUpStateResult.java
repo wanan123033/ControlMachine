@@ -1,5 +1,7 @@
 package com.feipulai.device.serial.beans;
 
+import com.orhanobut.logger.examlogger.LogUtils;
+
 import java.io.Serializable;
 
 /**
@@ -37,6 +39,8 @@ public class SitPushUpStateResult implements Serializable,IDeviceResult {
 		state = data[10] & 0xff;
 		batteryLeft = data[11] & 0xff;
 		baseline = data[12] & 0xff;
+		LogUtils.normal("仰卧起坐俯卧撑返回设备状态数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+
 	}
 
 	public SitPushUpStateResult(){

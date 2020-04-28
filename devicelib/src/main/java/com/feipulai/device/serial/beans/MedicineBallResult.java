@@ -1,5 +1,7 @@
 package com.feipulai.device.serial.beans;
 
+import com.orhanobut.logger.examlogger.LogUtils;
+
 /**
  * Created by James on 2018/5/11 0011.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
@@ -20,6 +22,8 @@ public class MedicineBallResult{
 		result = ((data[9] & 0xff) << 8) + (data[10] & 0xff);
 		checkFault(data);
 		sweepPoint = data[13]&0xff;
+		LogUtils.normal("中长跑返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+
 	}
     public int getSweepPoint() {
         return sweepPoint;

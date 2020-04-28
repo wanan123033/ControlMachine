@@ -1,5 +1,7 @@
 package com.feipulai.device.serial.beans;
 
+import com.orhanobut.logger.examlogger.LogUtils;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,6 +22,7 @@ public class JumpVersion{
 		versionCode = String.valueOf(result[8] >> 4 & 0x0f) + "." + (result[8] & 0x0f) + "."
 				+ (result[9] >> 4 & 0x0f) + (result[9] & 0x0f);
 		versionDate = String.valueOf(result[10]) + "年" + String.valueOf(result[11]) + "月" + String.valueOf(result[12]) + "日";
+		LogUtils.normal("跳绳返回数据(解析前):"+result.length+"---"+StringUtility.bytesToHexString(result)+"---\n(解析后):"+toString());
 	}
 	
 	public String getVersionCode(){
@@ -39,5 +42,13 @@ public class JumpVersion{
 		}
 		return date;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "JumpVersion{" +
+				"versionCode='" + versionCode + '\'' +
+				", versionDate='" + versionDate + '\'' +
+				", mDateFormat=" + mDateFormat +
+				'}';
+	}
 }

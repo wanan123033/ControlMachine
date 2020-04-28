@@ -5,6 +5,8 @@ package com.feipulai.device.serial.beans;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 
+import com.orhanobut.logger.examlogger.LogUtils;
+
 /**
  * 子机开机0频段发送
  * [00] [01]：包头高字节0x54  低字节0x55
@@ -51,6 +53,8 @@ public class SitPushUpSetFrequencyResult {
 		frequency = data[8] & 0xff;
 		rate = data[9] & 0xff;
 		deviceId = data[4] & 0xff;
+		LogUtils.normal("硬件设置参数返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+
 	}
 	
 	public int getFrequency(){

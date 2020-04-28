@@ -1,5 +1,7 @@
 package com.feipulai.device.serial.beans;
 
+import com.orhanobut.logger.examlogger.LogUtils;
+
 /**
  * Created by James on 2018/4/11 0011.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
@@ -75,6 +77,8 @@ public class RunTimerResult {
 		result = ((data[10] & 0xff) << 24) | ((data[11] & 0xff) << 16) |((data[12] & 0xff) << 8)|(data[13] & 0xff);
 		trackNum = data[8];
 		order = data[9];
+		LogUtils.normal("实心球返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+
 	}
 
 	@Override

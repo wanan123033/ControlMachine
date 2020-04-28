@@ -1,5 +1,9 @@
 package com.feipulai.device.serial.beans;
 
+import com.orhanobut.logger.examlogger.LogUtils;
+
+import java.util.Arrays;
+
 /**
  * Created by James on 2017/10/30.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
@@ -105,6 +109,7 @@ public class JumpSelfCheckResult{
 			//有坏点
 			mTerminalCondition = HAS_BROKEN_POINTS;
 		}
+		LogUtils.normal("跳绳自检返回数据(解析前):"+buf.length+"---"+StringUtility.bytesToHexString(buf)+"---\n(解析后):"+toString());
 	}
 	
 	/**
@@ -125,5 +130,12 @@ public class JumpSelfCheckResult{
 	public int getTerminalCondition(){
 		return mTerminalCondition;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "JumpSelfCheckResult{" +
+				"brokenLEDs=" + Arrays.toString(brokenLEDs) +
+				", mTerminalCondition=" + mTerminalCondition +
+				'}';
+	}
 }

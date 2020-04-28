@@ -1,5 +1,7 @@
 package com.feipulai.device.serial.beans;
 
+import com.orhanobut.logger.examlogger.LogUtils;
+
 public class Basketball868Result {
     private int frequency;
     private int deviceId;
@@ -60,7 +62,7 @@ public class Basketball868Result {
 
         }
 
-
+        LogUtils.normal("篮球返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
     }
 
     public int getDeviceId() {

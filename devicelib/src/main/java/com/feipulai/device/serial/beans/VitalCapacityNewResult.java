@@ -1,5 +1,7 @@
 package com.feipulai.device.serial.beans;
 
+import com.orhanobut.logger.examlogger.LogUtils;
+
 /**
  * 作者 pengjf
  * 公司 深圳菲普莱体育
@@ -19,6 +21,8 @@ public class VitalCapacityNewResult {
 		    frequency = (data[12]&0xff);
 		    hostId = data[5];
 		velocity = (data[13]&0xff);
+		LogUtils.normal("肺活量返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+
 	}
 	private int deviceId ;
 	private int power ;
@@ -92,4 +96,18 @@ public class VitalCapacityNewResult {
     public void setHostId(int hostId) {
         this.hostId = hostId;
     }
+
+	@Override
+	public String toString() {
+		return "VitalCapacityNewResult{" +
+				"deviceId=" + deviceId +
+				", power=" + power +
+				", state=" + state +
+				", capacity=" + capacity +
+				", frequency=" + frequency +
+				", index=" + index +
+				", velocity=" + velocity +
+				", hostId=" + hostId +
+				'}';
+	}
 }

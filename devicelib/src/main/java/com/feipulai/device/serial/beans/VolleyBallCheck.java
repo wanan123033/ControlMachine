@@ -1,6 +1,7 @@
 package com.feipulai.device.serial.beans;
 
 import com.feipulai.device.SysConvertUtil;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,6 +76,7 @@ public class VolleyBallCheck {
                 break;
 
         }
+        LogUtils.normal("排球返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
 
 
     }

@@ -1,5 +1,7 @@
 package com.feipulai.device.serial.beans;
 
+import com.orhanobut.logger.examlogger.LogUtils;
+
 /**
  * Created by James on 2018/5/3 0003.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
@@ -57,6 +59,7 @@ public class SitReachResult{
 		if(isNegative){
 			score = -score;
 		}
+		LogUtils.normal("坐位体前屈返回设备结果数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
 	}
 	
 	
@@ -82,5 +85,14 @@ public class SitReachResult{
 	
 	public void setFoul(boolean foul){
 		isFoul = foul;
+	}
+
+	@Override
+	public String toString() {
+		return "SitReachResult{" +
+				"score=" + score +
+				", state=" + state +
+				", isFoul=" + isFoul +
+				'}';
 	}
 }

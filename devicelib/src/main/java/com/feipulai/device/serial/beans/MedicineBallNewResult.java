@@ -1,5 +1,7 @@
 package com.feipulai.device.serial.beans;
 
+import com.orhanobut.logger.examlogger.LogUtils;
+
 import java.util.Arrays;
 
 /**
@@ -58,6 +60,7 @@ public class MedicineBallNewResult {
                 bit >>= 1;
             }
         }
+        LogUtils.normal("中长跑返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
 
 	}
 

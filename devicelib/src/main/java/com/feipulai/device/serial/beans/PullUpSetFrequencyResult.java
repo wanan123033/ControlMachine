@@ -1,5 +1,7 @@
 package com.feipulai.device.serial.beans;
 
+import com.orhanobut.logger.examlogger.LogUtils;
+
 /**
  * Created by James on 2018/5/14 0014.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
@@ -21,6 +23,8 @@ public class PullUpSetFrequencyResult{
 		frequency = data[8] & 0xff;
 		rate = data[9] & 0xff;
 		deviceId = data[4] & 0xff;
+		LogUtils.normal("引体向上返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+
 	}
 
 	public int getFrequency(){

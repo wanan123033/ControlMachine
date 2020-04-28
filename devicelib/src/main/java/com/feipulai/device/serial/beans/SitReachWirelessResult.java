@@ -1,5 +1,7 @@
 package com.feipulai.device.serial.beans;
 
+import com.orhanobut.logger.examlogger.LogUtils;
+
 /**
  * Created by pengjf on 2020/4/20.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
@@ -22,6 +24,8 @@ public class SitReachWirelessResult {
             frequency = (data[12] & 0xff);
             velocity = (data[13] & 0xff);
         }
+        LogUtils.normal("坐位体前屈返回设备数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+
     }
 
     private int deviceId;

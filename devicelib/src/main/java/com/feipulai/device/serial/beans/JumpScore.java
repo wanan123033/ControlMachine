@@ -1,5 +1,7 @@
 package com.feipulai.device.serial.beans;
 
+import com.orhanobut.logger.examlogger.LogUtils;
+
 /**
  * Created by james on 2017/10/27.
  */
@@ -13,6 +15,7 @@ public class JumpScore {
 		checkFoul(result);
 		//获取到的成绩需要加50cm
 		score = ((result[9] & 0xff) << 8) + (result[10] & 0xff) + 50;
+		LogUtils.normal("跳绳返回数据(解析前):"+result.length+"---"+StringUtility.bytesToHexString(result)+"---\n(解析后):"+toString());
 	}
 	
 	public JumpScore() {

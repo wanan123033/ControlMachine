@@ -3,6 +3,7 @@ package com.feipulai.device.serial.beans;
 import android.util.Log;
 
 import com.feipulai.device.SysConvertUtil;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,6 +74,8 @@ public class VolleyPair868Result {
             deviceType = data[12];
             poleNum = data[13];
         }
+        LogUtils.normal("排球返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+
 
     }
     public int getState() {
@@ -126,5 +129,22 @@ public class VolleyPair868Result {
 
     public byte[] getCheckResult() {
         return checkResult;
+    }
+
+    @Override
+    public String toString() {
+        return "VolleyPair868Result{" +
+                "poleNum=" + poleNum +
+                ", deviceType=" + deviceType +
+                ", dataArr=" + Arrays.toString(dataArr) +
+                ", positionList=" + positionList +
+                ", frequency=" + frequency +
+                ", state=" + state +
+                ", score=" + score +
+                ", deviceId=" + deviceId +
+                ", electricityState=" + electricityState +
+                ", hostid=" + hostid +
+                ", checkResult=" + Arrays.toString(checkResult) +
+                '}';
     }
 }

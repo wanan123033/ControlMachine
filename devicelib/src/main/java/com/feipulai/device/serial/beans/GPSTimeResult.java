@@ -1,5 +1,7 @@
 package com.feipulai.device.serial.beans;
 
+import com.orhanobut.logger.examlogger.LogUtils;
+
 public class GPSTimeResult {
 	
 	private int sequence;
@@ -13,6 +15,7 @@ public class GPSTimeResult {
 		}
 		sb.append("  ");
 		time = sb.toString();
+		LogUtils.normal("GPS返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
 	}
 	
 	public int getSequence() {
