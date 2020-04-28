@@ -51,6 +51,7 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
     private List<Student> mStudentList;
     private volatile OnCheckedInListener listener;
     private Context mContext;
+    private String text;
 
     public StuSearchEditText(Context context) {
         super(context);
@@ -145,11 +146,10 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
 
                 if (actionId == EditorInfo.IME_ACTION_GO
                         || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    final String text = v.getText().toString().trim();
-                    if (TextUtils.isEmpty(text)) {
+
+                    if (TextUtils.isEmpty(v.getText().toString().trim())) {
                         return true;
                     }
-                    etInputText.setText("");
 //                    mStudentList = DBManager.getInstance().fuzzyQueryByStuCode(etInputText.getText().toString(), 20, 0);
 //                    if (mStudentList == null || mStudentList.size() == 0) {
 //                        mLvResults.setVisibility(View.GONE);
@@ -158,12 +158,17 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
 //                        mLvResults.setAdapter(adapter);
 //                        mLvResults.setVisibility(View.VISIBLE);
 //                    }
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            search(text);
-                        }
-                    }, 200);
+                    if (TextUtils.isEmpty(text)) {
+                        text = etInputText.getText().toString();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                search(text);
+
+                            }
+                        }, 200);
+
+                    }
 
                     return true;
                 }
@@ -210,8 +215,8 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
         boolean onInputCheck(Student student);
     }
 
-    public void search(String text) {
-        mStudentList = DBManager.getInstance().fuzzyQueryByStuCode(text, 20, 0);
+    public void search(String dataText) {
+        mStudentList = DBManager.getInstance().fuzzyQueryByStuCode(dataText, 20, 0);
         if (mStudentList == null || mStudentList.size() == 0) {
             mLvResults.setVisibility(View.GONE);
         } else {
@@ -219,9 +224,10 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
             mLvResults.setAdapter(adapter);
             mLvResults.setVisibility(View.VISIBLE);
         }
+        text = "";
         if (mStudentList != null && mStudentList.size() > 0) {
             for (Student student : mStudentList) {
-                if (text.equals(student.getStudentCode()) || text.equals(student.getIdCardNo())) {
+                if (dataText.equals(student.getStudentCode()) || dataText.equals(student.getIdCardNo())) {
                     // 找到已有的,检录
                     check(student);
                     return;
@@ -230,7 +236,7 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
         }
         // 添加考生,检录
         Student student = new Student();
-        student.setStudentCode(text);
+        student.setStudentCode(dataText);
         check(student);
     }
 
