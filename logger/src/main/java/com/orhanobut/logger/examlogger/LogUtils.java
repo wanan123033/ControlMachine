@@ -44,17 +44,35 @@ public class LogUtils {
         String exam_life = Environment.getExternalStorageDirectory() + "/logger/" + "exam_life_" + logFileName;
         Logger.addLogAdapter(new DiskLogAdapter(new LifeLogAdapter(exam_life)));
     }
+
+    /**
+     * 发送接收日志打印
+     * @param message
+     */
     public static void normal(String message){
         Logger.t(LogUtils.NORMAL_TAG).i(message);
     }
 
+    /**
+     * 用户操作日志打印
+     * @param message
+     */
     public static void operation(String message) {
         Logger.t(LogUtils.OPERATION_TAG).i(message);
     }
+
+    /**
+     * Activity 生命周期打印
+     * @param message
+     */
     public static void life(String message) {
         Logger.t(LogUtils.LIFE_TAG).i(message);
     }
 
+    /**
+     * 过滤指令日志打印
+     * @param message
+     */
     public static void all(String message) {
         Logger.t(LogUtils.ALL_TAG).i(message);
     }
