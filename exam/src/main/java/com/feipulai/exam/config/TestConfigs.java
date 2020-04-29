@@ -40,6 +40,7 @@ import com.feipulai.exam.activity.ranger.RangerMoreActivity;
 import com.feipulai.exam.activity.ranger.RangerTestActivity;
 import com.feipulai.exam.activity.sargent_jump.SargentGroupActivity;
 import com.feipulai.exam.activity.sargent_jump.SargentItemSelectActivity;
+import com.feipulai.exam.activity.sargent_jump.SargentSetting;
 import com.feipulai.exam.activity.sargent_jump.SargentSettingActivity;
 import com.feipulai.exam.activity.sitreach.SitReachGroupTestActivity;
 import com.feipulai.exam.activity.sitreach.SitReachSelectActivity;
@@ -512,6 +513,9 @@ public class TestConfigs {
                 break;
             case ItemDefault.CODE_ZCP:
                 result = 1;
+                break;
+            case ItemDefault.CODE_MG:
+                result = SharedPrefsUtil.loadFormSource(context, SargentSetting.class).getTestTimes();
                 break;
             default:
                 throw new IllegalArgumentException("wrong machine code");
