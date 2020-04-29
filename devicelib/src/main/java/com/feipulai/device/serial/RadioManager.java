@@ -54,6 +54,8 @@ public class RadioManager{
 	// 这个地方必须锁住,万恶之源
 	public synchronized void sendCommand(ConvertCommand convertCommand){
 		ensureInterval();
+		if (mSerialPorter == null)
+		    return;
 		mSerialPorter.sendCommand(convertCommand);
 	}
 

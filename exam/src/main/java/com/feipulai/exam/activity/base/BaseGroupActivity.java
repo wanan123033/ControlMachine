@@ -256,7 +256,6 @@ public class BaseGroupActivity extends BaseTitleActivity {
         groupList.addAll(dbGroupList);
         groupAdapter.notifyDataSetChanged();
         LogUtils.operation("分组模式获取groupList(日程分组):"+groupList.toString());
-        groupPop.updateAdapter(groupAdapter);
     }
 
     // 选择分组
@@ -447,6 +446,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_group_name:
+                groupPop.updateAdapter(groupList);
                 groupPop.showPopOrDismiss();
 
                 break;

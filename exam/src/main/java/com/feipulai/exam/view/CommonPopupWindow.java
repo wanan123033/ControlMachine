@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
@@ -32,7 +33,7 @@ public class CommonPopupWindow extends Dialog {
     private OnPopItemClickListener onPopItemClickListener;
     private RecyclerView rv_pop;
     BaseQuickAdapter mAdapter;
-    List results = new ArrayList();
+    List results ;
     private SearchView searchView;
 
     public void setOnPopItemClickListener(OnPopItemClickListener onPopItemClickListener) {
@@ -67,7 +68,6 @@ public class CommonPopupWindow extends Dialog {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         rv_pop.setLayoutManager(layoutManager);
         setAdapter(mAdapter);
-        results.addAll(mAdapter.getData());
         searchView = findViewById(R.id.et_search);
         if (mAdapter instanceof GroupAdapter) {
             searchView.setIconifiedByDefault(false);//设为true则搜索栏 缩小成俄日一个图标点击展开
@@ -100,9 +100,12 @@ public class CommonPopupWindow extends Dialog {
 
     }
 
-    public void updateAdapter(BaseQuickAdapter adapter){
-        results.clear();
-        results.addAll(adapter.getData());
+    public void updateAdapter(List group){
+        results = new ArrayList();
+        results.addAll(group);
+        mAdapter.getData().clear();
+        mAdapter.getData().addAll(results);
+
         mAdapter.notifyDataSetChanged();
     }
 
