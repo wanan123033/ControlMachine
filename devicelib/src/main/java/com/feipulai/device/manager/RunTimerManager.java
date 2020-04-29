@@ -33,8 +33,9 @@ public class RunTimerManager {
      * @param interceptPoint 拦截点 不需要传入-1
      * @param interceptWay 触发方式 不需要传入-1
      * @param settingSensor 传感器信道 不需要传入-1
+     * @param senNum 灵敏度 不需要传入-1
      */
-    public static void cmdSetting(int runNum,int hostId,int interceptPoint,int interceptWay,int settingSensor){
+    public static void cmdSetting(int runNum,int hostId,int interceptPoint,int interceptWay,int settingSensor,int senNum){
 //        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.cmd((byte) 0xc1, (byte) 0x01, (byte) runNum)));//跑道数
 //        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.cmd((byte) 0xc1, (byte) 0x02, (byte) hostId)));//主机号
 //        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.cmd((byte) 0xc1, (byte) 0x04, (byte) interceptPoint)));//拦截点
@@ -62,6 +63,12 @@ public class RunTimerManager {
             cmd = cmd((byte) 0xc1,(byte) 0x08,(byte) settingSensor);
             LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---红外计时设置传感器信道指令");
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd));//传感器信道
+        }
+
+        if (senNum != -1){
+            cmd = cmd((byte) 0xc1,(byte) 0x03,(byte) settingSensor);
+            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---红外计时设置灵敏度指令");
+            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd));//灵敏度
         }
 
     }
@@ -96,6 +103,13 @@ public class RunTimerManager {
     public static void illegalBack(){
         byte[] cmd = cmd((byte) 0xc8, (byte) 0x00, (byte) 0x00);
         LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---红外计时违规反返回指令");
+        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
+                cmd));
+    }
+
+    public static void getTime(){
+        byte[] cmd = cmd((byte) 0xc7, (byte) 0x00, (byte) 0x00);
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---红外计时获取时间指令");
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                 cmd));
     }

@@ -126,8 +126,9 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
         interceptPoint = runTimerSetting.getInterceptPoint();
         interceptWay = runTimerSetting.getInterceptWay();
         settingSensor = runTimerSetting.getSensor();
+        int senNum = runTimerSetting.getSensitivityNum();
         int hostId = SettingHelper.getSystemSetting().getHostId();
-        RunTimerManager.cmdSetting(runNum,hostId,interceptPoint,interceptWay,settingSensor);
+        RunTimerManager.cmdSetting(runNum,hostId,interceptPoint,interceptWay,settingSensor,senNum);
         maxTestTimes = runTimerSetting.getTestTimes();
     }
 
@@ -460,6 +461,10 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
 //        isAuto = true;
 //        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.cmd((byte) 0xc4, (byte) 0x00, (byte) 0x00)));
         RunTimerManager.forceStart();
+    }
+
+    public void getTime() {
+        RunTimerManager.getTime();
     }
 
     public void faultBack() {
