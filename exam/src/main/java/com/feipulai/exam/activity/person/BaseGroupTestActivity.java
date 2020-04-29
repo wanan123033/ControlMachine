@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.tts.TtsManager;
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
@@ -123,7 +124,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         ButterKnife.bind(this);
         PrinterManager.getInstance().init();
         group = (Group) TestConfigs.baseGroupMap.get("group");
-        LogUtils.operation("获取到分组信息:"+group.toString());
+        LogUtils.operation("获取到分组信息:" + group.toString());
         initData();
 
         mLEDManager = new LEDManager();
@@ -601,8 +602,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
      * @param deviceState
      */
     public void updateDevice(@NonNull BaseDeviceState deviceState) {
-        LogUtils.operation("更新设备状态:"+deviceState);
-        Logger.i("updateDevice："+deviceState);
+        LogUtils.operation("更新设备状态:" + deviceState);
+        Logger.i("updateDevice：" + deviceState);
         if (stuAdapter == null || stuAdapter.getTestPosition() == -1)
             return;
 
@@ -698,7 +699,12 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         roundResult.setResult(baseStuPair.getResult());
         roundResult.setMachineResult(baseStuPair.getResult());
         roundResult.setResultState(baseStuPair.getResultState());
-        roundResult.setEndTime(baseStuPair.getEndTime());
+        if (TextUtils.isEmpty(baseStuPair.getEndTime())) {
+            roundResult.setEndTime(DateUtil.getCurrentTime() + "");
+        } else {
+            roundResult.setEndTime(baseStuPair.getEndTime());
+        }
+
         roundResult.setTestTime(baseStuPair.getTestTime());
         roundResult.setRoundNo(roundNo);
         roundResult.setTestNo(1);
@@ -732,9 +738,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             roundResult.setIsLastResult(1);
             updateLastResultLed(roundResult);
         }
-        //生成结束时间
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        roundResult.setEndTime(sdf.format(new Date()));
+
         DBManager.getInstance().insertRoundResult(roundResult);
         LogUtils.operation("保存成绩:" + roundResult.toString());
 
@@ -742,7 +746,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         roundResultList.add(roundResult);
         UploadResults uploadResults = new UploadResults(group.getScheduleNo()
                 , TestConfigs.getCurrentItemCode(), baseStuPair.getStudent().getStudentCode()
-                , "1", group , RoundResultBean.beanCope(roundResultList,group));
+                , "1", group, RoundResultBean.beanCope(roundResultList, group));
 
         uploadResult(uploadResults);
 

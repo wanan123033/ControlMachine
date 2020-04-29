@@ -99,7 +99,6 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="测试时间"
             android:textColor="@color/white"
             android:textSize="18sp" />
         <TextView
@@ -108,7 +107,6 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="结束时间"
             android:textColor="@color/white"
             android:textSize="18sp" />
 
