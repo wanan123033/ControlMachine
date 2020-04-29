@@ -36,7 +36,7 @@ public class SitReachMoreActivity extends BaseMoreActivity {
     private static final String TAG = "SitReachMoreActivity";
     private boolean backFlag = false;//推杆返回
     private boolean [] resultUpdate  ;//成绩更新
-
+    private final static int DISCONNECT_TIME = 3;
     @Override
     protected void initData() {
         setting = SharedPrefsUtil.loadFormSource(this, SitReachSetting.class);
@@ -205,7 +205,7 @@ public class SitReachMoreActivity extends BaseMoreActivity {
     SitReachRadioImpl sitReachRadio = new SitReachRadioImpl(new SitReachRadioImpl.DisposeListener() {
         @Override
         public void onResultArrived(final SitReachWirelessResult result) {
-            deviceState[result.getDeviceId() - 1] = 5;//联机正常
+            deviceState[result.getDeviceId() - 1] = DISCONNECT_TIME;//联机正常
             if (result.getState() == 4) {//测试结束
                 sendStop(result.getDeviceId());
                 if (result.getCapacity() > -200 && result.getCapacity() < 700 && resultUpdate[result.getDeviceId()-1]) {

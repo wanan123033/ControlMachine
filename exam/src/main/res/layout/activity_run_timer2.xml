@@ -193,6 +193,16 @@
                 android:text="强制启动" />
 
             <TextView
+                android:id="@+id/tv_get_time"
+                style="@style/style_run_timer_text"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_toRightOf="@+id/tv_force_start"
+                android:drawableTop="@mipmap/wait"
+                android:paddingTop="15dp"
+                android:background="@drawable/selector_red_grey"
+                android:text="获取时间" />
+
+            <TextView
                 android:id="@+id/tv_mark_confirm"
                 android:layout_marginRight="@dimen/dp_10"
                 android:layout_alignParentRight="true"

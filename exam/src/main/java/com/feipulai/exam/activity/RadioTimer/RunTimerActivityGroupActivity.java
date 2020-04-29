@@ -63,6 +63,8 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
     TextView tvRunState;
     @BindView(R.id.tv_wait_ready)
     TextView tvWaitReady;
+    @BindView(R.id.tv_get_time)
+    TextView tvGetTime;
     private int currentTestTime = 0;
     private List<RunStudent> mList = new ArrayList<>();//测试的
     private RunNumberAdapter2 mAdapter;
@@ -276,6 +278,10 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
                     cycleRun();
                 }
                 mAdapter.notifyDataSetChanged();
+                break;
+            case R.id.tv_get_time:
+                getTime();
+                LogUtils.operation("红外计时点击了获取时间");
                 break;
 //            case R.id.img_last:
 //                if (groupAdapter.getTestPosition() > 0) {
@@ -533,6 +539,9 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
                 tvWaitReady.setEnabled(state[4]);
                 tvWaitReady.setSelected(state[4]);
                 tvRunState.setText(state[0] ? "空闲" : state[1] ? "等待" : "计时");
+
+                tvGetTime.setEnabled(state[3]);//获取时间
+                tvGetTime.setSelected(state[3]);
 
             }
         });

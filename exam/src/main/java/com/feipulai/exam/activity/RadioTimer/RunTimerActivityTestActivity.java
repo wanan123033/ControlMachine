@@ -85,6 +85,8 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     TextView tvRunState;
     @BindView(R.id.tv_wait_ready)
     TextView tvWaitReady;
+    @BindView(R.id.tv_get_time)
+    TextView tvGetTime;
     private int testNo;
     private List<RunStudent> mList = new ArrayList<>();
     private RunNumberAdapter2 mAdapter2;
@@ -255,7 +257,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     }
 
     @OnClick({R.id.btn_start, R.id.btn_led, R.id.tv_wait_start, R.id.tv_force_start,
-            R.id.tv_fault_back, R.id.tv_mark_confirm, R.id.tv_wait_ready})
+            R.id.tv_fault_back, R.id.tv_mark_confirm, R.id.tv_wait_ready,R.id.tv_get_time})
     //R.id.tv_project_setting,
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -344,6 +346,10 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
                     mAdapter2.notifyDataSetChanged();
                     mAdapter.notifyDataSetChanged();
                 }
+                break;
+            case R.id.tv_get_time:
+                getTime();
+                LogUtils.operation("红外计时点击了获取时间");
                 break;
         }
     }
@@ -523,6 +529,9 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
                 tvWaitReady.setSelected(state[4]);
 
                 tvRunState.setText(state[0] ? "空闲" : state[1] ? "等待" : "计时");
+
+                tvGetTime.setEnabled(state[3]);//获取时间
+                tvGetTime.setSelected(state[3]);
             }
         });
 

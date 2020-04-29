@@ -5,6 +5,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -55,6 +56,8 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
 //    EditText etFullFemale;
     @BindView(R.id.et_run_num)
     EditText etRunNum;
+    @BindView(R.id.et_sensitivity_num)
+    EditText etSensitivityNum;
     @BindView(R.id.cb_start)
     CheckBox cbStart;
     @BindView(R.id.cb_end)
@@ -97,6 +100,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
 //        etFullFemale.addTextChangedListener(this);
         etRunNum.addTextChangedListener(this);
         deviceManager = SerialDeviceManager.getInstance();
+        etSensitivityNum.setText(String.format("%d", runTimerSetting.getSensitivityNum()));
     }
 
     @Nullable
@@ -288,6 +292,8 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     @Override
     protected void onStop() {
         super.onStop();
+        String senNum = etSensitivityNum.getText().toString();
+        runTimerSetting.setSensitivityNum(TextUtils.isEmpty(senNum)?5:Integer.parseInt(senNum));
         runTimerSetting.setInterceptPoint(runTimerSetting.getStartPoint() + runTimerSetting.getEndPoint());
         SharedPrefsUtil.save(this, runTimerSetting);
     }

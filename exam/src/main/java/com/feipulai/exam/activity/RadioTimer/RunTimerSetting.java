@@ -45,6 +45,7 @@ public class RunTimerSetting {
      * 跑道数量
      */
     private String runNum = "4";
+    private int sensitivityNum = 5;
     /**
      * 男子满分
      */
@@ -173,5 +174,13 @@ public class RunTimerSetting {
 
     public void setEndPoint(int endPoint) {
         this.endPoint = endPoint;
+    }
+
+    public int getSensitivityNum() {
+        return sensitivityNum;
+    }
+
+    public void setSensitivityNum(int sensitivityNum) {
+        this.sensitivityNum = sensitivityNum;
     }
 }
