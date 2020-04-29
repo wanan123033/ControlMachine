@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -70,7 +71,13 @@ public abstract class AbstractRadioCheckActivity<Setting>
     protected void initData() {
         ButterKnife.bind(this);
     }
-
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (individualCheckFragment.dispatchKeyEvent(event)) {
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
+    }
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
         boolean isTestNameEmpty = TextUtils.isEmpty(SettingHelper.getSystemSetting().getTestName());

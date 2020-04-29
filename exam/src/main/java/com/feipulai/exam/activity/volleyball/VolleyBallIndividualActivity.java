@@ -11,6 +11,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -150,7 +151,13 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
             tvPair.setVisibility(View.GONE);
         }
     }
-
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (individualCheckFragment.dispatchKeyEvent(event)) {
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
+    }
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {

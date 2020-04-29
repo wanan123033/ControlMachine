@@ -3,6 +3,7 @@ package com.feipulai.exam.activity.basketball;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 
 import com.feipulai.common.utils.IntentUtil;
@@ -34,6 +35,7 @@ public abstract class BaseShootActivity extends BaseTitleActivity
     private static final int WAIT_CONFIRM = 0x5;
     protected volatile int state = WAIT_FREE;
     private List<StuDevicePair> pairs = new ArrayList<>();
+
     @Override
     protected void initData() {
         individualCheckFragment = new IndividualCheckFragment();
@@ -41,14 +43,23 @@ public abstract class BaseShootActivity extends BaseTitleActivity
 
     }
 
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (individualCheckFragment.dispatchKeyEvent(event)) {
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
     @Override
     public void onIndividualCheckIn(Student student, StudentItem studentItem, List<RoundResult> results) {
         if (student != null)
-            LogUtils.operation("篮球检入到学生:"+student.toString());
+            LogUtils.operation("篮球检入到学生:" + student.toString());
         if (studentItem != null)
-            LogUtils.operation("篮球检入到学生StudentItem:"+studentItem.toString());
+            LogUtils.operation("篮球检入到学生StudentItem:" + studentItem.toString());
         if (results != null)
-            LogUtils.operation("篮球检入到学生成绩:"+results.size()+"----"+results.toString());
+            LogUtils.operation("篮球检入到学生成绩:" + results.size() + "----" + results.toString());
         if (state == WAIT_FREE || state == WAIT_CHECK_IN) {
 
             pairs.get(0).setStudent(student);
@@ -57,15 +68,16 @@ public abstract class BaseShootActivity extends BaseTitleActivity
                 if (isFullSkip(result.getResult(), result.getResultState())) {
                     toastSpeak("满分");
                     pairs.get(0).setStudent(null);
-                    LogUtils.operation("篮球该学生已满分跳过测试:"+result.getStudentCode());
+                    LogUtils.operation("篮球该学生已满分跳过测试:" + result.getStudentCode());
                     return;
                 }
             }
             updateStudent(student);
         }
-        
+
 
     }
+
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
@@ -104,7 +116,7 @@ public abstract class BaseShootActivity extends BaseTitleActivity
      */
     private boolean isConfigurableNow() {
         boolean flag = !(state == WAIT_FREE || state == WAIT_CHECK_IN || state == WAIT_BEGIN);
-        LogUtils.operation("篮球isConfigurableNow(是否是使用中) = "+flag);
+        LogUtils.operation("篮球isConfigurableNow(是否是使用中) = " + flag);
         return flag;
     }
 
@@ -114,7 +126,6 @@ public abstract class BaseShootActivity extends BaseTitleActivity
 
         return false;
     }
-
 
 
 }

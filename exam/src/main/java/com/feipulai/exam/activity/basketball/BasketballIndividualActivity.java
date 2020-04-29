@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
@@ -183,7 +184,13 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
 
     }
 
-
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (individualCheckFragment.dispatchKeyEvent(event)) {
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
+    }
     @Override
     protected void onResume() {
         super.onResume();
