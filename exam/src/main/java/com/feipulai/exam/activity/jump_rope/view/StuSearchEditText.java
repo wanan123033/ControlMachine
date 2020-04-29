@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -146,7 +147,7 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
 
                 if (actionId == EditorInfo.IME_ACTION_GO
                         || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-
+                    LogUtil.logDebugMessage("EditorInfo======>" + actionId + "     getKeyCode=====>" + event.getKeyCode());
                     if (TextUtils.isEmpty(v.getText().toString().trim())) {
                         return true;
                     }
@@ -163,10 +164,11 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
+                                text = etInputText.getText().toString();
                                 search(text);
 
                             }
-                        }, 200);
+                        }, 500);
 
                     }
 
