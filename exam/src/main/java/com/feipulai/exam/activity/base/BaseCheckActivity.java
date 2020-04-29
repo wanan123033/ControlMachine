@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -14,6 +15,7 @@ import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.HandlerUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.LogUtil;
+import com.feipulai.common.utils.ScannerGunManager;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.CheckDeviceOpener;
 import com.feipulai.device.ic.ICCardDealer;
@@ -80,6 +82,7 @@ public abstract class BaseCheckActivity
     private volatile boolean isStartThermometer = false;
     private SweetAlertDialog thermometerDialog;
     private SweetAlertDialog thermometerOpenDialog;
+    private ScannerGunManager scannerGunManager;
 
     public void setOpenDevice(boolean openDevice) {
         isOpenDevice = openDevice;
@@ -99,6 +102,21 @@ public abstract class BaseCheckActivity
             afrFragment.setCompareListener(this);
             initAFR();
         }
+        scannerGunManager = new ScannerGunManager(new ScannerGunManager.OnScanListener() {
+            @Override
+            public void onResult(String code) {
+                checkQulification(code, STUDENT_CODE);
+            }
+        });
+
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (scannerGunManager.dispatchKeyEvent(event)) {
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
     }
 
     @Override

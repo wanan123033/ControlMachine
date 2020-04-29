@@ -8,6 +8,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.HandlerUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.LogUtil;
+import com.feipulai.common.utils.ScannerGunManager;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.CheckDeviceOpener;
 import com.feipulai.device.ic.ICCardDealer;
@@ -97,6 +99,7 @@ public class IndividualCheckFragment
     private volatile boolean isStartThermometer = false;
     private SweetAlertDialog thermometerDialog;
     private SweetAlertDialog thermometerOpenDialog;
+    private ScannerGunManager scannerGunManager;
 
     public void setResultView(ListView lvResults) {
         this.lvResults = lvResults;
@@ -115,7 +118,18 @@ public class IndividualCheckFragment
         mEtSelect.setOnCheckedInListener(this);
         EventBus.getDefault().register(this);
         systemSetting = SharedPrefsUtil.loadFormSource(getActivity(), SystemSetting.class);
+        scannerGunManager = new ScannerGunManager(new ScannerGunManager.OnScanListener() {
+            @Override
+            public void onResult(String code) {
+                checkQulification(code, STUDENT_CODE);
+            }
+        });
         return view;
+    }
+
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        return scannerGunManager.dispatchKeyEvent(event);
+
     }
 
     @Override
