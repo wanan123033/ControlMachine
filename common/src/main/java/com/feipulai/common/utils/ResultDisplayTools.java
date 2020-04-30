@@ -95,7 +95,7 @@ public class ResultDisplayTools {
                 result = "千克";
                 break;
             case ItemDefault.CODE_JGCJ:
-                result = "厘米";
+                result = "米";
                 break;
             default:
                 throw new IllegalArgumentException("wrong machineCode");

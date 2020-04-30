@@ -146,4 +146,10 @@ public class RangerSettingActivity extends BaseTitleActivity implements Compound
         SharedPrefsUtil.save(getApplicationContext(),setting);
         super.finish();
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SharedPrefsUtil.save(getApplicationContext(),setting);
+    }
 }

@@ -1,4 +1,4 @@
-package com.feipulai.exam.activity.ranger;
+package com.feipulai.host.activity.ranger;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -6,8 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
-
-import com.feipulai.exam.R;
+import com.feipulai.host.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

@@ -8,6 +8,7 @@ import android.os.Build;
 
 import com.feipulai.common.utils.ActivityCollector;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -49,7 +50,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
         // String deviceInfo = collectDeviceInfo(mContext);
         String erroMsg = getErrMessage(ex);
 
-        Logger.e("----------start------------------\n" +
+        LogUtils.crash("----------start------------------\n" +
                 "fatal exception:\t    application crashed!!!\n"
                 // + deviceInfo
                 + erroMsg);
@@ -73,7 +74,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
                 sb.append("version code:").append(versionCode).append("\nversion name:").append(versionName).append("\n");
             }
         } catch (NameNotFoundException e) {
-            Logger.e("CrashHandleran.NameNotFoundException---> error occured when collect package info", e);
+            LogUtils.crash("CrashHandleran.NameNotFoundException---> error occured when collect package info"+getErrMessage(e));
         }
         Field[] fields = Build.class.getDeclaredFields();
         for (Field field : fields) {
@@ -81,7 +82,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
                 field.setAccessible(true);
                 sb.append(field.getName()).append(":").append(field.get(null).toString()).append("\n");
             } catch (Exception e) {
-                Logger.e("CrashHandler.NameNotFoundException---> an error occured when collect crash info", e);
+                LogUtils.crash("CrashHandler.NameNotFoundException---> an error occured when collect crash info"+getErrMessage(e));
             }
         }
         return sb.toString();
