@@ -13,7 +13,6 @@ import java.util.Locale;
 
 public class LogUtils {
     public static final String ALL_TAG = "ALL_TAG";                 //所有日志TAG
-    public static final String UNNORMAL_TAG = "UNNORMAL_TAG";    //被过滤的指令日志
     public static final String NORMAL_TAG = "NORMAL_TAG";       //正常日志
     public static final String OPERATION_TAG = "OPERATION_TAG"; //操作日志TAG
     public static final String CRASH_TAG = "CRASH_TAG";
