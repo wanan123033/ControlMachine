@@ -14,6 +14,7 @@ import com.feipulai.host.activity.medicine_ball.MedicineBallTestActivity;
 import com.feipulai.host.activity.pullup.PullUpSelectActivity;
 import com.feipulai.host.activity.radio_timer.RunTimerFreeTestActivity;
 import com.feipulai.host.activity.radio_timer.RunTimerTestActivity;
+import com.feipulai.host.activity.ranger.RangerTestActivity;
 import com.feipulai.host.activity.sitreach.SitReachTestActivity;
 import com.feipulai.host.activity.situp.check.SitUpCheckActivity;
 import com.feipulai.host.activity.standjump.StandJumpSelectActivity;
@@ -79,6 +80,7 @@ public class TestConfigs {
         TestConfigs.freedomActivity.put(ItemDefault.CODE_LDTY, StandJumpSelectActivity.class);
         TestConfigs.freedomActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallFreeTestActivity.class);
         TestConfigs.freedomActivity.put(ItemDefault.CODE_ZFP, RunTimerFreeTestActivity.class);
+        TestConfigs.freedomActivity.put(ItemDefault.CODE_JGCJ, RangerTestActivity.class);
         // 每个机器码对应的机器名称
         TestConfigs.machineNameMap.put(ItemDefault.CODE_TS, MyApplication.getInstance().getString(R.string.jump_rope));
         TestConfigs.machineNameMap.put(ItemDefault.CODE_YWQZ, MyApplication.getInstance().getString(R.string.sit_up));
@@ -92,6 +94,7 @@ public class TestConfigs {
         TestConfigs.machineNameMap.put(ItemDefault.CODE_ZFP, MyApplication.getInstance().getString(R.string.run_time));
         TestConfigs.machineNameMap.put(ItemDefault.CODE_WLJ, MyApplication.getInstance().getString(R.string.grip_meter));
         TestConfigs.machineNameMap.put(ItemDefault.CODE_YTXS, "引体向上");
+        TestConfigs.machineNameMap.put(ItemDefault.CODE_JGCJ, "激光测距");
 
         // 每个机器码对应的机器名称
         TestConfigs.itemMinScope.put(ItemDefault.CODE_ZWTQQ, -200);
