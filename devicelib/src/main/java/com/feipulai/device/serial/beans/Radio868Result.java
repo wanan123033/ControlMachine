@@ -134,16 +134,32 @@ public class Radio868Result {
                                 break;
 
                             case 0x04:
-                                setType(SerialConfigs.SARGENT_JUMP_GET_SCORE_RESPONSE);
-                                setResult(new SargentJumpResult(data));
+                                byte []bytes = new byte[16];
+                                if (data.length> 16 && data[14] == 0x27 && data[15] == 0x0d){
+                                    System.arraycopy(data,0,bytes,0,16);
+                                    setType(SerialConfigs.SARGENT_JUMP_GET_SCORE_RESPONSE);
+                                    setResult(new SargentJumpResult(bytes));
+                                }else if (data.length == 16){
+                                    setType(SerialConfigs.SARGENT_JUMP_GET_SCORE_RESPONSE);
+                                    setResult(new SargentJumpResult(data));
+                                }
+
                                 break;
 
                             case 0x06:
 
                                 break;
                             case 0x0b:
-                                setType(SerialConfigs.SARGENT_JUMP_SET_MATCH);
-                                setResult(new SargentJumpResult(data));
+                                byte []bytes1 = new byte[16];
+                                if (data.length> 16 && data[14] == 0x27 && data[15] == 0x0d){
+                                    System.arraycopy(data,0,bytes1,0,16);
+                                    setType(SerialConfigs.SARGENT_JUMP_SET_MATCH);
+                                    setResult(new SargentJumpResult(bytes1));
+                                }else if (data.length == 16){
+                                    setType(SerialConfigs.SARGENT_JUMP_SET_MATCH);
+                                    setResult(new SargentJumpResult(data));
+                                }
+
                                 break;
                         }
                     } else if (data[6] == 0x01) {
@@ -157,8 +173,19 @@ public class Radio868Result {
                                 setResult(new SargentJumpResult(data));
                                 break;
                             case 0x04:
-                                setType(SerialConfigs.SARGENT_JUMP_CHECK);
-                                setResult(new SargentJumpResult(data));
+                                if (data[16] ==0){
+                                    byte []bytes = new byte[16];
+                                    System.arraycopy(data,0,bytes,0,16);
+                                    setType(SerialConfigs.SARGENT_JUMP_GET_SCORE_RESPONSE);
+                                    setResult(new SargentJumpResult(bytes));
+                                }else {
+                                    setType(SerialConfigs.SARGENT_JUMP_CHECK);
+                                    setResult(new SargentJumpResult(data));
+                                }
+
+                                break;
+                            case 0x00:
+                                setType(SerialConfigs.SARGENT_JUMP_EMPTY_RESPONSE);
                                 break;
                         }
                     }

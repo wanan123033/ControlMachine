@@ -234,6 +234,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
 
     private void onResultArrived(int result, boolean fault, BaseStuPair stuPair) {
         stuPair.setEndTime(DateUtil.getCurrentTime()+"");
+        stuPair.setResult(result);
         if (testState == TestState.WAIT_RESULT) {
             if (medicineBallSetting.isFullReturn()) {
                 if (baseStuPair.getStudent().getSex() == Student.MALE) {
@@ -242,7 +243,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
                     stuPair.setFullMark(result >= Integer.parseInt(medicineBallSetting.getFemaleFull()) * 10);
                 }
             }
-            stuPair.setResult(result);
+
             stuPair.setResultState(fault ? RoundResult.RESULT_STATE_FOUL : RoundResult.RESULT_STATE_NORMAL);
             updateTestResult(stuPair);
             updateDevice(stuPair.getBaseDevice());

@@ -557,17 +557,18 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
      */
     public void updateDevice(@NonNull BaseDeviceState deviceState) {
         Logger.i("updateDevice==>" + deviceState.toString());
-        if (pair.getStudent() == null) {
-            return;
-        }
         if (pair.getBaseDevice() != null) {
             pair.getBaseDevice().setState(deviceState.getState());
+            refreshDevice();
             //状态为测试已结束
             if (deviceState.getState() == BaseDeviceState.STATE_END) {
                 if (pair.getStudent() != null) {
                     Logger.i("考生" + pair.getStudent().toString());
                 }
                 Logger.i("设备成绩信息STATE_END==>" + deviceState.toString());
+                if (pair.getStudent() == null) {
+                    return;
+                }
                 if (isFault && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
                     showPenalize();
                 } else {

@@ -603,14 +603,15 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     public void updateDevice(@NonNull BaseDeviceState deviceState) {
         LogUtils.operation("更新设备状态:"+deviceState);
         Logger.i("updateDevice："+deviceState);
-        if (stuAdapter == null || stuAdapter.getTestPosition() == -1)
-            return;
 
         if (deviceState.getState() != BaseDeviceState.STATE_ERROR) {
             cbDeviceState.setChecked(true);
         } else {
             cbDeviceState.setChecked(false);
         }
+        if (stuAdapter == null || stuAdapter.getTestPosition() == -1)
+            return;
+
         BaseStuPair pair = stuPairsList.get(stuAdapter.getTestPosition());
         pair.getBaseDevice().setState(deviceState.getState());
         if (isStop && !SettingHelper.getSystemSetting().isIdentityMark()) {

@@ -18,11 +18,11 @@ public class SargentJumpResult{
     private int hostId;
     private byte incorrectPoles[];//检测杆
 	public SargentJumpResult(byte[] data){
-	    if (data.length == 16){
-            score = ((data[8] & 0xff) << 8) + (data[9] & 0xff);
-        }else if (data.length == 18){
+        if (data[6] == 0x01 && data.length == 18 && data[7] == 2){
             score = ((data[9] & 0xff) << 8) + (data[10] & 0xff);
             state = (data[8] & 0xff);
+        }else if (data[7] == 0x04 ){
+            score = ((data[8] & 0xff) << 8) + (data[9] & 0xff);
         }else if (data.length == 24){
 	        //13*8= 104
             incorrectPoles = new byte[104];
@@ -38,7 +38,7 @@ public class SargentJumpResult{
 		    hostId = data[11];
         }
 //		Log.i("sargent",StringUtility.bytesToHexString(data));
-        LogUtils.normal("立定跳远返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+        LogUtils.normal("摸高返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
 
     }
 	

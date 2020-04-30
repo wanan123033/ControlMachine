@@ -8,6 +8,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.serial.RadioManager;
@@ -29,10 +30,6 @@ import com.feipulai.exam.view.WaitDialog;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.examlogger.LogUtils;
 
-import java.util.Date;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import static com.feipulai.exam.activity.sargent_jump.Constants.CONNECTED;
 import static com.feipulai.exam.activity.sargent_jump.Constants.END_TEST;
@@ -44,15 +41,15 @@ import static com.feipulai.exam.activity.sargent_jump.Constants.UN_CONNECT;
 public class SargentGroupActivity extends BaseGroupTestActivity {
 
     private static final String TAG = "SargentGroupActivity";
+    private static final int SEND_EMPTY = 0x01;
     private SargentSetting sargentSetting;
 
     private volatile int check = 0;
     private boolean isConnect;
-    private ScheduledExecutorService checkService = Executors.newSingleThreadScheduledExecutor();
+//    private ScheduledExecutorService checkService = Executors.newSingleThreadScheduledExecutor();
     private TestState testState = TestState.UN_STARTED;
     //保存当前测试考生
     private BaseStuPair baseStuPair;
-    private boolean isSetBase = false;
     private int frequency;//需设定的主机频段
     private int currentFrequency;//当前主机频段
     private WaitDialog changBadDialog;
@@ -124,28 +121,46 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
     }
 
     public void sendEmpty() {
-        checkService.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                check++;
-                LogUtils.normal(SerialConfigs.CMD_SARGENT_JUMP_EMPTY.length+"---"+StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_EMPTY)+"---摸高空指令");
-                if (sargentSetting.getType() == 0) {
-                    SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
-                            SerialConfigs.CMD_SARGENT_JUMP_EMPTY));
-                } else {
-                    RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
-                            SerialConfigs.CMD_SARGENT_JUMP_EMPTY));
-                }
+//        checkService.scheduleAtFixedRate(new Runnable() {
+//            @Override
+//            public void run() {
+//                check++;
+//                LogUtils.normal(SerialConfigs.CMD_SARGENT_JUMP_EMPTY.length+"---"+StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_EMPTY)+"---摸高空指令");
+//                if (sargentSetting.getType() == 0) {
+//                    SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
+//                            SerialConfigs.CMD_SARGENT_JUMP_EMPTY));
+//                } else {
+//                    RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
+//                            SerialConfigs.CMD_SARGENT_JUMP_EMPTY));
+//                }
+//
+//                if (check > 2) {
+//                    // 失去连接
+//                    check = 0;
+//                    isConnect = false;
+//                    mHandler.sendEmptyMessage(UN_CONNECT);
+//                }
+//            }
+//        }, 1000, 3000, TimeUnit.MILLISECONDS);
 
-                if (check > 2) {
-                    // 失去连接
-                    check = 0;
-                    isConnect = false;
-                    mHandler.sendEmptyMessage(UN_CONNECT);
-                }
-            }
-        }, 1000, 3000, TimeUnit.MILLISECONDS);
 
+        check++;
+        LogUtils.normal(SerialConfigs.CMD_SARGENT_JUMP_EMPTY.length+"---"+StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_EMPTY)+"---摸高空指令");
+        if (sargentSetting.getType() == 0) {
+            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
+                    SerialConfigs.CMD_SARGENT_JUMP_EMPTY));
+        } else {
+            RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
+                    SerialConfigs.CMD_SARGENT_JUMP_EMPTY));
+        }
+
+        if (check > 2) {
+            // 失去连接
+            isConnect = false;
+            mHandler.sendEmptyMessage(UN_CONNECT);
+        }
+
+        mHandler.sendEmptyMessageDelayed(SEND_EMPTY,2000);
     }
 
     @Override
@@ -185,21 +200,6 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
         baseStuPair.setBaseDevice(baseDevice);
         updateDevice(baseDevice);
         if (isConnect) {
-            if (!isSetBase) {
-                byte[] buf = SerialConfigs.CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight());
-                LogUtils.normal(buf.length+"---"+StringUtility.bytesToHexString(buf)+"---摸高0点设置指令");
-
-                if (sargentSetting.getType() == 0) {
-
-                    SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
-                            buf));
-                } else {
-
-                    RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
-                            buf));
-                }
-                isSetBase = true;
-            }
             LogUtils.normal(SerialConfigs.CMD_SARGENT_JUMP_START.length+"---"+StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_START)+"---摸高开始测试指令");
             if (sargentSetting.getType() == 0) {
                 SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
@@ -211,7 +211,7 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
 
         }
         testState = TestState.WAIT_RESULT;
-        baseStuPair.setTestTime(TestConfigs.df.format(new Date()));
+        baseStuPair.setTestTime(DateUtil.getCurrentTime()+"");
     }
 
     @Override
@@ -327,6 +327,9 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
                     updateDevice(device1);
                     toastSpeak("测试结束");
                     break;
+                case SEND_EMPTY:
+                    sendEmpty();
+                    break;
             }
             return false;
         }
@@ -337,6 +340,9 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
             toastSpeak("数据异常，请重测");
             return;
         }
+        if (stuPair == null)
+            return;
+        stuPair.setResult(result);
         if (testState == TestState.WAIT_RESULT) {
             if (sargentSetting.isFullReturn()) {
                 if (baseStuPair.getStudent().getSex() == Student.MALE) {
@@ -345,7 +351,6 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
                     stuPair.setFullMark(result >= Integer.parseInt(sargentSetting.getFemaleFull()) * 10);
                 }
             }
-            stuPair.setResult(result);
             stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
             updateTestResult(stuPair);
             updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, 1));
@@ -372,9 +377,7 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
     protected void onStop() {
         super.onStop();
         LogUtils.life("SargentGroupActivity onStop");
-        if (checkService != null) {
-            checkService.shutdown();
-        }
+
     }
 
     public void showChangeBadDialog() {

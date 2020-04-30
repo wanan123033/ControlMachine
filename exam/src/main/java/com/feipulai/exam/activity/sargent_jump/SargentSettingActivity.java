@@ -28,6 +28,7 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.manager.SargentJumpMore;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
+import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.SargentJumpResult;
 import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
@@ -41,6 +42,7 @@ import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -209,7 +211,6 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
         if (sargentSetting.getType() != 2) {
             llLight.setVisibility(View.GONE);
             llCheck.setVisibility(View.GONE);
-            tvAccuracyUse.setVisibility(View.GONE);
         }
     }
 
@@ -357,8 +358,24 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
                 SargentJumpMore.checkSelf(deviceId);
                 break;
             case R.id.tv_accuracy_use:
-                Logger.i("基础高度：" + sargentSetting.getBaseHeight() + "设备号：" + deviceId);
-                SargentJumpMore.setBaseHeight(sargentSetting.getBaseHeight(),deviceId);
+                int type = sargentSetting.getType();
+                byte[] buf = SerialConfigs.CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight());
+                LogUtils.normal(buf.length+"---"+StringUtility.bytesToHexString(buf)+"摸高0点设置指令");
+                switch (type){
+                    case 0:
+                        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
+                                buf));
+                        break;
+                    case 1:
+                        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
+                                buf));
+                        break;
+                    case 2:
+                        Logger.i("基础高度：" + sargentSetting.getBaseHeight() + "设备号：" + deviceId);
+                        SargentJumpMore.setBaseHeight(sargentSetting.getBaseHeight(),deviceId);
+                        break;
+                }
+
                 break;
 
         }
@@ -387,6 +404,8 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
             case SerialConfigs.SARGENT_JUMP_CHECK:
                 SargentJumpResult jumpResult = (SargentJumpResult) msg.obj;
                 byte[] incorrectPoles = jumpResult.getIncorrectPoles();
+                if (incorrectPoles == null ||incorrectPoles.length == 0 )
+                    return;
                 boolean check = true;
                 flagBad = 0;
                 for (int i = 0; i < incorrectPoles.length; i++) {

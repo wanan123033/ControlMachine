@@ -44,9 +44,9 @@ public class SargentItemSelectActivity extends BaseTitleActivity {
     protected void initData() {
         mContext = this;
         itemList = new ArrayList<>();
-        itemList.add(new Item("触摸式摸高板-有线"));
-        itemList.add(new Item("触摸式摸高板-无线"));
-        itemList.add(new Item("红外摸高板"));
+        itemList.add(new Item("V1摸高板-有线"));
+        itemList.add(new Item("V1摸高板-无线"));
+        itemList.add(new Item("V2摸高板"));
         rvSubitems.setLayoutManager(new LinearLayoutManager(this));
         adapter = new SubItemsSelectAdapter(itemList);
         rvSubitems.setAdapter(adapter);

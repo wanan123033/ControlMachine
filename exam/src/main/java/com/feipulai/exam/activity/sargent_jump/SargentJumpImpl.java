@@ -93,6 +93,8 @@ public class SargentJumpImpl implements SerialDeviceManager.RS232ResiltListener,
                         if (tempId[result.getDeviceId()-1] == result.getDeviceId())
                             showRes[result.getDeviceId()-1] = true;
                     }
+                }else {
+                    jumpListener.onFree(1);
                 }
                 break;
             case SARGENT_JUMP_START_RESPONSE:
