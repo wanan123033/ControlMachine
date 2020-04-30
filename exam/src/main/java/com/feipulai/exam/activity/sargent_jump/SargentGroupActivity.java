@@ -377,6 +377,7 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
     protected void onStop() {
         super.onStop();
         LogUtils.life("SargentGroupActivity onStop");
+        mHandler.removeCallbacksAndMessages(null);
 
     }
 
