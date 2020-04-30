@@ -87,9 +87,9 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
                     @Override
                     public void onClick(View v) {
                         RadioChannelCommand command = new RadioChannelCommand(0);
-                        LogUtils.normal(command.getCommand().length+"---"+ StringUtility.bytesToHexString(command.getCommand())+"---跳远切频指令");
-                        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(command));
-                        currentFrequency = 0;
+                        LogUtils.normal(command.getCommand().length+"---"+StringUtility.bytesToHexString(command.getCommand())+"---摸高切频指令");
+                        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(0)));
+                        currentFrequency = 0 ;
                         showChangeBadDialog();
                     }
                 });
