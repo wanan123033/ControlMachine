@@ -248,13 +248,13 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
             return false;
         }
 
-        setting.setMaleFullScore(Integer.valueOf(editMaleFull.getText().toString()));
+        setting.setMaleFullScore(Double.valueOf(editMaleFull.getText().toString()));
         if (TextUtils.isEmpty(editFemaleFull.getText().toString())) {
             ToastUtils.showShort("启动满分跳过必须设置满分值");
             ToastUtils.showShort("请输入女子满分值");
             return false;
         }
-        setting.setFemaleFullScore(Integer.valueOf(editFemaleFull.getText().toString()));
+        setting.setFemaleFullScore(Double.valueOf(editFemaleFull.getText().toString()));
         return true;
     }
 
