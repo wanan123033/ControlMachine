@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.feipulai.common.utils.ActivityUtils;
 import com.feipulai.common.utils.IntentUtil;
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.basketball.adapter.DribbleShootAdapter;
@@ -77,6 +78,9 @@ public class DribbleShootActivity extends BaseShootActivity {
 
     private List<BasketBallResult> dateList = new ArrayList<>();
     private DribbleShootAdapter mAdapter;
+    private String[] interceptRound = new String[]{"1起点", "2折返1", "3投篮", "4折返2", "5投篮", "6折返1", "7投篮", "8折返2", "9投篮"};
+    private ShootSetting setting;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_dribble_shoot_activity;
@@ -87,22 +91,34 @@ public class DribbleShootActivity extends BaseShootActivity {
         super.initData();
         individualCheckFragment.setResultView(lvResults);
         ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), individualCheckFragment, R.id.ll_individual_check);
-        for (int i = 0;i< 6;i++){
+
+        mAdapter = new DribbleShootAdapter(this, dateList);
+        rvState.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        rvState.setAdapter(mAdapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setting = SharedPrefsUtil.loadFormSource(this, ShootSetting.class);
+        if (setting == null) {
+            setting = new ShootSetting();
+        }
+        dateList.clear();
+        for (int i = 0; i <= setting.getInterceptNo(); i++) {
             BasketBallResult ballResult = new BasketBallResult();
-            ballResult.setName("折返点"+(i+1));
-            ballResult.setState(i%2 == 0);
+            ballResult.setName(interceptRound[i]);
+            ballResult.setState(false);
             dateList.add(ballResult);
         }
-        mAdapter = new DribbleShootAdapter(this,dateList);
-        rvState.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
-        rvState.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
     protected void updateStudent(Student student) {
         tvStudentCode.setText(student.getStudentCode());
         tvStudentName.setText(student.getStudentName());
-        tvGender.setText(student.getSex()==0?"男":"女");
+        tvGender.setText(student.getSex() == 0 ? "男" : "女");
     }
 
 
