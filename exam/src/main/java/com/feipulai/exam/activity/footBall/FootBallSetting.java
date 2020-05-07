@@ -18,8 +18,8 @@ public class FootBallSetting {
      * 满分跳过
      */
     private boolean fullSkip = false;
-    private int maleFullScore;//男子
-    private int femaleFullScore;//女子
+    private double maleFullScore;//男子
+    private double femaleFullScore;//女子
     /**
      * 分组测试模式 0 连续 1 循环
      */
@@ -106,19 +106,19 @@ public class FootBallSetting {
         this.fullSkip = fullSkip;
     }
 
-    public int getMaleFullScore() {
+    public double getMaleFullScore() {
         return maleFullScore;
     }
 
-    public void setMaleFullScore(int maleFullScore) {
+    public void setMaleFullScore(double maleFullScore) {
         this.maleFullScore = maleFullScore;
     }
 
-    public int getFemaleFullScore() {
+    public double getFemaleFullScore() {
         return femaleFullScore;
     }
 
-    public void setFemaleFullScore(int femaleFullScore) {
+    public void setFemaleFullScore(double femaleFullScore) {
         this.femaleFullScore = femaleFullScore;
     }
 
