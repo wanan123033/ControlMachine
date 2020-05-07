@@ -264,7 +264,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
 
     @Override
     protected int setLayoutResID() {
-        return R.layout.activity_middle_distance_race3;
+        return R.layout.activity_middle_distance_race;
     }
 
 
@@ -433,7 +433,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         videoPlayer = new VideoPlayWindow(this);
         videoPlayer.initVideoWindow(eventHandler);
 
-        //检查存储空间大小，给予提示，录像15M/sec
+        //检查存储空间大小，给予提示，录像大概15M/sec
         freeSpace = new BigDecimal((float) FileUtil.getFreeSpaceStorage() / (1024 * 1024 * 1024)).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         freeTime = new BigDecimal(freeSpace * 1024 / (15 * 60)).setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue();
 
@@ -883,8 +883,8 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                 .setDimValue(0.5f)
                 //是否允许点击PopupWindow之外的地方消失
                 .setFocusAndOutsideEnable(true)
-                .setHeight(height * 2 / 3)
-                .setWidth(width * 3 / 4)
+                .setHeight(height)
+                .setWidth(width)
                 .apply();
         resultScroll = mSelectPop.findViewById(R.id.result_scroll);
 
@@ -954,6 +954,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         nettyClient.sendMsgToServer(TcpConfig.CMD_CONNECT, this);
     }
 
+    //发送断开设备命令
     private void sendDisConnect() {
         nettyClient.sendMsgToServer(TcpConfig.getCmdEndTiming(), this);
     }

@@ -281,7 +281,7 @@ public class TestConfigs {
                 }
             } else if (codeItem == null && nameItem == null) {
                 DBManager.getInstance().insertItem(ItemDefault.CODE_ZCP, item.getItemCode()
-                        , item.getItemName(), "分'秒");
+                        , item.getItemName(), "分'秒", DBManager.TEST_TYPE_TIME);
             } else if (codeItem != null && nameItem == null) {
                 if (codeItem.getMachineCode() == ItemDefault.CODE_ZCP) {
                     codeItem.setItemName(item.getItemName());

@@ -29,6 +29,14 @@ public class SystemSetting {
      * 服务器Ip
      */
     private String serverIp;
+
+    /**
+     * tcp ip
+     */
+    private String tcpIp;
+
+    private boolean isTCP = false;
+
     /**
      * 主机号
      */
@@ -134,6 +142,22 @@ public class SystemSetting {
 
     public void setServerIp(String serverIp) {
         this.serverIp = serverIp;
+    }
+
+    public String getTcpIp() {
+        return tcpIp;
+    }
+
+    public void setTcpIp(String tcpIp) {
+        this.tcpIp = tcpIp;
+    }
+
+    public void setTCP(boolean TCP) {
+        isTCP = TCP;
+    }
+
+    public boolean isTCP() {
+        return isTCP;
     }
 
     public int getHostId() {
@@ -281,7 +305,9 @@ public class SystemSetting {
                 "testName='" + testName + '\'' +
                 ", testSite='" + testSite + '\'' +
                 ", serverIp='" + serverIp + '\'' +
+                ", tcpIp='" + tcpIp + '\'' +
                 ", hostId=" + hostId +
+                ", isTCP='" + isTCP +
                 ", isAutoBroadcast=" + isAutoBroadcast +
                 ", isAutoPrint=" + isAutoPrint +
                 ", isRtUpload=" + isRtUpload +

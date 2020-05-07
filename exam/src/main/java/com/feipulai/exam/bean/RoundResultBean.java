@@ -49,6 +49,14 @@ public class RoundResultBean implements Serializable {
     private String remark2;
     private String remark3;
 
+    public int getResultStatus() {
+        return resultStatus;
+    }
+
+    public int getTrackNo() {
+        return trackNo;
+    }
+
     public void setItemCode(String itemCode) {
         this.itemCode = itemCode;
     }

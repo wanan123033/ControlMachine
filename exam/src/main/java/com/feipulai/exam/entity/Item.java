@@ -30,7 +30,7 @@ public class Item {
     private int digital;//保留小数位数
     private int testNum;//项目测试次数	表示一次检录的测试次数	 默认1次
     private int carryMode;//进位方式	不取舍,四舍五入,非零进一,非零舍去  与显示成绩有关 （0.不去舍，1.四舍五入 2.舍位 3.非零进取）
-    private int testType;    //项目测量方式,计时，计数，远度，力量,但是暂时不用
+    private int testType;    //项目测量方式,1计时，2计数，3远度，4力量(重量)
     private int lastResultMode;//最终成绩选择模式 （1.最后成绩，2.补考成绩，3.最好）
 //    private int cycleNo;//中长跑圈数(已无用)
 
