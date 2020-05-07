@@ -8,8 +8,12 @@ import android.view.View;
 
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.serial.SerialDeviceManager;
+import com.feipulai.device.serial.beans.RunTimerConnectState;
+import com.feipulai.device.serial.beans.RunTimerResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.basketball.util.RunTimerImpl;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.fragment.IndividualCheckFragment;
 import com.feipulai.exam.activity.setting.SettingActivity;
@@ -35,12 +39,14 @@ public abstract class BaseShootActivity extends BaseTitleActivity
     private static final int WAIT_CONFIRM = 0x5;
     protected volatile int state = WAIT_FREE;
     private List<StuDevicePair> pairs = new ArrayList<>();
-
+    private SerialDeviceManager deviceManager;
     @Override
     protected void initData() {
+        pairs.add(new StuDevicePair());
         individualCheckFragment = new IndividualCheckFragment();
         individualCheckFragment.setOnIndividualCheckInListener(this);
-
+        deviceManager = SerialDeviceManager.getInstance();
+        deviceManager.setRS232ResiltListener(runTimer);
     }
 
 
@@ -127,5 +133,26 @@ public abstract class BaseShootActivity extends BaseTitleActivity
         return false;
     }
 
+    private RunTimerImpl runTimer = new RunTimerImpl(new RunTimerImpl.RunTimerListener() {
+        @Override
+        public void onGetTime(RunTimerResult result) {
 
+        }
+
+        @Override
+        public void onConnected(RunTimerConnectState connectState) {
+
+        }
+
+        @Override
+        public void onTestState(int state) {
+
+        }
+    });
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        deviceManager.setRS232ResiltListener(null);
+    }
 }

@@ -15,7 +15,33 @@ public class ShootSetting {
     private int maleFullShoot;//男子投篮
     private int femaleFullShoot;//女子投篮
     private int maleFullDribble;//男子运球
+    private int interceptNo = 3;
+    private int startNo = 1;
+    private int back1No = 2;
+    private int back2No = 3;
+    public int getStartNo() {
+        return startNo;
+    }
 
+    public void setStartNo(int startNo) {
+        this.startNo = startNo;
+    }
+
+    public int getBack1No() {
+        return back1No;
+    }
+
+    public void setBack1No(int back1No) {
+        this.back1No = back1No;
+    }
+
+    public int getBack2No() {
+        return back2No;
+    }
+
+    public void setBack2No(int back2No) {
+        this.back2No = back2No;
+    }
     public int getTestNo() {
         return testNo;
     }
@@ -86,4 +112,12 @@ public class ShootSetting {
      */
     private int testPattern = TestConfigs.GROUP_PATTERN_SUCCESIVE;
     private int testType = 0;
+
+    public int getInterceptNo() {
+        return interceptNo;
+    }
+
+    public void setInterceptNo(int interceptNo) {
+        this.interceptNo = interceptNo;
+    }
 }
