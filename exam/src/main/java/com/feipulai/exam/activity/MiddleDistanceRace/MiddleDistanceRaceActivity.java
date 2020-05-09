@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -15,18 +16,22 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -57,6 +62,7 @@ import com.feipulai.exam.activity.MiddleDistanceRace.bean.RaceResultBean;
 import com.feipulai.exam.activity.MiddleDistanceRace.bean.SelectResultBean;
 import com.feipulai.exam.activity.MiddleDistanceRace.bean.ServiceTcpBean;
 import com.feipulai.exam.activity.MiddleDistanceRace.vhtableview.VHTableAdapter;
+import com.feipulai.exam.activity.MiddleDistanceRace.vhtableview.VHTableResultAdapter;
 import com.feipulai.exam.activity.MiddleDistanceRace.vhtableview.VHTableView;
 import com.feipulai.exam.activity.base.MiddleBaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -76,14 +82,18 @@ import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.view.MiddleRace.ScrollablePanel;
+import com.kk.taurus.playerbase.assist.InterEvent;
 import com.kk.taurus.playerbase.assist.OnVideoViewEventHandler;
 import com.kk.taurus.playerbase.entity.DataSource;
+import com.kk.taurus.playerbase.event.OnPlayerEventListener;
 import com.kk.taurus.playerbase.player.IPlayer;
+import com.kk.taurus.playerbase.receiver.ReceiverGroup;
 import com.kk.taurus.playerbase.widget.BaseVideoView;
 import com.orhanobut.logger.Logger;
 import com.ww.fpl.videolibrary.camera.HkCameraManager;
 import com.ww.fpl.videolibrary.play.VideoPlayWindow;
 import com.ww.fpl.videolibrary.play.play.DataInter;
+import com.ww.fpl.videolibrary.play.play.ReceiverGroupManager;
 import com.ww.fpl.videolibrary.play.util.PUtil;
 import com.zyyoona7.popup.EasyPopup;
 
@@ -91,8 +101,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -247,7 +259,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
     private int spanTime;//芯片接收时间间隔
     private int height;
     private EasyPopup mSelectPop;
-    private ScrollablePanel resultScroll;
+    //    private ScrollablePanel resultScroll;
     private int carryMode;
     private int digital;
     private boolean isChange = false;
@@ -261,6 +273,12 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
     private Button btndisConnect;
     private String camera_ip;
     private DialogUtil dialogUtil;
+    private ReceiverGroup mReceiverGroup;
+    private Button btnVideoPlay;
+    private Button btnVideoStartPause;
+    private ImageView ivControl;
+    private VHTableView tableResult;
+    private VHTableResultAdapter tableResultAdapter;
 
     @Override
     protected int setLayoutResID() {
@@ -396,7 +414,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         //连接设备弹窗
         initConnectPop();
 
-        initSelectPop();
+//        initSelectPop();
 
         //当上一次服务开启时间小于12小时，每次进入自动开启服务
         if (!TextUtils.isEmpty(server_Port) && lastServiceTime != 0 && (System.currentTimeMillis() - lastServiceTime) < 12 * 60 * 60 * 1000) {
@@ -406,23 +424,9 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
     }
 
     private DataSource mDataSource;
-    private VideoPlayWindow videoPlayer;
     private HkCameraManager hkCamera;
     private boolean hkInit;
-
-//    private void initCamera() {
-//        camera_ip = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, CAMERA_IP, "");
-//        mDataSource = new DataSource();
-//        videoPlayer = new VideoPlayWindow(this);
-//        videoPlayer.initVideoWindow(eventHandler);
-//        hkCamera = new HkCameraManager(this, camera_ip, HK_PORT, HK_USER, HK_PSW);
-//        hkInit = hkCamera.initeSdk();
-//        if (hkInit) {
-//            hkCamera.login2HK();
-//        } else {
-//            ToastUtils.showShort("海康摄像头初始化失败");
-//        }
-//    }
+    private BaseVideoView mVideoView;
 
     private double freeTime;
     private double freeSpace;
@@ -430,8 +434,6 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
     private void initCamera() {
         camera_ip = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, CAMERA_IP, "");
         mDataSource = new DataSource();
-        videoPlayer = new VideoPlayWindow(this);
-        videoPlayer.initVideoWindow(eventHandler);
 
         //检查存储空间大小，给予提示，录像大概15M/sec
         freeSpace = new BigDecimal((float) FileUtil.getFreeSpaceStorage() / (1024 * 1024 * 1024)).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
@@ -454,41 +456,6 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
             }
         });
     }
-
-    private OnVideoViewEventHandler eventHandler = new OnVideoViewEventHandler() {
-        @Override
-        public void onAssistHandle(BaseVideoView assist, int eventCode, Bundle bundle) {
-            super.onAssistHandle(assist, eventCode, bundle);
-            switch (eventCode) {
-                case DataInter.Event.EVENT_CODE_ERROR_SHOW:
-                    videoPlayer.mWindowVideoView.stop();
-                    break;
-                case DataInter.Event.EVENT_CODE_REQUEST_CLOSE:
-                    videoPlayer.mWindowVideoView.close();
-                    break;
-                case DataInter.Event.EVENT_CODE_REQUEST_SPEED_X_HALF:
-                    Log.i("eventHandler", "X0.5");
-                    videoPlayer.mWindowVideoView.setSpeed((float) 0.5);
-                    break;
-                case DataInter.Event.EVENT_CODE_REQUEST_SPEED_X_1:
-                    Log.i("eventHandler", "X1");
-                    videoPlayer.mWindowVideoView.setSpeed((float) 1.0);
-                    break;
-                case DataInter.Event.EVENT_CODE_REQUEST_SPEED_X_2:
-                    Log.i("eventHandler", "X2");
-                    videoPlayer.mWindowVideoView.setSpeed((float) 2.0);
-                    break;
-            }
-        }
-
-        @Override
-        public void requestRetry(BaseVideoView assist, Bundle bundle) {
-            if (PUtil.isTopActivity(MiddleDistanceRaceActivity.this)) {
-                super.requestRetry(assist, bundle);
-            }
-        }
-    };
-
 
     private int cycleNo = 0;//当前项目圈数
 
@@ -871,7 +838,12 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
     }
 
 
-    private List<List<String>> selectResults;
+    private List<List<String>> selectResults = new ArrayList<>();
+    private int videoPosition;
+    private String videoResult;
+    private boolean hasStart = false;
+    private boolean userPause = true;
+    private ArrayList<String> resultTitles = new ArrayList<>();
 
     /**
      * 初始化查询成绩pop
@@ -883,14 +855,200 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                 .setDimValue(0.5f)
                 //是否允许点击PopupWindow之外的地方消失
                 .setFocusAndOutsideEnable(true)
-                .setHeight(height)
-                .setWidth(width)
                 .apply();
-        resultScroll = mSelectPop.findViewById(R.id.result_scroll);
+        tableResult = mSelectPop.findViewById(R.id.vht_table_result);
 
-        selectResults = new ArrayList<>();
-        resultScroll.setPanelAdapter(new SelectResultAdapter(selectResults));
+        tableResultAdapter = new VHTableResultAdapter(mContext, resultTitles, selectResults, new VHTableResultAdapter.OnResultItemLongClick() {
+            @Override
+            public void resultListLongClick(final int row) {
+                if (!userPause || videoPosition == 0) {
+                    ToastUtils.showShort("录像未暂停，无法获取成绩");
+                    return;
+                }
+                final int track = Integer.parseInt(selectResults.get(row).get(0));
+                dialogUtil.showCommonDialog(completeResults.get(track).getStudentCode() + "  更正成绩：" + videoResult, 0, new DialogUtil.DialogListener() {
+                    @Override
+                    public void onPositiveClick() {
+                        ToastUtils.showShort(videoResult);
+                        completeResults.get(track).setResult(videoPosition - seekTime);
+                        int[] cResult = DataUtil.byteArray2RgbArray(completeResults.get(track).getCycleResult());
+                        cResult[cResult.length - 1] = videoPosition - seekTime;
+                        completeResults.get(track).setCycleResult(DataUtil.byteArray2RgbArray(cResult));
+                        DBManager.getInstance().updateRoundResult(completeResults.get(track));
+                        selectResults.get(row).set(3, videoResult);
+                        selectResults.get(row).set(selectResults.get(row).size() - 1, videoResult);
+                        tableResult.notifyContent();
+                    }
+
+                    @Override
+                    public void onNegativeClick() {
+
+                    }
+                });
+            }
+        });
+
+        mVideoView = mSelectPop.findViewById(R.id.baseVideoView);
+        btnVideoPlay = mSelectPop.findViewById(R.id.btn_video_play);
+        btnVideoStartPause = mSelectPop.findViewById(R.id.btn_video_start_pause);
+        ivControl = mSelectPop.findViewById(R.id.iv_video_control);
+
+        updateVideo();
+        mReceiverGroup = ReceiverGroupManager.get().getReceiverGroup(this);
+        mReceiverGroup.getGroupValue().putBoolean(DataInter.Key.KEY_CONTROLLER_TOP_ENABLE, true);
+        mVideoView.setReceiverGroup(mReceiverGroup);
+        mVideoView.setEventHandler(onVideoViewEventHandler);
+
+        ivControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int state = mVideoView.getState();
+                Log.i("mVideoView", "1------" + state);
+                if (state == IPlayer.STATE_PLAYBACK_COMPLETE)
+                    return;
+
+                Log.i("mVideoView", "2------" + mVideoView.isInPlaybackState());
+                Log.i("mVideoView", "3------" + userPause);
+                if (mVideoView.isInPlaybackState()) {
+                    if (userPause) {
+                        mVideoView.resume();
+                        userPause = false;
+                    } else {
+                        mVideoView.pause();
+                        userPause = true;
+                        videoPosition = mVideoView.getCurrentPosition();
+                        if (carryMode == 0) {
+                            videoResult = DateUtil.caculateTime(videoPosition - seekTime, 3, carryMode);
+                        } else {
+                            videoResult = DateUtil.caculateTime(videoPosition - seekTime, digital, carryMode);
+                        }
+                    }
+                } else {
+                    if (userPause) {
+                        if (hasStart) {
+                            mVideoView.rePlay(seekTime);
+                        } else {
+                            initPlay();
+                        }
+                        userPause = false;
+                    } else {
+                        mVideoView.stop();
+                        userPause = true;
+                    }
+                }
+                Log.i("mVideoView", "4------" + userPause);
+                if (userPause) {
+                    ivControl.setImageResource(R.mipmap.ic_video_player_btn_play);
+                } else {
+                    ivControl.setImageResource(R.mipmap.ic_video_player_btn_pause);
+                }
+            }
+        });
+        btnVideoPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int state = mVideoView.getState();
+                if (state == IPlayer.STATE_PLAYBACK_COMPLETE)
+                    return;
+                if (mVideoView.isInPlaybackState()) {
+                    if (!userPause)
+                        mVideoView.resume();
+                } else {
+                    mVideoView.rePlay(seekTime);
+                }
+                initPlay();
+            }
+        });
+        btnVideoStartPause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int state = mVideoView.getState();
+                if (state == IPlayer.STATE_PLAYBACK_COMPLETE)
+                    return;
+                if (mVideoView.isInPlaybackState()) {
+                    mVideoView.pause();
+                    videoPosition = mVideoView.getCurrentPosition();
+                } else {
+                    mVideoView.stop();
+                }
+            }
+        });
+
+        mSelectPop.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                mVideoView.stop();
+                mVideoView.updateRender();
+                videoResult = "";
+                seekTime = 0;
+            }
+        });
     }
+
+    private void updateVideo() {
+        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mVideoView.getLayoutParams();
+        layoutParams.width = width * 2 / 3 - 20;
+        layoutParams.height = (width * 2 / 3 - 20) * 720 / 1280;
+        layoutParams.setMargins(0, 0, 0, 0);
+        mVideoView.setLayoutParams(layoutParams);
+    }
+
+    //快进时间
+    private int seekTime;
+
+    private void initPlay() {
+        Log.i("mVideoView", "5------" + hasStart);
+        if (!hasStart) {
+            String startTime = groupItemBeans.get(groupPosition).getGroup().getRemark1();
+            List<String> paths = PUtil.getFilesAllName(hkCamera.PATH);
+            Log.i("timeLong", "paths---" + paths.toString());
+            String[] timeLong = new String[0];
+            for (String path : paths
+                    ) {
+                timeLong = path.replace(".mp4", "").split("_");
+                Log.i("timeLong", "---" + timeLong.toString());
+                if (timeLong.length == 2 && Long.parseLong(startTime) >= Long.parseLong(timeLong[0]) && Long.parseLong(startTime) <= Long.parseLong(timeLong[1])) {
+                    mDataSource.setData(hkCamera.PATH + path);
+                    mDataSource.setTitle("发令时刻：" + DateUtil.formatTime2(Long.parseLong(startTime), "yyyy/MM/dd HH:mm:ss:SSS"));
+                    break;
+                }
+            }
+            if (mDataSource.getData().isEmpty()) {
+                ToastUtils.showShort("找不到录像文件");
+                return;
+            }
+            //发令时刻-视频开始录制时间=需要快进的时间（最终成绩=视频暂停时间-快进时间）
+            seekTime = (int) (Long.parseLong(startTime) - Long.parseLong(timeLong[0]));
+            Log.i("mVideoView", "seekTime-----" + seekTime);
+            mVideoView.setDataSource(mDataSource);
+            mVideoView.start(seekTime);
+            hasStart = true;
+        }
+    }
+
+    private OnVideoViewEventHandler onVideoViewEventHandler = new OnVideoViewEventHandler() {
+        @Override
+        public void onAssistHandle(BaseVideoView assist, int eventCode, Bundle bundle) {
+            super.onAssistHandle(assist, eventCode, bundle);
+            Log.i("mVideoView", "6------" + eventCode);
+            switch (eventCode) {
+                case InterEvent.CODE_REQUEST_PAUSE:
+                    userPause = true;
+                    break;
+                case DataInter.Event.EVENT_CODE_ERROR_SHOW:
+                    mVideoView.stop();
+                    break;
+            }
+        }
+
+        @Override
+        public void requestRetry(BaseVideoView videoView, Bundle bundle) {
+            if (PUtil.isTopActivity(MiddleDistanceRaceActivity.this)) {
+                super.requestRetry(videoView, bundle);
+            }
+        }
+    };
+
 
     private boolean isIntentFlag = false;//跳转监听（当跳转时在onPause中断开连接）
 
@@ -968,12 +1126,6 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
     @Override
     protected void onResume() {
         super.onResume();
-//        mHander.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                hkCamera.startPreview();
-//            }
-//        }, 1500);
         mHander.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -1064,10 +1216,6 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
             isIntentFlag = false;
         }
         hkCamera.stopPreview();
-        int state = videoPlayer.mWindowVideoView.getState();
-        if (state == IPlayer.STATE_PLAYBACK_COMPLETE)
-            return;
-        videoPlayer.mWindowVideoView.pause();
     }
 
     @Override
@@ -1101,7 +1249,11 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
 
         hkCamera.loginOut();
         hkCamera.clearSdk();
-        videoPlayer.clear();
+
+        if (mVideoView != null) {
+            mVideoView.stopPlayback();
+            mVideoView = null;
+        }
 
 //        try {
 //            if (mySocketServer != null)
@@ -1260,7 +1412,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                     viewConnectState.setBackgroundResource(R.drawable.blue_circle);
                 } else {
                     if (isFirst) {
-                        ToastUtils.showShort("连接失败");
+                        ToastUtils.showShort("设备连接失败");
                         mHander.removeMessages(5);
                         nettyClient.disconnect();
                         nettyClient = null;
@@ -1662,7 +1814,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                         roundResults.add(roundResult);
 
                         uploadResult = new UploadResults(dbGroupList.getScheduleNo(), resultBean2.getItemCode()
-                                , resultBean2.getStudentCode(), "1",dbGroupList, RoundResultBean.beanCope2(roundResult,dbGroupList));//需要上传的成绩对象
+                                , resultBean2.getStudentCode(), "1", dbGroupList, RoundResultBean.beanCope2(roundResult, dbGroupList));//需要上传的成绩对象
 
                         uploadResults.add(uploadResult);
                     }
@@ -1859,6 +2011,8 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         });
     }
 
+    private Map<Integer, RoundResult> completeResults = new HashMap<>();
+
     private void showCompleteDialog() {
         String[] selectItems = new String[]{"查看成绩", "打印成绩", "回放录像"};
         AlertDialog.Builder listDialog = new AlertDialog.Builder(this);
@@ -1869,10 +2023,18 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                 switch (which) {
                     case 0:
                         selectResults.clear();
+                        resultTitles.clear();
+                        completeResults.clear();
+                        resultTitles.add("道次");
+                        resultTitles.add("考号");
+                        resultTitles.add("姓名");
+                        resultTitles.add("最终成绩");
 
                         List<GroupItem> groupItems = groupItemBeans.get(groupPosition).getGroupItems();
                         SelectResultBean selectResultBean;
                         List<String> strings;
+                        int resultCycles = 0;
+                        Map<Integer, RoundResult> resultMap;
                         for (GroupItem groupItem : groupItems
                                 ) {
                             Student student = DBManager.getInstance().queryStudentByStuCode(groupItem.getStudentCode());
@@ -1883,7 +2045,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                             selectResultBean.setTrackNo(groupItem.getTrackNo());
 
                             RoundResult roundResult = DBManager.getInstance().queryResultByStudentCode(groupItem.getStudentCode(), groupItem.getItemCode(), groupItemBeans.get(groupPosition).getGroup().getId());
-
+                            completeResults.put(groupItem.getTrackNo(), roundResult);
                             strings = new ArrayList<>();
                             strings.add(groupItem.getTrackNo() + "");
                             strings.add(student.getStudentCode());
@@ -1913,6 +2075,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
 //                            strings.add(student.getSex()==0?"男":"女");
                             if (roundResult.getCycleResult() != null) {
                                 int[] results = DataUtil.byteArray2RgbArray(roundResult.getCycleResult());
+                                resultCycles = results.length;
                                 for (int result : results
                                         ) {
                                     String resultString;
@@ -1934,36 +2097,42 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                                 return Integer.valueOf(o1.get(0)).compareTo(Integer.valueOf(o2.get(0)));//按照道次升序排列
                             }
                         });
-                        selectResults.add(0, null);//添加标题栏
-                        resultScroll.notifyDataSetChanged();
+                        for (int i = 1; i < resultCycles + 1; i++) {
+                            resultTitles.add("第" + i + "圈");
+                        }
 
+                        if (mSelectPop == null) {
+                            initSelectPop();
+                            tableResult.setAdapter(tableResultAdapter);
+                        } else {
+                            tableResult.notifyContent();
+                        }
                         mSelectPop.showAtLocation(getWindow().getDecorView(), Gravity.CENTER, 0, 0);
                         break;
                     case 1:
                         MiddlePrintUtil.print2(groupItemBeans.get(groupPosition), digital, carryMode);
                         break;
                     case 2:
-                        String startTime = groupItemBeans.get(groupPosition).getGroup().getRemark1();
-                        List<String> paths = PUtil.getFilesAllName(hkCamera.PATH);
-                        Log.i("timeLong", "paths---" + paths.toString());
-                        String[] timeLong = new String[0];
-                        for (String path : paths
-                                ) {
-                            timeLong = path.replace(".mp4", "").split("_");
-                            Log.i("timeLong", "---" + timeLong.toString());
-                            if (timeLong.length == 2 && Long.parseLong(startTime) >= Long.parseLong(timeLong[0]) && Long.parseLong(startTime) <= Long.parseLong(timeLong[1])) {
-                                mDataSource.setData(hkCamera.PATH + path);
-                                mDataSource.setTitle("发令时刻：" + DateUtil.formatTime2(Long.parseLong(startTime), "yyyy/MM/dd HH:mm:ss:SSS"));
-                                break;
-                            }
-                        }
-                        if (mDataSource.getData().isEmpty()) {
-                            ToastUtils.showShort("找不到录像文件");
-                            return;
-                        }
-                        int seekTime = (int) (Long.parseLong(startTime) - Long.parseLong(timeLong[0]));
-                        Log.i("seekTime", "-----" + seekTime);
-                        videoPlayer.activeWindowVideoView(MiddleDistanceRaceActivity.this, mDataSource, seekTime);
+//                        String startTime = groupItemBeans.get(groupPosition).getGroup().getRemark1();
+//                        List<String> paths = PUtil.getFilesAllName(hkCamera.PATH);
+//                        Log.i("timeLong", "paths---" + paths.toString());
+//                        String[] timeLong = new String[0];
+//                        for (String path : paths
+//                                ) {
+//                            timeLong = path.replace(".mp4", "").split("_");
+//                            Log.i("timeLong", "---" + timeLong.toString());
+//                            if (timeLong.length == 2 && Long.parseLong(startTime) >= Long.parseLong(timeLong[0]) && Long.parseLong(startTime) <= Long.parseLong(timeLong[1])) {
+//                                mDataSource.setData(hkCamera.PATH + path);
+//                                mDataSource.setTitle("发令时刻：" + DateUtil.formatTime2(Long.parseLong(startTime), "yyyy/MM/dd HH:mm:ss:SSS"));
+//                                break;
+//                            }
+//                        }
+//                        if (mDataSource.getData().isEmpty()) {
+//                            ToastUtils.showShort("找不到录像文件");
+//                            return;
+//                        }
+//                        int seekTime = (int) (Long.parseLong(startTime) - Long.parseLong(timeLong[0]));
+//                        Log.i("seekTime", "-----" + seekTime);
                         break;
                     default:
                         break;

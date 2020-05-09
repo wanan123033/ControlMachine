@@ -38,7 +38,7 @@ public class ControllerCover extends BaseCover implements OnTimerUpdateListener,
 
     private final int MSG_CODE_DELAY_HIDDEN_CONTROLLER = 101;
 
-    private View mTopContainer;
+//    private View mTopContainer;
     private View mBottomContainer;
     private ImageView mBackIcon;
     private TextView mTopTitle;
@@ -87,7 +87,7 @@ public class ControllerCover extends BaseCover implements OnTimerUpdateListener,
     public void onReceiverBind() {
         super.onReceiverBind();
 
-        mTopContainer = findViewById(R.id.cover_player_controller_top_container);
+//        mTopContainer = findViewById(R.id.cover_player_controller_top_container);
         mBottomContainer = findViewById(R.id.cover_player_controller_bottom_container);
         mBackIcon = findViewById(R.id.cover_player_controller_image_view_back_icon);
         mTopTitle = findViewById(R.id.cover_player_controller_text_view_video_title);
@@ -114,25 +114,25 @@ public class ControllerCover extends BaseCover implements OnTimerUpdateListener,
     @Override
     protected void onCoverAttachedToWindow() {
         super.onCoverAttachedToWindow();
-        DataSource dataSource = getGroupValue().get(DataInter.Key.KEY_DATA_SOURCE);
-        setTitle(dataSource);
+//        DataSource dataSource = getGroupValue().get(DataInter.Key.KEY_DATA_SOURCE);
+//        setTitle(dataSource);
 
-        boolean topEnable = getGroupValue().getBoolean(DataInter.Key.KEY_CONTROLLER_TOP_ENABLE, false);
-        mControllerTopEnable = topEnable;
-        if (!topEnable) {
-            setTopContainerState(false);
-        }
-
-        boolean screenSwitchEnable = getGroupValue().getBoolean(DataInter.Key.KEY_CONTROLLER_SCREEN_SWITCH_ENABLE, true);
-        setScreenSwitchEnable(screenSwitchEnable);
+//        boolean topEnable = getGroupValue().getBoolean(DataInter.Key.KEY_CONTROLLER_TOP_ENABLE, false);
+//        mControllerTopEnable = topEnable;
+//        if (!topEnable) {
+//            setTopContainerState(false);
+//        }
+//
+//        boolean screenSwitchEnable = getGroupValue().getBoolean(DataInter.Key.KEY_CONTROLLER_SCREEN_SWITCH_ENABLE, true);
+//        setScreenSwitchEnable(screenSwitchEnable);
     }
 
     @Override
     protected void onCoverDetachedToWindow() {
         super.onCoverDetachedToWindow();
-        mTopContainer.setVisibility(View.GONE);
-        mBottomContainer.setVisibility(View.GONE);
-        rgSpeed.setVisibility(View.GONE);
+//        mTopContainer.setVisibility(View.GONE);
+//        mBottomContainer.setVisibility(View.GONE);
+//        rgSpeed.setVisibility(View.GONE);
         removeDelayHiddenMessage();
     }
 
@@ -191,7 +191,7 @@ public class ControllerCover extends BaseCover implements OnTimerUpdateListener,
                     } else if (key.equals(DataInter.Key.KEY_CONTROLLER_TOP_ENABLE)) {
                         mControllerTopEnable = (boolean) value;
                         if (!mControllerTopEnable) {
-                            setTopContainerState(false);
+//                            setTopContainerState(false);
                         }
                     } else if (key.equals(DataInter.Key.KEY_IS_LANDSCAPE)) {
                         setSwitchScreenIcon((Boolean) value);
@@ -284,34 +284,34 @@ public class ControllerCover extends BaseCover implements OnTimerUpdateListener,
         }
     }
 
-    private void setTopContainerState(final boolean state) {
-        if (mControllerTopEnable) {
-            mTopContainer.clearAnimation();
-            cancelTopAnimation();
-            mTopAnimator = ObjectAnimator.ofFloat(mTopContainer,
-                    "alpha", state ? 0 : 1, state ? 1 : 0).setDuration(300);
-            mTopAnimator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    super.onAnimationStart(animation);
-                    if (state) {
-                        mTopContainer.setVisibility(View.VISIBLE);
-                    }
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    super.onAnimationEnd(animation);
-                    if (!state) {
-                        mTopContainer.setVisibility(View.GONE);
-                    }
-                }
-            });
-            mTopAnimator.start();
-        } else {
-            mTopContainer.setVisibility(View.GONE);
-        }
-    }
+//    private void setTopContainerState(final boolean state) {
+//        if (mControllerTopEnable) {
+//            mTopContainer.clearAnimation();
+//            cancelTopAnimation();
+//            mTopAnimator = ObjectAnimator.ofFloat(mTopContainer,
+//                    "alpha", state ? 0 : 1, state ? 1 : 0).setDuration(300);
+//            mTopAnimator.addListener(new AnimatorListenerAdapter() {
+//                @Override
+//                public void onAnimationStart(Animator animation) {
+//                    super.onAnimationStart(animation);
+//                    if (state) {
+//                        mTopContainer.setVisibility(View.VISIBLE);
+//                    }
+//                }
+//
+//                @Override
+//                public void onAnimationEnd(Animator animation) {
+//                    super.onAnimationEnd(animation);
+//                    if (!state) {
+//                        mTopContainer.setVisibility(View.GONE);
+//                    }
+//                }
+//            });
+//            mTopAnimator.start();
+//        } else {
+//            mTopContainer.setVisibility(View.GONE);
+//        }
+//    }
 
     private void cancelBottomAnimation() {
         if (mBottomAnimator != null) {
@@ -321,31 +321,31 @@ public class ControllerCover extends BaseCover implements OnTimerUpdateListener,
         }
     }
 
-    private void setBottomContainerState(final boolean state) {
-        mBottomContainer.clearAnimation();
-        cancelBottomAnimation();
-        mBottomAnimator = ObjectAnimator.ofFloat(mBottomContainer,
-                "alpha", state ? 0 : 1, state ? 1 : 0).setDuration(300);
-        mBottomAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                super.onAnimationStart(animation);
-                if (state) {
-                    mBottomContainer.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                if (!state) {
-                    mBottomContainer.setVisibility(View.GONE);
-                }
-            }
-        });
-        mBottomAnimator.start();
-        setBottomSeekBarState(!state);
-    }
+//    private void setBottomContainerState(final boolean state) {
+//        mBottomContainer.clearAnimation();
+//        cancelBottomAnimation();
+//        mBottomAnimator = ObjectAnimator.ofFloat(mBottomContainer,
+//                "alpha", state ? 0 : 1, state ? 1 : 0).setDuration(300);
+//        mBottomAnimator.addListener(new AnimatorListenerAdapter() {
+//            @Override
+//            public void onAnimationStart(Animator animation) {
+//                super.onAnimationStart(animation);
+//                if (state) {
+//                    mBottomContainer.setVisibility(View.VISIBLE);
+//                }
+//            }
+//
+//            @Override
+//            public void onAnimationEnd(Animator animation) {
+//                super.onAnimationEnd(animation);
+//                if (!state) {
+//                    mBottomContainer.setVisibility(View.GONE);
+//                }
+//            }
+//        });
+//        mBottomAnimator.start();
+//        setBottomSeekBarState(!state);
+//    }
 
 //    private void setSpeedContainerState(final boolean state) {
 //        rgSpeed.clearAnimation();
@@ -386,8 +386,8 @@ public class ControllerCover extends BaseCover implements OnTimerUpdateListener,
         } else {
             removeDelayHiddenMessage();
         }
-        setTopContainerState(state);
-        setBottomContainerState(state);
+//        setTopContainerState(state);
+//        setBottomContainerState(state);
 //        setSpeedContainerState(state);
     }
 

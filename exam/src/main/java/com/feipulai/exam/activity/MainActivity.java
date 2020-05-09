@@ -80,21 +80,21 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
             UdpLEDUtil.shellExec("ip route add " + routeIp + ".0/24 dev eth0 proto static scope link table wlan0 \n");
         }
 
-        //100米测试数据
-//        List<GroupItem> items = DBManager.getInstance().queryGroupItemByCode("3");
+        //测试数据
+//        List<GroupItem> items = DBManager.getInstance().queryGroupItemByCode("11");
 //        List<RoundResult> roundResults = new ArrayList<>();
 //        RoundResult roundResult;
 //        int countI = 0;
 //        for (GroupItem groupItem : items
 //                ) {
-//            Group group = DBManager.getInstance().queryGroup("3", 1);
+//            Group group = DBManager.getInstance().queryGroup("11", 1);
 //            roundResult = new RoundResult();
 //            roundResult.setGroupId(group.getId());
 //            roundResult.setIsLastResult(1);
-//            roundResult.setItemCode("3");
-//            roundResult.setMachineCode(15);
-//            roundResult.setMachineResult(13130 + countI * 20);
-//            roundResult.setResult(13130 + countI * 20);
+//            roundResult.setItemCode("11");
+//            roundResult.setMachineCode(3);
+//            roundResult.setMachineResult(1130 + countI * 100);
+//            roundResult.setResult(1130 + countI * 100);
 //            roundResult.setResultState(1);
 //            roundResult.setRoundNo(1);
 //            roundResult.setScheduleNo("1");
@@ -104,6 +104,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
 //            roundResults.add(roundResult);
 //            countI++;
 //        }
+//        roundResults.get(2).setResultState(2);
 //        DBManager.getInstance().insertRoundResults(roundResults);
     }
 
