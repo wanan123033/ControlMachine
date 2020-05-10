@@ -843,8 +843,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     private void printResult(@NonNull BaseStuPair baseStuPair) {
         if (!SettingHelper.getSystemSetting().isAutoPrint())
             return;
-        //是否已全部次数测试完成，非满分跳过
-        if (roundNo < setTestCount() && !baseStuPair.isFullMark()) {
+        //是否已全部次数测试完成，非满分跳过与满分犯规
+        if (roundNo < setTestCount() &&
+                (!baseStuPair.isFullMark() || baseStuPair.getResultState() == RoundResult.RESULT_STATE_FOUL)) {
             return;
         }
         Student student = baseStuPair.getStudent();
