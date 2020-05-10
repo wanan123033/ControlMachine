@@ -366,7 +366,7 @@ public class StuItemExLReader extends ExlReader {
             }
         } else if (codeItem == null && nameItem == null) {
             DBManager.getInstance().insertItem(ItemDefault.CODE_ZCP, mItemCode
-                    , mItemName, "分'秒");
+                    , mItemName, "分'秒", DBManager.TEST_TYPE_TIME);
         } else if (codeItem != null && nameItem == null) {
             if (codeItem.getMachineCode() == ItemDefault.CODE_ZCP) {
                 codeItem.setItemName(mItemName);

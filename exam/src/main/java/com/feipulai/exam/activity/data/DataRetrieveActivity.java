@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -126,6 +128,12 @@ public class DataRetrieveActivity extends BaseTitleActivity
     private int mPageNum;
     public BroadcastReceiver receiver;
     private Item mCurrentItem;
+    private Handler mHandler=new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            return false;
+        }
+    });
 
     @Override
     protected int setLayoutResID() {
@@ -276,12 +284,16 @@ public class DataRetrieveActivity extends BaseTitleActivity
 //                    mProgressDialog.dismiss();
                     ToastUtils.showShort("未选中数据上传");
                 } else {
-                    if (mCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
-                        ServerMessage.uploadZCPResult(this, mCurrentItem.getItemName(), DBManager.getInstance().getUploadResultsByStuCode(getItemCode(), studentCode));
+                    //tcp
+                    if (SettingHelper.getSystemSetting().isTCP()) {
+                        ServerMessage.uploadTCPResult(this, DBManager.getInstance().getUploadResultsByStuCode(getItemCode(), studentCode));
                     } else {
-                        ServerMessage.uploadResult(this, DBManager.getInstance().getUploadResultsByStuCode(getItemCode(), studentCode));
+                        if (mCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+                            ServerMessage.uploadZCPResult(this, mCurrentItem.getItemName(), DBManager.getInstance().getUploadResultsByStuCode(getItemCode(), studentCode));
+                        } else {
+                            ServerMessage.uploadResult(this, DBManager.getInstance().getUploadResultsByStuCode(getItemCode(), studentCode));
+                        }
                     }
-
                 }
                 break;
 //            case R.id.btn_print:

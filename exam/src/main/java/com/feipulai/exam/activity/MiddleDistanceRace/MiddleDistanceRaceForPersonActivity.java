@@ -76,7 +76,6 @@ import com.feipulai.exam.entity.Item;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.entity.Student;
-import com.feipulai.exam.netUtils.CommonUtils;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.view.MiddleRace.ScrollablePanel;
 import com.kk.taurus.playerbase.assist.OnVideoViewEventHandler;
@@ -87,12 +86,9 @@ import com.orhanobut.logger.Logger;
 import com.ww.fpl.videolibrary.camera.HkCameraManager;
 import com.ww.fpl.videolibrary.play.VideoPlayWindow;
 import com.ww.fpl.videolibrary.play.play.DataInter;
-import com.ww.fpl.videolibrary.play.util.AWMp4ParserHelper;
 import com.ww.fpl.videolibrary.play.util.PUtil;
-import com.ww.fpl.videolibrary.play.util.VideoComposer;
 import com.zyyoona7.popup.EasyPopup;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -273,7 +269,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
 
     @Override
     protected int setLayoutResID() {
-        return R.layout.activity_middle_distance_race3;
+        return R.layout.activity_middle_distance_race;
     }
 
 

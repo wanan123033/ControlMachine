@@ -3,6 +3,7 @@ package com.feipulai.exam.activity.setting;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Paint;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -90,6 +91,18 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     CheckBox cbMonitoring;
     @BindView(R.id.cb_thermometer)
     CheckBox cbThermometer;
+    @BindView(R.id.et_tcp_ip)
+    EditText mEtTcpIp;
+    @BindView(R.id.txt_custom_channel)
+    TextView txtCustomChannel;
+    @BindView(R.id.btn_monitoring_setting)
+    TextView btnMonitoringSetting;
+    @BindView(R.id.btn_thermometer)
+    TextView btnThermometer;
+    @BindView(R.id.txt_advanced)
+    TextView txtAdvanced;
+    @BindView(R.id.cb_is_tcp)
+    CheckBox cbIsTcp;
     private String[] partternList = new String[]{"个人测试", "分组测试"};
     private List<Integer> hostIdList;
     private SystemSetting systemSetting;
@@ -107,9 +120,12 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         mEtTestSite.setText(systemSetting.getTestSite());
         mEtSeverIp.setText(systemSetting.getServerIp());
 
+        mEtTcpIp.setText(systemSetting.getTcpIp());
+
         mEtTestSite.addTextChangedListener(this);
         mEtTestName.addTextChangedListener(this);
         mEtSeverIp.addTextChangedListener(this);
+        mEtTcpIp.addTextChangedListener(this);
 
         hostIdList = new ArrayList<>();
         Integer maxHostId = ItemDefault.HOST_IDS_MAP.get(TestConfigs.sCurrentItem.getMachineCode());
@@ -190,6 +206,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
 
         cbMonitoring.setChecked(systemSetting.isBindMonitoring());
         cbThermometer.setChecked(systemSetting.isStartThermometer());
+        cbIsTcp.setChecked(systemSetting.isTCP());
     }
 
     @Nullable
@@ -226,9 +243,12 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
 
     @OnClick({R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting
             , R.id.txt_advanced, R.id.sw_identity_mark, R.id.sw_add_student, R.id.cb_route, R.id.cb_custom_channel, R.id.cb_monitoring,
-            R.id.btn_monitoring_setting, R.id.btn_thermometer, R.id.cb_thermometer})
+            R.id.btn_monitoring_setting, R.id.btn_thermometer, R.id.cb_thermometer,R.id.cb_is_tcp})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            case R.id.cb_is_tcp:
+                systemSetting.setTCP(cbIsTcp.isChecked());
+                break;
             case R.id.btn_thermometer:
                 IntentUtil.gotoActivity(this, BlueToothListActivity.class);
                 break;
@@ -332,7 +352,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
             systemSetting.setChannel(Integer.valueOf(editCustomChannel.getText().toString().trim()));
         }
         RadioChannelCommand command = new RadioChannelCommand(systemSetting.getUseChannel());
-        LogUtils.normal(command.getCommand().length+"---"+ StringUtility.bytesToHexString(command.getCommand())+"---切频指令");
+        LogUtils.normal(command.getCommand().length + "---" + StringUtility.bytesToHexString(command.getCommand()) + "---切频指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(command));
 
         HttpManager.resetManager();
@@ -353,6 +373,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         systemSetting.setTestName(mEtTestName.getText().toString().trim());
         systemSetting.setTestSite(mEtTestSite.getText().toString().trim());
         systemSetting.setServerIp(mEtSeverIp.getText().toString().trim());
+        systemSetting.setTcpIp(mEtTcpIp.getText().toString().trim());
     }
 
     public void showAdvancedPwdDialog() {
@@ -385,4 +406,10 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     }
 
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        butterknife.ButterKnife.bind(this);
+    }
 }

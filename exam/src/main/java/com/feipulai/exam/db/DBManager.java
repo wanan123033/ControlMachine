@@ -61,6 +61,10 @@ public class DBManager {
 
     public static final String DB_NAME = "control_db";
     public static final String DB_PASSWORD = "fplwwj";
+    public static final int TEST_TYPE_TIME = 1;//项目类型 计时
+    public static final int TEST_TYPE_COUNT = 2;//项目类型 计数
+    public static final int TEST_TYPE_DISTANCE = 3;//项目类型 远度
+    public static final int TEST_TYPE_POWER = 4;//项目类型 力量
     private static DBManager mInstance;
     private static ItemDao itemDao;
     private static StudentDao studentDao;
@@ -126,60 +130,60 @@ public class DBManager {
 
                 case ItemDefault.CODE_TS:
                     // insertItem(machineCode, "E11","一分钟跳绳", "次");// for test
-                    insertItem(machineCode, "跳绳", "次");
+                    insertItem(machineCode, "跳绳", "次", TEST_TYPE_COUNT);
                     break;
 
                 case ItemDefault.CODE_YWQZ:
-                    insertItem(machineCode, "仰卧起坐", "次");
+                    insertItem(machineCode, "仰卧起坐", "次", TEST_TYPE_COUNT);
                     break;
 
                 case ItemDefault.CODE_YTXS:
-                    insertItem(machineCode, "引体向上", "次");
+                    insertItem(machineCode, "引体向上", "次", TEST_TYPE_COUNT);
                     break;
 
                 case ItemDefault.CODE_LDTY:
-                    insertItem(machineCode, "立定跳远", "米");
+                    insertItem(machineCode, "立定跳远", "米", TEST_TYPE_DISTANCE);
                     break;
 
                 case ItemDefault.CODE_ZWTQQ:
-                    insertItem(machineCode, "坐位体前屈", "厘米");
+                    insertItem(machineCode, "坐位体前屈", "厘米", TEST_TYPE_DISTANCE);
                     break;
 
                 case ItemDefault.CODE_HWSXQ:
-                    insertItem(machineCode, "红外实心球", "米");
+                    insertItem(machineCode, "红外实心球", "米", TEST_TYPE_DISTANCE);
                     break;
 
                 case ItemDefault.CODE_FHL:
-                    insertItem(machineCode, "肺活量", "毫升");
+                    insertItem(machineCode, "肺活量", "毫升", TEST_TYPE_POWER);
                     break;
 
                 case ItemDefault.CODE_ZFP:
-                    insertItem(machineCode, "红外计时", "分'秒");
+                    insertItem(machineCode, "红外计时", "分'秒", TEST_TYPE_TIME);
                     break;
 
                 case ItemDefault.CODE_PQ:
-                    insertItem(machineCode, "排球", "次");
+                    insertItem(machineCode, "排球", "次", TEST_TYPE_COUNT);
                     break;
                 case ItemDefault.CODE_MG:
-                    insertItem(machineCode, "摸高", "厘米");
+                    insertItem(machineCode, "摸高", "厘米", TEST_TYPE_DISTANCE);
                     break;
                 case ItemDefault.CODE_FWC:
-                    insertItem(machineCode, "俯卧撑", "次");
+                    insertItem(machineCode, "俯卧撑", "次", TEST_TYPE_COUNT);
                     break;
                 case ItemDefault.CODE_LQYQ:
-                    insertItem(machineCode, "篮球运球", "分'秒");
+                    insertItem(machineCode, "篮球运球", "分'秒", TEST_TYPE_TIME);
                     break;
                 case ItemDefault.CODE_ZQYQ:
-                    insertItem(machineCode, "足球运球", "分'秒");
+                    insertItem(machineCode, "足球运球", "分'秒", TEST_TYPE_TIME);
                     break;
                 case ItemDefault.CODE_ZCP:
-                    insertItem(machineCode, "fpl_800", "800米", "分'秒");
-                    insertItem(machineCode, "fpl_1000", "1000米", "分'秒");
+                    insertItem(machineCode, "fpl_800", "800米", "分'秒", TEST_TYPE_TIME);
+                    insertItem(machineCode, "fpl_1000", "1000米", "分'秒", TEST_TYPE_TIME);
 //                    insertMiddleRaceItem(machineCode, "800米", "分'秒");
 //                    insertMiddleRaceItem(machineCode, "1000米", "分'秒");
                     break;
                 case ItemDefault.CODE_JGCJ:
-                    insertItem(machineCode, "激光测距", "米");
+                    insertItem(machineCode, "激光测距", "米", TEST_TYPE_DISTANCE);
                     break;
 
             }
@@ -912,11 +916,12 @@ public class DBManager {
         itemScheduleDao.deleteInTx(itemSchedules);
     }
 
-    private void insertItem(int machineCode, String itemName, String unit) {
+    private void insertItem(int machineCode, String itemName, String unit, int testType) {
         Item item = new Item();
         item.setMachineCode(machineCode);
         item.setItemName(itemName);
         item.setUnit(unit);
+        item.setTestType(testType);
         itemDao.insert(item);
     }
 
@@ -930,12 +935,13 @@ public class DBManager {
         itemDao.insert(item);
     }
 
-    public void insertItem(int machineCode, String itemCode, String itemName, String unit) {
+    public void insertItem(int machineCode, String itemCode, String itemName, String unit, int testType) {
         Item item = new Item();
         item.setMachineCode(machineCode);
         item.setItemCode(itemCode);
         item.setItemName(itemName);
         item.setUnit(unit);
+        item.setTestType(testType);
         itemDao.insert(item);
     }
 
@@ -2046,13 +2052,13 @@ public class DBManager {
         Log.i("queryCurrentSchedules", items.toString());
         List<ItemSchedule> itemSchedules = new ArrayList<>();
         for (Item item : items
-        ) {
+                ) {
             itemSchedules.addAll(itemScheduleDao.queryBuilder().where(ItemScheduleDao.Properties.ItemCode.eq(item.getItemCode())).list());
         }
 
         List<Schedule> schedules = new ArrayList<>();
         for (ItemSchedule schedule : itemSchedules
-        ) {
+                ) {
             schedules.addAll(scheduleDao.queryBuilder().where(ScheduleDao.Properties.ScheduleNo.eq(schedule.getScheduleNo())).list());
         }
 
