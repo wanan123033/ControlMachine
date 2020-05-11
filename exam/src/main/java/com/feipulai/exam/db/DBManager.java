@@ -636,10 +636,8 @@ public class DBManager {
         sqlBuf.append(" FROM " + GroupItemDao.TABLENAME);
         sqlBuf.append(" WHERE  " + GroupItemDao.Properties.ItemCode.columnName + " = ?  )");
 
-        sqlBuf.append(" AND S." + StudentDao.Properties.StudentCode.columnName);
-
         if (isTested || isUnTested) {
-
+            sqlBuf.append(" AND S." + StudentDao.Properties.StudentCode.columnName);
             if (isTested) {
                 sqlBuf.append(" IN (SELECT " + RoundResultDao.Properties.StudentCode.columnName + " FROM " + RoundResultDao.TABLENAME + " R");
             } else {
@@ -654,6 +652,7 @@ public class DBManager {
                     sqlBuf.append("  WHERE R." + RoundResultDao.Properties.UpdateState.columnName + "= 0 AND ");
                 }
             } else {
+                sqlBuf.append(" AND S." + StudentDao.Properties.StudentCode.columnName);
                 if (isUpload) {
                     sqlBuf.append(" IN (SELECT " +
                             RoundResultDao.Properties.StudentCode.columnName + " FROM " + RoundResultDao.TABLENAME + " R  WHERE R." + RoundResultDao
@@ -666,7 +665,7 @@ public class DBManager {
             }
 
         } else {
-            sqlBuf.append(" WHERE ");
+            sqlBuf.append(" AND ");
         }
 
         sqlBuf.append("  R." + RoundResultDao.Properties.ItemCode.columnName + " = '" + itemCode + "'");
