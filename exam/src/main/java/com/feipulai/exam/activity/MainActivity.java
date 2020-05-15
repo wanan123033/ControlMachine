@@ -41,10 +41,13 @@ import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.Group;
+import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.netUtils.CommonUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -76,6 +79,33 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
             String routeIp = locatIp.substring(0, locatIp.lastIndexOf("."));
             UdpLEDUtil.shellExec("ip route add " + routeIp + ".0/24 dev eth0 proto static scope link table wlan0 \n");
         }
+
+        //测试数据
+//        List<GroupItem> items = DBManager.getInstance().queryGroupItemByCode("11");
+//        List<RoundResult> roundResults = new ArrayList<>();
+//        RoundResult roundResult;
+//        int countI = 0;
+//        for (GroupItem groupItem : items
+//                ) {
+//            Group group = DBManager.getInstance().queryGroup("11", 1);
+//            roundResult = new RoundResult();
+//            roundResult.setGroupId(group.getId());
+//            roundResult.setIsLastResult(1);
+//            roundResult.setItemCode("11");
+//            roundResult.setMachineCode(3);
+//            roundResult.setMachineResult(1130 + countI * 100);
+//            roundResult.setResult(1130 + countI * 100);
+//            roundResult.setResultState(1);
+//            roundResult.setRoundNo(1);
+//            roundResult.setScheduleNo("1");
+//            roundResult.setStudentCode(groupItem.getStudentCode());
+//            roundResult.setTestNo(1);
+//            roundResult.setTestTime(System.currentTimeMillis() + "");
+//            roundResults.add(roundResult);
+//            countI++;
+//        }
+//        roundResults.get(2).setResultState(2);
+//        DBManager.getInstance().insertRoundResults(roundResults);
     }
 
     @Override

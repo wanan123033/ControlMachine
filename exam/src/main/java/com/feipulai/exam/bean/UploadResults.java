@@ -33,9 +33,26 @@ public class UploadResults implements Serializable {
     public final static String BEAN_KEY = "UploadResults_KEY";
     //打印成绩使用
     private long groupId;
-    private int result;
-    private String testTime;
-    private int resultStatus;
+    private int result;//最终成绩
+    private String testTime;//最终成绩测试时间
+    private int resultStatus;//最终成绩状态
+    private int examState;//
+
+    public int getExamState() {
+        return examState;
+    }
+
+    public int getResult() {
+        return result;
+    }
+
+    public int getResultStatus() {
+        return resultStatus;
+    }
+
+    public String getTestTime() {
+        return testTime;
+    }
 
     public long getGroupId() {
         return groupId;
@@ -69,6 +86,7 @@ public class UploadResults implements Serializable {
             this.result = lastResult.getResult();
             this.resultStatus = lastResult.getResultState();
             this.testTime = lastResult.getTestTime();
+            this.examState=lastResult.getExamType();
         }
     }
 

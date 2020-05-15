@@ -1,12 +1,17 @@
 package com.feipulai.exam.netUtils.netapi;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.device.tcp.PackageHeadInfo;
+import com.feipulai.device.tcp.SendTcpClientThread;
+import com.feipulai.device.tcp.TCPConst;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
@@ -36,6 +41,7 @@ import com.feipulai.exam.netUtils.HttpManager;
 import com.feipulai.exam.netUtils.HttpResult;
 import com.feipulai.exam.netUtils.OnResultListener;
 import com.feipulai.exam.netUtils.RequestSub;
+import com.feipulai.exam.netUtils.TCPResultPackage;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
@@ -505,13 +511,12 @@ public class HttpSubscriber {
     }
 
     /**
-     * 上传多个成绩
+     * http上传多个成绩
      *
      * @param uploadResultsList
      */
     public void uploadResult(final List<UploadResults> uploadResultsList) {
         int pageSum = 1;
-
         if (uploadResultsList.size() > 100) {
             //获取上传分页数目
             if (uploadResultsList.size() % 100 == 0) {
@@ -520,8 +525,147 @@ public class HttpSubscriber {
                 pageSum = uploadResultsList.size() / 100 + 1;
             }
         }
-
         setUploadResult(0, pageSum, uploadResultsList);
+    }
+
+    /**
+     * tcp上传多个成绩
+     *
+     * @param uploadResultsList
+     */
+    public void uploadResultTCP(Activity activity, final List<UploadResults> uploadResultsList) {
+        int pageSum = 1;
+        if (uploadResultsList.size() > 50) {
+            //获取上传分页数目
+            if (uploadResultsList.size() % 50 == 0) {
+                pageSum = uploadResultsList.size() / 50;
+            } else {
+                pageSum = uploadResultsList.size() / 50 + 1;
+            }
+        }
+        sendTcpResult(activity, 0, pageSum, uploadResultsList);
+    }
+
+    private SendTcpClientThread tcpClientThread;
+
+    /**
+     * 上传tcp 一个包最多50人
+     *
+     * @param activity
+     * @param pageNo
+     * @param pageSum
+     * @param uploadResultsList
+     */
+    private void sendTcpResult(final Activity activity, final int pageNo, final int pageSum, final List<UploadResults> uploadResultsList) {
+        final List<UploadResults> uploadData;
+        if (pageNo == pageSum - 1) {
+            uploadData = uploadResultsList.subList(pageNo * 50, uploadResultsList.size());
+        } else {
+            uploadData = uploadResultsList.subList(pageNo * 50, (pageNo + 1) * 50);
+        }
+        Logger.i("setUploadResult===>" + pageNo);
+
+        TCPResultPackage rcPackage = new TCPResultPackage();
+        rcPackage.m_nEventType = String.valueOf(TCPConst.enumEvent.EventAllData.getIndex());
+        rcPackage.m_strPackType = "PFPAndroidSend";
+        rcPackage.m_strEvent = TestConfigs.sCurrentItem.getItemName();
+        rcPackage.m_nProperty = TestConfigs.sCurrentItem.getTestType();
+
+        final String data = rcPackage.EncodePackage(TestConfigs.sCurrentItem, uploadData, new PackageHeadInfo(), false, TCPConst.enumCodeType.CodeGB2312.getIndex());
+        Log.i("data---", data);
+
+        if (tcpClientThread == null) {
+            String tcpIp = SettingHelper.getSystemSetting().getTcpIp();
+            String ipStr = tcpIp.split(":")[0];
+            String portStr = tcpIp.split(":")[1];
+            tcpClientThread = new SendTcpClientThread(ipStr, Integer.parseInt(portStr), new SendTcpClientThread.SendTcpListener() {
+                @Override
+                public void onMsgReceive(String text) {
+                    //更新上传状态
+                    List<RoundResult> roundResultList = new ArrayList<>();
+                    for (UploadResults uploadResults : uploadData) {
+                        List<RoundResult> roundResults = RoundResultBean.dbCope(uploadResults.getRoundResultList());
+                        for (RoundResult roundResult : roundResults) {
+                            roundResult.setUpdateState(1);
+                            roundResultList.add(roundResult);
+                        }
+                    }
+                    Logger.i("setUploadResult===>" + pageNo + "   " + roundResultList.size() + "   更新成功");
+                    DBManager.getInstance().updateRoundResult(roundResultList);
+
+                    //是否是最一次上传，关闭加载窗
+                    if (pageNo == pageSum - 1) {
+                        Logger.i("setUploadResult===>" + pageNo + " 上传成功");
+                        if (activity == null) {
+                            if (onRequestEndListener != null) {
+                                onRequestEndListener.onSuccess(UPLOAD_BIZ);
+                            }
+                            return;
+                        }
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ToastUtils.showShort("上传成功");
+                                if (onRequestEndListener != null) {
+                                    onRequestEndListener.onSuccess(UPLOAD_BIZ);
+                                }
+                            }
+                        });
+                    } else {
+                        sendTcpResult(activity, pageNo + 1, pageSum, uploadResultsList);
+                    }
+                }
+
+                @Override
+                public void onSendFail(final String msg) {
+                    if (activity == null) {
+                        if (onRequestEndListener != null) {
+                            onRequestEndListener.onFault(UPLOAD_BIZ);
+                        }
+                        return;
+                    }
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ToastUtils.showShort("上传失败:" + msg);
+                            if (onRequestEndListener != null) {
+                                onRequestEndListener.onFault(UPLOAD_BIZ);
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onConnectFlag(boolean isConnect) {
+                    Log.e("onConnectFlag", "---------" + isConnect);
+                    if (isConnect) {
+                        tcpClientThread.write(data);
+                    } else {
+                        tcpClientThread = null;
+                        if (activity == null) {
+                            if (onRequestEndListener != null) {
+                                onRequestEndListener.onFault(UPLOAD_BIZ);
+                            }
+                            return;
+                        }
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ToastUtils.showShort("服务器连接失败");
+                                if (onRequestEndListener != null) {
+                                    onRequestEndListener.onFault(UPLOAD_BIZ);
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+            tcpClientThread.start();
+        } else {
+            if (tcpClientThread.isInterrupted()) {
+                tcpClientThread.start();
+            }
+        }
     }
 
     private void setUploadResult(final int pageNo, final int pageSum, final List<UploadResults> uploadResultsList) {
@@ -560,7 +704,6 @@ public class HttpSubscriber {
                     if (onRequestEndListener != null) {
                         onRequestEndListener.onSuccess(UPLOAD_BIZ);
                     }
-
                 } else {
                     setUploadResult(pageNo + 1, pageSum, uploadResultsList);
                 }

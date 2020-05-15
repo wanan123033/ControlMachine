@@ -1,14 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@color/blue"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@color/blue">
 
     <com.feipulai.exam.view.MiddleRace.ScrollablePanel
         android:id="@+id/result_scroll"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
         android:background="@color/background_color"
-        android:layout_margin="10dp" />
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1">
+
+        <com.feipulai.exam.activity.MiddleDistanceRace.vhtableview.VHTableView
+            android:id="@+id/vht_table_result"
+            android:layout_width="385dp"
+            android:layout_height="match_parent"
+            android:background="@color/background_color"
+            android:orientation="vertical" />
+    </RelativeLayout>
+
+
+    <!--<SurfaceView-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_marginBottom="10dp"-->
+    <!--android:layout_marginEnd="10dp"-->
+    <!--android:layout_marginTop="10dp"-->
+    <!--android:layout_weight="1" />-->
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1.5"
+        android:background="#000000">
+
+        <com.kk.taurus.playerbase.widget.BaseVideoView
+            android:id="@+id/baseVideoView"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_centerVertical="true"
+            android:background="#000000" />
+
+
+        <ImageView
+            android:id="@+id/iv_video_control"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_below="@+id/baseVideoView"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="10dp"
+            android:paddingEnd="6dp"
+            android:paddingStart="6dp"
+            android:src="@mipmap/ic_video_player_btn_play" />
+
+        <Button
+            android:id="@+id/btn_video_play"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_below="@+id/baseVideoView"
+            android:layout_margin="10dp"
+            android:background="@drawable/btn_background"
+            android:text="播放"
+            android:textColor="@color/white"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btn_video_start_pause"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_below="@+id/baseVideoView"
+            android:layout_margin="10dp"
+            android:layout_toEndOf="@+id/btn_video_play"
+            android:background="@drawable/btn_background"
+            android:text="暂停"
+            android:textColor="@color/white"
+            android:visibility="gone" />
+    </RelativeLayout>
+
 </LinearLayout>

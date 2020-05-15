@@ -27,7 +27,7 @@ public class DialogUtil {
     }
 
     public void showCommonDialog(String notice, int bitmapId, final DialogListener dialogListener) {
-        builder = new AlertDialog.Builder(context).setTitle("提示").setIcon(bitmapId)
+        builder = new AlertDialog.Builder(context).setTitle("提示").setIcon(bitmapId==0?android.R.drawable.ic_dialog_info:bitmapId)
                 .setMessage(notice).setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

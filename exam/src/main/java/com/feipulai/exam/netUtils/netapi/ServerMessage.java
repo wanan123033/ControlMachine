@@ -1,11 +1,14 @@
 package com.feipulai.exam.netUtils.netapi;
 
+import android.app.Activity;
 import android.content.Context;
+import android.os.Handler;
 import android.text.TextUtils;
 
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.LoadingDialog;
 import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.ScheduleBean;
 import com.feipulai.exam.bean.UploadResults;
@@ -168,7 +171,11 @@ public class ServerMessage {
      * @param uploadResultsList
      */
     public static void uploadZCPResult(final Context context, final String itemName, final List<UploadResults> uploadResultsList) {
-//        Logger.i("uploadResult==>" + uploadResultsList.toString());
+        if (SettingHelper.getSystemSetting().isTCP()) {
+            uploadTCPResult(context, uploadResultsList);
+            return;
+        }
+
         if (uploadResultsList == null || uploadResultsList.size() == 0) {
             ToastUtils.showShort("没有需要上传的成绩");
             return;
@@ -181,6 +188,7 @@ public class ServerMessage {
             loadingDialog = null;
         }
         final HttpSubscriber subscriber = new HttpSubscriber();
+
         subscriber.setOnRequestEndListener(new HttpSubscriber.OnRequestEndListener() {
             @Override
             public void onSuccess(int bizType) {
@@ -244,7 +252,57 @@ public class ServerMessage {
                 Logger.i("成绩自动上传失败");
             }
         });
-        subscriber.uploadResult(uploadResultsList);
+        if (SettingHelper.getSystemSetting().isTCP()) {
+            subscriber.uploadResultTCP(null, uploadResultsList);
+        } else {
+            subscriber.uploadResult(uploadResultsList);
+        }
+    }
+
+    /**
+     * tcp上传所有成绩
+     *
+     * @param context
+     * @param uploadResultsList
+     */
+    public static void uploadTCPResult(Context context, final List<UploadResults> uploadResultsList) {
+        if (uploadResultsList == null || uploadResultsList.size() == 0) {
+            ToastUtils.showShort("没有需要上传的成绩");
+            return;
+        }
+        Logger.i("TCP上传成绩:" + uploadResultsList.toString());
+
+        final LoadingDialog loadingDialog;
+        if (context != null) {
+            loadingDialog = new LoadingDialog(context);
+            loadingDialog.showDialog("成绩上传中，请稍后...", true);
+        } else {
+            loadingDialog = null;
+        }
+
+        final HttpSubscriber subscriber = new HttpSubscriber();
+        subscriber.setOnRequestEndListener(new HttpSubscriber.OnRequestEndListener() {
+            @Override
+            public void onSuccess(int bizType) {
+                switch (bizType) {
+                    case HttpSubscriber.UPLOAD_BIZ://上传成绩
+                        Logger.i("成绩上传成功");
+                        if (loadingDialog != null && loadingDialog.isShow()) {
+                            loadingDialog.dismissDialog();
+                        }
+                        break;
+                }
+            }
+
+            @Override
+            public void onFault(int bizType) {
+                Logger.i("成绩上传失败");
+                if (loadingDialog != null && loadingDialog.isShow()) {
+                    loadingDialog.dismissDialog();
+                }
+            }
+        });
+        subscriber.uploadResultTCP((Activity) context, uploadResultsList);
     }
 
     /**
