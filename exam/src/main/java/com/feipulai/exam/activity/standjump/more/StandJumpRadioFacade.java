@@ -1,6 +1,7 @@
 package com.feipulai.exam.activity.standjump.more;
 
 import android.os.Message;
+import android.util.Log;
 
 import com.feipulai.common.jump_rope.task.GetDeviceStatesTask;
 import com.feipulai.common.tts.TtsManager;
@@ -129,6 +130,7 @@ public class StandJumpRadioFacade implements RadioManager.OnRadioArrivedListener
             //成绩处理
 
             if (result.getState() == StandJumpResult.STATE_END) {
+                Log.i("pair_state",deviceList.get(result.getDeviceId() - 1).getStuDevicePair().getBaseDevice().getState()+"");
                 //未开始 结束不接收成绩
                 if (deviceList.get(result.getDeviceId() - 1).getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_END
                         || deviceList.get(result.getDeviceId() - 1).getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN) {
