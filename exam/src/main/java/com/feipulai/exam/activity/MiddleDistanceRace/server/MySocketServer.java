@@ -304,7 +304,7 @@ public class MySocketServer {
             String itemCode;
             if (item == null) {
                 itemCode = "fpl_" + m_strEvent;//暂时用项目名代替
-                DBManager.getInstance().insertItem(TestConfigs.sCurrentItem.getMachineCode(), itemCode, m_strEvent, "分'秒");
+                DBManager.getInstance().insertItem(TestConfigs.sCurrentItem.getMachineCode(), itemCode, m_strEvent, "分'秒",DBManager.TEST_TYPE_TIME);
             } else {
                 if (TextUtils.isEmpty(item.getItemCode())) {
                     itemCode = "fpl_" + m_strEvent;

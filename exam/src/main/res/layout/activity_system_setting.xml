@@ -93,7 +93,6 @@
                     android:maxLines="1" />
                 <!--android:lines="1"-->
 
-
                 <TextView
                     android:id="@+id/btn_default"
                     android:layout_width="73dp"
@@ -121,6 +120,51 @@
                     android:text="登录"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_16" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="21dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/style_setting_tv_title"
+                    android:text="  TCP地址  :" />
+
+                <EditText
+                    android:id="@+id/et_tcp_ip"
+                    android:layout_width="242dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="10dp"
+                    android:background="@drawable/edit_search_bg"
+                    android:gravity="center"
+                    android:imeOptions="actionDone"
+                    android:maxLines="1" />
+
+                <TextView
+                    android:id="@+id/btn_tcp_test"
+                    android:layout_width="73dp"
+                    android:layout_height="35dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toLeftOf="@+id/tv_start_test"
+                    android:background="@drawable/btn_click_bg_selected"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="测试"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_16" />
+
+                <CheckBox
+                    android:id="@+id/cb_is_tcp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:button="@drawable/checkbox_switch_selected" />
+
 
             </LinearLayout>
 
@@ -197,9 +241,9 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/dp_10"
-                    android:textColor="@color/black"
                     android:layout_toRightOf="@+id/edit_custom_channel"
-                    android:text="信道范围（1-140）" />
+                    android:text="信道范围（1-140）"
+                    android:textColor="@color/black" />
 
                 <CheckBox
                     android:id="@+id/cb_custom_channel"
@@ -292,6 +336,7 @@
             <View
                 style="@style/divider_gray_horizontal_style"
                 android:layout_marginTop="8dp" />
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -334,6 +379,7 @@
             <View
                 style="@style/divider_gray_horizontal_style"
                 android:layout_marginTop="8dp" />
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

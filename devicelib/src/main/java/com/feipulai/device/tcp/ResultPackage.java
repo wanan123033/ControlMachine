@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.io.UnsupportedEncodingException;
 
+import static com.feipulai.device.tcp.PackageHeadInfo.g_SepFlag;
 import static com.feipulai.device.tcp.PackageHeadInfo.g_SepFlag1;
 import static com.feipulai.device.tcp.TCPConst.MAX_RECORD_COUNT;
 import static com.feipulai.device.tcp.TCPConst.MAX_RUN_SPORTER_NUM;
@@ -298,7 +299,7 @@ public String    m_strGameEventName="";
         String target=null;
         try {
             target1 = new String(g_SepFlag1,"GB2312");
-            target2 = new String(headInfo.g_SepFlag,"GB2312");
+            target2 = new String(g_SepFlag,"GB2312");
             target=target1+target2;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -438,13 +439,14 @@ public String    m_strGameEventName="";
         return  SetEncodePackageBuffer(headInfo,strBody,type,bEnCrypt, TCPConst.enmuCommand.CommandPTResult,false);
 
     }
+
     private String SetEncodePackageBuffer(PackageHeadInfo headInfo, String strBody, int type, boolean bEnCrypt, TCPConst.enmuCommand nCommandID, boolean bBasePack){
 
         String RS1 = "";
         String target = null;//特殊分割符的转换
         String target1 = null;
         try {
-            target = new String(headInfo.g_SepFlag,"GB2312");
+            target = new String(g_SepFlag,"GB2312");
             target1 = new String(g_SepFlag1,"GB2312");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
