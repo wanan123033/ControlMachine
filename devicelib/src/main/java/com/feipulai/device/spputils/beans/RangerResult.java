@@ -2,6 +2,9 @@ package com.feipulai.device.spputils.beans;
 
 import android.util.Log;
 
+import com.feipulai.device.serial.beans.StringUtility;
+import com.orhanobut.logger.examlogger.LogUtils;
+
 import java.io.UnsupportedEncodingException;
 
 public class RangerResult {
@@ -16,6 +19,10 @@ public class RangerResult {
     private int frame; //菱镜常数
 
     private int type; //type=1: 测距结果数据
+
+    private int level_d;  // 水平角 度
+    private int level_g;  // 水平角 分
+    private int level_m;  // 水平角 秒
 
     public RangerResult(byte[] result){
         try {
@@ -36,10 +43,15 @@ public class RangerResult {
                 frame = Integer.parseInt(split[5].substring(0, 2));
                 Log.e("TAG----", string);
                 type = 1;
+                level_d = (int) level;
+                level_g = Integer.parseInt(split[2].replace("d", "").substring(3,5));
+                level_m = Integer.parseInt(split[2].replace("d", "").substring(5,7));
             }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+        LogUtils.normal("测距返回数据(解析前):"+result.length+"---"+ StringUtility.bytesToHexString(result)+"---\n(解析后):"+toString());
+
     }
 
     public int getId() {
@@ -80,5 +92,36 @@ public class RangerResult {
 
     public int getType() {
         return type;
+    }
+
+    public int getLevel_d() {
+        return level_d;
+    }
+
+    public int getLevel_g() {
+        return level_g;
+    }
+
+    public int getLevel_m() {
+        return level_m;
+    }
+
+    @Override
+    public String toString() {
+        return "RangerResult{" +
+                "id=" + id +
+                ", slantRange=" + slantRange +
+                ", unit='" + unit + '\'' +
+                ", vertical=" + vertical +
+                ", level=" + level +
+                ", jsUnit='" + jsUnit + '\'' +
+                ", result=" + result +
+                ", backlight=" + backlight +
+                ", frame=" + frame +
+                ", type=" + type +
+                ", level_d=" + level_d +
+                ", level_g=" + level_g +
+                ", level_m=" + level_m +
+                '}';
     }
 }

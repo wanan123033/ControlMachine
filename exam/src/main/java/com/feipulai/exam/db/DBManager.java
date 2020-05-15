@@ -665,7 +665,11 @@ public class DBManager {
             }
 
         } else {
-            sqlBuf.append(" AND ");
+            if (isTested || isUnTested) {
+                sqlBuf.append(" WHERE ");
+            }else {
+                sqlBuf.append(" AND ");
+            }
         }
 
         sqlBuf.append("  R." + RoundResultDao.Properties.ItemCode.columnName + " = '" + itemCode + "'");

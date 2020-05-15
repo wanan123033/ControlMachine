@@ -59,6 +59,7 @@ import com.feipulai.exam.utils.StringChineseUtil;
 import com.feipulai.exam.view.OperateProgressBar;
 import com.github.mjdev.libaums.fs.UsbFile;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.libarcface.widget.ProgressDialog;
 import com.yhy.gvp.listener.OnItemClickListener;
@@ -127,6 +128,7 @@ public class DataManageActivity
 
     @Override
     protected void initData() {
+
         backupManager = new BackupManager(this, DBManager.DB_NAME, BackupManager.TYPE_EXAM);
 
         File file = Environment.getExternalStorageDirectory();
@@ -215,6 +217,7 @@ public class DataManageActivity
                 Intent intent = new Intent();
                 switch (position) {
                     case 0://数据导入
+                        LogUtils.operation("用户点击了数据导入...");
 //                        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
 //                            toastSpeak("中长跑不允许进行个人名单导入");
 //                            return;
@@ -226,6 +229,7 @@ public class DataManageActivity
                         break;
 
                     case 1: //分组数据导入
+                        LogUtils.operation("用户点击了分组数据导入...");
                         isGroupImport = true;
                         intent.setClass(DataManageActivity.this, FileSelectActivity.class);
                         intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_FILE);
@@ -233,21 +237,25 @@ public class DataManageActivity
                         break;
 
                     case 2: //名单下载
+                        LogUtils.operation("用户点击了名单下载...");
 //                        OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在下载最新数据...");
 //                        ServerMessage.downloadData(DataManageActivity.this);
                         showDownloadDataDialog();
                         break;
                     case 3://头像导入
+                        LogUtils.operation("用户点击了头像导入...");
                         intent.setClass(DataManageActivity.this, FileSelectActivity.class);
                         intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
                         startActivityForResult(intent, REQUEST_CODE_PHOTO);
                         break;
                     case 4://头像下载
+                        LogUtils.operation("用户点击了头像下载...");
 //                        ToastUtils.showShort("功能未开放，敬请期待");
                         uploadPortrait();
                         break;
                     case 5://删除头像
                         //TODO 测试使用
+                        LogUtils.operation("用户点击了删除头像...");
 //                        DBManager.getInstance().roundResultClear();
 
                         new SweetAlertDialog(DataManageActivity.this, SweetAlertDialog.CUSTOM_IMAGE_TYPE).setTitleText("是否进行删除头像")
@@ -266,6 +274,7 @@ public class DataManageActivity
                         }).show();
                         break;
                     case 6: //数据库备份
+                        LogUtils.operation("用户点击了数据备份...");
                         //选择备份到的文件夹
                         intent.setClass(DataManageActivity.this, FileSelectActivity.class);
                         intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
@@ -273,17 +282,21 @@ public class DataManageActivity
                         break;
 
                     case 7://数据恢复
+                        LogUtils.operation("用户点击了数据恢复...");
                         new DBDataCleaner(DataManageActivity.this, ClearDataProcess.CLEAR_FOR_RESTORE, DataManageActivity.this).process();
                         break;
                     case 8: //数据查询
+                        LogUtils.operation("用户点击了数据查询...");
                         intent.setClass(DataManageActivity.this, DataRetrieveActivity.class);
                         startActivity(intent);
                         break;
                     case 9: //数据清空
+                        LogUtils.operation("用户点击了数据清空...");
                         new DBDataCleaner(DataManageActivity.this, ClearDataProcess.CLEAR_DATABASE, DataManageActivity.this).process();
                         break;
 
                     case 10://成绩上传
+                        LogUtils.operation("用户点击了成绩上传...");
                         if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
                             List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
                             if (itemList != null && itemList.size() > 0)
@@ -300,20 +313,24 @@ public class DataManageActivity
                         break;
 
                     case 11://数据导出
+                        LogUtils.operation("用户点击了数据导出...");
                         //选择文件夹并命名文件导出文件
                         intent.setClass(DataManageActivity.this, FileSelectActivity.class);
                         intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
                         startActivityForResult(intent, REQUEST_CODE_EXPORT);
                         break;
                     case 12://exl模版导出
+                        LogUtils.operation("用户点击了exl模板导出...");
                         intent.setClass(DataManageActivity.this, FileSelectActivity.class);
                         intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
                         startActivityForResult(intent, REQUEST_CODE_EXPORT_TEMPLATE);
                         break;
                     case 13://体温查询
+                        LogUtils.operation("用户点击了体温查询...");
                         IntentUtil.gotoActivity(DataManageActivity.this, ThermometerSearchActivity.class);
                         break;
                     case 14://体温导出
+                        LogUtils.operation("用户点击了体温导出...");
                         intent.setClass(DataManageActivity.this, FileSelectActivity.class);
                         intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
                         startActivityForResult(intent, REQUEST_CODE_EXPORT_THERMIMETER);
@@ -628,6 +645,7 @@ public class DataManageActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        LogUtils.life("DataManageActivity onDestroy");
         if (executorService != null && !executorService.isShutdown()) {
             executorService.shutdownNow();
         }

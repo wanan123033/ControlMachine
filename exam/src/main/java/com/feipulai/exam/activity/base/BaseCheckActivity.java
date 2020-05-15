@@ -1,6 +1,5 @@
 package com.feipulai.exam.activity.base;
 
-import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,7 +32,6 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.entity.StudentThermometer;
-import com.feipulai.exam.netUtils.CommonUtils;
 import com.feipulai.exam.utils.StringChineseUtil;
 import com.feipulai.exam.utils.bluetooth.BlueBindBean;
 import com.feipulai.exam.utils.bluetooth.BlueToothHelper;
@@ -44,8 +42,6 @@ import com.inuker.bluetooth.library.connect.listener.BleConnectStatusListener;
 import com.inuker.bluetooth.library.connect.response.BleConnectResponse;
 import com.inuker.bluetooth.library.connect.response.BleNotifyResponse;
 import com.inuker.bluetooth.library.model.BleGattProfile;
-import com.inuker.bluetooth.library.utils.BluetoothLog;
-import com.inuker.bluetooth.library.utils.ByteUtils;
 import com.orhanobut.logger.Logger;
 import com.zkteco.android.biometric.module.idcard.meta.IDCardInfo;
 

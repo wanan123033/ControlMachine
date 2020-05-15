@@ -1,9 +1,12 @@
 package com.feipulai.host.activity.ranger;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.annotation.Nullable;
+import android.view.View;
 import android.widget.Toast;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
@@ -11,6 +14,7 @@ import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.spputils.OnDataReceivedListener;
 import com.feipulai.device.spputils.SppUtils;
 import com.feipulai.device.spputils.beans.RangerResult;
+import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.freedom.BaseFreedomTestActivity;
 import com.feipulai.host.activity.ranger.bluetooth.BluetoothManager;
@@ -40,6 +44,12 @@ public class RangerTestActivity extends BaseFreedomTestActivity {
             }
         }
     };
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        findViewById(R.id.txt_led_setting).setVisibility(View.GONE);
+    }
 
     @Override
     protected void initData() {
@@ -117,7 +127,6 @@ public class RangerTestActivity extends BaseFreedomTestActivity {
     @Override
     public void startTest() {
         if (utils.isConnected()) {
-
             byte[] bytes = new byte[]{0x5A, 0x33, 0x34, 0x30, 0x39, 0x33, 0x03, 0x0d, 0x0a};
             utils.send(bytes, false);
             bytes = new byte[]{0x43, 0x30, 0x36, 0x37, 0x03, 0x0d, 0x0a};
@@ -142,6 +151,5 @@ public class RangerTestActivity extends BaseFreedomTestActivity {
         if (result.getType() == 1){
             setScore(result1);
         }
-
     }
 }
