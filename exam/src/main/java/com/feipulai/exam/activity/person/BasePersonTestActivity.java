@@ -625,14 +625,16 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         }
         return false;
     }
-
+    boolean clicked = false;
     /**
      * 展示判罚
      */
     private void showPenalize() {
+
         if (pair.getStudent() == null) {
             return;
         }
+        clicked = false;
         SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
         alertDialog.setTitleText(getString(R.string.confirm_result));
         alertDialog.setCancelable(false);
@@ -640,7 +642,12 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
-                doResult();
+
+                if (!clicked){
+                    doResult();
+                    clicked = true;
+                }
+
             }
         }).setCancelText(getString(R.string.foul)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
@@ -648,7 +655,11 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 sweetAlertDialog.dismissWithAnimation();
                 pair.setResultState(RoundResult.RESULT_STATE_FOUL);
                 updateResult(pair);
-                doResult();
+                if (!clicked){
+                    doResult();
+                    clicked = true;
+                }
+
             }
         }).show();
     }
@@ -711,8 +722,6 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         roundResultList.add(roundResult);
         UploadResults uploadResults = new UploadResults(studentItem.getScheduleNo(), TestConfigs.getCurrentItemCode(),
                 baseStuPair.getStudent().getStudentCode(), testNo + "", null, RoundResultBean.beanCope(roundResultList));
-
-
         uploadResult(uploadResults);
 
 
