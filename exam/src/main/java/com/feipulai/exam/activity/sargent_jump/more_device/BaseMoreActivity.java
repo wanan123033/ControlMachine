@@ -326,7 +326,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                             stuSkip(pos);
                             return;
                         }
-                        if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
+                        if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE ||
+                                pair.getBaseDevice().getState() == BaseDeviceState.STATE_END) {
                             sendTestCommand(pair, pos);
                         }
                         break;
@@ -566,7 +567,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
         deviceListAdapter.notifyItemChanged(index);
         pair.setCanTest(true);
-        pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+//        pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
 
     }
 

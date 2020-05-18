@@ -2091,6 +2091,7 @@ public class DBManager {
         sqlBuf.append(" LEFT JOIN " + ItemScheduleDao.TABLENAME + " I ");
         sqlBuf.append(" ON S." + ScheduleDao.Properties.ScheduleNo.columnName + " = I." + ItemScheduleDao.Properties.ScheduleNo.columnName);
         sqlBuf.append(" WHERE I." + GroupItemDao.Properties.ItemCode.columnName + " = '" + TestConfigs.getCurrentItemCode() + "'");
+        sqlBuf.append(" ORDER BY "+ ScheduleDao.Properties.ScheduleNo.columnName +" ASC" );
         List<Schedule> scheduleList = new ArrayList<>();
         Log.i("sql", sqlBuf.toString());
         Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), null);
