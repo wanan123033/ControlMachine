@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.feipulai.common.utils.ActivityUtils;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.device.manager.RunTimerManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.basketball.adapter.DribbleShootAdapter;
@@ -122,21 +123,19 @@ public class DribbleShootActivity extends BaseShootActivity {
     }
 
 
-    @OnClick({R.id.txt_waiting, R.id.txt_illegal_return, R.id.txt_continue_run, R.id.txt_stop_timing,
+    @OnClick({R.id.txt_waiting, R.id.txt_illegal_return, R.id.txt_stop_timing,
             R.id.tv_led_setting, R.id.tv_print, R.id.tv_confirm, R.id.txt_finish_test})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_waiting:
-
+                RunTimerManager.waitStart();
                 break;
             case R.id.txt_illegal_return:
-
+                RunTimerManager.illegalBack();
                 break;
-            case R.id.txt_continue_run:
 
-                break;
             case R.id.txt_stop_timing:
-
+                RunTimerManager.stopRun();
                 break;
             case R.id.tv_led_setting:
                 IntentUtil.gotoActivity(this, LEDSettingActivity.class);
