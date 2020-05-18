@@ -218,15 +218,35 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
                 break;
 
             case R.id.tv_abandon_test:
-                LogUtils.operation("排球点击了放弃测试");
-                facade.abandonTest();
-                prepareForBegin();
+                abandon();
                 break;
             case R.id.tv_pair:
                 LogUtils.operation("排球点击了设备配对");
                 changeBadDevice();
                 break;
         }
+    }
+
+    private void abandon() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("温馨提示");
+        builder.setMessage("确认放弃测试吗?");
+        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                LogUtils.operation("排球点击了放弃测试");
+                facade.abandonTest();
+                prepareForBegin();
+            }
+        });
+        builder.setNegativeButton("返回", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
+
     }
 
     private void onResultConfirmed() {

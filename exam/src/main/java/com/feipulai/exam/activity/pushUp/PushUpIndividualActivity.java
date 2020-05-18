@@ -1,5 +1,7 @@
 package com.feipulai.exam.activity.pushUp;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
@@ -319,10 +321,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
 //                break;
 
             case R.id.tv_abandon_test:
-                LogUtils.operation("俯卧撑点击了放弃测试");
-                facade.abandonTest();
-                state = WAIT_BEGIN;
-                prepareForBegin();
+                abandon();
                 break;
 
             case R.id.tv_finish_test:
@@ -340,6 +339,29 @@ public class PushUpIndividualActivity extends BaseTitleActivity
                 break;
 
         }
+    }
+
+    private void abandon() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("温馨提示");
+        builder.setMessage("确认放弃测试吗?");
+        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                LogUtils.operation("俯卧撑点击了放弃测试");
+                facade.abandonTest();
+                state = WAIT_BEGIN;
+                prepareForBegin();
+            }
+        });
+        builder.setNegativeButton("返回", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
+
     }
 
     private void onResultConfirmed() {
