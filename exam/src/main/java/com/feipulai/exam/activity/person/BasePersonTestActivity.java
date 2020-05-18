@@ -316,7 +316,6 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                     LogUtils.operation("该学生已满分跳过测试:"+roundResult.getStudentCode());
                     return;
                 }
-
             }
         }
         //是否有成绩，没有成绩查底该项目是否有成绩，没有成绩测试次数为1，有成绩测试次数+1

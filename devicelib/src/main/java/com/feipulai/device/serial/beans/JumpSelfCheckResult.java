@@ -109,7 +109,7 @@ public class JumpSelfCheckResult{
 			//有坏点
 			mTerminalCondition = HAS_BROKEN_POINTS;
 		}
-		LogUtils.normal("跳绳自检返回数据(解析前):"+buf.length+"---"+StringUtility.bytesToHexString(buf)+"---\n(解析后):"+toString());
+		LogUtils.normal("立定跳远自检返回数据(解析前):"+buf.length+"---"+StringUtility.bytesToHexString(buf)+"---\n(解析后):"+toString());
 	}
 	
 	/**

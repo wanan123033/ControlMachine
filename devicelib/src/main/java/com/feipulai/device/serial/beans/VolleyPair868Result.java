@@ -40,7 +40,7 @@ public class VolleyPair868Result {
         this.dataArr = data;
         Log.e("TAG", "----" + StringUtility.bytesToHexString(data));
         state = data[12];
-        score = data[13] * 0x0100 + data[14];
+        score = (data[13] & 0xFF) * 0x0100 + (data[14] & 0xFF);
         hostid = data[5];
         deviceId = data[6];
         electricityState = data[15];

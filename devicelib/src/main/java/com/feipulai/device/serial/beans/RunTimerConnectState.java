@@ -152,7 +152,7 @@ public class RunTimerConnectState {
         byte state2 = (byte) (data[8] & 0xff);
         byte state3 = (byte) (data[9] & 0xff);
         checkConnect(state, state2, state3);
-        LogUtils.normal("实心球返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+        LogUtils.normal("折返跑返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
 
     }
 

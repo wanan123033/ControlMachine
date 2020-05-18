@@ -182,10 +182,20 @@ public class ThrowSettingDialog extends AlertDialog.Builder {
 
     private void onResults(byte[] datas) {
         RangerResult result = new RangerResult(datas);
-        double result1 = result.getResult();
         if (result.getType() == 1){
-
+            initResult(result);
         }
 
+    }
+
+    private void initResult(RangerResult result) {
+        et_d.setText(String.valueOf(result.getLevel_d()));
+        et_d.setSelection(et_d.getText().length());
+        et_f.setText(String.valueOf(result.getLevel_g()));
+        et_f.setSelection(et_f.getText().length());
+        et_m.setText(String.valueOf(result.getLevel_m()));
+        et_m.setSelection(et_m.getText().length());
+        et_range.setText(String.valueOf(result.getResult()));
+        et_range.setSelection(et_range.getText().length());
     }
 }

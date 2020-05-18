@@ -47,6 +47,7 @@ import com.feipulai.exam.service.UploadService;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.StuSearchEditText;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
@@ -140,6 +141,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LogUtils.life("BaseTestActivity onCreate");
         init();
         PrinterManager.getInstance().init();
         if (SettingHelper.getSystemSetting().isRtUpload()) {
@@ -297,12 +299,17 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
         }
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
         List<RoundResult> roundResultList = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(student.getStudentCode(), studentItem.getExamType());
+        if (student != null)
+            LogUtils.operation("测距检入到学生:"+student.toString());
+        if (studentItem != null)
+            LogUtils.operation("测距检入到学生StudentItem:"+studentItem.toString());
+        if (roundResultList != null)
+            LogUtils.operation("测距检入到学生成绩:"+roundResultList.size()+"----"+roundResultList.toString());
+
         testNo = roundResultList == null || roundResultList.size() == 0 ? 1 : roundResultList.get(0).getTestNo();
         //保存成绩，并测试轮次大于测试轮次次数
         if (roundResultList != null && roundResultList.size() >= setTestCount()) {
-            //已测试，不重测
-//            roundNo = roundResult.getRoundNo();
-//            selectTestDialog(student);
+            LogUtils.operation("该考生已测试完成:"+student.toString());
             toastSpeak("该考生已测试完成");
             return;
         }
@@ -343,6 +350,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
         switch (view.getId()) {
 
             case R.id.txt_led_setting:
+
                 toLedSetting();
                 break;
             case R.id.txt_stu_skip:
@@ -431,6 +439,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        LogUtils.life("BaseTestActivity onDestroy");
         Intent serverIntent = new Intent(this, UploadService.class);
         stopService(serverIntent);
         PrinterManager.getInstance().close();
@@ -467,10 +476,10 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
             if (testType == 0) {
                 sendTestCommand(pair);
             }
-            setShowLed(pair);
+//            setShowLed(pair);
 
-            Logger.i("addStudent:" + student.toString());
-            Logger.i("addStudent:当前考生进行第" + testNo + "次的第" + roundNo + "轮测试");
+            LogUtils.operation("测距添加学生信息:" + student.toString());
+            LogUtils.operation("测距当前考生:"+pair.getStudent().getStudentCode()+"进行第" + testNo + "次的第" + roundNo + "轮测试");
         } else {
             toastSpeak("当前无设备可添加学生测试");
         }
@@ -600,6 +609,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
             txtStuResult.setText("");
             toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), roundNo)
                     , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), roundNo));
+            LogUtils.operation("测距当前考生:"+pair.getStudent().getStudentCode()+"进行第" + testNo + "次的第" + roundNo + "轮测试");
             Message msg = new Message();
             msg.obj = pair;
             ledHandler.sendMessageDelayed(msg, 2000);
@@ -630,7 +640,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
      * @param baseStuPair 当前设备
      */
     public void saveResult(@NonNull BaseStuPair baseStuPair) {
-        Logger.i("saveResult==>" + baseStuPair.toString());
+        LogUtils.operation("测距保存成绩:" + baseStuPair.toString());
         if (baseStuPair.getStudent() == null)
             return;
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(baseStuPair.getStudent().getStudentCode());
@@ -638,7 +648,6 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
         roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
         roundResult.setStudentCode(baseStuPair.getStudent().getStudentCode());
         roundResult.setItemCode(TestConfigs.getCurrentItemCode());
-        Log.e("TAG----","baseStuPair.getResult()="+baseStuPair.getResult());
         roundResult.setResult(baseStuPair.getResult());
         roundResult.setMachineResult(baseStuPair.getResult());
         roundResult.setResultState(baseStuPair.getResultState());
@@ -678,7 +687,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
         //生成结束时间
         roundResult.setEndTime(System.currentTimeMillis()+"");
         DBManager.getInstance().insertRoundResult(roundResult);
-        Logger.i("saveResult==>insertRoundResult->" + roundResult.toString());
+        LogUtils.operation("测距保存成绩:" + roundResult.toString());
         List<RoundResult> roundResultList = new ArrayList<>();
         roundResultList.add(roundResult);
         UploadResults uploadResults = new UploadResults(studentItem.getScheduleNo(), TestConfigs.getCurrentItemCode(),
@@ -843,7 +852,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             BaseTestActivity activity = mActivityWeakReference.get();
-            activity.setShowLed((BaseStuPair) msg.obj);
+//            activity.setShowLed((BaseStuPair) msg.obj);
 
         }
 

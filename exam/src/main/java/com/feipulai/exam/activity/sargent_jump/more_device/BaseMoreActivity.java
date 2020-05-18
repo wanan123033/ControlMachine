@@ -495,6 +495,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
      * 处理结果
      */
     private synchronized void doResult(final BaseStuPair pair, final int index) {
+        if (pair.getStudent() == null)
+            return;
         broadResult(pair);
         DeviceDetail detail = deviceDetails.get(index);
         String[] timeResult = detail.getStuDevicePair().getTimeResult();
@@ -523,7 +525,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 msg.obj = detail;
                 clearHandler.sendMessageDelayed(msg, 4000);
                 pair.setCanTest(true);
-                pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
+                pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
                 return;
             }
             int count = detail.getRound();
@@ -537,7 +539,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                deviceDetails.get(index).getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
+                                deviceDetails.get(index).getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
                                 deviceDetails.get(index).getStuDevicePair().setResult(-999);
                                 deviceListAdapter.notifyItemChanged(index);
                             }
@@ -564,8 +566,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
         deviceListAdapter.notifyItemChanged(index);
         pair.setCanTest(true);
-        pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
-//        pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+        pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
 
     }
 
