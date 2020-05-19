@@ -1,5 +1,6 @@
 package com.feipulai.exam.activity.data;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,6 +21,7 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.utils.ResultDisplayUtils;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -116,7 +118,6 @@ public class DataDisplayActivity extends BaseTitleActivity {
                 // 0 正常  -1犯规    -2中退    -3放弃
                 // 体侧系统没有中退和放弃,且犯规均为机器判定的犯规
                 switch (roundResult.getResultState()) {
-
                     case RoundResult.RESULT_STATE_NORMAL:
                         StringBuilder sb = new StringBuilder();
                         sb.append(ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult(), HWConfigs.HEIGHT_ITEM));
@@ -124,13 +125,10 @@ public class DataDisplayActivity extends BaseTitleActivity {
                         sb.append(ResultDisplayUtils.getStrResultForDisplay(weightResults.get(i).getResult(), HWConfigs.WEIGHT_ITEM));
                         mTvBestResult.setText(sb.toString());
                         break;
-
                     case RoundResult.RESULT_STATE_FOUL:
                         mTvBestResult.setText("X");
                         break;
-
                 }
-
                 break;
             }
         }
@@ -164,4 +162,9 @@ public class DataDisplayActivity extends BaseTitleActivity {
         rvResult.setAdapter(new ResultDetailAdapter(roundResults));
     }
 
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        LogUtils.life("DataDisplayActivity onCreate");
+    }
 }

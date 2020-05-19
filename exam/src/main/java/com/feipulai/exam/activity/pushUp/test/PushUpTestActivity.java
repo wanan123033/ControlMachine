@@ -11,5 +11,4 @@ public class PushUpTestActivity
 	protected SitPullUpTestPresenter<PushUpSetting> getPresenter() {
 		return new PushUpTestPresenter(this, this);
 	}
-	
 }

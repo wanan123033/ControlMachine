@@ -28,8 +28,8 @@ public class PushUpCheckActivity extends SitPullUpCheckActivity {
         if (baseEvent.getTagInt() == EventConfigs.ITEM_SETTING_UPDATE) {
             PushUpSetting setting = SharedPrefsUtil.loadFormSource(this, PushUpSetting.class);
             if (setting.getTestType() == PushUpSetting.WIRELESS_TYPE && setting.getDeviceSum() == 1) {
-                finish();
                 IntentUtil.gotoActivity(PushUpCheckActivity.this, PushUpIndividualActivity.class);
+                finish();
             }
         }
     }

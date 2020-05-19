@@ -65,25 +65,23 @@ public class RangerTestActivity extends BaseTestActivity  implements PenalizeDia
         if (utils.isBluetoothEnabled()) {
             utils.setupService();
             utils.startService();
-            utils.setOnDataReceivedListener(new OnDataReceivedListener() {
-                @Override
-                protected void onResult(byte[] datas) {
-                    onResults(datas);
-                }
-            });
         }else {
             utils.enable();
             utils.setupService();
             utils.startService();
-            utils.setOnDataReceivedListener(new OnDataReceivedListener() {
-                @Override
-                protected void onResult(byte[] datas) {
-                    onResults(datas);
-                }
-            });
-
         }
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        utils.setOnDataReceivedListener(new OnDataReceivedListener() {
+            @Override
+            protected void onResult(byte[] datas) {
+                onResults(datas);
+            }
+        });
     }
 
     @Override

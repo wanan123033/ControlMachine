@@ -59,6 +59,7 @@ import com.feipulai.exam.utils.PrintResultUtil;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.StuSearchEditText;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadmoreListener;
 import com.zkteco.android.biometric.module.idcard.meta.IDCardInfo;
@@ -306,6 +307,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
     @Override
     protected void onResume() {
         super.onResume();
+        LogUtils.life("DataRetrieveActivity onResume");
         CheckDeviceOpener.getInstance().setQrLength(SettingHelper.getSystemSetting().getQrLength());
         CheckDeviceOpener.getInstance().setOnCheckDeviceArrived(this);
         int checkTool = SettingHelper.getSystemSetting().getCheckTool();
@@ -318,6 +320,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
     @Override
     protected void onPause() {
         super.onPause();
+        LogUtils.life("DataRetrieveActivity onPause");
         CheckDeviceOpener.getInstance().close();
     }
 
@@ -841,6 +844,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        LogUtils.life("DataRetrieveActivity onDestroy");
         CheckDeviceOpener.getInstance().destroy();
         unregisterReceiver(receiver);
     }
