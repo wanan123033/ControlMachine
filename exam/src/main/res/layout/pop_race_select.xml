@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:background="@color/blue">
+    android:background="@color/blue"
+    android:orientation="horizontal">
 
     <com.feipulai.exam.view.MiddleRace.ScrollablePanel
         android:id="@+id/result_scroll"
@@ -24,8 +24,18 @@
             android:id="@+id/vht_table_result"
             android:layout_width="385dp"
             android:layout_height="match_parent"
+            android:layout_below="@+id/tv_notice"
             android:background="@color/background_color"
             android:orientation="vertical" />
+
+        <TextView
+            android:id="@+id/tv_notice"
+            android:layout_width="385dp"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:gravity="center"
+            android:text="长按获取成绩"
+            android:textSize="20sp" />
     </RelativeLayout>
 
 

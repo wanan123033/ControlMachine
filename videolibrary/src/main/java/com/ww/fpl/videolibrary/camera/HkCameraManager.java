@@ -145,7 +145,7 @@ public class HkCameraManager {
      * 第三步
      * 或者开始或者停止预览
      */
-    public void startPreview() {
+    public boolean startPreview() {
         try {
 //            ((InputMethodManager) MainActivity.activity.getSystemService(Context.INPUT_METHOD_SERVICE))
 //                    .hideSoftInputFromWindow(MainActivity.activity.getCurrentFocus().getWindowToken(),
@@ -153,14 +153,16 @@ public class HkCameraManager {
             if (m_iLogID < 0) {
                 Log.e(TAG, "please login on device first");
                 Toast.makeText(activity, "摄像头连接失败", Toast.LENGTH_SHORT).show();
-                return;
+                return false;
             }
             if (m_iPlayID < 0) {
-                startSinglePreview();
+                return startSinglePreview();
             }
         } catch (Exception ex) {
             Log.e(TAG, ex.toString());
+            return false;
         }
+        return false;
     }
 
     public void stopPreview() {
@@ -174,7 +176,7 @@ public class HkCameraManager {
     }
 
     //开始单通道预览
-    private void startSinglePreview() {
+    private boolean startSinglePreview() {
         Log.i(TAG, "m_iStartChan:" + m_iStartChan);
         NET_DVR_PREVIEWINFO previewInfo = new NET_DVR_PREVIEWINFO();
         previewInfo.lChannel = m_iStartChan;
@@ -185,11 +187,11 @@ public class HkCameraManager {
         m_iPlayID = HCNetSDK.getInstance().NET_DVR_RealPlay_V40(m_iLogID, previewInfo, null);
         if (m_iPlayID < 0) {
             Log.e(TAG, "NET_DVR_RealPlay is failed!Err:" + HCNetSDK.getInstance().NET_DVR_GetLastError() + "---" + m_iLogID);
-            return;
+            return false;
         }
         Log.i(TAG, "开启预览" + "---" + m_iLogID);
         Toast.makeText(activity, "摄像头已开启", Toast.LENGTH_SHORT).show();
-
+        return true;
     }
 
     private void stopSinglePreview() {

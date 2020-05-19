@@ -131,8 +131,9 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="40dp"
         android:background="#22000000"
+        android:layout_alignParentEnd="true"
         android:orientation="vertical"
-        android:visibility="gone">
+        >
 
         <RadioButton
             android:id="@+id/rb_speed_half"

@@ -24,7 +24,7 @@ import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.udp.UdpLEDUtil;
 import com.feipulai.exam.R;
-import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceActivity;
+import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForGroupActivity;
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForPersonActivity;
 import com.feipulai.exam.activity.MiddleDistanceRace.MyTcpService;
 import com.feipulai.exam.activity.base.BaseActivity;
@@ -41,13 +41,11 @@ import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
-import com.feipulai.exam.entity.Group;
-import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.netUtils.CommonUtils;
+import com.feipulai.exam.netUtils.netapi.ServerMessage;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -124,7 +122,10 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
         if (initState != TestConfigs.INIT_NO_MACHINE_CODE) {
             MachineCode.machineCode = machineCode;
         }
-
+        //所有界面在此关闭tcp上传线程（待测试）
+        if (ServerMessage.subscriber0 != null) {
+            ServerMessage.subscriber0.stopSendTcpThread();
+        }
 //        testUpload();
     }
 
@@ -305,7 +306,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                 if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
                     startActivity(new Intent(MainActivity.this, MiddleDistanceRaceForPersonActivity.class));
                 } else {
-                    startActivity(new Intent(MainActivity.this, MiddleDistanceRaceActivity.class));
+                    startActivity(new Intent(MainActivity.this, MiddleDistanceRaceForGroupActivity.class));
                 }
                 return;
             }

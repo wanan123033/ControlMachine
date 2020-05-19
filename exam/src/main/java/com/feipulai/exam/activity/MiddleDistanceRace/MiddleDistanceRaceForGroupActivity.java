@@ -1,13 +1,11 @@
 package com.feipulai.exam.activity.MiddleDistanceRace;
 
-import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -16,12 +14,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.util.ArrayMap;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -56,7 +52,6 @@ import com.feipulai.exam.R;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.ColorSelectAdapter;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.MiddleRaceGroupAdapter;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.RaceTimingAdapter;
-import com.feipulai.exam.activity.MiddleDistanceRace.adapter.SelectResultAdapter;
 import com.feipulai.exam.activity.MiddleDistanceRace.bean.GroupItemBean;
 import com.feipulai.exam.activity.MiddleDistanceRace.bean.RaceResultBean;
 import com.feipulai.exam.activity.MiddleDistanceRace.bean.SelectResultBean;
@@ -81,17 +76,14 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
-import com.feipulai.exam.view.MiddleRace.ScrollablePanel;
 import com.kk.taurus.playerbase.assist.InterEvent;
 import com.kk.taurus.playerbase.assist.OnVideoViewEventHandler;
 import com.kk.taurus.playerbase.entity.DataSource;
-import com.kk.taurus.playerbase.event.OnPlayerEventListener;
 import com.kk.taurus.playerbase.player.IPlayer;
 import com.kk.taurus.playerbase.receiver.ReceiverGroup;
 import com.kk.taurus.playerbase.widget.BaseVideoView;
 import com.orhanobut.logger.Logger;
 import com.ww.fpl.videolibrary.camera.HkCameraManager;
-import com.ww.fpl.videolibrary.play.VideoPlayWindow;
 import com.ww.fpl.videolibrary.play.play.DataInter;
 import com.ww.fpl.videolibrary.play.play.ReceiverGroupManager;
 import com.ww.fpl.videolibrary.play.util.PUtil;
@@ -141,10 +133,10 @@ import static com.ww.fpl.videolibrary.camera.HKConfig.HK_USER;
 /**
  * @author ww
  * @time 2019/10/18 13:30
- * 中长跑
+ * 中长跑分组模式（无分组功能）
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
-public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implements UdpClient.UDPChannelListerner, NettyListener, RaceTimingAdapter.MyClickListener, ChannelFutureListener, MiddleRaceGroupAdapter.OnItemClickListener, ColorSelectAdapter.OnItemClickListener, AdapterView.OnItemSelectedListener {
+public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity implements UdpClient.UDPChannelListerner, NettyListener, RaceTimingAdapter.MyClickListener, ChannelFutureListener, MiddleRaceGroupAdapter.OnItemClickListener, ColorSelectAdapter.OnItemClickListener, AdapterView.OnItemSelectedListener {
 
     @BindView(R.id.sp_race_item)
     Spinner spRaceItem;
@@ -184,7 +176,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
     ImageTextButton btnCamera;
     @BindView(R.id.Sur_Player)
     SurfaceView SurPlayer;
-    private String TAG = "MiddleDistanceRaceActivity";
+    private String TAG = "MiddleDistanceRaceForGroupActivity";
     private final int MESSAGE_A = 1;
     private boolean isFlag = true;
     private int mItemPosition = 0;
@@ -263,7 +255,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
     private int carryMode;
     private int digital;
     private boolean isChange = false;
-    public static MiddleDistanceRaceActivity instance;
+    public static MiddleDistanceRaceForGroupActivity instance;
     private int width;
     private String machine_ip;
     private String machine_port;
@@ -414,13 +406,11 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         //连接设备弹窗
         initConnectPop();
 
-//        initSelectPop();
-
         //当上一次服务开启时间小于12小时，每次进入自动开启服务
-        if (!TextUtils.isEmpty(server_Port) && lastServiceTime != 0 && (System.currentTimeMillis() - lastServiceTime) < 12 * 60 * 60 * 1000) {
-            currentPort = Integer.parseInt(server_Port);
-            bindTcpService();
-        }
+//        if (!TextUtils.isEmpty(server_Port) && lastServiceTime != 0 && (System.currentTimeMillis() - lastServiceTime) < 12 * 60 * 60 * 1000) {
+//            currentPort = Integer.parseInt(server_Port);
+//            bindTcpService();
+//        }
     }
 
     private DataSource mDataSource;
@@ -765,7 +755,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                     toastSpeak("请先连接设备");
                     return;
                 }
-                nettyClient.sendMsgToServer(TcpConfig.getCmdUpdateDate(), MiddleDistanceRaceActivity.this);
+                nettyClient.sendMsgToServer(TcpConfig.getCmdUpdateDate(), MiddleDistanceRaceForGroupActivity.this);
                 ToastUtils.showShort("同步完成");
             }
         });
@@ -806,25 +796,8 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
     private void bindTcpService() {
         bindIntent = new Intent(mContext, MyTcpService.class);
 
-//        if (!isWorked())
         startService(bindIntent);
         isBind = bindService(bindIntent, serviceConnection, BIND_AUTO_CREATE);
-    }
-
-    /**
-     * 判断服务是否已启动
-     *
-     * @return
-     */
-    private boolean isWorked() {
-        ActivityManager myManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
-        ArrayList<ActivityManager.RunningServiceInfo> runningService = (ArrayList<ActivityManager.RunningServiceInfo>) myManager.getRunningServices(30);
-        for (int i = 0; i < runningService.size(); i++) {
-            if (runningService.get(i).service.getClassName().equals("com.feipulai.exam.activity.MiddleDistanceRace.MyTcpService")) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public void unBindService() {
@@ -866,7 +839,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                     return;
                 }
                 final int track = Integer.parseInt(selectResults.get(row).get(0));
-                dialogUtil.showCommonDialog(completeResults.get(track).getStudentCode() + "  更正成绩：" + videoResult, 0, new DialogUtil.DialogListener() {
+                dialogUtil.showCommonDialog(completeResults.get(track).getStudentCode() + "  获取最终成绩：" + videoResult, 0, new DialogUtil.DialogListener() {
                     @Override
                     public void onPositiveClick() {
                         ToastUtils.showShort(videoResult);
@@ -894,21 +867,14 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         ivControl = mSelectPop.findViewById(R.id.iv_video_control);
 
         updateVideo();
-        mReceiverGroup = ReceiverGroupManager.get().getReceiverGroup(this);
-        mReceiverGroup.getGroupValue().putBoolean(DataInter.Key.KEY_CONTROLLER_TOP_ENABLE, true);
-        mVideoView.setReceiverGroup(mReceiverGroup);
-        mVideoView.setEventHandler(onVideoViewEventHandler);
 
         ivControl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int state = mVideoView.getState();
-                Log.i("mVideoView", "1------" + state);
                 if (state == IPlayer.STATE_PLAYBACK_COMPLETE)
                     return;
 
-                Log.i("mVideoView", "2------" + mVideoView.isInPlaybackState());
-                Log.i("mVideoView", "3------" + userPause);
                 if (mVideoView.isInPlaybackState()) {
                     if (userPause) {
                         mVideoView.resume();
@@ -936,7 +902,6 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                         userPause = true;
                     }
                 }
-                Log.i("mVideoView", "4------" + userPause);
                 if (userPause) {
                     ivControl.setImageResource(R.mipmap.ic_video_player_btn_play);
                 } else {
@@ -978,9 +943,13 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
             @Override
             public void onDismiss() {
                 mVideoView.stop();
-                mVideoView.updateRender();
+                mVideoView.setDataSource(null);
                 videoResult = "";
                 seekTime = 0;
+                hasStart = false;
+                userPause = true;
+                speed=1.0f;
+                ivControl.setImageResource(R.mipmap.ic_video_player_btn_play);
             }
         });
     }
@@ -991,22 +960,28 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
         layoutParams.height = (width * 2 / 3 - 20) * 720 / 1280;
         layoutParams.setMargins(0, 0, 0, 0);
         mVideoView.setLayoutParams(layoutParams);
+
+        mReceiverGroup = ReceiverGroupManager.get().getReceiverGroup(this);
+        mReceiverGroup.getGroupValue().putBoolean(DataInter.Key.KEY_CONTROLLER_TOP_ENABLE, true);
+        mVideoView.setReceiverGroup(mReceiverGroup);
+        mVideoView.setEventHandler(onVideoViewEventHandler);
     }
 
     //快进时间
     private int seekTime;
 
     private void initPlay() {
-        Log.i("mVideoView", "5------" + hasStart);
         if (!hasStart) {
             String startTime = groupItemBeans.get(groupPosition).getGroup().getRemark1();
+            if (TextUtils.isEmpty(startTime)) {
+                ToastUtils.showShort("找不到录像文件");
+                return;
+            }
             List<String> paths = PUtil.getFilesAllName(hkCamera.PATH);
-            Log.i("timeLong", "paths---" + paths.toString());
             String[] timeLong = new String[0];
             for (String path : paths
                     ) {
                 timeLong = path.replace(".mp4", "").split("_");
-                Log.i("timeLong", "---" + timeLong.toString());
                 if (timeLong.length == 2 && Long.parseLong(startTime) >= Long.parseLong(timeLong[0]) && Long.parseLong(startTime) <= Long.parseLong(timeLong[1])) {
                     mDataSource.setData(hkCamera.PATH + path);
                     mDataSource.setTitle("发令时刻：" + DateUtil.formatTime2(Long.parseLong(startTime), "yyyy/MM/dd HH:mm:ss:SSS"));
@@ -1019,31 +994,76 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
             }
             //发令时刻-视频开始录制时间=需要快进的时间（最终成绩=视频暂停时间-快进时间）
             seekTime = (int) (Long.parseLong(startTime) - Long.parseLong(timeLong[0]));
-            Log.i("mVideoView", "seekTime-----" + seekTime);
             mVideoView.setDataSource(mDataSource);
             mVideoView.start(seekTime);
+            mVideoView.setSpeed(speed);
             hasStart = true;
         }
     }
 
+    private float speed = 1;
     private OnVideoViewEventHandler onVideoViewEventHandler = new OnVideoViewEventHandler() {
         @Override
         public void onAssistHandle(BaseVideoView assist, int eventCode, Bundle bundle) {
-            super.onAssistHandle(assist, eventCode, bundle);
-            Log.i("mVideoView", "6------" + eventCode);
+//            super.onAssistHandle(assist, eventCode, bundle);
             switch (eventCode) {
-                case InterEvent.CODE_REQUEST_PAUSE:
-                    userPause = true;
-                    break;
+//                case InterEvent.CODE_REQUEST_PAUSE:
+//                    userPause = true;
+//                    break;
                 case DataInter.Event.EVENT_CODE_ERROR_SHOW:
                     mVideoView.stop();
+                    break;
+                case DataInter.Event.EVENT_CODE_REQUEST_SPEED_X_HALF:
+                    speed = 0.5f;
+                    if (mVideoView != null && mVideoView.isInPlaybackState()) {
+                        mVideoView.setSpeed((float) 0.5);
+                    }
+                    break;
+                case DataInter.Event.EVENT_CODE_REQUEST_SPEED_X_1:
+                    speed = 1.0f;
+                    if (mVideoView != null && mVideoView.isInPlaybackState()) {
+                        mVideoView.setSpeed((float) 1.0);
+                    }
+                    break;
+                case DataInter.Event.EVENT_CODE_REQUEST_SPEED_X_2:
+                    speed = 2.0f;
+                    if (mVideoView != null && mVideoView.isInPlaybackState()) {
+                        mVideoView.setSpeed((float) 2.0);
+                    }
+                    break;
+                case InterEvent.CODE_REQUEST_PAUSE:
+                    requestPause(assist, bundle);
+                    userPause = true;
+                    break;
+                case InterEvent.CODE_REQUEST_RESUME:
+                    requestResume(assist, bundle);
+                    break;
+                case InterEvent.CODE_REQUEST_SEEK:
+                    requestSeek(assist, bundle);
+                    break;
+                case InterEvent.CODE_REQUEST_STOP:
+                    requestStop(assist, bundle);
+                    break;
+                case InterEvent.CODE_REQUEST_RESET:
+                    requestReset(assist, bundle);
+                    break;
+                case InterEvent.CODE_REQUEST_RETRY:
+                    requestRetry(assist, bundle);
+                    break;
+                case InterEvent.CODE_REQUEST_REPLAY:
+//                    requestReplay(assist, bundle);
+                    mVideoView.rePlay(seekTime);
+                    ReceiverGroupManager.get().control.resetSpeed();
+                    break;
+                case InterEvent.CODE_REQUEST_PLAY_DATA_SOURCE:
+                    requestPlayDataSource(assist, bundle);
                     break;
             }
         }
 
         @Override
         public void requestRetry(BaseVideoView videoView, Bundle bundle) {
-            if (PUtil.isTopActivity(MiddleDistanceRaceActivity.this)) {
+            if (PUtil.isTopActivity(MiddleDistanceRaceForGroupActivity.this)) {
                 super.requestRetry(videoView, bundle);
             }
         }
@@ -1079,7 +1099,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                     isFirst = true;
                     nettyClient = new NettyClient(ip, port);
                     if (!nettyClient.getConnectStatus()) {
-                        nettyClient.setListener(MiddleDistanceRaceActivity.this);
+                        nettyClient.setListener(MiddleDistanceRaceForGroupActivity.this);
                         nettyClient.connect(isFirst);
                         mHander.sendEmptyMessageDelayed(2, 400);
                     } else {
@@ -1101,7 +1121,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
             @Override
             public void run() {
                 if (isConnect) {
-                    nettyClient.sendMsgToServer(TcpConfig.getCmdUpdateDate(), MiddleDistanceRaceActivity.this);
+                    nettyClient.sendMsgToServer(TcpConfig.getCmdUpdateDate(), MiddleDistanceRaceForGroupActivity.this);
                 }
             }
         }, 3000);
@@ -1130,14 +1150,16 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
             @Override
             public void run() {
                 if (hkCamera == null) {
-                    hkCamera = new HkCameraManager(MiddleDistanceRaceActivity.this, camera_ip, HK_PORT, HK_USER, HK_PSW);
+                    hkCamera = new HkCameraManager(MiddleDistanceRaceForGroupActivity.this, camera_ip, HK_PORT, HK_USER, HK_PSW);
                     hkInit = hkCamera.initeSdk();
                     if (hkInit) {
                         hkCamera.login2HK();
                         mHander.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                hkCamera.startPreview();
+                                if (hkCamera.startPreview()) {
+                                    btnCamera.performClick();
+                                }
                             }
                         }, 600);
                     } else {
@@ -1361,10 +1383,10 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
 
     }
 
+
     @Override
     public void onStartTiming(long time) {
 //        Log.i("onMessageResponse", "开始计时---------" + time);
-//        Log.i("timingLists", timingLists.toString());
         int timerNo = 0;
         for (TimingBean timing : timingLists
                 ) {
@@ -1744,6 +1766,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                     }
                 }
 
+                long startTime = timingLists.get(position).getTime();
                 List<UploadResults> uploadResults = new ArrayList<>();
                 List<RoundResult> roundResults = new ArrayList<>();
 
@@ -1755,6 +1778,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                         if (timingLists.get(position).getItemGroupName().equals(groupItemBean.getGroupItemName())) {
                             //当前组完成之后更新状态并移除
                             groupItemBean.getGroup().setIsTestComplete(GROUP_FINISH);
+                            groupItemBean.getGroup().setRemark1(startTime + "");//增加发令时刻
                             DBManager.getInstance().updateGroup(groupItemBean.getGroup());
                             groupItemBeans.remove(groupItemBean);
                             groupAdapter.notifyDataSetChanged();
@@ -2014,7 +2038,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
     private Map<Integer, RoundResult> completeResults = new HashMap<>();
 
     private void showCompleteDialog() {
-        String[] selectItems = new String[]{"查看成绩", "打印成绩", "回放录像"};
+        String[] selectItems = new String[]{"查看成绩", "打印成绩"};
         AlertDialog.Builder listDialog = new AlertDialog.Builder(this);
         listDialog.setTitle(groupName);
         listDialog.setItems(selectItems, new DialogInterface.OnClickListener() {
@@ -2034,7 +2058,6 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                         SelectResultBean selectResultBean;
                         List<String> strings;
                         int resultCycles = 0;
-                        Map<Integer, RoundResult> resultMap;
                         for (GroupItem groupItem : groupItems
                                 ) {
                             Student student = DBManager.getInstance().queryStudentByStuCode(groupItem.getStudentCode());
@@ -2107,6 +2130,7 @@ public class MiddleDistanceRaceActivity extends MiddleBaseTitleActivity implemen
                         } else {
                             tableResult.notifyContent();
                         }
+                        updateVideo();
                         mSelectPop.showAtLocation(getWindow().getDecorView(), Gravity.CENTER, 0, 0);
                         break;
                     case 1:

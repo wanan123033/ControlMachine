@@ -223,7 +223,7 @@
             android:name=".activity.footBall.FootBallSettingActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".activity.MiddleDistanceRace.MiddleDistanceRaceActivity"
+            android:name=".activity.MiddleDistanceRace.MiddleDistanceRaceForGroupActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.MiddleDistanceRace.MiddleRaceSettingActivity"
