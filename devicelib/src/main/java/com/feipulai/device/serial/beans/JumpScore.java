@@ -15,7 +15,7 @@ public class JumpScore {
 		checkFoul(result);
 		//获取到的成绩需要加50cm
 		score = ((result[9] & 0xff) << 8) + (result[10] & 0xff) + 50;
-		LogUtils.normal("跳绳返回数据(解析前):"+result.length+"---"+StringUtility.bytesToHexString(result)+"---\n(解析后):"+toString());
+		LogUtils.normal("立定跳远返回数据(解析前):"+result.length+"---"+StringUtility.bytesToHexString(result)+"---\n(解析后):"+toString());
 	}
 	
 	public JumpScore() {
@@ -53,5 +53,12 @@ public class JumpScore {
 	public void setFoul(boolean foul) {
 		isFoul = foul;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "JumpScore{" +
+				"isFoul=" + isFoul +
+				", score=" + score +
+				'}';
+	}
 }

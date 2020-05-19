@@ -339,11 +339,12 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 //                break;
         }
     }
-
+    boolean clicked = false;
     /**
      * 展示判罚
      */
     private void showPenalize(final BaseDeviceState deviceState, final BaseStuPair pair) {
+        clicked = false;
         SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
         alertDialog.setTitleText(getString(R.string.confirm_result));
         alertDialog.setCancelable(false);
@@ -351,13 +352,20 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
-                updatePair(deviceState, pair, false);
+                if (!clicked) {
+                    updatePair(deviceState, pair, false);
+                    clicked = true;
+                }
             }
         }).setCancelText(getString(R.string.foul)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
-                updatePair(deviceState, pair, true);
+
+                if (!clicked) {
+                    updatePair(deviceState, pair, true);
+                    clicked = true;
+                }
             }
         }).show();
 
@@ -1182,7 +1190,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             super.handleMessage(msg);
 
             BaseGroupTestActivity activity = mActivityWeakReference.get();
-            if (activity.stuAdapter.getTestPosition() == -1) {
+            if (activity.stuAdapter == null ||activity.stuAdapter.getTestPosition() == -1) {
                 return;
             }
             activity.setShowLed((BaseStuPair) msg.obj);

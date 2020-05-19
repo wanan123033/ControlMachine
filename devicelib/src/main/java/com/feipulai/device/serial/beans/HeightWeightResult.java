@@ -17,7 +17,7 @@ public class HeightWeightResult{
 		//Logger.e(raw);
 		weight = Double.parseDouble(raw.substring(2,7));
 		height = Double.parseDouble(raw.substring(10,15));
-		LogUtils.normal("摸高返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+		LogUtils.normal("身高体重返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
 	}
 	
 	// 测试用

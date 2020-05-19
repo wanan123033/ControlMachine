@@ -20,6 +20,7 @@ import com.feipulai.exam.activity.ranger.bluetooth.BluetoothManager;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.utils.Toast;
 import com.feipulai.exam.view.OperateProgressBar;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.util.Arrays;
 
@@ -64,25 +65,23 @@ public class RangerTestActivity extends BaseTestActivity  implements PenalizeDia
         if (utils.isBluetoothEnabled()) {
             utils.setupService();
             utils.startService();
-            utils.setOnDataReceivedListener(new OnDataReceivedListener() {
-                @Override
-                protected void onResult(byte[] datas) {
-                    onResults(datas);
-                }
-            });
         }else {
             utils.enable();
             utils.setupService();
             utils.startService();
-            utils.setOnDataReceivedListener(new OnDataReceivedListener() {
-                @Override
-                protected void onResult(byte[] datas) {
-                    onResults(datas);
-                }
-            });
-
         }
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        utils.setOnDataReceivedListener(new OnDataReceivedListener() {
+            @Override
+            protected void onResult(byte[] datas) {
+                onResults(datas);
+            }
+        });
     }
 
     @Override
@@ -184,7 +183,6 @@ public class RangerTestActivity extends BaseTestActivity  implements PenalizeDia
     protected void confrim() {
         saveResult(pair);
         updateInitBtnState();
-        Log.e("TAG----","testNo="+testNo+",setting.getTestNo()="+setting.getTestNo());
         result[testNo - 1] = ResultDisplayUtils.getStrResultForDisplay(pair.getResult());
         adapter.setNewData(Arrays.asList(result));
         testNo++;
@@ -199,6 +197,7 @@ public class RangerTestActivity extends BaseTestActivity  implements PenalizeDia
 
     private void onResults(byte[] datas) {
         RangerResult result = new RangerResult(datas);
+        LogUtils.operation("测距获取结果:"+result.toString());
         int result1 = result.getResult();
         if (result.getType() == 1){
             setScore(result1);

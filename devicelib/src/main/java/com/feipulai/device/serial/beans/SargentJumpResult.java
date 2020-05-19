@@ -38,7 +38,7 @@ public class SargentJumpResult{
 		    hostId = data[11];
         }
 //		Log.i("sargent",StringUtility.bytesToHexString(data));
-        LogUtils.normal("摸高返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+        LogUtils.normal("跳远返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
 
     }
 	

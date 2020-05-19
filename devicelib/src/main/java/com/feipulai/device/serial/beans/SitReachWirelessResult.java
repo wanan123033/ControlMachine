@@ -101,5 +101,19 @@ public class SitReachWirelessResult {
     public void setHostId(int hostId) {
         this.hostId = hostId;
     }
+
+    @Override
+    public String toString() {
+        return "SitReachWirelessResult{" +
+                "deviceId=" + deviceId +
+                ", power=" + power +
+                ", state=" + state +
+                ", capacity=" + capacity +
+                ", frequency=" + frequency +
+                ", index=" + index +
+                ", velocity=" + velocity +
+                ", hostId=" + hostId +
+                '}';
+    }
 }
 

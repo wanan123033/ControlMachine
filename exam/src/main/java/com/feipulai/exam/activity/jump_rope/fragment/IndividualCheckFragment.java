@@ -258,6 +258,7 @@ public class IndividualCheckFragment
 
     @Override
     public boolean onInputCheck(Student student) {
+        LogUtil.logDebugMessage("onInputCheck=============>" + student.getStudentCode());
         boolean needAdd = checkQulification(student.getStudentCode(), STUDENT_CODE);
         if (needAdd) {
             showAddHint(student);

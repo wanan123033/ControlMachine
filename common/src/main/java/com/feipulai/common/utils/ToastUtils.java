@@ -6,6 +6,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.orhanobut.logger.examlogger.LogUtils;
+
 /**
  * Created by wangwentao on 2017/1/25.
  * Toast统一管理类
@@ -54,6 +56,7 @@ public class ToastUtils{
 	 * 短时间显示Toast
 	 */
 	public static void showShort(CharSequence message){
+		LogUtils.operation("页面提示:"+message);
 		if(isShowAble){
 			if(mToast == null){
 				mToast = Toast.makeText(context,message, Toast.LENGTH_SHORT);
@@ -70,6 +73,7 @@ public class ToastUtils{
 	 * @param resId 资源ID:getResources().getString(R.string.xxxxxx);
 	 */
 	public static void showShort(int resId){
+		LogUtils.operation("页面提示:"+context.getResources().getString(resId));
 		if(isShowAble){
 			if(mToast == null){
 				mToast = Toast.makeText(context,resId, Toast.LENGTH_SHORT);
@@ -84,6 +88,7 @@ public class ToastUtils{
 	 * 长时间显示Toast
 	 */
 	public static void showLong(CharSequence message){
+		LogUtils.operation("页面提示:"+message);
 		if(isShowAble){
 			if(mToast == null){
 				mToast = Toast.makeText(context,message, Toast.LENGTH_LONG);
@@ -100,6 +105,7 @@ public class ToastUtils{
 	 * @param resId 资源ID:getResources().getString(R.string.xxxxxx);
 	 */
 	public static void showLong(int resId){
+		LogUtils.operation("页面提示:"+context.getResources().getString(resId));
 		if(isShowAble){
 			if(mToast == null){
 				mToast = Toast.makeText(context,resId, Toast.LENGTH_LONG);

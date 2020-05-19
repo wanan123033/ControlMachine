@@ -39,7 +39,6 @@ public class PushPatternSelectActivity extends SubItemsSelectActivity {
                         startActivity(new Intent(PushPatternSelectActivity.this,
                                 PushUpCheckActivity.class));
                     }
-
                 } else {
                     startActivity(new Intent(PushPatternSelectActivity.this, BaseGroupActivity.class));
                 }

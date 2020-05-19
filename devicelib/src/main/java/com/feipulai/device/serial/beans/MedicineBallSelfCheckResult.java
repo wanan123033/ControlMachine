@@ -30,7 +30,7 @@ public class MedicineBallSelfCheckResult{
 			}
 			bit >>= 1;
 		}
-		LogUtils.normal("中长跑返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+		LogUtils.normal("实心球返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
 
 	}
 	

@@ -59,6 +59,7 @@ import com.feipulai.exam.utils.PrintResultUtil;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.StuSearchEditText;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadmoreListener;
 import com.zkteco.android.biometric.module.idcard.meta.IDCardInfo;
@@ -128,7 +129,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
     private int mPageNum;
     public BroadcastReceiver receiver;
     private Item mCurrentItem;
-    private Handler mHandler=new Handler(new Handler.Callback() {
+    private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message message) {
             return false;
@@ -147,10 +148,10 @@ public class DataRetrieveActivity extends BaseTitleActivity
         mRbAll.setChecked(true);
         registerReceiver();
         mCbSelectAll.setOnCheckedChangeListener(this);
-        cbUploaded.setOnCheckedChangeListener(this);
-        cbUnUpload.setOnCheckedChangeListener(this);
-        cbUnTested.setOnCheckedChangeListener(this);
-        cbTested.setOnCheckedChangeListener(this);
+//        cbUploaded.setOnCheckedChangeListener(this);
+//        cbUnUpload.setOnCheckedChangeListener(this);
+//        cbUnTested.setOnCheckedChangeListener(this);
+//        cbTested.setOnCheckedChangeListener(this);
         mRbAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -306,6 +307,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
     @Override
     protected void onResume() {
         super.onResume();
+        LogUtils.life("DataRetrieveActivity onResume");
         CheckDeviceOpener.getInstance().setQrLength(SettingHelper.getSystemSetting().getQrLength());
         CheckDeviceOpener.getInstance().setOnCheckDeviceArrived(this);
         int checkTool = SettingHelper.getSystemSetting().getCheckTool();
@@ -318,6 +320,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
     @Override
     protected void onPause() {
         super.onPause();
+        LogUtils.life("DataRetrieveActivity onPause");
         CheckDeviceOpener.getInstance().close();
     }
 
@@ -649,6 +652,55 @@ public class DataRetrieveActivity extends BaseTitleActivity
         mRefreshView.setEnableAutoLoadmore(true);
     }
 
+    @OnClick({R.id.cb_tested, R.id.cb_un_tested, R.id.cb_uploaded, R.id.cb_un_upload})
+    public void onCheckedClickChanged(View view) {
+        CheckBox checkBox = (CheckBox) view;
+        boolean isChecked = checkBox.isChecked();
+        switch (view.getId()) {
+            case R.id.cb_select_all:
+                for (int i = 0; i < mList.size(); i++) {
+                    mList.get(i).setChecked(isChecked);
+                }
+                if (mAdapter != null) {
+                    mAdapter.notifyDataSetChanged();
+                }
+                break;
+            case R.id.cb_tested://已测
+                if (isChecked) {
+                    cbTested.setChecked(true);
+                    mRbAll.setChecked(false);
+                    cbUnTested.setChecked(false);
+                }
+                selectChoose(isChecked);
+                break;
+            case R.id.cb_un_tested://未测
+                if (isChecked) {
+                    cbUnTested.setChecked(true);
+                    mRbAll.setChecked(false);
+                    cbTested.setChecked(false);
+                }
+                selectChoose(isChecked);
+                break;
+            case R.id.cb_uploaded://已上传
+                if (isChecked) {
+                    cbUploaded.setChecked(true);
+                    mRbAll.setChecked(false);
+                    cbUnUpload.setChecked(false);
+                }
+                selectChoose(isChecked);
+                break;
+            case R.id.cb_un_upload://未上传
+                if (isChecked) {
+                    cbUnUpload.setChecked(true);
+                    mRbAll.setChecked(false);
+                    cbUploaded.setChecked(false);
+                }
+                selectChoose(isChecked);
+                break;
+
+        }
+    }
+
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()) {
@@ -737,13 +789,16 @@ public class DataRetrieveActivity extends BaseTitleActivity
             public void onExecuteSuccess(DataBaseRespon respon) {
                 Student student;
                 List<Student> studentList = (List<Student>) respon.getObject();
-
+                Logger.i("zzs===>onExecuteSuccess===>" + studentList.size());
                 if (mPageNum == 0) {
                     mList.clear();
-                    Map<String, Object> countMap = DBManager.getInstance().getChooseStudentCount(getItemCode(), cbTested.isChecked(), cbUnTested.isChecked(),
-                            cbUploaded.isChecked(), cbUnUpload.isChecked());
-                    setStuCount(countMap.get("count"), countMap.get("women_count"), countMap.get("man_count"));
-                    Logger.i("zzs===>" + countMap.toString());
+                    if (cbTested.isChecked() || cbUnTested.isChecked() ||
+                            cbUploaded.isChecked() || cbUnUpload.isChecked()) {
+                        Map<String, Object> countMap = DBManager.getInstance().getChooseStudentCount(getItemCode(), cbTested.isChecked(), cbUnTested.isChecked(),
+                                cbUploaded.isChecked(), cbUnUpload.isChecked());
+                        setStuCount(countMap.get("count"), countMap.get("women_count"), countMap.get("man_count"));
+                        Logger.i("zzs===>" + countMap.toString());
+                    }
                 }
                 if (studentList == null || studentList.size() == 0) {
                     ToastUtils.showShort("没有更多数据了");
@@ -758,13 +813,14 @@ public class DataRetrieveActivity extends BaseTitleActivity
                     student = studentList.get(i);
                     //是否刷选已测或未测
                     if (cbTested.isChecked() || cbUnTested.isChecked()) {
+                        Logger.i("zzs===>Tested===>" + studentList.size());
                         if (cbTested.isChecked()) {
                             mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), student.getPortrait(), 1, displaStuResult(student.getStudentCode()), mCbSelectAll.isChecked()));
                         } else {
                             mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), student.getPortrait(), 0, "-1000", mCbSelectAll.isChecked()));
                         }
                     } else if (cbUploaded.isChecked() || cbUnUpload.isChecked()) {
-
+                        Logger.i("zzs===>Uploaded===>" + studentList.size());
                         mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), student.getPortrait(), 1, displaStuResult(student.getStudentCode()), mCbSelectAll.isChecked()));
                     }
                 }
@@ -841,6 +897,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        LogUtils.life("DataRetrieveActivity onDestroy");
         CheckDeviceOpener.getInstance().destroy();
         unregisterReceiver(receiver);
     }
