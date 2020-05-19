@@ -129,7 +129,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
     private int mPageNum;
     public BroadcastReceiver receiver;
     private Item mCurrentItem;
-    private Handler mHandler=new Handler(new Handler.Callback() {
+    private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message message) {
             return false;
@@ -743,10 +743,13 @@ public class DataRetrieveActivity extends BaseTitleActivity
 
                 if (mPageNum == 0) {
                     mList.clear();
-                    Map<String, Object> countMap = DBManager.getInstance().getChooseStudentCount(getItemCode(), cbTested.isChecked(), cbUnTested.isChecked(),
-                            cbUploaded.isChecked(), cbUnUpload.isChecked());
-                    setStuCount(countMap.get("count"), countMap.get("women_count"), countMap.get("man_count"));
-                    Logger.i("zzs===>" + countMap.toString());
+                    if (cbTested.isChecked() || cbUnTested.isChecked() ||
+                            cbUploaded.isChecked() || cbUnUpload.isChecked()) {
+                        Map<String, Object> countMap = DBManager.getInstance().getChooseStudentCount(getItemCode(), cbTested.isChecked(), cbUnTested.isChecked(),
+                                cbUploaded.isChecked(), cbUnUpload.isChecked());
+                        setStuCount(countMap.get("count"), countMap.get("women_count"), countMap.get("man_count"));
+                        Logger.i("zzs===>" + countMap.toString());
+                    }
                 }
                 if (studentList == null || studentList.size() == 0) {
                     ToastUtils.showShort("没有更多数据了");
