@@ -339,7 +339,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                         Logger.i("stuSkip:" + student.toString());
                         //测试结束学生清除 ，设备设置空闲状态
                         toSkip(index);
-                        mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
+//                        mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
                     }
                 }).setNegativeButton("取消", null).show();
     }
@@ -395,6 +395,9 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                         stuAdapter.notifyDataSetChanged();
                         roundNo++;
                         if (!isNextClickStart) {
+                            if (deviceCount == 1) {
+                                setStuShowLed(stuAdapter.getTestPosition() != -1 ? pairList.get(stuAdapter.getTestPosition()) : null);
+                            }
                             deviceDetails.get(index).getStuDevicePair().setTestTime(DateUtil.getCurrentTime() + "");
                             toStart(index);
                         }
@@ -418,6 +421,9 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 stuAdapter.setTestPosition(i);
                 stuAdapter.notifyDataSetChanged();
                 if (!isNextClickStart) {
+                    if (deviceCount == 1) {
+                        setStuShowLed(stuAdapter.getTestPosition() != -1 ? pairList.get(stuAdapter.getTestPosition()) : null);
+                    }
                     deviceDetails.get(index).getStuDevicePair().setTestTime(DateUtil.getCurrentTime() + "");
                     toStart(index);
                 }
@@ -1143,7 +1149,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
             try {
                 byte[] data = new byte[16];
                 String ledName = deviceDetails.get(index).getStuDevicePair().getStudent().getLEDStuName() + "   第" +
-                        (deviceDetails.get(index).getRound()) + "次";
+                        (getRound(deviceDetails.get(index).getStuDevicePair().getTimeResult())) + "次";
                 byte[] strData = ledName.getBytes("GB2312");
                 System.arraycopy(strData, 0, data, 0, strData.length);
                 //todo
