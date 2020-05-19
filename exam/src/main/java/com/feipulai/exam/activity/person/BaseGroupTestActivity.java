@@ -1182,7 +1182,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             super.handleMessage(msg);
 
             BaseGroupTestActivity activity = mActivityWeakReference.get();
-            if (activity.stuAdapter.getTestPosition() == -1) {
+            if (activity.stuAdapter == null ||activity.stuAdapter.getTestPosition() == -1) {
                 return;
             }
             activity.setShowLed((BaseStuPair) msg.obj);
