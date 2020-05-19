@@ -344,6 +344,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
      * 展示判罚
      */
     private void showPenalize(final BaseDeviceState deviceState, final BaseStuPair pair) {
+        clicked = false;
         SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
         alertDialog.setTitleText(getString(R.string.confirm_result));
         alertDialog.setCancelable(false);
