@@ -652,9 +652,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
-                pair.setResultState(RoundResult.RESULT_STATE_FOUL);
-                updateResult(pair);
                 if (!clicked){
+                    pair.setResultState(RoundResult.RESULT_STATE_FOUL);
+                    updateResult(pair);
                     doResult();
                     clicked = true;
                 }

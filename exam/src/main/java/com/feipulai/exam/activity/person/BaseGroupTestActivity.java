@@ -339,7 +339,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 //                break;
         }
     }
-
+    boolean clicked = false;
     /**
      * 展示判罚
      */
@@ -351,13 +351,20 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
-                updatePair(deviceState, pair, false);
+                if (!clicked) {
+                    updatePair(deviceState, pair, false);
+                    clicked = true;
+                }
             }
         }).setCancelText(getString(R.string.foul)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
-                updatePair(deviceState, pair, true);
+
+                if (!clicked) {
+                    updatePair(deviceState, pair, true);
+                    clicked = true;
+                }
             }
         }).show();
 
