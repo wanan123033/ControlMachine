@@ -96,6 +96,12 @@
             android:name=".activity.sitreach.SitReachSelectActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
+            android:name=".activity.sitreach.more.SitReachMoreActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.sitreach.more.pair.SitReachPairActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
             android:name=".activity.sitreach.SitReachSettingActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity android:name=".activity.sitreach.SitReachFaceIDActivity" /> <!-- stand jump -->
