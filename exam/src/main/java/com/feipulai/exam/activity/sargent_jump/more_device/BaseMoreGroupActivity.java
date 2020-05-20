@@ -1147,9 +1147,14 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 16 - x, index, false, true);
         } else {
             try {
+                int testRound = getRound(deviceDetails.get(index).getStuDevicePair().getTimeResult());
+                if (TextUtils.isEmpty(result)){
+                    testRound +=1;
+                }
+
                 byte[] data = new byte[16];
                 String ledName = deviceDetails.get(index).getStuDevicePair().getStudent().getLEDStuName() + "   第" +
-                        (getRound(deviceDetails.get(index).getStuDevicePair().getTimeResult())) + "次";
+                        testRound + "次";
                 byte[] strData = ledName.getBytes("GB2312");
                 System.arraycopy(strData, 0, data, 0, strData.length);
                 //todo
