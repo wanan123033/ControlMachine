@@ -52,7 +52,6 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
     private List<Student> mStudentList;
     private volatile OnCheckedInListener listener;
     private Context mContext;
-    private String text;
 
     public StuSearchEditText(Context context) {
         super(context);
@@ -147,12 +146,11 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
 
                 if (actionId == EditorInfo.IME_ACTION_GO
                         || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    LogUtil.logDebugMessage("EditorInfo======>" + actionId + "     getKeyCode=====>" + event.getKeyCode());
+
                     if (TextUtils.isEmpty(v.getText().toString().trim())) {
                         return true;
                     }
                     LogUtil.logDebugMessage("KEYCODE_ENTER======>");
-                    etInputText.setText("");
 //                    mStudentList = DBManager.getInstance().fuzzyQueryByStuCode(etInputText.getText().toString(), 20, 0);
 //                    if (mStudentList == null || mStudentList.size() == 0) {
 //                        mLvResults.setVisibility(View.GONE);
@@ -161,18 +159,8 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
 //                        mLvResults.setAdapter(adapter);
 //                        mLvResults.setVisibility(View.VISIBLE);
 //                    }
-                    if (TextUtils.isEmpty(text)) {
-                        text = etInputText.getText().toString();
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                text = etInputText.getText().toString();
-                                search(text);
+                    search(etInputText.getText().toString());
 
-                            }
-                        }, 500);
-
-                    }
 
                     return true;
                 }
@@ -228,7 +216,6 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
             mLvResults.setAdapter(adapter);
             mLvResults.setVisibility(View.VISIBLE);
         }
-        text = "";
         if (mStudentList != null && mStudentList.size() > 0) {
             for (Student student : mStudentList) {
                 if (dataText.equals(student.getStudentCode()) || dataText.equals(student.getIdCardNo())) {
