@@ -668,6 +668,13 @@ public class HttpSubscriber {
         }
     }
 
+    public void stopSendTcpThread() {
+        if (tcpClientThread != null && tcpClientThread.isAlive()) {
+            tcpClientThread.exit = true;
+            tcpClientThread.interrupt();
+        }
+    }
+
     private void setUploadResult(final int pageNo, final int pageSum, final List<UploadResults> uploadResultsList) {
         final List<UploadResults> uploadData;
         if (pageNo == pageSum - 1) {

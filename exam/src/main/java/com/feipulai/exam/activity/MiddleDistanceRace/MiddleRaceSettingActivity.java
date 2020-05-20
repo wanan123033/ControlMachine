@@ -78,8 +78,8 @@ public class MiddleRaceSettingActivity extends BaseTitleActivity {
                 MiddleDistanceRaceForPersonActivity.instance.finish();
                 intent = new Intent(MiddleRaceSettingActivity.this, MiddleDistanceRaceForPersonActivity.class);
             } else {
-                MiddleDistanceRaceActivity.instance.finish();
-                intent = new Intent(MiddleRaceSettingActivity.this, MiddleDistanceRaceActivity.class);
+                MiddleDistanceRaceForGroupActivity.instance.finish();
+                intent = new Intent(MiddleRaceSettingActivity.this, MiddleDistanceRaceForGroupActivity.class);
             }
             Bundle bundle = new Bundle();
             bundle.putInt("schedulePosition", schedulePosition);

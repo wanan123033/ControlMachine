@@ -9,9 +9,11 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -38,7 +40,7 @@ public class ControllerCover extends BaseCover implements OnTimerUpdateListener,
 
     private final int MSG_CODE_DELAY_HIDDEN_CONTROLLER = 101;
 
-//    private View mTopContainer;
+    //    private View mTopContainer;
     private View mBottomContainer;
     private ImageView mBackIcon;
     private TextView mTopTitle;
@@ -78,6 +80,7 @@ public class ControllerCover extends BaseCover implements OnTimerUpdateListener,
     private ObjectAnimator mSpeedAnimator;
     private RadioGroup rgSpeed;
     private TextView mTvStartTime;
+    private RadioButton rbSpeed1;
 
     public ControllerCover(Context context) {
         super(context);
@@ -98,7 +101,8 @@ public class ControllerCover extends BaseCover implements OnTimerUpdateListener,
         mSeekBar = findViewById(R.id.cover_player_controller_seek_bar);
         mBottomSeekBar = findViewById(R.id.cover_bottom_seek_bar);
         mTvStartTime = findViewById(R.id.tv_startTime);
-        rgSpeed=findViewById(R.id.rg_speed);
+        rgSpeed = findViewById(R.id.rg_speed);
+        rbSpeed1 = findViewById(R.id.rb_speed_1);
 
         mBackIcon.setOnClickListener(this);
         mStateIcon.setOnClickListener(this);
@@ -108,7 +112,10 @@ public class ControllerCover extends BaseCover implements OnTimerUpdateListener,
         mSeekBar.setOnSeekBarChangeListener(onSeekBarChangeListener);
 
         getGroupValue().registerOnGroupValueUpdateListener(mOnGroupValueUpdateListener);
+    }
 
+    public void resetSpeed() {
+        rgSpeed.check(rbSpeed1.getId());
     }
 
     @Override

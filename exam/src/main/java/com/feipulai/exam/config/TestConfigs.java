@@ -8,7 +8,7 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.MachineCode;
-import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceActivity;
+import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForGroupActivity;
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForPersonActivity;
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleRaceSettingActivity;
 import com.feipulai.exam.activity.RadioTimer.RunTimerActivityGroupActivity;
@@ -46,7 +46,6 @@ import com.feipulai.exam.activity.sitreach.SitReachGroupTestActivity;
 import com.feipulai.exam.activity.sitreach.SitReachSelectActivity;
 import com.feipulai.exam.activity.sitreach.SitReachSetting;
 import com.feipulai.exam.activity.sitreach.SitReachSettingActivity;
-import com.feipulai.exam.activity.sitreach.SitReachTestActivity;
 import com.feipulai.exam.activity.situp.check.SitUpCheckActivity;
 import com.feipulai.exam.activity.situp.setting.SitUpSetting;
 import com.feipulai.exam.activity.situp.setting.SitUpSettingActivity;
@@ -399,7 +398,7 @@ public class TestConfigs {
         TestConfigs.groupActivity.put(ItemDefault.CODE_PQ, VolleyBallGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_MG, SargentGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_FWC, PushUpCheckActivity.class);
-        TestConfigs.groupActivity.put(ItemDefault.CODE_ZCP, MiddleDistanceRaceActivity.class);
+        TestConfigs.groupActivity.put(ItemDefault.CODE_ZCP, MiddleDistanceRaceForGroupActivity.class);
 
         TestConfigs.groupActivity.put(ItemDefault.CODE_LQYQ, BasketBallGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_ZQYQ, FootBallGroupActivity.class);

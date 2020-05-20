@@ -21,6 +21,7 @@ import static com.ww.fpl.videolibrary.play.play.DataInter.ReceiverKey.KEY_LOADIN
 public class ReceiverGroupManager {
 
     private static ReceiverGroupManager i;
+    public ControllerCover control;
 
     private ReceiverGroupManager(){
     }
@@ -66,9 +67,10 @@ public class ReceiverGroupManager {
     }
 
     public ReceiverGroup getReceiverGroup(Context context, GroupValue groupValue){
+        control=new ControllerCover(context);
         ReceiverGroup receiverGroup = new ReceiverGroup(groupValue);
         receiverGroup.addReceiver(KEY_LOADING_COVER, new LoadingCover(context));
-        receiverGroup.addReceiver(KEY_CONTROLLER_COVER, new ControllerCover(context));
+        receiverGroup.addReceiver(KEY_CONTROLLER_COVER, control);
 //        receiverGroup.addReceiver(KEY_GESTURE_COVER, new GestureCover(context));
         receiverGroup.addReceiver(KEY_COMPLETE_COVER, new CompleteCover(context));
         receiverGroup.addReceiver(KEY_ERROR_COVER, new ErrorCover(context));

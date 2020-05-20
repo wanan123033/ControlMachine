@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activity.MiddleDistanceRace.MiddleDistanceRaceActivity">
+    tools:context=".activity.MiddleDistanceRace.MiddleDistanceRaceForGroupActivity">
 
     <include layout="@layout/layout_race_title" />
 

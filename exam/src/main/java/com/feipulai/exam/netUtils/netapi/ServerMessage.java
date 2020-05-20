@@ -259,6 +259,8 @@ public class ServerMessage {
         }
     }
 
+    public static HttpSubscriber subscriber0;
+
     /**
      * tcp上传所有成绩
      *
@@ -280,8 +282,8 @@ public class ServerMessage {
             loadingDialog = null;
         }
 
-        final HttpSubscriber subscriber = new HttpSubscriber();
-        subscriber.setOnRequestEndListener(new HttpSubscriber.OnRequestEndListener() {
+        subscriber0 = new HttpSubscriber();
+        subscriber0.setOnRequestEndListener(new HttpSubscriber.OnRequestEndListener() {
             @Override
             public void onSuccess(int bizType) {
                 switch (bizType) {
@@ -302,7 +304,7 @@ public class ServerMessage {
                 }
             }
         });
-        subscriber.uploadResultTCP((Activity) context, uploadResultsList);
+        subscriber0.uploadResultTCP((Activity) context, uploadResultsList);
     }
 
     /**

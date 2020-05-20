@@ -10,7 +10,7 @@ import java.net.UnknownHostException;
  * created by ww on 2020/5/8.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
-public class SendTcpClientThread extends Thread{
+public class SendTcpClientThread extends Thread {
 
     private Socket socket = null;
     private OutputStream outputStream = null;        //输出流
@@ -32,6 +32,8 @@ public class SendTcpClientThread extends Thread{
         this.port = port;
         this.listener = listener;
     }
+
+    public volatile boolean exit = false;
 
     public void run() {
         try {
@@ -64,7 +66,7 @@ public class SendTcpClientThread extends Thread{
 
         listener.onConnectFlag(true);
         try {
-            while (true)         //读取服务器端发送来的数据
+            while (!exit)         //读取服务器端发送来的数据
             {
                 byte[] buffer = new byte[1024];//创建接收缓冲区
                 if (inputStream.available() > 0) {

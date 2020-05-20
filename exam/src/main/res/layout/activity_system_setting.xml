@@ -136,7 +136,7 @@
 
                 <EditText
                     android:id="@+id/et_tcp_ip"
-                    android:layout_width="242dp"
+                    android:layout_width="320dp"
                     android:layout_height="35dp"
                     android:layout_marginLeft="10dp"
                     android:background="@drawable/edit_search_bg"
@@ -154,6 +154,7 @@
                     android:background="@drawable/btn_click_bg_selected"
                     android:gravity="center"
                     android:padding="8dp"
+                    android:visibility="gone"
                     android:text="测试"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_16" />
