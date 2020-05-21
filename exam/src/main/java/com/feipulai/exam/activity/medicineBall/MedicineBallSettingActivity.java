@@ -21,6 +21,7 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
+import com.feipulai.device.serial.beans.MedicineBallSelfCheckResult;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseActivity;
@@ -59,6 +60,8 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
     TextView tvMatch;
     @BindView(R.id.tv_device_check)
     TextView tvDeviceCheck;
+    @BindView(R.id.tv_device_result)
+    TextView tvDeviceResult;
     private String[] spinnerItems;
     private MedicineBallSetting medicineBallSetting;
     @BindView(R.id.et_begin_point)
@@ -248,6 +251,7 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
 
 
     public void checkDevice(View view) {
+        tvDeviceResult.setText("");
         alertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
         alertDialog.setTitleText("终端自检中...");
         alertDialog.setCancelable(false);
@@ -307,6 +311,17 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
                         activity.isDisconnect = false;
                         isDialogShow = false;
                         activity.toastSpeak("设备连接成功");
+                        break;
+                    case SerialConfigs.MEDICINE_BALL_SELF_CHECK_RESPONSE:
+                        MedicineBallSelfCheckResult selfCheckResult = (MedicineBallSelfCheckResult) msg.obj;
+                        int[] errors = selfCheckResult.getIncorrectPoles();
+                        for (int i = 1; i < errors.length + 1; i++) {
+                            if (errors[i - 1] == 1) {
+                                int e = errors[i] + 1;
+                                activity.tvDeviceResult.setText(String.format("%s测量杆出现异常", "第" + e));
+                            }
+                        }
+
                         break;
                 }
                 if (!isDialogShow && activity.alertDialog != null && activity.alertDialog.isShowing()) {
