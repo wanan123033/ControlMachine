@@ -74,7 +74,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     private DeviceListAdapter deviceListAdapter;
     private ClearHandler clearHandler = new ClearHandler();
     private LedHandler ledHandler = new LedHandler();
-
+    private boolean isNextClickStart = true;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_base_more;
@@ -103,6 +103,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(),SettingHelper.getSystemSetting().getHostId());
         for (int i = 0; i < setTestDeviceCount(); i++) {
             StringBuilder data = new StringBuilder();
             data.append(i + 1).append("号机");//1号机         空闲
@@ -137,7 +138,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     }
 
     private int setTestCount() {
-        return 1;
+        return deviceCount;
     }
 
     public void updateAdapterTestCount() {
@@ -224,6 +225,14 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 }).setNegativeButton("取消", null).show();
     }
 
+    public void setTxtEnable(int deviceId,boolean enable){
+        deviceListAdapter.setTxtStartEnable(deviceId,enable);
+    }
+
+    public void setNextClickStart(boolean nextClickStart) {
+        isNextClickStart = nextClickStart;
+        deviceListAdapter.setNextClickStart(nextClickStart);
+    }
 
     @Override
     public void onCheckIn(Student student) {

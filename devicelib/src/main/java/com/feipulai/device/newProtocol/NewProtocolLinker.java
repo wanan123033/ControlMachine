@@ -7,6 +7,7 @@ import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.MedicineBallNewResult;
 import com.feipulai.device.serial.beans.SargentJumpResult;
+import com.feipulai.device.serial.beans.SitReachWirelessResult;
 import com.feipulai.device.serial.beans.VitalCapacityNewResult;
 import com.feipulai.device.serial.beans.VitalCapacityResult;
 import com.feipulai.device.serial.beans.VolleyPairResult;
@@ -67,6 +68,11 @@ public class NewProtocolLinker extends SitPullLinker {
         } else if (machineCode == ItemDefault.CODE_HWSXQ && what == SerialConfigs.MEDICINE_BALL_MATCH_MORE) {
             MedicineBallNewResult mbn = (MedicineBallNewResult) msg.obj;
             checkDevice(mbn);
+            return true;
+        }
+         else if (machineCode == ItemDefault.CODE_ZWTQQ && what == SerialConfigs.SIT_REACH_FREQUENCY) {
+            SitReachWirelessResult result = (SitReachWirelessResult) msg.obj;
+            checkDevice(result.getDeviceId(),result.getFrequency(),result.getHostId());
             return true;
         }
         return super.onRadioArrived(msg);

@@ -51,7 +51,7 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
         updateAdapterTestCount();
         facade.resume();
         RadioManager.getInstance().setOnRadioArrived(facade);
-
+        setNextClickStart(false);
     }
 
 

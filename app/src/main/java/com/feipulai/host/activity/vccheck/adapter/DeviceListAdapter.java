@@ -33,6 +33,8 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
 
     private int testCount = 1;
     private boolean isNextClickStart = true;
+    private int deviceId;
+    private boolean enable = true;
 
     public void setNextClickStart(boolean nextClickStart) {
         isNextClickStart = nextClickStart;
@@ -108,7 +110,6 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                 });
 
 
-
                 moreHelper.addOnClickListener(R.id.txt_skip).addOnClickListener(R.id.txt_start);
                 moreHelper.addOnClickListener(R.id.txt_punish);
                 if (item.getStuDevicePair() != null) {
@@ -133,7 +134,9 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                         moreHelper.setImageResource(R.id.item_img_portrait, R.mipmap.icon_head_photo);
                     }
                 }
-
+                if (item.getStuDevicePair().getBaseDevice().getDeviceId() == deviceId) {
+                    moreHelper.txtStart.setEnabled(enable);
+                }
                 break;
 
             case DeviceDetail.ITEM_ONE:
@@ -143,13 +146,13 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                     oneViewHolder.setText(R.id.txt_stu_sex, item.getStuDevicePair().getStudent().getSex() == 0 ? "男" : "女");
                 } else {
                     oneViewHolder.setText(R.id.txt_stu_sex, "");
+                    oneViewHolder.setText(R.id.txt_test_result,"");
                 }
 //                if (item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_END) {
                 if (item.getStuDevicePair().getResult() == -999) {
                     oneViewHolder.setText(R.id.txt_test_result, "");
                 } else if (item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_END
-                        || item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_ONUSE ||
-                        item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN) {
+                        || item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN) {
                     oneViewHolder.setText(R.id.txt_test_result, item.getStuDevicePair().getResultState() == RoundResult.RESULT_STATE_FOUL ?
                             "X" : ResultDisplayUtils.getStrResultForDisplay(item.getStuDevicePair().getResult()));
                 }
@@ -164,9 +167,7 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                     oneViewHolder.itemTxtTestResult.setText(item.getStuDevicePair().getTimeResult()[0]);
                 }
 
-                if (!isNextClickStart) {
-                    oneViewHolder.txtStart.setVisibility(View.GONE);
-                }
+                oneViewHolder.txtStart.setVisibility(isNextClickStart? View.VISIBLE:View.GONE);
                 oneViewHolder.addOnClickListener(R.id.txt_skip).addOnClickListener(R.id.txt_start);
                 oneViewHolder.addOnClickListener(R.id.txt_punish);
                 if (item.getStuDevicePair() != null) {
@@ -192,11 +193,19 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                     }
 
                 }
+                if (item.getStuDevicePair().getBaseDevice().getDeviceId() == deviceId) {
+                    oneViewHolder.txtStart.setEnabled(enable);
+                }
                 break;
         }
 
     }
 
+    public void setTxtStartEnable(int deviceId, boolean enable) {
+        this.deviceId = deviceId;
+        this.enable = enable;
+        notifyItemChanged(deviceId - 1);
+    }
 
     static class MoreViewHolder extends BaseViewHolder {
         @BindView(R.id.cb_device_state)

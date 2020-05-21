@@ -206,14 +206,14 @@ public class TestConfigs {
         final List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(machineCode);
 
         String newItemCode = itemList.get(0).getItemCode();
-//        // 还是没有 itemCode
-//        if (newItemCode == null) {
-//            sCurrentItem = itemList.get(0);
-//            Logger.i("sCurrentItem:" + sCurrentItem.toString());
-//            SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, machineCode);
-//            SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, newItemCode);
-//            return INIT_SUCCESS;
-//        }
+        // 还是没有 itemCode
+        if (newItemCode == null) {
+            sCurrentItem = itemList.get(0);
+            Logger.i("sCurrentItem:" + sCurrentItem.toString());
+            SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, machineCode);
+            SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, newItemCode);
+            return INIT_SUCCESS;
+        }
 
         // 项目代码已更新
         // 如果当前机器码只测一个项目,直接把学生项目报名信息和成绩信息中的itemCode改掉即可
