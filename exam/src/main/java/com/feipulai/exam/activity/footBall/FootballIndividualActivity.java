@@ -187,7 +187,10 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
     }
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        return individualCheckFragment.dispatchKeyEvent(event);
+        if (individualCheckFragment.dispatchKeyEvent(event)) {
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
     }
 
     @Override
