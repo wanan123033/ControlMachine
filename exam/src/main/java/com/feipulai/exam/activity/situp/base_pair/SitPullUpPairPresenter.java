@@ -25,7 +25,7 @@ public abstract class SitPullUpPairPresenter
 	
 	private Context context;
 	private SitPullUpPairContract.View view;
-	private volatile int focusPosition;
+	public volatile int focusPosition;
 	private List<StuDevicePair> pairs;
 	public int machineCode = TestConfigs.sCurrentItem.getMachineCode();
 	public final int TARGET_FREQUENCY =SettingHelper.getSystemSetting().getUseChannel();

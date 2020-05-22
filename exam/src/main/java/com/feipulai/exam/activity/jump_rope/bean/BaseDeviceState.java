@@ -28,6 +28,16 @@ public class BaseDeviceState implements Serializable {
 
     private int disconnectCount = 0;
 
+    private String deviceVersion;
+
+    public String getDeviceVersion() {
+        return deviceVersion;
+    }
+
+    public void setDeviceVersion(String deviceVersion) {
+        this.deviceVersion = deviceVersion;
+    }
+
     public BaseDeviceState() {
     }
 

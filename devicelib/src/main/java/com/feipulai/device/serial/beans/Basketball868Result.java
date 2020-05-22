@@ -1,5 +1,6 @@
 package com.feipulai.device.serial.beans;
 
+import com.feipulai.device.tcp.TcpConfig;
 import com.orhanobut.logger.examlogger.LogUtils;
 
 public class Basketball868Result {
@@ -25,8 +26,8 @@ public class Basketball868Result {
     private int sencond;
     //毫秒(精准度10ms)
     private int minsencond;
-
     private String serialNumber;//设备序列号
+    private String versionNum;//版本号
     private int deviceCode;// 3 子机 2 LED
     public final static int DEVICE_LED = 2;
     private int interceptSecond;//默认5秒
@@ -37,12 +38,17 @@ public class Basketball868Result {
     }
 
     public Basketball868Result(byte[] data) {
-        state = data[12];
-        sum = data[13];
-        hour = data[14];
-        minth = data[15];
-        sencond = data[16];
-        minsencond = data[17];
+
+        versionNum = new String(new byte[]{data[16], data[17], data[18], data[19]});
+
+        state = data[12] & 0xff;
+        sum = data[13] & 0xff;
+        hour = data[14] & 0xff;
+        minth = data[15] & 0xff;
+        sencond = data[16] & 0xff;
+        //添加千分位
+        String Thousands = (data[17] & 0xff) + String.valueOf(data[18]);
+        minsencond = Integer.valueOf(Thousands);
         if (data[7] == 0x02) {
             deviceId = data[15];
         } else {
@@ -62,7 +68,7 @@ public class Basketball868Result {
 
         }
 
-        LogUtils.normal("篮球返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+        LogUtils.normal("篮球返回数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
     }
 
     public int getDeviceId() {
@@ -167,6 +173,10 @@ public class Basketball868Result {
 
     public void setuPrecision(int uPrecision) {
         this.uPrecision = uPrecision;
+    }
+
+    public String getVersionNum() {
+        return versionNum;
     }
 
     @Override

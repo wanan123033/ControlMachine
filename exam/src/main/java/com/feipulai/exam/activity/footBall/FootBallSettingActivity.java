@@ -163,7 +163,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
         etSensitivity.setText(setting.getSensitivity() + "");
         etHostIp.setText(setting.getHostIp());
         etPort.setText(setting.getPost() + "");
-        rgAccuracy.check(getAccuracy() == 1 ? R.id.rb_tenths : R.id.rb_percentile);
+        rgAccuracy.check(getAccuracy() == 1 ? R.id.rb_tenths : getAccuracy() == 2 ? R.id.rb_percentile : R.id.rb_thousand);
 
         etPenaltySecond.setText(setting.getPenaltySecond() + "");
         if (setting.getTestType() == 1) {
@@ -175,6 +175,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
         switch (TestConfigs.sCurrentItem.getDigital()) {
             case 1:
             case 2:
+            case 3:
                 return TestConfigs.sCurrentItem.getDigital();
             default:
                 return 2;
@@ -371,6 +372,10 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
                     case R.id.rb_percentile://百分位
                         manager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), Integer.valueOf(this.etSensitivity.getText().toString()),
                                 this.setting.getInterceptSecond(), 1);
+                        break;
+                    case R.id.rb_thousand://百分位
+                        manager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), Integer.valueOf(this.etSensitivity.getText().toString()),
+                                this.setting.getInterceptSecond(), 2);
                         break;
                 }
                 isDisconnect = true;

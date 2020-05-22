@@ -156,7 +156,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
         etSensitivity.setText(setting.getSensitivity() + "");
         etHostIp.setText(setting.getHostIp());
         etPort.setText(setting.getPost() + "");
-        rgAccuracy.check(getAccuracy() == 1 ? R.id.rb_tenths : R.id.rb_percentile);
+        rgAccuracy.check(getAccuracy() == 1 ? R.id.rb_tenths : getAccuracy() == 2 ? R.id.rb_percentile : R.id.rb_thousand);
 
         etPenaltySecond.setText(setting.getPenaltySecond() + "");
 
@@ -171,6 +171,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
         switch (TestConfigs.sCurrentItem.getDigital()) {
             case 1:
             case 2:
+            case 3:
                 return TestConfigs.sCurrentItem.getDigital();
             default:
                 return 2;
@@ -212,7 +213,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
             case UDPBasketBallConfig.CMD_SET_PRECISION_RESPONSE:
                 ToastUtils.showShort("设置成功");
                 BasketballResult basketballResult = (BasketballResult) result.getResult();
-                TestConfigs.sCurrentItem.setDigital(basketballResult.getuPrecision() == 0 ? 1 : 2);
+                TestConfigs.sCurrentItem.setDigital(basketballResult.getuPrecision() + 1);
                 break;
             case UDPBasketBallConfig.CMD_SET_BLOCKERTIME_RESPONSE:
                 ToastUtils.showShort("设置成功");
@@ -367,7 +368,6 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
             case R.id.tv_accuracy_use:
                 switch (rgAccuracy.getCheckedRadioButtonId()) {
                     case R.id.rb_tenths: //十分位
-//                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(0));
                         manager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), Integer.valueOf(this.etSensitivity.getText().toString()),
                                 this.setting.getInterceptSecond(), 0);
 
@@ -375,7 +375,10 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
                     case R.id.rb_percentile://百分位
                         manager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), Integer.valueOf(this.etSensitivity.getText().toString()),
                                 this.setting.getInterceptSecond(), 1);
-//                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(1));
+                        break;
+                    case R.id.rb_thousand://百分位
+                        manager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), Integer.valueOf(this.etSensitivity.getText().toString()),
+                                this.setting.getInterceptSecond(), 2);
                         break;
                 }
                 isDisconnect = true;

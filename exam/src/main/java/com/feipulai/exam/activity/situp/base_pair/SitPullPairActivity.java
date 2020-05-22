@@ -36,7 +36,7 @@ public abstract class SitPullPairActivity extends BaseTitleActivity
 
     public DevicePairAdapter mAdapter;
     private MyHandler mHandler = new MyHandler(this);
-    private SitPullUpPairPresenter presenter;
+    public SitPullUpPairPresenter presenter;
 
     @Override
     protected int setLayoutResID() {

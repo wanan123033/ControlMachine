@@ -207,7 +207,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         }
         //设置精度
         ballManager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), setting.getSensitivity(),
-                setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1);
+                setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() -1);
     }
 
     @Override

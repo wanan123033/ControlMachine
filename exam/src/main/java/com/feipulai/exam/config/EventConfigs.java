@@ -18,4 +18,6 @@ public class EventConfigs {
 
 
     public static final int  BALL_STATE_UPDATE = 10 ;
+
+    public static final int  BACKBALL_FREQUENCY_DATA = 11 ;
 }

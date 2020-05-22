@@ -1,5 +1,6 @@
 package com.feipulai.exam.activity.basketball.pair;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -23,15 +24,38 @@ public class BallPairAdapter extends DevicePairAdapter {
     }
 
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
 
+//        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ) {
+//            holder.mTvDeviceId.setText(position == 0 ? "近红外" : "计时屏");
+//        } else {
+//            holder.mTvDeviceId.setText(position == 0 ? "远红外" : position == 1 ? "近红外" : "计时屏");
+//        }
+
+
         if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ) {
-            holder.mTvDeviceId.setText(position == 0 ? "近红外" : "计时屏");
+            switch (position) {
+                case 0:
+                    holder.mTvDeviceId.setText("近红外" + stuPairs.get(position).getBaseDevice().getDeviceVersion());
+                case 1:
+                    holder.mTvDeviceId.setText("计时屏" + stuPairs.get(position).getBaseDevice().getDeviceVersion());
+            }
         } else {
-            holder.mTvDeviceId.setText(position == 0 ? "远红外" : position == 1 ? "近红外" : "计时屏");
+            switch (position) {
+                case 0:
+                    holder.mTvDeviceId.setText("远红外" + stuPairs.get(position).getBaseDevice().getDeviceVersion());
+                case 1:
+                    holder.mTvDeviceId.setText("近红外" + stuPairs.get(position).getBaseDevice().getDeviceVersion());
+                case 2:
+                    holder.mTvDeviceId.setText("计时屏" + stuPairs.get(position).getBaseDevice().getDeviceVersion());
+            }
+
         }
+
+
     }
 
     public DevicePairAdapter.ViewHolder onCreateViewHolder(ViewGroup paramViewGroup, int paramInt) {

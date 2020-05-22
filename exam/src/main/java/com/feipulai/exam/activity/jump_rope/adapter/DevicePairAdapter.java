@@ -21,7 +21,7 @@ import butterknife.ButterKnife;
 public class DevicePairAdapter
         extends RecyclerView.Adapter<DevicePairAdapter.ViewHolder> {
 
-    private List<StuDevicePair> stuPairs;
+    protected List<StuDevicePair> stuPairs;
     private int selectedPosition;
     //private Context mContext;
 

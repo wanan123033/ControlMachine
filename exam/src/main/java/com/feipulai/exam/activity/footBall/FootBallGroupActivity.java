@@ -194,7 +194,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         } else {
             ballManager.setRadioFreeStates(SettingHelper.getSystemSetting().getHostId());
             cbNear.setVisibility(View.VISIBLE);
-            cbFar.setVisibility(View.GONE);
+            cbFar.setVisibility(View.VISIBLE);
             cbLed.setVisibility(View.VISIBLE);
         }
         fristCheckTest();

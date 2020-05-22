@@ -28,6 +28,7 @@ import com.feipulai.device.manager.StandJumpManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
+import com.feipulai.device.serial.beans.JumpNewSelfCheckResult;
 import com.feipulai.device.serial.beans.JumpSelfCheckResult;
 import com.feipulai.device.serial.beans.StandJumpResult;
 import com.feipulai.device.serial.beans.StringUtility;
@@ -327,7 +328,7 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
             case R.id.tv_device_check:
                 checkDialog();
                 if (standSetting.getTestType() == 0) {
-                    LogUtils.normal(SerialConfigs.CMD_SELF_CHECK_JUMP.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_SELF_CHECK_JUMP)+"---跳远自检指令");
+                    LogUtils.normal(SerialConfigs.CMD_SELF_CHECK_JUMP.length + "---" + StringUtility.bytesToHexString(SerialConfigs.CMD_SELF_CHECK_JUMP) + "---跳远自检指令");
 
                     SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SELF_CHECK_JUMP));
                 } else {
@@ -355,7 +356,7 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
                 if (standSetting.getTestType() == 0) {
                     standSetting.setTestPoints(testPoints);
                     byte[] buk = SerialConfigs.SET_CMD_SARGENT_JUMP_SETTING_POINTS(scope - 42);
-                    LogUtils.normal(buk.length+"---"+ StringUtility.bytesToHexString(buk)+"---跳远点数设置指令");
+                    LogUtils.normal(buk.length + "---" + StringUtility.bytesToHexString(buk) + "---跳远点数设置指令");
                     SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, buk));
                 } else {
                     StandJumpManager.setPoints(SettingHelper.getSystemSetting().getHostId(), deviceId, scope - 42);
@@ -544,6 +545,23 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
 
                 }
 
+            } else if (msg.what == SerialConfigs.JUMP_NEW_SELF_CHECK_RESPONSE) {
+                JumpNewSelfCheckResult checkResult = (JumpNewSelfCheckResult) msg.obj;
+                String poleState = "";
+                for (int i = 0; i < checkResult.getJumpPoleState().length; i++) {
+
+
+                    if (checkResult.getJumpPoleState()[i] == 0) {
+                        poleState += ("  " + (i + 1));
+                    }
+                }
+                if (!TextUtils.isEmpty(poleState)) {
+                    if (!TextUtils.isEmpty(tvCheckData.getText().toString())) {
+                        tvCheckData.append("\n");
+                    }
+                    tvCheckData.append("发现坏杆有：" + poleState + "号有异常");
+                    toastSpeak("发现坏杆");
+                }
             }
             runOnUiThread(new Runnable() {
                 @Override
@@ -618,6 +636,24 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
                             }
                             activity.tvCheckData.setText("发现故障点:" + ledPostion);
                         }
+                        break;
+                    case SerialConfigs.JUMP_NEW_SELF_CHECK_RESPONSE://自检返回杆状态
+                        JumpNewSelfCheckResult checkResult = (JumpNewSelfCheckResult) msg.obj;
+                        String poleState = "";
+                        for (int i = 0; i < checkResult.getJumpPoleState().length; i++) {
+                            if (checkResult.getJumpPoleState()[i] == 0) {
+                                poleState += ("  " + (i + 1));
+                            }
+                        }
+                        if (!TextUtils.isEmpty(poleState)) {
+                            if (!TextUtils.isEmpty(activity.tvCheckData.getText().toString())) {
+                                activity.tvCheckData.append("\n");
+                            }
+                            activity.tvCheckData.append("发现坏杆有：" + poleState + "号有异常");
+                            activity.toastSpeak("发现坏杆");
+                        }
+
+
                         break;
                     case SerialConfigs.JUMP_SELF_CHECK_RESPONSE_Simple://立地跳远自检成功回调
                         Log.i("james", "JUMP_SELF_CHECK_RESPONSE_Simple");
