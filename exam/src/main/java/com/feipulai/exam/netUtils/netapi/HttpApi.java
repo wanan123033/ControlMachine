@@ -9,6 +9,7 @@ package com.feipulai.exam.netUtils.netapi;
 import com.feipulai.exam.bean.BatchBean;
 import com.feipulai.exam.bean.GroupBean;
 import com.feipulai.exam.bean.ItemBean;
+import com.feipulai.exam.bean.RoundScoreBean;
 import com.feipulai.exam.bean.ScheduleBean;
 import com.feipulai.exam.bean.StudentBean;
 import com.feipulai.exam.bean.UploadResults;
@@ -62,6 +63,12 @@ public interface HttpApi {
      * 成绩上传接口
      */
     String UPLOAD_RESULT_ACTION = "/run/uploadStudentResult";
+    /**
+     * 云端成绩获取
+     */
+    String GET_RESULT_ACTION = "/run/checkTerminalStudentSingleTest";
+
+
 
     @POST(LOGIN_ACTION)
     @FormUrlEncoded
@@ -90,4 +97,8 @@ public interface HttpApi {
     @POST(UPLOAD_RESULT_ACTION)
     @Headers("Content-Type:application/json;charset=UTF-8")
     Observable<HttpResult<List<UploadResults>>> uploadResult(@Header("Authorization") String token, @Body ResponseParame data);
+
+    @POST(GET_RESULT_ACTION)
+    @Headers("Content-Type:application/json;charset=UTF-8")
+    Observable<HttpResult<RoundScoreBean>> getRoundScore(@Header("Authorization")String token, @Body ResponseParame data);
 }

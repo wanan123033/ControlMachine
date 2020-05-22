@@ -23,6 +23,7 @@ import com.feipulai.exam.activity.sitreach.more_device.pair.SitReachPairActivity
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import butterknife.OnClick;
 
@@ -123,6 +124,7 @@ public class SitReachMoreActivity extends BaseMoreActivity {
 
     @Override
     protected void sendTestCommand(BaseStuPair pair, int index) {
+        LogUtils.operation("坐位体前屈开始测试:index="+index+",pair="+pair.toString());
         pair.setTestTime(DateUtil.getCurrentTime() + "");
         pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
         updateDevice(pair.getBaseDevice());
@@ -262,6 +264,7 @@ public class SitReachMoreActivity extends BaseMoreActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        LogUtils.life("SitReachMoreActivity onDestroy");
         RadioManager.getInstance().setOnRadioArrived(null);
     }
 }

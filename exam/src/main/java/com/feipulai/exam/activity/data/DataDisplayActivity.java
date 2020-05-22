@@ -57,7 +57,6 @@ public class DataDisplayActivity extends BaseTitleActivity {
         }
     });
     private String itemCode;
-
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_data_display;

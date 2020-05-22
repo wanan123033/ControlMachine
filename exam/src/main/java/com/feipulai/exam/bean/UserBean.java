@@ -10,6 +10,7 @@ import java.io.Serializable;
 public class UserBean implements Serializable {
     private String token;
     private String examName;//考试名称
+    private String siteId; //考点ID
 
     public String getToken() {
         return token;
@@ -33,5 +34,14 @@ public class UserBean implements Serializable {
                 "token='" + token + '\'' +
                 ", examName='" + examName + '\'' +
                 '}';
+    }
+
+
+    public String getSiteId() {
+        return siteId;
+    }
+
+    public void setSiteId(String siteId) {
+        this.siteId = siteId;
     }
 }

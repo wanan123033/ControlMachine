@@ -18,6 +18,7 @@ import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.basketball.adapter.DribbleShootAdapter;
 import com.feipulai.exam.activity.basketball.result.BasketBallResult;
 import com.feipulai.exam.entity.Student;
+import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,6 +102,7 @@ public class DribbleShootActivity extends BaseShootActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        LogUtils.life("DribbleShootActivity onResume");
         setting = SharedPrefsUtil.loadFormSource(this, ShootSetting.class);
         if (setting == null) {
             setting = new ShootSetting();
@@ -128,25 +130,30 @@ public class DribbleShootActivity extends BaseShootActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_waiting:
+                LogUtils.operation("篮球运球投篮点击了等待发令...");
                 RunTimerManager.waitStart();
                 break;
             case R.id.txt_illegal_return:
+                LogUtils.operation("篮球运球投篮点击了违规返回...");
                 RunTimerManager.illegalBack();
                 break;
 
             case R.id.txt_stop_timing:
+                LogUtils.operation("篮球运球投篮点击了停止运行...");
                 RunTimerManager.stopRun();
                 break;
             case R.id.tv_led_setting:
+                LogUtils.operation("篮球运球投篮点击了LED设置...");
                 IntentUtil.gotoActivity(this, LEDSettingActivity.class);
                 break;
             case R.id.tv_print:
-
+                LogUtils.operation("篮球运球投篮点击了打印...");
                 break;
             case R.id.tv_confirm:
-
+                LogUtils.operation("篮球运球投篮点击了确认...");
                 break;
             case R.id.txt_finish_test:
+                LogUtils.operation("篮球运球投篮点击了结束测试...");
                 break;
         }
     }

@@ -25,7 +25,7 @@ public class MedicineBallMore {
         cmd[5] = (byte) hosId;
         cmd[6] = (byte) deviceId;
         cmd[19] = (byte) sum(cmd, 19);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---中长跑空指令");
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---实心球空指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                 cmd));
     }
@@ -35,7 +35,7 @@ public class MedicineBallMore {
         cmd[5] = (byte) hostId;
         cmd[6] = (byte) (deviceId&0xff);
         cmd[19] = (byte) sum(cmd, 19);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---中长跑开始指令");
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---实心球开始指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                 cmd));
     }
@@ -45,7 +45,7 @@ public class MedicineBallMore {
         cmd[5] = (byte) hostId;
         cmd[6] = (byte) (deviceId&0xff);
         cmd[19] = (byte) sum(cmd, 19);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---中长跑获取状态指令");
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---实心球获取状态指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                 cmd));
     }

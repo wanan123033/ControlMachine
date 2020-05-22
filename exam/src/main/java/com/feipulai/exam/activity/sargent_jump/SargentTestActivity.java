@@ -341,6 +341,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        LogUtils.life("SargentTestActivity onDestroy");
         if (SerialDeviceManager.getInstance() != null)
             SerialDeviceManager.getInstance().close();
     }
@@ -348,6 +349,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        LogUtils.life("SargentTestActivity onStop");
         mHandler.removeCallbacksAndMessages(null);
     }
 
