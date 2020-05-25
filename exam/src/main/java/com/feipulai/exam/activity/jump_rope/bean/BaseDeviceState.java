@@ -1,5 +1,7 @@
 package com.feipulai.exam.activity.jump_rope.bean;
 
+import android.text.TextUtils;
+
 import java.io.Serializable;
 
 public class BaseDeviceState implements Serializable {
@@ -31,7 +33,7 @@ public class BaseDeviceState implements Serializable {
     private String deviceVersion;
 
     public String getDeviceVersion() {
-        return deviceVersion;
+        return  deviceVersion;
     }
 
     public void setDeviceVersion(String deviceVersion) {

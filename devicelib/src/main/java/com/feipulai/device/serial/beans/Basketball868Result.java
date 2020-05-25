@@ -26,6 +26,7 @@ public class Basketball868Result {
     private int sencond;
     //毫秒(精准度10ms)
     private int minsencond;
+    private int minsencondThousand;
     private String serialNumber;//设备序列号
     private String versionNum;//版本号
     private int deviceCode;// 3 子机 2 LED
@@ -38,18 +39,25 @@ public class Basketball868Result {
     }
 
     public Basketball868Result(byte[] data) {
-
-        versionNum = new String(new byte[]{data[16], data[17], data[18], data[19]});
+        if (data[7] == 0x01 && data.length == 22) {//新协议添加配对硬件版本号
+            versionNum = new String(new byte[]{data[16], data[17], data[18], data[19]});
+        }
 
         state = data[12] & 0xff;
         sum = data[13] & 0xff;
-        hour = data[14] & 0xff;
-        minth = data[15] & 0xff;
-        sencond = data[16] & 0xff;
-        //添加千分位
-        String Thousands = (data[17] & 0xff) + String.valueOf(data[18]);
-        minsencond = Integer.valueOf(Thousands);
-        if (data[7] == 0x02) {
+
+        try {
+            hour = data[14] & 0xff;
+            minth = data[15] & 0xff;
+            sencond = data[16] & 0xff;
+            //添加千分位
+            minsencondThousand = data[18];
+            minsencond = data[17];
+        } catch (Exception e) {
+
+        }
+
+        if (data[7] == 0x02) {//配对
             deviceId = data[15];
         } else {
             deviceId = data[6];
@@ -61,7 +69,7 @@ public class Basketball868Result {
         sensitivity = data[16] & 0xff;
         interceptSecond = data[17] & 0xff;
 
-        if (data[7] == 0x0a) {
+        if (data[7] == 0x0a) {//设置
             sensitivity = data[13] & 0xff;
             interceptSecond = data[14] & 0xff;
             uPrecision = data[15] & 0xff;
@@ -190,15 +198,17 @@ public class Basketball868Result {
                 ", minth=" + minth +
                 ", sencond=" + sencond +
                 ", minsencond=" + minsencond +
+                ", minsencondThousand=" + minsencondThousand +
                 ", serialNumber='" + serialNumber + '\'' +
+                ", versionNum='" + versionNum + '\'' +
                 ", deviceCode=" + deviceCode +
                 ", interceptSecond=" + interceptSecond +
                 ", sensitivity=" + sensitivity +
+                ", uPrecision=" + uPrecision +
                 '}';
     }
 
-
     public long getInterceptTime() {
-        return hour * 60 * 60 * 1000 + minth * 60 * 1000 + sencond * 1000 + minsencond * 10;
+        return hour * 60 * 60 * 1000 + minth * 60 * 1000 + sencond * 1000 + minsencond * 10 + minsencondThousand;
     }
 }

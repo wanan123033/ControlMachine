@@ -7,7 +7,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.feipulai.common.utils.ResultDisplayTools;
 import com.feipulai.exam.R;
+import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.MachineResult;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 
@@ -54,11 +56,14 @@ public class MachineResultAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        String time = ResultDisplayUtils.getStrResultForDisplay(dataList.get(position).getResult());
-        if (time.charAt(0) == '0' && time.charAt(1) == '0'){
-            time = time.substring(3,time.toCharArray().length);
-        }else if (time.charAt(0) == '0'){
-            time = time.substring(1,time.toCharArray().length);
+
+
+        String time = ResultDisplayTools.getStrResultForDisplay(TestConfigs.sCurrentItem.getMachineCode(),
+                dataList.get(position).getResult(),2, 0, TestConfigs.sCurrentItem.getUnit(), 0, true);
+        if (time.charAt(0) == '0' && time.charAt(1) == '0') {
+            time = time.substring(3, time.toCharArray().length);
+        } else if (time.charAt(0) == '0') {
+            time = time.substring(1, time.toCharArray().length);
         }
         holder.txtName.setText("第" + (position + 1) + "次拦截成绩：" +
                 time + "      ");

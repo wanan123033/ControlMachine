@@ -373,7 +373,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
     public void triggerStart(BasketballResult basketballResult) {
         LogUtils.operation("篮球开始计时");
         testDate = System.currentTimeMillis() + "";
-        timerUtil.startTime(10);
+        timerUtil.startTime(1);
         state = TESTING;
         txtDeviceStatus.setText("计时");
         setOperationUI();
@@ -510,9 +510,9 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
 
     @Override
     public void timer(Long time) {
-        timerDate = time * 10;
+        timerDate = time ;
         if (state == TESTING) {
-            tvResult.setText(DateUtil.caculateTime(time * 10, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital(), 0));
+            tvResult.setText(DateUtil.caculateTime(time , TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital(), 0));
         }
     }
 

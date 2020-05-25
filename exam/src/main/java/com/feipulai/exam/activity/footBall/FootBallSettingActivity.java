@@ -84,8 +84,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
     LinearLayout llUseMode;
     @BindView(R.id.tv_pair)
     TextView tvPair;
-    private Integer[] testRound = new Integer[]{1, 2, 3};
-
+    private Integer[] testRound;
     private String[] carryMode = new String[]{"四舍五入", "不进位", "非零进位"};
     private String[] useMode = {"单拦截", "2:起点1:终点", "2:终点1:起点", "2:折返点1:起终点", "2:起终点1:折返点"};
     private FootBallSetting setting;
@@ -122,10 +121,14 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
         spTestMode.setSelection(setting.getUseMode());
 
         //设置测试次数
+        testRound = new Integer[TestConfigs.getMaxTestCount(this)];
+        for (int i = 0; i < TestConfigs.getMaxTestCount(this); i++) {
+            testRound[i] = i + 1;
+        }
         ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testRound);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTestNo.setAdapter(adapter);
-        spTestNo.setSelection(TestConfigs.sCurrentItem.getTestNum() != 0 ?TestConfigs.getMaxTestCount(this) - 1:setting.getTestNo()-1);
+        spTestNo.setSelection(TestConfigs.sCurrentItem.getTestNum() != 0 ? TestConfigs.getMaxTestCount(this) - 1 : setting.getTestNo() - 1);
         // 数据库中已经指定了测试次数,就不能再设置了
         spTestNo.setEnabled(TestConfigs.sCurrentItem.getTestNum() == 0);
 
@@ -168,7 +171,10 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
         etPenaltySecond.setText(setting.getPenaltySecond() + "");
         if (setting.getTestType() == 1) {
             tvPair.setVisibility(View.VISIBLE);
+            etPort.setEnabled(false);
+            etHostIp.setEnabled(false);
         }
+
     }
 
     private int getAccuracy() {
@@ -197,7 +203,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
             Basketball868Result result = (Basketball868Result) msg.obj;
             this.setting.setSensitivity(result.getSensitivity());
             this.setting.setInterceptSecond(result.getInterceptSecond());
-            TestConfigs.sCurrentItem.setDigital(result.getuPrecision() == 0 ? 1 : 2);
+            TestConfigs.sCurrentItem.setDigital(result.getuPrecision() + 1);
         }
     }
 
@@ -217,7 +223,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
             case UDPBasketBallConfig.CMD_SET_PRECISION_RESPONSE:
                 ToastUtils.showShort("设置成功");
                 BasketballResult basketballResult = (BasketballResult) result.getResult();
-                TestConfigs.sCurrentItem.setDigital(basketballResult.getuPrecision() == 0 ? 1 : 2);
+                TestConfigs.sCurrentItem.setDigital(basketballResult.getuPrecision() + 1);
                 break;
             case UDPBasketBallConfig.CMD_SET_BLOCKERTIME_RESPONSE:
                 ToastUtils.showShort("设置成功");
@@ -298,7 +304,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
         }
     }
 
-    @OnItemSelected({R.id.sp_carryMode, R.id.sp_test_mode,R.id.sp_test_no})
+    @OnItemSelected({R.id.sp_carryMode, R.id.sp_test_mode, R.id.sp_test_no})
     public void spinnerItemSelected(Spinner spinner, int position) {
         switch (spinner.getId()) {
             case R.id.sp_carryMode:
@@ -308,14 +314,16 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
                 setting.setUseMode(position);
                 break;
             case R.id.sp_test_no:
-                setting.setTestNo(position+1);
+                setting.setTestNo(position + 1);
                 break;
         }
     }
+
     @OnClick(R.id.tv_pair)
     public void onViewClicked() {
         IntentUtil.gotoActivity(this, BasketBallPairActivity.class);
     }
+
     @OnClick({R.id.tv_sensitivity_use, R.id.tv_ip_connect, R.id.tv_accuracy_use, R.id.tv_intercept_time_use})
     public void onViewClicked(View view) {
         switch (view.getId()) {

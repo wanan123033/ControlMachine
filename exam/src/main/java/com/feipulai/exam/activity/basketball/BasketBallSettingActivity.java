@@ -87,7 +87,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
     Spinner spTestMode;
     @BindView(R.id.tv_pair)
     TextView tvPair;
-    private Integer[] testRound = new Integer[]{1, 2, 3};
+    private Integer[] testRound;
     private String[] carryMode = new String[]{"四舍五入", "不进位", "非零进位"};
     private BasketBallSetting setting;
     private MyHandler mHandler = new MyHandler(this);
@@ -117,6 +117,10 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
         manager = new BallManager.Builder(setting.getTestType()).setRadioListener(this).setHostIp(setting.getHostIp())
                 .setInetPost(1527).setPost(setting.getPost()).setUdpListerner(this).build();
         //设置测试次数
+        testRound = new Integer[TestConfigs.getMaxTestCount(this)];
+        for (int i = 0; i < TestConfigs.getMaxTestCount(this); i++) {
+            testRound[i] = i + 1;
+        }
         ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testRound);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTestNo.setAdapter(adapter);
@@ -193,7 +197,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
             Basketball868Result result = (Basketball868Result) msg.obj;
             this.setting.setSensitivity(result.getSensitivity());
             this.setting.setInterceptSecond(result.getInterceptSecond());
-            TestConfigs.sCurrentItem.setDigital(result.getuPrecision() == 0 ? 1 : 2);
+            TestConfigs.sCurrentItem.setDigital(result.getuPrecision() + 1);
         }
     }
 
