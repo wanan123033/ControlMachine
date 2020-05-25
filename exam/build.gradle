@@ -12,7 +12,7 @@ android {
     }
     defaultConfig {
         applicationId "com.feipulai.exam"
-        minSdkVersion 17
+        minSdkVersion 20
         targetSdkVersion 26
         versionCode 10
         //上测试版本1.1.3.1
@@ -126,6 +126,7 @@ dependencies {
     compile project(':libarcface')
     compile project(':uvccamerasdk')
     compile project(':videolibrary')
+    compile project(':mobileprintsdk')
 
 }
 configurations.all {

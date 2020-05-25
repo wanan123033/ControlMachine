@@ -136,7 +136,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
     private void addTestResult() {
         RoundResult roundResult = new RoundResult();
         roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
-        roundResult.setStudentCode("193012100006");
+        roundResult.setStudentCode("193012100030");
         String itemCode = TestConfigs.sCurrentItem.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : TestConfigs.sCurrentItem.getItemCode();
         roundResult.setItemCode(itemCode);
         roundResult.setResult(122);
@@ -241,7 +241,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                 break;
             case R.id.card_device_cut:
                 startActivity(new Intent(this, MachineSelectActivity.class));
-                addTestResult();
+//                addTestResult();
                 break;
 
         }

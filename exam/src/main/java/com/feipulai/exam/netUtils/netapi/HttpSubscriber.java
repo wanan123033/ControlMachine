@@ -104,7 +104,7 @@ public class HttpSubscriber {
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<ScheduleBean>(new OnResultListener<ScheduleBean>() {
             @Override
             public void onSuccess(ScheduleBean result) {
-                Logger.e("getScheduleAll====>" + result.toString());
+//                Logger.e("getScheduleAll====>" + result.toString());
                 if (result == null) {
                     if (onRequestEndListener != null) {
                         onRequestEndListener.onFault(SCHEDULE_BIZ);
@@ -164,7 +164,7 @@ public class HttpSubscriber {
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<List<ItemBean>>(new OnResultListener<List<ItemBean>>() {
             @Override
             public void onSuccess(List<ItemBean> result) {
-                Logger.e("getItemAll====>" + result.toString());
+//                Logger.e("getItemAll====>" + result.toString());
                 if (result == null)
                     return;
                 List<Item> itemList = new ArrayList<>();
@@ -339,7 +339,7 @@ public class HttpSubscriber {
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<BatchBean<List<StudentBean>>>(new OnResultListener<BatchBean<List<StudentBean>>>() {
             @Override
             public void onSuccess(BatchBean<List<StudentBean>> result) {
-                Logger.e("getStudent===>"+result);
+//                Logger.e("getStudent===>"+result);
                 Set<String> supplements = new HashSet<>();// 补考考生考号集合
                 if (result == null || result.getDataInfo() == null || result.getDataInfo().size() == 0) {
                     ToastUtils.showShort("当前无数据下载更新");
