@@ -550,6 +550,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                         if ((setting.getTestType() == 1 && facade.isDeviceNormal()) || setting.getTestType() == 0) {
                             ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, pairs.get(position()).getStudent().getLEDStuName(), Paint.Align.CENTER);
                             timerUtil.stop();
+                            ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
                             ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
                             startTime = System.currentTimeMillis() + "";
                         } else {

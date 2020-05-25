@@ -172,6 +172,7 @@ public class UDPBasketBallConfig {
      *
      * @param uPrecision 0表示设置显示精度为十分秒
      *                   1表示设置显示精度为百分秒
+     *                   2表示设置显示精度为千分秒
      * @return
      */
     public static final byte[] BASKETBALL_CMD_SET_PRECISION(int uPrecision) {
