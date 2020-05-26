@@ -1133,6 +1133,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
+                LogUtils.operation("篮球违规返回弹窗点击了确定...");
                 sweetAlertDialog.dismissWithAnimation();
                 timerUtil.stop();
                 BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
@@ -1161,6 +1162,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
+                LogUtils.operation("篮球违规返回弹窗点击了取消...");
                 sweetAlertDialog.dismissWithAnimation();
             }
         }).show();

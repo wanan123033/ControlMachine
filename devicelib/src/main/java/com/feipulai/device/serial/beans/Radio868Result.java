@@ -173,12 +173,12 @@ public class Radio868Result {
                                 setResult(new SargentJumpResult(data));
                                 break;
                             case 0x04:
-                                if (data[16] == 0) {
-                                    byte[] bytes = new byte[16];
-                                    System.arraycopy(data, 0, bytes, 0, 16);
+                                if (data[16] ==0 && data.length!=24){
+                                    byte []bytes = new byte[16];
+                                    System.arraycopy(data,0,bytes,0,16);
                                     setType(SerialConfigs.SARGENT_JUMP_GET_SCORE_RESPONSE);
                                     setResult(new SargentJumpResult(bytes));
-                                } else {
+                                }else if (data.length == 24){
                                     setType(SerialConfigs.SARGENT_JUMP_CHECK);
                                     setResult(new SargentJumpResult(data));
                                 }

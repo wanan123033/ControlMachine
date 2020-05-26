@@ -37,6 +37,7 @@ import com.feipulai.exam.activity.setting.MonitoringBindActivity;
 import com.feipulai.exam.activity.setting.SettingActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
@@ -45,7 +46,10 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.netUtils.CommonUtils;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
+import com.feipulai.exam.service.UploadService;
+import com.orhanobut.logger.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -130,30 +134,29 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
     }
 
     private void addTestResult() {
-        List<Student> dbStudentList = DBManager.getInstance().dumpAllStudents();
-        for (Student student : dbStudentList) {
-            for (int i = 0; i < 1; i++) {
-                RoundResult roundResult = new RoundResult();
-                roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
-                roundResult.setStudentCode(student.getStudentCode());
-                String itemCode = TestConfigs.sCurrentItem.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : TestConfigs.sCurrentItem.getItemCode();
-                roundResult.setItemCode(itemCode);
-                roundResult.setResult(1980 + i);
-                roundResult.setResultState(0);
-                roundResult.setTestTime(DateUtil.getCurrentTime() + "");
-                roundResult.setRoundNo(i + 1);
-                roundResult.setTestNo(1);
-                roundResult.setExamType(0);
-                roundResult.setUpdateState(0);
-                roundResult.setIsLastResult(1);
-                roundResult.setScheduleNo("5");
-                roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
-                if (i == 1) {
-                    roundResult.setIsLastResult(1);
-                }
-                DBManager.getInstance().insertRoundResult(roundResult);
-            }
-        }
+        RoundResult roundResult = new RoundResult();
+        roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
+        roundResult.setStudentCode("193012100030");
+        String itemCode = TestConfigs.sCurrentItem.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : TestConfigs.sCurrentItem.getItemCode();
+        roundResult.setItemCode(itemCode);
+        roundResult.setResult(122);
+        roundResult.setResultState(0);
+        roundResult.setTestTime(DateUtil.getCurrentTime() + "");
+        roundResult.setRoundNo(1);
+        roundResult.setTestNo(1);
+        roundResult.setExamType(0);
+        roundResult.setUpdateState(0);
+        roundResult.setIsLastResult(1);
+        roundResult.setScheduleNo("1");
+        roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
+        roundResult.setIsLastResult(1);
+        DBManager.getInstance().insertRoundResult(roundResult);
+
+//        List<RoundResult> results = new ArrayList<>();
+//        results.add(roundResult);
+//        UploadResults uploadResults = new UploadResults("1", TestConfigs.getCurrentItemCode(),
+//                "193012100002", 1 + "", null, RoundResultBean.beanCope(results));
+//        uploadResult(uploadResults);
     }
 
     /**
@@ -162,7 +165,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
      * @param uploadResults 上传成绩
      */
     private void uploadResult(UploadResults uploadResults) {
-
+        Intent serverIntent = new Intent(this, UploadService.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable(UploadResults.BEAN_KEY, uploadResults);
         serverIntent.putExtras(bundle);
@@ -238,6 +241,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                 break;
             case R.id.card_device_cut:
                 startActivity(new Intent(this, MachineSelectActivity.class));
+//                addTestResult();
                 break;
 
         }
