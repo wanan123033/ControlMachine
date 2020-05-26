@@ -561,8 +561,8 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
                             if (!TextUtils.isEmpty(tvCheckData.getText().toString())) {
                                 tvCheckData.append("\n");
                             }
-                            tvCheckData.append("发现坏杆有：" + poleState + "号有异常");
-                            toastSpeak("发现坏杆");
+                            tvCheckData.append("异常测量杆：" + poleState + "号杆");
+                            toastSpeak("发现异常测量杆");
                         }
                     }
                 });
@@ -654,8 +654,8 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
                             if (!TextUtils.isEmpty(activity.tvCheckData.getText().toString())) {
                                 activity.tvCheckData.append("\n");
                             }
-                            activity.tvCheckData.append("发现坏杆有：" + poleState + "号有异常");
-                            activity.toastSpeak("发现坏杆");
+                            activity.tvCheckData.append("异常测量杆：" + poleState + "号杆");
+                            activity.toastSpeak("发现异常测量杆");
                         }
 
 
