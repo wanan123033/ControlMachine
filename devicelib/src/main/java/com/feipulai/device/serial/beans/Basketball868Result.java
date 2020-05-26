@@ -26,7 +26,7 @@ public class Basketball868Result {
     private int sencond;
     //毫秒(精准度10ms)
     private int minsencond;
-    private int minsencondThousand;
+    private int minsencondThousand = 0;
     private String serialNumber;//设备序列号
     private String versionNum;//版本号
     private int deviceCode;// 3 子机 2 LED
@@ -50,9 +50,13 @@ public class Basketball868Result {
             hour = data[14] & 0xff;
             minth = data[15] & 0xff;
             sencond = data[16] & 0xff;
-            //添加千分位
-            minsencondThousand = data[18];
+
             minsencond = data[17];
+            if (data.length == 21) {//新6.4 版本添加千分位
+                //添加千分位
+                minsencondThousand = data[18];
+            }
+
         } catch (Exception e) {
 
         }
