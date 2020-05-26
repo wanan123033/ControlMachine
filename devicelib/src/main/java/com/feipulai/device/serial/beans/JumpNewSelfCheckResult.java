@@ -14,12 +14,12 @@ public class JumpNewSelfCheckResult {
     int[] jumpPoleState = new int[4];
 
     public JumpNewSelfCheckResult(int type, byte[] buf) {
-        if (type == 0) {
+        if (type == 0) {//有线
             jumpPoleState[0] = buf[8];
             jumpPoleState[1] = buf[9];
             jumpPoleState[2] = buf[10];
             jumpPoleState[3] = buf[11];
-        } else {
+        } else {//无线
             jumpPoleState[0] = buf[12];
             jumpPoleState[1] = buf[13];
             jumpPoleState[2] = buf[14];

@@ -517,7 +517,7 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
 
     RadioManager.OnRadioArrivedListener arrivedListener = new RadioManager.OnRadioArrivedListener() {
         @Override
-        public void onRadioArrived(Message msg) {
+        public void onRadioArrived(final Message msg) {
             if (msg.what == SerialConfigs.STAND_JUMP_SET_POINTS) {
                 isSetPoints = true;
                 standSetting.getPointsScopeArray()[deviceId - 1] = scope;
@@ -546,22 +546,27 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
                 }
 
             } else if (msg.what == SerialConfigs.JUMP_NEW_SELF_CHECK_RESPONSE) {
-                JumpNewSelfCheckResult checkResult = (JumpNewSelfCheckResult) msg.obj;
-                String poleState = "";
-                for (int i = 0; i < checkResult.getJumpPoleState().length; i++) {
-
-
-                    if (checkResult.getJumpPoleState()[i] == 0) {
-                        poleState += ("  " + (i + 1));
+                final JumpNewSelfCheckResult checkResult = (JumpNewSelfCheckResult) msg.obj;
+                isDisconnect = false;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String poleState = "";
+                        for (int i = 0; i < checkResult.getJumpPoleState().length; i++) {
+                            if (checkResult.getJumpPoleState()[i] == 0) {
+                                poleState += ("  " + (i + 1));
+                            }
+                        }
+                        if (!TextUtils.isEmpty(poleState)) {
+                            if (!TextUtils.isEmpty(tvCheckData.getText().toString())) {
+                                tvCheckData.append("\n");
+                            }
+                            tvCheckData.append("发现坏杆有：" + poleState + "号有异常");
+                            toastSpeak("发现坏杆");
+                        }
                     }
-                }
-                if (!TextUtils.isEmpty(poleState)) {
-                    if (!TextUtils.isEmpty(tvCheckData.getText().toString())) {
-                        tvCheckData.append("\n");
-                    }
-                    tvCheckData.append("发现坏杆有：" + poleState + "号有异常");
-                    toastSpeak("发现坏杆");
-                }
+                });
+
             }
             runOnUiThread(new Runnable() {
                 @Override
