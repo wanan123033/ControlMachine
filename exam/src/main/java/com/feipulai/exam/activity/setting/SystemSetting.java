@@ -111,6 +111,8 @@ public class SystemSetting {
     private String monitoringJson;
     //是否启用体温计
     private boolean isStartThermometer = false;
+    private boolean autoScore;
+    private String sitCode;
 
     public int getQrLength() {
         return qrLength;
@@ -374,5 +376,21 @@ public class SystemSetting {
             }
         }
         return bindName;
+    }
+
+    public boolean isAutoScore() {
+        return autoScore;
+    }
+
+    public void setAutoScore(boolean autoScore) {
+        this.autoScore = autoScore;
+    }
+
+    public void setSitCode(String siteCode) {
+        this.sitCode = siteCode;
+    }
+
+    public String getSitCode() {
+        return sitCode;
     }
 }

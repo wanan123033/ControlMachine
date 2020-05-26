@@ -84,7 +84,7 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
+        LogUtils.life("StandJumpGroupTestActivity onResume");
 //        updateDevice(new BaseDeviceState(BaseDeviceState.STATE_ERROR, 1));
         SerialDeviceManager.getInstance().setRS232ResiltListener(standResiltListener);
         sendCheck();
@@ -103,6 +103,7 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
 
     @Override
     public void startTest(BaseStuPair stuPair) {
+        LogUtils.operation("立定跳远开始测试:"+stuPair.toString());
         baseStuPair = stuPair;
         baseStuPair.setTestTime(System.currentTimeMillis()+"");
 //        sendCheck();
@@ -129,6 +130,7 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        LogUtils.life("StandJumpGroupTestActivity onPause");
         //结束测试 发送结束指令
         LogUtils.normal(SerialConfigs.CMD_END_JUMP.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_END_JUMP)+"---跳远结束指令");
 

@@ -300,8 +300,10 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
             while (!isFinish) {
                 if (testState != SitReachResiltListener.TestState.UN_STARTED) {
                     Log.i("zzs", "===>" + "sendCommand");
-                    if (SerialDeviceManager.getInstance() != null)
+                    if (SerialDeviceManager.getInstance() != null){
+                        LogUtils.normal(SerialConfigs.CMD_SIT_REACH_GET_SCORE.length+"---"+StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_GET_SCORE)+"---坐位体前屈空闲指令");
                         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_GET_SCORE));
+                    }
                 }
                 try {
                     Thread.sleep(100);
@@ -341,6 +343,7 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
                             isDisconnect = true;
                             if (SerialDeviceManager.getInstance() != null) {
                                 //设备自检,校验连接是否正常
+                                LogUtils.normal(SerialConfigs.CMD_SIT_REACH_EMPTY.length+"---"+StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_EMPTY)+"---坐位体前屈空闲指令");
                                 SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_EMPTY));
                                 mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
                             }

@@ -185,6 +185,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
 
     @Override
     public void onIndividualCheckIn(Student student, StudentItem studentItem, List<RoundResult> results) {
+
         if (state != WAIT_CHECK_IN) {
             toastSpeak("当前考生还未完成测试,拒绝检录");
             return;

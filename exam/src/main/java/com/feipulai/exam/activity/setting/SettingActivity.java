@@ -103,6 +103,8 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     TextView txtAdvanced;
     @BindView(R.id.cb_is_tcp)
     CheckBox cbIsTcp;
+    @BindView(R.id.sw_auto_score)
+    CheckBox mSwAutoScore;
     private String[] partternList = new String[]{"个人测试", "分组测试"};
     private List<Integer> hostIdList;
     private SystemSetting systemSetting;
@@ -164,6 +166,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         mSwRtUpload.setChecked(systemSetting.isRtUpload());
         mSwIdentityMark.setChecked(systemSetting.isIdentityMark());
         mSwAddStudent.setChecked(systemSetting.isTemporaryAddStu());
+        mSwAutoScore.setChecked(systemSetting.isAutoScore());
         if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN) {
             spPattern.setSelection(0);
         } else {
@@ -243,7 +246,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
 
     @OnClick({R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting
             , R.id.txt_advanced, R.id.sw_identity_mark, R.id.sw_add_student, R.id.cb_route, R.id.cb_custom_channel, R.id.cb_monitoring,
-            R.id.btn_monitoring_setting, R.id.btn_thermometer, R.id.cb_thermometer,R.id.cb_is_tcp})
+            R.id.btn_monitoring_setting, R.id.btn_thermometer, R.id.cb_thermometer,R.id.cb_is_tcp,R.id.sw_auto_score})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.cb_is_tcp:
@@ -277,6 +280,9 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                 break;
             case R.id.sw_add_student://添加考生
                 systemSetting.setTemporaryAddStu(mSwAddStudent.isChecked());
+                break;
+            case R.id.sw_auto_score:
+                systemSetting.setAutoScore(mSwAutoScore.isChecked());
                 break;
             case R.id.cb_custom_channel://自定义信道
                 if (TextUtils.isEmpty(editCustomChannel.getText().toString())) {
