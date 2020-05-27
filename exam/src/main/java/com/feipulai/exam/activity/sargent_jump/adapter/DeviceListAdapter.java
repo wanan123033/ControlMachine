@@ -36,6 +36,7 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
     private boolean isGroup;
     private int deviceId;
     private boolean enable = true;
+    private boolean showGetData;
     public void setNextClickStart(boolean nextClickStart) {
         isNextClickStart = nextClickStart;
     }
@@ -65,6 +66,12 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
     public void setTxtStartEnable(int deviceId,boolean enable){
         this.deviceId = deviceId;
         this.enable = enable;
+        notifyItemChanged(deviceId-1);
+    }
+
+    public void setShowGetData(int deviceId,boolean showGetData){
+        this.deviceId = deviceId;
+        this.showGetData = showGetData;
         notifyItemChanged(deviceId-1);
     }
 
@@ -222,8 +229,14 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                     oneViewHolder.txtPunish.setVisibility(View.GONE);
                 }
 
+                if (showGetData){
+                    oneViewHolder.txtGetData.setVisibility(View.VISIBLE);
+                }else {
+                    oneViewHolder.txtGetData.setVisibility(View.GONE);
+                }
+
                 oneViewHolder.addOnClickListener(R.id.txt_skip).addOnClickListener(R.id.txt_start);
-                oneViewHolder.addOnClickListener(R.id.txt_punish);
+                oneViewHolder.addOnClickListener(R.id.txt_punish).addOnClickListener(R.id.txt_get_data);
                 if (item.getStuDevicePair() != null) {
                     if (item.getStuDevicePair().getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
                         oneViewHolder.cbDeviceState.setChecked(true);
@@ -310,7 +323,8 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
         TextView itemTxtTestResult1;
         @BindView(R.id.item_txt_test_result2)
         TextView itemTxtTestResult2;
-
+        @BindView(R.id.txt_get_data)
+        TextView txtGetData;
 
         public OneViewHolder(View view) {
             super(view);

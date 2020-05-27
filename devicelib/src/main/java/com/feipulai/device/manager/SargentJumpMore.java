@@ -17,7 +17,7 @@ public class SargentJumpMore {
     private static byte[] CMD_SARGENT_JUMP_IGNORE_BREAK_POINT = {0X54, 0X44, 00, 0X0B, 01, 0x01, 0X01, 0x09, 0x13, 0x27, 0x0d};
     private static byte[] CMD_SARGENT_JUMP_CHECK_SELF = {0X54, 0X44, 00, 0X0B, 01, 0x01, 0X01, 0x04, 0x13, 0x27, 0x0d};
     private static byte[] CMD_SET_BASE_HEIGHT = {0X54, 0X44, 00, 0X0D, 01, 0x01, 01, 0x05, 00, 00, 0x00, 0x27, 0x0d};
-
+    private static byte[] CMD_SARGENT_JUMP_GET_DATA = {0X54, 0X44, 00, 0X0B, 01, 0x01, 0X01, 0x0A, 0x13, 0x27, 0x0d};
     public static void sendStart(int deviceId){
         byte[] cmd = CMD_SARGENT_JUMP_START;
         cmd[4] = (byte) deviceId;
@@ -100,5 +100,12 @@ public class SargentJumpMore {
                 data));
     }
 
-
+    public static void getData(int deviceId){
+        byte[] cmd = CMD_SARGENT_JUMP_GET_DATA;
+        cmd[4] = (byte) deviceId;
+        cmd[8] = (byte) sum(cmd, 8);
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---摸高0点设置指令");
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
+                cmd));
+    }
 }

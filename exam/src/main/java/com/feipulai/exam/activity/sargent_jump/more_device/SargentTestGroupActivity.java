@@ -45,6 +45,7 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
         RadioManager.getInstance().setOnRadioArrived(resultImpl);
         sendEmpty();
         setNextClickStart(false);
+        setShowGetData(1,true);
     }
 
     @Override
@@ -112,6 +113,11 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
         }
         mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 1000);
 
+    }
+
+    @Override
+    public void getData(int pos) {
+        SargentJumpMore.getData(pos+1);
     }
 
     private int sum(byte[] cmd, int index) {
