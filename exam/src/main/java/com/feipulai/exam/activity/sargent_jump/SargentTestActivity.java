@@ -342,8 +342,11 @@ public class SargentTestActivity extends BasePersonTestActivity {
     protected void onDestroy() {
         super.onDestroy();
         LogUtils.life("SargentTestActivity onDestroy");
-        if (SerialDeviceManager.getInstance() != null)
-            SerialDeviceManager.getInstance().close();
+//        if (SerialDeviceManager.getInstance() != null)
+//            SerialDeviceManager.getInstance().close();
+
+        SerialDeviceManager.getInstance().setRS232ResiltListener(null);
+        RadioManager.getInstance().setOnRadioArrived(null);
     }
 
     @Override

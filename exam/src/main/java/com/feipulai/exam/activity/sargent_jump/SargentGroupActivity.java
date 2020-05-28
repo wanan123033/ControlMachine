@@ -378,7 +378,8 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
         super.onStop();
         LogUtils.life("SargentGroupActivity onStop");
         mHandler.removeCallbacksAndMessages(null);
-
+        SerialDeviceManager.getInstance().setRS232ResiltListener(null);
+        RadioManager.getInstance().setOnRadioArrived(null);
     }
 
     public void showChangeBadDialog() {

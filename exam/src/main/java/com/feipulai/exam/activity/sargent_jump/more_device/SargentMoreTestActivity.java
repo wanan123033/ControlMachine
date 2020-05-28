@@ -71,6 +71,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
         for (int i = 0; i < deviceState.length; i++) {
 
             deviceState[i] = 0;//连续5次检测不到认为掉线
+            setShowGetData(i+1,true);
         }
         runUp = sargentSetting.getRunUp();
         RadioManager.getInstance().setOnRadioArrived(resultImpl);
@@ -117,6 +118,11 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
         updateDevice(pair.getBaseDevice());
         int id = pair.getBaseDevice().getDeviceId();
         sendStart((byte) id);
+    }
+
+    @Override
+    public void getData(int pos) {
+        SargentJumpMore.getData(pos+1);
     }
 
     @Override

@@ -187,6 +187,10 @@ public class Radio868Result {
                             case 0x00:
                                 setType(SerialConfigs.SARGENT_JUMP_EMPTY_RESPONSE);
                                 break;
+                            case 0x0A:
+                                setType(SerialConfigs.SARGENT_GET_DATA);
+                                setResult(new SargentJumpResult(data));
+                                break;
                         }
                     }
                 }

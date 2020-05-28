@@ -8,6 +8,7 @@ import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.SargentJumpResult;
 import com.orhanobut.logger.Logger;
 
+import static com.feipulai.device.serial.SerialConfigs.SARGENT_GET_DATA;
 import static com.feipulai.device.serial.SerialConfigs.SARGENT_JUMP_EMPTY_RESPONSE;
 import static com.feipulai.device.serial.SerialConfigs.SARGENT_JUMP_GET_SCORE_RESPONSE;
 import static com.feipulai.device.serial.SerialConfigs.SARGENT_JUMP_SET_MATCH;
@@ -116,6 +117,15 @@ public class SargentJumpImpl implements SerialDeviceManager.RS232ResiltListener,
                 if (jumpListener != null) {
                     SargentJumpResult r = (SargentJumpResult) msg.obj;
                     jumpListener.onMatch(r);
+                }
+                break;
+            case SARGENT_GET_DATA:
+                SargentJumpResult result1 = (SargentJumpResult) msg.obj;
+                if (showRes[result1.getDeviceId()-1]){
+                    jumpListener.onResultArrived(result1);
+                    Logger.i("=>SargentJumpImpl====>" + result1.getScore());
+                    showRes[result1.getDeviceId()-1] = false;
+                    tempId[result1.getDeviceId()-1] = result1.getDeviceId();
                 }
                 break;
         }

@@ -283,6 +283,8 @@ public class SerialConfigs {
     public static final int SIT_REACH_VERSION = 0x76;
     public static final int SIT_REACH_GET_STATE = 0x77;
     public static final int SIT_REACH_LEISURE = 0x78;
+    //摸高新增获取数据
+    public static final int SARGENT_GET_DATA = 0x79;
 
 
 }

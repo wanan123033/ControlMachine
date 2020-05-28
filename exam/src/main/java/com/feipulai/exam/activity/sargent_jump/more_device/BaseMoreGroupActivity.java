@@ -313,11 +313,42 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                             confirmResult(pos);
                         }
                         break;
+                    case R.id.txt_get_data:
+                        if (pair.getStudent() != null) {
+                            showGetData(pos);
+                        }
+                        break;
                 }
             }
         });
     }
 
+    public void getData(int pos){
+
+    }
+
+    /**
+     * 展示手动获取成绩
+     */
+    private void showGetData(final int index) {
+        SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
+        alertDialog.setTitleText("是否手动获取成绩");
+        alertDialog.setCancelable(false);
+        alertDialog.setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                LogUtils.operation("点击了获取成绩:");
+                sweetAlertDialog.dismissWithAnimation();
+                getData(index);
+            }
+        }).setCancelText("否").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+            }
+        }).show();
+
+    }
     public void setFaultEnable(boolean isPenalize) {
         this.isPenalize = isPenalize;
     }
@@ -329,6 +360,10 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
 
     public void setTxtEnable(int deviceId,boolean enable){
         deviceListAdapter.setTxtStartEnable(deviceId,enable);
+    }
+
+    public void setShowGetData(int deviceId,boolean enable){
+        deviceListAdapter.setShowGetData(deviceId,enable);
     }
 
     protected void stuSkipDialog(final Student student, final int index) {
