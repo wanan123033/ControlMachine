@@ -367,8 +367,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                     clicked = true;
                 }
             }
-        }).show();
-
+        });
+        alertDialog.show();
     }
 
     public void updatePair(BaseDeviceState deviceState, BaseStuPair pair, boolean isFault) {
@@ -941,12 +941,12 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         //当前的测试次数是否在项目设置的轮次中，是否满分跳过考生测试，满分由子类处理，基类只做界面展示
         if (roundNo < setTestCount()) {
             if (pair.isFullMark() && pair.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
-                //是否测试到最后一位
-                if (stuAdapter.getTestPosition() == stuPairsList.size() - 1) {
-                    //全部次数测试完，
-                    allTestComplete();
-                    return;
-                }
+//                //是否测试到最后一位
+//                if (stuAdapter.getTestPosition() == stuPairsList.size() - 1) {
+//                    //全部次数测试完，
+//                    allTestComplete();
+//                    return;
+//                }
                 continuousTestNext();
                 return;
 
@@ -1045,7 +1045,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 return;
             } else {
                 //全部次数测试完，
-                allTestComplete();
+//                allTestComplete();
+                loopTestNext();
                 return;
             }
         }
