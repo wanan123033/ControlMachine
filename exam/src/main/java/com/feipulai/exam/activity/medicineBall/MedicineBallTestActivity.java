@@ -67,6 +67,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
 
     @Override
     public void stuSkip() {
+        sendFree();
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
     }
 
