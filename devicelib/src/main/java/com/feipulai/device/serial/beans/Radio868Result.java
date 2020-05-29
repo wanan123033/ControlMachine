@@ -22,7 +22,7 @@ public class Radio868Result {
     public Radio868Result(byte[] data) {
         Log.i("james", StringUtility.bytesToHexString(data));
         if (MachineCode.machineCode == -1) {
-            LogUtils.all(data.length+"---"+StringUtility.bytesToHexString(data)+"---当前测试项目代码为-1");
+            LogUtils.all(data.length + "---" + StringUtility.bytesToHexString(data) + "---当前测试项目代码为-1");
             return;
         }
         // 不处理其他非当前测试项目的噪音信息
@@ -134,12 +134,12 @@ public class Radio868Result {
                                 break;
 
                             case 0x04:
-                                byte []bytes = new byte[16];
-                                if (data.length> 16 && data[14] == 0x27 && data[15] == 0x0d){
-                                    System.arraycopy(data,0,bytes,0,16);
+                                byte[] bytes = new byte[16];
+                                if (data.length > 16 && data[14] == 0x27 && data[15] == 0x0d) {
+                                    System.arraycopy(data, 0, bytes, 0, 16);
                                     setType(SerialConfigs.SARGENT_JUMP_GET_SCORE_RESPONSE);
                                     setResult(new SargentJumpResult(bytes));
-                                }else if (data.length == 16){
+                                } else if (data.length == 16) {
                                     setType(SerialConfigs.SARGENT_JUMP_GET_SCORE_RESPONSE);
                                     setResult(new SargentJumpResult(data));
                                 }
@@ -150,12 +150,12 @@ public class Radio868Result {
 
                                 break;
                             case 0x0b:
-                                byte []bytes1 = new byte[16];
-                                if (data.length> 16 && data[14] == 0x27 && data[15] == 0x0d){
-                                    System.arraycopy(data,0,bytes1,0,16);
+                                byte[] bytes1 = new byte[16];
+                                if (data.length > 16 && data[14] == 0x27 && data[15] == 0x0d) {
+                                    System.arraycopy(data, 0, bytes1, 0, 16);
                                     setType(SerialConfigs.SARGENT_JUMP_SET_MATCH);
                                     setResult(new SargentJumpResult(bytes1));
-                                }else if (data.length == 16){
+                                } else if (data.length == 16) {
                                     setType(SerialConfigs.SARGENT_JUMP_SET_MATCH);
                                     setResult(new SargentJumpResult(data));
                                 }
@@ -223,7 +223,7 @@ public class Radio868Result {
             case ItemDefault.CODE_LQYQ:
             case ItemDefault.CODE_ZQYQ:
                 if (data[0] == (byte) 0xAA && data[data.length - 1] == 0x0D && data[2] == 0x0d) {
-                    if (verifySum(data,1,data.length-2)!= data[data.length-2])
+                    if (verifySum(data, 1, data.length - 2) != data[data.length - 2])
                         return;
                     setResult(new Basketball868Result(data));
                     switch (data[7]) {
@@ -384,13 +384,17 @@ public class Radio868Result {
                         case 0x09://设置测试长度
                             setType(SerialConfigs.STAND_JUMP_SET_POINTS);
                             break;
+                        case 0xa://新自检杆状态
+                            setType(SerialConfigs.JUMP_NEW_SELF_CHECK_RESPONSE);
+                            setResult(new JumpNewSelfCheckResult(1, data));
+                            break;
                     }
                 }
 
                 break;
             case ItemDefault.CODE_ZWTQQ:
-                if ((data[0] & 0xff) == 0xaa && (data.length == 21 )) {
-                    if (verifySum(data,1,data.length-2)!= data[data.length-2])
+                if ((data[0] & 0xff) == 0xaa && (data.length == 21)) {
+                    if (verifySum(data, 1, data.length - 2) != data[data.length - 2])
                         return;
                     setResult(new SitReachWirelessResult(data));
                     switch (data[7]) {
@@ -446,12 +450,13 @@ public class Radio868Result {
 
     /**
      * 和校验
+     *
      * @param data
      * @return
      */
-    private byte verifySum(byte [] data,int index,int end){
+    private byte verifySum(byte[] data, int index, int end) {
         byte sum = 0;
-        for (int i = index;i< end;i++){
+        for (int i = index; i < end; i++) {
             sum += data[i];
         }
 

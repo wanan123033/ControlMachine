@@ -12,16 +12,16 @@ public class TimeUtil {
         int[] time = new int[4];
         if (date < 60 * 1000) {
             time[2] = Integer.valueOf(DateUtil.formatTime(date, "ss"));
-            time[3] = Integer.valueOf(DateUtil.formatTime(date, "SS"));
+            time[3] = Integer.valueOf(DateUtil.formatTime(date, "SSS"));
         } else if (date >= 60 * 1000 && date < 60 * 60 * 1000) { // 一小时之内
             time[1] = Integer.valueOf(DateUtil.formatTime(date, "mm"));
             time[2] = Integer.valueOf(DateUtil.formatTime(date, "ss"));
-            time[3] = Integer.valueOf(DateUtil.formatTime(date, "SS"));
+            time[3] = Integer.valueOf(DateUtil.formatTime(date, "SSS"));
         } else if (date >= 60 * 60 * 1000 && date < 60 * 60 * 24 * 1000) { // 同一天之内
             time[0] = Integer.valueOf(DateUtil.formatTime(date, "HH"));
             time[1] = Integer.valueOf(DateUtil.formatTime(date, "mm"));
             time[2] = Integer.valueOf(DateUtil.formatTime(date, "ss"));
-            time[3] = Integer.valueOf(DateUtil.formatTime(date, "SS"));
+            time[3] = Integer.valueOf(DateUtil.formatTime(date, "SSS"));
         } else {
             return null;
         }

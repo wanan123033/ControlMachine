@@ -87,7 +87,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
     Spinner spTestMode;
     @BindView(R.id.tv_pair)
     TextView tvPair;
-    private Integer[] testRound = new Integer[]{1, 2, 3};
+    private Integer[] testRound;
     private String[] carryMode = new String[]{"四舍五入", "不进位", "非零进位"};
     private BasketBallSetting setting;
     private MyHandler mHandler = new MyHandler(this);
@@ -117,6 +117,10 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
         manager = new BallManager.Builder(setting.getTestType()).setRadioListener(this).setHostIp(setting.getHostIp())
                 .setInetPost(1527).setPost(setting.getPost()).setUdpListerner(this).build();
         //设置测试次数
+        testRound = new Integer[TestConfigs.getMaxTestCount(this)];
+        for (int i = 0; i < TestConfigs.getMaxTestCount(this); i++) {
+            testRound[i] = i + 1;
+        }
         ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testRound);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTestNo.setAdapter(adapter);
@@ -156,7 +160,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
         etSensitivity.setText(setting.getSensitivity() + "");
         etHostIp.setText(setting.getHostIp());
         etPort.setText(setting.getPost() + "");
-        rgAccuracy.check(getAccuracy() == 1 ? R.id.rb_tenths : R.id.rb_percentile);
+        rgAccuracy.check(getAccuracy() == 1 ? R.id.rb_tenths : getAccuracy() == 2 ? R.id.rb_percentile : R.id.rb_thousand);
 
         etPenaltySecond.setText(setting.getPenaltySecond() + "");
 
@@ -171,6 +175,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
         switch (TestConfigs.sCurrentItem.getDigital()) {
             case 1:
             case 2:
+            case 3:
                 return TestConfigs.sCurrentItem.getDigital();
             default:
                 return 2;
@@ -192,7 +197,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
             Basketball868Result result = (Basketball868Result) msg.obj;
             this.setting.setSensitivity(result.getSensitivity());
             this.setting.setInterceptSecond(result.getInterceptSecond());
-            TestConfigs.sCurrentItem.setDigital(result.getuPrecision() == 0 ? 1 : 2);
+            TestConfigs.sCurrentItem.setDigital(result.getuPrecision() + 1);
         }
     }
 
@@ -212,7 +217,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
             case UDPBasketBallConfig.CMD_SET_PRECISION_RESPONSE:
                 ToastUtils.showShort("设置成功");
                 BasketballResult basketballResult = (BasketballResult) result.getResult();
-                TestConfigs.sCurrentItem.setDigital(basketballResult.getuPrecision() == 0 ? 1 : 2);
+                TestConfigs.sCurrentItem.setDigital(basketballResult.getuPrecision() + 1);
                 break;
             case UDPBasketBallConfig.CMD_SET_BLOCKERTIME_RESPONSE:
                 ToastUtils.showShort("设置成功");
@@ -367,7 +372,6 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
             case R.id.tv_accuracy_use:
                 switch (rgAccuracy.getCheckedRadioButtonId()) {
                     case R.id.rb_tenths: //十分位
-//                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(0));
                         manager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), Integer.valueOf(this.etSensitivity.getText().toString()),
                                 this.setting.getInterceptSecond(), 0);
 
@@ -375,7 +379,10 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
                     case R.id.rb_percentile://百分位
                         manager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), Integer.valueOf(this.etSensitivity.getText().toString()),
                                 this.setting.getInterceptSecond(), 1);
-//                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(1));
+                        break;
+                    case R.id.rb_thousand://百分位
+                        manager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), Integer.valueOf(this.etSensitivity.getText().toString()),
+                                this.setting.getInterceptSecond(), 2);
                         break;
                 }
                 isDisconnect = true;

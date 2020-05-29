@@ -207,7 +207,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         }
         //设置精度
         ballManager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), setting.getSensitivity(),
-                setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1);
+                setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() -1);
     }
 
     @Override
@@ -373,7 +373,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
     public void triggerStart(BasketballResult basketballResult) {
         LogUtils.operation("篮球开始计时");
         testDate = System.currentTimeMillis() + "";
-        timerUtil.startTime(10);
+        timerUtil.startTime(1);
         state = TESTING;
         txtDeviceStatus.setText("计时");
         setOperationUI();
@@ -510,9 +510,9 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
 
     @Override
     public void timer(Long time) {
-        timerDate = time * 10;
+        timerDate = time ;
         if (state == TESTING) {
-            tvResult.setText(DateUtil.caculateTime(time * 10, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital(), 0));
+            tvResult.setText(DateUtil.caculateTime(time , TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital(), 0));
         }
     }
 
@@ -648,6 +648,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                     if ((setting.getTestType() == 1 && facade.isDeviceNormal()) || setting.getTestType() == 0) {
                         ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, pairs.get(0).getStudent().getLEDStuName(), Paint.Align.CENTER);
                         timerUtil.stop();
+                        ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
                         ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
                     } else {
                         toastSpeak("存在未连接设备，请配对");
