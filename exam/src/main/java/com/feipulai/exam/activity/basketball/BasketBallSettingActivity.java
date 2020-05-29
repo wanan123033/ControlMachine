@@ -117,8 +117,9 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
         manager = new BallManager.Builder(setting.getTestType()).setRadioListener(this).setHostIp(setting.getHostIp())
                 .setInetPost(1527).setPost(setting.getPost()).setUdpListerner(this).build();
         //设置测试次数
-        testRound = new Integer[TestConfigs.getMaxTestCount(this)];
-        for (int i = 0; i < TestConfigs.getMaxTestCount(this); i++) {
+        int maxTestNo =TestConfigs.sCurrentItem.getTestNum()==0?TestConfigs.MAX_TEST_NO:TestConfigs.getMaxTestCount(this);
+        testRound = new Integer[maxTestNo];
+        for (int i = 0; i < maxTestNo; i++) {
             testRound[i] = i + 1;
         }
         ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testRound);
