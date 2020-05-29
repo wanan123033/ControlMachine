@@ -444,8 +444,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         //设置测试学生，当学生有满分跳过则寻找需要测试学生
         if (stuAdapter.getTestPosition() == stuPairsList.size() - 1) {
             if (setTestPattern() == 0) { //连续测试
-                //全部次数测试完，
-                allTestComplete();
+                continuousTestNext();
                 return;
             } else if (setTestPattern() == 1 && setTestCount() > roundNo) {
                 //循环测试到最后一位，当前测试次数小于测试次数则进行下一轮测试
@@ -454,7 +453,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 loopTestNext();
                 return;
             } else {
-                allTestComplete();
+                loopTestNext();
             }
         } else {
             if (setTestPattern() == 0) {//连续测试 下一位
