@@ -159,6 +159,8 @@ public class SitReachMoreGroupActivity extends BaseMoreGroupActivity {
                     msg.what = GET_RESULT;
                     mHandler.sendMessage(msg);
                     resultUpdate[result.getDeviceId()-1] = false;
+                }else {
+                    toastSpeak("数据错误请重测");
                 }
                 backFlag = true;
             }
