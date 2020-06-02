@@ -130,6 +130,7 @@ public class AdvancedSettingActivity extends BaseTitleActivity
     @Override
     protected void onPause() {
         super.onPause();
+        SharedPrefsUtil.putValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.DEFAULT_SERVER_TOKEN, "dGVybWluYWw6dGVybWluYWxfc2VjcmV0");
         SettingHelper.updateSettingCache(systemSetting);
         SharedPrefsUtil.save(this, sitUpSetting);
         SharedPrefsUtil.save(this, pullUpSetting);

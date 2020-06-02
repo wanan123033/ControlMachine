@@ -1,4 +1,4 @@
-package com.feipulai.host.entity;
+package com.feipulai.host.bean;
 
 /**
  * Created by pengjf on 2018/11/23.

@@ -107,7 +107,7 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
     @BindView(R.id.rb_4)
     RadioButton rb4;
 
-    private Integer[] testRound = new Integer[]{1, 2, 3};
+    private Integer[] testRound;
 
     private StandJumpSetting standSetting;
     private static final int MSG_DISCONNECT = 0X101;
@@ -135,9 +135,17 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
         if (standSetting == null)
             standSetting = new StandJumpSetting();
 
+        //设置测试次数
+        int maxTestNo = (TestConfigs.sCurrentItem.getTestNum() == 0 && TestConfigs.getMaxTestCount(this) <= TestConfigs.MAX_TEST_NO)
+                ? TestConfigs.MAX_TEST_NO : TestConfigs.getMaxTestCount(this);
+        testRound = new Integer[maxTestNo];
+        for (int i = 0; i < maxTestNo; i++) {
+            testRound[i] = i + 1;
+        }
         ArrayAdapter spTestRoundAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testRound);
         spTestRoundAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTestRound.setAdapter(spTestRoundAdapter);
+
         ArrayAdapter spDeviceCountAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,
                 standSetting.getTestType() == 0 ? new String[]{"1"} : new String[]{"1", "2", "3", "4"});
         spDeviceCountAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -383,6 +391,12 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
         }
         SerialDeviceManager.getInstance().close();
         RadioManager.getInstance().setOnRadioArrived(null);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mHandler.removeCallbacksAndMessages(null);
     }
 
     private void setEditTextWatcherListener() {

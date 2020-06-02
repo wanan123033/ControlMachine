@@ -111,7 +111,7 @@ public class SystemSetting {
     private String monitoringJson;
     //是否启用体温计
     private boolean isStartThermometer = false;
-    private boolean autoScore;
+    private boolean autoScore = false;
     private String sitCode;
 
     public int getQrLength() {

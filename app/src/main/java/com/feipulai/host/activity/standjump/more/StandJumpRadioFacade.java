@@ -13,7 +13,7 @@ import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.activity.standjump.StandJumpSetting;
 import com.feipulai.host.config.TestConfigs;
-import com.feipulai.host.entity.DeviceDetail;
+import com.feipulai.host.bean.DeviceDetail;
 import com.feipulai.host.entity.RoundResult;
 import com.orhanobut.logger.Logger;
 

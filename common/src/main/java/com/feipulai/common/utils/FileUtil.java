@@ -4,6 +4,7 @@ import android.content.res.AssetManager;
 import android.os.Environment;
 import android.util.Log;
 
+import com.feipulai.common.dbutils.BackupManager;
 import com.feipulai.common.dbutils.UsbFileAdapter;
 import com.github.mjdev.libaums.fs.UsbFile;
 import com.github.mjdev.libaums.fs.UsbFileOutputStream;
@@ -298,6 +299,7 @@ public class FileUtil {
      */
     public static void createAllFile() {
         mkdirs(PATH_BASE);
+        mkdirs(BackupManager.AUTO_BACKUP_DIR);
     }
 
     /**

@@ -121,8 +121,15 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
         spTestMode.setSelection(setting.getUseMode());
 
         //设置测试次数
-        testRound = new Integer[TestConfigs.getMaxTestCount(this)];
-        for (int i = 0; i < TestConfigs.getMaxTestCount(this); i++) {
+        //设置测试次数
+        int maxTestNo = (TestConfigs.sCurrentItem.getTestNum() == 0 && TestConfigs.getMaxTestCount(this) <= TestConfigs.MAX_TEST_NO)
+                ? TestConfigs.MAX_TEST_NO : TestConfigs.getMaxTestCount(this);
+        testRound = new Integer[maxTestNo];
+        for (int i = 0; i < maxTestNo; i++) {
+            testRound[i] = i + 1;
+        }
+        testRound = new Integer[maxTestNo];
+        for (int i = 0; i < maxTestNo; i++) {
             testRound[i] = i + 1;
         }
         ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testRound);

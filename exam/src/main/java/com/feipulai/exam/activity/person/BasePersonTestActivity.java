@@ -448,6 +448,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "菲普莱体育", 3, 3, false, true);
             mLEDManager = null;
         }
+        ledHandler.removeCallbacksAndMessages(null);
+        clearHandler.removeCallbacksAndMessages(null);
     }
 
 

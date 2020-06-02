@@ -24,7 +24,7 @@ import com.feipulai.host.adapter.PopAdapter;
 import com.feipulai.host.adapter.RunNumberAdapter2;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.entity.RoundResult;
-import com.feipulai.host.entity.RunStudent;
+import com.feipulai.host.bean.RunStudent;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.view.CommonPopupWindow;
 import com.feipulai.host.view.ResultPopWindow;

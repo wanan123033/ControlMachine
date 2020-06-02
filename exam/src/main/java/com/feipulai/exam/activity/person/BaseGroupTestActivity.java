@@ -311,6 +311,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                         } else {
                             Message msg = new Message();
                             msg.obj = stuPairsList.get(stuAdapter.getTestPosition());
+                            ledHandler.removeCallbacksAndMessages(null);
                             ledHandler.sendMessageDelayed(msg, 1000);
                         }
 
@@ -339,7 +340,9 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 //                break;
         }
     }
+
     boolean clicked = false;
+
     /**
      * 展示判罚
      */
@@ -367,8 +370,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                     clicked = true;
                 }
             }
-        }).show();
-
+        });
+        alertDialog.show();
     }
 
     public void updatePair(BaseDeviceState deviceState, BaseStuPair pair, boolean isFault) {
@@ -444,8 +447,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         //设置测试学生，当学生有满分跳过则寻找需要测试学生
         if (stuAdapter.getTestPosition() == stuPairsList.size() - 1) {
             if (setTestPattern() == 0) { //连续测试
-                //全部次数测试完，
-                allTestComplete();
+                continuousTestNext();
                 return;
             } else if (setTestPattern() == 1 && setTestCount() > roundNo) {
                 //循环测试到最后一位，当前测试次数小于测试次数则进行下一轮测试
@@ -454,7 +456,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 loopTestNext();
                 return;
             } else {
-                allTestComplete();
+                loopTestNext();
             }
         } else {
             if (setTestPattern() == 0) {//连续测试 下一位
@@ -490,6 +492,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 }
                 Message msg = new Message();
                 msg.obj = stuPairsList.get(stuAdapter.getTestPosition());
+                ledHandler.removeCallbacksAndMessages(null);
                 ledHandler.sendMessageDelayed(msg, 3000);
                 break;
             }
@@ -942,12 +945,12 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         //当前的测试次数是否在项目设置的轮次中，是否满分跳过考生测试，满分由子类处理，基类只做界面展示
         if (roundNo < setTestCount()) {
             if (pair.isFullMark() && pair.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
-                //是否测试到最后一位
-                if (stuAdapter.getTestPosition() == stuPairsList.size() - 1) {
-                    //全部次数测试完，
-                    allTestComplete();
-                    return;
-                }
+//                //是否测试到最后一位
+//                if (stuAdapter.getTestPosition() == stuPairsList.size() - 1) {
+//                    //全部次数测试完，
+//                    allTestComplete();
+//                    return;
+//                }
                 continuousTestNext();
                 return;
 
@@ -965,6 +968,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             }
             Message msg = new Message();
             msg.obj = stuPairsList.get(stuAdapter.getTestPosition());
+            ledHandler.removeCallbacksAndMessages(null);
             ledHandler.sendMessageDelayed(msg, 3000);
         } else {
             //是否测试到最后一位
@@ -1009,6 +1013,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 //                }
                 Message msg = new Message();
                 msg.obj = stuPairsList.get(stuAdapter.getTestPosition());
+                ledHandler.removeCallbacksAndMessages(null);
                 ledHandler.sendMessageDelayed(msg, 3000);
                 Logger.i("addStudent:当前考生进行第" + 1 + "次的第" + roundNo + "轮测试");
                 group.setIsTestComplete(2);
@@ -1046,7 +1051,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 return;
             } else {
                 //全部次数测试完，
-                allTestComplete();
+//                allTestComplete();
+                loopTestNext();
                 return;
             }
         }
@@ -1084,6 +1090,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 //                    }
                     Message msg = new Message();
                     msg.obj = stuPairsList.get(stuAdapter.getTestPosition());
+                    ledHandler.removeCallbacksAndMessages(null);
                     ledHandler.sendMessageDelayed(msg, 3000);
 //                    resultList.clear();
 //                    resultList.addAll(Arrays.asList(stuPairsList.get(stuAdapter.getTestPosition()).getTimeResult()));
@@ -1139,6 +1146,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             }
             Message msg = new Message();
             msg.obj = stuPairsList.get(stuAdapter.getTestPosition());
+            ledHandler.removeCallbacksAndMessages(null);
             ledHandler.sendMessageDelayed(msg, 3000);
         } else {
             //检测是否考生全部完成测试
@@ -1190,7 +1198,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             super.handleMessage(msg);
 
             BaseGroupTestActivity activity = mActivityWeakReference.get();
-            if (activity.stuAdapter == null ||activity.stuAdapter.getTestPosition() == -1) {
+            if (activity.stuAdapter == null || activity.stuAdapter.getTestPosition() == -1) {
                 return;
             }
             activity.setShowLed((BaseStuPair) msg.obj);
@@ -1216,5 +1224,6 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         EventBus.getDefault().post(new BaseEvent(EventConfigs.UPDATE_TEST_RESULT));
         Intent serverIntent = new Intent(this, UploadService.class);
         stopService(serverIntent);
+        ledHandler.removeCallbacksAndMessages(null);
     }
 }

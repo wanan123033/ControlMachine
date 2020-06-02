@@ -4,7 +4,6 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.feipulai.common.tts.TtsManager;
-import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.led.RunLEDManager;
 import com.feipulai.device.printer.PrinterManager;
@@ -14,7 +13,7 @@ import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
-import com.feipulai.host.entity.RunStudent;
+import com.feipulai.host.bean.RunStudent;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.netUtils.UploadResultUtil;
 import com.feipulai.host.netUtils.netapi.ServerIml;

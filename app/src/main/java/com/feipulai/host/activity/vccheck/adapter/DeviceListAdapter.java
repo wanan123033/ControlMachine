@@ -14,7 +14,7 @@ import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseDeviceState;
-import com.feipulai.host.entity.DeviceDetail;
+import com.feipulai.host.bean.DeviceDetail;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.utils.ResultDisplayUtils;

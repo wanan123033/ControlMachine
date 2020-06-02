@@ -18,7 +18,7 @@ import com.feipulai.host.activity.standjump.StandJumpSetting;
 import com.feipulai.host.activity.standjump.StandJumpSettingActivity;
 import com.feipulai.host.activity.standjump.more.StandJumpPairActivity;
 import com.feipulai.host.activity.standjump.more.StandJumpRadioFacade;
-import com.feipulai.host.entity.DeviceDetail;
+import com.feipulai.host.bean.DeviceDetail;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

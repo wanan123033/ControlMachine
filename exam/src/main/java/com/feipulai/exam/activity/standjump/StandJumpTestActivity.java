@@ -155,6 +155,12 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
         SerialDeviceManager.getInstance().close();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mHandler.removeCallbacksAndMessages(null);
+    }
+
     /**
      * 发送检测设备指令
      */

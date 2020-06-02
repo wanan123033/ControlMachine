@@ -36,12 +36,28 @@ public class MyApplication extends MultiDexApplication {
         instance = this;
         CrashHandler.getInstance().init(this);
         SettingHelper.init(this);
+        BlueToothHelper.init(this);
         TOKEN = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.TOKEN, "");
         //默认打开WiFi，虹软sdk需要读物唯一标识，某些机器WiFi断开情况下读不到
 //        NetUtil.openWifi(this);
 
         FileUtil.createAllFile();
         FileUtil.mkdirs(PATH_SPECIFICATION);
+
+        //视频播放初始化库
+        PlayerLibrary.init(this);
+//        IjkPlayer.init(this);
+        //如果添加了'cn.jiajunhui:exoplayer:xxxx'该依赖
+//        ExoMediaPlayer.init(this);
+        //播放记录的配置
+        //开启播放记录
+        PlayerConfig.playRecord(true);
+        PlayRecordManager.setRecordConfig(
+                new PlayRecordManager.RecordConfig.Builder()
+                        .setMaxRecordCount(100)
+                        //.setRecordKeyProvider()
+                        //.setOnRecordCallBack()
+                        .build());
 //        TODO 岭南IC
         AdaptiveConfig.initIC(AdaptiveConfig.LIN_NAN_SHI_FAN, AdaptiveConfig.DEFAULT, new char[]{0x73, 0x79, 0x6E, 0x70, 0x75, 0x62});
 

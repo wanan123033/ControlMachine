@@ -19,8 +19,8 @@ public class BasketBallSelectActivity
         this.itemList.clear();
         this.itemList.add(new Item("有线运球模式"));
         this.itemList.add(new Item("无线运球模式"));
-        this.itemList.add(new Item("往返运球投篮模式"));
-        this.itemList.add(new Item("投篮模式"));
+//        this.itemList.add(new Item("往返运球投篮模式"));
+//        this.itemList.add(new Item("投篮模式"));
         this.adapter.notifyDataSetChanged();
         getToolbar().setTitle("篮球模式选择");
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {

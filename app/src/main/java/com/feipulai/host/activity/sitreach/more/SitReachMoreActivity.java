@@ -19,7 +19,7 @@ import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.activity.sitreach.SitReachSetting;
 import com.feipulai.host.activity.sitreach.SitReachSettingActivity;
 import com.feipulai.host.activity.sitreach.more.pair.SitReachPairActivity;
-import com.feipulai.host.entity.DeviceDetail;
+import com.feipulai.host.bean.DeviceDetail;
 import com.orhanobut.logger.Logger;
 
 import butterknife.OnClick;

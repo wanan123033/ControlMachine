@@ -1,4 +1,6 @@
-package com.feipulai.host.entity;
+package com.feipulai.host.bean;
+
+import com.feipulai.host.entity.Student;
 
 import java.util.List;
 
