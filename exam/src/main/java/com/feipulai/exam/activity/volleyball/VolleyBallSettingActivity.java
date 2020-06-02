@@ -70,7 +70,7 @@ public class VolleyBallSettingActivity
     @BindView(R.id.txt_device_versions)
     TextView txtDeviceVersions;
 
-    private Integer[] testRound = new Integer[]{1, 2, 3};
+    private Integer[] testRound;
 
     private VolleyBallSetting setting;
     private SweetAlertDialog alertDialog;
@@ -94,6 +94,14 @@ public class VolleyBallSettingActivity
     protected void initData() {
         setting = SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class);
         volleyBallManager = new VolleyBallManager(setting.getType());
+        //设置测试次数
+        int maxTestNo = (TestConfigs.sCurrentItem.getTestNum() == 0 && TestConfigs.getMaxTestCount(this) <= TestConfigs.MAX_TEST_NO)
+                ? TestConfigs.MAX_TEST_NO : TestConfigs.getMaxTestCount(this);
+
+        testRound = new Integer[maxTestNo];
+        for (int i = 0; i < maxTestNo; i++) {
+            testRound[i] = i + 1;
+        }
         ArrayAdapter spTestRoundAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testRound);
         spTestRoundAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTestNo.setAdapter(spTestRoundAdapter);
@@ -212,7 +220,7 @@ public class VolleyBallSettingActivity
                     });
                     builder.create().show();
 
-                } else if (setting.getType() == 1){
+                } else if (setting.getType() == 1) {
                     VolleyBallCheckDialog dialog1 = new VolleyBallCheckDialog();
                     Bundle bundle = new Bundle();
                     bundle.putInt("deviceId", 1);
