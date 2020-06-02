@@ -10,6 +10,7 @@ import com.feipulai.host.R;
 import com.feipulai.host.activity.height_weight.HeightWeightCheckActivity;
 import com.feipulai.host.activity.jump_rope.check.JumpRopeCheckActivity;
 import com.feipulai.host.activity.medicine_ball.MedicineBallFreeTestActivity;
+import com.feipulai.host.activity.medicine_ball.MedicineBallSelectActivity;
 import com.feipulai.host.activity.medicine_ball.MedicineBallTestActivity;
 import com.feipulai.host.activity.pullup.PullUpSelectActivity;
 import com.feipulai.host.activity.radio_timer.RunTimerFreeTestActivity;
@@ -73,7 +74,7 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_FHL, VitalTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_ZWTQQ, SitReachSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_LDTY, StandJumpSelectActivity.class);
-        TestConfigs.proActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallTestActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_ZFP, RunTimerTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_WLJ, VitalTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_YTXS, PullUpSelectActivity.class);
