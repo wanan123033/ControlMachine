@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseActivity;
-import com.feipulai.host.entity.Tuple;
+import com.feipulai.host.bean.Tuple;
 
 import java.util.ArrayList;
 import java.util.List;

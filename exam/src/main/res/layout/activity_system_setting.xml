@@ -503,7 +503,7 @@
 
                 <TextView
                     style="@style/style_setting_tv_title"
-                    android:text="单机测试:" />
+                    android:text="单点测试:" />
 
                 <CheckBox
                     android:id="@+id/sw_auto_score"

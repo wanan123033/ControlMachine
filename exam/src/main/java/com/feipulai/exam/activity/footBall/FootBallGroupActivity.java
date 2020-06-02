@@ -551,6 +551,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                             ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, pairs.get(position()).getStudent().getLEDStuName(), Paint.Align.CENTER);
                             timerUtil.stop();
                             ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
+                            sleep();
                             ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
                             startTime = System.currentTimeMillis() + "";
                         } else {

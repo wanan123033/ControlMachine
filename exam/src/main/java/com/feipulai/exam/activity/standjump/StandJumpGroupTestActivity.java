@@ -137,7 +137,11 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_END_JUMP));
         SerialDeviceManager.getInstance().close();
     }
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mHandler.removeCallbacksAndMessages(null);
+    }
     /**
      * 发送检测设备指令
      */

@@ -16,7 +16,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
@@ -31,7 +30,7 @@ import com.feipulai.host.activity.vccheck.adapter.DeviceListAdapter;
 import com.feipulai.host.activity.vccheck.pair.VcPairActivity;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
-import com.feipulai.host.entity.DeviceDetail;
+import com.feipulai.host.bean.DeviceDetail;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.netUtils.UploadResultUtil;

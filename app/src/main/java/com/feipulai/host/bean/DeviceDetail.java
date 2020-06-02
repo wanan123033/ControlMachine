@@ -1,8 +1,9 @@
-package com.feipulai.host.entity;
+package com.feipulai.host.bean;
 
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BaseStuPair;
+import com.feipulai.host.entity.RoundResult;
 
 /**
  * Created by pengjf on 2019/7/31.

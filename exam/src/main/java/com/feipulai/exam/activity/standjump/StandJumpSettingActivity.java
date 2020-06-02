@@ -138,6 +138,7 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
         ArrayAdapter spTestRoundAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testRound);
         spTestRoundAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTestRound.setAdapter(spTestRoundAdapter);
+
         ArrayAdapter spDeviceCountAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,
                 standSetting.getTestType() == 0 ? new String[]{"1"} : new String[]{"1", "2", "3", "4"});
         spDeviceCountAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -383,6 +384,11 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
         }
         SerialDeviceManager.getInstance().close();
         RadioManager.getInstance().setOnRadioArrived(null);
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mHandler.removeCallbacksAndMessages(null);
     }
 
     private void setEditTextWatcherListener() {

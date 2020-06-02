@@ -16,7 +16,7 @@ import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BaseMoreActivity;
 import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.setting.SettingHelper;
-import com.feipulai.host.entity.DeviceDetail;
+import com.feipulai.host.bean.DeviceDetail;
 import com.feipulai.host.entity.RoundResult;
 
 /**

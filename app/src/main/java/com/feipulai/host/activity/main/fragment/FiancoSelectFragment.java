@@ -22,7 +22,7 @@ import com.feipulai.host.adapter.TupleAdapter;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.Item;
-import com.feipulai.host.entity.Tuple;
+import com.feipulai.host.bean.Tuple;
 
 import java.util.ArrayList;
 import java.util.List;
