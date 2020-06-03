@@ -250,6 +250,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
         DBManager.getInstance().updateItem(TestConfigs.sCurrentItem);
         Logger.i("保存设置:" + setting.toString());
         EventBus.getDefault().post(new BaseEvent(EventConfigs.UPDATE_TEST_RESULT));
+        mHandler.removeCallbacksAndMessages(null);
         super.finish();
     }
 
