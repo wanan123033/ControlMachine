@@ -128,6 +128,12 @@
         <activity
             android:name=".activity.medicine_ball.MedicineBallTestActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.medicine_ball.MedicineBallSelectActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.medicine_ball.pair.MedicineBallPairActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity android:name=".activity.medicine_ball.MedicineBallFaceIDActivity" />
         <activity android:name=".activity.vccheck.UploadActivity" />
         <activity android:name=".activity.radio_timer.RunTimerTestActivity" />

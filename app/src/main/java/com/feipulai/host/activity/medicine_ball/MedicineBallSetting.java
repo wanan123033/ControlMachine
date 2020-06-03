@@ -5,7 +5,7 @@ package com.feipulai.host.activity.medicine_ball;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 public class MedicineBallSetting {
-
+    private int testType = 0;
     /**
      * 测试设置数量
      */
@@ -20,7 +20,7 @@ public class MedicineBallSetting {
      * 基础距离
      */
     private int basePoint;
-
+    private boolean autoPair;
 
     public int getBasePoint() {
         return basePoint;
@@ -55,5 +55,21 @@ public class MedicineBallSetting {
                 ", testCount=" + testCount +
                 ", basePoint=" + basePoint +
                 '}';
+    }
+
+    public int getTestType() {
+        return testType;
+    }
+
+    public void setTestType(int testType) {
+        this.testType = testType;
+    }
+
+    public boolean isAutoPair() {
+        return autoPair;
+    }
+
+    public void setAutoPair(boolean autoPair) {
+        this.autoPair = autoPair;
     }
 }

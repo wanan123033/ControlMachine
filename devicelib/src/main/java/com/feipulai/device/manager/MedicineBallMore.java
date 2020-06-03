@@ -3,6 +3,7 @@ package com.feipulai.device.manager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
+import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.orhanobut.logger.examlogger.LogUtils;
 
 /**
@@ -56,5 +57,46 @@ public class MedicineBallMore {
             sum += cmd[i] & 0xff;
         }
         return sum;
+    }
+
+    /**
+     * 实心球设置频段
+     *
+     * @param originFrequency
+     * @param deviceId
+     * @param hostId
+     */
+    public static void setFrequency(int targetChannel, int originFrequency, int deviceId, int hostId) {
+        byte[] buf = new byte[21];
+        buf[0] = (byte) 0xAA;//包头
+        buf[1] = 0x15;    //包长
+        buf[2] = 0x07;       //项目编号
+        buf[3] = 0x03; //子机
+        buf[4] = 0x01;      //主机
+        buf[5] = (byte) (hostId & 0xff);     //主机号
+        buf[6] = (byte) (deviceId & 0xff);       //子机号
+        buf[7] = 0x02;      //命令
+        buf[8] = 0;
+        buf[9] = 0;
+        buf[10] = 0;
+        buf[11] = 0;
+        buf[12] = (byte) targetChannel;
+        buf[13] = 0x04;
+        buf[14] = (byte) (hostId & 0xff);
+        buf[15] = (byte) (deviceId & 0xff);
+        buf[16] = 0x00;
+        buf[17] = 0x00;
+        buf[18] = 0x00;
+        for (int i = 1; i < 19; i++) {
+            buf[19] += buf[i] & 0xff;
+        }
+        buf[20] = 0x0d;   //包尾
+        //Logger.i(StringUtility.bytesToHexString(buf));
+        //先切到通信频段
+        LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---实心球设置参数指令");
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
+        RadioChannelCommand command1 = new RadioChannelCommand(targetChannel);
+        LogUtils.normal(command1.getCommand().length+"---"+ StringUtility.bytesToHexString(command1.getCommand())+"---实心球切频指令");
+        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(targetChannel)));
     }
 }
