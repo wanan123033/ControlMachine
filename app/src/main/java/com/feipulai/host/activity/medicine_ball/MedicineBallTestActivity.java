@@ -247,6 +247,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
                             SerialConfigs.CMD_MEDICINE_BALL_START));
                     mHandler.sendEmptyMessageDelayed(START_DEVICE,1000);
                     setBegin(0);
+                    pair.setStartTime(DateUtil.getCurrentTime());
                     executorService.shutdown();
                 }
             }

@@ -1,6 +1,5 @@
 package com.feipulai.host.activity.medicine_ball;
 
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -23,8 +22,8 @@ import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseTitleActivity;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnItemSelected;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class MedicineBallSettingActivity extends BaseTitleActivity {
@@ -57,9 +56,11 @@ public class MedicineBallSettingActivity extends BaseTitleActivity {
         if (medicineBallSetting == null)
             medicineBallSetting = new MedicineBallSetting();
 
-        ArrayAdapter spDeviceCountAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{"1"});
+        ArrayAdapter spDeviceCountAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, medicineBallSetting.getTestType() ==0 ?
+                new String[]{"1"}:new String[]{"1","2","3","4"});
         spDeviceCountAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spDeviceCount.setAdapter(spDeviceCountAdapter);
+        spDeviceCount.setSelection(medicineBallSetting.getTestType() == 0? 0:medicineBallSetting.getTestDeviceCount()-1);
 
         SerialDeviceManager.getInstance().setRS232ResiltListener(listener);
 
@@ -119,6 +120,14 @@ public class MedicineBallSettingActivity extends BaseTitleActivity {
         }
     }
 
+    @OnItemSelected(R.id.sp_device_count)
+    public void spinnerItemSelected(Spinner spinner, int position) {
+        switch (spinner.getId()){
+            case R.id.sp_device_count:
+                medicineBallSetting.setTestDeviceCount(position+1);
+                break;
+        }
+    }
 
     SerialDeviceManager.RS232ResiltListener listener = new SerialDeviceManager.RS232ResiltListener() {
         @Override

@@ -64,7 +64,7 @@ public class SitReachSettingActivity extends BaseTitleActivity implements Serial
                 setting.getTestType() == 0  ? new String[]{"1"} : new String[]{"1", "2", "3", "4"});
         spDeviceCountAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spDeviceCount.setAdapter(spDeviceCountAdapter);
-        spDeviceCount.setSelection(setting.getTestDeviceCount()-1);
+        spDeviceCount.setSelection(setting.getTestType() == 0? 0:setting.getTestDeviceCount()-1);
     }
 
     @Nullable

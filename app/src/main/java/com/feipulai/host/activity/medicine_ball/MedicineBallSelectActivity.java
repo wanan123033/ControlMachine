@@ -6,6 +6,7 @@ import android.view.View;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.host.activity.main.SubItemsSelectActivity;
+import com.feipulai.host.activity.medicine_ball.more_device.MedicineBallMoreActivity;
 import com.feipulai.host.activity.sitreach.SitReachSetting;
 import com.feipulai.host.activity.sitreach.SitReachTestActivity;
 import com.feipulai.host.activity.sitreach.more.SitReachMoreActivity;
@@ -34,7 +35,7 @@ public class MedicineBallSelectActivity extends SubItemsSelectActivity {
                     startActivity(new Intent(MedicineBallSelectActivity.this,
                             MedicineBallTestActivity.class));
                 } else {
-                    startActivity(new Intent(MedicineBallSelectActivity.this, SitReachMoreActivity.class));
+                    startActivity(new Intent(MedicineBallSelectActivity.this, MedicineBallMoreActivity.class));
                 }
                 SharedPrefsUtil.save(MedicineBallSelectActivity.this, setting);
 
