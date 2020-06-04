@@ -4,12 +4,20 @@ import android.content.Intent;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.host.activity.main.SubItemsSelectActivity;
 import com.feipulai.host.activity.medicine_ball.more_device.MedicineBallMoreActivity;
+import com.feipulai.host.activity.medicine_ball.more_device.MedicineBallRadioFreedomActivity;
+import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.activity.sitreach.SitReachSetting;
 import com.feipulai.host.activity.sitreach.SitReachTestActivity;
 import com.feipulai.host.activity.sitreach.more.SitReachMoreActivity;
+import com.feipulai.host.activity.standjump.Freedom.StandJumpFreedomActivity;
+import com.feipulai.host.activity.standjump.Freedom.StandJumpRadioFreedomActivity;
+import com.feipulai.host.activity.standjump.StandJumpSelectActivity;
+import com.feipulai.host.activity.standjump.StandJumpTestActivity;
+import com.feipulai.host.activity.standjump.more.StandJumpMoreActivity;
 import com.feipulai.host.entity.Item;
 
 /**
@@ -32,10 +40,19 @@ public class MedicineBallSelectActivity extends SubItemsSelectActivity {
                 MedicineBallSetting setting = SharedPrefsUtil.loadFormSource(MedicineBallSelectActivity.this, MedicineBallSetting.class);
                 setting.setTestType(position);
                 if (position == 0) {
+                    if (SettingHelper.getSystemSetting().isFreedomTest()) {
+                        IntentUtil.gotoActivity(MedicineBallSelectActivity.this, MedicineBallFreeTestActivity.class);
+                    } else {
+                        IntentUtil.gotoActivity(MedicineBallSelectActivity.this, MedicineBallTestActivity.class);
+                    }
                     startActivity(new Intent(MedicineBallSelectActivity.this,
                             MedicineBallTestActivity.class));
                 } else {
-                    startActivity(new Intent(MedicineBallSelectActivity.this, MedicineBallMoreActivity.class));
+                    if (SettingHelper.getSystemSetting().isFreedomTest()) {
+                        IntentUtil.gotoActivity(MedicineBallSelectActivity.this, MedicineBallRadioFreedomActivity.class);
+                    } else {
+                        IntentUtil.gotoActivity(MedicineBallSelectActivity.this, MedicineBallMoreActivity.class);
+                    }
                 }
                 SharedPrefsUtil.save(MedicineBallSelectActivity.this, setting);
 

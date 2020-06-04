@@ -33,6 +33,7 @@ public class MedicineBallFreeTestActivity extends BaseFreedomTestActivity {
     private boolean startFlag;
     private ScheduledExecutorService executorService;
     private SweetAlertDialog alertDialog;
+    private final int CHECK_DEVICE = 0xf1;
     @Override
     protected void onResume() {
         super.onResume();
@@ -123,6 +124,11 @@ public class MedicineBallFreeTestActivity extends BaseFreedomTestActivity {
                     SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                             SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
                     break;
+                case CHECK_DEVICE:
+                    if (alertDialog!= null&& alertDialog.isShowing()){
+                        alertDialog.dismiss();
+                    }
+                    break;
                 default:
                     break;
             }
@@ -132,14 +138,15 @@ public class MedicineBallFreeTestActivity extends BaseFreedomTestActivity {
 
 
     private synchronized void decideBegin() {
-        checkDevice();
+//        checkDevice();
         executorService = Executors.newSingleThreadScheduledExecutor();
         executorService.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 if (checkFlag && testState == TestState.UN_STARTED) {
                     testState = TestState.WAIT_RESULT;
-
+                    toastSpeak("开始测试");
+                    startFlag = false;
                     SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                             SerialConfigs.CMD_MEDICINE_BALL_START));
 
@@ -156,6 +163,8 @@ public class MedicineBallFreeTestActivity extends BaseFreedomTestActivity {
         alertDialog.setTitleText("终端自检中...");
         alertDialog.setCancelable(false);
         alertDialog.show();
+
+        mHandler.sendEmptyMessageDelayed(CHECK_DEVICE,5000);
 
     }
 
@@ -200,13 +209,13 @@ public class MedicineBallFreeTestActivity extends BaseFreedomTestActivity {
             } else {
                 deviceState.setState(BaseDeviceState.STATE_ONUSE);
             }
-            if (testState == TestState.WAIT_RESULT && startFlag) {
-                toastSpeak("开始测试");
-                if (alertDialog!= null &&alertDialog.isShowing()){
-                    alertDialog.dismiss();
-                }
-                startFlag = false;
-            }
+//            if (testState == TestState.WAIT_RESULT && startFlag) {
+//                toastSpeak("开始测试");
+//                if (alertDialog!= null &&alertDialog.isShowing()){
+//                    alertDialog.dismiss();
+//                }
+//                startFlag = false;
+//            }
 
         }
         setDeviceState(deviceState);

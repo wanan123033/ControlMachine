@@ -11,11 +11,10 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.manager.MedicineBallMore;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.MedicineBallNewResult;
-
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseDeviceState;
-import com.feipulai.host.activity.base.BaseMoreActivity;
 import com.feipulai.host.activity.base.BaseStuPair;
+import com.feipulai.host.activity.freedom.BaseFreedomTestActivity;
 import com.feipulai.host.activity.medicine_ball.MedicineBallSetting;
 import com.feipulai.host.activity.medicine_ball.MedicineBallSettingActivity;
 import com.feipulai.host.activity.medicine_ball.MedicineConstant;
@@ -23,27 +22,50 @@ import com.feipulai.host.activity.medicine_ball.pair.MedicineBallPairActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.bean.DeviceDetail;
 import com.feipulai.host.entity.RoundResult;
-import com.feipulai.host.entity.Student;
-import com.orhanobut.logger.Logger;
 
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-
-public class MedicineBallMoreActivity extends BaseMoreActivity {
-    private static final String TAG = "MedicineMoreActivity";
-    private int[] deviceState = {};
+/**
+ * Created by pengjf on 2020/6/4.
+ * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
+ */
+public class MedicineBallRadioFreedomActivity extends BaseFreedomTestActivity {
+    private static final String TAG = "RadioFreedomActivity";
     private MedicineBallSetting setting;
     private final static int GET_SCORE_RESPONSE = 0x02;
-
+    public List<DeviceDetail> deviceDetails = new ArrayList<>();
+    private int[] deviceState = {};
     private final int SEND_EMPTY = 1;
     private int beginPoint;
-    private boolean using;
+    @Override
+    public void gotoItemSetting() {
+        startActivity(new Intent(this, MedicineBallSettingActivity.class));
+    }
+
+    @Override
+    public void startTest() {
+        DeviceDetail deviceDetail = deviceDetails.get(0);
+        BaseStuPair pair = deviceDetail.getStuDevicePair();
+        pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
+        setDeviceState(pair.getBaseDevice());
+        int id = pair.getBaseDevice().getDeviceId();
+        sendStart((byte) id);
+    }
+
+    @Override
+    public void stopTest() {
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sendEmpty();
+    }
 
     @Override
     protected void initData() {
@@ -53,43 +75,39 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
         }
         super.initData();
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        setting = SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class);
-        if (null == setting) {
-            setting = new MedicineBallSetting();
-        }
-        Logger.i(TAG + ":medicineBallSetting ->" + setting.toString());
-//        setDeviceCount(setting.getSpDeviceCount());
-        deviceState = new int[setting.getTestDeviceCount()];
-
-        for (int i = 0; i < deviceState.length; i++) {
-
-            deviceState[i] = 0;//连续5次检测不到认为掉线
-        }
+        txtDevicePair.setVisibility(View.VISIBLE);
+        DeviceDetail detail = new DeviceDetail();
+        detail.getStuDevicePair().getBaseDevice().setDeviceId(1);
+        detail.getStuDevicePair().setTimeResult(new String[1]);
+        detail.setDeviceOpen(true);
+        deviceDetails.add(detail);
+        setDeviceState(new BaseDeviceState(BaseDeviceState.STATE_ERROR));
+        RadioManager.getInstance().setOnRadioArrived(medicineBall);
+        deviceState = new int[deviceDetails.size()];
         beginPoint = Integer.parseInt(SharedPrefsUtil.getValue(this, "SXQ", "beginPoint", "0"));
 
-        RadioManager.getInstance().setOnRadioArrived(medicineBall);
-        sendEmpty();
     }
 
+    @OnClick({R.id.txt_device_pair})
+    public void devicePair(View view) {
+        if (!isStartTest) {
+            startActivity(new Intent(this, MedicineBallPairActivity.class));
+        }
+    }
+    
     private void sendEmpty() {
-        Log.i(TAG, "james_send_empty");
-        for (int i = 0; i < setting.getTestDeviceCount(); i++) {
+        for (int i = 0; i < deviceDetails.size(); i++) {
             BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
             if (deviceState[i] == 0) {
                 if (baseDevice.getState() != BaseDeviceState.STATE_ERROR) {
                     baseDevice.setState(BaseDeviceState.STATE_ERROR);
-                    updateDevice(baseDevice);
+                    setDeviceState(baseDevice);
                 }
 
             } else {
                 if (baseDevice.getState() == BaseDeviceState.STATE_ERROR) {
                     baseDevice.setState(BaseDeviceState.STATE_NOT_BEGAIN);
-                    updateDevice(baseDevice);
+                    setDeviceState(baseDevice);
                 }
                 deviceState[i] -= 1;
             }
@@ -97,41 +115,12 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
 
         }
         for (DeviceDetail detail : deviceDetails) {
-            int hostId =  SettingHelper.getSystemSetting().getHostId();
+            int hostId = SettingHelper.getSystemSetting().getHostId();
             int deviceId = detail.getStuDevicePair().getBaseDevice().getDeviceId();
-            MedicineBallMore.sendGetState(hostId,deviceId);
+            MedicineBallMore.sendGetState(hostId, deviceId);
         }
         mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 1000);
     }
-
-
-
-    @Override
-    public int setTestDeviceCount() {
-        return setting.getTestDeviceCount();
-    }
-
-
-
-    @Override
-    public void gotoItemSetting() {
-        if (using) {
-            toastSpeak("正在测试中,不能设置");
-            return;
-        }
-        startActivity(new Intent(this, MedicineBallSettingActivity.class));
-    }
-
-    @Override
-    public void sendTestCommand(BaseStuPair pair, int index) {
-        pair.setStartTime(DateUtil.getCurrentTime());
-        pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
-        updateDevice(pair.getBaseDevice());
-        int id = pair.getBaseDevice().getDeviceId();
-        sendStart((byte) id);
-        using = true;
-    }
-
 
     private void sendStart(byte id) {
         MedicineBallMore.sendStart(SettingHelper.getSystemSetting().getHostId(),id);
@@ -143,7 +132,6 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
 
     private boolean isInCorrect;
     private int PROMPT_TIMES;
-
     private void disposeDevice(MedicineBallNewResult result) {
         isInCorrect = result.isInCorrect();
         if (isInCorrect) {
@@ -168,6 +156,35 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
         }
 
     }
+
+    private MedicineBallImpl medicineBall = new MedicineBallImpl(new MedicineBallImpl.MainThreadDisposeListener() {
+        @Override
+        public void onResultArrived(MedicineBallNewResult result) {
+            Log.i(TAG, result.toString());
+
+            // MedicineBallNewResult{result=50, fault=false, sweepPoint=1, deviceId=2, frequency=0, state=2}
+            if (result.getState() == 2) {
+                Message msg = mHandler.obtainMessage();
+                msg.obj = result;
+                msg.what = MedicineConstant.GET_SCORE_RESPONSE;
+                mHandler.sendMessage(msg);
+                sendFree(result.getDeviceId());
+            }
+            disposeDevice(result);
+        }
+
+        @Override
+        public void onStopTest() {
+
+        }
+
+        @Override
+        public void onStarTest(int deviceId) {
+
+            toastSpeak("请开始测试");
+
+        }
+    });
 
     private Handler mHandler = new Handler(new Handler.Callback() {
 
@@ -200,7 +217,6 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
     });
 
     private void onResultArrived(int result, BaseStuPair stuPair) {
-        using = false;
         if (result < beginPoint * 10 || result > 5000 * 10) {
             toastSpeak("数据异常，请重测");
             return;
@@ -211,53 +227,10 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
 
         stuPair.setEndTime(DateUtil.getCurrentTime());
         stuPair.setResult(result);
-        updateResult(stuPair);
-        updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, stuPair.getBaseDevice().getDeviceId()));
+        settTestResult(stuPair);
+        setDeviceState(new BaseDeviceState(BaseDeviceState.STATE_END, stuPair.getBaseDevice().getDeviceId()));
 
     }
-
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mHandler.removeCallbacksAndMessages(null);
-        RadioManager.getInstance().setOnRadioArrived(null);
-    }
-
-    @OnClick({R.id.tv_device_pair})
-    public void onClick(View view) {
-        startActivity(new Intent(this, MedicineBallPairActivity.class));
-    }
-
-    private MedicineBallImpl medicineBall = new MedicineBallImpl(new MedicineBallImpl.MainThreadDisposeListener() {
-        @Override
-        public void onResultArrived(MedicineBallNewResult result) {
-            Log.i(TAG, result.toString());
-
-            // MedicineBallNewResult{result=50, fault=false, sweepPoint=1, deviceId=2, frequency=0, state=2}
-            if (result.getState() == 2) {
-                Message msg = mHandler.obtainMessage();
-                msg.obj = result;
-                msg.what = MedicineConstant.GET_SCORE_RESPONSE;
-                mHandler.sendMessage(msg);
-                sendFree(result.getDeviceId());
-            }
-            disposeDevice(result);
-        }
-
-        @Override
-        public void onStopTest() {
-
-        }
-
-        @Override
-        public void onStarTest(int deviceId) {
-            Student student = deviceDetails.get(deviceId - 1).getStuDevicePair().getStudent();
-            if (student != null) {
-                toastSpeak(MessageFormat.format("请{0}开始测试", student.getStudentName()));
-            }
-        }
-    });
 
     private void showValidResult(final int result, final BaseStuPair stuPair, final int deviceId) {
         final SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
@@ -274,11 +247,17 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sendFree(deviceId);
                 stuPair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
-                updateDevice(stuPair.getBaseDevice());
+                setDeviceState(stuPair.getBaseDevice());
                 sweetAlertDialog.dismissWithAnimation();
             }
         }).show();
 
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mHandler.removeCallbacksAndMessages(null);
     }
 
     @Override
