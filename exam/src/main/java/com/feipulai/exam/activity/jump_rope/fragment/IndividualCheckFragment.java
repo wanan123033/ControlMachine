@@ -28,6 +28,7 @@ import com.feipulai.device.CheckDeviceOpener;
 import com.feipulai.device.ic.ICCardDealer;
 import com.feipulai.device.ic.NFCDevice;
 import com.feipulai.device.ic.entity.StuInfo;
+import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
@@ -229,7 +230,6 @@ public class IndividualCheckFragment
             } else {
                 listener.onIndividualCheckIn(mStudent, mStudentItem, null);
             }
-
         }
     }
 

@@ -81,7 +81,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     @BindView(R.id.tv_base_height)
     TextView tvBaseHeight;
     @BindView(R.id.txt_stu_skip)
-    TextView txtStuSkip;
+    public TextView txtStuSkip;
     @BindView(R.id.txt_led_setting)
     public TextView txtLedSetting;
     @BindView(R.id.view_skip)
@@ -341,7 +341,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     /**
      * 加载学生信息
      */
-    private void refreshTxtStu(@NonNull Student student) {
+    public void refreshTxtStu(@NonNull Student student) {
         if (student != null) {
             txtStuName.setText(student.getStudentName());
             txtStuSex.setText((student.getSex() == Student.MALE ? R.string.male : R.string.female));
@@ -464,6 +464,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         roundResult.setTestTime(baseStuPair.getStartTime() + "");
         roundResult.setPrintTime(baseStuPair.getEndTime() + "");
         roundResult.setRoundNo(1);
+//        roundResult.setWeightResult(baseStuPair.getBaseHeight());
         RoundResult bestResult = DBManager.getInstance().queryBestScore(baseStuPair.getStudent().getStudentCode());
         if (bestResult != null) {
             // 原有最好成绩犯规 或者原有最好成绩没有犯规但是现在成绩更好
@@ -529,6 +530,12 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             refreshDevice();
             updateResultLed(((baseStu.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult())));
         }
+    }
+
+    public void updateVision(BaseStuPair baseStuPair){
+        txtStuResult.setText("左眼力:"+ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult())+"\n右眼力:"+ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getBaseHeight()));
+        refreshDevice();
+
     }
 
 

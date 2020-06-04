@@ -17,7 +17,7 @@ public class ActivityCollector{
 	private static ActivityCollector mActivityCollector;
 	/**
 	 * 打开的activity
-	 **/
+	 */
 	private static Stack<Activity> mStackActivity;
 
 

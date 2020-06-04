@@ -73,8 +73,6 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerInd
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.CommonPagerTitleView;
 
-import org.apache.poi.ss.formula.functions.T;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -114,8 +112,6 @@ public class DataManageActivity
     private boolean isProcessingData;
     //是否为分组导入
     private boolean isGroupImport;
-    private AlertDialog nameFileDialog;
-    //    private EditText mEditText;
     private List<TypeListBean> typeDatas;
     public BackupManager backupManager;
     private ProgressDialog progressDialog;
