@@ -147,6 +147,11 @@
         <activity android:name=".activity.ranger.RangerTestActivity" />
         <activity android:name=".activity.ranger.RangerSettingActivity" />
         <activity android:name=".activity.ranger.bluetooth.BluetoothSettingActivity" />
+        <activity android:name=".activity.vision.VisionTestActivity" />
+        <activity android:name=".activity.vision.VisionSettingActivity" />
+        <activity android:name=".activity.vision.bluetooth.BlueToothListActivity" />
+
+        <service android:name="com.inuker.bluetooth.library.BluetoothService" />
     </application>
 
 </manifest>

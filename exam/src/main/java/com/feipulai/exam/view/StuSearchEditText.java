@@ -228,7 +228,7 @@ public class StuSearchEditText extends RelativeLayout {
 
     private void showAddHint() {
 
-//        new SweetAlertDialog(mContext).setTitleText(mContext.getString(R.string.addStu_dialog_title))
+//        new SweetAlertDialog(mContext).setTitleText(mContext.getString(R.string.))
 //                .setContentText(mContext.getString(R.string.addStu_dialog_content))
 //                .setConfirmText(mContext.getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
 //            @Override

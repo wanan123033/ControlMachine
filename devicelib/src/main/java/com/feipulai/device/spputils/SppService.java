@@ -26,7 +26,7 @@ public class SppService {
     /*打印标记*/
     private static final String TAG = "SppService";
     private static final String NAME_SECURE = "SppService_Secure";
-    //蓝牙2.0通信UUID
+    //蓝牙2.0通信UUID  00001101-0000-1000-8000-00805F9B34FB
     private static final UUID UUID_DEVICE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     //成员属性
     private final BluetoothAdapter mAdapter;

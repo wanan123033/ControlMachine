@@ -111,7 +111,8 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.8.1'
     compile 'com.android.support:multidex:1.0.1'
-
+    compile 'com.inuker.bluetooth:library:1.4.0'
+    
     compile project(':devicelib')
     compile project(':common')
     compile project(':magicindicator')

@@ -97,6 +97,9 @@ public class ResultDisplayTools {
             case ItemDefault.CODE_JGCJ:
                 result = "米";
                 break;
+            case ItemDefault.CODE_SL:
+                result = "";
+                break;
             default:
                 throw new IllegalArgumentException("wrong machineCode");
 
@@ -146,6 +149,9 @@ public class ResultDisplayTools {
             case "次":
             case "毫升":
                 strResult = dbResult + (isReturnUnit ? unit : "");
+                break;
+            case "":
+                strResult = String.valueOf((double)dbResult / 10.0);
                 break;
         }
         return strResult;
