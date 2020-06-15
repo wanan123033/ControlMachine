@@ -38,7 +38,7 @@
         android:layout_gravity="center_horizontal"
         android:background="@drawable/btn_click_bg_selected"
         android:gravity="center"
-        android:text="手臂模式"
+        android:text="手臂检测模式"
         android:textColor="@color/white" />
 
 </LinearLayout>

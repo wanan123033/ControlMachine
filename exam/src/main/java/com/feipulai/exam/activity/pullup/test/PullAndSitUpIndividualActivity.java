@@ -30,6 +30,7 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.manager.PullUpManager;
 import com.feipulai.device.serial.beans.PullUpStateResult;
+import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
@@ -63,7 +64,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 public class PullAndSitUpIndividualActivity extends BaseTitleActivity
-        implements PullUpTestFacade.Listener,
+        implements PullSitUpTestFacade.Listener,
         IndividualCheckFragment.OnIndividualCheckInListener {
 
     private static final int UPDATE_SCORE = 0x3;
@@ -97,7 +98,7 @@ public class PullAndSitUpIndividualActivity extends BaseTitleActivity
     @BindView(R.id.tv_exit_test)
     TextView tvExitTest;
 
-    private PullUpTestFacade facade;
+    private PullSitUpTestFacade facade;
     private IndividualCheckFragment individualCheckFragment;
     // 状态  WAIT_CHECK_IN--->WAIT_BEGIN--->TESTING---->WAIT_CONFIRM--->WAIT_CHECK_IN
     private static final int WAIT_CHECK_IN = 0x0;
@@ -135,10 +136,17 @@ public class PullAndSitUpIndividualActivity extends BaseTitleActivity
         individualCheckFragment.setOnIndividualCheckInListener(this);
         ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), individualCheckFragment, R.id.ll_individual_check);
 
-        facade = new PullUpTestFacade(SettingHelper.getSystemSetting().getHostId(), this);
+        facade = new PullSitUpTestFacade(SettingHelper.getSystemSetting().getHostId(), this);
         ledManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
         prepareForCheckIn();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        facade.setLinking(false);
+    }
+
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (individualCheckFragment.dispatchKeyEvent(event)) {
@@ -558,4 +566,9 @@ public class PullAndSitUpIndividualActivity extends BaseTitleActivity
 
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        facade.setLinking(true);
+    }
 }

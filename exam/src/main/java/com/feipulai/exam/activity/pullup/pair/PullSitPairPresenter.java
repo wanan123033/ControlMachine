@@ -27,7 +27,7 @@ public class PullSitPairPresenter extends SitPullUpPairPresenter {
         }
         this.setting = SharedPrefsUtil.loadFormSource(context, PullUpSetting.class);
         this.pullUpManager = new PullUpManager();
-        sitPushUpManager = new SitPushUpManager(SitPushUpManager.PROJECT_CODE_SIT_UP);
+        sitPushUpManager = new SitPushUpManager(SitPushUpManager.PROJECT_CODE_SIT_UP_HAND);
     }
 
     @Override

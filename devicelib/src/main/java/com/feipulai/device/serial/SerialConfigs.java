@@ -285,6 +285,7 @@ public class SerialConfigs {
     public static final int SIT_REACH_LEISURE = 0x78;
     //摸高新增获取数据
     public static final int SARGENT_GET_DATA = 0x79;
-
-
+    //新增引体向上手臂检测
+    public static final int PULL_UP_GET_GYRO_DATA = 0x80;
+    public static final int PULL_UP_GET_ANGLE_DATA = 0x81;
 }

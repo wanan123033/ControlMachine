@@ -50,12 +50,12 @@ public class PullSitLinker
 //
 //        }
 
-        if (paramMessage.what == SerialConfigs.PULL_UP_MACHINE_BOOT_RESPONSE) {
+        if (paramMessage.what == SerialConfigs.PULL_UP_MACHINE_BOOT_RESPONSE) {//引体向上配对
             PullUpSetFrequencyResult pullUpSetFrequencyResult = (PullUpSetFrequencyResult) paramMessage.obj;
             Log.i("james----", pullUpSetFrequencyResult.toString());
             checkDevice(pullUpSetFrequencyResult);
             return true;
-        }else if (paramMessage.what == SerialConfigs.SIT_UP_MACHINE_BOOT_RESPONSE) {
+        }else if (paramMessage.what == SerialConfigs.SIT_UP_MACHINE_BOOT_RESPONSE) {//仰卧起坐
             SitPushUpSetFrequencyResult sitUpSetFrequencyResult = (SitPushUpSetFrequencyResult) paramMessage.obj;
             Log.i("", sitUpSetFrequencyResult.toString());
             checkDevice(sitUpSetFrequencyResult.getDeviceId(),sitUpSetFrequencyResult.getFrequency());

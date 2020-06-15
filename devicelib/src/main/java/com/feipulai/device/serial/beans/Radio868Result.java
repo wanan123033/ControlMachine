@@ -78,7 +78,7 @@ public class Radio868Result {
                     }
                 }
 
-                sitUp(data);
+                sitUpHand(data);
                 break;
             case ItemDefault.CODE_FWC:
                 if (data.length >= 0x10
@@ -415,6 +415,48 @@ public class Radio868Result {
                     setResult(new SitPushUpStateResult(data));
                     break;
 
+                case 0x0b:
+                    setType(SerialConfigs.SIT_UP_MACHINE_BOOT_RESPONSE);
+                    setResult(new SitPushUpSetFrequencyResult(data));
+                    break;
+
+                case 0x0c:
+                    setType(SerialConfigs.SIT_UP_GET_VERSION);
+                    setResult(new SitPushUpVersionResult(data));
+                    break;
+
+            }
+        }
+    }
+
+    private void sitUpHand(byte[] data) {
+        if (data.length >= 0x10
+                && data[0] == 0x54 && data[1] == 0x55 //[00] [01]：包头高字节0x54   低字节0x55
+                && data[3] == 0x10  //[02] [03]：长度高字节0x00   低字节0x10
+                && data[5] == 0x00b//[05]：项目编号   5—仰卧起坐    8—俯卧撑 0x0b引体向上手臂检测
+                && data[14] == 0x27 && data[15] == 0x0d//[14] [15]：包尾高字节0x27   低字节0x0d
+        ) {
+            // 仰卧起坐
+            int sum = 0;
+            //0b 命令(获取数据)不需要校验
+            if (data[7] != 0x0b) {
+                for (int i = 2; i < 13; i++) {
+                    sum += (data[i] & 0xff);
+                }
+                if ((sum & 0xff) != (data[13] & 0xff)) {
+                    return;
+                }
+            }
+            switch (data[7]) {
+
+                case 14:
+                    setType(SerialConfigs.PULL_UP_GET_ANGLE_DATA);
+                    setResult(new SitPushUpStateResult(data));
+                    break;
+                case 13:
+                    setType(SerialConfigs.PULL_UP_GET_GYRO_DATA);
+                    setResult(new SitPushUpStateResult(data));
+                    break;
                 case 0x0b:
                     setType(SerialConfigs.SIT_UP_MACHINE_BOOT_RESPONSE);
                     setResult(new SitPushUpSetFrequencyResult(data));

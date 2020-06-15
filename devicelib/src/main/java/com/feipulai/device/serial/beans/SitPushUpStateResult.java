@@ -31,15 +31,28 @@ public class SitPushUpStateResult implements Serializable,IDeviceResult {
 	private int state;
 	private int batteryLeft;
 	private int baseline;
-	
+	private int time;//时间相对于开始命令下达的时刻
+    private int angle;
+    private byte angleState;
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
 	public SitPushUpStateResult(byte[] data){
 		deviceId = data[4] & 0xff;
 		projectCode = data[5] & 0xff;
-		result = ((data[8] & 0xff) << 8) + (data[9] & 0xff);
-		state = data[10] & 0xff;
-		batteryLeft = data[11] & 0xff;
-		baseline = data[12] & 0xff;
-		LogUtils.normal("仰卧起坐俯卧撑返回设备状态数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+		if (projectCode == 0x0b){
+            time = ((data[8] & 0xff) << 8) + (data[9] & 0xff);
+            result = data[12];
+            angleState = data[10];
+            angle = data[11];
+        }else {
+            result = ((data[8] & 0xff) << 8) + (data[9] & 0xff);
+            batteryLeft = data[11] & 0xff;
+            state = data[10] & 0xff;
+            baseline = data[12] & 0xff;
+            LogUtils.normal("仰卧起坐俯卧撑返回设备状态数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+        }
 
 	}
 
@@ -93,17 +106,57 @@ public class SitPushUpStateResult implements Serializable,IDeviceResult {
 	public void setBaseline(int baseline){
 		this.baseline = baseline;
 	}
-	
-	@Override
-	public String toString(){
-		return "SitUpStateResult{" +
-				"deviceId=" + deviceId +
-				", projectCode=" + projectCode +
-				", result=" + result +
-				", state=" + state +
-				", batteryLeft=" + batteryLeft +
-				", baseline=" + baseline +
-				'}';
-	}
-	
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
+    }
+
+    public int getAngle() {
+        byte[] bitArray = getBitArray(angleState);
+//        if (bitArray[0] == 0){//
+//            return 0-angle;
+//        }else if (bitArray[0] == 1){
+//            return angle;
+//        }
+        //0位为x轴角度正负，0负，1正
+        return (bitArray[0] == 0 ? -angle :angle);
+    }
+
+    public void setAngle(int angle) {
+        this.angle = angle;
+    }
+
+    public int getHightState(){
+        // 1位为高低位状态：0当前处于低位，1当前处于高位
+        byte[] bitArray = getBitArray(angleState);
+        return bitArray[1];
+    }
+
+    @Override
+    public String toString() {
+        return "SitPushUpStateResult{" +
+                "deviceId=" + deviceId +
+                ", projectCode=" + projectCode +
+                ", result=" + result +
+                ", state=" + state +
+                ", batteryLeft=" + batteryLeft +
+                ", baseline=" + baseline +
+                ", time=" + time +
+                ", angle=" + angle +
+                ", angleState=" + angleState +
+                '}';
+    }
+
+    private byte[] getBitArray(byte b) {
+        byte[] array = new byte[8];
+        for (int i = 7; i >= 0; i--) {
+            array[i] = (byte) (b & 1);
+            b = (byte) (b >> 1);
+        }
+        return array;
+    }
 }
