@@ -319,7 +319,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         txtDeviceStatus.setText("计时");
         testDate = System.currentTimeMillis() + "";
         setOperationUI();
-        timerUtil.startTime(0);
+        timerUtil.startTime(1);
     }
 
 
