@@ -3,7 +3,7 @@ package com.feipulai.device.spputils.beans;
 import android.util.Log;
 
 import com.feipulai.device.serial.beans.StringUtility;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.io.UnsupportedEncodingException;
 

@@ -11,7 +11,6 @@ import com.feipulai.device.serial.runnable.RS232ReadRunnable;
 import com.feipulai.device.serial.runnable.RadioReadRunnable;
 import com.feipulai.device.serial.runnable.SerialReadRunnable;
 import com.orhanobut.logger.Logger;
-import com.orhanobut.logger.examlogger.LogUtils;
 
 import java.io.File;
 import java.io.IOException;

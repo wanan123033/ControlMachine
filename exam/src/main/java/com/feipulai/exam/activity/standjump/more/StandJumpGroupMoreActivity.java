@@ -10,7 +10,7 @@ import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.standjump.StandJumpSetting;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.Student;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 /**
  * Created by zzs on  2019/11/14

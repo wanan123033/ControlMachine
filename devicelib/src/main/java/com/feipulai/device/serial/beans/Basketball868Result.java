@@ -1,7 +1,6 @@
 package com.feipulai.device.serial.beans;
 
-import com.feipulai.device.tcp.TcpConfig;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 public class Basketball868Result {
     private int frequency;

@@ -1,8 +1,12 @@
 package com.feipulai.exam.activity.base;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,8 +19,9 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.SharedPrefsConfigs;
+import com.feipulai.exam.receiver.WifiReceiver;
 import com.orhanobut.logger.Logger;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -35,6 +40,14 @@ public class BaseActivity extends FragmentActivity {
     private String mActivityName;
     private long lastBroadcastTime;
     public int machineCode;
+    /**
+     * 广播接收器
+     */
+    public BroadcastReceiver receiver;
+    /**
+     * 广播过滤器
+     */
+    public IntentFilter filter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +68,10 @@ public class BaseActivity extends FragmentActivity {
                 .DEFAULT_MACHINE_CODE);
 
 
+        filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+        filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(receiver = new WifiReceiver(), filter);
     }
 
     @Override
@@ -98,12 +115,15 @@ public class BaseActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (null != receiver) {
+            unregisterReceiver(receiver);
+        }
         ActivityCollector.getInstance().onDestroy(this);
         EventBus.getDefault().unregister(this);
     }
 
     protected void toastSpeak(final String msg) {
-        LogUtils.operation("页面提示:"+msg);
+        LogUtils.operation("页面提示:" + msg);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

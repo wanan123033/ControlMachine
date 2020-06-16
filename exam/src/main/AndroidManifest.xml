@@ -64,7 +64,7 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.HOME" />
+<!--                <category android:name="android.intent.category.HOME" />-->
             </intent-filter>
         </activity>
         <activity android:name=".activity.MainActivity">
@@ -261,6 +261,13 @@
         <receiver android:name="com.feipulai.device.spputils.SppReciver" />
 
         <service android:name="com.inuker.bluetooth.library.BluetoothService" />
+        <receiver android:name=".receiver.WifiReceiver">
+            <intent-filter >
+                <action android:name="android.net.wifi.RSSI_CHANGED"/>
+                <action android:name="android.net.wifi.STATE_CHANGE"/>
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

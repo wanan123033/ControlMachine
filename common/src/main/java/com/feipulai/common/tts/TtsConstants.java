@@ -17,7 +17,7 @@ public class TtsConstants{
 	public static final int FEMALE_VOICE = 0X1;
 	public static final int MALE_VOICE = 0X2;
 	
-	public static final String LOG_ENCRYPT_KEY = "19834762";
+
 	
 	public static final int MALE = 0;//男
 	public static final int FEMALE = 1;//女

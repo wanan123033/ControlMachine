@@ -7,7 +7,7 @@ import com.feipulai.device.serial.SerialPorter;
 import com.feipulai.device.serial.beans.ConverterVersion;
 import com.feipulai.device.serial.beans.Radio868Result;
 import com.feipulai.device.serial.beans.StringUtility;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.io.IOException;
 import java.io.InputStream;

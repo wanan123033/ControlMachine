@@ -23,6 +23,7 @@ import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseActivity;
 import com.feipulai.host.activity.data.DataManageActivity;
 import com.feipulai.host.activity.data.DataRetrieveActivity;
+import com.feipulai.host.activity.explain.ExplainActivity;
 import com.feipulai.host.activity.setting.LEDSettingActivity;
 import com.feipulai.host.activity.setting.SettingActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
@@ -113,7 +114,10 @@ public class MainActivity extends BaseActivity {
         txtMainTitle.setText(sb.toString());
         txtDeviceId.setText(CommonUtils.getDeviceId(this));
     }
-
+    @OnClick(R.id.txt_help)
+    public void onViewClicked() {
+        IntentUtil.gotoActivity(this, ExplainActivity.class);
+    }
 
     @OnClick({R.id.card_test, R.id.card_select, R.id.card_print, R.id.card_parameter_setting, R.id.card_data_admin, R.id.card_system, R.id.card_led, R.id.card_device_cut})
     public void onViewClicked(View view) {

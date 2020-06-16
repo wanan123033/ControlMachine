@@ -12,7 +12,7 @@ import android.widget.NumberPicker;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.jump_rope.base.test.AbstractRadioTestActivity;
 import com.feipulai.exam.view.WaitDialog;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import butterknife.OnClick;
 
