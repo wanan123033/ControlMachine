@@ -53,6 +53,7 @@ public class FiancoSelectFragment extends BaseFragment implements DialogInterfac
         mTupleList.add(new Tuple(ItemDefault.CODE_ZFP, getString(R.string.run_time), R.mipmap.icon_runtime, 3));
         mTupleList.add(new Tuple(ItemDefault.CODE_WLJ, getString(R.string.grip_meter), R.mipmap.grip, 3));
         mTupleList.add(new Tuple(ItemDefault.CODE_YTXS, getString(R.string.pull_up), R.mipmap.icon_pullup, 3));
+        mTupleList.add(new Tuple(ItemDefault.CODE_SL, "视力", R.mipmap.icon_pullup, 3));
 
         RecyclerView recyclerView = findView(R.id.rv_item);
         GridLayoutManager layoutManager = new GridLayoutManager(mContext, 12);
@@ -88,7 +89,19 @@ public class FiancoSelectFragment extends BaseFragment implements DialogInterfac
                 ActivityCollector.getInstance().finishAllActivityExcept(MainActivity.class);
                 ActivityCollector.getInstance().finishActivity(MachineSelectActivity.class);
             }
-        } else {
+        } else if (machineCode == ItemDefault.CODE_SL){
+            int init = TestConfigs.init(mContext, machineCode, ItemDefault.CODE_SL+"", this);
+            if (init == TestConfigs.INIT_SUCCESS) {
+                systemSetting.setHostId(1);
+                systemSetting.setFreedomTest(false);
+                SettingHelper.updateSettingCache(systemSetting);
+                // 清除所有已启动的Activity
+//                ActivityCollector.getInstance().finishAllActivity();
+//                startActivity(new Intent(this, MainActivity.class));
+                ActivityCollector.getInstance().finishAllActivityExcept(MainActivity.class);
+                ActivityCollector.getInstance().finishActivity(MachineSelectActivity.class);
+            }
+        }else {
             Bundle bundle = new Bundle();
             bundle.putInt("machineCode", machineCode);
             IntentUtil.gotoActivity(mContext, SubItemsSelectActivity.class, bundle);

@@ -17,7 +17,7 @@ public class PullUpSetting {
 	private boolean autoPair = true;
 	private boolean isPenalize;
 	private boolean isCountless;// 是否为不计时模式
-
+    private int pullUpAndSitUp =3;
 	public boolean isCountless() {
 		return isCountless;
 	}

@@ -41,7 +41,7 @@ public class SitPushUpSetFrequencyResult {
 	private int frequency;// 设备运行在的频率号
 	private int deviceId;// 设备ID,可以通过主机设置
 	private int rate;
-	private int projectCode;//5—仰卧起坐    8—俯卧撑
+	private int projectCode;//5—仰卧起坐    8—俯卧撑 0xb 引体向上手臂检测
 	
 	//54  55  00  10  01  08  00  0b  19  04  00  00  00  00  27  0d
 	//54  55  00  10  01  0B  00  0B  19  04  00  00  00  44  27  0D  00  00

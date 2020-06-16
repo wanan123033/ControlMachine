@@ -56,7 +56,8 @@ public class ResultUtils {
                     throw new IllegalArgumentException("height weight item must have arg(1 or 2)");
                 }
                 break;
-
+            case ItemDefault.CODE_SL:
+                break;
             default:
                 throw new IllegalArgumentException("wrong machine code");
         }

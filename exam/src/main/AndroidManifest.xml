@@ -149,6 +149,8 @@
         <activity android:name=".activity.pullup.setting.PullUpSettingActivity" />
         <activity android:name=".activity.pullup.test.PullUpTestActivity" />
         <activity android:name=".activity.pullup.test.PullUpIndividualActivity" />
+        <activity android:name=".activity.pullup.test.PullAndSitUpIndividualActivity" />
+        <activity android:name=".activity.pullup.pair.PullSitUpPairActivity" />
         <activity android:name=".activity.pullup.test.PullUpGroupActivity" /> <!-- volleyball -->
         <activity android:name=".activity.volleyball.VolleyBallSettingActivity" />
         <activity android:name=".activity.volleyball.VolleyBallGroupActivity" />

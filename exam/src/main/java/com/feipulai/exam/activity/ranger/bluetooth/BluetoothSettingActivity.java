@@ -87,12 +87,9 @@ public class BluetoothSettingActivity extends BaseTitleActivity implements Adapt
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         device = adapter.getItem(position);
-        ParcelUuid[] uuids = device.getUuids();
-        for (ParcelUuid uuid : uuids){
-            Log.e("TAG----",uuid.getUuid().toString());
-        }
         OperateProgressBar.showLoadingUi(this,"正在连接中...");
         utils.connect(device.getAddress());
+        
     }
     @OnClick({R.id.btn_search})
     public void onClick(View view){

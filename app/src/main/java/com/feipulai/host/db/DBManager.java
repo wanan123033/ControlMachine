@@ -81,7 +81,7 @@ public class DBManager {
         int[] supportMachineCodes = {ItemDefault.CODE_HW, ItemDefault.CODE_TS, ItemDefault.CODE_YWQZ,
                 ItemDefault.CODE_LDTY, ItemDefault.CODE_ZWTQQ,
                 ItemDefault.CODE_HWSXQ, ItemDefault.CODE_FHL,ItemDefault.CODE_ZFP,ItemDefault.CODE_WLJ,ItemDefault.CODE_YTXS,
-                ItemDefault.CODE_JGCJ};
+                ItemDefault.CODE_JGCJ,ItemDefault.CODE_SL};
         for (int machineCode : supportMachineCodes) {
             //查询是否已经存在该机器码的项,如果存在就放弃,避免重复添加
             List<Item> items = itemDao.queryBuilder().where(ItemDao.Properties.MachineCode.eq(machineCode)).list();
@@ -128,6 +128,9 @@ public class DBManager {
                     break;
                 case ItemDefault.CODE_JGCJ:
                     insertItem(machineCode, "激光测距", "米");
+                    break;
+                case ItemDefault.CODE_SL:
+                    insertItem(machineCode,machineCode+"","视力","");
                     break;
 
             }

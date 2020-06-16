@@ -42,6 +42,8 @@ public class RadioManager{
 	
 	// 程序退出时才调用
 	public synchronized void close(){
+	    if (mSerialPorter == null)
+	        return;
 		mSerialPorter.close();
 		IOPower.getInstance().setUhfcommPwr(0);
 		instance = null;

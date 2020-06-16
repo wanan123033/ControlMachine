@@ -467,6 +467,10 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
         RunTimerManager.forceStart();
     }
 
+    public void getTime() {
+        RunTimerManager.getTime();
+    }
+
     public void faultBack() {
         showConfirm();
     }

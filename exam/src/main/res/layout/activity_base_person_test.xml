@@ -189,7 +189,6 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="15dp">
-
                 <TextView
                     android:id="@+id/txt_start_test"
                     android:layout_width="match_parent"

@@ -28,7 +28,7 @@ public class SitPushUpManager {
     public static final int PROJECT_CODE_SXQ = 0x07;  //实心球
 
     public static final int DEFAULT_COUNT_DOWN_TIME = 5;
-
+    public static final int PROJECT_CODE_SIT_UP_HAND = 0X0B;// 0B引体向上手臂模式
     private int projectCode;
     /**
      *
@@ -52,7 +52,7 @@ public class SitPushUpManager {
 
 
     private void wrapAndSend(byte[] cmd) {
-        if (projectCode == PROJECT_CODE_SIT_UP || connectType == 1) {
+        if (projectCode == PROJECT_CODE_SIT_UP || connectType == 1 ) {
             RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
         } else {
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd));
@@ -400,6 +400,24 @@ public class SitPushUpManager {
         wrapAndSend(cmd);
     }
 
+    public void getGyroscopeInfo(int deviceId){
+        byte[] cmd = {0x54, 0x44, 0, 0x10, 0, 0x0b, 0,13 , 0, 0, 0, 0, 0, 0, 0x27, 0x0d};
+        cmd[4] = (byte) (deviceId&0xff);
+        for (int i = 2; i < 13; i++) {
+            cmd[13] += cmd[i] & 0xff;
+        }
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+
+    }
+
+    public void getSitUpHandAngle(int deviceId){
+        byte[] cmd = {0x54, 0x44, 0, 0x10, 0, 0x0b, 0,14 , 0, 0, 0, 0, 0, 0, 0x27, 0x0d};
+        cmd[4] = (byte) (deviceId&0xff);
+        for (int i = 2; i < 13; i++) {
+            cmd[13] += cmd[i] & 0xff;
+        }
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+    }
     /**
      * 结束测试
      */
