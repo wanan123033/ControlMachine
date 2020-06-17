@@ -234,7 +234,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 
     public void setBaseHeightVisible(int visible) {
         tvBaseHeight.setVisibility(visible == 0 ? View.VISIBLE : View.GONE);
-        txtStuSkip.setVisibility(View.GONE);
+//        txtStuSkip.setVisibility(View.GONE);
     }
 
     public void setBaseHeight(int height) {

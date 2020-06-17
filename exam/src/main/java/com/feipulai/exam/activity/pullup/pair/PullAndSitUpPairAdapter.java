@@ -28,10 +28,10 @@ public class PullAndSitUpPairAdapter extends DevicePairAdapter {
         super.onBindViewHolder(holder, position);
             switch (position) {
                 case 0:
-                    holder.mTvDeviceId.setText("引体向上");
+                    holder.mTvDeviceId.setText("红外探头");
                     break;
                 case 1:
-                    holder.mTvDeviceId.setText("仰卧起坐" );
+                    holder.mTvDeviceId.setText("手臂感应器" );
                     break;
             }
 

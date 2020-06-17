@@ -525,7 +525,7 @@ public class PullAndSitUpIndividualActivity extends BaseTitleActivity
 
     public void showPenalizeDialog(int max) {
         final NumberPicker numberPicker = new NumberPicker(this);
-        numberPicker.setMinValue(0);
+        numberPicker.setMinValue(-30);
         numberPicker.setValue(pairs.get(0).getPenalty());
         numberPicker.setMaxValue(max);
         LinearLayout layout = new LinearLayout(this);
@@ -540,7 +540,7 @@ public class PullAndSitUpIndividualActivity extends BaseTitleActivity
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        int value = -1 * numberPicker.getValue();
+                        int value =  numberPicker.getValue();
                         if (value != pairs.get(0).getPenalty()) {
                             ledManager.showString(systemSetting.getHostId(), "判罚:" + ResultDisplayUtils.getStrResultForDisplay(value), 1, 2, false, false);
                             ledManager.showString(systemSetting.getHostId(),
@@ -567,8 +567,15 @@ public class PullAndSitUpIndividualActivity extends BaseTitleActivity
     }
 
     @Override
+    public void onInvalid(int invalid) {
+        toastSpeak(String.format("不规则数据%d", invalid));
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         facade.setLinking(true);
     }
+
+
 }
