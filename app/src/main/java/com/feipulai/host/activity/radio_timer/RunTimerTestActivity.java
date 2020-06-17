@@ -39,7 +39,7 @@ import com.feipulai.host.view.CommonPopupWindow;
 import com.feipulai.host.view.ResultPopWindow;
 import com.feipulai.host.view.StuSearchEditText;
 import com.orhanobut.logger.Logger;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;

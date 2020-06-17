@@ -28,7 +28,7 @@ import com.feipulai.host.bean.RunStudent;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.view.CommonPopupWindow;
 import com.feipulai.host.view.ResultPopWindow;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
