@@ -47,7 +47,7 @@ public class BaseActivity extends FragmentActivity {
     /**
      * 广播过滤器
      */
-    public IntentFilter filter;
+    public IntentFilter filter =new IntentFilter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

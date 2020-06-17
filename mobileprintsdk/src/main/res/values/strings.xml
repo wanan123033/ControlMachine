@@ -11,7 +11,7 @@
   -->
 
 <resources>
-
+    <string name="app_name">智能主机(考试版)</string>
     <string name="title_activity_print_preview">Print Preview</string>
     <string name="title_activity_print_place_holder">Print</string>
     <string name="action_settings">Settings</string>
