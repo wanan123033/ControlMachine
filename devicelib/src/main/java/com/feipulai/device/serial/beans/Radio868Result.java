@@ -451,7 +451,7 @@ public class Radio868Result {
 
                 case 14:
                     setType(SerialConfigs.PULL_UP_GET_ANGLE_DATA);
-                    setResult(new SitPushUpStateResult(data));
+                    setResult(new ArmStateResult(data));
                     break;
                 case 13:
                     setType(SerialConfigs.PULL_UP_GET_GYRO_DATA);

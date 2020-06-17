@@ -52,7 +52,7 @@ public class SitPushUpManager {
 
 
     private void wrapAndSend(byte[] cmd) {
-        if (projectCode == PROJECT_CODE_SIT_UP || connectType == 1 ) {
+        if (projectCode == PROJECT_CODE_SIT_UP || connectType == 1 ||projectCode==PROJECT_CODE_SIT_UP_HAND) {
             RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
         } else {
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd));
@@ -351,6 +351,8 @@ public class SitPushUpManager {
             LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---仰卧起坐开始测试指令");
         else if (cmd[5] == 8)
             LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---俯卧撑开始测试指令");
+        else if (cmd[5]== 0x0b)
+            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---手臂检测测试指令");
         wrapAndSend(cmd);
     }
 
@@ -417,6 +419,7 @@ public class SitPushUpManager {
             cmd[13] += cmd[i] & 0xff;
         }
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---手臂检测指令");
     }
     /**
      * 结束测试
@@ -441,6 +444,8 @@ public class SitPushUpManager {
             LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---仰卧起坐结束测试指令");
         else if (cmd[5] == 8)
             LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---俯卧撑结束测试指令");
+        else if (cmd[5] == 0x0b)
+            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---手臂检测结束测试指令");
         wrapAndSend(cmd);
     }
 

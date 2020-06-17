@@ -567,8 +567,15 @@ public class PullAndSitUpIndividualActivity extends BaseTitleActivity
     }
 
     @Override
+    public void onInvalid(int invalid) {
+//        toastSpeak("不规则数据"+invalid);
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         facade.setLinking(true);
     }
+
+
 }
