@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -34,6 +35,7 @@ import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.base.PenalizeDialog;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
@@ -65,7 +67,7 @@ import butterknife.OnClick;
 
 public class PullAndSitUpIndividualActivity extends BaseTitleActivity
         implements PullSitUpTestFacade.Listener,
-        IndividualCheckFragment.OnIndividualCheckInListener {
+        IndividualCheckFragment.OnIndividualCheckInListener, PenalizeDialog.PenalizeListener {
 
     private static final int UPDATE_SCORE = 0x3;
 
@@ -523,36 +525,44 @@ public class PullAndSitUpIndividualActivity extends BaseTitleActivity
         rvTestResult.setAdapter(adapter);
     }
 
-    public void showPenalizeDialog(int max) {
-        final NumberPicker numberPicker = new NumberPicker(this);
-        numberPicker.setMinValue(0);
-        numberPicker.setValue(pairs.get(0).getPenalty());
-        numberPicker.setMaxValue(max);
-        LinearLayout layout = new LinearLayout(this);
-        layout.setGravity(Gravity.CENTER);
-        layout.addView(numberPicker, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        numberPicker.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS); //禁止输入
+//    public void showPenalizeDialog(int max) {
+//        final NumberPicker numberPicker = new NumberPicker(this);
+//        numberPicker.setMinValue(0);
+//        numberPicker.setValue(pairs.get(0).getPenalty());
+//        numberPicker.setMaxValue(max);
+//        LinearLayout layout = new LinearLayout(this);
+//        layout.setGravity(Gravity.CENTER);
+//        layout.addView(numberPicker, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+//        numberPicker.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS); //禁止输入
+//
+//        new AlertDialog.Builder(this).setTitle("请输入判罚值")
+//                .setIcon(android.R.drawable.ic_dialog_info)
+//                .setView(layout)
+//                .setCancelable(false)
+//                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        int value = -1 * numberPicker.getValue();
+//                        if (value != pairs.get(0).getPenalty()) {
+//                            ledManager.showString(systemSetting.getHostId(), "判罚:" + ResultDisplayUtils.getStrResultForDisplay(value), 1, 2, false, false);
+//                            ledManager.showString(systemSetting.getHostId(),
+//                                    "最终:" + ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult() + value),
+//                                    1, 3, false, true);
+//                        }
+//                        pairs.get(0).setPenalty(value);
+//                        Logger.i("判罚："+value);
+//                        toastSpeak("判罚成功");
+//                    }
+//                })
+//                .setNegativeButton("返回", null).show();
+//    }
 
-        new AlertDialog.Builder(this).setTitle("请输入判罚值")
-                .setIcon(android.R.drawable.ic_dialog_info)
-                .setView(layout)
-                .setCancelable(false)
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        int value = -1 * numberPicker.getValue();
-                        if (value != pairs.get(0).getPenalty()) {
-                            ledManager.showString(systemSetting.getHostId(), "判罚:" + ResultDisplayUtils.getStrResultForDisplay(value), 1, 2, false, false);
-                            ledManager.showString(systemSetting.getHostId(),
-                                    "最终:" + ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult() + value),
-                                    1, 3, false, true);
-                        }
-                        pairs.get(0).setPenalty(value);
-                        Logger.i("判罚："+value);
-                        toastSpeak("判罚成功");
-                    }
-                })
-                .setNegativeButton("返回", null).show();
+    public void showPenalizeDialog(int max) {
+        Log.e("TAG=====", max + "");
+        PenalizeDialog dialog = new PenalizeDialog(this);
+        dialog.setPenalizeListener(this);
+        dialog.setMinMaxValue(max * -1, max);
+        dialog.show();
     }
 
 
@@ -578,4 +588,35 @@ public class PullAndSitUpIndividualActivity extends BaseTitleActivity
     }
 
 
+    @Override
+    public void penalize(int value) {
+        if (value != pairs.get(0).getPenalty()) {
+            ledManager.showString(systemSetting.getHostId(), "判罚:" + ResultDisplayUtils.getStrResultForDisplay(value), 1, 2, false, false);
+            ledManager.showString(systemSetting.getHostId(),
+                    "最终:" + ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult() + value),
+                    1, 3, false, true);
+        }
+        pairs.get(0).setPenalty(value);
+        toastSpeak("判罚成功");
+        updateResult();
+    }
+
+    private void updateResult() {
+        if (pairs.get(0).getPenalty() != 0){
+            tvResult.setText(ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult()) + "(判罚:" + pairs.get(0).getPenalty() + ")");
+        }else {
+            tvResult.setText(ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult()));
+        }
+    }
+
+
+    @Override
+    public void dismisson(DialogInterface dialog) {
+        dialog.dismiss();
+    }
+
+    @Override
+    public boolean getPenalize() {
+        return true;
+    }
 }

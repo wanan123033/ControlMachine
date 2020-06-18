@@ -494,6 +494,9 @@ public class SitPushUpManager {
         //[13]：累加和(从02到12共11个字节算术和的低字节)
         //[14] [15]：包尾高字节0x27   低字节0x0d
         byte[] cmd = {0x54, 0x44, 0, 0x10, 0, 0, 0, 0x07, 0, 0, 0, 0, 0, 0, 0x27, 0x0d};
+        if (projectCode == PROJECT_CODE_SIT_UP_HAND){
+            cmd[4] = 2;
+        }
         cmd[5] = (byte) (projectCode & 0xff);
         cmd[8] = (byte) (baseLine & 0xff);
         for (int i = 2; i < 13; i++) {

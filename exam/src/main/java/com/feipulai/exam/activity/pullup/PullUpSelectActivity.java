@@ -53,12 +53,14 @@ public class PullUpSelectActivity extends BaseTitleActivity {
 
             case R.id.tv_count_time:
                 setting.setCountless(false);
+                setting.setHandCheck(false);
                 startActivity(new Intent(this, PullUpCheckActivity.class));
                 finish();
                 break;
 
             case R.id.tv_countless:
                 setting.setCountless(true);
+                setting.setHandCheck(false);
                 startActivity(new Intent(this,
                         SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN
                                 ? PullUpGroupActivity.class
@@ -66,6 +68,7 @@ public class PullUpSelectActivity extends BaseTitleActivity {
                 finish();
                 break;
             case R.id.tv_pull_and_sit_up:
+                setting.setHandCheck(true);
                 startActivity(new Intent(this, PullAndSitUpIndividualActivity.class));
                 finish();
                 break;

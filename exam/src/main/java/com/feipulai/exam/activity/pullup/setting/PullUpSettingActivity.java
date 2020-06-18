@@ -20,6 +20,11 @@ public class PullUpSettingActivity extends AbstractRadioSettingActivity {
             mSpDeviceNum.setSelection(0);
             mSpDeviceNum.setEnabled(false);
         }
+        if (setting.isHandCheck()){
+            llTestAngle.setVisibility(View.VISIBLE);
+            mSpDeviceNum.setSelection(0);
+            mSpDeviceNum.setEnabled(false);
+        }
     }
 
     @Override

@@ -4,7 +4,6 @@ import android.os.Message;
 import android.util.Log;
 
 import com.feipulai.common.jump_rope.task.GetReadyCountDownTimer;
-import com.feipulai.common.utils.DateUtil;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.manager.PullUpManager;
 import com.feipulai.device.manager.SitPushUpManager;
@@ -12,7 +11,6 @@ import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.ArmStateResult;
 import com.feipulai.device.serial.beans.PullUpStateResult;
-import com.feipulai.device.serial.beans.SitPushUpStateResult;
 import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
@@ -51,6 +49,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
     private SitPushUpManager sitUpManager = new SitPushUpManager(SitPushUpManager.PROJECT_CODE_SIT_UP_HAND);
     private volatile boolean linking;
     private List<ArmStateResult> sitUpLists = new ArrayList<>();
+
     public PullSitUpTestFacade(int hostId, Listener listener) {
         this.hostId = hostId;
         TARGET_FREQUENCY = SettingHelper.getSystemSetting().getUseChannel();
@@ -86,11 +85,12 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
                     @Override
                     public void onFinish() {
                         tmp = 0;
-                        invaliad = 0;
+                        invalid = 0;
                         sitUpLists.clear();
                         listener.onGetReadyTimerFinish();
                         testState = TESTING;
                         tmpResult = null;
+                        sitUpManager.getSitUpHandAngle(2);
                         String displayInLed = "成绩:" + ResultDisplayUtils.getStrResultForDisplay(0);
                         ledManager.showString(SettingHelper.getSystemSetting().getHostId(), displayInLed, 1, 1, false, true);
                     }
@@ -104,7 +104,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
         reset();
         executor.execute(mGetReadyCountDownTimer);
         tmp = 0;
-        invaliad = 0;
+        invalid = 0;
     }
 
     public void stopTest() {
@@ -115,8 +115,8 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
         sitUpManager.endTest();
         tmp = 0;
         sitUpLists.clear();
-        invaliad = 0;
-        listener.onInvalid(invaliad);
+        invalid = 0;
+        listener.onInvalid(invalid);
     }
 
     public void abandonTest() {
@@ -126,7 +126,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
         sitUpManager.endTest();
         ledManager.showString(hostId, "", 0, 0, true, true);
         tmp = 0;
-        invaliad = 0;
+        invalid = 0;
         sitUpLists.clear();
     }
 
@@ -144,6 +144,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
     }
 
     private volatile PullUpStateResult tmpResult;
+
 
     @Override
     public void onRadioArrived(Message msg) {
@@ -178,15 +179,9 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
                         return;
                     }
                     sitUpLists.add(result);
-                    byte angleState = result.getAngleState();
-                    String high ;
-                    if (angleState == 2 || angleState == 3){
-                        high = "高点";
-                    }else {
-                        high = "低点";
-                    }
-                    Log.i("armState",result.getAngle()+high);
+                    hand = result.getResult();
 //                    updateResult(result);
+                    FileUtils.log("手臂检测====" + result.toString());
                 }
 
                 break;
@@ -195,65 +190,83 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
 
 
     private int tmp;
-    private int invaliad;
+    private int invalid;
+    private int handCheck;//当前临时手臂值
+    private int hand;
+    ArmStateResult high, low;
+
     private void updateResult(PullUpStateResult pull) {
-        FileUtils.log("==========引体向上数据变化更新==========="+pull.toString());
-        for (ArmStateResult result : sitUpLists) {
-            FileUtils.log(result.toString());
+        if (sitUpLists.size() == 0) {
+            return;
         }
-        if (Math.abs(getHeightSitResult() - getLowSitResult()) > 55){
+        high = getHeightSitResult();
+        low = getLowSitResult();
+        FileUtils.log(pull.getResult() + "==========引体向上数据变化更新===========" + tmp + "hand==" + hand);
+        FileUtils.log(high.getAngle() + "======高点与低点角度===========" + low.getAngle());
+//        int t = hand - handCheck;
+        if (Math.abs(high.getAngle() - low.getAngle()) > 55) {
+//            if (t > 1) {
+//                tmp = high.getResult();
+//            } else {
+//                tmp++;
+//            }
+            handCheck = hand;
             tmp++;
-            pull.setValidCountNum(tmp);
-            listener.onScoreArrived(tmpResult);
-            String displayInLed = "成绩:" + ResultDisplayUtils.getStrResultForDisplay(tmpResult.getResult());
-            ledManager.showString(SettingHelper.getSystemSetting().getHostId(), displayInLed, 1, 1, false, true);
-            sitUpLists.clear();
-        }else {
+        } else if (high.getAngleState() == low.getAngleState()) {
+            if (tmp!=0){
+                tmp++;
+            }
+
+        }else{
             //此次操作违规
-            invaliad++;
+            invalid++;
         }
 
+        pull.setValidCountNum(tmp);
+        listener.onScoreArrived(pull);
+        String displayInLed = "成绩:" + ResultDisplayUtils.getStrResultForDisplay(pull.getResult());
+        ledManager.showString(SettingHelper.getSystemSetting().getHostId(), displayInLed, 1, 1, false, true);
+        sitUpLists.clear();
     }
 
     private void updateResult(ArmStateResult armState) {
         byte angleState = armState.getAngleState();
-        if (angleState == 3 || angleState ==2){//高点
-            Log.i("high+low==","高位");
-        }else {//低点
-            Log.i("high+low==","低位");
+        if (angleState == 3 || angleState == 2) {//高点
+            Log.i("high+low==", "高位");
+        } else {//低点
+            Log.i("high+low==", "低位");
         }
 
-        Log.i("high+low==",getBitArray(armState.getAngleState())[1] == 0 ? "低位":"高位");
+        Log.i("high+low==", getBitArray(armState.getAngleState())[1] == 0 ? "低位" : "高位");
     }
 
-    private int getHeightSitResult(){
+
+    private ArmStateResult getHeightSitResult() {
 //        for (ArmStateResult armState : sitUpLists) {
 //            if (getBitArray(armState.getAngleState())[1]==1 || armState.getAngle()>60){
 //                return true;
 //            }
 //        }
 //        return false;
-        if (sitUpLists.size() == 0){
-            return -1;
-        }
-        int k = sitUpLists.get(0).getAngle();
-        for (int i = 0; i < sitUpLists.size()-1; i++) {
-            if (k < sitUpLists.get(i+1).getAngle()){
-                k = sitUpLists.get(i+1).getAngle();
+
+        ArmStateResult k = sitUpLists.get(0);
+
+        for (int i = 0; i < sitUpLists.size() - 1; i++) {
+            if (k.getAngle() < sitUpLists.get(i + 1).getAngle()) {
+                k = sitUpLists.get(i + 1);
+
             }
         }
         return k;
 
     }
 
-    private int getLowSitResult(){
-        if (sitUpLists.size() == 0){
-            return -1;
-        }
-        int k = sitUpLists.get(0).getAngle();
-        for (int i = 0; i < sitUpLists.size()-1; i++) {
-            if (k > sitUpLists.get(i+1).getAngle()){
-                k = sitUpLists.get(i+1).getAngle();
+    private ArmStateResult getLowSitResult() {
+
+        ArmStateResult k = sitUpLists.get(0);
+        for (int i = 0; i < sitUpLists.size() - 1; i++) {
+            if (k.getAngle() > sitUpLists.get(i + 1).getAngle()) {
+                k = sitUpLists.get(i + 1);
             }
         }
         return k;
@@ -269,7 +282,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
     }
 
     public void setLinking(boolean linking) {
-        if (!linking){
+        if (!linking) {
             RadioManager.getInstance().setOnRadioArrived(this);
             RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(TARGET_FREQUENCY)));
         }
@@ -291,7 +304,9 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
     public void setFrequency(int deviceId, int originFrequency, int targetFrequency) {
         deviceManager.setFrequency(originFrequency, deviceId, targetFrequency);
     }
+
     private int timeCount = 0;
+
     private class PullUpDetector {
 
         private ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -304,9 +319,9 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
                 @Override
                 public void run() {
                     while (detecting) {
-                        if (!linking){
+                        if (!linking) {
                             deviceManager.getState(1);
-                            if (timeCount % 10 == 0){
+                            if (timeCount % 10 == 0) {
                                 sitUpManager.getState(2);
                             }
 //                            sitUpManager.getSitUpHandAngle(2);

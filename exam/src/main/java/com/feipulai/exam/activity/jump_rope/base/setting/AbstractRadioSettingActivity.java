@@ -13,9 +13,11 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.config.TestConfigs;
@@ -42,9 +44,14 @@ public abstract class AbstractRadioSettingActivity
     EditText mNpSecond;
     @BindView(R.id.ll_test_time)
     protected LinearLayout llTestTime;
-
+    @BindView(R.id.ll_test_angle)
+    protected LinearLayout llTestAngle;
     private AbstractRadioSettingPresenter presenter;
-
+    @BindView(R.id.et_test_angle)
+    EditText mTestAngle;
+    @BindView(R.id.tv_angle_use)
+    TextView mAngleUse;
+    private SitPushUpManager sitUpManager = new SitPushUpManager(SitPushUpManager.PROJECT_CODE_SIT_UP_HAND);
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_radio_setting;
@@ -57,6 +64,8 @@ public abstract class AbstractRadioSettingActivity
         presenter.start();
         mRgModel.setOnCheckedChangeListener(this);
         mNpSecond.addTextChangedListener(this);
+
+        mTestAngle.setText("65");
     }
 
     @Nullable
@@ -72,9 +81,18 @@ public abstract class AbstractRadioSettingActivity
         presenter.saveSettings();
     }
 
-    @OnClick(R.id.btn_show_judgements)
-    public void onViewClicked() {
-        presenter.showJudgements();
+    @OnClick({R.id.btn_show_judgements,R.id.tv_angle_use})
+    public void onViewClicked(View view) {
+        switch (view.getId()){
+            case R.id.btn_show_judgements:
+                presenter.showJudgements();
+                break;
+            case R.id.tv_angle_use:
+                String num = mTestAngle.getText().toString();
+                sitUpManager.setBaseline(SitPushUpManager.PROJECT_CODE_SIT_UP_HAND,Integer.parseInt(num));
+                break;
+        }
+
     }
 
     @Override

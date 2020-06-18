@@ -162,5 +162,43 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/ll_test_angle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
+            android:visibility="gone"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:text="角度:"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/et_test_angle"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:inputType="number"
+                android:hint="65"
+                android:maxLength="2" />
+
+            <TextView
+                android:id="@+id/tv_angle_use"
+                android:layout_width="70dp"
+                android:layout_height="35dp"
+                android:layout_marginLeft="30dp"
+                android:background="@drawable/btn_click_bg"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="应用" />
+
+        </LinearLayout>
+
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

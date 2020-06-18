@@ -16,7 +16,8 @@ public class PullUpSetting {
 	private boolean autoPair = true;
 	private boolean isPenalize;
 	private boolean isCountless;// 是否为不计时模式
-
+    private int angle = 65;
+    private boolean handCheck;
 	public boolean isCountless() {
 		return isCountless;
 	}
@@ -84,4 +85,19 @@ public class PullUpSetting {
 				'}';
 	}
 
+    public int getAngle() {
+        return angle;
+    }
+
+    public void setAngle(int angle) {
+        this.angle = angle;
+    }
+
+    public boolean isHandCheck() {
+        return handCheck;
+    }
+
+    public void setHandCheck(boolean handCheck) {
+        this.handCheck = handCheck;
+    }
 }
