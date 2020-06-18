@@ -15,7 +15,7 @@ import com.feipulai.exam.activity.person.BaseGroupTestActivity;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.config.TestConfigs;
 import com.orhanobut.logger.Logger;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.ExecutorService;

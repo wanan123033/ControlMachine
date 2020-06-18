@@ -15,7 +15,7 @@ import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.device.sitpullup.SitPullLinker;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.utils.ResultDisplayUtils;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

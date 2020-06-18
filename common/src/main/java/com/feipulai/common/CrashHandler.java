@@ -7,8 +7,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 
 import com.feipulai.common.utils.ActivityCollector;
-import com.orhanobut.logger.Logger;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

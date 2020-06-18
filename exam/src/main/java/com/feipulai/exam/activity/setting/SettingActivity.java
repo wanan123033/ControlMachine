@@ -3,7 +3,6 @@ package com.feipulai.exam.activity.setting;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Paint;
-import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -40,7 +39,7 @@ import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.netUtils.HttpManager;
 import com.feipulai.exam.utils.bluetooth.BlueToothListActivity;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

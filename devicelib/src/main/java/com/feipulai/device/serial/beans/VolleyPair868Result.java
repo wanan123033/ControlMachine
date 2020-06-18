@@ -3,7 +3,7 @@ package com.feipulai.device.serial.beans;
 import android.util.Log;
 
 import com.feipulai.device.SysConvertUtil;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

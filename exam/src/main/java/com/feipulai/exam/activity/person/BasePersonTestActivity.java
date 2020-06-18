@@ -44,7 +44,7 @@ import com.feipulai.exam.service.UploadService;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.StuSearchEditText;
 import com.orhanobut.logger.Logger;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;

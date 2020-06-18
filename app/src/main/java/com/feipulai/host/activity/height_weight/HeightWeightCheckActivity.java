@@ -203,10 +203,11 @@ public class HeightWeightCheckActivity
             case SerialConfigs.HEIGHT_WEIGHT_RESULT:
                 HeightWeightResult result = (HeightWeightResult) msg.obj;
                 endTime = DateUtil.getCurrentTime();
-                mWeightResult.setTestTime(startTime+"");
-                mWeightResult.setPrintTime(endTime+"");
+
                 mHeightResult = ResultUtils.generateRoughResultWithRaw(mStudent, result, 1);
                 mWeightResult = ResultUtils.generateRoughResultWithRaw(mStudent, result, 2);
+                mWeightResult.setTestTime(startTime+"");
+                mWeightResult.setPrintTime(endTime+"");
                 mHeightResult.setWeightResult(mWeightResult.getResult());
                 ResultUtils.saveResults(this, mHeightResult, mLastHeightResult);
                 ResultUtils.saveResults(this, mWeightResult, mLastWeightResult);

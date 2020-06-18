@@ -8,7 +8,7 @@ import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

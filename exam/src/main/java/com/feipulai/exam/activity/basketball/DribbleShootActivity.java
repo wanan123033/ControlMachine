@@ -18,7 +18,7 @@ import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.basketball.adapter.DribbleShootAdapter;
 import com.feipulai.exam.activity.basketball.result.BasketBallResult;
 import com.feipulai.exam.entity.Student;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;

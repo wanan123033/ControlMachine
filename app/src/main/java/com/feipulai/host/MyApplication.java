@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 
+import com.feipulai.common.CrashHandler;
 import com.feipulai.common.utils.FileUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.host.activity.setting.SettingHelper;
@@ -32,7 +33,7 @@ public class MyApplication extends MultiDexApplication {
         SettingHelper.init(this);
         TOKEN = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.TOKEN, "");
         // 初始化工作已经移至mainactivity中,保证尽快进入界面,减少白屏时间
-//        CrashHandler.getInstance().init(this);
+        CrashHandler.getInstance().init(this);
         FileUtil.createAllFile();
         FileUtil.mkdirs(PATH_SPECIFICATION);
     }

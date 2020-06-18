@@ -18,14 +18,12 @@ import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.person.BasePersonTestActivity;
 import com.feipulai.host.activity.vccheck.TestState;
 import com.feipulai.host.entity.RoundResult;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import cn.pedant.SweetAlert.SweetAlertDialog;
 
 import static com.feipulai.host.activity.medicine_ball.MedicineConstant.END_TEST;
 import static com.feipulai.host.activity.medicine_ball.MedicineConstant.GET_SCORE_RESPONSE;

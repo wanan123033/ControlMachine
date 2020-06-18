@@ -1,11 +1,8 @@
 package com.feipulai.device.serial;
 
 import android.os.Message;
-import android.util.Log;
 
-import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
-import com.orhanobut.logger.examlogger.LogUtils;
 
 /**
  * Created by James on 2018/11/8 0008.

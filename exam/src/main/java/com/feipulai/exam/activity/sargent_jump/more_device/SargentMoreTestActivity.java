@@ -22,10 +22,7 @@ import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
-import com.orhanobut.logger.Logger;
-import com.orhanobut.logger.examlogger.LogUtils;
-
-import java.util.Date;
+import com.orhanobut.logger.utils.LogUtils;
 
 import butterknife.OnClick;
 

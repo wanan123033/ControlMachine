@@ -59,7 +59,7 @@ import com.feipulai.exam.utils.StringChineseUtil;
 import com.feipulai.exam.view.OperateProgressBar;
 import com.github.mjdev.libaums.fs.UsbFile;
 import com.orhanobut.logger.Logger;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.libarcface.widget.ProgressDialog;
 import com.yhy.gvp.listener.OnItemClickListener;

@@ -5,7 +5,7 @@ package com.feipulai.device.serial.beans;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 /**
  * 子机开机0频段发送

@@ -11,14 +11,13 @@ import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.PullUpSetFrequencyResult;
 import com.feipulai.device.serial.beans.SitPushUpSetFrequencyResult;
-import com.feipulai.device.serial.beans.SitReachResult;
 import com.feipulai.device.serial.beans.SitReachWirelessResult;
 import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.beans.VitalCapacityNewResult;
 import com.feipulai.device.serial.beans.VitalCapacityResult;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 public class SitPullLinker implements Handler.Callback {
 
