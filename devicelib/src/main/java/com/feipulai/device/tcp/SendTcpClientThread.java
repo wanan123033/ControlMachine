@@ -20,10 +20,25 @@ public class SendTcpClientThread extends Thread {
     private String tcpIp;
 
     public interface SendTcpListener {
+        /**
+         * 获取服务器返回的数据
+         *
+         * @param text
+         */
         void onMsgReceive(String text);
 
+        /**
+         * 发送数据失败
+         *
+         * @param msg
+         */
         void onSendFail(String msg);
 
+        /**
+         * 服务器连接状态
+         *
+         * @param isConnect
+         */
         void onConnectFlag(boolean isConnect);
     }
 
@@ -38,11 +53,6 @@ public class SendTcpClientThread extends Thread {
     public void run() {
         try {
             socket = new Socket(tcpIp, port);
-// 1 UnknownHostException：如果无法识别主机的名字或IP地址，就会抛出这种异常。
-//	2 ConnectException：如果没有服务器进程监听指定的端口，或者服务器进程拒绝连接，就会抛出这种异常。
-//	3 SocketTimeoutException：如果等待连接超时，就会抛出这种异常。
-//	4 BindException：如果无法把Socket对象与指定的本地IP地址或端口绑定，就会抛出这种异常
-
         } catch (UnknownHostException e) {
             e.printStackTrace();
             listener.onConnectFlag(false);
@@ -84,7 +94,12 @@ public class SendTcpClientThread extends Thread {
 
     }
 
-    //向服务器端写入数据
+    /**
+     * 向服务器端写入数据
+     *
+     * @param text
+     * @return
+     */
     public boolean write(String text) {
         boolean ret = true;
         try {

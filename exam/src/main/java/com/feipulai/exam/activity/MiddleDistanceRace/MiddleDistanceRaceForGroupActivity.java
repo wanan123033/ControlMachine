@@ -1007,9 +1007,6 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
         public void onAssistHandle(BaseVideoView assist, int eventCode, Bundle bundle) {
 //            super.onAssistHandle(assist, eventCode, bundle);
             switch (eventCode) {
-//                case InterEvent.CODE_REQUEST_PAUSE:
-//                    userPause = true;
-//                    break;
                 case DataInter.Event.EVENT_CODE_ERROR_SHOW:
                     mVideoView.stop();
                     break;
