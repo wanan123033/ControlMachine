@@ -15,7 +15,7 @@ import com.feipulai.exam.activity.person.BaseGroupTestActivity;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.config.TestConfigs;
 import com.orhanobut.logger.Logger;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.ExecutorService;
@@ -300,8 +300,10 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
             while (!isFinish) {
                 if (testState != SitReachResiltListener.TestState.UN_STARTED) {
                     Log.i("zzs", "===>" + "sendCommand");
-                    if (SerialDeviceManager.getInstance() != null)
+                    if (SerialDeviceManager.getInstance() != null){
+                        LogUtils.normal(SerialConfigs.CMD_SIT_REACH_GET_SCORE.length+"---"+StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_GET_SCORE)+"---坐位体前屈空闲指令");
                         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_GET_SCORE));
+                    }
                 }
                 try {
                     Thread.sleep(100);
@@ -341,6 +343,7 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
                             isDisconnect = true;
                             if (SerialDeviceManager.getInstance() != null) {
                                 //设备自检,校验连接是否正常
+                                LogUtils.normal(SerialConfigs.CMD_SIT_REACH_EMPTY.length+"---"+StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_EMPTY)+"---坐位体前屈空闲指令");
                                 SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_EMPTY));
                                 mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
                             }

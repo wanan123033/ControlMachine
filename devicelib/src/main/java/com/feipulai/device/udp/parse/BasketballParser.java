@@ -22,14 +22,14 @@ public class BasketballParser extends UDPParser {
         result.setType((data[1] & 0xff));
         switch ((data[1] & 0xff)) {
             case UDPBasketBallConfig.CMD_SET_TIME_RESPONSE://设置显示内容返回：0XA6， CMD_SET_TIME , Hund, Second, Minute, Hour,0XFF
-                result.setHund(data[2]);
+                result.setHund(data[2]*10);
                 result.setSecond(data[3]);
                 result.setMinute(data[4]);
                 result.setHour(data[5]);
                 break;
             case UDPBasketBallConfig.CMD_GET_TIME_RESPONSE://获取时间显示 0XA6(包头) CMD_GET_TIME (命令), ucFD(遮挡1,2) , Hund(毫秒), Second(秒), Minute(分), Hour(时), flag(标志) ,0XFF(包尾)
                 result.setUcFD(data[2]);
-                result.setHund(data[3]);
+                result.setHund(data[3]*10);
                 result.setSecond(data[4]);
                 result.setMinute(data[5]);
                 result.setHour(data[6]);
@@ -45,14 +45,14 @@ public class BasketballParser extends UDPParser {
                 result.setUcStatus(data[2]);
                 break;
             case UDPBasketBallConfig.CMD_SET_STATUS_STOP_RESPONSE://停止
-                result.setHund(data[2]);
+                result.setHund(data[2]*10);
                 result.setSecond(data[3]);
                 result.setMinute(data[4]);
                 result.setHour(data[5]);
                 break;
             case UDPBasketBallConfig.CMD_BREAK_RESPONSE://中断时间
                 result.settNum(data[2]);
-                result.setHund(data[3]);
+                result.setHund(data[3]*10);
                 result.setSecond(data[4]);
                 result.setMinute(data[5]);
                 result.setHour(data[6]);

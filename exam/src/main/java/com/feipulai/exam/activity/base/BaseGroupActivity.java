@@ -32,7 +32,6 @@ import com.feipulai.exam.activity.sargent_jump.SargentSetting;
 import com.feipulai.exam.activity.sargent_jump.more_device.SargentTestGroupActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.sitreach.SitReachSetting;
-import com.feipulai.exam.activity.sitreach.more_device.SitReachMoreActivity;
 import com.feipulai.exam.activity.sitreach.more_device.SitReachMoreGroupActivity;
 import com.feipulai.exam.activity.standjump.StandJumpSetting;
 import com.feipulai.exam.activity.standjump.more.StandJumpGroupMoreActivity;
@@ -51,7 +50,7 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.view.CommonPopupWindow;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -21,7 +21,7 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.utils.ResultDisplayUtils;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -57,7 +57,6 @@ public class DataDisplayActivity extends BaseTitleActivity {
         }
     });
     private String itemCode;
-
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_data_display;

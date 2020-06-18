@@ -1,6 +1,6 @@
 package com.feipulai.device.serial.beans;
 
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 public class Basketball868Result {
     private int frequency;
@@ -25,8 +25,9 @@ public class Basketball868Result {
     private int sencond;
     //毫秒(精准度10ms)
     private int minsencond;
-
+    private int minsencondThousand = 0;
     private String serialNumber;//设备序列号
+    private String versionNum;//版本号
     private int deviceCode;// 3 子机 2 LED
     public final static int DEVICE_LED = 2;
     private int interceptSecond;//默认5秒
@@ -37,13 +38,29 @@ public class Basketball868Result {
     }
 
     public Basketball868Result(byte[] data) {
-        state = data[12];
-        sum = data[13];
-        hour = data[14];
-        minth = data[15];
-        sencond = data[16];
-        minsencond = data[17];
-        if (data[7] == 0x02) {
+        if (data[7] == 0x01 && data.length == 22) {//新协议添加配对硬件版本号
+            versionNum = new String(new byte[]{data[16], data[17], data[18], data[19]});
+        }
+
+        state = data[12] & 0xff;
+        sum = data[13] & 0xff;
+
+        try {
+            hour = data[14] & 0xff;
+            minth = data[15] & 0xff;
+            sencond = data[16] & 0xff;
+
+            minsencond = data[17];
+            if (data.length == 21) {//新6.4 版本添加千分位
+                //添加千分位
+                minsencondThousand = data[18];
+            }
+
+        } catch (Exception e) {
+
+        }
+
+        if (data[7] == 0x02) {//配对
             deviceId = data[15];
         } else {
             deviceId = data[6];
@@ -55,14 +72,14 @@ public class Basketball868Result {
         sensitivity = data[16] & 0xff;
         interceptSecond = data[17] & 0xff;
 
-        if (data[7] == 0x0a) {
+        if (data[7] == 0x0a) {//设置
             sensitivity = data[13] & 0xff;
             interceptSecond = data[14] & 0xff;
             uPrecision = data[15] & 0xff;
 
         }
 
-        LogUtils.normal("篮球返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+        LogUtils.normal("篮球返回数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
     }
 
     public int getDeviceId() {
@@ -169,6 +186,10 @@ public class Basketball868Result {
         this.uPrecision = uPrecision;
     }
 
+    public String getVersionNum() {
+        return versionNum;
+    }
+
     @Override
     public String toString() {
         return "Basketball868Result{" +
@@ -180,15 +201,17 @@ public class Basketball868Result {
                 ", minth=" + minth +
                 ", sencond=" + sencond +
                 ", minsencond=" + minsencond +
+                ", minsencondThousand=" + minsencondThousand +
                 ", serialNumber='" + serialNumber + '\'' +
+                ", versionNum='" + versionNum + '\'' +
                 ", deviceCode=" + deviceCode +
                 ", interceptSecond=" + interceptSecond +
                 ", sensitivity=" + sensitivity +
+                ", uPrecision=" + uPrecision +
                 '}';
     }
 
-
     public long getInterceptTime() {
-        return hour * 60 * 60 * 1000 + minth * 60 * 1000 + sencond * 1000 + minsencond * 10;
+        return hour * 60 * 60 * 1000 + minth * 60 * 1000 + sencond * 1000 + minsencond * 10 + minsencondThousand;
     }
 }

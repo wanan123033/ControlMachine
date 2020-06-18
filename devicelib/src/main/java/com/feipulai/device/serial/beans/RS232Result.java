@@ -5,7 +5,7 @@ import android.util.Log;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.SerialConfigs;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 
 /**
@@ -30,7 +30,7 @@ public class RS232Result {
         // Log.i("RS232Result", StringUtility.bytesToHexString(data));
         //Log.i("james","I got sth");
         if (MachineCode.machineCode == -1) {
-            LogUtils.all(data.length+"---"+StringUtility.bytesToHexString(data)+"---当前测试项目代码为-1");
+            LogUtils.all(data.length + "---" + StringUtility.bytesToHexString(data) + "---当前测试项目代码为-1");
             return;
         }
         switch (MachineCode.machineCode) {
@@ -188,6 +188,10 @@ public class RS232Result {
                             } else {
                                 setType(SerialConfigs.JUMP_SELF_CHECK_RESPONSE_Simple);
                             }
+                            break;
+                        case 0xa:
+                            setType(SerialConfigs.JUMP_NEW_SELF_CHECK_RESPONSE);
+                            setResult(new JumpNewSelfCheckResult(0,data));
                             break;
                         case 0x0c://测量垫版本
                             setType(SerialConfigs.JUMP_GET_VERSION_RESPONSE);

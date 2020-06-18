@@ -84,8 +84,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
     LinearLayout llUseMode;
     @BindView(R.id.tv_pair)
     TextView tvPair;
-    private Integer[] testRound = new Integer[]{1, 2, 3};
-
+    private Integer[] testRound;
     private String[] carryMode = new String[]{"四舍五入", "不进位", "非零进位"};
     private String[] useMode = {"单拦截", "2:起点1:终点", "2:终点1:起点", "2:折返点1:起终点", "2:起终点1:折返点"};
     private FootBallSetting setting;
@@ -122,10 +121,21 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
         spTestMode.setSelection(setting.getUseMode());
 
         //设置测试次数
+        //设置测试次数
+        int maxTestNo = (TestConfigs.sCurrentItem.getTestNum() == 0 && TestConfigs.getMaxTestCount(this) <= TestConfigs.MAX_TEST_NO)
+                ? TestConfigs.MAX_TEST_NO : TestConfigs.getMaxTestCount(this);
+        testRound = new Integer[maxTestNo];
+        for (int i = 0; i < maxTestNo; i++) {
+            testRound[i] = i + 1;
+        }
+        testRound = new Integer[maxTestNo];
+        for (int i = 0; i < maxTestNo; i++) {
+            testRound[i] = i + 1;
+        }
         ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testRound);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTestNo.setAdapter(adapter);
-        spTestNo.setSelection(TestConfigs.sCurrentItem.getTestNum() != 0 ?TestConfigs.getMaxTestCount(this) - 1:setting.getTestNo()-1);
+        spTestNo.setSelection(TestConfigs.sCurrentItem.getTestNum() != 0 ? TestConfigs.getMaxTestCount(this) - 1 : setting.getTestNo() - 1);
         // 数据库中已经指定了测试次数,就不能再设置了
         spTestNo.setEnabled(TestConfigs.sCurrentItem.getTestNum() == 0);
 
@@ -163,18 +173,22 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
         etSensitivity.setText(setting.getSensitivity() + "");
         etHostIp.setText(setting.getHostIp());
         etPort.setText(setting.getPost() + "");
-        rgAccuracy.check(getAccuracy() == 1 ? R.id.rb_tenths : R.id.rb_percentile);
+        rgAccuracy.check(getAccuracy() == 1 ? R.id.rb_tenths : getAccuracy() == 2 ? R.id.rb_percentile : R.id.rb_thousand);
 
         etPenaltySecond.setText(setting.getPenaltySecond() + "");
         if (setting.getTestType() == 1) {
             tvPair.setVisibility(View.VISIBLE);
+            etPort.setEnabled(false);
+            etHostIp.setEnabled(false);
         }
+
     }
 
     private int getAccuracy() {
         switch (TestConfigs.sCurrentItem.getDigital()) {
             case 1:
             case 2:
+            case 3:
                 return TestConfigs.sCurrentItem.getDigital();
             default:
                 return 2;
@@ -196,7 +210,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
             Basketball868Result result = (Basketball868Result) msg.obj;
             this.setting.setSensitivity(result.getSensitivity());
             this.setting.setInterceptSecond(result.getInterceptSecond());
-            TestConfigs.sCurrentItem.setDigital(result.getuPrecision() == 0 ? 1 : 2);
+            TestConfigs.sCurrentItem.setDigital(result.getuPrecision() + 1);
         }
     }
 
@@ -216,7 +230,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
             case UDPBasketBallConfig.CMD_SET_PRECISION_RESPONSE:
                 ToastUtils.showShort("设置成功");
                 BasketballResult basketballResult = (BasketballResult) result.getResult();
-                TestConfigs.sCurrentItem.setDigital(basketballResult.getuPrecision() == 0 ? 1 : 2);
+                TestConfigs.sCurrentItem.setDigital(basketballResult.getuPrecision() + 1);
                 break;
             case UDPBasketBallConfig.CMD_SET_BLOCKERTIME_RESPONSE:
                 ToastUtils.showShort("设置成功");
@@ -236,6 +250,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
         DBManager.getInstance().updateItem(TestConfigs.sCurrentItem);
         Logger.i("保存设置:" + setting.toString());
         EventBus.getDefault().post(new BaseEvent(EventConfigs.UPDATE_TEST_RESULT));
+        mHandler.removeCallbacksAndMessages(null);
         super.finish();
     }
 
@@ -297,7 +312,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
         }
     }
 
-    @OnItemSelected({R.id.sp_carryMode, R.id.sp_test_mode,R.id.sp_test_no})
+    @OnItemSelected({R.id.sp_carryMode, R.id.sp_test_mode, R.id.sp_test_no})
     public void spinnerItemSelected(Spinner spinner, int position) {
         switch (spinner.getId()) {
             case R.id.sp_carryMode:
@@ -307,14 +322,16 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
                 setting.setUseMode(position);
                 break;
             case R.id.sp_test_no:
-                setting.setTestNo(position+1);
+                setting.setTestNo(position + 1);
                 break;
         }
     }
+
     @OnClick(R.id.tv_pair)
     public void onViewClicked() {
         IntentUtil.gotoActivity(this, BasketBallPairActivity.class);
     }
+
     @OnClick({R.id.tv_sensitivity_use, R.id.tv_ip_connect, R.id.tv_accuracy_use, R.id.tv_intercept_time_use})
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -371,6 +388,10 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
                     case R.id.rb_percentile://百分位
                         manager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), Integer.valueOf(this.etSensitivity.getText().toString()),
                                 this.setting.getInterceptSecond(), 1);
+                        break;
+                    case R.id.rb_thousand://百分位
+                        manager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), Integer.valueOf(this.etSensitivity.getText().toString()),
+                                this.setting.getInterceptSecond(), 2);
                         break;
                 }
                 isDisconnect = true;

@@ -1,6 +1,7 @@
 package com.feipulai.exam.activity.basketball;
 
 import android.graphics.Paint;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +18,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.ActivityUtils;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
+import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.manager.BallManager;
@@ -52,10 +54,9 @@ import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -207,7 +208,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         }
         //设置精度
         ballManager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), setting.getSensitivity(),
-                setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1);
+                setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() -1);
     }
 
     @Override
@@ -245,6 +246,15 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             Student student = (Student) baseEvent.getData();
             StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
             onIndividualCheckIn(student, studentItem, new ArrayList<RoundResult>());
+        }else if (baseEvent.getTagInt()==EventConfigs.WIFI_STATE){
+            if (setting.getTestType()==0&&baseEvent.getData()== NetworkInfo.State.CONNECTED){//有线模式UDP
+                //配置网络
+                if (SettingHelper.getSystemSetting().isAddRoute() && !TextUtils.isEmpty(NetWorkUtils.getLocalIp())) {
+                    String locatIp = NetWorkUtils.getLocalIp();
+                    String routeIp = locatIp.substring(0, locatIp.lastIndexOf("."));
+                    UdpLEDUtil.shellExec("ip route add " + routeIp + ".0/24 dev eth0 proto static scope link table wlan0 \n");
+                }
+            }
         }
     }
 
@@ -373,7 +383,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
     public void triggerStart(BasketballResult basketballResult) {
         LogUtils.operation("篮球开始计时");
         testDate = System.currentTimeMillis() + "";
-        timerUtil.startTime(10);
+        timerUtil.startTime(1);
         state = TESTING;
         txtDeviceStatus.setText("计时");
         setOperationUI();
@@ -510,9 +520,9 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
 
     @Override
     public void timer(Long time) {
-        timerDate = time * 10;
+        timerDate = time ;
         if (state == TESTING) {
-            tvResult.setText(DateUtil.caculateTime(time * 10, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital(), 0));
+            tvResult.setText(DateUtil.caculateTime(time , TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital(), 0));
         }
     }
 
@@ -648,6 +658,11 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                     if ((setting.getTestType() == 1 && facade.isDeviceNormal()) || setting.getTestType() == 0) {
                         ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, pairs.get(0).getStudent().getLEDStuName(), Paint.Align.CENTER);
                         timerUtil.stop();
+                        if (setting.getTestType() == 0) {
+                            //有线需要发停止命令重置时间
+                            ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
+                        }
+                        sleep();
                         ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
                     } else {
                         toastSpeak("存在未连接设备，请配对");
@@ -1132,6 +1147,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
+                LogUtils.operation("篮球违规返回弹窗点击了确定...");
                 sweetAlertDialog.dismissWithAnimation();
                 timerUtil.stop();
                 BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
@@ -1160,6 +1176,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
+                LogUtils.operation("篮球违规返回弹窗点击了取消...");
                 sweetAlertDialog.dismissWithAnimation();
             }
         }).show();

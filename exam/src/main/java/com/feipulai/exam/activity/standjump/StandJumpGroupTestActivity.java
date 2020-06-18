@@ -18,10 +18,9 @@ import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.lang.ref.WeakReference;
-import java.util.Date;
 
 /**
  * 立定跳远分组模式
@@ -84,7 +83,7 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
+        LogUtils.life("StandJumpGroupTestActivity onResume");
 //        updateDevice(new BaseDeviceState(BaseDeviceState.STATE_ERROR, 1));
         SerialDeviceManager.getInstance().setRS232ResiltListener(standResiltListener);
         sendCheck();
@@ -103,6 +102,7 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
 
     @Override
     public void startTest(BaseStuPair stuPair) {
+        LogUtils.operation("立定跳远开始测试:"+stuPair.toString());
         baseStuPair = stuPair;
         baseStuPair.setTestTime(System.currentTimeMillis()+"");
 //        sendCheck();
@@ -129,13 +129,18 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        LogUtils.life("StandJumpGroupTestActivity onPause");
         //结束测试 发送结束指令
         LogUtils.normal(SerialConfigs.CMD_END_JUMP.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_END_JUMP)+"---跳远结束指令");
 
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_END_JUMP));
         SerialDeviceManager.getInstance().close();
     }
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mHandler.removeCallbacksAndMessages(null);
+    }
     /**
      * 发送检测设备指令
      */

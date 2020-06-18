@@ -27,7 +27,7 @@ public abstract class AbstractRadioSettingPresenter implements RadioSettingContr
 
     @Override
     public void start() {
-        view.showMax(TestConfigs.MAX_TEST_NO, getMaxDeviceSum());
+        view.showMax(TestConfigs.sCurrentItem.getTestNum()==0?TestConfigs.MAX_TEST_NO:TestConfigs.getMaxTestCount(context), getMaxDeviceSum());
         if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
             view.disableGroupSetting();
         } else {
@@ -70,7 +70,7 @@ public abstract class AbstractRadioSettingPresenter implements RadioSettingContr
         if (groupMode == TestConfigs.GROUP_PATTERN_LOOP
                 || groupMode == TestConfigs.GROUP_PATTERN_SUCCESIVE) {
             setGroupMode(groupMode);
-        }else{
+        } else {
             view.showToast("无效的分组测试模式");
         }
     }
@@ -78,17 +78,17 @@ public abstract class AbstractRadioSettingPresenter implements RadioSettingContr
 
     @Override
     public void updateTestTime(int testTime) {
-        if (testTime < 10){
+        if (testTime < 10) {
             view.showToast("测试时长不能小于10秒");
-        }else if(testTime > 3600){
+        } else if (testTime > 3600) {
             view.showToast("测试时长不能大于3600秒");
-        }else {
+        } else {
             setTestTime(testTime);
         }
     }
 
     @Override
-    public void showJudgements(){
+    public void showJudgements() {
         view.showToast("功能开发中,敬请期待");
     }
 

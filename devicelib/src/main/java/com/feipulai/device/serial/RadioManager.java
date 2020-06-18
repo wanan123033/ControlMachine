@@ -1,11 +1,8 @@
 package com.feipulai.device.serial;
 
 import android.os.Message;
-import android.util.Log;
 
-import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
-import com.orhanobut.logger.examlogger.LogUtils;
 
 /**
  * Created by James on 2018/11/8 0008.
@@ -42,6 +39,8 @@ public class RadioManager{
 	
 	// 程序退出时才调用
 	public synchronized void close(){
+	    if (mSerialPorter == null)
+	        return;
 		mSerialPorter.close();
 		IOPower.getInstance().setUhfcommPwr(0);
 		instance = null;

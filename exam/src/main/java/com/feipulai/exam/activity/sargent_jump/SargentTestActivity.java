@@ -29,7 +29,7 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.view.WaitDialog;
 import com.orhanobut.logger.Logger;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 
 import static com.feipulai.exam.activity.sargent_jump.Constants.CONNECTED;
@@ -341,13 +341,18 @@ public class SargentTestActivity extends BasePersonTestActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (SerialDeviceManager.getInstance() != null)
-            SerialDeviceManager.getInstance().close();
+        LogUtils.life("SargentTestActivity onDestroy");
+//        if (SerialDeviceManager.getInstance() != null)
+//            SerialDeviceManager.getInstance().close();
+
+        SerialDeviceManager.getInstance().setRS232ResiltListener(null);
+        RadioManager.getInstance().setOnRadioArrived(null);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        LogUtils.life("SargentTestActivity onStop");
         mHandler.removeCallbacksAndMessages(null);
     }
 

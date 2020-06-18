@@ -13,17 +13,17 @@ import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.MedicineBallResult;
 import com.feipulai.device.serial.beans.MedicineBallSelfCheckResult;
+import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
-import com.feipulai.exam.activity.MainActivity;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseGroupTestActivity;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.lang.ref.WeakReference;
-import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -69,6 +69,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        LogUtils.life("MedicineBallGroupActivity onResume");
         //设置基点
 //        mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
 //                SerialConfigs.CMD_MEDICINE_BALL_SET_BASE_POINT));
@@ -93,6 +94,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
 
     @Override
     public void startTest(BaseStuPair baseStuPair) {
+        LogUtils.operation("实心球开始测试:"+baseStuPair.toString());
         startFlag = true;
         this.baseStuPair = baseStuPair;
         this.baseStuPair.setTestTime(System.currentTimeMillis()+"");
@@ -134,6 +136,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
 
                 case SELF_CHECK_RESPONSE:
                     MedicineBallSelfCheckResult selfCheckResult = (MedicineBallSelfCheckResult) msg.obj;
+                    LogUtils.operation("实心球处理自检:"+selfCheckResult.toString());
                     BaseStuPair pair = new BaseStuPair();
                     BaseDeviceState device = new BaseDeviceState();
                     device.setDeviceId(1);
@@ -143,6 +146,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
 
                 case GET_SCORE_RESPONSE:
                     MedicineBallResult result = (MedicineBallResult) msg.obj;
+                    LogUtils.operation("实心球处理成绩:"+result.toString());
                     BaseStuPair basePair = new BaseStuPair();
                     basePair.setBaseDevice(new BaseDeviceState(BaseDeviceState.STATE_END, 1));
                     int beginPoint = Integer.parseInt(SharedPrefsUtil.getValue(activity, "SXQ", "beginPoint", "0"));
@@ -156,11 +160,14 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
                     BaseDeviceState device1 = new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1);
                     activity.updateDevice(device1);
                     activity.toastSpeak("测试结束");
+                    LogUtils.operation("实心球结束了测试");
                     break;
                 case DELAY:
+                    LogUtils.operation("实心球设备空闲");
                     activity.sendFree();
                     break;
                 case UPDATEDEVICE:
+                    LogUtils.operation("实心球更新设备状态");
                     BaseDeviceState deviceState = new BaseDeviceState(BaseDeviceState.STATE_ERROR, 0);
                     activity.updateDevice(deviceState);
                     activity.sendFree();
@@ -173,6 +180,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
     }
 
     private void sendFree() {
+        LogUtils.normal("实心球设备空闲指令:"+SerialConfigs.CMD_MEDICINE_BALL_EMPTY.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
         mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
     }
 
@@ -198,6 +206,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
             checkFlag = false;
             PROMPT_TIMES++;
             //只做两次提醒
+            LogUtils.normal("实心球设备空闲指令:"+SerialConfigs.CMD_MEDICINE_BALL_EMPTY.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
             mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
 
             if (PROMPT_TIMES >= 2 && PROMPT_TIMES < 4) {
@@ -248,6 +257,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
             updateTestResult(stuPair);
             updateDevice(stuPair.getBaseDevice());
             // 发送结束命令
+            LogUtils.normal("实心球结束指令:"+SerialConfigs.CMD_MEDICINE_BALL_STOP.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_MEDICINE_BALL_STOP));
             mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_STOP));
 
             testState = TestState.UN_STARTED;
@@ -261,6 +271,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // 发送结束命令
+                LogUtils.normal("实心球结束指令:"+SerialConfigs.CMD_MEDICINE_BALL_STOP.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_MEDICINE_BALL_STOP));
                 mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_STOP));
                 testState = TestState.UN_STARTED;
                 dialog.dismiss();
@@ -279,6 +290,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        LogUtils.life("MedicineBallGroupActivity onDestroy");
         mHandler.removeCallbacksAndMessages(null);
         if (executorService != null && !executorService.isShutdown())
             executorService.shutdown();

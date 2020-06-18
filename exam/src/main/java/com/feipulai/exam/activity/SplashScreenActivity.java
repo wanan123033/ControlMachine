@@ -14,7 +14,6 @@ import com.arcsoft.face.ActiveFileInfo;
 import com.arcsoft.face.ErrorInfo;
 import com.arcsoft.face.FaceEngine;
 import com.feipulai.common.tts.TtsManager;
-import com.feipulai.common.utils.LogUtils;
 import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.serial.RadioManager;
@@ -22,6 +21,7 @@ import com.feipulai.exam.BuildConfig;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseActivity;
+import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.common.Constants;
 import com.ww.fpl.libarcface.util.ConfigUtil;
 

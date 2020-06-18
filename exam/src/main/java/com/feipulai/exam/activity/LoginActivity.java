@@ -83,6 +83,7 @@ public class LoginActivity extends BaseTitleActivity {
                     SettingHelper.getSystemSetting().setTestName(userBean.getExamName());
                 }
                 SettingHelper.getSystemSetting().setUserName(editAccount.getText().toString());
+                SettingHelper.getSystemSetting().setSitCode(userBean.getSiteId());
                 SettingHelper.updateSettingCache(SettingHelper.getSystemSetting());
                 finish();
             }

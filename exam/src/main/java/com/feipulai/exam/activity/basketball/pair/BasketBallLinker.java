@@ -6,6 +6,10 @@ import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.Basketball868Result;
 import com.feipulai.device.sitpullup.SitPullLinker;
+import com.feipulai.exam.config.BaseEvent;
+import com.feipulai.exam.config.EventConfigs;
+
+import org.greenrobot.eventbus.EventBus;
 
 public class BasketBallLinker
         extends SitPullLinker {
@@ -14,7 +18,9 @@ public class BasketBallLinker
     }
 
     public boolean onRadioArrived(Message paramMessage) {
-
+        if (paramMessage.what == SerialConfigs.DRIBBLEING_FREQUENCY) {
+            EventBus.getDefault().post(new BaseEvent(paramMessage.obj, EventConfigs.BACKBALL_FREQUENCY_DATA));
+        }
         if (((paramMessage.what == SerialConfigs.DRIBBLEING_PARAMETER)
                 || (paramMessage.what == SerialConfigs.DRIBBLEING_FREQUENCY))) {
             Basketball868Result result = (Basketball868Result) paramMessage.obj;

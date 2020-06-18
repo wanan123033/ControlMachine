@@ -14,7 +14,7 @@ import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.jump_rope.adapter.DevicePairAdapter;
 import com.feipulai.exam.view.DividerItemDecoration;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.List;
 
@@ -36,7 +36,7 @@ public abstract class SitPullPairActivity extends BaseTitleActivity
 
     public DevicePairAdapter mAdapter;
     private MyHandler mHandler = new MyHandler(this);
-    private SitPullUpPairPresenter presenter;
+    public SitPullUpPairPresenter presenter;
 
     @Override
     protected int setLayoutResID() {

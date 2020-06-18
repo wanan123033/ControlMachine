@@ -12,8 +12,6 @@ import java.util.Map;
 public class SerialConfigs {
 
 
-
-
     private SerialConfigs() {
     }
 
@@ -152,6 +150,7 @@ public class SerialConfigs {
     public static final int FROM_RS232_RESPONSE = 0x5;
     //determines which kind of stand jump response it is
     public static final int JUMP_SELF_CHECK_RESPONSE = 0x6;
+    public static final int JUMP_NEW_SELF_CHECK_RESPONSE = 0x10;
     public static final int JUMP_START_RESPONSE = 0x7;
     public static final int JUMP_SCORE_RESPONSE = 0x8;
     public static final int JUMP_END_RESPONSE = 0x9;
@@ -271,7 +270,7 @@ public class SerialConfigs {
     public static final int STAND_JUMP_LEISURE = 0x63;
     public static final int STAND_JUMP_GET_STATE = 0x64;
     public static final int STAND_JUMP_CHECK = 0x65;
-    public static final int STAND_JUMP_SET_POINTS= 0x66;
+    public static final int STAND_JUMP_SET_POINTS = 0x66;
 
     //握力计
     public static final int GRIP_SET_MORE_MATCH = 0x70;
@@ -284,6 +283,9 @@ public class SerialConfigs {
     public static final int SIT_REACH_VERSION = 0x76;
     public static final int SIT_REACH_GET_STATE = 0x77;
     public static final int SIT_REACH_LEISURE = 0x78;
-
-
+    //摸高新增获取数据
+    public static final int SARGENT_GET_DATA = 0x79;
+    //新增引体向上手臂检测
+    public static final int PULL_UP_GET_GYRO_DATA = 0x80;
+    public static final int PULL_UP_GET_ANGLE_DATA = 0x81;
 }

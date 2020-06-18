@@ -22,10 +22,7 @@ import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
-import com.orhanobut.logger.Logger;
-import com.orhanobut.logger.examlogger.LogUtils;
-
-import java.util.Date;
+import com.orhanobut.logger.utils.LogUtils;
 
 import butterknife.OnClick;
 
@@ -71,6 +68,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
         for (int i = 0; i < deviceState.length; i++) {
 
             deviceState[i] = 0;//连续5次检测不到认为掉线
+            setShowGetData(i+1,true);
         }
         runUp = sargentSetting.getRunUp();
         RadioManager.getInstance().setOnRadioArrived(resultImpl);
@@ -117,6 +115,11 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
         updateDevice(pair.getBaseDevice());
         int id = pair.getBaseDevice().getDeviceId();
         sendStart((byte) id);
+    }
+
+    @Override
+    public void getData(int pos) {
+        SargentJumpMore.getData(pos+1);
     }
 
     @Override

@@ -33,6 +33,7 @@ public class CheckUtils {
                 case ItemDefault.CODE_WLJ:
                 case ItemDefault.CODE_HWSXQ:
                 case ItemDefault.CODE_LDTY:
+                case ItemDefault.CODE_ZWTQQ:
                     state = new BaseDeviceState();
                     break;
                 default:

@@ -42,7 +42,7 @@ import com.feipulai.exam.service.UploadService;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.StuSearchEditText;
 import com.orhanobut.logger.Logger;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -137,6 +137,9 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         deviceListAdapter.notifyItemChanged(index);
     }
 
+    public void setShowGetData(int deviceId,boolean enable){
+        deviceListAdapter.setShowGetData(deviceId,enable);
+    }
 
     @Override
     public void onCheckIn(Student student) {
@@ -341,6 +344,11 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                             confirmResult(pos);
                         }
                         break;
+                    case R.id.txt_get_data:
+                        if (pair.getStudent() != null) {
+                            showGetData(pos);
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -348,6 +356,32 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
             }
         });
+    }
+
+    /**
+     * 展示手动获取成绩
+     */
+    private void showGetData(final int index) {
+        SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
+        alertDialog.setTitleText("是否手动获取成绩");
+        alertDialog.setCancelable(false);
+        alertDialog.setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                LogUtils.operation("点击了获取成绩:");
+                sweetAlertDialog.dismissWithAnimation();
+                getData(index);
+            }
+        }).setCancelText("否").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+            }
+        }).show();
+
+    }
+    public void getData(int pos){
+
     }
 
     //确认成绩判罚

@@ -3,7 +3,6 @@ package com.feipulai.exam.activity.setting;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Paint;
-import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -39,9 +38,8 @@ import com.feipulai.exam.activity.LoginActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.netUtils.HttpManager;
-import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
 import com.feipulai.exam.utils.bluetooth.BlueToothListActivity;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,6 +102,8 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     TextView txtAdvanced;
     @BindView(R.id.cb_is_tcp)
     CheckBox cbIsTcp;
+    @BindView(R.id.sw_auto_score)
+    CheckBox mSwAutoScore;
     private String[] partternList = new String[]{"个人测试", "分组测试"};
     private List<Integer> hostIdList;
     private SystemSetting systemSetting;
@@ -165,6 +165,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         mSwRtUpload.setChecked(systemSetting.isRtUpload());
         mSwIdentityMark.setChecked(systemSetting.isIdentityMark());
         mSwAddStudent.setChecked(systemSetting.isTemporaryAddStu());
+        mSwAutoScore.setChecked(systemSetting.isAutoScore());
         if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN) {
             spPattern.setSelection(0);
         } else {
@@ -242,14 +243,11 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         }
     }
 
-    @OnClick({R.id.btn_tcp_test, R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting
+    @OnClick({R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting
             , R.id.txt_advanced, R.id.sw_identity_mark, R.id.sw_add_student, R.id.cb_route, R.id.cb_custom_channel, R.id.cb_monitoring,
-            R.id.btn_monitoring_setting, R.id.btn_thermometer, R.id.cb_thermometer, R.id.cb_is_tcp})
+            R.id.btn_monitoring_setting, R.id.btn_thermometer, R.id.cb_thermometer,R.id.cb_is_tcp,R.id.sw_auto_score})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.btn_tcp_test:
-                new HttpSubscriber().sendTestTcp(this);
-                break;
             case R.id.cb_is_tcp:
                 systemSetting.setTCP(cbIsTcp.isChecked());
                 break;
@@ -281,6 +279,9 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                 break;
             case R.id.sw_add_student://添加考生
                 systemSetting.setTemporaryAddStu(mSwAddStudent.isChecked());
+                break;
+            case R.id.sw_auto_score:
+                systemSetting.setAutoScore(mSwAutoScore.isChecked());
                 break;
             case R.id.cb_custom_channel://自定义信道
                 if (TextUtils.isEmpty(editCustomChannel.getText().toString())) {

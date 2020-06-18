@@ -59,7 +59,7 @@ import com.feipulai.exam.utils.StringChineseUtil;
 import com.feipulai.exam.view.OperateProgressBar;
 import com.github.mjdev.libaums.fs.UsbFile;
 import com.orhanobut.logger.Logger;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.libarcface.widget.ProgressDialog;
 import com.yhy.gvp.listener.OnItemClickListener;
@@ -72,8 +72,6 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNav
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.CommonPagerTitleView;
-
-import org.apache.poi.ss.formula.functions.T;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -114,8 +112,6 @@ public class DataManageActivity
     private boolean isProcessingData;
     //是否为分组导入
     private boolean isGroupImport;
-    private AlertDialog nameFileDialog;
-    //    private EditText mEditText;
     private List<TypeListBean> typeDatas;
     public BackupManager backupManager;
     private ProgressDialog progressDialog;

@@ -4,8 +4,17 @@ import android.content.Intent;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.host.R;
 import com.feipulai.host.activity.main.SubItemsSelectActivity;
+import com.feipulai.host.activity.setting.LEDSettingActivity;
+import com.feipulai.host.activity.setting.SettingHelper;
+import com.feipulai.host.activity.setting.SystemSetting;
+import com.feipulai.host.activity.sitreach.more.SitReachMoreActivity;
+import com.feipulai.host.activity.standjump.more.StandJumpPairActivity;
 import com.feipulai.host.entity.Item;
+
+import butterknife.OnClick;
 
 /**
  * Created by zzs on  2019/6/27
@@ -24,26 +33,20 @@ public class SitReachSelectActivity extends SubItemsSelectActivity {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-//                SitReachSetting setting = SharedPrefsUtil.loadFormSource(SitReachSelectActivity.this, SitReachSetting.class);
-//                setting.setTestType(position);
-//                if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
-//                    if ( position == PushUpSetting.WIRED_TYPE) {
-//                        startActivity(new Intent(SitReachSelectActivity.this,
-//                                SitReachTestActivity.class));
-//                    } else {
-//                        startActivity(new Intent(SitReachSelectActivity.this,
-//                                SitReachMoreActivity.class));
-//                    }
-//
-//                } else {
-//                    startActivity(new Intent(SitReachSelectActivity.this, BaseGroupActivity.class));
-//                }
-//                SharedPrefsUtil.save(SitReachSelectActivity.this, setting);
-                startActivity(new Intent(SitReachSelectActivity.this,
-                                SitReachTestActivity.class));
+                SitReachSetting setting = SharedPrefsUtil.loadFormSource(SitReachSelectActivity.this, SitReachSetting.class);
+                setting.setTestType(position);
+                if (position == 0) {
+                    startActivity(new Intent(SitReachSelectActivity.this,
+                            SitReachTestActivity.class));
+                } else {
+                    startActivity(new Intent(SitReachSelectActivity.this, SitReachMoreActivity.class));
+                }
+                SharedPrefsUtil.save(SitReachSelectActivity.this, setting);
+
                 finish();
             }
         });
     }
+
 
 }

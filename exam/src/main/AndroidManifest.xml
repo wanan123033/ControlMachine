@@ -61,7 +61,6 @@
             android:theme="@style/AppTheme.SplashScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.HOME" />
@@ -149,6 +148,8 @@
         <activity android:name=".activity.pullup.setting.PullUpSettingActivity" />
         <activity android:name=".activity.pullup.test.PullUpTestActivity" />
         <activity android:name=".activity.pullup.test.PullUpIndividualActivity" />
+        <activity android:name=".activity.pullup.test.PullAndSitUpIndividualActivity" />
+        <activity android:name=".activity.pullup.pair.PullSitUpPairActivity" />
         <activity android:name=".activity.pullup.test.PullUpGroupActivity" /> <!-- volleyball -->
         <activity android:name=".activity.volleyball.VolleyBallSettingActivity" />
         <activity android:name=".activity.volleyball.VolleyBallGroupActivity" />
@@ -259,6 +260,13 @@
         <receiver android:name="com.feipulai.device.spputils.SppReciver" />
 
         <service android:name="com.inuker.bluetooth.library.BluetoothService" />
+        <receiver android:name=".receiver.WifiReceiver">
+            <intent-filter >
+                <action android:name="android.net.wifi.RSSI_CHANGED"/>
+                <action android:name="android.net.wifi.STATE_CHANGE"/>
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

@@ -1,24 +1,31 @@
 package com.feipulai.host.activity.sitreach;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseTitleActivity;
+import com.feipulai.host.activity.setting.SettingHelper;
+import com.feipulai.host.activity.sitreach.more.pair.SitReachPairActivity;
 import com.orhanobut.logger.Logger;
 
 import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import butterknife.OnItemSelected;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
@@ -29,12 +36,14 @@ public class SitReachSettingActivity extends BaseTitleActivity implements Serial
 
     @BindView(R.id.sp_device_count)
     Spinner spDeviceCount;
+    @BindView(R.id.tv_device_check)
+    TextView tvDeviceCheck;
     private static final int MSG_DISCONNECT = 0X101;
     private SweetAlertDialog alertDialog;
     private SerialHandler mHandler = new SerialHandler(this);
     //3秒内检设备是否可用
     private volatile boolean isDisconnect = true;
-
+    private SitReachSetting setting;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_sitreach_setting;
@@ -42,10 +51,20 @@ public class SitReachSettingActivity extends BaseTitleActivity implements Serial
 
     @Override
     protected void initData() {
-        ArrayAdapter spDeviceCountAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{"1"});
+
+        SerialDeviceManager.getInstance().setRS232ResiltListener(this);
+        this.setting = SharedPrefsUtil.loadFormSource(this, SitReachSetting.class);
+        if (setting.getTestType() == 0){
+            tvDeviceCheck.setText("终端自检");
+        }else {
+            tvDeviceCheck.setText("设备匹配");
+        }
+
+        ArrayAdapter spDeviceCountAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,
+                setting.getTestType() == 0  ? new String[]{"1"} : new String[]{"1", "2", "3", "4"});
         spDeviceCountAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spDeviceCount.setAdapter(spDeviceCountAdapter);
-        SerialDeviceManager.getInstance().setRS232ResiltListener(this);
+        spDeviceCount.setSelection(setting.getTestType() == 0? 0:setting.getTestDeviceCount()-1);
     }
 
     @Nullable
@@ -56,19 +75,33 @@ public class SitReachSettingActivity extends BaseTitleActivity implements Serial
 
     @OnClick(R.id.tv_device_check)
     public void onViewClicked() {
-        alertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
-        alertDialog.setTitleText(getString(R.string.device_check_hint));
-        alertDialog.setCancelable(false);
-        alertDialog.show();
+        if (setting.getTestType() == 0){
+            alertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+            alertDialog.setTitleText(getString(R.string.device_check_hint));
+            alertDialog.setCancelable(false);
+            alertDialog.show();
 //        alertDialog = ProgressDialog.show(this, "", "终端自检中...", true);
-        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_EMPTY));
-        //3秒自检
-        mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
+            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_EMPTY));
+            //3秒自检
+            mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
+        }else {
+            startActivity(new Intent(this, SitReachPairActivity.class));
+        }
+
     }
 
     @Override
     public void onRS232Result(Message msg) {
         mHandler.sendMessage(msg);
+    }
+
+    @OnItemSelected({ R.id.sp_device_count})
+    public void spinnerItemSelected(Spinner spinner, int position) {
+        switch (spinner.getId()) {
+            case R.id.sp_device_count:
+                setting.setTestDeviceCount(position + 1);
+                break;
+        }
     }
 
     /**

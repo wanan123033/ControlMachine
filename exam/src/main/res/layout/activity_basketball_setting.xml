@@ -11,7 +11,7 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="600dp"
+            android:layout_width="620dp"
             android:layout_height="match_parent"
             android:layout_marginBottom="20dp"
             android:layout_marginTop="20dp"
@@ -115,7 +115,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:inputType="numberDecimal"
-                    android:maxLength="4" />
+                    android:maxLength="6" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -134,7 +134,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:inputType="numberDecimal"
-                    android:maxLength="4" />
+                    android:maxLength="6" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -386,7 +386,7 @@
                         android:id="@+id/rb_tenths"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="30dp"
+                        android:layout_marginLeft="10dp"
                         android:button="@null"
                         android:drawablePadding="10dp"
                         android:drawableRight="@drawable/checkbox_switch_selected"
@@ -402,7 +402,16 @@
                         android:drawablePadding="10dp"
                         android:drawableRight="@drawable/checkbox_switch_selected"
                         android:text="百分位：" />
-
+                    <RadioButton
+                        android:id="@+id/rb_thousand"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:button="@null"
+                        android:checked="true"
+                        android:drawablePadding="10dp"
+                        android:drawableRight="@drawable/checkbox_switch_selected"
+                        android:text="千分位：" />
 
                 </RadioGroup>
 
@@ -410,7 +419,7 @@
                     android:id="@+id/tv_accuracy_use"
                     android:layout_width="70dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
+                    android:layout_marginLeft="20dp"
                     android:background="@drawable/btn_click_bg"
                     android:gravity="center"
                     android:padding="8dp"

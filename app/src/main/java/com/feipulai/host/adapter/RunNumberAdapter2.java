@@ -7,7 +7,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.feipulai.host.R;
 import com.feipulai.host.config.TestConfigs;
-import com.feipulai.host.entity.RunStudent;
+import com.feipulai.host.bean.RunStudent;
 import com.feipulai.host.entity.Student;
 
 import java.util.List;

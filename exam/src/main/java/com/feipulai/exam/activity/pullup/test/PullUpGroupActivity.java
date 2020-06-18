@@ -55,6 +55,7 @@ import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.WaitDialog;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -125,6 +126,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
         setting = SharedPrefsUtil.loadFormSource(this, PullUpSetting.class);
 
         group = (Group) TestConfigs.baseGroupMap.get("group");
+        LogUtils.operation("引体向上获取分组信息:"+group.toString());
         String type = "男女混合";
         if (group.getGroupType() == Group.MALE) {
             type = "男子";
@@ -136,6 +138,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
         TestCache.getInstance().init();
         pairs = CheckUtils.newPairs(((List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu")).size());
         CheckUtils.groupCheck(pairs);
+        LogUtils.operation("引体向上获取分组信息:"+pairs.size()+"---"+pairs.toString());
 
         rvTestingPairs.setLayoutManager(new LinearLayoutManager(this));
         stuPairAdapter = new VolleyBallGroupStuAdapter(pairs);
@@ -183,41 +186,49 @@ public class PullUpGroupActivity extends BaseTitleActivity
             case R.id.tv_led_setting:
                 if (isConfigurableNow()) {
                     startActivity(new Intent(this, LEDSettingActivity.class));
+                    LogUtils.operation("引体向上点击了外接屏幕");
                 } else {
                     toastSpeak("测试中,不能进行外接屏幕设置");
                 }
                 break;
 
             case R.id.tv_start_test:
+                LogUtils.operation("引体向上点击了开始测试");
                 prepareForTesting();
                 break;
 
             case R.id.tv_stop_test:
+                LogUtils.operation("引体向上点击了结束测试");
                 facade.stopTest();
                 SoundPlayUtils.play(12);
                 prepareForConfirmResult();
                 break;
 
             case R.id.tv_print:
+                LogUtils.operation("引体向上点击了打印");
                 TestCache testCache = TestCache.getInstance();
                 InteractUtils.printResults(group, testCache.getAllStudents(), testCache.getResults(),
                         TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
                 break;
 
             case R.id.tv_confirm:
+                LogUtils.operation("引体向上点击了确认");
                 onResultConfirmed();
                 break;
 
             case R.id.tv_punish:
+                LogUtils.operation("引体向上点击了判罚");
                 showPenalizeDialog(pairs.get(position()).getDeviceResult().getResult());
                 break;
 
             case R.id.tv_abandon_test:
+                LogUtils.operation("引体向上点击了放弃测试");
                 facade.abandonTest();
                 prepareForBegin();
                 break;
 
             case R.id.tv_pair:
+                LogUtils.operation("引体向上点击了配对");
                 changeBadDevice();
                 break;
 
@@ -518,6 +529,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         int value = -1 * numberPicker.getValue();
+                        LogUtils.operation("引体向上判罚:pair="+pairs.get(position())+"---value="+value);
                         if (value != pairs.get(position()).getPenalty()) {
                             Logger.i("初始成绩："+ResultDisplayUtils.getStrResultForDisplay(pairs.get(position()).getDeviceResult().getResult())+"判罚"+value);
                             ledManager.showString(systemSetting.getHostId(), "判罚:" + ResultDisplayUtils.getStrResultForDisplay(value), 1, 2, false, false);

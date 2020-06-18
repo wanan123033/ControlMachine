@@ -3,9 +3,8 @@ package com.feipulai.host.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-
+import com.orhanobut.logger.utils.LogUtils;
 import com.feipulai.common.tts.TtsManager;
-import com.feipulai.common.utils.LogUtils;
 import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.host.BuildConfig;

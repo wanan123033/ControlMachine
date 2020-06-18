@@ -71,13 +71,15 @@ public abstract class AbstractRadioCheckActivity<Setting>
     protected void initData() {
         ButterKnife.bind(this);
     }
+
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if (individualCheckFragment.dispatchKeyEvent(event)) {
+        if (individualCheckFragment != null && individualCheckFragment.dispatchKeyEvent(event)) {
             return true;
         }
         return super.dispatchKeyEvent(event);
     }
+
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
         boolean isTestNameEmpty = TextUtils.isEmpty(SettingHelper.getSystemSetting().getTestName());
@@ -248,7 +250,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
         mAdapter.setSelected(position);
         mAdapter.notifyItemChanged(oldPosition);
         mAdapter.notifyItemChanged(position);
-        if (isRefreshStu){
+        if (isRefreshStu) {
             presenter.showStuInfo(position);
         }
 

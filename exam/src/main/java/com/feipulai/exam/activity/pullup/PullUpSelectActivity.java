@@ -10,6 +10,7 @@ import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.pullup.check.PullUpCheckActivity;
 import com.feipulai.exam.activity.pullup.setting.PullUpSetting;
+import com.feipulai.exam.activity.pullup.test.PullAndSitUpIndividualActivity;
 import com.feipulai.exam.activity.pullup.test.PullUpGroupActivity;
 import com.feipulai.exam.activity.pullup.test.PullUpIndividualActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -46,22 +47,29 @@ public class PullUpSelectActivity extends BaseTitleActivity {
         return builder;
     }
 
-    @OnClick({R.id.tv_count_time, R.id.tv_countless})
+    @OnClick({R.id.tv_count_time, R.id.tv_countless,R.id.tv_pull_and_sit_up})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
             case R.id.tv_count_time:
                 setting.setCountless(false);
+                setting.setHandCheck(false);
                 startActivity(new Intent(this, PullUpCheckActivity.class));
                 finish();
                 break;
 
             case R.id.tv_countless:
                 setting.setCountless(true);
+                setting.setHandCheck(false);
                 startActivity(new Intent(this,
                         SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN
                                 ? PullUpGroupActivity.class
                                 : PullUpIndividualActivity.class));
+                finish();
+                break;
+            case R.id.tv_pull_and_sit_up:
+                setting.setHandCheck(true);
+                startActivity(new Intent(this, PullAndSitUpIndividualActivity.class));
                 finish();
                 break;
         }

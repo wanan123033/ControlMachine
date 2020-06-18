@@ -1,5 +1,4 @@
-<resources>
-
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">智能主机(考试版)</string>
     <string name="host_style">考试版本</string>
     <string name="go_back">返回</string>

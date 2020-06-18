@@ -15,8 +15,7 @@ import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
-import com.orhanobut.logger.Logger;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import static com.feipulai.exam.activity.sargent_jump.Constants.GET_SCORE_RESPONSE;
 
@@ -45,6 +44,7 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
         RadioManager.getInstance().setOnRadioArrived(resultImpl);
         sendEmpty();
         setNextClickStart(false);
+        setShowGetData(1,true);
     }
 
     @Override
@@ -112,6 +112,11 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
         }
         mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 1000);
 
+    }
+
+    @Override
+    public void getData(int pos) {
+        SargentJumpMore.getData(pos+1);
     }
 
     private int sum(byte[] cmd, int index) {

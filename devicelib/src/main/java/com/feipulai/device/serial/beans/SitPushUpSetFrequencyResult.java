@@ -5,7 +5,7 @@ package com.feipulai.device.serial.beans;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 /**
  * 子机开机0频段发送
@@ -41,7 +41,7 @@ public class SitPushUpSetFrequencyResult {
 	private int frequency;// 设备运行在的频率号
 	private int deviceId;// 设备ID,可以通过主机设置
 	private int rate;
-	private int projectCode;//5—仰卧起坐    8—俯卧撑
+	private int projectCode;//5—仰卧起坐    8—俯卧撑 0xb 引体向上手臂检测
 	
 	//54  55  00  10  01  08  00  0b  19  04  00  00  00  00  27  0d
 	//54  55  00  10  01  0B  00  0B  19  04  00  00  00  44  27  0D  00  00

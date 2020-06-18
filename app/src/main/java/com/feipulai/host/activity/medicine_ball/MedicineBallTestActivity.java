@@ -11,19 +11,19 @@ import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.MedicineBallResult;
 import com.feipulai.device.serial.beans.MedicineBallSelfCheckResult;
+import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.person.BasePersonTestActivity;
 import com.feipulai.host.activity.vccheck.TestState;
 import com.feipulai.host.entity.RoundResult;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import cn.pedant.SweetAlert.SweetAlertDialog;
 
 import static com.feipulai.host.activity.medicine_ball.MedicineConstant.END_TEST;
 import static com.feipulai.host.activity.medicine_ball.MedicineConstant.GET_SCORE_RESPONSE;
@@ -33,8 +33,6 @@ import static com.feipulai.host.activity.medicine_ball.MedicineConstant.SELF_CHE
  * 实心球测试
  * Created by Pengjf on 2018/8/20
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
- * <p>
- * 针对一对多时，设备id处理需考虑，
  */
 public class MedicineBallTestActivity extends BasePersonTestActivity {
     private static final String TAG = "MedicineBallActivity";
@@ -42,9 +40,10 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
     private TestState testState = TestState.UN_STARTED;
     private Handler mHandler = new MedicineBallHandler(this);
     private boolean checkFlag = false;
-    private boolean startFlag;
     private ScheduledExecutorService executorService;
-    SweetAlertDialog alertDialog;
+    private static final int START_DEVICE = 0X1002;
+    private static final int DEVICE_CHECK = 0X1001;
+    private int startCount = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +53,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
     private void init() {
         setTestType(1);
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_ERROR, 1));
+        sendCheck();
     }
 
     @Override
@@ -72,7 +72,6 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
         }
 //        stuPair = baseStuPair;
         //因为新测试人员过来时需要重新初始化
-        startFlag = true;
         testState = TestState.UN_STARTED;
         decideBegin();
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
@@ -95,9 +94,30 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
     @Override
     public void stuSkip() {
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
+        sendFree();
     }
 
+    private void sendCheck() {
 
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!checkFlag){
+                    updateDevice(new BaseDeviceState(BaseDeviceState.STATE_ERROR,1));
+                }
+                if (startCount == 6){//因为下位机每4s会发送一次信息
+                    sendFree();
+                }
+                startCount++;
+                mHandler.sendEmptyMessage(DEVICE_CHECK);
+            }
+        },1000);
+    }
+
+    private void sendFree() {
+        LogUtils.normal(SerialConfigs.CMD_MEDICINE_BALL_EMPTY.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_MEDICINE_BALL_EMPTY)+"---实心球空闲指令");
+        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
+    }
     public static class MedicineBallHandler extends Handler {
         WeakReference<MedicineBallTestActivity> weakReference;
 
@@ -131,6 +151,12 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
                     SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                             SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
                     break;
+                case START_DEVICE:
+                    activity.toastSpeak("开始测试");
+                    break;
+                case DEVICE_CHECK:
+                    activity.sendCheck();
+                    break;
                 default:
                     break;
             }
@@ -150,6 +176,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
         if (isInCorrect) {
             PROMPT_TIMES++;
             checkFlag = false;
+            sendFree();
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_FAST_EMPTY));
             if (PROMPT_TIMES >= 2 && PROMPT_TIMES < 4) {
                 int[] errors = selfCheckResult.getIncorrectPoles();
@@ -173,17 +200,9 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
             } else {
                 deviceState.setState(BaseDeviceState.STATE_ONUSE);
             }
-            if (testState == TestState.WAIT_RESULT && startFlag) {
-                toastSpeak("开始测试");
-                if (alertDialog!= null &&alertDialog.isShowing()){
-                    alertDialog.dismiss();
-                }
-                pair.setStartTime(DateUtil.getCurrentTime());
-                startFlag = false;
-                setBegin(0);
-            }
 
         }
+
         updateDevice(deviceState);
     }
 
@@ -216,7 +235,6 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
      * 所以轮询查看是否需要开始测试
      */
     private synchronized void decideBegin() {
-        checkDevice();
         executorService = Executors.newSingleThreadScheduledExecutor();
         executorService.scheduleAtFixedRate(new Runnable() {
             @Override
@@ -225,20 +243,16 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
                     testState = TestState.WAIT_RESULT;
                     SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                             SerialConfigs.CMD_MEDICINE_BALL_START));
-
+                    mHandler.sendEmptyMessageDelayed(START_DEVICE,1000);
+                    setBegin(0);
+                    pair.setStartTime(DateUtil.getCurrentTime());
                     executorService.shutdown();
                 }
             }
         }, 0, 1000, TimeUnit.MILLISECONDS);
 
     }
-    public void checkDevice() {
-        alertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
-        alertDialog.setTitleText("终端自检中...");
-        alertDialog.setCancelable(false);
-        alertDialog.show();
 
-    }
 
     private MedicineBallResultImpl resultImpl = new MedicineBallResultImpl(new MedicineBallResultImpl.MainThreadDisposeListener() {
         @Override
@@ -265,6 +279,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
         @Override
         public void onFree() {
             checkFlag = true;
+            startCount = 0 ;
         }
     });
 }

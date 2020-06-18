@@ -13,11 +13,13 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.feipulai.common.view.dialog.DialogUtils;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.data.MachineResultView;
+import com.feipulai.exam.activity.data.SchduleView;
 import com.feipulai.exam.config.HWConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.MachineResult;
 import com.feipulai.exam.entity.RoundResult;
+import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 
 import java.util.Date;
@@ -90,6 +92,35 @@ public class ResultDetailAdapter extends BaseQuickAdapter<RoundResult, ResultDet
             @Override
             public void onClick(View v) {
                 setMachineResult(roundResult);
+            }
+        });
+
+        viewHolder.mTvTimes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSchedule(roundResult);
+            }
+        });
+    }
+
+    private void showSchedule(RoundResult roundResult) {
+        Schedule schedule = DBManager.getInstance().getSchedulesByNo(roundResult.getScheduleNo());
+        SchduleView view = new SchduleView(mContext);
+        view.setData(schedule,roundResult);
+        DialogUtils.create(mContext,view,true).show();
+        view.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop,
+                                       int oldRight, int oldBottom) {
+                int height = v.getHeight();     //此处的view 和v 其实是同一个控件
+
+                int needHeight = 260;
+
+                if (height > needHeight) {
+                    //注意：这里的 LayoutParams 必须是 FrameLayout的！！
+                    v.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+                            needHeight));
+                }
             }
         });
     }

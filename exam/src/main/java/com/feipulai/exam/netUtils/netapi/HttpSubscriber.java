@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.ic.utils.ItemDefault;
@@ -19,6 +20,7 @@ import com.feipulai.exam.bean.BatchBean;
 import com.feipulai.exam.bean.GroupBean;
 import com.feipulai.exam.bean.ItemBean;
 import com.feipulai.exam.bean.RoundResultBean;
+import com.feipulai.exam.bean.RoundScoreBean;
 import com.feipulai.exam.bean.ScheduleBean;
 import com.feipulai.exam.bean.StudentBean;
 import com.feipulai.exam.bean.UploadResults;
@@ -67,6 +69,8 @@ public class HttpSubscriber {
     public final static int GROUP_BIZ = 2004;
     public final static int GROUP_INFO_BIZ = 2005;
     public final static int UPLOAD_BIZ = 4001;
+    public final static int ROUNDRESULT_BIZ = 5001;
+
 
 
     private OnRequestEndListener onRequestEndListener;
@@ -77,7 +81,6 @@ public class HttpSubscriber {
 
     /**
      * 用户登录
-     *
      * @param username
      * @param password
      */
@@ -101,7 +104,7 @@ public class HttpSubscriber {
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<ScheduleBean>(new OnResultListener<ScheduleBean>() {
             @Override
             public void onSuccess(ScheduleBean result) {
-//                Logger.i("getScheduleAll====>" + result.toString());
+//                Logger.e("getScheduleAll====>" + result.toString());
                 if (result == null) {
                     if (onRequestEndListener != null) {
                         onRequestEndListener.onFault(SCHEDULE_BIZ);
@@ -161,7 +164,7 @@ public class HttpSubscriber {
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<List<ItemBean>>(new OnResultListener<List<ItemBean>>() {
             @Override
             public void onSuccess(List<ItemBean> result) {
-//                Logger.i("getItemAll====>" + result.toString());
+//                Logger.e("getItemAll====>" + result.toString());
                 if (result == null)
                     return;
                 List<Item> itemList = new ArrayList<>();
@@ -336,6 +339,7 @@ public class HttpSubscriber {
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<BatchBean<List<StudentBean>>>(new OnResultListener<BatchBean<List<StudentBean>>>() {
             @Override
             public void onSuccess(BatchBean<List<StudentBean>> result) {
+//                Logger.e("getStudent===>"+result);
                 Set<String> supplements = new HashSet<>();// 补考考生考号集合
                 if (result == null || result.getDataInfo() == null || result.getDataInfo().size() == 0) {
                     ToastUtils.showShort("当前无数据下载更新");
@@ -505,6 +509,111 @@ public class HttpSubscriber {
                 ToastUtils.showShort(errorMsg);
                 if (onRequestEndListener != null) {
                     onRequestEndListener.onFault(GROUP_INFO_BIZ);
+                }
+            }
+        }));
+    }
+
+    /**
+     * 获取服务端成绩
+     * @param sitCode 考点ID
+     * @param scheduleNo 考试日程ID
+     * @param itemCode 项目代码
+     * @param studentCode 准考证号
+     * @param groupNo 组号
+     * @param sortName 组别名称
+     * @param groupType 分组类型 0.男子 1.女子 2.混合, 没有传空
+     * @param examStatus 考试状态0.正常，1.缓考，2.补考
+     */
+    public void getRoundResult(String sitCode, final String scheduleNo, final String itemCode, final String studentCode,
+                               String groupNo, String sortName, String groupType, final String examStatus,
+                               final OnResultListener<RoundScoreBean> onResultListener){
+        Map<String,Object> params = new HashMap<>();
+        params.put("sitCode",sitCode);
+        params.put("scheduleNo",scheduleNo);
+        params.put("itemCode",itemCode);
+        params.put("studentCode",studentCode);
+        params.put("groupNo",groupNo);
+        params.put("sortName",sortName);
+        params.put("groupType",groupType);
+        params.put("examStatus",examStatus);
+        Logger.e("----sitCode="+params.toString());
+
+        Observable<HttpResult<RoundScoreBean>> observable = HttpManager.getInstance().getHttpApi().
+                getRoundScore("bearer " + MyApplication.TOKEN,
+                        CommonUtils.encryptQuery(ROUNDRESULT_BIZ + "", params));
+        HttpManager.getInstance().toSubscribe(observable,new RequestSub<RoundScoreBean>(new OnResultListener<RoundScoreBean>() {
+            @Override
+            public void onSuccess(RoundScoreBean result) {
+                Logger.e("-------------单机测试3333333333");
+                Logger.e("-------------getRoundResult===>"+result.toString());
+                if (result.getExist() == 1){
+                    List<RoundScoreBean.ScoreBean> scoreBeanList = result.getRoundList();
+                    for (RoundScoreBean.ScoreBean score : scoreBeanList){
+                        RoundResult roundResult = new RoundResult();
+                        roundResult.setStudentCode(studentCode);
+                        roundResult.setItemCode(itemCode);
+                        roundResult.setResult(Integer.parseInt(score.getResult()));
+                        roundResult.setPenaltyNum(Integer.parseInt(score.getPenalty()));
+                        roundResult.setRoundNo(Integer.parseInt(score.getRoundNo()));
+                        roundResult.setTestNo(TestConfigs.sCurrentItem.getTestNum());
+                        roundResult.setScheduleNo(scheduleNo);
+                        roundResult.setExamType(Integer.parseInt(examStatus));
+                        roundResult.setResultState(score.resultStatus);
+                        roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
+                        roundResult.setStumbleCount(score.getStumbleCount());
+                        roundResult.setTestTime(score.getTestTime());
+                        roundResult.setEndTime(DateUtil.getCurrentTime()+"");
+                        roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
+                        RoundResult bestResult = DBManager.getInstance().queryBestScore(studentCode, TestConfigs.sCurrentItem.getTestNum());
+                        if (bestResult != null) {
+                            // 原有最好成绩犯规 或者原有最好成绩没有犯规但是现在成绩更好
+                            if (bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && score.resultStatus == RoundResult.RESULT_STATE_NORMAL && bestResult.getResult() <= roundResult.getResult()) {
+                                // 这个时候就要同时修改这两个成绩了
+                                roundResult.setIsLastResult(1);
+                                bestResult.setIsLastResult(0);
+                                DBManager.getInstance().updateRoundResult(bestResult);
+
+                            } else {
+                                if (bestResult.getResultState() != RoundResult.RESULT_STATE_NORMAL) {
+                                    roundResult.setIsLastResult(1);
+                                    bestResult.setIsLastResult(0);
+                                    DBManager.getInstance().updateRoundResult(bestResult);
+
+                                } else {
+                                    roundResult.setIsLastResult(0);
+                                }
+                            }
+                        } else {
+                            // 第一次测试
+                            roundResult.setIsLastResult(1);
+                        }
+                        List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(studentCode);
+                        boolean flag = false;
+                        for (RoundResult re : results){
+                            if (re.getTestTime().equals(score.testTime)&& re.getResult() == roundResult.getResult()){
+                                flag = true;
+                                break;
+                            }else {
+                                flag = false;
+                            }
+                        }
+                        if (!flag){
+                            DBManager.getInstance().insertRoundResult(roundResult);
+                        }
+                    }
+                }
+
+                if (onResultListener != null)
+                    onResultListener.onSuccess(result);
+            }
+
+            @Override
+            public void onFault(int code, String errorMsg) {
+                Logger.e("-------------单机测试2222222");
+                ToastUtils.showShort(errorMsg);
+                if (onResultListener != null) {
+                    onResultListener.onFault(code,errorMsg);
                 }
             }
         }));

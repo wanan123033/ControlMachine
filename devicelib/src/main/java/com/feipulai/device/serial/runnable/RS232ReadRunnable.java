@@ -14,7 +14,7 @@ import com.feipulai.device.serial.parser.RS232Parser;
 import com.feipulai.device.serial.parser.RunTimerParser;
 import com.feipulai.device.serial.parser.VCParser;
 import com.feipulai.device.serial.parser.VolleyBallParser;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.io.IOException;
 import java.io.InputStream;

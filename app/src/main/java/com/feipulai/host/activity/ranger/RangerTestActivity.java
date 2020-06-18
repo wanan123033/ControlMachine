@@ -20,7 +20,7 @@ import com.feipulai.host.activity.freedom.BaseFreedomTestActivity;
 import com.feipulai.host.activity.ranger.bluetooth.BluetoothManager;
 import com.feipulai.host.utils.StringUtility;
 import com.feipulai.host.view.OperateProgressBar;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 public class RangerTestActivity extends BaseFreedomTestActivity {
     private static final int GET_BLUETOOTH = 222;

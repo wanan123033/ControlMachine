@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.orhanobut.logger.AndroidDiskFormatStrategy;
 import com.orhanobut.logger.FormatStrategy;
 import com.orhanobut.logger.LogAdapter;
+import com.orhanobut.logger.utils.LogUtils;
 
 public class AllLogAdapter implements LogAdapter, FormatStrategy {
 

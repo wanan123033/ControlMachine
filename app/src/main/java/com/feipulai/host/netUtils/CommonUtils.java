@@ -13,6 +13,7 @@ import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.utils.EncryptUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.orhanobut.logger.Logger;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -126,6 +127,7 @@ public class CommonUtils {
         respost.setSign(EncryptUtil.getSignData(gson.toJson(object)));
         respost.setData(EncryptUtil.setEncryptData(object));
         respost.setRequestTime(String.valueOf(System.currentTimeMillis()));
+        Logger.i("json:============="+respost.toString());
         return respost;
     }
 

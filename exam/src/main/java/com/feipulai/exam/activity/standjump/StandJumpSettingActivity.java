@@ -28,6 +28,7 @@ import com.feipulai.device.manager.StandJumpManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
+import com.feipulai.device.serial.beans.JumpNewSelfCheckResult;
 import com.feipulai.device.serial.beans.JumpSelfCheckResult;
 import com.feipulai.device.serial.beans.StandJumpResult;
 import com.feipulai.device.serial.beans.StringUtility;
@@ -41,7 +42,7 @@ import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -106,7 +107,7 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
     @BindView(R.id.rb_4)
     RadioButton rb4;
 
-    private Integer[] testRound = new Integer[]{1, 2, 3};
+    private Integer[] testRound;
 
     private StandJumpSetting standSetting;
     private static final int MSG_DISCONNECT = 0X101;
@@ -134,9 +135,17 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
         if (standSetting == null)
             standSetting = new StandJumpSetting();
 
+        //设置测试次数
+        int maxTestNo = (TestConfigs.sCurrentItem.getTestNum() == 0 && TestConfigs.getMaxTestCount(this) <= TestConfigs.MAX_TEST_NO)
+                ? TestConfigs.MAX_TEST_NO : TestConfigs.getMaxTestCount(this);
+        testRound = new Integer[maxTestNo];
+        for (int i = 0; i < maxTestNo; i++) {
+            testRound[i] = i + 1;
+        }
         ArrayAdapter spTestRoundAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testRound);
         spTestRoundAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTestRound.setAdapter(spTestRoundAdapter);
+
         ArrayAdapter spDeviceCountAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,
                 standSetting.getTestType() == 0 ? new String[]{"1"} : new String[]{"1", "2", "3", "4"});
         spDeviceCountAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -327,7 +336,7 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
             case R.id.tv_device_check:
                 checkDialog();
                 if (standSetting.getTestType() == 0) {
-                    LogUtils.normal(SerialConfigs.CMD_SELF_CHECK_JUMP.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_SELF_CHECK_JUMP)+"---跳远自检指令");
+                    LogUtils.normal(SerialConfigs.CMD_SELF_CHECK_JUMP.length + "---" + StringUtility.bytesToHexString(SerialConfigs.CMD_SELF_CHECK_JUMP) + "---跳远自检指令");
 
                     SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SELF_CHECK_JUMP));
                 } else {
@@ -355,7 +364,7 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
                 if (standSetting.getTestType() == 0) {
                     standSetting.setTestPoints(testPoints);
                     byte[] buk = SerialConfigs.SET_CMD_SARGENT_JUMP_SETTING_POINTS(scope - 42);
-                    LogUtils.normal(buk.length+"---"+ StringUtility.bytesToHexString(buk)+"---跳远点数设置指令");
+                    LogUtils.normal(buk.length + "---" + StringUtility.bytesToHexString(buk) + "---跳远点数设置指令");
                     SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, buk));
                 } else {
                     StandJumpManager.setPoints(SettingHelper.getSystemSetting().getHostId(), deviceId, scope - 42);
@@ -382,6 +391,12 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
         }
         SerialDeviceManager.getInstance().close();
         RadioManager.getInstance().setOnRadioArrived(null);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mHandler.removeCallbacksAndMessages(null);
     }
 
     private void setEditTextWatcherListener() {
@@ -516,7 +531,7 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
 
     RadioManager.OnRadioArrivedListener arrivedListener = new RadioManager.OnRadioArrivedListener() {
         @Override
-        public void onRadioArrived(Message msg) {
+        public void onRadioArrived(final Message msg) {
             if (msg.what == SerialConfigs.STAND_JUMP_SET_POINTS) {
                 isSetPoints = true;
                 standSetting.getPointsScopeArray()[deviceId - 1] = scope;
@@ -543,6 +558,28 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
                     });
 
                 }
+
+            } else if (msg.what == SerialConfigs.JUMP_NEW_SELF_CHECK_RESPONSE) {
+                final JumpNewSelfCheckResult checkResult = (JumpNewSelfCheckResult) msg.obj;
+                isDisconnect = false;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String poleState = "";
+                        for (int i = 0; i < checkResult.getJumpPoleState().length; i++) {
+                            if (checkResult.getJumpPoleState()[i] == 0) {
+                                poleState += ("  " + (i + 1));
+                            }
+                        }
+                        if (!TextUtils.isEmpty(poleState)) {
+                            if (!TextUtils.isEmpty(tvCheckData.getText().toString())) {
+                                tvCheckData.append("\n");
+                            }
+                            tvCheckData.append("异常测量杆：" + poleState + "号杆");
+                            toastSpeak("发现异常测量杆");
+                        }
+                    }
+                });
 
             }
             runOnUiThread(new Runnable() {
@@ -618,6 +655,24 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
                             }
                             activity.tvCheckData.setText("发现故障点:" + ledPostion);
                         }
+                        break;
+                    case SerialConfigs.JUMP_NEW_SELF_CHECK_RESPONSE://自检返回杆状态
+                        JumpNewSelfCheckResult checkResult = (JumpNewSelfCheckResult) msg.obj;
+                        String poleState = "";
+                        for (int i = 0; i < checkResult.getJumpPoleState().length; i++) {
+                            if (checkResult.getJumpPoleState()[i] == 0) {
+                                poleState += ("  " + (i + 1));
+                            }
+                        }
+                        if (!TextUtils.isEmpty(poleState)) {
+                            if (!TextUtils.isEmpty(activity.tvCheckData.getText().toString())) {
+                                activity.tvCheckData.append("\n");
+                            }
+                            activity.tvCheckData.append("异常测量杆：" + poleState + "号杆");
+                            activity.toastSpeak("发现异常测量杆");
+                        }
+
+
                         break;
                     case SerialConfigs.JUMP_SELF_CHECK_RESPONSE_Simple://立地跳远自检成功回调
                         Log.i("james", "JUMP_SELF_CHECK_RESPONSE_Simple");

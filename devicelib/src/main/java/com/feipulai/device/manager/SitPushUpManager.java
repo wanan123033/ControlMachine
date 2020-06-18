@@ -5,7 +5,7 @@ import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 /**
  * Created by James on 2018/5/14 0014.
@@ -28,7 +28,7 @@ public class SitPushUpManager {
     public static final int PROJECT_CODE_SXQ = 0x07;  //实心球
 
     public static final int DEFAULT_COUNT_DOWN_TIME = 5;
-
+    public static final int PROJECT_CODE_SIT_UP_HAND = 0X0B;// 0B引体向上手臂模式
     private int projectCode;
     /**
      *
@@ -52,7 +52,7 @@ public class SitPushUpManager {
 
 
     private void wrapAndSend(byte[] cmd) {
-        if (projectCode == PROJECT_CODE_SIT_UP || connectType == 1) {
+        if (projectCode == PROJECT_CODE_SIT_UP || connectType == 1 ||projectCode==PROJECT_CODE_SIT_UP_HAND) {
             RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
         } else {
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd));
@@ -351,6 +351,8 @@ public class SitPushUpManager {
             LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---仰卧起坐开始测试指令");
         else if (cmd[5] == 8)
             LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---俯卧撑开始测试指令");
+        else if (cmd[5]== 0x0b)
+            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---手臂检测测试指令");
         wrapAndSend(cmd);
     }
 
@@ -400,6 +402,25 @@ public class SitPushUpManager {
         wrapAndSend(cmd);
     }
 
+    public void getGyroscopeInfo(int deviceId){
+        byte[] cmd = {0x54, 0x44, 0, 0x10, 0, 0x0b, 0,13 , 0, 0, 0, 0, 0, 0, 0x27, 0x0d};
+        cmd[4] = (byte) (deviceId&0xff);
+        for (int i = 2; i < 13; i++) {
+            cmd[13] += cmd[i] & 0xff;
+        }
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+
+    }
+
+    public void getSitUpHandAngle(int deviceId){
+        byte[] cmd = {0x54, 0x44, 0, 0x10, 0, 0x0b, 0,14 , 0, 0, 0, 0, 0, 0, 0x27, 0x0d};
+        cmd[4] = (byte) (deviceId&0xff);
+        for (int i = 2; i < 13; i++) {
+            cmd[13] += cmd[i] & 0xff;
+        }
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---手臂检测指令");
+    }
     /**
      * 结束测试
      */
@@ -423,6 +444,8 @@ public class SitPushUpManager {
             LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---仰卧起坐结束测试指令");
         else if (cmd[5] == 8)
             LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---俯卧撑结束测试指令");
+        else if (cmd[5] == 0x0b)
+            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---手臂检测结束测试指令");
         wrapAndSend(cmd);
     }
 
@@ -471,6 +494,9 @@ public class SitPushUpManager {
         //[13]：累加和(从02到12共11个字节算术和的低字节)
         //[14] [15]：包尾高字节0x27   低字节0x0d
         byte[] cmd = {0x54, 0x44, 0, 0x10, 0, 0, 0, 0x07, 0, 0, 0, 0, 0, 0, 0x27, 0x0d};
+        if (projectCode == PROJECT_CODE_SIT_UP_HAND){
+            cmd[4] = 2;
+        }
         cmd[5] = (byte) (projectCode & 0xff);
         cmd[8] = (byte) (baseLine & 0xff);
         for (int i = 2; i < 13; i++) {

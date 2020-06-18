@@ -26,7 +26,7 @@ public class BasketBallSetting {
      * 分组测试模式 0 连续 1 循环
      */
     private int testPattern = TestConfigs.GROUP_PATTERN_SUCCESIVE;
-    private int testType = 0;
+    private int testType = 0;//0有线 1无线
 
     public int getTestNo() {
         return testNo;

@@ -15,7 +15,7 @@ import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.RoundResult;
 import com.orhanobut.logger.Logger;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import static com.feipulai.device.serial.SerialConfigs.JUMP_SCORE_RESPONSE;
 import static com.feipulai.device.serial.SerialConfigs.JUMP_SELF_CHECK_RESPONSE;

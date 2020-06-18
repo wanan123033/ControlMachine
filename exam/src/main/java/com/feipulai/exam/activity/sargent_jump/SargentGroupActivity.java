@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 
 import com.feipulai.common.utils.DateUtil;
@@ -28,7 +27,7 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.view.WaitDialog;
 import com.orhanobut.logger.Logger;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 
 import static com.feipulai.exam.activity.sargent_jump.Constants.CONNECTED;
@@ -378,7 +377,8 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
         super.onStop();
         LogUtils.life("SargentGroupActivity onStop");
         mHandler.removeCallbacksAndMessages(null);
-
+        SerialDeviceManager.getInstance().setRS232ResiltListener(null);
+        RadioManager.getInstance().setOnRadioArrived(null);
     }
 
     public void showChangeBadDialog() {

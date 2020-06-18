@@ -1,6 +1,6 @@
 package com.feipulai.device.serial.beans;
 
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 /**
  * 作者 王伟

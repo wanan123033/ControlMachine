@@ -46,7 +46,7 @@ import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.service.UploadService;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -313,11 +313,42 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                             confirmResult(pos);
                         }
                         break;
+                    case R.id.txt_get_data:
+                        if (pair.getStudent() != null) {
+                            showGetData(pos);
+                        }
+                        break;
                 }
             }
         });
     }
 
+    public void getData(int pos){
+
+    }
+
+    /**
+     * 展示手动获取成绩
+     */
+    private void showGetData(final int index) {
+        SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
+        alertDialog.setTitleText("是否手动获取成绩");
+        alertDialog.setCancelable(false);
+        alertDialog.setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                LogUtils.operation("点击了获取成绩:");
+                sweetAlertDialog.dismissWithAnimation();
+                getData(index);
+            }
+        }).setCancelText("否").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+            }
+        }).show();
+
+    }
     public void setFaultEnable(boolean isPenalize) {
         this.isPenalize = isPenalize;
     }
@@ -331,6 +362,10 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         deviceListAdapter.setTxtStartEnable(deviceId,enable);
     }
 
+    public void setShowGetData(int deviceId,boolean enable){
+        deviceListAdapter.setShowGetData(deviceId,enable);
+    }
+
     protected void stuSkipDialog(final Student student, final int index) {
         new AlertDialog.Builder(this).setMessage("是否跳过" + student.getStudentName() + "考生测试")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -339,7 +374,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                         Logger.i("stuSkip:" + student.toString());
                         //测试结束学生清除 ，设备设置空闲状态
                         toSkip(index);
-                        mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
+//                        mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
                     }
                 }).setNegativeButton("取消", null).show();
     }
@@ -395,6 +430,9 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                         stuAdapter.notifyDataSetChanged();
                         roundNo++;
                         if (!isNextClickStart) {
+                            if (deviceCount == 1) {
+                                setStuShowLed(stuAdapter.getTestPosition() != -1 ? pairList.get(stuAdapter.getTestPosition()) : null);
+                            }
                             deviceDetails.get(index).getStuDevicePair().setTestTime(DateUtil.getCurrentTime() + "");
                             toStart(index);
                         }
@@ -418,6 +456,9 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 stuAdapter.setTestPosition(i);
                 stuAdapter.notifyDataSetChanged();
                 if (!isNextClickStart) {
+                    if (deviceCount == 1) {
+                        setStuShowLed(stuAdapter.getTestPosition() != -1 ? pairList.get(stuAdapter.getTestPosition()) : null);
+                    }
                     deviceDetails.get(index).getStuDevicePair().setTestTime(DateUtil.getCurrentTime() + "");
                     toStart(index);
                 }
@@ -1141,9 +1182,14 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 16 - x, index, false, true);
         } else {
             try {
+                int testRound = getRound(deviceDetails.get(index).getStuDevicePair().getTimeResult());
+                if (TextUtils.isEmpty(result)){
+                    testRound +=1;
+                }
+
                 byte[] data = new byte[16];
                 String ledName = deviceDetails.get(index).getStuDevicePair().getStudent().getLEDStuName() + "   第" +
-                        (deviceDetails.get(index).getRound()) + "次";
+                        testRound + "次";
                 byte[] strData = ledName.getBytes("GB2312");
                 System.arraycopy(strData, 0, data, 0, strData.length);
                 //todo

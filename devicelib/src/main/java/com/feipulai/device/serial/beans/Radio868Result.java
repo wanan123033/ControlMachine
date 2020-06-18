@@ -6,7 +6,7 @@ import android.util.Log;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.SerialConfigs;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import static com.feipulai.device.serial.SerialConfigs.JUMPROPE_RESPONSE;
 
@@ -22,7 +22,7 @@ public class Radio868Result {
     public Radio868Result(byte[] data) {
         Log.i("james", StringUtility.bytesToHexString(data));
         if (MachineCode.machineCode == -1) {
-            LogUtils.all(data.length+"---"+StringUtility.bytesToHexString(data)+"---当前测试项目代码为-1");
+            LogUtils.all(data.length + "---" + StringUtility.bytesToHexString(data) + "---当前测试项目代码为-1");
             return;
         }
         // 不处理其他非当前测试项目的噪音信息
@@ -41,15 +41,16 @@ public class Radio868Result {
 
             // 仰卧起坐
             case ItemDefault.CODE_YWQZ:
+                sitUp(data);
+                break;
+            case ItemDefault.CODE_YTXS:
                 if (data.length >= 0x10
-                        && data[0] == 0x54 && data[1] == 0x55 //[00] [01]：包头高字节0x54   低字节0x55
-                        && data[3] == 0x10  //[02] [03]：长度高字节0x00   低字节0x10
-                        && data[5] == 0x05//[05]：项目编号   5—仰卧起坐    8—俯卧撑
-                        && data[14] == 0x27 && data[15] == 0x0d//[14] [15]：包尾高字节0x27   低字节0x0d
-                ) {
-                    // 仰卧起坐
+                        && data[0] == 0x54 && data[1] == 0x55
+                        && data[3] == 0x10
+                        && data[5] == 0x0b
+                        && data[14] == 0x27 && data[15] == 0x0d) {
                     int sum = 0;
-                    //0b 命令(获取数据)不需要校验
+                    //0B命令不需要校验
                     if (data[7] != 0x0b) {
                         for (int i = 2; i < 13; i++) {
                             sum += (data[i] & 0xff);
@@ -59,26 +60,26 @@ public class Radio868Result {
                         }
                     }
                     switch (data[7]) {
-
                         case 4:
-                            setType(SerialConfigs.SIT_UP_GET_STATE);
-                            setResult(new SitPushUpStateResult(data));
+                            setType(SerialConfigs.PULL_UP_GET_STATE);
+                            setResult(new PullUpStateResult(data));
                             break;
 
                         case 0x0b:
-                            setType(SerialConfigs.SIT_UP_MACHINE_BOOT_RESPONSE);
-                            setResult(new SitPushUpSetFrequencyResult(data));
+                            setType(SerialConfigs.PULL_UP_MACHINE_BOOT_RESPONSE);
+                            setResult(new PullUpSetFrequencyResult(data));
                             break;
 
                         case 0x0c:
-                            setType(SerialConfigs.SIT_UP_GET_VERSION);
-                            setResult(new SitPushUpVersionResult(data));
+                            setType(SerialConfigs.PULL_UP_GET_VERSION);
+                            setResult(new PullUpVersionResult(data));
                             break;
 
                     }
                 }
-                break;
 
+                sitUpHand(data);
+                break;
             case ItemDefault.CODE_FWC:
                 if (data.length >= 0x10
                         && data[0] == 0x54 && data[1] == 0x55 //[00] [01]：包头高字节0x54   低字节0x55
@@ -134,12 +135,12 @@ public class Radio868Result {
                                 break;
 
                             case 0x04:
-                                byte []bytes = new byte[16];
-                                if (data.length> 16 && data[14] == 0x27 && data[15] == 0x0d){
-                                    System.arraycopy(data,0,bytes,0,16);
+                                byte[] bytes = new byte[16];
+                                if (data.length > 16 && data[14] == 0x27 && data[15] == 0x0d) {
+                                    System.arraycopy(data, 0, bytes, 0, 16);
                                     setType(SerialConfigs.SARGENT_JUMP_GET_SCORE_RESPONSE);
                                     setResult(new SargentJumpResult(bytes));
-                                }else if (data.length == 16){
+                                } else if (data.length == 16) {
                                     setType(SerialConfigs.SARGENT_JUMP_GET_SCORE_RESPONSE);
                                     setResult(new SargentJumpResult(data));
                                 }
@@ -150,12 +151,12 @@ public class Radio868Result {
 
                                 break;
                             case 0x0b:
-                                byte []bytes1 = new byte[16];
-                                if (data.length> 16 && data[14] == 0x27 && data[15] == 0x0d){
-                                    System.arraycopy(data,0,bytes1,0,16);
+                                byte[] bytes1 = new byte[16];
+                                if (data.length > 16 && data[14] == 0x27 && data[15] == 0x0d) {
+                                    System.arraycopy(data, 0, bytes1, 0, 16);
                                     setType(SerialConfigs.SARGENT_JUMP_SET_MATCH);
                                     setResult(new SargentJumpResult(bytes1));
-                                }else if (data.length == 16){
+                                } else if (data.length == 16) {
                                     setType(SerialConfigs.SARGENT_JUMP_SET_MATCH);
                                     setResult(new SargentJumpResult(data));
                                 }
@@ -173,12 +174,12 @@ public class Radio868Result {
                                 setResult(new SargentJumpResult(data));
                                 break;
                             case 0x04:
-                                if (data[16] ==0){
-                                    byte []bytes = new byte[16];
-                                    System.arraycopy(data,0,bytes,0,16);
+                                if (data[16] == 0 && data.length != 24) {
+                                    byte[] bytes = new byte[16];
+                                    System.arraycopy(data, 0, bytes, 0, 16);
                                     setType(SerialConfigs.SARGENT_JUMP_GET_SCORE_RESPONSE);
                                     setResult(new SargentJumpResult(bytes));
-                                }else {
+                                } else if (data.length == 24) {
                                     setType(SerialConfigs.SARGENT_JUMP_CHECK);
                                     setResult(new SargentJumpResult(data));
                                 }
@@ -186,6 +187,10 @@ public class Radio868Result {
                                 break;
                             case 0x00:
                                 setType(SerialConfigs.SARGENT_JUMP_EMPTY_RESPONSE);
+                                break;
+                            case 0x0A:
+                                setType(SerialConfigs.SARGENT_GET_DATA);
+                                setResult(new SargentJumpResult(data));
                                 break;
                         }
                     }
@@ -219,7 +224,7 @@ public class Radio868Result {
             case ItemDefault.CODE_LQYQ:
             case ItemDefault.CODE_ZQYQ:
                 if (data[0] == (byte) 0xAA && data[data.length - 1] == 0x0D && data[2] == 0x0d) {
-                    if (verifySum(data,1,data.length-2)!= data[data.length-2])
+                    if (verifySum(data, 1, data.length - 2) != data[data.length - 2])
                         return;
                     setResult(new Basketball868Result(data));
                     switch (data[7]) {
@@ -258,41 +263,7 @@ public class Radio868Result {
 
                 }
                 break;
-            case ItemDefault.CODE_YTXS:
-                if (data.length >= 0x10
-                        && data[0] == 0x54 && data[1] == 0x55
-                        && data[3] == 0x10
-                        && data[5] == 0x0b
-                        && data[14] == 0x27 && data[15] == 0x0d) {
-                    int sum = 0;
-                    //0B命令不需要校验
-                    if (data[7] != 0x0b) {
-                        for (int i = 2; i < 13; i++) {
-                            sum += (data[i] & 0xff);
-                        }
-                        if ((sum & 0xff) != (data[13] & 0xff)) {
-                            return;
-                        }
-                    }
-                    switch (data[7]) {
-                        case 4:
-                            setType(SerialConfigs.PULL_UP_GET_STATE);
-                            setResult(new PullUpStateResult(data));
-                            break;
 
-                        case 0x0b:
-                            setType(SerialConfigs.PULL_UP_MACHINE_BOOT_RESPONSE);
-                            setResult(new PullUpSetFrequencyResult(data));
-                            break;
-
-                        case 0x0c:
-                            setType(SerialConfigs.PULL_UP_GET_VERSION);
-                            setResult(new PullUpVersionResult(data));
-                            break;
-
-                    }
-                }
-                break;
             case ItemDefault.CODE_FHL:
 
                 if ((data[0] & 0xff) == 0xaa && data.length == 16) {
@@ -380,13 +351,17 @@ public class Radio868Result {
                         case 0x09://设置测试长度
                             setType(SerialConfigs.STAND_JUMP_SET_POINTS);
                             break;
+                        case 0xa://新自检杆状态
+                            setType(SerialConfigs.JUMP_NEW_SELF_CHECK_RESPONSE);
+                            setResult(new JumpNewSelfCheckResult(1, data));
+                            break;
                     }
                 }
 
                 break;
             case ItemDefault.CODE_ZWTQQ:
-                if ((data[0] & 0xff) == 0xaa && (data.length == 21 )) {
-                    if (verifySum(data,1,data.length-2)!= data[data.length-2])
+                if ((data[0] & 0xff) == 0xaa && (data.length == 21)) {
+                    if (verifySum(data, 1, data.length - 2) != data[data.length - 2])
                         return;
                     setResult(new SitReachWirelessResult(data));
                     switch (data[7]) {
@@ -412,6 +387,87 @@ public class Radio868Result {
                     }
                 }
                 break;
+        }
+    }
+
+    private void sitUp(byte[] data) {
+        if (data.length >= 0x10
+                && data[0] == 0x54 && data[1] == 0x55 //[00] [01]：包头高字节0x54   低字节0x55
+                && data[3] == 0x10  //[02] [03]：长度高字节0x00   低字节0x10
+                && data[5] == 0x05//[05]：项目编号   5—仰卧起坐    8—俯卧撑
+                && data[14] == 0x27 && data[15] == 0x0d//[14] [15]：包尾高字节0x27   低字节0x0d
+        ) {
+            // 仰卧起坐
+            int sum = 0;
+            //0b 命令(获取数据)不需要校验
+            if (data[7] != 0x0b) {
+                for (int i = 2; i < 13; i++) {
+                    sum += (data[i] & 0xff);
+                }
+                if ((sum & 0xff) != (data[13] & 0xff)) {
+                    return;
+                }
+            }
+            switch (data[7]) {
+
+                case 4:
+                    setType(SerialConfigs.SIT_UP_GET_STATE);
+                    setResult(new SitPushUpStateResult(data));
+                    break;
+
+                case 0x0b:
+                    setType(SerialConfigs.SIT_UP_MACHINE_BOOT_RESPONSE);
+                    setResult(new SitPushUpSetFrequencyResult(data));
+                    break;
+
+                case 0x0c:
+                    setType(SerialConfigs.SIT_UP_GET_VERSION);
+                    setResult(new SitPushUpVersionResult(data));
+                    break;
+
+            }
+        }
+    }
+
+    private void sitUpHand(byte[] data) {
+        if (data.length >= 0x10
+                && data[0] == 0x54 && data[1] == 0x55 //[00] [01]：包头高字节0x54   低字节0x55
+                && data[3] == 0x10  //[02] [03]：长度高字节0x00   低字节0x10
+                && data[5] == 0x00b//[05]：项目编号   5—仰卧起坐    8—俯卧撑 0x0b引体向上手臂检测
+                && data[14] == 0x27 && data[15] == 0x0d//[14] [15]：包尾高字节0x27   低字节0x0d
+        ) {
+            // 仰卧起坐
+            int sum = 0;
+            //0b 命令(获取数据)不需要校验
+            if (data[7] != 0x0b) {
+                for (int i = 2; i < 13; i++) {
+                    sum += (data[i] & 0xff);
+                }
+                if ((sum & 0xff) != (data[13] & 0xff)) {
+                    return;
+                }
+            }
+            switch (data[7]) {
+
+                case 14:
+                    setType(SerialConfigs.PULL_UP_GET_ANGLE_DATA);
+                    setResult(new ArmStateResult(data));
+                    break;
+                case 13:
+                    setType(SerialConfigs.PULL_UP_GET_GYRO_DATA);
+                    setResult(new SitPushUpStateResult(data));
+                    break;
+                case 0x0b:
+                    setType(SerialConfigs.SIT_UP_MACHINE_BOOT_RESPONSE);
+                    setResult(new SitPushUpSetFrequencyResult(data));
+                    break;
+
+                case 0x0c:
+                    setType(SerialConfigs.SIT_UP_GET_VERSION);
+                    setResult(new SitPushUpVersionResult(data));
+                    break;
+
+            }
         }
     }
 
@@ -442,12 +498,13 @@ public class Radio868Result {
 
     /**
      * 和校验
+     *
      * @param data
      * @return
      */
-    private byte verifySum(byte [] data,int index,int end){
+    private byte verifySum(byte[] data, int index, int end) {
         byte sum = 0;
-        for (int i = index;i< end;i++){
+        for (int i = index; i < end; i++) {
             sum += data[i];
         }
 

@@ -10,6 +10,7 @@ import com.feipulai.host.R;
 import com.feipulai.host.activity.height_weight.HeightWeightCheckActivity;
 import com.feipulai.host.activity.jump_rope.check.JumpRopeCheckActivity;
 import com.feipulai.host.activity.medicine_ball.MedicineBallFreeTestActivity;
+import com.feipulai.host.activity.medicine_ball.MedicineBallSelectActivity;
 import com.feipulai.host.activity.medicine_ball.MedicineBallTestActivity;
 import com.feipulai.host.activity.pullup.PullUpSelectActivity;
 import com.feipulai.host.activity.radio_timer.RunTimerFreeTestActivity;
@@ -20,6 +21,7 @@ import com.feipulai.host.activity.sitreach.SitReachTestActivity;
 import com.feipulai.host.activity.situp.check.SitUpCheckActivity;
 import com.feipulai.host.activity.standjump.StandJumpSelectActivity;
 import com.feipulai.host.activity.vccheck.VitalTestActivity;
+import com.feipulai.host.activity.vision.VisionTestActivity;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.db.MachineItemCodeUtil;
 import com.feipulai.host.entity.Item;
@@ -73,13 +75,14 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_FHL, VitalTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_ZWTQQ, SitReachSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_LDTY, StandJumpSelectActivity.class);
-        TestConfigs.proActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallTestActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_ZFP, RunTimerTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_WLJ, VitalTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_YTXS, PullUpSelectActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_SL, VisionTestActivity.class);
 
         TestConfigs.freedomActivity.put(ItemDefault.CODE_LDTY, StandJumpSelectActivity.class);
-        TestConfigs.freedomActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallFreeTestActivity.class);
+        TestConfigs.freedomActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallSelectActivity.class);
         TestConfigs.freedomActivity.put(ItemDefault.CODE_ZFP, RunTimerFreeTestActivity.class);
         TestConfigs.freedomActivity.put(ItemDefault.CODE_JGCJ, RangerTestActivity.class);
         // 每个机器码对应的机器名称
@@ -96,6 +99,7 @@ public class TestConfigs {
         TestConfigs.machineNameMap.put(ItemDefault.CODE_WLJ, MyApplication.getInstance().getString(R.string.grip_meter));
         TestConfigs.machineNameMap.put(ItemDefault.CODE_YTXS, "引体向上");
         TestConfigs.machineNameMap.put(ItemDefault.CODE_JGCJ, "激光测距");
+        TestConfigs.machineNameMap.put(ItemDefault.CODE_SL, "视力");
 
         // 每个机器码对应的机器名称
         TestConfigs.itemMinScope.put(ItemDefault.CODE_ZWTQQ, -200);
@@ -204,16 +208,16 @@ public class TestConfigs {
         }
 
         final List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(machineCode);
-
+        Logger.e("machineCode="+machineCode+"----"+itemList);
         String newItemCode = itemList.get(0).getItemCode();
-//        // 还是没有 itemCode
-//        if (newItemCode == null) {
-//            sCurrentItem = itemList.get(0);
-//            Logger.i("sCurrentItem:" + sCurrentItem.toString());
-//            SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, machineCode);
-//            SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, newItemCode);
-//            return INIT_SUCCESS;
-//        }
+        // 还是没有 itemCode
+        if (newItemCode == null) {
+            sCurrentItem = itemList.get(0);
+            Logger.i("sCurrentItem:" + sCurrentItem.toString());
+            SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, machineCode);
+            SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, newItemCode);
+            return INIT_SUCCESS;
+        }
 
         // 项目代码已更新
         // 如果当前机器码只测一个项目,直接把学生项目报名信息和成绩信息中的itemCode改掉即可

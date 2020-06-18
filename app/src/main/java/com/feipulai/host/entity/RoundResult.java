@@ -33,7 +33,7 @@ public class RoundResult implements Serializable {
     private int roundNo;//轮次
     @NotNull
     private int result;//成绩      单位为"毫米(mm)"、"毫秒(ms)"、"克(g)"、"次","毫升"
-    private int weightResult;// 体重成绩,身体体重项目有
+    private int weightResult;// 体重成绩,身体体重项目有   //视力测试时右眼视力值
     private int stumbleCount;// 绊绳次数
 	/**
 	 * 取值为{@link #RESULT_STATE_NORMAL}或{@link #RESULT_STATE_FOUL}

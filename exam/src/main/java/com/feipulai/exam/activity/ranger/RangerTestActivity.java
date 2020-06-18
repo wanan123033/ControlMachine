@@ -20,7 +20,7 @@ import com.feipulai.exam.activity.ranger.bluetooth.BluetoothManager;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.utils.Toast;
 import com.feipulai.exam.view.OperateProgressBar;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.Arrays;
 

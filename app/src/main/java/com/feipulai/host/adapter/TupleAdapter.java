@@ -9,7 +9,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.TestConfigs;
-import com.feipulai.host.entity.Tuple;
+import com.feipulai.host.bean.Tuple;
 
 import java.util.List;
 

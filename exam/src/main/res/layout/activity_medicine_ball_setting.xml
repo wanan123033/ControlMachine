@@ -16,20 +16,35 @@
         android:paddingLeft="30dp"
         android:paddingRight="20dp"
         android:paddingTop="20dp">
-
-        <TextView
-            android:id="@+id/tv_device_check"
-            android:layout_width="120dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginBottom="@dimen/dp_10"
-            android:layout_marginRight="20dp"
-            android:layout_toLeftOf="@+id/tv_start_test"
-            android:background="@drawable/btn_click_bg"
-            android:gravity="center"
-            android:onClick="checkDevice"
-            android:padding="8dp"
-            android:text="终端自检" />
+            android:layout_marginBottom="@dimen/dp_10">
+            <TextView
+                android:id="@+id/tv_device_check"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:layout_toLeftOf="@+id/tv_start_test"
+                android:background="@drawable/btn_click_bg"
+                android:gravity="center"
+                android:onClick="checkDevice"
+                android:padding="8dp"
+                android:text="终端自检" />
+
+            <TextView
+                android:id="@+id/tv_device_result"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:layout_toLeftOf="@+id/tv_start_test"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="" />
+
+        </LinearLayout>
 
         <TextView
             android:layout_width="120dp"

@@ -20,6 +20,7 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.text.MessageFormat;
 
@@ -103,6 +104,7 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
         pair.setTestTime(DateUtil.getCurrentTime()+"");
         updateDevice(pair.getBaseDevice());
         sendStart((byte) pair.getBaseDevice().getDeviceId());
+        LogUtils.operation("实心球开始测试:pos="+pos+",pair="+pair.toString());
     }
 
     private void sendStart(byte id) {
@@ -263,6 +265,7 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
 
     @Override
     protected void onDestroy() {
+        LogUtils.life("BallGroupMoreActivity onDestroy");
         super.onDestroy();
         mHandler.removeCallbacksAndMessages(null);
     }

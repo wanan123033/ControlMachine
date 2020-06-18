@@ -45,7 +45,7 @@ import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.utils.ResultDisplayUtils;
 import com.feipulai.host.view.StuSearchEditText;
-import com.orhanobut.logger.examlogger.LogUtils;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.io.Serializable;
 import java.lang.ref.WeakReference;

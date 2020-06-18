@@ -32,13 +32,14 @@ import com.feipulai.host.adapter.RunNumberAdapter2;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
-import com.feipulai.host.entity.RunStudent;
+import com.feipulai.host.bean.RunStudent;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.entity.StudentItem;
 import com.feipulai.host.view.CommonPopupWindow;
 import com.feipulai.host.view.ResultPopWindow;
 import com.feipulai.host.view.StuSearchEditText;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -90,6 +91,8 @@ public class RunTimerTestActivity extends BaseRunTimerActivity {
     private ResultPopWindow resultPopWindow;
     @BindView(R.id.lv_results)
     ListView lvResults;
+    @BindView(R.id.tv_get_time)
+    TextView tvGetTime;
     private List<String> marks = new ArrayList<>();
     //更换成绩的序号
     private int select;
@@ -233,7 +236,7 @@ public class RunTimerTestActivity extends BaseRunTimerActivity {
     }
 
     @OnClick({R.id.btn_start, R.id.btn_led, R.id.tv_wait_start, R.id.tv_force_start,
-            R.id.tv_fault_back, R.id.tv_mark_confirm, R.id.tv_wait_ready})
+            R.id.tv_fault_back, R.id.tv_mark_confirm, R.id.tv_wait_ready,R.id.tv_get_time})
     //R.id.tv_project_setting,
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -294,8 +297,10 @@ public class RunTimerTestActivity extends BaseRunTimerActivity {
                     }
                 }
                 disposeManager.setShowLed(mList);
-
-
+                break;
+            case R.id.tv_get_time:
+                getTime();
+                LogUtils.operation("红外计时点击了获取时间");
                 break;
         }
     }
@@ -428,6 +433,9 @@ public class RunTimerTestActivity extends BaseRunTimerActivity {
                 tvWaitReady.setSelected(state[4]);
 
                 tvRunState.setText(state[0] ? "空闲" : state[1] ? "等待" : "计时");
+
+                tvGetTime.setEnabled(state[3]);//获取时间
+                tvGetTime.setSelected(state[3]);
             }
         });
 

@@ -1,5 +1,6 @@
 package com.feipulai.exam.activity.jump_rope.fragment;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -22,16 +23,19 @@ import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.ScannerGunManager;
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.CheckDeviceOpener;
 import com.feipulai.device.ic.ICCardDealer;
 import com.feipulai.device.ic.NFCDevice;
 import com.feipulai.device.ic.entity.StuInfo;
+import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.jump_rope.view.StuSearchEditText;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.bean.RoundScoreBean;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
@@ -40,6 +44,8 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.entity.StudentThermometer;
+import com.feipulai.exam.netUtils.OnResultListener;
+import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
 import com.feipulai.exam.utils.StringChineseUtil;
 import com.feipulai.exam.utils.bluetooth.BlueBindBean;
 import com.feipulai.exam.utils.bluetooth.BlueToothHelper;
@@ -74,7 +80,7 @@ import static com.inuker.bluetooth.library.Constants.STATUS_CONNECTED;
 public class IndividualCheckFragment
         extends Fragment
         implements StuSearchEditText.OnCheckedInListener,
-        CheckDeviceOpener.OnCheckDeviceArrived {
+        CheckDeviceOpener.OnCheckDeviceArrived, OnResultListener<RoundScoreBean> {
 
     private static final int CHECK_IN = 0x0;
     private static final int CHECK_THERMOMETER = 0x1;
@@ -224,7 +230,6 @@ public class IndividualCheckFragment
             } else {
                 listener.onIndividualCheckIn(mStudent, mStudentItem, null);
             }
-
         }
     }
 
@@ -249,11 +254,21 @@ public class IndividualCheckFragment
     }
 
 
-    private void checkInUIThread(Student student) {
-        Message msg = Message.obtain();
-        msg.what = CHECK_IN;
-        msg.obj = student;
-        mHandler.sendMessage(msg);
+    private void checkInUIThread(Student student,StudentItem studentItem) {
+
+        Logger.e("-------------单机测试");
+        SystemSetting setting = SettingHelper.getSystemSetting();
+        if (setting.isAutoScore()){
+            HttpSubscriber subscriber = new HttpSubscriber();
+            subscriber.getRoundResult(setting.getSitCode(), studentItem.getScheduleNo(), TestConfigs.getCurrentItemCode(), student.getStudentCode(),
+                    null, null, null, String.valueOf(studentItem.getExamType()), this);
+        }else {
+            Message msg = Message.obtain();
+            msg.what = CHECK_IN;
+            msg.obj = student;
+            mHandler.sendMessage(msg);
+        }
+
     }
 
     @Override
@@ -351,8 +366,61 @@ public class IndividualCheckFragment
         mStudentItem = studentItem;
         mResults = results;
         // 可以直接检录
-        checkInUIThread(student);
+        //TODO 考虑单机测试的开关是否开启
+        checkInUIThread(student,studentItem);
         return false;
+    }
+
+    @Override
+    public void onSuccess(RoundScoreBean result) {
+        if (result.getExist() == 1){
+            boolean flag = false;
+            List<RoundScoreBean.ScoreBean> roundList = result.getRoundList();
+            for (RoundScoreBean.ScoreBean scoreBean : roundList){
+                if (!scoreBean.mtEquipment.equals(SettingHelper.getSystemSetting().getBindDeviceName())){
+                    flag = true;
+                    break;
+                }else {
+                    flag = false;
+                }
+            }
+            if (flag){
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("温馨提示")
+                        .setMessage("该学生已在其他设备上测试,确认测试吗?")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Message msg = Message.obtain();
+                                msg.what = CHECK_IN;
+                                msg.obj = mStudent;
+                                mHandler.sendMessage(msg);
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .create().show();
+            }else {
+                Message msg = Message.obtain();
+                msg.what = CHECK_IN;
+                msg.obj = mStudent;
+                mHandler.sendMessage(msg);
+            }
+        }else {
+            Message msg = Message.obtain();
+            msg.what = CHECK_IN;
+            msg.obj = mStudent;
+            mHandler.sendMessage(msg);
+        }
+    }
+
+    @Override
+    public void onFault(int code, String errorMsg) {
+        ToastUtils.showLong(errorMsg);
     }
 
     private static class MyHandler extends Handler {
