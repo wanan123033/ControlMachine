@@ -1,14 +1,19 @@
 package com.feipulai.exam.activity.base;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 
 import com.feipulai.common.utils.DateUtil;
@@ -18,12 +23,16 @@ import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.ScannerGunManager;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.common.view.dialog.DialogUtils;
 import com.feipulai.device.CheckDeviceOpener;
 import com.feipulai.device.ic.ICCardDealer;
 import com.feipulai.device.ic.NFCDevice;
 import com.feipulai.device.ic.entity.StuInfo;
+import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
+import com.feipulai.exam.activity.setting.AdvancedSettingActivity;
+import com.feipulai.exam.activity.setting.SettingActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.bean.RoundResultBean;
@@ -44,6 +53,7 @@ import com.feipulai.exam.utils.bluetooth.BlueToothHelper;
 import com.feipulai.exam.utils.bluetooth.BlueToothListActivity;
 import com.feipulai.exam.utils.bluetooth.ClientManager;
 import com.feipulai.exam.view.AddStudentDialog;
+import com.feipulai.exam.view.OperateProgressBar;
 import com.inuker.bluetooth.library.connect.listener.BleConnectStatusListener;
 import com.inuker.bluetooth.library.connect.response.BleConnectResponse;
 import com.inuker.bluetooth.library.connect.response.BleNotifyResponse;
@@ -390,13 +400,11 @@ public abstract class BaseCheckActivity
         SystemSetting setting = SettingHelper.getSystemSetting();
         if (setting.isAutoScore()){
             HttpSubscriber subscriber = new HttpSubscriber();
+            OperateProgressBar.showLoadingUi(this,"正在获取云端成绩...");
             subscriber.getRoundResult(setting.getSitCode(), studentItem.getScheduleNo(), TestConfigs.getCurrentItemCode(), student.getStudentCode(),
                     null, null, null, String.valueOf(studentItem.getExamType()), this);
         }else {
-            Message msg = Message.obtain();
-            msg.what = CHECK_IN;
-            msg.obj = student;
-            mHandler.sendMessage(msg);
+            sendCheckHandlerMessage(student);
         }
 
     }
@@ -452,6 +460,7 @@ public abstract class BaseCheckActivity
 
     @Override
     public void onSuccess(RoundScoreBean result) {
+        OperateProgressBar.removeLoadingUiIfExist(this);
         if (result.getExist() == 1){
             boolean flag = false;
             List<RoundScoreBean.ScoreBean> roundList = result.getRoundList();
@@ -470,10 +479,8 @@ public abstract class BaseCheckActivity
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Message msg = Message.obtain();
-                                msg.what = CHECK_IN;
-                                msg.obj = mStudent;
-                                mHandler.sendMessage(msg);
+                                showAdvancedPwdDialog();
+                                dialog.dismiss();
                             }
                         })
                         .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -484,22 +491,25 @@ public abstract class BaseCheckActivity
                         })
                         .create().show();
             }else {
-                Message msg = Message.obtain();
-                msg.what = CHECK_IN;
-                msg.obj = mStudent;
-                mHandler.sendMessage(msg);
+                sendCheckHandlerMessage(mStudent);
             }
         }else {
-            Message msg = Message.obtain();
-            msg.what = CHECK_IN;
-            msg.obj = mStudent;
-            mHandler.sendMessage(msg);
+            sendCheckHandlerMessage(mStudent);
         }
+    }
+
+    private void sendCheckHandlerMessage(Student mStudent) {
+        Message msg = Message.obtain();
+        msg.what = CHECK_IN;
+        msg.obj = mStudent;
+        mHandler.sendMessage(msg);
     }
 
     @Override
     public void onFault(int code, String errorMsg) {
+        OperateProgressBar.removeLoadingUiIfExist(this);
         ToastUtils.showLong(errorMsg);
+        sendCheckHandlerMessage(mStudent);
     }
 
 
@@ -654,6 +664,35 @@ public abstract class BaseCheckActivity
             @Override
             public void onDismiss(DialogInterface dialog) {
                 thermometerOpenDialog = null;
+            }
+        });
+    }
+
+    public void showAdvancedPwdDialog() {
+
+        View view = LayoutInflater.from(this).inflate(R.layout.view_advanced_pwd, null);
+        final EditText editPwd = view.findViewById(R.id.edit_pwd);
+        Button btnCancel = view.findViewById(R.id.btn_cancel);
+        Button btnConfirm = view.findViewById(R.id.btn_confirm);
+
+        final Dialog dialog = DialogUtils.create(this, view, true);
+        dialog.show();
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+
+            }
+        });
+        btnConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.equals(editPwd.getText().toString(), MyApplication.ADVANCED_PWD)) {
+                    sendCheckHandlerMessage(mStudent);
+                    dialog.dismiss();
+                } else {
+                    ToastUtils.showShort("密码错误");
+                }
             }
         });
     }
