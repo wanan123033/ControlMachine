@@ -545,8 +545,6 @@ public class HttpSubscriber {
         HttpManager.getInstance().toSubscribe(observable,new RequestSub<RoundScoreBean>(new OnResultListener<RoundScoreBean>() {
             @Override
             public void onSuccess(RoundScoreBean result) {
-                Logger.e("-------------单机测试3333333333");
-                Logger.e("-------------getRoundResult===>"+result.toString());
                 if (result.getExist() == 1){
                     List<RoundScoreBean.ScoreBean> scoreBeanList = result.getRoundList();
                     for (RoundScoreBean.ScoreBean score : scoreBeanList){
@@ -610,7 +608,6 @@ public class HttpSubscriber {
 
             @Override
             public void onFault(int code, String errorMsg) {
-                Logger.e("-------------单机测试2222222");
                 ToastUtils.showShort(errorMsg);
                 if (onResultListener != null) {
                     onResultListener.onFault(code,errorMsg);
