@@ -39,6 +39,7 @@ import com.feipulai.exam.activity.LoginActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.netUtils.HttpManager;
+import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
 import com.feipulai.exam.utils.bluetooth.BlueToothListActivity;
 import com.orhanobut.logger.examlogger.LogUtils;
 
@@ -241,11 +242,14 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         }
     }
 
-    @OnClick({R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting
+    @OnClick({R.id.btn_tcp_test, R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting
             , R.id.txt_advanced, R.id.sw_identity_mark, R.id.sw_add_student, R.id.cb_route, R.id.cb_custom_channel, R.id.cb_monitoring,
-            R.id.btn_monitoring_setting, R.id.btn_thermometer, R.id.cb_thermometer,R.id.cb_is_tcp})
+            R.id.btn_monitoring_setting, R.id.btn_thermometer, R.id.cb_thermometer, R.id.cb_is_tcp})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            case R.id.btn_tcp_test:
+                new HttpSubscriber().sendTestTcp(this);
+                break;
             case R.id.cb_is_tcp:
                 systemSetting.setTCP(cbIsTcp.isChecked());
                 break;

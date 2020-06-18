@@ -81,168 +81,96 @@ public class TCPResultPackage {
 
         StringBuilder sb = new StringBuilder();
         String strBody;
-        //客户端
-        sb.append(m_strClientName);
-        sb.append(target);
 
-        //服务端
-        sb.append(m_strServerName);
-        sb.append(target);
-
-        //事件类型
-        sb.append(m_nEventType);
-        sb.append(target);
-
-        //包类型
-        sb.append(m_strPackType);
-        sb.append(target);
-
-        //项目全称
-        sb.append(item.getItemName());
-        sb.append(target);
-
-        //性别
-        sb.append(m_nSex);
-        sb.append(target);
-
-        //组别
-        sb.append(m_strSort);
-        sb.append(target);
-
-        //项目名称
-        sb.append(item.getItemName());
-        sb.append(target);
-
-        //项目代码
-        sb.append(item.getItemCode());
-        sb.append(target);
-
-        //赛次
-        sb.append(m_nLayer);
-        sb.append(target);
-
-        //组号
-        sb.append(m_nGrp);
-        sb.append(target);
-
-        //场次
-        sb.append(m_nField);
-        sb.append(target);
-
-        //开始时间
-        sb.append(m_strBeginTime);
-        sb.append(target);
-
-        //考生人数
-        sb.append(uploadResults.size());
-        sb.append(target);
-
-        //分组类型
-        sb.append(m_nGroupType);
-        sb.append(target);
-
-        //项目属性
-        sb.append(m_nProperty);
-        sb.append(target);
-
-        //全能分项名称
-        sb.append(m_strAllEventName);
-        sb.append(target);
-
-        //全能分项属性
-        sb.append(m_nAllProp);
-        sb.append(target);
-
-        //全能分项序号
-        sb.append(m_nAllNum);
-        sb.append(target);
-
-        //风速
-        sb.append(m_strWindSpeed);
-        sb.append(target);
-
-        //专项代码
-        sb.append(m_strSpecialItemCode);
-        sb.append(target);
-
-        //专项名称
-        sb.append(m_strSpecialItemName);
-        sb.append(target);
-
-        //备注1
-        sb.append("");
-        sb.append(target);
-
-        //备注2
-        sb.append("");
-        sb.append(target);
-
-
-        //备注3
-        sb.append("");
-        sb.append(target);
-
-
-        //备注4
-        sb.append("");
-        sb.append(target);
-
-        for (int i = 0; i < uploadResults.size(); i++)//m_vecExamRoundResult.size();
-        {
-            examRoundResult.clear();
-            examRoundResult.addAll(uploadResults.get(i).getRoundResultList());
-
-            //名次
-            sb.append(0);//考试无
+        if (uploadResults == null) {
+            strBody = "test";
+        } else {
+            //客户端
+            sb.append(m_strClientName);
             sb.append(target);
 
-            //道次
-            sb.append(0);//考试无
+            //服务端
+            sb.append(m_strServerName);
             sb.append(target);
 
-            //考生考号
-            sb.append(uploadResults.get(i).getStudentCode());
+            //事件类型
+            sb.append(m_nEventType);
             sb.append(target);
 
-            //考生姓名
-            sb.append("");
+            //包类型
+            sb.append(m_strPackType);
+            sb.append(target);
+
+            //项目全称
+            sb.append(item.getItemName());
             sb.append(target);
 
             //性别
-            sb.append(-1);
+            sb.append(m_nSex);
             sb.append(target);
 
-            //单位
-            sb.append("");
+            //组别
+            sb.append(m_strSort);
             sb.append(target);
 
-            //检录状态-0正常,1-缺考
-            sb.append(0);
+            //项目名称
+            sb.append(item.getItemName());
             sb.append(target);
 
-            //考试状态-0正常，1缓考，2补考
-            sb.append(uploadResults.get(i).getExamState());
+            //项目代码
+            sb.append(item.getItemCode());
             sb.append(target);
 
-            //测试次数
-            sb.append(uploadResults.get(i).getTestNum());
+            //赛次
+            sb.append(m_nLayer);
             sb.append(target);
 
-
-            //最好成绩
-            sb.append(uploadResults.get(i).getResult());
+            //组号
+            sb.append(m_nGrp);
             sb.append(target);
 
-            //最好成绩得分
-            sb.append("");
+            //场次
+            sb.append(m_nField);
             sb.append(target);
 
-            //成绩状态
-            sb.append(uploadResults.get(i).getResultStatus());
+            //开始时间
+            sb.append(m_strBeginTime);
             sb.append(target);
 
-            //测试时间
-            sb.append(DateUtil.formatTime3(uploadResults.get(i).getTestTime()));
+            //考生人数
+            sb.append(uploadResults.size());
+            sb.append(target);
+
+            //分组类型
+            sb.append(m_nGroupType);
+            sb.append(target);
+
+            //项目属性
+            sb.append(m_nProperty);
+            sb.append(target);
+
+            //全能分项名称
+            sb.append(m_strAllEventName);
+            sb.append(target);
+
+            //全能分项属性
+            sb.append(m_nAllProp);
+            sb.append(target);
+
+            //全能分项序号
+            sb.append(m_nAllNum);
+            sb.append(target);
+
+            //风速
+            sb.append(m_strWindSpeed);
+            sb.append(target);
+
+            //专项代码
+            sb.append(m_strSpecialItemCode);
+            sb.append(target);
+
+            //专项名称
+            sb.append(m_strSpecialItemName);
             sb.append(target);
 
             //备注1
@@ -253,50 +181,126 @@ public class TCPResultPackage {
             sb.append("");
             sb.append(target);
 
+
             //备注3
             sb.append("");
             sb.append(target);
+
 
             //备注4
             sb.append("");
             sb.append(target);
 
-            for (int j = 0; j < examRoundResult.size(); j++){
-                //轮次
-                sb.append(examRoundResult.get(j).getRoundNo());
+            for (int i = 0; i < uploadResults.size(); i++)//m_vecExamRoundResult.size();
+            {
+                examRoundResult.clear();
+                examRoundResult.addAll(uploadResults.get(i).getRoundResultList());
+
+                //名次
+                sb.append(0);//考试无
                 sb.append(target);
 
-                //成绩
-                sb.append(examRoundResult.get(j).getResult());
+                //道次
+                sb.append(0);//考试无
                 sb.append(target);
 
-                //状态
-                sb.append(examRoundResult.get(j).getResultStatus());
+                //考生考号
+                sb.append(uploadResults.get(i).getStudentCode());
+                sb.append(target);
+
+                //考生姓名
+                sb.append("");
+                sb.append(target);
+
+                //性别
+                sb.append(-1);
+                sb.append(target);
+
+                //单位
+                sb.append("");
+                sb.append(target);
+
+                //检录状态-0正常,1-缺考
+                sb.append(0);
+                sb.append(target);
+
+                //考试状态-0正常，1缓考，2补考
+                sb.append(uploadResults.get(i).getExamState());
+                sb.append(target);
+
+                //测试次数
+                sb.append(uploadResults.get(i).getTestNum());
+                sb.append(target);
+
+
+                //最好成绩
+                sb.append(uploadResults.get(i).getResult());
+                sb.append(target);
+
+                //最好成绩得分
+                sb.append("");
+                sb.append(target);
+
+                //成绩状态
+                sb.append(uploadResults.get(i).getResultStatus());
                 sb.append(target);
 
                 //测试时间
-                sb.append(DateUtil.formatTime3(examRoundResult.get(j).getTestTime()));
-                sb.append(target);
-
-                //是否为最终成绩
-                sb.append(examRoundResult.get(j).getResultType());
+                sb.append(DateUtil.formatTime3(uploadResults.get(i).getTestTime()));
                 sb.append(target);
 
                 //备注1
-                sb.append(examRoundResult.get(j).getRemark1());
+                sb.append("");
                 sb.append(target);
 
                 //备注2
-                sb.append(examRoundResult.get(j).getRemark2());
+                sb.append("");
                 sb.append(target);
 
                 //备注3
-                sb.append(examRoundResult.get(j).getRemark3());
+                sb.append("");
                 sb.append(target);
-            }
-        }
 
-        strBody=sb.toString();
+                //备注4
+                sb.append("");
+                sb.append(target);
+
+                for (int j = 0; j < examRoundResult.size(); j++) {
+                    //轮次
+                    sb.append(examRoundResult.get(j).getRoundNo());
+                    sb.append(target);
+
+                    //成绩
+                    sb.append(examRoundResult.get(j).getResult());
+                    sb.append(target);
+
+                    //状态
+                    sb.append(examRoundResult.get(j).getResultStatus());
+                    sb.append(target);
+
+                    //测试时间
+                    sb.append(DateUtil.formatTime3(examRoundResult.get(j).getTestTime()));
+                    sb.append(target);
+
+                    //是否为最终成绩
+                    sb.append(examRoundResult.get(j).getResultType());
+                    sb.append(target);
+
+                    //备注1
+                    sb.append(examRoundResult.get(j).getRemark1());
+                    sb.append(target);
+
+                    //备注2
+                    sb.append(examRoundResult.get(j).getRemark2());
+                    sb.append(target);
+
+                    //备注3
+                    sb.append(examRoundResult.get(j).getRemark3());
+                    sb.append(target);
+                }
+            }
+            strBody = sb.toString();
+        }
 
         return SetEncodePackageBuffer(headInfo, strBody, type, bEnCrypt, TCPConst.enmuCommand.CommandStickResult, false);
     }

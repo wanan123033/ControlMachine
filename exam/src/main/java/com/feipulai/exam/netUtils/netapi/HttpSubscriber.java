@@ -668,7 +668,56 @@ public class HttpSubscriber {
         }
     }
 
+    /**
+     * 测试tcp连接
+     */
+    public void sendTestTcp(final Activity activity) {
+        if (tcpClientThread == null) {
+            String tcpIp = SettingHelper.getSystemSetting().getTcpIp();
+            String ipStr = tcpIp.split(":")[0];
+            String portStr = tcpIp.split(":")[1];
+            tcpClientThread = new SendTcpClientThread(ipStr, Integer.parseInt(portStr), new SendTcpClientThread.SendTcpListener() {
+                @Override
+                public void onMsgReceive(String text) {
+                    stopSendTcpThread();
+                }
+
+                @Override
+                public void onSendFail(final String msg) {
+                    stopSendTcpThread();
+                }
+
+                @Override
+                public void onConnectFlag(boolean isConnect) {
+                    if (isConnect) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ToastUtils.showShort("服务器连接成功");
+                            }
+                        });
+                    } else {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ToastUtils.showShort("服务器连接失败");
+                            }
+                        });
+                    }
+                    stopSendTcpThread();
+                }
+            });
+            tcpClientThread.start();
+        } else {
+            if (tcpClientThread.isInterrupted()) {
+                tcpClientThread.start();
+            }
+        }
+    }
+
+
     public void stopSendTcpThread() {
+        Log.i("stopSendTcpThread", "---------");
         if (tcpClientThread != null && tcpClientThread.isAlive()) {
             tcpClientThread.exit = true;
             tcpClientThread.interrupt();
