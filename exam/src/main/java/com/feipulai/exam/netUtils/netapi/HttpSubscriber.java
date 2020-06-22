@@ -545,8 +545,6 @@ public class HttpSubscriber {
         HttpManager.getInstance().toSubscribe(observable,new RequestSub<RoundScoreBean>(new OnResultListener<RoundScoreBean>() {
             @Override
             public void onSuccess(RoundScoreBean result) {
-                Logger.e("-------------单机测试3333333333");
-                Logger.e("-------------getRoundResult===>"+result.toString());
                 if (result.getExist() == 1){
                     List<RoundScoreBean.ScoreBean> scoreBeanList = result.getRoundList();
                     for (RoundScoreBean.ScoreBean score : scoreBeanList){
@@ -610,7 +608,6 @@ public class HttpSubscriber {
 
             @Override
             public void onFault(int code, String errorMsg) {
-                Logger.e("-------------单机测试2222222");
                 ToastUtils.showShort(errorMsg);
                 if (onResultListener != null) {
                     onResultListener.onFault(code,errorMsg);
@@ -777,7 +774,56 @@ public class HttpSubscriber {
         }
     }
 
+    /**
+     * 测试tcp连接
+     */
+    public void sendTestTcp(final Activity activity) {
+        if (tcpClientThread == null) {
+            String tcpIp = SettingHelper.getSystemSetting().getTcpIp();
+            String ipStr = tcpIp.split(":")[0];
+            String portStr = tcpIp.split(":")[1];
+            tcpClientThread = new SendTcpClientThread(ipStr, Integer.parseInt(portStr), new SendTcpClientThread.SendTcpListener() {
+                @Override
+                public void onMsgReceive(String text) {
+                    stopSendTcpThread();
+                }
+
+                @Override
+                public void onSendFail(final String msg) {
+                    stopSendTcpThread();
+                }
+
+                @Override
+                public void onConnectFlag(boolean isConnect) {
+                    if (isConnect) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ToastUtils.showShort("服务器连接成功");
+                            }
+                        });
+                    } else {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ToastUtils.showShort("服务器连接失败");
+                            }
+                        });
+                    }
+                    stopSendTcpThread();
+                }
+            });
+            tcpClientThread.start();
+        } else {
+            if (tcpClientThread.isInterrupted()) {
+                tcpClientThread.start();
+            }
+        }
+    }
+
+
     public void stopSendTcpThread() {
+        Log.i("stopSendTcpThread", "---------");
         if (tcpClientThread != null && tcpClientThread.isAlive()) {
             tcpClientThread.exit = true;
             tcpClientThread.interrupt();

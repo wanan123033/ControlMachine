@@ -18,6 +18,7 @@ import com.feipulai.device.manager.VisionManager;
 import com.feipulai.device.serial.beans.VisionResult;
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
+import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.person.BasePersonTestActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
@@ -28,6 +29,7 @@ import com.feipulai.host.activity.vision.bluetooth.ClientManager;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
+import com.feipulai.host.entity.Student;
 import com.feipulai.host.utils.StringUtility;
 import com.inuker.bluetooth.library.connect.listener.BleConnectStatusListener;
 import com.inuker.bluetooth.library.connect.response.BleConnectResponse;
@@ -134,7 +136,7 @@ public class VisionTestActivity extends BasePersonTestActivity {
     protected void initData() {
         super.initData();
         txtStuSkip.setVisibility(View.VISIBLE);
-        setTestType(1);
+        setTestType(0);
     }
 
     @Override
@@ -154,6 +156,7 @@ public class VisionTestActivity extends BasePersonTestActivity {
         ClientManager.getClient().notify(blueBind.getBluetoothMac(), UUID.fromString(blueBind.getServerUUID())
                 , UUID.fromString(blueBind.getCharacterUUID()), mNotifyRsp);
     }
+
     @Override
     public void sendTestCommand(BaseStuPair baseStuPair) {
         //0xF0 0x3F 0x06 0x32 ID1 ID2 ID3 ID4 CHECK  01100111

@@ -189,7 +189,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         txtStartTest.setText(isBegin == 0 ? R.string.stop_test : R.string.start_test);
     }
 
-    private void refreshDevice() {
+    public void refreshDevice() {
         if (pair.getBaseDevice() != null) {
             if (pair.getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
                 cbDeviceState.setChecked(true);
@@ -315,7 +315,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 
     }
 
-    private void addStudent(Student student) {
+    protected void addStudent(Student student) {
 
         if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
 //            roundNo = 1;
