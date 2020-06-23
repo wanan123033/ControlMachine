@@ -212,7 +212,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
 //            }
             handCheck = hand;
             tmp++;
-        } else if (high.getAngleState() == low.getAngleState()) {
+        } else if (high.getAngleState() == low.getAngleState() && high.getAngleState() < 2) {//在高点时没收到，处理低点
             if (tmp!=0){
                 tmp++;
             }
@@ -321,7 +321,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
                     while (detecting) {
                         if (!linking) {
                             deviceManager.getState(1);
-                            if (timeCount % 10 == 0) {
+                            if (timeCount % 5 == 0) {
                                 sitUpManager.getState(2);
                             }
 //                            sitUpManager.getSitUpHandAngle(2);
@@ -333,7 +333,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
                                 listener.onDeviceConnectState(PullUpManager.STATE_DISCONNECT);
                             }
                             try {
-                                Thread.sleep(500);
+                                Thread.sleep(1000);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
