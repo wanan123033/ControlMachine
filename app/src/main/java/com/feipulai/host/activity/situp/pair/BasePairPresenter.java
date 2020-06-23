@@ -39,8 +39,11 @@ public abstract class BasePairPresenter implements SitUpPairContract.Presenter,
         pairs = CheckUtils.newPairs(getDeviceSum());
         view.initView(isAutoPair(), pairs);
         RadioManager.getInstance().setOnRadioArrived(this);
-        linker = new SitPullLinker(machineCode, TARGET_FREQUENCY, this);
-        linker.startPair(1);
+        if (linker==null){
+            linker = new SitPullLinker(machineCode, TARGET_FREQUENCY, this);
+            linker.startPair(1);
+        }
+
     }
 
     @Override
