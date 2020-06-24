@@ -33,8 +33,10 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
 
     private int testCount = 1;
     private boolean isNextClickStart = true;
+    private boolean isGroup;
     private int deviceId;
     private boolean enable = true;
+    private boolean showGetData;
 
     public void setNextClickStart(boolean nextClickStart) {
         isNextClickStart = nextClickStart;
@@ -46,9 +48,29 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
         addItemType(DeviceDetail.ITEM_MORE, R.layout.item_device_list);
     }
 
+    public DeviceListAdapter(@Nullable List<DeviceDetail> data, boolean isGroup) {
+        super(data);
+        this.isGroup = isGroup;
+        addItemType(DeviceDetail.ITEM_ONE, R.layout.item_device_one_list);
+        addItemType(DeviceDetail.ITEM_MORE, R.layout.item_device_list);
+
+
+    }
 
     public void setTestCount(int testCount) {
         this.testCount = testCount;
+    }
+
+    public void setTxtStartEnable(int deviceId, boolean enable) {
+        this.deviceId = deviceId;
+        this.enable = enable;
+        notifyItemChanged(deviceId - 1);
+    }
+
+    public void setShowGetData(int deviceId, boolean showGetData) {
+        this.deviceId = deviceId;
+        this.showGetData = showGetData;
+        notifyItemChanged(deviceId - 1);
     }
 
     @Override
@@ -108,7 +130,14 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                         item.setDeviceOpen(isChecked);
                     }
                 });
-
+                if (item.isPunish() && item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_END) {
+                    moreHelper.txtPunish.setVisibility(View.VISIBLE);
+                } else {
+                    moreHelper.txtPunish.setVisibility(View.GONE);
+                }
+                moreHelper.txtConfirm.setVisibility(item.isConfirmVisible() ? View.VISIBLE : View.GONE);
+                moreHelper.txtStart.setVisibility(item.isConfirmVisible() ? View.GONE : View.VISIBLE);
+                moreHelper.txtStart.setVisibility(item.isConfirmVisible() ? View.GONE : View.VISIBLE);
 
                 moreHelper.addOnClickListener(R.id.txt_skip).addOnClickListener(R.id.txt_start);
                 moreHelper.addOnClickListener(R.id.txt_punish);
@@ -141,18 +170,22 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
 
             case DeviceDetail.ITEM_ONE:
                 OneViewHolder oneViewHolder = (OneViewHolder) holder;
-
+                if (isGroup) {
+                    oneViewHolder.llStuDetail.setVisibility(View.GONE);
+                } else {
+                    oneViewHolder.llStuDetail.setVisibility(View.VISIBLE);
+                }
                 if (item.getStuDevicePair().getStudent() != null) {
                     oneViewHolder.setText(R.id.txt_stu_sex, item.getStuDevicePair().getStudent().getSex() == 0 ? "男" : "女");
                 } else {
                     oneViewHolder.setText(R.id.txt_stu_sex, "");
-                    oneViewHolder.setText(R.id.txt_test_result,"");
                 }
 //                if (item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_END) {
                 if (item.getStuDevicePair().getResult() == -999) {
                     oneViewHolder.setText(R.id.txt_test_result, "");
                 } else if (item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_END
-                        || item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN) {
+                        || item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_ONUSE ||
+                        item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN) {
                     oneViewHolder.setText(R.id.txt_test_result, item.getStuDevicePair().getResultState() == RoundResult.RESULT_STATE_FOUL ?
                             "X" : ResultDisplayUtils.getStrResultForDisplay(item.getStuDevicePair().getResult()));
                 }
@@ -166,8 +199,40 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                 if (item.getStuDevicePair().getTimeResult() != null) {
                     oneViewHolder.itemTxtTestResult.setText(item.getStuDevicePair().getTimeResult()[0]);
                 }
+                if (testCount == 1) {
+                    oneViewHolder.getView(R.id.view_content1).setVisibility(View.VISIBLE);
+                    oneViewHolder.getView(R.id.view_content2).setVisibility(View.INVISIBLE);
+                    oneViewHolder.getView(R.id.view_content3).setVisibility(View.INVISIBLE);
+                } else if (testCount == 2) {
+                    oneViewHolder.getView(R.id.view_content1).setVisibility(View.VISIBLE);
+                    oneViewHolder.getView(R.id.view_content2).setVisibility(View.VISIBLE);
+                    oneViewHolder.getView(R.id.view_content3).setVisibility(View.INVISIBLE);
+                    oneViewHolder.itemTxtTestResult1.setText(item.getStuDevicePair().getTimeResult()[1]);
+                } else if (testCount == 3) {
+                    oneViewHolder.getView(R.id.view_content1).setVisibility(View.VISIBLE);
+                    oneViewHolder.getView(R.id.view_content2).setVisibility(View.VISIBLE);
+                    oneViewHolder.getView(R.id.view_content3).setVisibility(View.VISIBLE);
+                    oneViewHolder.itemTxtTestResult1.setText(item.getStuDevicePair().getTimeResult()[1]);
+                    oneViewHolder.itemTxtTestResult2.setText(item.getStuDevicePair().getTimeResult()[2]);
+                }
 
-                oneViewHolder.txtStart.setVisibility(isNextClickStart? View.VISIBLE:View.GONE);
+                oneViewHolder.txtStart.setVisibility(item.isConfirmVisible() ? View.GONE : View.VISIBLE);
+
+                if (!isNextClickStart) {
+                    oneViewHolder.txtStart.setVisibility(View.GONE);
+                }
+                if (item.isPunish()) {
+                    oneViewHolder.txtPunish.setVisibility(View.VISIBLE);
+                } else {
+                    oneViewHolder.txtPunish.setVisibility(View.GONE);
+                }
+
+//                if (showGetData) {
+//                    oneViewHolder.txtGetData.setVisibility(View.VISIBLE);
+//                } else {
+//                    oneViewHolder.txtGetData.setVisibility(View.GONE);
+//                }
+
                 oneViewHolder.addOnClickListener(R.id.txt_skip).addOnClickListener(R.id.txt_start);
                 oneViewHolder.addOnClickListener(R.id.txt_punish);
                 if (item.getStuDevicePair() != null) {
@@ -193,6 +258,7 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                     }
 
                 }
+
                 if (item.getStuDevicePair().getBaseDevice().getDeviceId() == deviceId) {
                     oneViewHolder.txtStart.setEnabled(enable);
                 }
@@ -201,11 +267,6 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
 
     }
 
-    public void setTxtStartEnable(int deviceId, boolean enable) {
-        this.deviceId = deviceId;
-        this.enable = enable;
-        notifyItemChanged(deviceId - 1);
-    }
 
     static class MoreViewHolder extends BaseViewHolder {
         @BindView(R.id.cb_device_state)
@@ -220,6 +281,10 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
         TextView txtSkip;
         @BindView(R.id.txt_start)
         TextView txtStart;
+        @BindView(R.id.txt_confirm)
+        TextView txtConfirm;
+        @BindView(R.id.txt_punish)
+        TextView txtPunish;
         @BindView(R.id.item_txt_test_result)
         TextView itemTxtTestResult;
         @BindView(R.id.item_txt_test_result1)
@@ -248,13 +313,16 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
         TextView txtSkip;
         @BindView(R.id.txt_start)
         TextView txtStart;
+        @BindView(R.id.txt_punish)
+        TextView txtPunish;
         @BindView(R.id.item_txt_test_result)
         TextView itemTxtTestResult;
         @BindView(R.id.item_txt_test_result1)
         TextView itemTxtTestResult1;
         @BindView(R.id.item_txt_test_result2)
         TextView itemTxtTestResult2;
-
+//        @BindView(R.id.txt_get_data)
+//        TextView txtGetData;
 
         public OneViewHolder(View view) {
             super(view);

@@ -16,6 +16,7 @@ public class StandJumpLinker
         super(machineCode, targetFrequency, listener, hostId);
     }
 
+    @Override
     public boolean onRadioArrived(Message paramMessage) {
         if (((paramMessage.what == SerialConfigs.STAND_JUMP_FREQUENCY)
                 || (paramMessage.what == SerialConfigs.STAND_JUMP_PARAMETER))) {
@@ -26,4 +27,9 @@ public class StandJumpLinker
         }
         return super.onRadioArrived(paramMessage);
     }
+
+    //    public boolean onRadioArrived(Message paramMessage) {
+
+//        return super.onRadioArrived(paramMessage);
+//    }
 }

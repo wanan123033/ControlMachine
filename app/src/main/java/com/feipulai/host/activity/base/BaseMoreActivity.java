@@ -46,6 +46,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * Created by pengjf on 2019/10/8.
@@ -74,6 +75,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     private ClearHandler clearHandler = new ClearHandler();
     private LedHandler ledHandler = new LedHandler();
     private boolean isNextClickStart = true;
+    private boolean isPenalize;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_base_more;
@@ -232,7 +234,9 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         isNextClickStart = nextClickStart;
         deviceListAdapter.setNextClickStart(nextClickStart);
     }
-
+    public void setFaultEnable(boolean isPenalize) {
+        this.isPenalize = isPenalize;
+    }
     @Override
     public void onCheckIn(Student student) {
         int index = 0;
@@ -254,6 +258,12 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
 
         addStudent(student, index);
+        if (!isNextClickStart) {
+            deviceDetails.get(index).getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
+            deviceDetails.get(index).getStuDevicePair().setResult(-999);
+            deviceListAdapter.notifyItemChanged(index);
+            sendTestCommand(deviceDetails.get(index).getStuDevicePair(), index);
+        }
     }
 
     private void stuSkip(int pos) {
@@ -437,15 +447,57 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                     Logger.i("考生" + pair.getStudent().toString());
                 }
                 Logger.i("设备成绩信息STATE_END==>" + deviceState.toString());
-                pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
-                pair.setCanTest(true);
-                doResult(pair, index);
+                //状态为测试已结束
+                    if (isPenalize && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
+
+                        if (setTestDeviceCount() == 1) {
+                            showPenalize(index);
+                        } else {
+                            deviceDetails.get(index).setConfirmVisible(true);
+                            deviceListAdapter.notifyItemChanged(index);
+                        }
+                    } else {
+                        pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+                        pair.setCanTest(true);
+                        doResult(pair, index);
+                    }
+
+
+
+
+
             }
         }
         refreshDevice(index);
     }
 
-
+    /**
+     * 展示判罚
+     */
+    private void showPenalize(final int index) {
+        final BaseStuPair pair = deviceDetails.get(index).getStuDevicePair();
+        SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
+        alertDialog.setTitleText(getString(R.string.confirm_result));
+        alertDialog.setCancelable(false);
+        alertDialog.setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                updateResult(pair);
+                doResult(pair, index);
+            }
+        }).setCancelText(getString(R.string.foul)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                pair.setResultState(RoundResult.RESULT_STATE_FOUL);
+                updateResult(pair);
+                doResult(pair, index);
+            }
+        }).show();
+        deviceDetails.get(index).setConfirmVisible(false);
+        deviceListAdapter.notifyItemChanged(index);
+    }
     public void refreshDevice(int index) {
         if (deviceDetails.get(index).getStuDevicePair().getBaseDevice() != null) {
             deviceListAdapter.notifyItemChanged(index);

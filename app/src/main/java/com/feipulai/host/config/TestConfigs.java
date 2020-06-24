@@ -15,6 +15,7 @@ import com.feipulai.host.activity.medicine_ball.MedicineBallTestActivity;
 import com.feipulai.host.activity.pullup.PullUpSelectActivity;
 import com.feipulai.host.activity.radio_timer.RunTimerFreeTestActivity;
 import com.feipulai.host.activity.radio_timer.RunTimerTestActivity;
+import com.feipulai.host.activity.ranger.RangerPersonTestActivity;
 import com.feipulai.host.activity.ranger.RangerTestActivity;
 import com.feipulai.host.activity.sitreach.SitReachSelectActivity;
 import com.feipulai.host.activity.sitreach.SitReachTestActivity;
@@ -80,6 +81,7 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_WLJ, VitalTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_YTXS, PullUpSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_SL, VisionTestActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_JGCJ, RangerPersonTestActivity.class);
 
         TestConfigs.freedomActivity.put(ItemDefault.CODE_LDTY, StandJumpSelectActivity.class);
         TestConfigs.freedomActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallSelectActivity.class);

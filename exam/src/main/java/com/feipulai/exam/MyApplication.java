@@ -13,6 +13,7 @@ import com.feipulai.exam.utils.bluetooth.BlueToothHelper;
 import com.kk.taurus.playerbase.config.PlayerConfig;
 import com.kk.taurus.playerbase.config.PlayerLibrary;
 import com.kk.taurus.playerbase.record.PlayRecordManager;
+import com.orhanobut.logger.utils.LogUtils;
 
 
 public class MyApplication extends MultiDexApplication {
@@ -37,6 +38,7 @@ public class MyApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
+        LogUtils.initLogger(true,true);
         CrashHandler.getInstance().init(this);
         SettingHelper.init(this);
         BlueToothHelper.init(this);
