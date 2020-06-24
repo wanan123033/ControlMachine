@@ -947,6 +947,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
     private ArrayList<String> resultTitles = new ArrayList<>();
     private Map<Integer, RoundResult> completeResults = new HashMap<>();
     private BaseVideoView mVideoView;
+    private RelativeLayout rlVideo;
 
     /**
      * 初始化查询成绩pop
@@ -960,6 +961,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                 .setFocusAndOutsideEnable(true)
                 .apply();
         tableResult = mSelectPop.findViewById(R.id.vht_table_result);
+        rlVideo = mSelectPop.findViewById(R.id.rl_video);
 
         tableResultAdapter = new VHTableResultAdapter(mContext, resultTitles, selectResults, new VHTableResultAdapter.OnResultItemLongClick() {
             @Override
@@ -1078,7 +1080,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                 seekTime = 0;
                 hasStart = false;
                 userPause = true;
-                speed=1.0f;
+                speed = 1.0f;
                 ivControl.setImageResource(R.mipmap.ic_video_player_btn_play);
             }
         });
@@ -1118,7 +1120,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                     break;
                 }
             }
-            if (mDataSource.getData().isEmpty()) {
+            if (TextUtils.isEmpty(mDataSource.getData())) {
                 ToastUtils.showShort("找不到录像文件");
                 return;
             }
@@ -1361,7 +1363,9 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             }
             isIntentFlag = false;
         }
-        hkCamera.stopPreview();
+        if (hkCamera != null) {
+            hkCamera.stopPreview();
+        }
     }
 
     @Override
@@ -1393,8 +1397,10 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         }
         DBManager.getInstance().updateGroups(groupList);
 
-        hkCamera.loginOut();
-        hkCamera.clearSdk();
+        if (hkCamera != null) {
+            hkCamera.loginOut();
+            hkCamera.clearSdk();
+        }
 
         if (mVideoView != null) {
             mVideoView.stopPlayback();
@@ -1818,7 +1824,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             return;
         }
 
-        if (!hkCamera.m_bSaveRealData) {
+        if (hkCamera != null && !hkCamera.m_bSaveRealData) {
             hkCamera.startRecord(System.currentTimeMillis());
         }
 
@@ -1914,7 +1920,9 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                     if (timingLists.get(i).getState() == TIMING_STATE_WAITING || timingLists.get(i).getState() == TIMING_STATE_TIMING) {
                         break;
                     } else if (i == timingLists.size() - 1) {
-                        hkCamera.stopRecord(System.currentTimeMillis());
+                        if (hkCamera != null) {
+                            hkCamera.stopRecord(System.currentTimeMillis());
+                        }
                     }
                 }
 

@@ -18,11 +18,11 @@
         android:layout_marginBottom="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
-        android:layout_weight="1">
+        android:layout_weight="1.2">
 
         <com.feipulai.exam.activity.MiddleDistanceRace.vhtableview.VHTableView
             android:id="@+id/vht_table_result"
-            android:layout_width="385dp"
+            android:layout_width="420dp"
             android:layout_height="match_parent"
             android:layout_below="@+id/tv_notice"
             android:background="@color/background_color"
@@ -30,7 +30,7 @@
 
         <TextView
             android:id="@+id/tv_notice"
-            android:layout_width="385dp"
+            android:layout_width="420dp"
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:gravity="center"
@@ -48,6 +48,7 @@
     <!--android:layout_weight="1" />-->
 
     <RelativeLayout
+        android:id="@+id/rl_video"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginBottom="10dp"

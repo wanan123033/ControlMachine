@@ -948,7 +948,7 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
                 seekTime = 0;
                 hasStart = false;
                 userPause = true;
-                speed=1.0f;
+                speed = 1.0f;
                 ivControl.setImageResource(R.mipmap.ic_video_player_btn_play);
             }
         });
@@ -988,7 +988,7 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
                     break;
                 }
             }
-            if (mDataSource.getData().isEmpty()) {
+            if (TextUtils.isEmpty(mDataSource.getData())){
                 ToastUtils.showShort("找不到录像文件");
                 return;
             }
@@ -1234,7 +1234,9 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
             }
             isIntentFlag = false;
         }
-        hkCamera.stopPreview();
+        if (hkCamera != null) {
+            hkCamera.stopPreview();
+        }
     }
 
     @Override
@@ -1266,8 +1268,10 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
         }
         DBManager.getInstance().updateGroups(groupList);
 
-        hkCamera.loginOut();
-        hkCamera.clearSdk();
+        if (hkCamera != null) {
+            hkCamera.loginOut();
+            hkCamera.clearSdk();
+        }
 
         if (mVideoView != null) {
             mVideoView.stopPlayback();
@@ -1662,7 +1666,7 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
             return;
         }
 
-        if (!hkCamera.m_bSaveRealData) {
+        if (hkCamera != null && !hkCamera.m_bSaveRealData) {
             hkCamera.startRecord(System.currentTimeMillis());
         }
 
@@ -1759,7 +1763,9 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
                     if (timingLists.get(i).getState() == TIMING_STATE_WAITING || timingLists.get(i).getState() == TIMING_STATE_TIMING) {
                         break;
                     } else if (i == timingLists.size() - 1) {
-                        hkCamera.stopRecord(System.currentTimeMillis());
+                        if (hkCamera != null) {
+                            hkCamera.stopRecord(System.currentTimeMillis());
+                        }
                     }
                 }
 
