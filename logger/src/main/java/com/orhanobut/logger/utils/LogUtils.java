@@ -72,7 +72,7 @@ public class LogUtils {
     /**
      * 发送接收日志打印
      *
-     * @param message`
+     * @param message
      */
     public static void normal(String message) {
         Logger.t(NORMAL_TAG).i(message);

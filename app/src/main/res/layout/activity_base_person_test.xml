@@ -107,7 +107,15 @@
                     android:layout_alignParentBottom="true"
                     android:background="@mipmap/icon_device_bg"
                     android:gravity="right">
-
+                    <TextView
+                        android:id="@+id/tv_device_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:text="设备蓝牙名称:"
+                        android:layout_gravity="center_vertical"
+                        android:visibility="gone"
+                        android:textSize="16sp"/>
                     <LinearLayout
                         android:id="@+id/ll_state"
                         android:layout_width="wrap_content"

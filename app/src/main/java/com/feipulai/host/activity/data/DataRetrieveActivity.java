@@ -552,6 +552,9 @@ public class DataRetrieveActivity extends BaseTitleActivity
             return "-1000";
         } else {
             RoundResult result = DBManager.getInstance().queryResultsByStudentCodeIsLastResult(studentCode);
+            if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_SL){
+                return result != null ? ("左"+ResultDisplayUtils.getStrResultForDisplay(result.getResult())+",右"+ResultDisplayUtils.getStrResultForDisplay(result.getWeightResult())):"";
+            }
             return result != null ? (result.getResultState() == RoundResult.RESULT_STATE_FOUL ? "X" : result.getResult()) + "" : "-1000";
         }
 

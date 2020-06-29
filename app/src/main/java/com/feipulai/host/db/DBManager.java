@@ -912,7 +912,7 @@ public class DBManager {
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.IsLastResult.eq("1"))
-                .unique();
+                 .unique();
     }
 
     public List<RoundResult> queryResultsByStuItem(StudentItem stuItem) {
