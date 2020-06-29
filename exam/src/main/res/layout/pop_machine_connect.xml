@@ -13,10 +13,87 @@
         android:background="@drawable/bg_edittext"
         android:orientation="vertical"
         android:padding="20dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="摄像头IP：  "
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/et_camera_ip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_search_bg3"
+                android:paddingStart="6dp"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="账号："
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/et_hk_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/edit_search_bg3"
+                android:paddingStart="6dp"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="密码："
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/et_hk_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/edit_search_bg3"
+                android:paddingStart="6dp"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_start_camera"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/btn_background"
+            android:text="连接摄像头"
+            android:textColor="@color/white"
+            android:textSize="15sp" />
+
         <RadioGroup
             android:id="@+id/rg_machine_version"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:visibility="gone">
 
             <RadioButton
                 android:id="@+id/rb_low"
@@ -45,7 +122,7 @@
         android:layout_margin="@dimen/dp_10"
         android:background="@drawable/bg_edittext"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="25dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -63,6 +140,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/edit_search_bg3"
+                android:paddingStart="6dp"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -85,6 +163,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/edit_search_bg2"
                 android:inputType="number"
+                android:paddingStart="6dp"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -101,31 +180,33 @@
             android:id="@+id/et_server_port"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:background="@drawable/edit_search_bg2"
             android:hint="端口"
             android:inputType="number"
-            android:paddingStart="5dp"
+            android:paddingStart="6dp"
             android:textSize="16sp" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
+        <!--<LinearLayout-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="20dp"-->
+        <!--android:orientation="horizontal">-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="摄像头IP：  "
-                android:textSize="16sp" />
+        <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="摄像头IP：  "-->
+        <!--android:textSize="16sp" />-->
 
-            <EditText
-                android:id="@+id/et_camera_ip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/edit_search_bg3"
-                android:textSize="16sp" />
-        </LinearLayout>
+        <!--<EditText-->
+        <!--android:id="@+id/et_camera_ip"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="@drawable/edit_search_bg3"-->
+        <!--android:paddingStart="6dp"-->
+        <!--android:textSize="16sp" />-->
+        <!--</LinearLayout>-->
 
     </LinearLayout>
 
@@ -140,7 +221,7 @@
         <Button
             android:id="@+id/btn_connect_machine"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:background="@drawable/btn_background"
             android:text="连接设备"
             android:textColor="@color/white"
@@ -149,7 +230,7 @@
         <Button
             android:id="@+id/btn_disconnect_machine"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/btn_background"
             android:text="断开设备"
@@ -159,7 +240,7 @@
         <Button
             android:id="@+id/btn_sync_time"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/btn_background"
             android:text="同步时间"
@@ -169,21 +250,22 @@
         <Button
             android:id="@+id/btn_start_server"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/btn_background"
             android:text="开启服务器"
             android:textColor="@color/white"
             android:textSize="16sp" />
-        <Button
-            android:id="@+id/btn_start_camera"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/btn_background"
-            android:text="连接摄像头"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
+
+        <!--<Button-->
+        <!--android:id="@+id/btn_start_camera"-->
+        <!--android:layout_width="100dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="20dp"-->
+        <!--android:background="@drawable/btn_background"-->
+        <!--android:text="连接摄像头"-->
+        <!--android:textColor="@color/white"-->
+        <!--android:textSize="16sp" />-->
 
     </LinearLayout>
 

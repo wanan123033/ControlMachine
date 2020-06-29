@@ -14,18 +14,12 @@ import com.hcnetsdk.jna.HCNetSDKByJNA;
 import com.hcnetsdk.jna.HCNetSDKJNAInstance;
 import com.hikvision.netsdk.ExceptionCallBack;
 import com.hikvision.netsdk.HCNetSDK;
-import com.hikvision.netsdk.NET_DVR_CONFIG;
 import com.hikvision.netsdk.NET_DVR_DEVICEINFO_V30;
-import com.hikvision.netsdk.NET_DVR_IPPARACFG_V40;
 import com.hikvision.netsdk.NET_DVR_PREVIEWINFO;
-import com.hikvision.netsdk.NET_DVR_SDKLOCAL_CFG;
 import com.hikvision.netsdk.NET_DVR_TIME;
-import com.sun.jna.Pointer;
 import com.ww.fpl.videolibrary.play.util.PUtil;
 
 import java.io.File;
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -84,9 +78,14 @@ public class HkCameraManager {
 
     /**
      * 第二步连接海康监控
+     *
+     * @param user
+     * @param password
      */
-    public boolean login2HK() {
+    public boolean login2HK(String user, String password) {
         try {
+            this.strUser = user;
+            this.strPsd = password;
             if (m_iLogID < 0) {
                 // login on the device
                 m_iLogID = loginDevice();
@@ -224,6 +223,9 @@ public class HkCameraManager {
         m_oNetDvrDeviceInfoV30 = new NET_DVR_DEVICEINFO_V30();
         if (null == m_oNetDvrDeviceInfoV30) {
             Log.e(TAG, "HKNetDvrDeviceInfoV30 new is failed!");
+            return -1;
+        }
+        if (TextUtils.isEmpty(strUser) || TextUtils.isEmpty(strPsd) || TextUtils.isEmpty(strIP)) {
             return -1;
         }
         int iLogID = HCNetSDK.getInstance().NET_DVR_Login_V30(strIP, nPort, strUser, strPsd, m_oNetDvrDeviceInfoV30);

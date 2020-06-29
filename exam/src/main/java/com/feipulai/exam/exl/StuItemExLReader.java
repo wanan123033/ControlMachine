@@ -538,6 +538,7 @@ public class StuItemExLReader extends ExlReader {
             groupItem.setGroupNo(bean.getGroupNo());
 //            DBManager.getInstance().insertGroupItem(groupItem);
             groupItemList.add(groupItem);
+            Logger.i(groupItem.toString());
         }
 
         // 插入学生信息

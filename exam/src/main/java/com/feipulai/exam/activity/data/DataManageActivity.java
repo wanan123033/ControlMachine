@@ -20,6 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arcsoft.face.util.ImageUtils;
+import com.arcsoft.imageutil.ArcSoftImageFormat;
+import com.arcsoft.imageutil.ArcSoftImageUtil;
+import com.arcsoft.imageutil.ArcSoftImageUtilError;
 import com.feipulai.common.db.ClearDataProcess;
 import com.feipulai.common.db.DataBaseExecutor;
 import com.feipulai.common.db.DataBaseRespon;
@@ -561,8 +564,8 @@ public class DataManageActivity
         final File[] jpgFiles = dir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                return name.endsWith(FaceServer.IMG_SUFFIX) || name.endsWith(FaceServer.IMG_SUFFIX2)
-                        || name.endsWith(FaceServer.IMG_SUFFIX.toUpperCase()) || name.endsWith(FaceServer.IMG_SUFFIX2.toUpperCase());
+                return name.endsWith(FaceServer.IMG_SUFFIX_JPG) || name.endsWith(FaceServer.IMG_SUFFIX_PNG)
+                        || name.endsWith(FaceServer.IMG_SUFFIX_JPG.toUpperCase()) || name.endsWith(FaceServer.IMG_SUFFIX_PNG.toUpperCase());
             }
         });
         executorService.execute(new Runnable() {
@@ -589,7 +592,9 @@ public class DataManageActivity
                         }
                     });
                     final File jpgFile = jpgFiles[i];
-                    Bitmap bitmap = BitmapFactory.decodeFile(jpgFile.getAbsolutePath());
+//                    Bitmap bitmap = BitmapFactory.decodeFile(jpgFile.getAbsolutePath());
+                    //路径获取图片。并对图片做缩小处理
+                    Bitmap bitmap = ImageUtil.getSmallBitmap(jpgFile.getAbsolutePath());
                     if (bitmap == null) {
 //                        File failedFile = new File(file + File.separator + jpgFile.getName());
 ////                        if (!failedFile.getParentFile().exists()) {
@@ -603,7 +608,8 @@ public class DataManageActivity
                         student.setPortrait(ImageUtil.bitmapToStrByBase64(bitmap));
                         DBManager.getInstance().updateStudent(student);
                     }
-                    bitmap = ImageUtils.alignBitmapForBgr24(bitmap);
+//                    bitmap = ImageUtils.alignBitmapForBgr24(bitmap);
+                    bitmap = ArcSoftImageUtil.getAlignedBitmap(bitmap, true);
                     if (bitmap == null) {
 //                        File failedFile = new File(file + File.separator + jpgFile.getName());
 //                        if (!failedFile.getParentFile().exists()) {
@@ -612,7 +618,13 @@ public class DataManageActivity
 //                        jpgFile.renameTo(failedFile);
                         continue;
                     }
-                    byte[] bgr24 = ImageUtils.bitmapToBgr24(bitmap);
+
+                    byte[] bgr24 = ArcSoftImageUtil.createImageData(bitmap.getWidth(), bitmap.getHeight(), ArcSoftImageFormat.BGR24);
+                    int transformCode = ArcSoftImageUtil.bitmapToImageData(bitmap, bgr24, ArcSoftImageFormat.BGR24);
+                    if (transformCode != ArcSoftImageUtilError.CODE_SUCCESS) {
+                        continue;
+                    }
+//                    byte[] bgr24 = ImageUtils.bitmapToBgr24(bitmap);
                     boolean success = FaceServer.getInstance().registerBgr24(DataManageActivity.this, bgr24, bitmap.getWidth(), bitmap.getHeight(),
                             jpgFile.getName().substring(0, jpgFile.getName().lastIndexOf(".")));
                     if (!success) {

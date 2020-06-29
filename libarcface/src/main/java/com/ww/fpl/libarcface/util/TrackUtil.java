@@ -6,7 +6,7 @@ import java.util.List;
 
 public class TrackUtil {
 
-    public static boolean isSameFace(FaceInfo faceInfo1,FaceInfo faceInfo2) {
+    public static boolean isSameFace(FaceInfo faceInfo1, FaceInfo faceInfo2) {
         return faceInfo1.getFaceId() == faceInfo2.getFaceId();
     }
 

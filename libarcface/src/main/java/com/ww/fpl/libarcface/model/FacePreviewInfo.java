@@ -1,16 +1,13 @@
 package com.ww.fpl.libarcface.model;
 
 import com.arcsoft.face.FaceInfo;
-import com.arcsoft.face.LivenessInfo;
 
 public class FacePreviewInfo {
     private FaceInfo faceInfo;
-    private LivenessInfo livenessInfo;
     private int trackId;
 
-    public FacePreviewInfo(FaceInfo faceInfo, LivenessInfo livenessInfo, int trackId) {
+    public FacePreviewInfo(FaceInfo faceInfo, int trackId) {
         this.faceInfo = faceInfo;
-        this.livenessInfo = livenessInfo;
         this.trackId = trackId;
     }
 
@@ -22,13 +19,6 @@ public class FacePreviewInfo {
         this.faceInfo = faceInfo;
     }
 
-    public LivenessInfo getLivenessInfo() {
-        return livenessInfo;
-    }
-
-    public void setLivenessInfo(LivenessInfo livenessInfo) {
-        this.livenessInfo = livenessInfo;
-    }
 
     public int getTrackId() {
         return trackId;
@@ -36,5 +26,13 @@ public class FacePreviewInfo {
 
     public void setTrackId(int trackId) {
         this.trackId = trackId;
+    }
+
+    @Override
+    public String toString() {
+        return "FacePreviewInfo{" +
+                "faceInfo=" + faceInfo +
+                ", trackId=" + trackId +
+                '}';
     }
 }

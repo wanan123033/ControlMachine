@@ -1,20 +1,18 @@
 package com.ww.fpl.libarcface.util;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.hardware.Camera;
 
-import com.arcsoft.face.LivenessInfo;
 import com.ww.fpl.libarcface.model.DrawInfo;
 import com.ww.fpl.libarcface.widget.FaceRectView;
 
 import java.util.List;
 
 /**
- * 绘制人脸框帮助类，用于在{@link com.ww.fpl.libarcface.widget.FaceRectView}上绘制矩形
+ * 绘制人脸框帮助类，用于绘制矩形
  */
 public class DrawHelper {
     private int previewWidth, previewHeight, canvasWidth, canvasHeight, cameraDisplayOrientation, cameraId;
@@ -58,8 +56,6 @@ public class DrawHelper {
         }
         faceRectView.addFaceInfo(drawInfoList);
     }
-
-
 
     /**
      * 调整人脸框用来绘制
@@ -171,175 +167,58 @@ public class DrawHelper {
         return newRect;
     }
 
-    public Rect adjustRect2(Rect ftRect) {
-        int previewWidth = this.previewWidth;
-        int previewHeight = this.previewHeight;
-        int canvasWidth = this.canvasWidth;
-        int canvasHeight = this.canvasHeight;
-        int cameraDisplayOrientation = this.cameraDisplayOrientation;
-        int cameraId = this.cameraId;
-        boolean isMirror = this.isMirror;
-        boolean mirrorHorizontal = this.mirrorHorizontal;
-        boolean mirrorVertical = this.mirrorVertical;
-
-        if (ftRect == null) {
-            return null;
-        }
-
-        Rect rect = new Rect(ftRect);
-
-        float widthRatio = (float) canvasWidth / (float) previewWidth;
-        float heightRatio = (float) canvasHeight / (float) previewHeight;
-
-        if (cameraDisplayOrientation == 0 || cameraDisplayOrientation == 180 ){
-            rect.left *= widthRatio;
-            rect.right *= widthRatio;
-            rect.top *= heightRatio;
-            rect.bottom *= heightRatio;
-        }else {
-            rect.left *= (float) canvasHeight / (float) previewWidth;
-            rect.right *= (float) canvasHeight / (float) previewWidth;
-            rect.top *= (float) canvasWidth / (float) previewHeight;
-            rect.bottom *= (float) canvasWidth / (float) previewHeight;
-        }
-
-//        if (cameraDisplayOrientation % 180 == 0) {
-//            horizontalRatio = (float) canvasWidth / (float) previewWidth;
-//            verticalRatio = (float) canvasHeight / (float) previewHeight;
-//        } else {
-//            horizontalRatio = (float) canvasHeight / (float) previewWidth;
-//            verticalRatio = (float) canvasWidth / (float) previewHeight;
-//        }
-//        rect.left *= horizontalRatio;
-//        rect.right *= horizontalRatio;
-//        rect.top *= verticalRatio;
-//        rect.bottom *= verticalRatio;
-
-        Rect newRect = new Rect();
-        switch (cameraDisplayOrientation) {
-            case 0:
-                if (cameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                    newRect.left = canvasWidth - rect.right;
-                    newRect.right = canvasWidth - rect.left;
-                } else {
-                    newRect.left = rect.left;
-                    newRect.right = rect.right;
-                }
-                newRect.top = rect.top;
-                newRect.bottom = rect.bottom;
-                break;
-            case 90:
-                newRect.right = canvasWidth - rect.top;
-                newRect.left = canvasWidth - rect.bottom;
-                if (cameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                    newRect.top = canvasHeight - rect.right;
-                    newRect.bottom = canvasHeight - rect.left;
-                } else {
-                    newRect.top = rect.left;
-                    newRect.bottom = rect.right;
-                }
-                break;
-            case 180:
-                newRect.top = canvasHeight - rect.bottom;
-                newRect.bottom = canvasHeight - rect.top;
-                if (cameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                    newRect.left = rect.left;
-                    newRect.right = rect.right;
-                } else {
-                    newRect.left = canvasWidth - rect.right;
-                    newRect.right = canvasWidth - rect.left;
-                }
-                break;
-            case 270:
-                newRect.left = rect.top;
-                newRect.right = rect.bottom;
-                if (cameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                    newRect.top = rect.left;
-                    newRect.bottom = rect.right;
-                } else {
-                    newRect.top = canvasHeight - rect.right;
-                    newRect.bottom = canvasHeight - rect.left;
-                }
-                break;
-            default:
-                break;
-        }
-
-        /**
-         * isMirror mirrorHorizontal finalIsMirrorHorizontal
-         * true         true                false
-         * false        false               false
-         * true         false               true
-         * false        true                true
-         *
-         * XOR
-         */
-        if (isMirror ^ mirrorHorizontal) {
-            int left = newRect.left;
-            int right = newRect.right;
-            newRect.left = canvasWidth - right;
-            newRect.right = canvasWidth - left;
-        }
-        if (mirrorVertical) {
-            int top = newRect.top;
-            int bottom = newRect.bottom;
-            newRect.top = canvasHeight - bottom;
-            newRect.bottom = canvasHeight - top;
-        }
-        return newRect;
-    }
-
-
     /**
-     * 绘制数据信息到view上，若 {@link DrawInfo#name} 不为null则绘制 {@link DrawInfo#name}
+     * 绘制数据信息到view上，若 {@link DrawInfo#getName()} 不为null则绘制 {@link DrawInfo#getName()}
      *
      * @param canvas            需要被绘制的view的canvas
      * @param drawInfo          绘制信息
-     * @param color             rect的颜色
      * @param faceRectThickness 人脸框厚度
+     * @param paint             画笔
      */
-    public static void drawFaceRect(Canvas canvas, DrawInfo drawInfo, int color, int faceRectThickness) {
+    public static void drawFaceRect(Canvas canvas, DrawInfo drawInfo, int faceRectThickness, Paint paint) {
         if (canvas == null || drawInfo == null) {
             return;
         }
-        Paint paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(faceRectThickness);
-        if (drawInfo.getLiveness() == LivenessInfo.NOT_ALIVE){
-            paint.setColor(Color.RED);
-        }else  if (drawInfo.getLiveness() == LivenessInfo.ALIVE){
-            paint.setColor(Color.GREEN);
-        }else {
-            paint.setColor(color);
-        }
+        paint.setColor(drawInfo.getColor());
+        paint.setAntiAlias(true);
+
         Path mPath = new Path();
-        //左上
+        // 左上
         Rect rect = drawInfo.getRect();
         mPath.moveTo(rect.left, rect.top + rect.height() / 4);
         mPath.lineTo(rect.left, rect.top);
         mPath.lineTo(rect.left + rect.width() / 4, rect.top);
-        //右上
+        // 右上
         mPath.moveTo(rect.right - rect.width() / 4, rect.top);
         mPath.lineTo(rect.right, rect.top);
         mPath.lineTo(rect.right, rect.top + rect.height() / 4);
-        //右下
+        // 右下
         mPath.moveTo(rect.right, rect.bottom - rect.height() / 4);
         mPath.lineTo(rect.right, rect.bottom);
         mPath.lineTo(rect.right - rect.width() / 4, rect.bottom);
-        //左下
+        // 左下
         mPath.moveTo(rect.left + rect.width() / 4, rect.bottom);
         mPath.lineTo(rect.left, rect.bottom);
         mPath.lineTo(rect.left, rect.bottom - rect.height() / 4);
         canvas.drawPath(mPath, paint);
 
+        // 绘制文字，用最细的即可，避免在某些低像素设备上文字模糊
+        paint.setStrokeWidth(1);
 
+        if (drawInfo.getName() != null) {
+            paint.setStyle(Paint.Style.FILL_AND_STROKE);
+            paint.setTextSize(rect.width() / 8);
+            canvas.drawText(drawInfo.getName(), rect.left, rect.top - 10, paint);
+        }
 //        if (drawInfo.getName() == null) {
 //            paint.setStyle(Paint.Style.FILL_AND_STROKE);
 //            paint.setTextSize(rect.width() / 8);
 //
 //            String str = (drawInfo.getSex() == GenderInfo.MALE ? "MALE" : (drawInfo.getSex() == GenderInfo.FEMALE ? "FEMALE" : "UNKNOWN"))
 //                    + ","
-//                    + (drawInfo.getAge() == AgeInfo.UNKNOWN_AGE ? "UNKNWON" : drawInfo.getAge())
+//                    + (drawInfo.getAge() == AgeInfo.UNKNOWN_AGE ? "UNKNOWN" : drawInfo.getAge())
 //                    + ","
 //                    + (drawInfo.getLiveness() == LivenessInfo.ALIVE ? "ALIVE" : (drawInfo.getLiveness() == LivenessInfo.NOT_ALIVE ? "NOT_ALIVE" : "UNKNOWN"));
 //            canvas.drawText(str, rect.left, rect.top - 10, paint);

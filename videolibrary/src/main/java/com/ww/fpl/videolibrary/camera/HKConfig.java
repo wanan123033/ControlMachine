@@ -6,6 +6,8 @@ package com.ww.fpl.videolibrary.camera;
  */
 public class HKConfig {
     public static int HK_PORT=8000;
+    public static String HK_USER_PRE="hk_user";
     public static String HK_USER="admin";
+    public static String HK_PSW_PRE="hk_psw";
     public static String HK_PSW="fpl12345";
 }

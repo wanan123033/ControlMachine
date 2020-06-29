@@ -38,6 +38,7 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:3.0.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile files('libs/arcsoft_face.jar')
     compile 'com.android.support:recyclerview-v7:26.1.0'
+    compile files('libs/arcsoft_image_util.jar')
+    compile files('libs/arcsoft_face.jar')
 }

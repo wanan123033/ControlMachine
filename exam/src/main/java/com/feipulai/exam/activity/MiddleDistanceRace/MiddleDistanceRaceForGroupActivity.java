@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -128,7 +129,9 @@ import static com.feipulai.exam.config.SharedPrefsConfigs.MIDDLE_RACE_TIME_SPAN;
 import static com.feipulai.exam.config.SharedPrefsConfigs.SPAN_TIME;
 import static com.ww.fpl.videolibrary.camera.HKConfig.HK_PORT;
 import static com.ww.fpl.videolibrary.camera.HKConfig.HK_PSW;
+import static com.ww.fpl.videolibrary.camera.HKConfig.HK_PSW_PRE;
 import static com.ww.fpl.videolibrary.camera.HKConfig.HK_USER;
+import static com.ww.fpl.videolibrary.camera.HKConfig.HK_USER_PRE;
 
 /**
  * @author ww
@@ -271,6 +274,11 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
     private ImageView ivControl;
     private VHTableView tableResult;
     private VHTableResultAdapter tableResultAdapter;
+    private EditText etHKUser;
+    private EditText etHKPassWord;
+    private String hk_user;
+    private String hk_psw;
+    private RelativeLayout rlVideo;
 
     @Override
     protected int setLayoutResID() {
@@ -342,6 +350,8 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
         machine_ip = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MACHINE_IP, "");
         machine_port = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MACHINE_PORT, "1401");
         server_Port = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MACHINE_SERVER_PORT, "4040");
+        hk_user = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, HK_USER_PRE, HK_USER);
+        hk_psw = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, HK_PSW_PRE, HK_PSW);
         lastServiceTime = SharedPrefsUtil.getValue(mContext, MyTcpService.SERVICE_CONNECT, MyTcpService.SERVICE_CONNECT, 0L);
         //所有组信息recycleView
         groupAdapter = new MiddleRaceGroupAdapter(groupItemBeans);
@@ -496,6 +506,7 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
             groupItemBeans.clear();
             groupAdapter.notifyDataSetChanged();
         } else {
+            TestConfigs.sCurrentItem.setItemCode(itemCode);
             DataBaseExecutor.addTask(new DataBaseTask(mContext, getString(R.string.loading_hint), true) {
                 @Override
                 public DataBaseRespon executeOper() {
@@ -668,6 +679,8 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
                 .apply();
         etIP = mMachinePop.findViewById(R.id.et_machine_ip);
         etPort = mMachinePop.findViewById(R.id.et_machine_port);
+        etHKUser = mMachinePop.findViewById(R.id.et_hk_user);
+        etHKPassWord = mMachinePop.findViewById(R.id.et_hk_password);
         btnConnect = mMachinePop.findViewById(R.id.btn_connect_machine);
         Button btndisConnect = mMachinePop.findViewById(R.id.btn_disconnect_machine);
         btnSyncTime = mMachinePop.findViewById(R.id.btn_sync_time);
@@ -679,6 +692,8 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
         final EditText cameraIP = mMachinePop.findViewById(R.id.et_camera_ip);
 
 
+        etHKUser.setText(hk_user);
+        etHKPassWord.setText(hk_psw);
         etIP.setText(machine_ip);
         etIP.setSelection(machine_ip.length());
         etPort.setText(machine_port);
@@ -769,7 +784,7 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
                 }
                 hkCamera.setStrIP(cameraIP.getText().toString());
                 if (hkInit) {
-                    hkCamera.login2HK();
+                    hkCamera.login2HK(etHKUser.getText().toString(), etHKPassWord.getText().toString());
                     mHander.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -789,6 +804,8 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
                 SharedPrefsUtil.putValue(mContext, MIDDLE_RACE, MACHINE_PORT, etPort.getText().toString());
                 SharedPrefsUtil.putValue(mContext, MIDDLE_RACE, MACHINE_SERVER_PORT, serverPort.getText().toString());
                 SharedPrefsUtil.putValue(mContext, MIDDLE_RACE, CAMERA_IP, cameraIP.getText().toString());
+                SharedPrefsUtil.putValue(mContext, MIDDLE_RACE, HK_USER_PRE, etHKUser.getText().toString().trim());
+                SharedPrefsUtil.putValue(mContext, MIDDLE_RACE, HK_PSW_PRE, etHKPassWord.getText().toString().trim());
             }
         });
     }
@@ -817,7 +834,7 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
     private boolean hasStart = false;
     private boolean userPause = true;
     private ArrayList<String> resultTitles = new ArrayList<>();
-
+    private String[] timeLong;
     /**
      * 初始化查询成绩pop
      */
@@ -865,7 +882,28 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
         btnVideoPlay = mSelectPop.findViewById(R.id.btn_video_play);
         btnVideoStartPause = mSelectPop.findViewById(R.id.btn_video_start_pause);
         ivControl = mSelectPop.findViewById(R.id.iv_video_control);
+        rlVideo = mSelectPop.findViewById(R.id.rl_video);
 
+//        String startTime = groupItemBeans.get(groupPosition).getGroup().getRemark1();
+//        if (TextUtils.isEmpty(startTime)) {
+//            rlVideo.setVisibility(View.GONE);
+//        }else {
+//            List<String> paths = PUtil.getFilesAllName(hkCamera.PATH);
+//            timeLong = new String[0];
+//            for (String path : paths
+//                    ) {
+//                timeLong = path.replace(".mp4", "").split("_");
+//                if (timeLong.length == 2 && Long.parseLong(startTime) >= Long.parseLong(timeLong[0]) && Long.parseLong(startTime) <= Long.parseLong(timeLong[1])) {
+//                    mDataSource.setData(hkCamera.PATH + path);
+//                    mDataSource.setTitle("发令时刻：" + DateUtil.formatTime2(Long.parseLong(startTime), "yyyy/MM/dd HH:mm:ss:SSS"));
+//                    break;
+//                }
+//            }
+//            if (TextUtils.isEmpty(mDataSource.getData())) {
+//                rlVideo.setVisibility(View.GONE);
+//                return;
+//            }
+//        }
         updateVideo();
 
         ivControl.setOnClickListener(new View.OnClickListener() {
@@ -988,7 +1026,7 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
                     break;
                 }
             }
-            if (TextUtils.isEmpty(mDataSource.getData())){
+            if (TextUtils.isEmpty(mDataSource.getData())) {
                 ToastUtils.showShort("找不到录像文件");
                 return;
             }
@@ -1147,10 +1185,10 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
             @Override
             public void run() {
                 if (hkCamera == null) {
-                    hkCamera = new HkCameraManager(MiddleDistanceRaceForGroupActivity.this, camera_ip, HK_PORT, HK_USER, HK_PSW);
+                    hkCamera = new HkCameraManager(MiddleDistanceRaceForGroupActivity.this, camera_ip, HK_PORT, hk_user, hk_psw);
                     hkInit = hkCamera.initeSdk();
                     if (hkInit) {
-                        hkCamera.login2HK();
+                        hkCamera.login2HK(etHKUser.getText().toString(), etHKPassWord.getText().toString());
                         mHander.postDelayed(new Runnable() {
                             @Override
                             public void run() {

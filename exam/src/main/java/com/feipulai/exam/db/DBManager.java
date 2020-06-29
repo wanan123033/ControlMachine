@@ -2044,7 +2044,7 @@ public class DBManager {
 
     /**
      * 同机器码多项目查询所有日程
-     *
+     * 中长跑方法
      * @return
      */
     public List<Schedule> queryCurrentSchedules() {
@@ -2052,7 +2052,6 @@ public class DBManager {
                 .where(ItemDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(ItemDao.Properties.ItemCode.isNotNull())
                 .list();
-        Log.i("queryCurrentSchedules", items.toString());
         List<ItemSchedule> itemSchedules = new ArrayList<>();
         for (Item item : items
                 ) {
@@ -2348,16 +2347,44 @@ public class DBManager {
     }
 
 
+    /**
+     * 公共部分代码包含中长跑项目
+     * 中长跑不能使用TestConfigs.getCurrentItemCode()
+     * @param group
+     * @param studentCode
+     * @return
+     */
     public GroupItem getItemStuGroupItem(Group group, String studentCode) {
-        return groupItemDao.queryBuilder()
-                .where(GroupItemDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
-                .where(GroupItemDao.Properties.ScheduleNo.eq(group.getScheduleNo()))
-                .where(GroupItemDao.Properties.GroupType.eq(group.getGroupType()))
-                .where(GroupItemDao.Properties.SortName.eq(group.getSortName()))
-                .where(GroupItemDao.Properties.GroupNo.eq(group.getGroupNo()))
-                .where(GroupItemDao.Properties.StudentCode.eq(studentCode))
-                .unique();
+        if(TestConfigs.sCurrentItem.getMachineCode()==ItemDefault.CODE_ZCP){
+            return groupItemDao.queryBuilder()
+                    .where(GroupItemDao.Properties.ItemCode.eq(group.getItemCode()))
+                    .where(GroupItemDao.Properties.ScheduleNo.eq(group.getScheduleNo()))
+                    .where(GroupItemDao.Properties.GroupType.eq(group.getGroupType()))
+                    .where(GroupItemDao.Properties.SortName.eq(group.getSortName()))
+                    .where(GroupItemDao.Properties.GroupNo.eq(group.getGroupNo()))
+                    .where(GroupItemDao.Properties.StudentCode.eq(studentCode))
+                    .unique();
+        }else {
+            return groupItemDao.queryBuilder()
+                    .where(GroupItemDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                    .where(GroupItemDao.Properties.ScheduleNo.eq(group.getScheduleNo()))
+                    .where(GroupItemDao.Properties.GroupType.eq(group.getGroupType()))
+                    .where(GroupItemDao.Properties.SortName.eq(group.getSortName()))
+                    .where(GroupItemDao.Properties.GroupNo.eq(group.getGroupNo()))
+                    .where(GroupItemDao.Properties.StudentCode.eq(studentCode))
+                    .unique();
+        }
     }
+//    public GroupItem getItemStuGroupItem(Group group, String studentCode) {
+//        return groupItemDao.queryBuilder()
+//                .where(GroupItemDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+//                .where(GroupItemDao.Properties.ScheduleNo.eq(group.getScheduleNo()))
+//                .where(GroupItemDao.Properties.GroupType.eq(group.getGroupType()))
+//                .where(GroupItemDao.Properties.SortName.eq(group.getSortName()))
+//                .where(GroupItemDao.Properties.GroupNo.eq(group.getGroupNo()))
+//                .where(GroupItemDao.Properties.StudentCode.eq(studentCode))
+//                .unique();
+//    }
 
     /**
      * 更新学生分组信息

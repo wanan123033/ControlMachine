@@ -16,7 +16,7 @@ android {
         targetSdkVersion 26
         versionCode 10
         //上测试版本1.1.3.1
-        versionName '1.1.8.2'
+        versionName '1.1.8.3'
         multiDexEnabled true
         ndk {
             abiFilters "armeabi-v7a"
@@ -119,7 +119,7 @@ dependencies {
     //    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.6.3"
     //    testCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.6.3"
     //    majiabaoOneCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.6.3"
-    // Optional, if you use support library fragments:
+//     Optional, if you use support library fragments:
     //    compile 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.3'
     //    compile 'com.kelin.scrollablepanel:library:1.2.0'
     compile project(':libarcface')

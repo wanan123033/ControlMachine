@@ -7,13 +7,15 @@ public class DrawInfo {
     private int sex;
     private int age;
     private int liveness;
+    private int color;
     private String name = null;
 
-    public DrawInfo(Rect rect, int sex, int age,int liveness,String name) {
+    public DrawInfo(Rect rect, int sex, int age,int liveness,int color,String name) {
         this.rect = rect;
         this.sex = sex;
         this.age = age;
         this.liveness = liveness;
+        this.color = color;
         this.name = name;
     }
 
@@ -55,5 +57,13 @@ public class DrawInfo {
 
     public void setLiveness(int liveness) {
         this.liveness = liveness;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 }

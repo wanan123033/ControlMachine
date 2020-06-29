@@ -93,7 +93,6 @@ public class SplashScreenActivity extends BaseActivity {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
-    private FaceEngine faceEngine = new FaceEngine();
 
     /**
      * 激活人脸识别引擎
@@ -106,7 +105,7 @@ public class SplashScreenActivity extends BaseActivity {
         Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
             public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
-                int activeCode = faceEngine.activeOnline(SplashScreenActivity.this, Constants.APP_ID, Constants.SDK_KEY);
+                int activeCode = FaceEngine.activeOnline(SplashScreenActivity.this, Constants.APP_ID, Constants.SDK_KEY);
                 emitter.onNext(activeCode);
             }
         })
@@ -129,11 +128,11 @@ public class SplashScreenActivity extends BaseActivity {
                             ToastUtils.showShort(getString(R.string.active_failed));
                         }
 
-                        ActiveFileInfo activeFileInfo = new ActiveFileInfo();
-                        int res = faceEngine.getActiveFileInfo(SplashScreenActivity.this, activeFileInfo);
-                        if (res == ErrorInfo.MOK) {
-                            Log.i("SplashScreenActivity", activeFileInfo.toString());
-                        }
+//                        ActiveFileInfo activeFileInfo = new ActiveFileInfo();
+//                        int res = FaceEngine.getActiveFileInfo(SplashScreenActivity.this, activeFileInfo);
+//                        if (res == ErrorInfo.MOK) {
+//                            Log.i("SplashScreenActivity", activeFileInfo.toString());
+//                        }
                     }
 
                     @Override

@@ -13,12 +13,12 @@ import com.ww.fpl.libarcface.R;
 public class ProgressDialog extends AlertDialog {
     private ProgressBar progressBar;
     private TextView tvProgress;
-    private int max = 100;
+    private int maxProgress = 100;
 
     public ProgressDialog(@NonNull Context context) {
         super(context);
-        progressBar = (ProgressBar) LayoutInflater.from(context).inflate(R.layout.horizontal_progress_bar, null);
-        progressBar.setMax(max);
+        progressBar = (ProgressBar) LayoutInflater.from(context).inflate(R.layout.dialog_horizontal_progress_bar, null);
+        progressBar.setMax(maxProgress);
         tvProgress = new TextView(context);
         LinearLayout linearLayout = new LinearLayout(context);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
@@ -26,13 +26,13 @@ public class ProgressDialog extends AlertDialog {
         linearLayout.addView(tvProgress);
         setView(linearLayout, 50, 50, 50, 50);
         setCanceledOnTouchOutside(false);
-        setTitle(R.string.registering_please_wait);
+        setTitle(R.string.progress_dialog_registering_please_wait);
     }
 
 
     public void setMaxProgress(int max) {
         if (max > 0) {
-            this.max = max;
+            this.maxProgress = max;
             if (progressBar != null) {
                 progressBar.setMax(max);
             }
@@ -45,9 +45,9 @@ public class ProgressDialog extends AlertDialog {
             progressBar.setProgress(progress);
         }
         if (tvProgress != null) {
-            tvProgress.setText("progress: " + progress + " / " + max);
+            tvProgress.setText(getContext().getString(R.string.progress_dialog_batch_register, progress, maxProgress));
         }
-        if (progress == max) {
+        if (progress == maxProgress) {
             dismiss();
         }
     }

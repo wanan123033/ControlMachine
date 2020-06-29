@@ -131,7 +131,9 @@ import static com.feipulai.exam.config.SharedPrefsConfigs.MIDDLE_RACE_TIME_SPAN;
 import static com.feipulai.exam.config.SharedPrefsConfigs.SPAN_TIME;
 import static com.ww.fpl.videolibrary.camera.HKConfig.HK_PORT;
 import static com.ww.fpl.videolibrary.camera.HKConfig.HK_PSW;
+import static com.ww.fpl.videolibrary.camera.HKConfig.HK_PSW_PRE;
 import static com.ww.fpl.videolibrary.camera.HKConfig.HK_USER;
+import static com.ww.fpl.videolibrary.camera.HKConfig.HK_USER_PRE;
 
 /**
  * @author ww
@@ -292,6 +294,10 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
     private ImageView ivControl;
     private VHTableView tableResult;
     private VHTableResultAdapter tableResultAdapter;
+    private EditText etHKUser;
+    private EditText etHKPassWord;
+    private String hk_user;
+    private String hk_psw;
 
     @Override
     protected int setLayoutResID() {
@@ -364,6 +370,8 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         machine_ip = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MACHINE_IP, "");
         machine_port = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MACHINE_PORT, "1401");
         server_Port = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MACHINE_SERVER_PORT, "4040");
+        hk_user = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, HK_USER_PRE, HK_USER);
+        hk_psw = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, HK_PSW_PRE, HK_PSW);
         lastServiceTime = SharedPrefsUtil.getValue(mContext, MyTcpService.SERVICE_CONNECT, MyTcpService.SERVICE_CONNECT, 0L);
         //所有组信息recycleView
         groupAdapter = new MiddleRaceGroupAdapter(groupItemBeans);
@@ -515,6 +523,8 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             groupItemBeans.clear();
             groupAdapter.notifyDataSetChanged();
         } else {
+            //这里设置全局项目代码，中长跑项目最好不要使用全局项目代码，因为中长跑项目一个界面允许出现多个项目代码
+            TestConfigs.sCurrentItem.setItemCode(itemCode);
             DataBaseExecutor.addTask(new DataBaseTask(mContext, getString(R.string.loading_hint), true) {
                 @Override
                 public DataBaseRespon executeOper() {
@@ -687,6 +697,8 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                 .apply();
         etIP = mMachinePop.findViewById(R.id.et_machine_ip);
         etPort = mMachinePop.findViewById(R.id.et_machine_port);
+        etHKUser = mMachinePop.findViewById(R.id.et_hk_user);
+        etHKPassWord = mMachinePop.findViewById(R.id.et_hk_password);
         btnConnect = mMachinePop.findViewById(R.id.btn_connect_machine);
         Button btndisConnect = mMachinePop.findViewById(R.id.btn_disconnect_machine);
         btnSyncTime = mMachinePop.findViewById(R.id.btn_sync_time);
@@ -787,7 +799,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                 }
                 hkCamera.setStrIP(cameraIP.getText().toString());
                 if (hkInit) {
-                    hkCamera.login2HK();
+                    hkCamera.login2HK(etHKUser.getText().toString(), etHKPassWord.getText().toString());
                     mHander.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -807,6 +819,8 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                 SharedPrefsUtil.putValue(mContext, MIDDLE_RACE, MACHINE_PORT, etPort.getText().toString());
                 SharedPrefsUtil.putValue(mContext, MIDDLE_RACE, MACHINE_SERVER_PORT, serverPort.getText().toString());
                 SharedPrefsUtil.putValue(mContext, MIDDLE_RACE, CAMERA_IP, cameraIP.getText().toString());
+                SharedPrefsUtil.putValue(mContext, MIDDLE_RACE, HK_USER_PRE, etHKUser.getText().toString().trim());
+                SharedPrefsUtil.putValue(mContext, MIDDLE_RACE, HK_PSW_PRE, etHKPassWord.getText().toString().trim());
             }
         });
     }
@@ -948,7 +962,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
     private Map<Integer, RoundResult> completeResults = new HashMap<>();
     private BaseVideoView mVideoView;
     private RelativeLayout rlVideo;
-
+    private String[] timeLong;
     /**
      * 初始化查询成绩pop
      */
@@ -998,6 +1012,26 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         btnVideoStartPause = mSelectPop.findViewById(R.id.btn_video_start_pause);
         ivControl = mSelectPop.findViewById(R.id.iv_video_control);
 
+//        String startTime = groupItemBeans.get(groupPosition).getGroup().getRemark1();
+//        if (TextUtils.isEmpty(startTime)) {
+//            rlVideo.setVisibility(View.GONE);
+//        }else {
+//            List<String> paths = PUtil.getFilesAllName(hkCamera.PATH);
+//            timeLong = new String[0];
+//            for (String path : paths
+//                    ) {
+//                timeLong = path.replace(".mp4", "").split("_");
+//                if (timeLong.length == 2 && Long.parseLong(startTime) >= Long.parseLong(timeLong[0]) && Long.parseLong(startTime) <= Long.parseLong(timeLong[1])) {
+//                    mDataSource.setData(hkCamera.PATH + path);
+//                    mDataSource.setTitle("发令时刻：" + DateUtil.formatTime2(Long.parseLong(startTime), "yyyy/MM/dd HH:mm:ss:SSS"));
+//                    break;
+//                }
+//            }
+//            if (TextUtils.isEmpty(mDataSource.getData())) {
+//                rlVideo.setVisibility(View.GONE);
+//                return;
+//            }
+//        }
         updateVideo();
 
         ivControl.setOnClickListener(new View.OnClickListener() {
@@ -1276,10 +1310,10 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             @Override
             public void run() {
                 if (hkCamera == null) {
-                    hkCamera = new HkCameraManager(MiddleDistanceRaceForPersonActivity.this, camera_ip, HK_PORT, HK_USER, HK_PSW);
+                    hkCamera = new HkCameraManager(MiddleDistanceRaceForPersonActivity.this, camera_ip, HK_PORT, hk_user, hk_psw);
                     hkInit = hkCamera.initeSdk();
                     if (hkInit) {
-                        hkCamera.login2HK();
+                        hkCamera.login2HK(etHKUser.getText().toString(), etHKPassWord.getText().toString());
                         mHander.postDelayed(new Runnable() {
                             @Override
                             public void run() {

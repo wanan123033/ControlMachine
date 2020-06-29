@@ -32,7 +32,7 @@ import java.util.List;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
- * Created by James on 2018/5/24 0024.
+ * Created by ww on 2018/5/24 0024.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 public abstract class BaseCheckMiddleActivity

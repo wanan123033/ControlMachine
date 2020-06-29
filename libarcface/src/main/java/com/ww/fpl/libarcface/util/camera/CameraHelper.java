@@ -84,6 +84,7 @@ public class CameraHelper implements Camera.PreviewCallback {
             if (mCamera == null) {
                 mCamera = Camera.open(mCameraId);
             }
+
             displayOrientation = getCameraOri(rotation);
             mCamera.setDisplayOrientation(displayOrientation);
             try {
@@ -327,6 +328,17 @@ public class CameraHelper implements Camera.PreviewCallback {
                 cameraListener.onCameraConfigurationChanged(mCameraId, displayOrientation);
             }
         }
+    }
+
+    public int switchCamera() {
+        if (Camera.getNumberOfCameras() < 2) {
+            return -1;
+        }
+        // cameraId ,0为后置，1为前置
+        specificCameraId = 1 - mCameraId;
+        stop();
+        start();
+        return specificCameraId;
     }
 
     public static final class Builder {
