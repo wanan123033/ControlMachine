@@ -60,7 +60,8 @@ public class LEDManager {
         machineCodesForLed.put(ItemDefault.CODE_YTXS, 7);//引体向上
         machineCodesForLed.put(ItemDefault.CODE_ZCP, 0);//中长跑
         machineCodesForLed.put(ItemDefault.CODE_PQ, 8);//排球垫球
-        machineCodesForLed.put(ItemDefault.CODE_FHL, 8);//排球垫球
+        machineCodesForLed.put(ItemDefault.CODE_FHL, 8);//肺活量
+        machineCodesForLed.put(ItemDefault.CODE_WLJ, 6);//握力
     }
 
     /**
