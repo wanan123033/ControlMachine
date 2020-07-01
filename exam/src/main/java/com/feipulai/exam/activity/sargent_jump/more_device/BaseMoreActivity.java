@@ -93,15 +93,15 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
         PrinterManager.getInstance().init();
         etInputText.setData(lvResults, this);
-        setDeviceCount(setTestDeviceCount());
+        setDeviceCount(setDeviceCount());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         if (!isUse()) {
-            if (deviceDetails.size() != setTestDeviceCount()) {
-                setDeviceCount(setTestDeviceCount());
+            if (deviceDetails.size() != setDeviceCount()) {
+                setDeviceCount(setDeviceCount());
             }
         }
 
@@ -507,7 +507,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             if (deviceState.getState() == BaseDeviceState.STATE_END) {
                 if (isPenalize && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
 
-                    if (setTestDeviceCount() == 1) {
+                    if (setDeviceCount() == 1) {
                         showPenalize(index);
                     } else {
                         deviceDetails.get(index).setConfirmVisible(true);
@@ -930,7 +930,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
      */
     public abstract int setTestCount();
 
-    public abstract int setTestDeviceCount();
+    public abstract int setDeviceCount();
 
     public abstract boolean isResultFullReturn(int sex, int result);
 

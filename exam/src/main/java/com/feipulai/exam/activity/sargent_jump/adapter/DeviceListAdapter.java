@@ -115,7 +115,7 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                 }
 
                 int state = item.getStuDevicePair().getBaseDevice().getState();
-                if (state == BaseDeviceState.STATE_FREE || state == BaseDeviceState.STATE_NOT_BEGAIN) {
+                if (state == BaseDeviceState.STATE_FREE || state == BaseDeviceState.STATE_NOT_BEGAIN||state == BaseDeviceState.STATE_END) {
                     moreHelper.txtStart.setEnabled(true);
                     moreHelper.txtStart.setBackgroundResource(R.drawable.btn_click_bg_selected);
                     moreHelper.txtStart.setTextColor(Color.WHITE);

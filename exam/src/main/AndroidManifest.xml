@@ -241,6 +241,18 @@
             android:name=".activity.setting.MonitoringBindActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity
+            android:name=".activity.grip.pair.GripPairActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.grip.GripMoreActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.grip.GripSettingActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.setting.MonitoringBindActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
             android:name=".activity.explain.ExplainActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity android:name=".activity.ranger.RangerSettingActivity" />

@@ -22,6 +22,7 @@ import com.feipulai.exam.activity.basketball.BasketBallSettingActivity;
 import com.feipulai.exam.activity.footBall.FootBallGroupActivity;
 import com.feipulai.exam.activity.footBall.FootBallItemSelectActivity;
 import com.feipulai.exam.activity.footBall.FootBallSettingActivity;
+import com.feipulai.exam.activity.grip.GripMoreActivity;
 import com.feipulai.exam.activity.jump_rope.check.JumpRopeCheckActivity;
 import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSetting;
 import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSettingActivity;
@@ -385,6 +386,7 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_ZCP, MiddleDistanceRaceForPersonActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_ZQYQ, FootBallItemSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_JGCJ, RangerTestActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_WLJ, GripMoreActivity.class);
 
         // 每个项目对应的分组检录Acitivity
         TestConfigs.groupActivity.put(ItemDefault.CODE_LDTY, StandJumpGroupTestActivity.class);
@@ -418,6 +420,7 @@ public class TestConfigs {
         TestConfigs.machineNameMap.put(ItemDefault.CODE_ZCP, "中长跑");
         TestConfigs.machineNameMap.put(ItemDefault.CODE_ZQYQ, "足球运球");
         TestConfigs.machineNameMap.put(ItemDefault.CODE_JGCJ, "激光测距");
+        TestConfigs.machineNameMap.put(ItemDefault.CODE_WLJ, "握力");
 
         TestConfigs.settingActivity.put(ItemDefault.CODE_LDTY, StandJumpSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_ZWTQQ, SitReachSettingActivity.class);

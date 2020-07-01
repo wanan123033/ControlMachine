@@ -73,7 +73,7 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
     }
 
     @Override
-    public int setTestDeviceCount() {
+    public int setDeviceCount() {
         return standJumpSetting.getTestDeviceCount();
     }
 
