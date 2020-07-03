@@ -18,6 +18,7 @@ import com.arcsoft.imageutil.ArcSoftImageUtil;
 import com.arcsoft.imageutil.ArcSoftImageUtilError;
 import com.arcsoft.imageutil.ArcSoftRotateDegree;
 import com.ww.fpl.libarcface.model.FaceRegisterInfo;
+import com.ww.fpl.libarcface.util.ConfigUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -72,15 +73,19 @@ public class FaceServer {
         synchronized (this) {
             if (faceEngine == null && context != null) {
                 faceEngine = new FaceEngine();
-                int engineCode = faceEngine.init(context, DetectMode.ASF_DETECT_MODE_IMAGE, DetectFaceOrientPriority.ASF_OP_0_ONLY, 16, 1, FaceEngine.ASF_FACE_RECOGNITION | FaceEngine.ASF_FACE_DETECT);
-                if (engineCode == ErrorInfo.MOK) {
-                    initFaceList(context);
-                    return true;
-                } else {
-                    faceEngine = null;
-                    Log.e(TAG, "init: failed! code = " + engineCode);
-                    return false;
+                boolean isEngine = ConfigUtil.getISEngine(context);
+                if (isEngine) {
+                    int engineCode = faceEngine.init(context, DetectMode.ASF_DETECT_MODE_IMAGE, DetectFaceOrientPriority.ASF_OP_0_ONLY, 16, 1, FaceEngine.ASF_FACE_RECOGNITION | FaceEngine.ASF_FACE_DETECT);
+                    if (engineCode == ErrorInfo.MOK) {
+                        initFaceList(context);
+                        return true;
+                    } else {
+                        faceEngine = null;
+                        Log.e(TAG, "init: failed! code = " + engineCode);
+                        return false;
+                    }
                 }
+
             }
             return false;
         }

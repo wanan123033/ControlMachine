@@ -214,4 +214,8 @@ public class Basketball868Result {
     public long getInterceptTime() {
         return hour * 60 * 60 * 1000 + minth * 60 * 1000 + sencond * 1000 + minsencond * 10 + minsencondThousand;
     }
+
+    public String getMapKey() {
+        return deviceId + "" + sum;
+    }
 }

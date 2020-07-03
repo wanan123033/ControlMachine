@@ -61,113 +61,186 @@
             android:theme="@style/AppTheme.SplashScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
-<!--                <category android:name="android.intent.category.HOME" />-->
+                <!--                <category android:name="android.intent.category.HOME" />-->
             </intent-filter>
         </activity>
-        <activity android:name=".activity.MainActivity">
+        <activity
+            android:name=".activity.MainActivity"
+            android:configChanges="keyboardHidden|keyboard">
             <intent-filter>
                 <action android:name="com.feipulai.exam.MainActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.LEDSettingActivity" />
+        <activity
+            android:name=".activity.LEDSettingActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity
             android:name=".activity.setting.SettingActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity android:name=".activity.MachineSelectActivity" /> <!-- <activity android:name=".activity.ItemSelectActivity" /> -->
-        <activity android:name=".activity.setting.AdvancedSettingActivity" />
+        <activity
+            android:name=".activity.MachineSelectActivity"
+            android:configChanges="keyboardHidden|keyboard" /> <!-- <activity android:name=".activity.ItemSelectActivity" /> -->
+        <activity
+            android:name=".activity.setting.AdvancedSettingActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity
             android:name=".activity.data.DataRetrieveActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity android:name=".activity.data.DataManageActivity" />
+        <activity
+            android:name=".activity.data.DataManageActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity
             android:name="com.feipulai.common.dbutils.FileSelectActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.medicineBall.MedicineBallTestActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.medicineBall.MedicineBallGroupActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity android:name=".activity.data.DataDisplayActivity" />
-        <activity android:name=".activity.medicineBall.MedicineBallSettingActivity" />
+        <activity
+            android:name=".activity.data.DataDisplayActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.medicineBall.MedicineBallSettingActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity
             android:name=".activity.RadioTimer.RunTimerActivityTestActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.RadioTimer.RunTimerSettingActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.RadioTimer.RunTimerActivityGroupActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.standjump.StandJumpSelectActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.standjump.more.StandJumpPairActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.standjump.more.StandJumpMoreActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.standjump.more.StandJumpGroupMoreActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.standjump.StandJumpTestActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.standjump.StandJumpSettingActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.standjump.StandJumpGroupTestActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.sitreach.SitReachTestActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" /> <!-- jump rope -->
-        <activity android:name=".activity.jump_rope.pair.JumpRopePairActivity" />
+        <activity
+            android:name=".activity.jump_rope.pair.JumpRopePairActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity
             android:name=".activity.jump_rope.check.JumpRopeCheckActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity android:name=".activity.jump_rope.test.JumpRopeTestActivity" />
-        <activity android:name=".activity.jump_rope.setting.JumpRopeSettingActivity" />
-        <activity android:name=".activity.jump_rope.base.result.RadioResultActivity" /> <!-- sit up -->
-        <activity android:name=".activity.situp.pair.SitUpPairActivity" />
+        <activity
+            android:name=".activity.jump_rope.test.JumpRopeTestActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.jump_rope.setting.JumpRopeSettingActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.jump_rope.base.result.RadioResultActivity"
+            android:configChanges="keyboardHidden|keyboard" /> <!-- sit up -->
+        <activity
+            android:name=".activity.situp.pair.SitUpPairActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity
             android:name=".activity.situp.check.SitUpCheckActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity android:name=".activity.situp.setting.SitUpSettingActivity" />
-        <activity android:name=".activity.situp.test.SitUpTestActivity" /> <!-- pull up -->
-        <activity android:name=".activity.pullup.PullUpSelectActivity" />
-        <activity android:name=".activity.pullup.pair.PullUpPairActivity" />
+        <activity
+            android:name=".activity.situp.setting.SitUpSettingActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.situp.test.SitUpTestActivity"
+            android:configChanges="keyboardHidden|keyboard" /> <!-- pull up -->
+        <activity
+            android:name=".activity.pullup.PullUpSelectActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.pullup.pair.PullUpPairActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity
             android:name=".activity.pullup.check.PullUpCheckActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity android:name=".activity.pullup.setting.PullUpSettingActivity" />
-        <activity android:name=".activity.pullup.test.PullUpTestActivity" />
-        <activity android:name=".activity.pullup.test.PullUpIndividualActivity" />
-        <activity android:name=".activity.pullup.test.PullAndSitUpIndividualActivity" />
-        <activity android:name=".activity.pullup.pair.PullSitUpPairActivity" />
-        <activity android:name=".activity.pullup.test.PullUpGroupActivity" /> <!-- volleyball -->
-        <activity android:name=".activity.volleyball.VolleyBallSettingActivity" />
-        <activity android:name=".activity.volleyball.VolleyBallGroupActivity" />
-        <activity android:name=".activity.volleyball.VolleyballPatternSelectActivity" />
+        <activity
+            android:name=".activity.pullup.setting.PullUpSettingActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.pullup.test.PullUpTestActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.pullup.test.PullUpIndividualActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.pullup.test.PullAndSitUpIndividualActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.pullup.pair.PullSitUpPairActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.pullup.test.PullUpGroupActivity"
+            android:configChanges="keyboardHidden|keyboard" /> <!-- volleyball -->
+        <activity
+            android:name=".activity.volleyball.VolleyBallSettingActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.volleyball.VolleyBallGroupActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.volleyball.VolleyballPatternSelectActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity
             android:name=".activity.sitreach.SitReachGroupTestActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.sitreach.SitReachSelectActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.sitreach.SitReachSettingActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.LoginActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity android:name=".activity.base.BaseGroupActivity" />
+        <activity
+            android:name=".activity.base.BaseGroupActivity"
+            android:configChanges="keyboardHidden|keyboard" />
 
         <service
             android:name=".service.UploadService"
@@ -179,66 +252,102 @@
 
         <activity
             android:name=".activity.sargent_jump.SargentTestActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.sargent_jump.SargentGroupActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.sargent_jump.SargentSettingActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".activity.SubItemsSelectActivity" />
+        <activity
+            android:name=".activity.SubItemsSelectActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity
             android:name=".activity.pushUp.PushUpIndividualActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.pushUp.PushUpSettingActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.pushUp.test.PushUpTestActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.pushUp.check.PushUpCheckActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.pushUp.pair.PushUpPairActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.pushUp.PushUpGroupActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.pushUp.PushPatternSelectActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.basketball.BasketballIndividualActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.basketball.BasketBallSettingActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.basketball.BasketBallGroupActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.footBall.FootballIndividualActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.footBall.FootBallSettingActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.MiddleDistanceRace.MiddleDistanceRaceForGroupActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.MiddleDistanceRace.MiddleRaceSettingActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity android:name=".activity.MiddleDistanceRace.MiddleDistanceRaceForPersonActivity" /> <!-- <activity android:name=".activity.volleyball.pair.VolleyBallMorePairActivity" /> -->
-        <activity android:name=".activity.volleyball.more_devices.VolleyBallMoreGroupActivity" />
-        <activity android:name=".activity.footBall.FootBallItemSelectActivity" />
-        <activity android:name=".activity.basketball.BasketBallSelectActivity" />
-        <activity android:name=".activity.basketball.pair.BasketBallPairActivity" />
-        <activity android:name=".activity.volleyball.more_devices.VolleyBallMoreTestActivity" />
-        <activity android:name=".activity.medicineBall.MedicineBallSelectActivity" />
-        <activity android:name=".activity.volleyball.VolleyBallIndividualActivity" />
+        <activity
+            android:name=".activity.MiddleDistanceRace.MiddleDistanceRaceForPersonActivity"
+            android:configChanges="keyboardHidden|keyboard" /> <!-- <activity android:name=".activity.volleyball.pair.VolleyBallMorePairActivity" /> -->
+        <activity
+            android:name=".activity.volleyball.more_devices.VolleyBallMoreGroupActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.footBall.FootBallItemSelectActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.basketball.BasketBallSelectActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.basketball.pair.BasketBallPairActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.volleyball.more_devices.VolleyBallMoreTestActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.medicineBall.MedicineBallSelectActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.volleyball.VolleyBallIndividualActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity
             android:name=".activity.setting.MonitoringBindActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.grip.pair.GripPairActivity"
@@ -250,32 +359,38 @@
             android:name=".activity.grip.GripSettingActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".activity.grip.GripMoreGroupActivity"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".activity.setting.MonitoringBindActivity"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
             android:name=".activity.explain.ExplainActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".activity.ranger.RangerSettingActivity" />
-        <activity android:name=".activity.ranger.RangerTestActivity" />
-        <activity android:name=".utils.bluetooth.BlueToothListActivity" />
+        <activity
+            android:name=".activity.ranger.RangerSettingActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.ranger.RangerTestActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".utils.bluetooth.BlueToothListActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity
             android:name=".activity.data.ThermometerSearchActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
 
-        <activity android:name=".activity.ranger.RangerMoreActivity" />
-        <activity android:name=".activity.ranger.bluetooth.BluetoothSettingActivity" />
+        <activity
+            android:name=".activity.ranger.RangerMoreActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.ranger.bluetooth.BluetoothSettingActivity"
+            android:configChanges="keyboardHidden|keyboard" />
 
         <receiver android:name="com.feipulai.device.spputils.SppReciver" />
 
         <service android:name="com.inuker.bluetooth.library.BluetoothService" />
         <receiver android:name=".receiver.WifiReceiver">
-            <intent-filter >
-                <action android:name="android.net.wifi.RSSI_CHANGED"/>
-                <action android:name="android.net.wifi.STATE_CHANGE"/>
-                <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
+            <intent-filter>
+                <action android:name="android.net.wifi.RSSI_CHANGED" />
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
             </intent-filter>
         </receiver>
     </application>
