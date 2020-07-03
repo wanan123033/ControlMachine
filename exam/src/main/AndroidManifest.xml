@@ -250,6 +250,9 @@
             android:name=".activity.grip.GripSettingActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity
+            android:name=".activity.grip.GripMoreGroupActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
             android:name=".activity.setting.MonitoringBindActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity
