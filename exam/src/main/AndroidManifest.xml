@@ -359,6 +359,9 @@
             android:name=".activity.grip.GripSettingActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity
+            android:name=".activity.grip.GripMoreGroupActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
             android:name=".activity.explain.ExplainActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
