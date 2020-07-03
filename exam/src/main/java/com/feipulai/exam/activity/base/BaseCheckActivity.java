@@ -509,7 +509,7 @@ public abstract class BaseCheckActivity
     public void onFault(int code, String errorMsg) {
         OperateProgressBar.removeLoadingUiIfExist(this);
         ToastUtils.showLong(errorMsg);
-        sendCheckHandlerMessage(mStudent);
+//        sendCheckHandlerMessage(mStudent);
     }
 
 
