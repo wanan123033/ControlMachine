@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Paint;
 import android.net.NetworkInfo;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -1060,13 +1061,18 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
     }
 
     private void nextTest() {
-        //连续测试
-        if (setting.getTestPattern() == TestConfigs.GROUP_PATTERN_SUCCESIVE) {
-            continuousTest();
-        } else {
-            //循环
-            loopTestNext();
-        }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //连续测试
+                if (setting.getTestPattern() == TestConfigs.GROUP_PATTERN_SUCCESIVE) {
+                    continuousTest();
+                } else {
+                    //循环
+                    loopTestNext();
+                }
+            }
+        },3000);
     }
 
     /**

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-
     <array name="check_tool">
         <item>条形码/二维码</item>
         <item>身份证</item>
         <item>IC卡</item>
         <item>外接扫描枪</item>
+        <item>人脸识别</item>
     </array>
 
 
@@ -20,6 +20,8 @@
         <item>成绩上传</item>
         <item>成绩导出</item>
         <item>模版导出</item>
+        <item>头像导入</item>
+        <item>头像检入</item>
     </array>
 
 

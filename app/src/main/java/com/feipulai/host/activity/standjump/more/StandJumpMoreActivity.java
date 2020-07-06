@@ -133,7 +133,11 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        toastSpeak(deviceDetails.get(deviceId - 1).getStuDevicePair().getStudent().getSpeakStuName() + "开始测试");
+        //未添加考生避免串机使用
+        if (deviceDetails.size() >= deviceId && deviceDetails.get(deviceId - 1).getStuDevicePair().getStudent() != null) {
+            toastSpeak(deviceDetails.get(deviceId - 1).getStuDevicePair().getStudent().getSpeakStuName() + "开始测试");
+
+        }
 
 
     }

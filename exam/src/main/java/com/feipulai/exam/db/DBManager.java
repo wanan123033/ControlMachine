@@ -118,7 +118,8 @@ public class DBManager {
         int[] supportMachineCodes = {/*ItemDefault.CODE_HW, */ItemDefault.CODE_TS, ItemDefault.CODE_YWQZ, ItemDefault.CODE_YTXS,
                 ItemDefault.CODE_LDTY, ItemDefault.CODE_ZWTQQ,
                 ItemDefault.CODE_HWSXQ, ItemDefault.CODE_FHL, ItemDefault.CODE_ZFP,
-                ItemDefault.CODE_PQ, ItemDefault.CODE_MG, ItemDefault.CODE_FWC, ItemDefault.CODE_LQYQ, ItemDefault.CODE_ZQYQ, ItemDefault.CODE_ZCP, ItemDefault.CODE_JGCJ
+                ItemDefault.CODE_PQ, ItemDefault.CODE_MG, ItemDefault.CODE_FWC, ItemDefault.CODE_LQYQ,
+                ItemDefault.CODE_ZQYQ, ItemDefault.CODE_ZCP, ItemDefault.CODE_JGCJ,ItemDefault.CODE_WLJ
         };
         for (int machineCode : supportMachineCodes) {
             //查询是否已经存在该机器码的项,如果存在就放弃,避免重复添加
@@ -184,6 +185,9 @@ public class DBManager {
                     break;
                 case ItemDefault.CODE_JGCJ:
                     insertItem(machineCode, "激光测距", "米", TEST_TYPE_DISTANCE);
+                    break;
+                case ItemDefault.CODE_WLJ:
+                    insertItem(machineCode, "握力", "千克", TEST_TYPE_POWER);
                     break;
 
             }

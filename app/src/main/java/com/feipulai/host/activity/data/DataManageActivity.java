@@ -5,9 +5,12 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +19,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.arcsoft.face.util.ImageUtils;
+import com.arcsoft.imageutil.ArcSoftImageFormat;
+import com.arcsoft.imageutil.ArcSoftImageUtil;
+import com.arcsoft.imageutil.ArcSoftImageUtilError;
 import com.feipulai.common.db.ClearDataProcess;
 import com.feipulai.common.db.DataBaseExecutor;
 import com.feipulai.common.db.DataBaseRespon;
@@ -25,6 +32,7 @@ import com.feipulai.common.dbutils.FileSelectActivity;
 import com.feipulai.common.exl.ExlListener;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.FileUtil;
+import com.feipulai.common.utils.ImageUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.StringChineseUtil;
 import com.feipulai.common.utils.ToastUtils;
@@ -39,6 +47,7 @@ import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
+import com.feipulai.host.entity.Student;
 import com.feipulai.host.exl.ResultExlWriter;
 import com.feipulai.host.exl.StuItemExLReader;
 import com.feipulai.host.netUtils.UploadResultUtil;
@@ -47,6 +56,9 @@ import com.feipulai.host.view.DBDataCleaner;
 import com.feipulai.host.view.OperateProgressBar;
 import com.github.mjdev.libaums.fs.UsbFile;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
+import com.ww.fpl.libarcface.faceserver.FaceServer;
+import com.ww.fpl.libarcface.widget.ProgressDialog;
 import com.yhy.gvp.listener.OnItemClickListener;
 import com.yhy.gvp.widget.GridViewPager;
 
@@ -59,9 +71,12 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTit
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.CommonPagerTitleView;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import butterknife.BindView;
 
@@ -73,8 +88,8 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
     private static final int REQUEST_CODE_RESTORE = 1;
     private static final int REQUEST_CODE_BACKUP = 2;
     private static final int REQUEST_CODE_IMPORT = 3;
-
     private static final int REQUEST_CODE_EXPORT = 4;
+    private static final int REQUEST_CODE_PHOTO = 5;
     private static final int REQUEST_CODE_EXPORT_TEMPLATE = 6;
     @BindView(R.id.grid_viewpager)
     GridViewPager gridViewpager;
@@ -90,7 +105,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
     //    private EditText mEditText;
     private boolean isProcessingData;
     private List<TypeListBean> typeDatas;
-
+    private ProgressDialog progressDialog;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_data_manage;
@@ -108,6 +123,11 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
         progressStorage.setProgress(100 - FileUtil.getPercentRemainStorage());
 
         initGridView();
+        if (!FaceServer.getInstance().init(DataManageActivity.this)) {
+            ToastUtils.showShort("人脸识别引擎初始化失败");
+        }
+
+        progressDialog = new ProgressDialog(this);
     }
 
     @Nullable
@@ -121,7 +141,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
         String[] typeName = getResources().getStringArray(R.array.data_admin);
         int[] typeRes = new int[]{R.mipmap.icon_data_import, R.mipmap.icon_data_down
                 , R.mipmap.icon_data_backup, R.mipmap.icon_data_restore, R.mipmap.icon_data_look, R.mipmap.icon_data_clear, R.mipmap.icon_result_upload,
-                R.mipmap.icon_result_import, R.mipmap.icon_template_export};
+                R.mipmap.icon_result_import, R.mipmap.icon_template_export, R.mipmap.icon_position_import, R.mipmap.icon_position_down};
         for (int i = 0; i < typeName.length; i++) {
             TypeListBean bean = new TypeListBean();
             bean.setName(typeName[i]);
@@ -243,6 +263,16 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                         intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
                         startActivityForResult(intent, REQUEST_CODE_EXPORT_TEMPLATE);
                         break;
+                    case 9://头像导入
+                        LogUtils.operation("用户点击了头像导入...");
+                        intent.setClass(DataManageActivity.this, FileSelectActivity.class);
+                        intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
+                        startActivityForResult(intent, REQUEST_CODE_PHOTO);
+                        break;
+                    case 10://头像检入
+                        LogUtils.operation("用户点击了头像检入...");
+                        uploadPortrait();
+                        break;
                 }
             }
         });
@@ -323,10 +353,158 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
             case REQUEST_CODE_EXPORT:
                 showExportFileNameDialog();
                 break;
-
+            case REQUEST_CODE_PHOTO:
+                doRegister(FileSelectActivity.sSelectedFile.getAbsolutePath());
+                break;
         }
 
     }
+    private ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+    private void doRegister(final String file) {
+        File dir = new File(file);
+        if (!dir.exists()) {
+            ToastUtils.showShort("path \n" + file + "\n is not exists");
+            return;
+        }
+        if (!dir.isDirectory()) {
+            ToastUtils.showShort("path \n" + file + "\n is not a directory");
+            return;
+        }
+        final File[] jpgFiles = dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(FaceServer.IMG_SUFFIX_JPG) || name.endsWith(FaceServer.IMG_SUFFIX_PNG)
+                        || name.endsWith(FaceServer.IMG_SUFFIX_JPG.toUpperCase()) || name.endsWith(FaceServer.IMG_SUFFIX_PNG.toUpperCase());
+            }
+        });
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                final int totalCount = jpgFiles.length;
+
+                int successCount = 0;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.setMaxProgress(totalCount);
+                        progressDialog.show();
+                    }
+                });
+                for (int i = 0; i < totalCount; i++) {
+                    final int finalI = i;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (progressDialog != null) {
+                                progressDialog.refreshProgress(finalI);
+                            }
+                        }
+                    });
+                    final File jpgFile = jpgFiles[i];
+//                    Bitmap bitmap = BitmapFactory.decodeFile(jpgFile.getAbsolutePath());
+                    //路径获取图片。并对图片做缩小处理
+                    Bitmap bitmap = ImageUtil.getSmallBitmap(jpgFile.getAbsolutePath());
+                    if (bitmap == null) {
+                        continue;
+                    }
+                    Student student = DBManager.getInstance().queryStudentByStuCode(jpgFile.getName().substring(0, jpgFile.getName().indexOf(".")));
+                    if (student != null && TextUtils.isEmpty(student.getPortrait())) {
+                        student.setPortrait(ImageUtil.bitmapToStrByBase64(bitmap));
+                        DBManager.getInstance().updateStudent(student);
+                    }
+//                    bitmap = ImageUtils.alignBitmapForBgr24(bitmap);
+                    bitmap = ArcSoftImageUtil.getAlignedBitmap(bitmap, true);
+                    if (bitmap == null) {
+
+                        continue;
+                    }
+
+                    byte[] bgr24 = ArcSoftImageUtil.createImageData(bitmap.getWidth(), bitmap.getHeight(), ArcSoftImageFormat.BGR24);
+                    int transformCode = ArcSoftImageUtil.bitmapToImageData(bitmap, bgr24, ArcSoftImageFormat.BGR24);
+                    if (transformCode != ArcSoftImageUtilError.CODE_SUCCESS) {
+                        continue;
+                    }
+                    boolean success = FaceServer.getInstance().registerBgr24(DataManageActivity.this, bgr24, bitmap.getWidth(), bitmap.getHeight(),
+                            jpgFile.getName().substring(0, jpgFile.getName().lastIndexOf(".")));
+                    if (!success) {
+                        Log.e("faceRegister", "人脸注册失败" + jpgFile.getName().substring(0, jpgFile.getName().lastIndexOf(".")));
+
+                    } else {
+                        successCount++;
+                    }
+                }
+                final int finalSuccessCount = successCount;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.dismiss();
+                    }
+                });
+                Log.i("DataManageActivity", "run: " + executorService.isShutdown());
+            }
+        });
+    }
+
+    public void uploadPortrait() {
+        final List<Student> studentList = DBManager.getInstance().getStudentByPortrait();
+        if (studentList.size() == 0) {
+            ToastUtils.showShort("当前所有考生无头像信息，请先进行名单下载");
+            return;
+        }
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                final int totalCount = studentList.size();
+
+                int successCount = 0;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.setMaxProgress(totalCount);
+                        progressDialog.show();
+                    }
+                });
+                for (int i = 0; i < totalCount; i++) {
+                    final int finalI = i;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (progressDialog != null) {
+                                progressDialog.refreshProgress(finalI);
+                            }
+                        }
+                    });
+                    Bitmap bitmap = studentList.get(i).getBitmapPortrait();
+                    if (bitmap == null) {
+                        continue;
+                    }
+                    bitmap = ImageUtils.alignBitmapForBgr24(bitmap);
+                    if (bitmap == null) {
+                        continue;
+                    }
+                    byte[] bgr24 = ImageUtils.bitmapToBgr24(bitmap);
+                    boolean success = FaceServer.getInstance().registerBgr24(DataManageActivity.this, bgr24, bitmap.getWidth(), bitmap.getHeight(),
+                            studentList.get(i).getStudentCode());
+                    if (!success) {
+                        Log.e("faceRegister", "人脸注册失败" + studentList.get(i).getStudentCode());
+                    } else {
+                        successCount++;
+                    }
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ToastUtils.showShort("头像导入成功");
+                        progressDialog.dismiss();
+                    }
+                });
+                Log.i("DataManageActivity", "run: " + executorService.isShutdown());
+            }
+        });
+
+    }
+
 
     @Override
     public void onBackPressed() {

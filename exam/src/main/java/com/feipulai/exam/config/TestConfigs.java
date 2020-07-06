@@ -21,7 +21,11 @@ import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.basketball.BasketBallSettingActivity;
 import com.feipulai.exam.activity.footBall.FootBallGroupActivity;
 import com.feipulai.exam.activity.footBall.FootBallItemSelectActivity;
+import com.feipulai.exam.activity.footBall.FootBallSetting;
 import com.feipulai.exam.activity.footBall.FootBallSettingActivity;
+import com.feipulai.exam.activity.grip.GripMoreActivity;
+import com.feipulai.exam.activity.grip.GripMoreGroupActivity;
+import com.feipulai.exam.activity.grip.GripSettingActivity;
 import com.feipulai.exam.activity.jump_rope.check.JumpRopeCheckActivity;
 import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSetting;
 import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSettingActivity;
@@ -42,6 +46,7 @@ import com.feipulai.exam.activity.sargent_jump.SargentGroupActivity;
 import com.feipulai.exam.activity.sargent_jump.SargentItemSelectActivity;
 import com.feipulai.exam.activity.sargent_jump.SargentSetting;
 import com.feipulai.exam.activity.sargent_jump.SargentSettingActivity;
+import com.feipulai.exam.activity.setting.SettingActivity;
 import com.feipulai.exam.activity.sitreach.SitReachGroupTestActivity;
 import com.feipulai.exam.activity.sitreach.SitReachSelectActivity;
 import com.feipulai.exam.activity.sitreach.SitReachSetting;
@@ -385,6 +390,7 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_ZCP, MiddleDistanceRaceForPersonActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_ZQYQ, FootBallItemSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_JGCJ, RangerTestActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_WLJ, GripMoreActivity.class);
 
         // 每个项目对应的分组检录Acitivity
         TestConfigs.groupActivity.put(ItemDefault.CODE_LDTY, StandJumpGroupTestActivity.class);
@@ -403,6 +409,8 @@ public class TestConfigs {
         TestConfigs.groupActivity.put(ItemDefault.CODE_LQYQ, BasketBallGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_ZQYQ, FootBallGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_JGCJ, RangerMoreActivity.class);
+        TestConfigs.groupActivity.put(ItemDefault.CODE_WLJ, GripMoreGroupActivity.class);
+
         // 每个机器码对应的机器名称
         TestConfigs.machineNameMap.put(ItemDefault.CODE_ZWTQQ, "坐位体前屈");
         TestConfigs.machineNameMap.put(ItemDefault.CODE_LDTY, "立定跳远");
@@ -418,6 +426,7 @@ public class TestConfigs {
         TestConfigs.machineNameMap.put(ItemDefault.CODE_ZCP, "中长跑");
         TestConfigs.machineNameMap.put(ItemDefault.CODE_ZQYQ, "足球运球");
         TestConfigs.machineNameMap.put(ItemDefault.CODE_JGCJ, "激光测距");
+        TestConfigs.machineNameMap.put(ItemDefault.CODE_WLJ, "握力");
 
         TestConfigs.settingActivity.put(ItemDefault.CODE_LDTY, StandJumpSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_ZWTQQ, SitReachSettingActivity.class);
@@ -432,6 +441,7 @@ public class TestConfigs {
         TestConfigs.settingActivity.put(ItemDefault.CODE_ZCP, MiddleRaceSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_LQYQ, BasketBallSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_ZQYQ, FootBallSettingActivity.class);
+        TestConfigs.settingActivity.put(ItemDefault.CODE_WLJ, GripSettingActivity.class);
         // 每个机器码对应的机器名称
         TestConfigs.itemMinScope.put(ItemDefault.CODE_ZWTQQ, -200);
         TestConfigs.itemMaxScope.put(ItemDefault.CODE_ZWTQQ, 400);
@@ -508,7 +518,7 @@ public class TestConfigs {
                 result = SharedPrefsUtil.loadFormSource(context, BasketBallSetting.class).getTestNo();
                 break;
             case ItemDefault.CODE_ZQYQ:
-                result = SharedPrefsUtil.loadFormSource(context, BasketBallSetting.class).getTestNo();
+                result = SharedPrefsUtil.loadFormSource(context, FootBallSetting.class).getTestNo();
                 break;
             case ItemDefault.CODE_ZCP:
                 result = 1;

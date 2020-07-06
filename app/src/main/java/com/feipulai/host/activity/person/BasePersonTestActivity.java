@@ -111,7 +111,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
      */
     private int testNo = 1;
     private int roundNo = 1;
-    private LEDManager mLEDManager;
+    protected LEDManager mLEDManager;
     //清理学生信息
     private ClearHandler clearHandler = new ClearHandler(this);
     //    private LedHandler ledHandler = new LedHandler(this);
@@ -122,6 +122,10 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         return R.layout.activity_base_person_test;
     }
 
+    @Override
+    public int setAFRFrameLayoutResID() {
+        return R.id.frame_camera;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -228,10 +232,13 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     }
 
     @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting,
-            R.id.tv_start_test, R.id.tv_exit_test, R.id.tv_stop_test, R.id.tv_abandon_test})
+            R.id.tv_start_test, R.id.tv_exit_test, R.id.tv_stop_test, R.id.tv_abandon_test,R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-
+            case R.id.img_AFR:
+//                gotoUVCFaceCamera();
+                showAFR();
+                break;
             case R.id.txt_led_setting:
                 toLedSetting();
                 break;
@@ -504,7 +511,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
      * @param roundResult 当前成绩
      * @param lastResult  最后成绩
      */
-    private void uploadResult(RoundResult roundResult, RoundResult lastResult) {
+    protected void uploadResult(RoundResult roundResult, RoundResult lastResult) {
         if (!SettingHelper.getSystemSetting().isRtUpload()) {
             return;
         }
@@ -535,7 +542,10 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     public void updateVision(BaseStuPair baseStuPair){
         txtStuResult.setText("左眼力:"+ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult())+"\n右眼力:"+ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getBaseHeight()));
         refreshDevice();
-
+        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "左视力：" + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult()),
+                0, 1, false, true);
+        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "右视力：" + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getBaseHeight()),
+                0, 2, false, true);
     }
 
 

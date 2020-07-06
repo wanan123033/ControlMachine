@@ -1,6 +1,8 @@
 package com.feipulai.exam.activity.basketball;
 
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -8,10 +10,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.feipulai.common.utils.ActivityUtils;
+import com.feipulai.device.manager.RunTimerManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.entity.Student;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * 投篮测试个人模式
@@ -78,12 +83,45 @@ public class BasketBallShootActivity extends BaseShootActivity {
         individualCheckFragment.setResultView(lvResults);
         ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), individualCheckFragment, R.id.ll_individual_check);
     }
+
     @Override
     protected void updateStudent(Student student) {
         tvStudentCode.setText(student.getStudentCode());
         tvStudentName.setText(student.getStudentName());
-        tvGender.setText(student.getSex()==0?"男":"女");
+        tvGender.setText(student.getSex() == 0 ? "男" : "女");
     }
 
 
+    @OnClick({R.id.txt_waiting, R.id.txt_illegal_return, R.id.txt_continue_run, R.id.txt_add,
+            R.id.txt_minus, R.id.txt_stop_timing, R.id.tv_led_setting, R.id.tv_print,
+            R.id.tv_confirm, R.id.txt_finish_test})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.txt_waiting:
+                RunTimerManager.waitStart();
+                break;
+            case R.id.txt_illegal_return:
+                RunTimerManager.illegalBack();
+                break;
+            case R.id.txt_continue_run:
+
+                break;
+            case R.id.txt_add:
+
+                break;
+            case R.id.txt_minus:
+
+                break;
+            case R.id.txt_stop_timing:
+                break;
+            case R.id.tv_led_setting:
+                break;
+            case R.id.tv_print:
+                break;
+            case R.id.tv_confirm:
+                break;
+            case R.id.txt_finish_test:
+                break;
+        }
+    }
 }

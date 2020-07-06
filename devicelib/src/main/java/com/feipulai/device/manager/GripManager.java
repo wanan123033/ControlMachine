@@ -1,5 +1,7 @@
 package com.feipulai.device.manager;
 
+import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
@@ -53,4 +55,31 @@ public class GripManager {
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
         RadioManager.getInstance().sendCommand(new ConvertCommand(command));
     }
+
+    /**
+     *
+     * @param hostId
+     * @param deviceId
+     * @param cmd 2获取状态 3开始 5空闲
+     */
+    public static void sendCommand(int hostId,int deviceId,int cmd){
+        byte[] data = {(byte) 0xAA, 0x12, 0x09, 0x03, 0x01, (byte) hostId, (byte) deviceId, (byte) cmd,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, (byte) 0x00, 0x0D};
+
+        if (MachineCode.machineCode == ItemDefault.CODE_WLJ) {
+            data[2] = 0x0c;
+        } else {
+            data[2] = 0x09;
+        }
+        int sum = 0;
+        for (int i = 1; i < data.length - 2; i++) {
+            sum += data[i];
+        }
+        data[16] = (byte) sum;
+
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
+    }
+
+
+
 }

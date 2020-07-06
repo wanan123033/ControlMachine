@@ -43,7 +43,7 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
     private int[] mCurrentConnect;
     public List<BallDeviceState> deviceStateList = new ArrayList<>();
     private List<Basketball868Result> timeRountList;
-    private Map<Integer, Basketball868Result> numResult;
+    private Map<String, Basketball868Result> numResult;
     private int interceptSecond = 5;
 
     public void setInterceptSecond(int interceptSecond) {
@@ -157,14 +157,14 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
                 if (result.getState() == 3 && timeRountList != null && result.getDeviceCode() != 2) {//计时
 
                     //保存每一次拦截成绩
-                    if (result.getSum() != 0 && !numResult.containsKey(result.getSum())) {
+                    if (result.getSum() != 0 && !numResult.containsKey(result.getMapKey())) {
                         Log.i("zzzz", "  timeRountList.add=====>");
                         timeRountList.add(result);
 
                     }
                     if (!isledStartTime) {
                         Log.i("zzzz", "triggerStart=====>");
-                        numResult.put(result.getSum(), result);
+                        numResult.put(result.getMapKey(), result);
                         Basketball868Result timeResult = new Basketball868Result();
                         timeResult.setHour(0);
                         timeResult.setSencond(0);
@@ -175,9 +175,9 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
                         listener.getDeviceStatus(3);//设置计时状态
                         listener.triggerStart(basketballResult);//开始计时
                     }
-                    if (result.getSum() != 0 && timeRountList.size() >= 2 && !numResult.containsKey(result.getSum())) { //获取拦截成绩
+                    if (result.getSum() != 0 && timeRountList.size() >= 2 && !numResult.containsKey(result.getMapKey())) { //获取拦截成绩
                         ballManager.setRadioPause(SettingHelper.getSystemSetting().getHostId());
-                        numResult.put(result.getSum(), result);
+                        numResult.put(result.getMapKey(), result);
 
                         Basketball868Result startTime = timeRountList.get(0);
                         long testTime = result.getInterceptTime() - startTime.getInterceptTime();

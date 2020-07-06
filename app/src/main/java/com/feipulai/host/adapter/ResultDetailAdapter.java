@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.height_weight.HWConfigs;
 import com.feipulai.host.config.TestConfigs;
@@ -71,6 +72,9 @@ public class ResultDetailAdapter extends BaseQuickAdapter<RoundResult, ResultDet
             viewHolder.mTvStatus.setText(setResultState(roundResult.getResultState()));
         } else {
             viewHolder.mViewHead.setVisibility(View.GONE);
+        }
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_SL){
+            viewHolder.mTvResult.setText("左:"+ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult())+"/右:"+ResultDisplayUtils.getStrResultForDisplay(roundResult.getWeightResult()));
         }
     }
 

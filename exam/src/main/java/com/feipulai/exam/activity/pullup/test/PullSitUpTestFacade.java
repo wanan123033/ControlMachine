@@ -90,7 +90,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
                         listener.onGetReadyTimerFinish();
                         testState = TESTING;
                         tmpResult = null;
-                        sitUpManager.getSitUpHandAngle(2);
+//                        sitUpManager.getSitUpHandAngle(2);
                         String displayInLed = "成绩:" + ResultDisplayUtils.getStrResultForDisplay(0);
                         ledManager.showString(SettingHelper.getSystemSetting().getHostId(), displayInLed, 1, 1, false, true);
                     }
@@ -105,6 +105,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
         executor.execute(mGetReadyCountDownTimer);
         tmp = 0;
         invalid = 0;
+        FileUtils.log("开始测试");
     }
 
     public void stopTest() {
@@ -117,6 +118,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
         sitUpLists.clear();
         invalid = 0;
         listener.onInvalid(invalid);
+        FileUtils.log("结束测试");
     }
 
     public void abandonTest() {
@@ -128,6 +130,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
         tmp = 0;
         invalid = 0;
         sitUpLists.clear();
+        FileUtils.log("放弃测试");
     }
 
     private void stopTimers() {
@@ -158,13 +161,12 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
                     if (result.getDeviceId() != 1) {
                         return;
                     }
+                    tmpResult = result;
 //                    listener.onScoreArrived(result);
-                    if (tmpResult == null || result.getResult() != tmpResult.getResult()) {
-//                        String displayInLed = "成绩:" + ResultDisplayUtils.getStrResultForDisplay(result.getResult());
-//                        ledManager.showString(SettingHelper.getSystemSetting().getHostId(), displayInLed, 1, 1, false, true);
-                        tmpResult = result;
-                        updateResult(tmpResult);
-                    }
+//                    if (tmpResult == null || result.getResult() != tmpResult.getResult()) {
+//                        tmpResult = result;
+//                        updateResult(tmpResult);
+//                    }
 
                 }
 
@@ -179,8 +181,11 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
                         return;
                     }
                     sitUpLists.add(result);
-                    hand = result.getResult();
-//                    updateResult(result);
+                    if(result.getResult() != hand){
+                        updateResult(result);
+                        hand = result.getResult();
+                    }
+
                     FileUtils.log("手臂检测====" + result.toString());
                 }
 
@@ -191,11 +196,10 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
 
     private int tmp;
     private int invalid;
-    private int handCheck;//当前临时手臂值
     private int hand;
     ArmStateResult high, low;
 
-    private void updateResult(PullUpStateResult pull) {
+    private synchronized void updateResult(PullUpStateResult pull) {
         if (sitUpLists.size() == 0) {
             return;
         }
@@ -210,18 +214,12 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
 //            } else {
 //                tmp++;
 //            }
-            handCheck = hand;
             tmp++;
-        } else if (high.getAngleState() == low.getAngleState() && high.getAngleState() < 2) {//在高点时没收到，处理低点
-            if (tmp!=0){
-                tmp++;
-            }
-
-        }else{
+        } else{
             //此次操作违规
             invalid++;
         }
-
+        pull.getTotalCountNum();
         pull.setValidCountNum(tmp);
         listener.onScoreArrived(pull);
         String displayInLed = "成绩:" + ResultDisplayUtils.getStrResultForDisplay(pull.getResult());
@@ -229,15 +227,23 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
         sitUpLists.clear();
     }
 
-    private void updateResult(ArmStateResult armState) {
-        byte angleState = armState.getAngleState();
-        if (angleState == 3 || angleState == 2) {//高点
-            Log.i("high+low==", "高位");
-        } else {//低点
-            Log.i("high+low==", "低位");
+    private synchronized void updateResult(ArmStateResult armState) {
+        if (tmpResult == null)
+            return;
+        high = getHeightSitResult();
+        low = getLowSitResult();
+        if (Math.abs(high.getAngle() - low.getAngle()) > 55) {
+            if (tmpResult.getResult()>tmp){
+                tmp = tmpResult.getResult();
+            }else {
+                invalid++;
+            }
+            tmpResult.setValidCountNum(armState.getResult()-invalid);
+            sitUpLists.clear();
+            listener.onScoreArrived(tmpResult);
+            String displayInLed = "成绩:" + ResultDisplayUtils.getStrResultForDisplay(tmpResult.getResult());
+            ledManager.showString(SettingHelper.getSystemSetting().getHostId(), displayInLed, 1, 1, false, true);
         }
-
-        Log.i("high+low==", getBitArray(armState.getAngleState())[1] == 0 ? "低位" : "高位");
     }
 
 
@@ -321,7 +327,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
                     while (detecting) {
                         if (!linking) {
                             deviceManager.getState(1);
-                            if (timeCount % 5 == 0) {
+                            if (timeCount % 10 == 0) {
                                 sitUpManager.getState(2);
                             }
 //                            sitUpManager.getSitUpHandAngle(2);
@@ -333,7 +339,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
                                 listener.onDeviceConnectState(PullUpManager.STATE_DISCONNECT);
                             }
                             try {
-                                Thread.sleep(1000);
+                                Thread.sleep(500);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }

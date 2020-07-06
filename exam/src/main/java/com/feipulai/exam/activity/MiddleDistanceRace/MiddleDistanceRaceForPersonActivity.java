@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -19,10 +20,12 @@ import android.text.Layout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewParent;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -45,6 +48,7 @@ import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.FileUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.NetWorkUtils;
+import com.feipulai.common.utils.ScannerGunManager;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.DisplayUtil;
@@ -97,6 +101,7 @@ import com.ww.fpl.videolibrary.play.play.ReceiverGroupManager;
 import com.ww.fpl.videolibrary.play.util.PUtil;
 import com.zyyoona7.popup.EasyPopup;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -304,6 +309,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
     private String hk_user;
     private String hk_psw;
     private View parentView;
+    private ScannerGunManager scannerGunManager;
 
     @Override
     protected int setLayoutResID() {
@@ -448,6 +454,34 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
 //            currentPort = Integer.parseInt(server_Port);
 //            bindTcpService();
 //        }
+    }
+
+    @Override
+    protected void initViews() {
+        scannerGunManager = new ScannerGunManager(new ScannerGunManager.OnScanListener() {
+            @Override
+            public void onResult(String code) {
+                Log.i("scannerGunManager", "->" + code);
+                showGroupPop();
+                if (TextUtils.isEmpty(code)) {
+                    return;
+                }
+                onQrArrived(code);
+            }
+        });
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (scannerGunManager != null && scannerGunManager.dispatchKeyEvent(event)) {
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
     }
 
     private double freeTime;
@@ -849,137 +883,170 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         }
     }
 
-    private EasyPopup groupPop;
-    private EditText groupInput;
-    private TextView groupingItem;
-    private TextView tvGroupeNo;
-    private RecyclerView rvGrouping;
-    private List<Student> groupIngStudents = new ArrayList<>();
-    private GroupingAdapter groupingAdapter;
-    private List<Group> groups;
+    private GroupingDialog groupingDialog;
+
+    private void showGroupPop() {
+        if (groupingDialog == null || !itemCode.equals(groupingDialog.getItemCode())) {
+            if (groupingDialog != null) {
+                groupingDialog.dismiss();
+            }
+            groupingDialog = new GroupingDialog(mContext);
+            groupingDialog.setContext(mContext);
+            groupingDialog.setItemCode(itemCode);
+            groupingDialog.setListener(new GroupingDialog.OnGroupPopListener() {
+                @Override
+                public void queryStudent(String code) {
+                    if (TextUtils.isEmpty(code)) {
+                        return;
+                    }
+                    onQrArrived(code);
+                }
+
+                @Override
+                public void addGroup() {
+                    updateSchedules();
+                    getGroupList();
+                }
+            });
+        }
+        groupingDialog.showDialog(itemList.get(mItemPosition).getItemName());
+
+//        if (groupingPop == null) {
+//            groupingPop = new GroupingPop(mContext, itemCode, new GroupingPop.OnGroupPopListener() {
+//                @Override
+//                public void queryStudent(String code) {
+//                    if (TextUtils.isEmpty(code)) {
+//                        return;
+//                    }
+//                    onQrArrived(code);
+//                }
+//
+//                @Override
+//                public void addGroup() {
+//                    updateSchedules();
+//                    getGroupList();
+//                }
+//            });
+//        }
+//        groupingPop.showGroupPop(itemList.get(mItemPosition).getItemName(), this);
+    }
+
+//    private EasyPopup groupPop;
+//    private EditText groupInput;
+//    private TextView groupingItem;
+//    private TextView tvGroupeNo;
+//    private RecyclerView rvGrouping;
+//    private List<Student> groupIngStudents = new ArrayList<>();
+//    private GroupingAdapter groupingAdapter;
+//    private List<Group> groups;
 
     /**
      * 分组弹窗
      */
-    @SuppressLint("ClickableViewAccessibility")
-    private void showGroupPop() {
-        if (groupPop == null) {
-            groupPop = EasyPopup.create()
-                    .setContentView(this, R.layout.pop_group)
-                    .setBackgroundDimEnable(true)
-                    .setDimValue(0.5f)
-                    //是否允许点击PopupWindow之外的地方消失
-                    .setFocusAndOutsideEnable(false)
-                    .setHeight(height)
-                    .setWidth(width)
-                    .apply();
-
-            groupInput = groupPop.findViewById(R.id.et_group_input);
-            Button btnQuery = groupPop.findViewById(R.id.btn_group_query);
-            groupingItem = groupPop.findViewById(R.id.tv_grouping_item);
-            rvGrouping = groupPop.findViewById(R.id.rv_grouping);
-            tvGroupeNo = groupPop.findViewById(R.id.tv_grouping_no);
-            Button btnCancel = groupPop.findViewById(R.id.btn_cancel);
-            Button btnSure = groupPop.findViewById(R.id.btn_sure);
-
-            groupingAdapter = new GroupingAdapter(mContext, groupIngStudents);
-            rvGrouping.setLayoutManager(new LinearLayoutManager(mContext));
-            rvGrouping.setAdapter(groupingAdapter);
-
-            ItemTouchHelperCallback helperCallback = new ItemTouchHelperCallback(groupingAdapter);
-            helperCallback.setSwipeEnable(true);
-            helperCallback.setDragEnable(true);
-            ItemTouchHelper helper = new ItemTouchHelper(helperCallback);
-            helper.attachToRecyclerView(rvGrouping);
-
-            //防止点击editText崩溃
-            groupInput.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+//    @SuppressLint("ClickableViewAccessibility")
+//    private void showGroupPop2() {
+//        if (groupPop == null) {
+//            groupPop = EasyPopup.create()
+//                    .setContentView(this, R.layout.pop_group)
+//                    .setBackgroundDimEnable(true)
+//                    .setDimValue(0.5f)
+//                    //是否允许点击PopupWindow之外的地方消失
+//                    .setFocusAndOutsideEnable(false)
+//                    .setHeight(height)
+//                    .setWidth(width)
+//                    .apply();
 //
-//            groupInput.setOnTouchListener(new View.OnTouchListener() {
+//            groupInput = groupPop.findViewById(R.id.et_group_input);
+//            Button btnQuery = groupPop.findViewById(R.id.btn_group_query);
+//            groupingItem = groupPop.findViewById(R.id.tv_grouping_item);
+//            rvGrouping = groupPop.findViewById(R.id.rv_grouping);
+//            tvGroupeNo = groupPop.findViewById(R.id.tv_group_no);
+//            Button btnCancel = groupPop.findViewById(R.id.btn_cancel);
+//            Button btnSure = groupPop.findViewById(R.id.btn_sure);
+//
+//            groupingAdapter = new GroupingAdapter(mContext, groupIngStudents);
+//            rvGrouping.setLayoutManager(new LinearLayoutManager(mContext));
+//            rvGrouping.setAdapter(groupingAdapter);
+//
+//            ItemTouchHelperCallback helperCallback = new ItemTouchHelperCallback(groupingAdapter);
+//            helperCallback.setSwipeEnable(true);
+//            helperCallback.setDragEnable(true);
+//            ItemTouchHelper helper = new ItemTouchHelper(helperCallback);
+//            helper.attachToRecyclerView(rvGrouping);
+//
+//            //防止点击editText崩溃
+//            groupInput.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+//
+//            btnQuery.setOnClickListener(new View.OnClickListener() {
 //                @Override
-//                public boolean onTouch(View arg0, MotionEvent event) {
-//                    if (event.getAction() == MotionEvent.ACTION_UP) {
-//                        InputMethodManager imm = (InputMethodManager) MiddleDistanceRaceForPersonActivity.this.getSystemService(MiddleDistanceRaceForPersonActivity.INPUT_METHOD_SERVICE);
-//                        //activity要换成自己的activity名字 
-//                        if (imm != null) {
-//                            imm.toggleSoftInput(0, InputMethodManager.SHOW_FORCED);
-//                        }
+//                public void onClick(View v) {
+//                    if (TextUtils.isEmpty(groupInput.getText())) {
+//                        return;
 //                    }
-//                    return true;
+//                    onQrArrived(groupInput.getText().toString());
 //                }
 //            });
-
-            btnQuery.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (TextUtils.isEmpty(groupInput.getText())) {
-                        return;
-                    }
-                    onQrArrived(groupInput.getText().toString());
-                }
-            });
-
-            btnCancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    groupIngStudents.clear();
-                    groupingAdapter.notifyDataSetChanged();
-                    groupInput.setText("");
-                    groupPop.dismiss();
-                }
-            });
-
-            btnSure.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (groupIngStudents.isEmpty()) {
-                        groupPop.dismiss();
-                        return;
-                    }
-                    Group group = new Group();
-                    group.setIsTestComplete(0);
-                    group.setItemCode(itemCode);
-                    group.setScheduleNo(DBManager.getInstance().queryItemSchedulesByItemCode(itemCode).get(0).getScheduleNo());
-                    group.setGroupNo(groups.size() + 1);
-                    group.setGroupType(groupIngStudents.get(0).getSex());
-                    group.setSortName("组");
-
-                    DBManager.getInstance().insertGroup(group);
-
-                    GroupItem groupItem;
-                    for (int i = 0; i < groupIngStudents.size(); i++) {
-                        groupItem = new GroupItem();
-                        groupItem.setItemCode(itemCode);
-                        groupItem.setTrackNo(i + 1);
-                        groupItem.setStudentCode(groupIngStudents.get(i).getStudentCode());
-                        groupItem.setScheduleNo(group.getScheduleNo());
-                        groupItem.setGroupNo(group.getGroupNo());
-                        groupItem.setGroupType(group.getGroupType());
-                        groupItem.setSortName("组");
-                        DBManager.getInstance().insertGroupItem(groupItem);
-                    }
-
-                    updateSchedules();
-                    getGroupList();
-
-                    groupIngStudents.clear();
-                    groupingAdapter.notifyDataSetChanged();
-                    groupInput.setText("");
-                    groupPop.dismiss();
-                }
-            });
-        }
-
-        if (groupPop != null && !groupPop.isShowing()) {
-            groupingItem.setText(itemList.get(mItemPosition).getItemName());
-            groups = DBManager.getInstance().queryGroup(itemCode);
-            tvGroupeNo.setText(String.valueOf(groups.size() + 1) + "组");
-            if (!this.isFinishing()) {
-                groupPop.showAtLocation(parentView, Gravity.CENTER, 0, 0);
-                groupInput.setText("");
-            }
-        }
-    }
+//
+//            btnCancel.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    groupIngStudents.clear();
+//                    groupingAdapter.notifyDataSetChanged();
+//                    groupInput.setText("");
+//                    groupPop.dismiss();
+//                }
+//            });
+//
+//            btnSure.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    if (groupIngStudents.isEmpty()) {
+//                        groupPop.dismiss();
+//                        return;
+//                    }
+//                    Group group = new Group();
+//                    group.setIsTestComplete(0);
+//                    group.setItemCode(itemCode);
+//                    group.setScheduleNo(DBManager.getInstance().queryItemSchedulesByItemCode(itemCode).get(0).getScheduleNo());
+//                    group.setGroupNo(groups.size() + 1);
+//                    group.setGroupType(groupIngStudents.get(0).getSex());
+//                    group.setSortName("组");
+//
+//                    DBManager.getInstance().insertGroup(group);
+//
+//                    GroupItem groupItem;
+//                    for (int i = 0; i < groupIngStudents.size(); i++) {
+//                        groupItem = new GroupItem();
+//                        groupItem.setItemCode(itemCode);
+//                        groupItem.setTrackNo(i + 1);
+//                        groupItem.setStudentCode(groupIngStudents.get(i).getStudentCode());
+//                        groupItem.setScheduleNo(group.getScheduleNo());
+//                        groupItem.setGroupNo(group.getGroupNo());
+//                        groupItem.setGroupType(group.getGroupType());
+//                        groupItem.setSortName("组");
+//                        DBManager.getInstance().insertGroupItem(groupItem);
+//                    }
+//
+//                    updateSchedules();
+//                    getGroupList();
+//
+//                    groupIngStudents.clear();
+//                    groupingAdapter.notifyDataSetChanged();
+//                    groupInput.setText("");
+//                    groupPop.dismiss();
+//                }
+//            });
+//        }
+//
+//        if (groupPop != null && !groupPop.isShowing()) {
+//            groupingItem.setText(itemList.get(mItemPosition).getItemName());
+//            groups = DBManager.getInstance().queryGroup(itemCode);
+//            tvGroupeNo.setText(String.valueOf(groups.size() + 1) + "组");
+//            if (!this.isFinishing()) {
+//                groupPop.showAtLocation(parentView, Gravity.CENTER, 0, 0);
+//            }
+//        }
+//    }
 
     private List<List<String>> selectResults = new ArrayList<>();
     private int videoPosition;
@@ -1489,23 +1556,25 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
 
     @Override
     public void onCheckIn(Student student) {
-        List<ChipGroup> chips = DBManager.getInstance().queryChipGroups();
-        if (!chips.isEmpty() && chips.get(0).getStudentNo() <= groupIngStudents.size()) {
-            toastSpeak("已达最大人数");
-            return;
-        }
+//        List<ChipGroup> chips = DBManager.getInstance().queryChipGroups();
+//        if (!chips.isEmpty() && chips.get(0).getStudentNo() <= groupIngStudents.size()) {
+//            toastSpeak("已达最大人数");
+//            return;
+//        }
         showGroupPop();
-        if (groupInput != null) {
-            groupInput.setText(student.getStudentCode());
-            groupInput.setSelection(student.getStudentCode().length());
-        }
-        if (!groupIngStudents.contains(student)) {
-            groupIngStudents.add(student);
-            groupingAdapter.notifyDataSetChanged();
-            smoothMoveToPosition(rvGrouping, groupIngStudents.size() - 1);
-        } else {
-            toastSpeak("已存在");
-        }
+//        if (groupInput != null) {
+//            groupInput.setText(student.getStudentCode());
+//            groupInput.setSelection(student.getStudentCode().length());
+//        }
+//        if (!groupIngStudents.contains(student)) {
+//            groupIngStudents.add(student);
+//            groupingAdapter.notifyDataSetChanged();
+//            smoothMoveToPosition(rvGrouping, groupIngStudents.size() - 1);
+//        } else {
+//            toastSpeak("已存在");
+//        }
+        groupingDialog.addStudent(student);
+        groupingDialog.showDialog(itemList.get(mItemPosition).getItemName());
     }
 
     @Override

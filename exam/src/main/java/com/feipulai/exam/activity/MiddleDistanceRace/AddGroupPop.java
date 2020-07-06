@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -42,7 +43,6 @@ public class AddGroupPop {
         this.listener = listener;
         this.itemCode = itemCode;
         initWindow(height, width);
-
     }
 
     private EditText groupInput;

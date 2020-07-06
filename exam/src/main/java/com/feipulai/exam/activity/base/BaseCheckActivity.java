@@ -117,7 +117,12 @@ public abstract class BaseCheckActivity
         scannerGunManager = new ScannerGunManager(new ScannerGunManager.OnScanListener() {
             @Override
             public void onResult(String code) {
-                checkQulification(code, STUDENT_CODE);
+                boolean needAdd = checkQulification(code, STUDENT_CODE);
+                if (needAdd) {
+                    Student student = new Student();
+                    student.setStudentCode(code);
+                    showAddHint(student);
+                }
             }
         });
 
@@ -509,7 +514,7 @@ public abstract class BaseCheckActivity
     public void onFault(int code, String errorMsg) {
         OperateProgressBar.removeLoadingUiIfExist(this);
         ToastUtils.showLong(errorMsg);
-        sendCheckHandlerMessage(mStudent);
+//        sendCheckHandlerMessage(mStudent);
     }
 
 

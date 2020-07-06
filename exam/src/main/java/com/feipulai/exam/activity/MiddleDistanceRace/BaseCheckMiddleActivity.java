@@ -55,7 +55,7 @@ public abstract class BaseCheckMiddleActivity
     private Student mStudent;
     private StudentItem mStudentItem;
     private List<RoundResult> mResults;
-    private ScannerGunManager scannerGunManager;
+//    private ScannerGunManager scannerGunManager;
 
     public void setOpenDevice(boolean openDevice) {
         isOpenDevice = openDevice;
@@ -68,28 +68,32 @@ public abstract class BaseCheckMiddleActivity
 
     @Override
     protected void initViews() {
-        scannerGunManager = new ScannerGunManager(new ScannerGunManager.OnScanListener() {
-            @Override
-            public void onResult(String code) {
-                Log.i("scannerGunManager","->"+code);
-                checkQulification(code, STUDENT_CODE);
-            }
-        });
+//        scannerGunManager = new ScannerGunManager(new ScannerGunManager.OnScanListener() {
+//            @Override
+//            public void onResult(String code) {
+//                boolean needAdd = checkQulification(code, STUDENT_CODE);
+//                if (needAdd) {
+//                    Student student = new Student();
+//                    student.setStudentCode(code);
+//                    showAddHint(student);
+//                }
+//            }
+//        });
     }
 
-    @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        Log.d("scan", "event= " + event);
-        if (scannerGunManager != null && scannerGunManager.dispatchKeyEvent(event)) {
-            return true;
-        }
-        return super.dispatchKeyEvent(event);
-    }
+//    @Override
+//    public boolean dispatchKeyEvent(KeyEvent event) {
+//        Log.d("scan", "event= " + event);
+//        if (scannerGunManager != null && scannerGunManager.dispatchKeyEvent(event)) {
+//            return true;
+//        }
+//        return super.dispatchKeyEvent(event);
+//    }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-    }
+//    @Override
+//    public void onConfigurationChanged(Configuration newConfig) {
+//        super.onConfigurationChanged(newConfig);
+//    }
 
     @Override
     protected void initData() {

@@ -116,7 +116,7 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
     }
 
     @Override
-    public int setTestDeviceCount() {
+    public int setDeviceCount() {
         return setting.getSpDeviceCount();
     }
 
