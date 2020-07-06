@@ -44,12 +44,17 @@ public class FaceServer {
     /**
      * 存放特征的目录
      */
-    private static final String SAVE_FEATURE_DIR = "register" + File.separator + "features";
+    public static final String SAVE_FEATURE_DIR = "register" + File.separator + "features";
 
     /**
      * 是否正在搜索人脸，保证搜索操作单线程进行
      */
     private boolean isProcessing = false;
+    private boolean isProcessing2 = false;
+    private boolean isProcessing3 = false;
+    private FaceEngine faceEngine2;
+    private FaceEngine faceEngine3;
+    private int faceNumber;
 
     public static FaceServer getInstance() {
         if (faceServer == null) {
@@ -62,6 +67,10 @@ public class FaceServer {
         return faceServer;
     }
 
+    public static List<FaceRegisterInfo> getFaceRegisterInfoList() {
+        return faceRegisterInfoList;
+    }
+
     /**
      * 初始化
      *
@@ -72,12 +81,18 @@ public class FaceServer {
         synchronized (this) {
             if (faceEngine == null && context != null) {
                 faceEngine = new FaceEngine();
+                faceEngine2 = new FaceEngine();
+                faceEngine3 = new FaceEngine();
                 int engineCode = faceEngine.init(context, DetectMode.ASF_DETECT_MODE_IMAGE, DetectFaceOrientPriority.ASF_OP_0_ONLY, 16, 1, FaceEngine.ASF_FACE_RECOGNITION | FaceEngine.ASF_FACE_DETECT);
-                if (engineCode == ErrorInfo.MOK) {
+                int engineCode2 = faceEngine2.init(context, DetectMode.ASF_DETECT_MODE_IMAGE, DetectFaceOrientPriority.ASF_OP_0_ONLY, 16, 1, FaceEngine.ASF_FACE_RECOGNITION | FaceEngine.ASF_FACE_DETECT);
+                int engineCode3 = faceEngine3.init(context, DetectMode.ASF_DETECT_MODE_IMAGE, DetectFaceOrientPriority.ASF_OP_0_ONLY, 16, 1, FaceEngine.ASF_FACE_RECOGNITION | FaceEngine.ASF_FACE_DETECT);
+                if (engineCode == ErrorInfo.MOK && engineCode2 == ErrorInfo.MOK && engineCode3 == ErrorInfo.MOK) {
                     initFaceList(context);
                     return true;
                 } else {
                     faceEngine = null;
+                    faceEngine2 = null;
+                    faceEngine3 = null;
                     Log.e(TAG, "init: failed! code = " + engineCode);
                     return false;
                 }
@@ -85,6 +100,23 @@ public class FaceServer {
             return false;
         }
     }
+//    public boolean init(Context context) {
+//        synchronized (this) {
+//            if (faceEngine == null && context != null) {
+//                faceEngine = new FaceEngine();
+//                int engineCode = faceEngine.init(context, DetectMode.ASF_DETECT_MODE_IMAGE, DetectFaceOrientPriority.ASF_OP_0_ONLY, 16, 1, FaceEngine.ASF_FACE_RECOGNITION | FaceEngine.ASF_FACE_DETECT);
+//                if (engineCode == ErrorInfo.MOK) {
+//                    initFaceList(context);
+//                    return true;
+//                } else {
+//                    faceEngine = null;
+//                    Log.e(TAG, "init: failed! code = " + engineCode);
+//                    return false;
+//                }
+//            }
+//            return false;
+//        }
+//    }
 
     /**
      * 销毁
@@ -98,6 +130,14 @@ public class FaceServer {
             if (faceEngine != null) {
                 faceEngine.unInit();
                 faceEngine = null;
+            }
+            if (faceEngine2 != null) {
+                faceEngine2.unInit();
+                faceEngine2 = null;
+            }
+            if (faceEngine3 != null) {
+                faceEngine3.unInit();
+                faceEngine3 = null;
             }
         }
     }
@@ -132,7 +172,20 @@ public class FaceServer {
                     e.printStackTrace();
                 }
             }
+            faceNumber=faceRegisterInfoList.size();
+            Log.i("faceRegisterInfoList", "1----------" + faceNumber);
         }
+    }
+
+    public void addFaceList(List<FaceRegisterInfo> faces) {
+        if (faceRegisterInfoList != null) {
+            faceRegisterInfoList.addAll(faces);
+        } else {
+            faceRegisterInfoList = new ArrayList<>();
+            faceRegisterInfoList.addAll(faces);
+        }
+        faceNumber=faceRegisterInfoList.size();
+        Log.i("faceRegisterInfoList", "2----------" + faceNumber);
     }
 
     public int getFaceNumber(Context context) {
@@ -157,6 +210,14 @@ public class FaceServer {
                 imageCount = imageFiles == null ? 0 : imageFiles.length;
             }
             return featureCount > imageCount ? imageCount : featureCount;
+        }
+    }
+
+    public int getFaceNumber() {
+        if (faceRegisterInfoList != null) {
+            return faceRegisterInfoList.size();
+        } else {
+            return 0;
         }
     }
 
@@ -442,7 +503,7 @@ public class FaceServer {
 
     /**
      * 在特征库中搜索
-     *
+     *分为3个线程
      * @param faceFeature 传入特征数据
      * @return 比对结果
      */
@@ -455,7 +516,7 @@ public class FaceServer {
         float maxSimilar = 0;
         int maxSimilarIndex = -1;
         isProcessing = true;
-        for (int i = 0; i < faceRegisterInfoList.size(); i++) {
+        for (int i = 0; i < faceNumber / 3; i++) {
             tempFaceFeature.setFeatureData(faceRegisterInfoList.get(i).getFeatureData());
             faceEngine.compareFaceFeature(faceFeature, tempFaceFeature, faceSimilar);
             if (faceSimilar.getScore() > maxSimilar) {
@@ -463,7 +524,58 @@ public class FaceServer {
                 maxSimilarIndex = i;
             }
         }
+        Log.i("getTopOfFaceLib1", "---------------------->");
         isProcessing = false;
+        if (maxSimilarIndex != -1) {
+            return new CompareResult(faceRegisterInfoList.get(maxSimilarIndex).getName(), maxSimilar);
+        }
+        return null;
+    }
+
+    public CompareResult getTopOfFaceLib2(FaceFeature faceFeature) {
+        if (faceEngine2 == null || isProcessing2 || faceFeature == null || faceRegisterInfoList == null || faceRegisterInfoList.size() == 0) {
+            return null;
+        }
+        FaceFeature tempFaceFeature = new FaceFeature();
+        FaceSimilar faceSimilar = new FaceSimilar();
+        float maxSimilar = 0;
+        int maxSimilarIndex = -1;
+        isProcessing2 = true;
+        for (int i = faceNumber / 3; i < faceNumber/3*2; i++) {
+            tempFaceFeature.setFeatureData(faceRegisterInfoList.get(i).getFeatureData());
+            faceEngine2.compareFaceFeature(faceFeature, tempFaceFeature, faceSimilar);
+            if (faceSimilar.getScore() > maxSimilar) {
+                maxSimilar = faceSimilar.getScore();
+                maxSimilarIndex = i;
+            }
+        }
+        Log.i("getTopOfFaceLib2", "---------------------->");
+        isProcessing2 = false;
+        if (maxSimilarIndex != -1) {
+            return new CompareResult(faceRegisterInfoList.get(maxSimilarIndex).getName(), maxSimilar);
+        }
+        return null;
+    }
+
+    public CompareResult getTopOfFaceLib3(FaceFeature faceFeature) {
+        if (faceEngine3 == null || isProcessing3 || faceFeature == null || faceRegisterInfoList == null || faceRegisterInfoList.size() == 0) {
+            return null;
+        }
+        FaceFeature tempFaceFeature = new FaceFeature();
+        FaceSimilar faceSimilar = new FaceSimilar();
+        float maxSimilar = 0;
+        int maxSimilarIndex = -1;
+        isProcessing3 = true;
+        for (int i = faceNumber/3*2; i < faceNumber; i++) {
+            tempFaceFeature.setFeatureData(faceRegisterInfoList.get(i).getFeatureData());
+            faceEngine3.compareFaceFeature(faceFeature, tempFaceFeature, faceSimilar);
+            if (faceSimilar.getScore() > maxSimilar) {
+                maxSimilar = faceSimilar.getScore();
+                maxSimilarIndex = i;
+            }
+        }
+        Log.i("getTopOfFaceLib3", "---------------------->");
+        isProcessing3 = false;
         if (maxSimilarIndex != -1) {
             return new CompareResult(faceRegisterInfoList.get(maxSimilarIndex).getName(), maxSimilar);
         }

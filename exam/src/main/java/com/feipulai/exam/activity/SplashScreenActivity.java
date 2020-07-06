@@ -21,8 +21,10 @@ import com.feipulai.exam.BuildConfig;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseActivity;
+import com.feipulai.exam.db.DBManager;
 import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.common.Constants;
+import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.libarcface.util.ConfigUtil;
 
 import io.reactivex.Observable;
@@ -81,6 +83,9 @@ public class SplashScreenActivity extends BaseActivity {
         ToastUtils.init(getApplicationContext());
         //这里初始化时间很长,大约需要3s左右
         TtsManager.getInstance().init(this, APP_ID, APP_KEY, SECRET_KEY);
+
+        //本地人脸库初始化
+        FaceServer.getInstance().init(this);
         // Log.i("james", CommonUtils.getDeviceInfo());
         // AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         // int max = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM);

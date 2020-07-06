@@ -1,5 +1,6 @@
 package com.feipulai.exam.activity.MiddleDistanceRace;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -14,12 +15,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.InputType;
+import android.text.Layout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -298,9 +303,11 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
     private EditText etHKPassWord;
     private String hk_user;
     private String hk_psw;
+    private View parentView;
 
     @Override
     protected int setLayoutResID() {
+        parentView = LayoutInflater.from(this).inflate(R.layout.activity_middle_distance_race, null);
         return R.layout.activity_middle_distance_race;
     }
 
@@ -854,6 +861,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
     /**
      * 分组弹窗
      */
+    @SuppressLint("ClickableViewAccessibility")
     private void showGroupPop() {
         if (groupPop == null) {
             groupPop = EasyPopup.create()
@@ -862,8 +870,8 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                     .setDimValue(0.5f)
                     //是否允许点击PopupWindow之外的地方消失
                     .setFocusAndOutsideEnable(false)
-                    .setHeight(height * 4 / 5)
-                    .setWidth(width * 3 / 4)
+                    .setHeight(height)
+                    .setWidth(width)
                     .apply();
 
             groupInput = groupPop.findViewById(R.id.et_group_input);
@@ -883,6 +891,23 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             helperCallback.setDragEnable(true);
             ItemTouchHelper helper = new ItemTouchHelper(helperCallback);
             helper.attachToRecyclerView(rvGrouping);
+
+            //防止点击editText崩溃
+            groupInput.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+//
+//            groupInput.setOnTouchListener(new View.OnTouchListener() {
+//                @Override
+//                public boolean onTouch(View arg0, MotionEvent event) {
+//                    if (event.getAction() == MotionEvent.ACTION_UP) {
+//                        InputMethodManager imm = (InputMethodManager) MiddleDistanceRaceForPersonActivity.this.getSystemService(MiddleDistanceRaceForPersonActivity.INPUT_METHOD_SERVICE);
+//                        //activity要换成自己的activity名字 
+//                        if (imm != null) {
+//                            imm.toggleSoftInput(0, InputMethodManager.SHOW_FORCED);
+//                        }
+//                    }
+//                    return true;
+//                }
+//            });
 
             btnQuery.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -945,11 +970,14 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             });
         }
 
-        if (!groupPop.isShowing()) {
+        if (groupPop != null && !groupPop.isShowing()) {
             groupingItem.setText(itemList.get(mItemPosition).getItemName());
             groups = DBManager.getInstance().queryGroup(itemCode);
             tvGroupeNo.setText(String.valueOf(groups.size() + 1) + "组");
-            groupPop.showAtLocation(getWindow().getDecorView(), Gravity.CENTER, 0, 0);
+            if (!this.isFinishing()) {
+                groupPop.showAtLocation(parentView, Gravity.CENTER, 0, 0);
+                groupInput.setText("");
+            }
         }
     }
 
@@ -963,6 +991,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
     private BaseVideoView mVideoView;
     private RelativeLayout rlVideo;
     private String[] timeLong;
+
     /**
      * 初始化查询成绩pop
      */
@@ -1144,6 +1173,10 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                 return;
             }
             List<String> paths = PUtil.getFilesAllName(hkCamera.PATH);
+            if (paths == null) {
+                ToastUtils.showShort("找不到录像文件");
+                return;
+            }
             String[] timeLong = new String[0];
             for (String path : paths
                     ) {
@@ -1290,16 +1323,19 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
 
     //发送连接设备命令
     private void sendConnect() {
-        nettyClient.sendMsgToServer(TcpConfig.CMD_CONNECT, this);
+        if (nettyClient != null)
+            nettyClient.sendMsgToServer(TcpConfig.CMD_CONNECT, this);
     }
 
     private void sendDisConnect() {
-        nettyClient.sendMsgToServer(TcpConfig.getCmdEndTiming(), this);
+        if (nettyClient != null)
+            nettyClient.sendMsgToServer(TcpConfig.getCmdEndTiming(), this);
     }
 
     //随便发送一个东西保持tcp不断
     private void send2() {
-        nettyClient.sendMsgToServer(TcpConfig.CMD_NOTHING, null);
+        if (nettyClient != null)
+            nettyClient.sendMsgToServer(TcpConfig.CMD_NOTHING, null);
     }
 
 
@@ -1774,7 +1810,6 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                 break;
             case R.id.btn_grouping:
                 showGroupPop();
-                groupInput.setText("");
                 break;
 
         }
@@ -2584,5 +2619,4 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
-
 }

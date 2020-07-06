@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.TextureView;
-import android.view.View;
 
 import com.arcsoft.face.AgeInfo;
 import com.arcsoft.face.ErrorInfo;
@@ -14,17 +13,16 @@ import com.arcsoft.face.FaceFeature;
 import com.arcsoft.face.FaceInfo;
 import com.arcsoft.face.GenderInfo;
 import com.arcsoft.face.LivenessInfo;
-import com.arcsoft.face.VersionInfo;
 import com.arcsoft.face.enums.DetectFaceOrientPriority;
 import com.arcsoft.face.enums.DetectMode;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.exam.R;
+import com.ww.fpl.libarcface.faceserver.ThreadManager;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Student;
 import com.lgh.uvccamera.UVCCameraProxy;
 import com.lgh.uvccamera.callback.ConnectCallback;
 import com.lgh.uvccamera.callback.PreviewCallback;
-import com.orhanobut.logger.Logger;
 import com.ww.fpl.libarcface.faceserver.CompareResult;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.libarcface.model.DrawInfo;
@@ -88,6 +86,9 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
     private static final int MAX_RETRY_TIME = 3;
     private int faceNumber;
     private FaceHelper faceHelper;
+    private ThreadManager.ThreadPool threadPool;
+    private FaceFeature mFaceFeature;
+    private Integer faceId;
 
     @Override
     protected int getLayoutId() {
@@ -97,15 +98,15 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
     @Override
     protected void initData() {
         initEngine();
-
         initCamera();
     }
 
     private void initCamera() {
+        threadPool = ThreadManager.getThreadPool();
         faceListener = new FaceListener() {
             @Override
             public void onFail(Exception e) {
-                Log.e(TAG, "onNFCFail: " + e.getMessage());
+                Log.e(TAG, "onFaceFail: " + e.getMessage());
             }
 
             //请求FR的回调
@@ -114,7 +115,13 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                 //FR成功
                 if (faceFeature != null) {
                     //不做活体检测的情况，直接搜索
-                    searchFace(faceFeature, requestId);
+//                    searchFace(faceFeature, requestId);
+                    //不做活体检测的情况，直接搜索
+                    faceId = requestId;
+                    mFaceFeature = faceFeature;
+                    threadPool.execute(searchFace1);
+                    threadPool.execute(searchFace2);
+                    threadPool.execute(searchFace3);
                 }
                 //特征提取失败
                 else {
@@ -454,6 +461,72 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
     }
 
     private float SIMILAR_THRESHOLD = 0.82f;
+
+    private CompareResult lastCompareResult;
+
+    //3个线程查找
+    private CompareResult compareResult1;
+    private Runnable searchFace1 = new Runnable() {
+        @Override
+        public void run() {
+            compareResult1 = FaceServer.getInstance().getTopOfFaceLib(mFaceFeature);
+            compareResult();
+        }
+    };
+    private CompareResult compareResult2;
+    private Runnable searchFace2 = new Runnable() {
+        @Override
+        public void run() {
+            compareResult2 = FaceServer.getInstance().getTopOfFaceLib2(mFaceFeature);
+            compareResult();
+        }
+    };
+
+    private CompareResult compareResult3;
+    private Runnable searchFace3 = new Runnable() {
+        @Override
+        public void run() {
+            compareResult3 = FaceServer.getInstance().getTopOfFaceLib3(mFaceFeature);
+            compareResult();
+        }
+    };
+
+    private void compareResult() {
+        if (compareResult1 == null && compareResult2 == null && compareResult3 == null || faceHelper == null) {
+            requestFeatureStatusMap.put(faceId, RequestFeatureStatus.FAILED);
+            return;
+        }
+
+        if (compareResult1 != null && compareResult2 != null && compareResult3 != null) {
+            if (compareResult1.getSimilar() > compareResult2.getSimilar()) {
+                if (compareResult1.getSimilar() > compareResult3.getSimilar()) {
+                    lastCompareResult = compareResult1;
+                } else {
+                    lastCompareResult = compareResult3;
+                }
+            } else {
+                if (compareResult2.getSimilar() < compareResult3.getSimilar()) {
+                    lastCompareResult = compareResult3;
+                } else {
+                    lastCompareResult = compareResult2;
+                }
+            }
+
+            compareResult1 = null;
+            compareResult2 = null;
+            compareResult3 = null;
+            if (lastCompareResult.getSimilar() > SIMILAR_THRESHOLD) {
+                requestFeatureStatusMap.put(faceId, RequestFeatureStatus.SUCCEED);
+                faceHelper.setName(faceId, mContext.getString(R.string.recognize_success_notice, lastCompareResult.getUserName()));
+                Student student = DBManager.getInstance().queryStudentByCode(lastCompareResult.getUserName());
+                compareListener.compareStu(student);
+            }else {
+                compareListener.compareStu(null);
+            }
+        }
+
+    }
+
 
     /**
      * 人脸库中比对

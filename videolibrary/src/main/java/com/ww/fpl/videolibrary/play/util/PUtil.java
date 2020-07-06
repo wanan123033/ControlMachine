@@ -56,11 +56,12 @@ public class PUtil {
      * @param filePath 文件地址
      * @return
      */
-    public static void createFile(String filePath) {
+    public static boolean createFile(String filePath) {
         File file = new File(filePath);
         if (!file.exists()) {
-            file.mkdirs();
+            return file.mkdirs();
         }
+        return false;
     }
 
     public static List<String> getFilesAllName(String path) {

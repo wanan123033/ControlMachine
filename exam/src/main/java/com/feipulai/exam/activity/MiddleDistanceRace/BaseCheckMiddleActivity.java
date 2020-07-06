@@ -1,16 +1,24 @@
 package com.feipulai.exam.activity.MiddleDistanceRace;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
 
+import com.feipulai.common.utils.ScannerGunManager;
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.CheckDeviceOpener;
 import com.feipulai.device.ic.ICCardDealer;
 import com.feipulai.device.ic.NFCDevice;
 import com.feipulai.device.ic.entity.StuInfo;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.base.BaseAFRFragment;
 import com.feipulai.exam.activity.base.MiddleBaseTitleActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -37,7 +45,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
  */
 public abstract class BaseCheckMiddleActivity
         extends MiddleBaseTitleActivity
-        implements CheckDeviceOpener.OnCheckDeviceArrived {
+        implements CheckDeviceOpener.OnCheckDeviceArrived, BaseAFRFragment.onAFRCompareListener {
 
     private MyHandler mHandler = new MyHandler(this);
     private boolean isOpenDevice = true;
@@ -47,6 +55,7 @@ public abstract class BaseCheckMiddleActivity
     private Student mStudent;
     private StudentItem mStudentItem;
     private List<RoundResult> mResults;
+    private ScannerGunManager scannerGunManager;
 
     public void setOpenDevice(boolean openDevice) {
         isOpenDevice = openDevice;
@@ -55,6 +64,31 @@ public abstract class BaseCheckMiddleActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void initViews() {
+        scannerGunManager = new ScannerGunManager(new ScannerGunManager.OnScanListener() {
+            @Override
+            public void onResult(String code) {
+                Log.i("scannerGunManager","->"+code);
+                checkQulification(code, STUDENT_CODE);
+            }
+        });
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        Log.d("scan", "event= " + event);
+        if (scannerGunManager != null && scannerGunManager.dispatchKeyEvent(event)) {
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
     }
 
     @Override
@@ -232,6 +266,11 @@ public abstract class BaseCheckMiddleActivity
                 toastSpeak("无此项目");
             }
         }
+    }
+
+    @Override
+    public void compareStu(Student student) {
+
     }
 
     private static class MyHandler extends Handler {

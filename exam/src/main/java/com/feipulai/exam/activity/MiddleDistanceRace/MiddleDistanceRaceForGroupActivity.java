@@ -7,10 +7,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -444,7 +446,6 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
             showSpaceNotice();
         }
     }
-
     private void showSpaceNotice() {
         dialogUtil.showCommonDialog("本机剩余存储空间" + freeSpace + "G,仅支持录像" + freeTime + "小时", android.R.drawable.ic_dialog_info, new DialogUtil.DialogListener() {
             @Override
@@ -834,7 +835,7 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
     private boolean hasStart = false;
     private boolean userPause = true;
     private ArrayList<String> resultTitles = new ArrayList<>();
-    private String[] timeLong;
+
     /**
      * 初始化查询成绩pop
      */
@@ -1016,6 +1017,10 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
                 return;
             }
             List<String> paths = PUtil.getFilesAllName(hkCamera.PATH);
+            if (paths == null) {
+                ToastUtils.showShort("找不到录像文件");
+                return;
+            }
             String[] timeLong = new String[0];
             for (String path : paths
                     ) {
@@ -1164,16 +1169,19 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
 
     //发送连接设备命令
     private void sendConnect() {
-        nettyClient.sendMsgToServer(TcpConfig.CMD_CONNECT, this);
+        if (nettyClient != null)
+            nettyClient.sendMsgToServer(TcpConfig.CMD_CONNECT, this);
     }
 
     //发送断开设备命令
     private void sendDisConnect() {
-        nettyClient.sendMsgToServer(TcpConfig.getCmdEndTiming(), this);
+        if (nettyClient != null)
+            nettyClient.sendMsgToServer(TcpConfig.getCmdEndTiming(), this);
     }
 
     //随便发送一个东西保持tcp不断
     private void send2() {
+        if (nettyClient != null)
         nettyClient.sendMsgToServer(TcpConfig.CMD_NOTHING, null);
     }
 

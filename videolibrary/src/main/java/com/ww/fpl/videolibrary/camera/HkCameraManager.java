@@ -2,6 +2,7 @@ package com.ww.fpl.videolibrary.camera;
 
 import android.app.Activity;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -17,9 +18,15 @@ import com.hikvision.netsdk.HCNetSDK;
 import com.hikvision.netsdk.NET_DVR_DEVICEINFO_V30;
 import com.hikvision.netsdk.NET_DVR_PREVIEWINFO;
 import com.hikvision.netsdk.NET_DVR_TIME;
+import com.ww.fpl.videolibrary.StorageUtils;
 import com.ww.fpl.videolibrary.play.util.PUtil;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -28,7 +35,7 @@ import java.util.List;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 public class HkCameraManager {
-    public String PATH = Environment.getExternalStorageDirectory() + "/HKCamera/";
+    public String PATH = Environment.getExternalStorageDirectory() + "/HKVideo/";
     private static final String TAG = "HkCameraManager";
     private int m_iLogID = -1;
     private int m_iPlayID = -1;
@@ -40,6 +47,7 @@ public class HkCameraManager {
     private int m_iChanNum = 0; // channel number
     private Activity activity;
     private NET_DVR_DEVICEINFO_V30 m_oNetDvrDeviceInfoV30 = null;
+    private String sdRootPath;
 //    private CameraListener listener;
 //
 //    interface CameraListener {
@@ -65,7 +73,7 @@ public class HkCameraManager {
             Log.e(TAG, "HCNetSDK init is failed!");
             return false;
         }
-        PUtil.createFile(PATH);
+        createFile();
         HCNetSDK.getInstance().NET_DVR_SetLogToFile(3, PATH + "Log/", true);
 
         //设置海康sdk，0切片（默认），1不切片
@@ -74,6 +82,21 @@ public class HkCameraManager {
         boolean cfgFlag = HCNetSDKJNAInstance.getInstance().NET_DVR_SetSDKLocalCfg(HCNetSDKByJNA.NET_SDK_LOCAL_CFG_TYPE.NET_DVR_LOCAL_CFG_TYPE_GENERAL, cfg);
         Log.e("cfgFlag", "------------" + cfgFlag);
         return true;
+    }
+
+    private void createFile(){
+        ArrayList<StorageUtils.Volume> storys = StorageUtils.getVolume(activity);
+        for (StorageUtils.Volume volume : storys
+                ) {
+            if (volume.isRemovable() && volume.getState().equals("mounted")) {
+                PATH = volume.getPath() + "/HKVideo/";
+                break;
+            }
+        }
+        if (!PUtil.createFile(PATH)) {
+            PATH = Environment.getExternalStorageDirectory() + "/HKVideo/";
+        }
+        Log.i("PATH", PATH);
     }
 
     /**
@@ -439,6 +462,91 @@ public class HkCameraManager {
                 }
             }
         }
+    }
+
+    private void getSDRoot() {
+        boolean sdCardExist = false;
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            //为真则SD卡已装入，
+            sdCardExist = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+        }
+        Log.i("getSDRoot", "--->" + sdCardExist);
+        if (sdCardExist) {
+            sdRootPath = Environment.getExternalStorageDirectory().toString();
+            Log.i("getSDRoot", "--->" + sdRootPath);
+        } else {
+            sdRootPath = "";
+        }
+    }
+
+    /**
+     * 获取外置SD卡路径以及TF卡的路径
+     * <p>
+     * 返回的数据：paths.get(0)肯定是外置SD卡的位置，因为它是primary external storage.
+     *
+     * @return 所有可用于存储的不同的卡的位置，用一个List来保存
+     */
+    private List<String> getExtSDCardPathList() {
+        List<String> paths = new ArrayList<String>();
+        String extFileStatus = Environment.getExternalStorageState();
+        File extFile = Environment.getExternalStorageDirectory();
+        //首先判断一下外置SD卡的状态，处于挂载状态才能获取的到
+        if (extFileStatus.equals(Environment.MEDIA_MOUNTED)
+                && extFile.exists() && extFile.isDirectory()
+                && extFile.canWrite()) {
+            //外置SD卡的路径
+            paths.add(extFile.getAbsolutePath());
+        }
+        try {
+            // obtain executed result of command line code of 'mount', to judge
+            // whether tfCard exists by the result
+            Runtime runtime = Runtime.getRuntime();
+            Process process = runtime.exec("mount");
+            InputStream is = process.getInputStream();
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+            String line = null;
+            int mountPathIndex = 1;
+            while ((line = br.readLine()) != null) {
+                // format of sdcard file system: vfat/fuse
+                if ((!line.contains("fat") && !line.contains("fuse") && !line
+                        .contains("storage"))
+                        || line.contains("secure")
+                        || line.contains("asec")
+                        || line.contains("firmware")
+                        || line.contains("shell")
+                        || line.contains("obb")
+                        || line.contains("legacy") || line.contains("data")) {
+                    continue;
+                }
+                String[] parts = line.split(" ");
+                int length = parts.length;
+                if (mountPathIndex >= length) {
+                    continue;
+                }
+                String mountPath = parts[mountPathIndex];
+                if (!mountPath.contains("/") || mountPath.contains("data")
+                        || mountPath.contains("Data")) {
+                    continue;
+                }
+                File mountRoot = new File(mountPath);
+                if (!mountRoot.exists() || !mountRoot.isDirectory()
+                        || !mountRoot.canWrite()) {
+                    continue;
+                }
+                boolean equalsToPrimarySD = mountPath.equals(extFile
+                        .getAbsolutePath());
+                if (equalsToPrimarySD) {
+                    continue;
+                }
+                //扩展存储卡即TF卡或者SD卡路径
+                paths.add(mountPath);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.i("getSDRoot", "--->" + paths.toString());
+        return paths;
     }
 
     /**

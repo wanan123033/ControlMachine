@@ -17,8 +17,10 @@ import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.ActivityCollector;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.SharedPrefsConfigs;
+import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.receiver.WifiReceiver;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
@@ -47,7 +49,7 @@ public class BaseActivity extends FragmentActivity {
     /**
      * 广播过滤器
      */
-    public IntentFilter filter =new IntentFilter();
+    public IntentFilter filter = new IntentFilter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

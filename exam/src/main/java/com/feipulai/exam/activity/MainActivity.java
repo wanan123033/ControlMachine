@@ -37,19 +37,16 @@ import com.feipulai.exam.activity.setting.MonitoringBindActivity;
 import com.feipulai.exam.activity.setting.SettingActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
-import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.RoundResult;
-import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.netUtils.CommonUtils;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.service.UploadService;
-import com.orhanobut.logger.Logger;
+import com.ww.fpl.libarcface.faceserver.FaceServer;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -81,7 +78,6 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
             String routeIp = locatIp.substring(0, locatIp.lastIndexOf("."));
             UdpLEDUtil.shellExec("ip route add " + routeIp + ".0/24 dev eth0 proto static scope link table wlan0 \n");
         }
-
         //测试数据
 //        List<GroupItem> items = DBManager.getInstance().queryGroupItemByCode("11");
 //        List<RoundResult> roundResults = new ArrayList<>();
@@ -292,6 +288,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
             clickTime = System.currentTimeMillis();
         } else {
             mIsExiting = true;
+            FaceServer.getInstance().unInit();
             this.finish();
         }
     }
