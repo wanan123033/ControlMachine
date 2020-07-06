@@ -4,8 +4,8 @@ package com.feipulai.exam.activity.grip;
  * Created by pengjf on 2019/10/16.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
-public class VcWrapper {
-    public VcWrapper(int deviceId , int result){
+public class GripWrapper {
+    public GripWrapper(int deviceId , int result){
         this.deviceId = deviceId;
         this.result = result ;
     }

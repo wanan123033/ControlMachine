@@ -8,6 +8,10 @@ public class GripSetting {
     private int deviceSum = 4;
     private boolean autoPair = true;
     private int testRound = 1;
+    /**
+     * 分组测试模式 0 连续 1 循环
+     */
+    private int testPattern = 0;
     public int getDeviceSum(){
         return deviceSum;
     }
@@ -31,6 +35,7 @@ public class GripSetting {
         return "SitUpSetting{" +
                 "deviceSum=" + deviceSum +
                 ", autoPair=" + autoPair +
+                ", testPattern=" + testPattern +
                 '}';
     }
 
@@ -40,5 +45,13 @@ public class GripSetting {
 
     public void setTestRound(int testRound) {
         this.testRound = testRound;
+    }
+
+    public int getTestPattern() {
+        return testPattern;
+    }
+
+    public void setTestPattern(int testPattern) {
+        this.testPattern = testPattern;
     }
 }

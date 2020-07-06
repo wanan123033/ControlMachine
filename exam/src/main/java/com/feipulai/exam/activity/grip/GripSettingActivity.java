@@ -13,6 +13,8 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
@@ -27,7 +29,7 @@ import butterknife.OnItemSelected;
  * Created by pengjf on 2020/6/30.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
-public class GripSettingActivity extends BaseTitleActivity  {
+public class GripSettingActivity extends BaseTitleActivity implements RadioGroup.OnCheckedChangeListener {
 
     @BindView(R.id.sp_device_count)
     Spinner spDeviceCount;
@@ -66,14 +68,13 @@ public class GripSettingActivity extends BaseTitleActivity  {
         spDeviceCount.setAdapter(spDeviceCountAdapter);
         spDeviceCount.setSelection(gripSetting.getDeviceSum()-1);
 
-//        if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
-//            rgTestPattern.setVisibility(View.GONE);
-//        } else {
-//            rgTestPattern.setVisibility(View.VISIBLE);
-//        }
+        if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
+            rgTestPattern.setVisibility(View.GONE);
+        } else {
+            rgTestPattern.setVisibility(View.VISIBLE);
+        }
         fullSkip.setVisibility(View.GONE);
         full.setVisibility(View.GONE);
-        rgTestPattern.setVisibility(View.GONE);
         deviceCheck.setVisibility(View.GONE);
         if (TestConfigs.sCurrentItem.getTestNum() != 0) {
             // 数据库中已经指定了测试次数,就不能再设置了
@@ -83,12 +84,12 @@ public class GripSettingActivity extends BaseTitleActivity  {
             spTestRound.setSelection(gripSetting.getTestRound() - 1);
         }
 
-
-//        if (gripSetting.getTestPattern() == 0) {//连续测试
-//            rgTestPattern.check(R.id.rb_continuous_test);
-//        } else {
-//            rgTestPattern.check(R.id.rb_circulation_test);
-//        }
+        rgTestPattern.setOnCheckedChangeListener(this);
+        if (gripSetting.getTestPattern() == 0) {//连续测试
+            rgTestPattern.check(R.id.rb_continuous_test);
+        } else {
+            rgTestPattern.check(R.id.rb_circulation_test);
+        }
 
 
 //        if (gripSetting.getManFull() > 0) {
@@ -121,10 +122,21 @@ public class GripSettingActivity extends BaseTitleActivity  {
     }
 
     @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        switch (checkedId) {
+            case R.id.rb_circulation_test://循环测试
+                gripSetting.setTestPattern(1);
+                break;
+            case R.id.rb_continuous_test://连续测试
+                gripSetting.setTestPattern(0);
+                break;
+        }
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         SharedPrefsUtil.save(this, gripSetting);
     }
-
 
 }

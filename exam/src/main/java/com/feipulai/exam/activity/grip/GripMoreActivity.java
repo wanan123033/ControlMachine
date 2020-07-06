@@ -10,8 +10,6 @@ import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.manager.GripManager;
 import com.feipulai.device.serial.RadioManager;
-import com.feipulai.device.serial.SerialConfigs;
-import com.feipulai.device.serial.beans.SitReachWirelessResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.grip.pair.GripPairActivity;
@@ -36,6 +34,7 @@ public class GripMoreActivity extends BaseMoreActivity {
     private final static int GET_RESULT = 2;
     private boolean[] resultUpdate;//成绩更新
     private static final String TAG = "GripMoreActivity";
+    private boolean isResume = true;
 
     @Override
     protected void initData() {
@@ -43,7 +42,7 @@ public class GripMoreActivity extends BaseMoreActivity {
         if (setting == null)
             setting = new GripSetting();
         super.initData();
-
+        getState();
     }
 
     @Override
@@ -61,40 +60,43 @@ public class GripMoreActivity extends BaseMoreActivity {
             resultUpdate[i] = true;
         }
         RadioManager.getInstance().setOnRadioArrived(gripRadio);
-        getState();
+        isResume = true;
         ledShow();
     }
 
     private void getState() {
-        Log.i(TAG, "send_empty");
-        for (int i = 0; i < deviceState.length; i++) {
-            BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
-            if (deviceState[i] == 0) {
-                if (baseDevice.getState() != BaseDeviceState.STATE_ERROR) {
-                    baseDevice.setState(BaseDeviceState.STATE_ERROR);
-                    updateDevice(baseDevice);
-                }
+        if (isResume) {
+            Log.i(TAG, "send_empty");
+            for (int i = 0; i < deviceState.length; i++) {
+                BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
+                if (deviceState[i] == 0) {
+                    if (baseDevice.getState() != BaseDeviceState.STATE_ERROR) {
+                        baseDevice.setState(BaseDeviceState.STATE_ERROR);
+                        updateDevice(baseDevice);
+                    }
 
-            } else {
-                if (baseDevice.getState() == BaseDeviceState.STATE_ERROR) {
-                    baseDevice.setState(BaseDeviceState.STATE_NOT_BEGAIN);
-                    updateDevice(baseDevice);
-                }
-                deviceState[i] -= 1;
+                } else {
+                    if (baseDevice.getState() == BaseDeviceState.STATE_ERROR) {
+                        baseDevice.setState(BaseDeviceState.STATE_NOT_BEGAIN);
+                        updateDevice(baseDevice);
+                    }
+                    deviceState[i] -= 1;
 
 //                if (tempPower[i] != powerState[i]) {
 //                    deviceDetails.get(i).getStuDevicePair().setPower(powerState[i]);
 //                    updateDevice(baseDevice);
 //                    tempPower[i] = powerState[i];
 //                }
+                }
+
+
             }
 
-
-        }
-        for (DeviceDetail detail : deviceDetails) {
-            //主机查询子机
-            GripManager.sendCommand(SettingHelper.getSystemSetting().getHostId(),
-                    detail.getStuDevicePair().getBaseDevice().getDeviceId(), 0x02);
+            for (DeviceDetail detail : deviceDetails) {
+                //主机查询子机
+                GripManager.sendCommand(SettingHelper.getSystemSetting().getHostId(),
+                        detail.getStuDevicePair().getBaseDevice().getDeviceId(), 0x02);
+            }
         }
         mHandler.sendEmptyMessageDelayed(GET_STATE, 1000);
     }
@@ -167,7 +169,7 @@ public class GripMoreActivity extends BaseMoreActivity {
                     getState();
                     break;
                 case GET_RESULT:
-                    VcWrapper result = (VcWrapper) msg.obj;
+                    GripWrapper result = (GripWrapper) msg.obj;
                     for (DeviceDetail detail : deviceDetails) {
                         if (detail.getStuDevicePair().getBaseDevice().getDeviceId() == result.getDeviceId()) {
 
@@ -201,12 +203,12 @@ public class GripMoreActivity extends BaseMoreActivity {
             if (result > 0 && state == 4) {
                 Message msg = mHandler.obtainMessage();
                 msg.what = GET_RESULT;
-                VcWrapper vcWrapper = new VcWrapper(id, result);
-                msg.obj = vcWrapper;
+                GripWrapper gripWrapper = new GripWrapper(id, result);
+                msg.obj = gripWrapper;
                 mHandler.sendMessage(msg);
             }
             if (state != 2 && state != 3) {
-                GripManager.sendCommand(SettingHelper.getSystemSetting().getHostId(),id, 0x05);
+                GripManager.sendCommand(SettingHelper.getSystemSetting().getHostId(), id, 0x05);
             }
         }
 
@@ -218,14 +220,16 @@ public class GripMoreActivity extends BaseMoreActivity {
 
     @Override
     protected void onStop() {
+        using = false;
         super.onStop();
-        mHandler.removeCallbacksAndMessages(null);
+        isResume = false;
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         LogUtils.life("SitReachMoreActivity onDestroy");
+        mHandler.removeCallbacksAndMessages(null);
         RadioManager.getInstance().setOnRadioArrived(null);
     }
 }
