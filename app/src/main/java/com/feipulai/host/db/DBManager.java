@@ -80,8 +80,8 @@ public class DBManager {
 
         int[] supportMachineCodes = {ItemDefault.CODE_HW, ItemDefault.CODE_TS, ItemDefault.CODE_YWQZ,
                 ItemDefault.CODE_LDTY, ItemDefault.CODE_ZWTQQ,
-                ItemDefault.CODE_HWSXQ, ItemDefault.CODE_FHL,ItemDefault.CODE_ZFP,ItemDefault.CODE_WLJ,ItemDefault.CODE_YTXS,
-                ItemDefault.CODE_JGCJ,ItemDefault.CODE_SL};
+                ItemDefault.CODE_HWSXQ, ItemDefault.CODE_FHL, ItemDefault.CODE_ZFP, ItemDefault.CODE_WLJ, ItemDefault.CODE_YTXS,
+                ItemDefault.CODE_JGCJ, ItemDefault.CODE_SL};
         for (int machineCode : supportMachineCodes) {
             //查询是否已经存在该机器码的项,如果存在就放弃,避免重复添加
             List<Item> items = itemDao.queryBuilder().where(ItemDao.Properties.MachineCode.eq(machineCode)).list();
@@ -130,7 +130,7 @@ public class DBManager {
                     insertItem(machineCode, "激光测距", "米");
                     break;
                 case ItemDefault.CODE_SL:
-                    insertItem(machineCode,machineCode+"","视力","");
+                    insertItem(machineCode, machineCode + "", "视力", "");
                     break;
 
             }
@@ -182,6 +182,18 @@ public class DBManager {
         return student;
     }
 
+    public Student queryStudentByCode(String code) {
+        Student student = studentDao.queryBuilder()
+                .where(StudentDao.Properties.StudentCode.eq(code))
+                .unique();
+        if (student == null) {
+            student = studentDao.queryBuilder()
+                    .where(StudentDao.Properties.IdCardNo.eq(code))
+                    .unique();
+        }
+        return student;
+    }
+
     /**
      * 批量添加学生信息
      *
@@ -193,6 +205,27 @@ public class DBManager {
         }
         studentDao.insertOrReplaceInTx(stuList);
         studentDao.detachAll();
+    }
+
+    public void updateStudent(Student student) {
+        studentDao.updateInTx(student);
+    }
+
+    public List<Student> getStudentByPortrait() {
+        StringBuffer sqlBuf = new StringBuffer("SELECT S.* FROM " + StudentDao.TABLENAME + " S");
+        sqlBuf.append(" WHERE S." + StudentDao.Properties.StudentCode.columnName + " IN ( ");
+        sqlBuf.append(" SELECT  " + StudentItemDao.Properties.StudentCode.columnName);
+        sqlBuf.append(" FROM " + StudentItemDao.TABLENAME);
+        sqlBuf.append(" WHERE  " + StudentItemDao.Properties.ItemCode.columnName + " = ?  )");
+        sqlBuf.append(" AND  S." + StudentDao.Properties.Portrait.columnName + " != '' ");
+        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{TestConfigs.getCurrentItemCode()});
+        List<Student> students = new ArrayList<>();
+        while (c.moveToNext()) {
+            Student student = studentDao.readEntity(c, 0);
+            students.add(student);
+        }
+        return students;
+
     }
 
     /**
@@ -912,7 +945,7 @@ public class DBManager {
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.IsLastResult.eq("1"))
-                 .unique();
+                .unique();
     }
 
     public List<RoundResult> queryResultsByStuItem(StudentItem stuItem) {
@@ -922,7 +955,6 @@ public class DBManager {
                 .where(RoundResultDao.Properties.MachineCode.eq(stuItem.getMachineCode()))
                 .list();
     }
-
 
 
     /**

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+    <TextureView
+        android:id="@+id/textureView2"
+        android:layout_width="640px"
+        android:layout_height="480px"
+        android:layout_gravity="center" />
+
+    <com.ww.fpl.libarcface.widget.FaceRectView
+        android:id="@+id/face_rect_view2"
+        android:layout_width="640px"
+        android:layout_height="480px"
+        android:layout_gravity="center" />
+
+</RelativeLayout>

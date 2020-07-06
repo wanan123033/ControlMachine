@@ -53,7 +53,7 @@ android {
             initWith(buildTypes.debug)
             applicationIdSuffix ".ruiliheng"
             // 修改马甲包的applicationId，即在原来的applicationId后加上配置内容
-//            manifestPlaceholders = [APP_NAME: '第一个马甲包'] // 配置马甲包的应用名称
+//            manifestPlaceholders = [APP_NAME: '睿力恒体测'] // 配置马甲包的应用名称
         }
     }
 
@@ -116,5 +116,7 @@ dependencies {
     compile project(':devicelib')
     compile project(':common')
     compile project(':magicindicator')
+    compile project(':libarcface')
+    compile project(':uvccamerasdk')
     compile 'com.yhy:gvp:1.1.0'
 }

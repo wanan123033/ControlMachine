@@ -3,8 +3,14 @@ package com.feipulai.host.activity.base;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
+import android.view.KeyEvent;
+import android.view.View;
+import android.widget.FrameLayout;
 
+import com.feipulai.common.utils.ScannerGunManager;
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.CheckDeviceOpener;
 import com.feipulai.device.ic.ICCardDealer;
 import com.feipulai.device.ic.NFCDevice;
@@ -33,7 +39,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
  */
 public abstract class BaseCheckActivity
         extends BaseTitleActivity
-        implements CheckDeviceOpener.OnCheckDeviceArrived {
+        implements CheckDeviceOpener.OnCheckDeviceArrived, BaseAFRFragment.onAFRCompareListener {
 
     private MyHandler mHandler = new MyHandler(this);
     private boolean isOpenDevice = true;
@@ -41,7 +47,9 @@ public abstract class BaseCheckActivity
     private static final int ID_CARD_NO = 0x1;
     private static final int CHECK_IN = 0x0;
     private boolean needAdd = true;
-
+    private FrameLayout afrFrameLayout;
+    private BaseAFRFragment afrFragment;
+    private ScannerGunManager scannerGunManager;
     public void setOpenDevice(boolean openDevice) {
         isOpenDevice = openDevice;
     }
@@ -53,14 +61,33 @@ public abstract class BaseCheckActivity
 
     @Override
     protected void initData() {
-
+        if (SettingHelper.getSystemSetting().getCheckTool() == 4 && setAFRFrameLayoutResID() != 0) {
+            afrFrameLayout = findViewById(setAFRFrameLayoutResID());
+            afrFragment = new BaseAFRFragment();
+            afrFragment.setCompareListener(this);
+            initAFR();
+        }
+        scannerGunManager = new ScannerGunManager(new ScannerGunManager.OnScanListener() {
+            @Override
+            public void onResult(String code) {
+                checkQulification(code, STUDENT_CODE);
+            }
+        });
     }
-
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (scannerGunManager.dispatchKeyEvent(event)) {
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
+    }
     @Override
     protected int setLayoutResID() {
         return 0;
     }
-
+    public int setAFRFrameLayoutResID() {
+        return 0;
+    }
     @Override
     protected void onResume() {
         if (isOpenDevice) {
@@ -89,6 +116,35 @@ public abstract class BaseCheckActivity
         if (isOpenDevice) {
             CheckDeviceOpener.getInstance().destroy();
         }
+    }
+    private void initAFR() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(setAFRFrameLayoutResID(), afrFragment);
+        transaction.commitAllowingStateLoss();// 提交更改
+    }
+
+    public void showAFR() {
+        if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
+            ToastUtils.showShort("未选择人脸识别检录功能");
+            return;
+        }
+        if (afrFrameLayout == null) {
+            return;
+        }
+
+        boolean isGoto = afrFragment.gotoUVCFaceCamera(!afrFragment.isOpenCamera);
+        if (isGoto) {
+            if (afrFragment.isOpenCamera) {
+                afrFrameLayout.setVisibility(View.VISIBLE);
+            } else {
+                afrFrameLayout.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    @Override
+    public void compareStu(Student student) {
+
     }
 
     @Override

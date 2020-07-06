@@ -123,6 +123,10 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     }
 
     @Override
+    public int setAFRFrameLayoutResID() {
+        return R.id.frame_camera;
+    }
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
@@ -228,10 +232,13 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     }
 
     @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting,
-            R.id.tv_start_test, R.id.tv_exit_test, R.id.tv_stop_test, R.id.tv_abandon_test})
+            R.id.tv_start_test, R.id.tv_exit_test, R.id.tv_stop_test, R.id.tv_abandon_test,R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-
+            case R.id.img_AFR:
+//                gotoUVCFaceCamera();
+                showAFR();
+                break;
             case R.id.txt_led_setting:
                 toLedSetting();
                 break;
