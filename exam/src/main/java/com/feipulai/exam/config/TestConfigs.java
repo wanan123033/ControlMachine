@@ -21,6 +21,7 @@ import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.basketball.BasketBallSettingActivity;
 import com.feipulai.exam.activity.footBall.FootBallGroupActivity;
 import com.feipulai.exam.activity.footBall.FootBallItemSelectActivity;
+import com.feipulai.exam.activity.footBall.FootBallSetting;
 import com.feipulai.exam.activity.footBall.FootBallSettingActivity;
 import com.feipulai.exam.activity.grip.GripMoreActivity;
 import com.feipulai.exam.activity.grip.GripMoreGroupActivity;
@@ -517,7 +518,7 @@ public class TestConfigs {
                 result = SharedPrefsUtil.loadFormSource(context, BasketBallSetting.class).getTestNo();
                 break;
             case ItemDefault.CODE_ZQYQ:
-                result = SharedPrefsUtil.loadFormSource(context, BasketBallSetting.class).getTestNo();
+                result = SharedPrefsUtil.loadFormSource(context, FootBallSetting.class).getTestNo();
                 break;
             case ItemDefault.CODE_ZCP:
                 result = 1;
