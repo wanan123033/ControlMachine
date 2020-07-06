@@ -400,7 +400,7 @@ public abstract class BaseCheckActivity
 
     }
 
-    private void checkInUIThread(Student student,StudentItem studentItem) {
+    protected void checkInUIThread(Student student,StudentItem studentItem) {
         Logger.e("-------------单机测试");
         SystemSetting setting = SettingHelper.getSystemSetting();
         if (setting.isAutoScore()){
@@ -451,11 +451,11 @@ public abstract class BaseCheckActivity
                     if (thermometer == null) {
                         showThermometerDialog();
                     } else {
-                        onCheckIn(mStudent);
+                        checkInUIThread(mStudent,mStudentItem);
                     }
 
                 } else {
-                    onCheckIn(mStudent);
+                    checkInUIThread(mStudent,mStudentItem);
                 }
             } else {
                 toastSpeak("无此项目");
