@@ -155,7 +155,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
         initUVCCamera();
 
-        drawHelper = new DrawHelper(mWidth, mHeight, textureView2.getWidth(), textureView2.getHeight(), 0
+        drawHelper = new DrawHelper(mWidth, mHeight, mWidth, mHeight, 0
                 , 0, false, false, false);
 
         faceHelper = new FaceHelper.Builder()

@@ -72,7 +72,6 @@ public class HttpSubscriber {
     public final static int ROUNDRESULT_BIZ = 5001;
 
 
-
     private OnRequestEndListener onRequestEndListener;
 
     public void setOnRequestEndListener(OnRequestEndListener onRequestEndListener) {
@@ -81,6 +80,7 @@ public class HttpSubscriber {
 
     /**
      * 用户登录
+     *
      * @param username
      * @param password
      */
@@ -367,6 +367,7 @@ public class HttpSubscriber {
                     student.setStudentName(studentBean.getStudentName());
                     student.setStudentCode(studentBean.getStudentCode());
                     student.setPortrait(studentBean.getPhotoData());
+                    student.setFaceFeature(studentBean.getFaceFeature());
                     student.setIdCardNo(TextUtils.isEmpty(studentBean.getIdCard()) ? null : studentBean.getIdCard());
                     studentList.add(student);
                     if (ScheduleBean.SITE_EXAMTYPE == 0) {
@@ -516,38 +517,39 @@ public class HttpSubscriber {
 
     /**
      * 获取服务端成绩
-     * @param sitCode 考点ID
-     * @param scheduleNo 考试日程ID
-     * @param itemCode 项目代码
+     *
+     * @param sitCode     考点ID
+     * @param scheduleNo  考试日程ID
+     * @param itemCode    项目代码
      * @param studentCode 准考证号
-     * @param groupNo 组号
-     * @param sortName 组别名称
-     * @param groupType 分组类型 0.男子 1.女子 2.混合, 没有传空
-     * @param examStatus 考试状态0.正常，1.缓考，2.补考
+     * @param groupNo     组号
+     * @param sortName    组别名称
+     * @param groupType   分组类型 0.男子 1.女子 2.混合, 没有传空
+     * @param examStatus  考试状态0.正常，1.缓考，2.补考
      */
     public void getRoundResult(String sitCode, final String scheduleNo, final String itemCode, final String studentCode,
                                String groupNo, String sortName, String groupType, final String examStatus,
-                               final OnResultListener<RoundScoreBean> onResultListener){
-        Map<String,Object> params = new HashMap<>();
-        params.put("sitCode",sitCode);
-        params.put("scheduleNo",scheduleNo);
-        params.put("itemCode",itemCode);
-        params.put("studentCode",studentCode);
-        params.put("groupNo",groupNo);
-        params.put("sortName",sortName);
-        params.put("groupType",groupType);
-        params.put("examStatus",examStatus);
-        Logger.e("----sitCode="+params.toString());
+                               final OnResultListener<RoundScoreBean> onResultListener) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("sitCode", sitCode);
+        params.put("scheduleNo", scheduleNo);
+        params.put("itemCode", itemCode);
+        params.put("studentCode", studentCode);
+        params.put("groupNo", groupNo);
+        params.put("sortName", sortName);
+        params.put("groupType", groupType);
+        params.put("examStatus", examStatus);
+        Logger.e("----sitCode=" + params.toString());
 
         Observable<HttpResult<RoundScoreBean>> observable = HttpManager.getInstance().getHttpApi().
                 getRoundScore("bearer " + MyApplication.TOKEN,
                         CommonUtils.encryptQuery(ROUNDRESULT_BIZ + "", params));
-        HttpManager.getInstance().toSubscribe(observable,new RequestSub<RoundScoreBean>(new OnResultListener<RoundScoreBean>() {
+        HttpManager.getInstance().toSubscribe(observable, new RequestSub<RoundScoreBean>(new OnResultListener<RoundScoreBean>() {
             @Override
             public void onSuccess(RoundScoreBean result) {
-                if (result.getExist() == 1){
+                if (result.getExist() == 1) {
                     List<RoundScoreBean.ScoreBean> scoreBeanList = result.getRoundList();
-                    for (RoundScoreBean.ScoreBean score : scoreBeanList){
+                    for (RoundScoreBean.ScoreBean score : scoreBeanList) {
                         RoundResult roundResult = new RoundResult();
                         roundResult.setStudentCode(studentCode);
                         roundResult.setItemCode(itemCode);
@@ -561,7 +563,7 @@ public class HttpSubscriber {
                         roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
                         roundResult.setStumbleCount(score.getStumbleCount());
                         roundResult.setTestTime(score.getTestTime());
-                        roundResult.setEndTime(DateUtil.getCurrentTime()+"");
+                        roundResult.setEndTime(DateUtil.getCurrentTime() + "");
                         roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
                         RoundResult bestResult = DBManager.getInstance().queryBestScore(studentCode, TestConfigs.sCurrentItem.getTestNum());
                         if (bestResult != null) {
@@ -588,15 +590,15 @@ public class HttpSubscriber {
                         }
                         List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(studentCode);
                         boolean flag = false;
-                        for (RoundResult re : results){
-                            if (re.getTestTime().equals(score.testTime)&& re.getResult() == roundResult.getResult()){
+                        for (RoundResult re : results) {
+                            if (re.getTestTime().equals(score.testTime) && re.getResult() == roundResult.getResult()) {
                                 flag = true;
                                 break;
-                            }else {
+                            } else {
                                 flag = false;
                             }
                         }
-                        if (!flag){
+                        if (!flag) {
                             DBManager.getInstance().insertRoundResult(roundResult);
                         }
                     }
@@ -610,7 +612,7 @@ public class HttpSubscriber {
             public void onFault(int code, String errorMsg) {
                 ToastUtils.showShort(errorMsg);
                 if (onResultListener != null) {
-                    onResultListener.onFault(code,errorMsg);
+                    onResultListener.onFault(code, errorMsg);
                 }
             }
         }));

@@ -1,8 +1,10 @@
 package com.feipulai.host.activity.base;
 
+import android.app.Activity;
 import android.hardware.usb.UsbDevice;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.util.Base64;
 import android.util.Log;
 import android.view.TextureView;
 
@@ -15,10 +17,18 @@ import com.arcsoft.face.GenderInfo;
 import com.arcsoft.face.LivenessInfo;
 import com.arcsoft.face.enums.DetectFaceOrientPriority;
 import com.arcsoft.face.enums.DetectMode;
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.host.R;
+import com.feipulai.host.activity.data.DataManageActivity;
+import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.Student;
+import com.feipulai.host.netUtils.netapi.ItemSubscriber;
+import com.feipulai.host.netUtils.netapi.OnRequestEndListener;
+import com.feipulai.host.netUtils.netapi.ServerIml;
+import com.feipulai.host.view.AddStudentDialog;
+import com.feipulai.host.view.OperateProgressBar;
 import com.lgh.uvccamera.UVCCameraProxy;
 import com.lgh.uvccamera.callback.ConnectCallback;
 import com.lgh.uvccamera.callback.PreviewCallback;
@@ -27,6 +37,7 @@ import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.libarcface.faceserver.ThreadManager;
 import com.ww.fpl.libarcface.model.DrawInfo;
 import com.ww.fpl.libarcface.model.FacePreviewInfo;
+import com.ww.fpl.libarcface.model.FaceRegisterInfo;
 import com.ww.fpl.libarcface.util.ConfigUtil;
 import com.ww.fpl.libarcface.util.DrawHelper;
 import com.ww.fpl.libarcface.util.face.FaceHelper;
@@ -43,6 +54,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -155,7 +167,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
         initUVCCamera();
 
-        drawHelper = new DrawHelper(mWidth, mHeight, textureView2.getWidth(), textureView2.getHeight(), 0
+        drawHelper = new DrawHelper(mWidth, mHeight,mWidth,mHeight, 0
                 , 0, false, false, false);
 
         faceHelper = new FaceHelper.Builder()
@@ -520,7 +532,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                 faceHelper.setName(faceId, mContext.getString(R.string.recognize_success_notice, lastCompareResult.getUserName()));
                 Student student = DBManager.getInstance().queryStudentByCode(lastCompareResult.getUserName());
                 compareListener.compareStu(student);
-            }else {
+            } else {
                 compareListener.compareStu(null);
             }
         }
@@ -571,7 +583,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                             Log.e("compareResult", "++++++++++++" + compareResult.getUserName() + "-" + compareResult.getSimilar());
 
                         } else {
-                            compareListener.compareStu(null);
+                            showAddHint();
                         }
                     }
 
@@ -584,6 +596,56 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
                     }
                 });
+    }
+
+    private void showAddHint() {
+        new SweetAlertDialog(mContext).setTitleText(getString(R.string.student_nonentity))
+                .setContentText("是否进行服务器信息识别")
+                .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                getStudent();
+
+            }
+        }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                compareListener.compareStu(null);
+            }
+        }).show();
+
+    }
+
+    private void getStudent() {
+        OperateProgressBar.showLoadingUi((Activity) mContext, "正在查询服务器信息...");
+        ItemSubscriber itemSubscriber = new ItemSubscriber();
+        String lastDownLoadTime = SharedPrefsUtil.getValue(mContext, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.LAST_DOWNLOAD_TIME, "");
+        itemSubscriber.setOnRequestEndListener(new OnRequestEndListener() {
+            @Override
+            public void onSuccess(int bizType) {
+                threadPool.execute(searchFace1);
+                threadPool.execute(searchFace2);
+                threadPool.execute(searchFace3);
+            }
+
+            @Override
+            public void onFault(int bizType) {
+
+            }
+
+            @Override
+            public void onRequestData(Object data) {
+                List<Student> studentList = (List<Student>) data;
+                List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
+                for (Student student : studentList) {
+                    registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+                }
+                FaceServer.getInstance().addFaceList(registerInfoList);
+            }
+        });
+        itemSubscriber.getStudentData(1, lastDownLoadTime);
     }
 
     private onAFRCompareListener compareListener;

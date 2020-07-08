@@ -23,6 +23,7 @@ import com.feipulai.host.config.BaseEvent;
 import com.feipulai.host.config.EventConfigs;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
+import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.entity.StudentItem;
 import com.feipulai.host.view.AddStudentDialog;
@@ -30,6 +31,7 @@ import com.orhanobut.logger.Logger;
 import com.zkteco.android.biometric.module.idcard.meta.IDCardInfo;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -70,7 +72,12 @@ public abstract class BaseCheckActivity
         scannerGunManager = new ScannerGunManager(new ScannerGunManager.OnScanListener() {
             @Override
             public void onResult(String code) {
-                checkQulification(code, STUDENT_CODE);
+                boolean needAdd = checkQulification(code, STUDENT_CODE);
+                if (needAdd) {
+                    Student student = new Student();
+                    student.setStudentCode(code);
+                    showAddHint(student);
+                }
             }
         });
     }
@@ -144,7 +151,23 @@ public abstract class BaseCheckActivity
 
     @Override
     public void compareStu(Student student) {
-
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                afrFrameLayout.setVisibility(View.GONE);
+            }
+        });
+        if (student == null) {
+            InteractUtils.toastSpeak(this, "该考生不存在");
+            return;
+        }
+        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+        if (studentItem == null) {
+            InteractUtils.toastSpeak(this, "无此项目");
+            return;
+        }
+        // 可以直接检录
+        checkInUIThread(student);
     }
 
     @Override

@@ -75,7 +75,7 @@ android {
 }
 
 greendao {
-    schemaVersion 4
+    schemaVersion 5
 //    daoPackage 'com.feipulai.host.gen'
 //    targetGenDir 'src/main/java'
 }

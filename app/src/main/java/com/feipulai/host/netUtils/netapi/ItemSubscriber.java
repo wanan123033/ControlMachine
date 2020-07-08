@@ -3,6 +3,7 @@ package com.feipulai.host.netUtils.netapi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.text.TextUtils;
+import android.util.Base64;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
@@ -165,7 +166,7 @@ public class ItemSubscriber {
 
         HashMap<String, Object> parameData = new HashMap<>();
         parameData.put("batch", pageNo);
-//        parameData.put("pageSize", "3000");
+        parameData.put("pageSize", "200");
         parameData.put("upLoadTime", TextUtils.isEmpty(lastDownLoadTime) ? 0 : Long.parseLong(lastDownLoadTime));
 //        parameData.put("itemName", TestConfigs.sCurrentItem.getItemName());
         parameData.put("examItemCode", TestConfigs.sCurrentItem.getItemCode());
@@ -207,6 +208,8 @@ public class ItemSubscriber {
                     student.setMajorName(studentBean.getSubject());
                     student.setStudentName(studentBean.getStudentName());
                     student.setStudentCode(studentBean.getStudentCode());
+                    student.setPortrait(studentBean.getPhotoData());
+                    student.setFaceFeature(studentBean.getFaceFeature());
                     student.setIdCardNo(TextUtils.isEmpty(studentBean.getIdCard()) ? null : studentBean.getIdCard());
                     studentList.add(student);
                     StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
@@ -217,6 +220,9 @@ public class ItemSubscriber {
 
                 DBManager.getInstance().insertStudentList(studentList);
                 DBManager.getInstance().insertStuItemList(studentItemList);
+                if (onRequestEndListener != null) {
+                    onRequestEndListener.onRequestData(studentList);
+                }
                 if (result.getBatch() < result.getBatchTotal()) {
                     getStudentData(result.getBatch() + 1, lastDownLoadTime);
                 } else {

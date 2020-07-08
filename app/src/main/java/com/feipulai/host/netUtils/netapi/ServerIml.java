@@ -53,6 +53,11 @@ public class ServerIml {
                     loadingDialog.dismissDialog();
                 }
             }
+
+            @Override
+            public void onRequestData(Object data) {
+
+            }
         });
         subscriber.getItemAll(context);
     }
@@ -99,6 +104,11 @@ public class ServerIml {
                     loadingDialog.dismissDialog();
                 }
             }
+
+            @Override
+            public void onRequestData(Object data) {
+
+            }
         });
         subscriber.getItemAll(context);
     }
@@ -127,6 +137,11 @@ public class ServerIml {
             @Override
             public void onFault(int bizType) {
                 Logger.i("成绩自动上传失败");
+            }
+
+            @Override
+            public void onRequestData(Object data) {
+
             }
         });
         subscriber.uploadResult(uploadResultsList);

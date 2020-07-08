@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Base64;
 import android.util.Log;
 
 import com.arcsoft.face.ActiveFileInfo;
@@ -21,11 +22,18 @@ import com.feipulai.exam.BuildConfig;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseActivity;
+import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.common.Constants;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
+import com.ww.fpl.libarcface.model.FaceRegisterInfo;
 import com.ww.fpl.libarcface.util.ConfigUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -84,8 +92,7 @@ public class SplashScreenActivity extends BaseActivity {
         //这里初始化时间很长,大约需要3s左右
         TtsManager.getInstance().init(this, APP_ID, APP_KEY, SECRET_KEY);
 
-        //本地人脸库初始化
-        FaceServer.getInstance().init(this);
+
         // Log.i("james", CommonUtils.getDeviceInfo());
         // AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         // int max = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM);
@@ -127,6 +134,16 @@ public class SplashScreenActivity extends BaseActivity {
                         if (activeCode == ErrorInfo.MOK) {
                             ToastUtils.showShort(getString(R.string.active_success));
                             ConfigUtil.setISEngine(SplashScreenActivity.this, true);
+                            //本地人脸库初始化
+                            FaceServer.getInstance().init(SplashScreenActivity.this);
+                            if (SettingHelper.getSystemSetting().getCheckTool() == 5) {
+                                List<Student> studentList = DBManager.getInstance().getItemStudent(TestConfigs.getCurrentItemCode(), -1, 0);
+                                List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
+                                for (Student student : studentList) {
+                                    registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+                                }
+                                FaceServer.getInstance().addFaceList(registerInfoList);
+                            }
                         } else if (activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
 //                            ToastUtils.showShort(getString(R.string.already_activated));
                         } else {

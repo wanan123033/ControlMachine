@@ -24,6 +24,15 @@ public class StudentBean implements Serializable {
     private String examItemCode;
     private int machineCode;//机器代码   一个机器码可能对应多个项目代码,所以机器码不能为唯一字段
     private String photoData;//头像
+    private String faceFeature;//学生头像特征信息(byte[])
+
+    public String getFaceFeature() {
+        return faceFeature;
+    }
+
+    public void setFaceFeature(String faceFeature) {
+        this.faceFeature = faceFeature;
+    }
 
     public String getStudentCode() {
         return this.studentCode;

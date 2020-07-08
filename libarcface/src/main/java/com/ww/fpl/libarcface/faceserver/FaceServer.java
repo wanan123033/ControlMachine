@@ -18,6 +18,7 @@ import com.arcsoft.imageutil.ArcSoftImageUtil;
 import com.arcsoft.imageutil.ArcSoftImageUtilError;
 import com.arcsoft.imageutil.ArcSoftRotateDegree;
 import com.ww.fpl.libarcface.model.FaceRegisterInfo;
+import com.ww.fpl.libarcface.util.ConfigUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -79,6 +80,10 @@ public class FaceServer {
      */
     public boolean init(Context context) {
         synchronized (this) {
+            boolean isEngine = ConfigUtil.getISEngine(context);
+            if (!isEngine) {
+                return false;
+            }
             if (faceEngine == null && context != null) {
                 faceEngine = new FaceEngine();
                 faceEngine2 = new FaceEngine();
@@ -172,19 +177,25 @@ public class FaceServer {
                     e.printStackTrace();
                 }
             }
-            faceNumber=faceRegisterInfoList.size();
+            faceNumber = faceRegisterInfoList.size();
             Log.i("faceRegisterInfoList", "1----------" + faceNumber);
         }
     }
 
     public void addFaceList(List<FaceRegisterInfo> faces) {
         if (faceRegisterInfoList != null) {
-            faceRegisterInfoList.addAll(faces);
+
+            for (FaceRegisterInfo face : faces) {
+                if (!faceRegisterInfoList.contains(face)) {
+                    faceRegisterInfoList.add(face);
+                }
+            }
+//            faceRegisterInfoList.addAll(faces);
         } else {
             faceRegisterInfoList = new ArrayList<>();
             faceRegisterInfoList.addAll(faces);
         }
-        faceNumber=faceRegisterInfoList.size();
+        faceNumber = faceRegisterInfoList.size();
         Log.i("faceRegisterInfoList", "2----------" + faceNumber);
     }
 
@@ -503,7 +514,8 @@ public class FaceServer {
 
     /**
      * 在特征库中搜索
-     *分为3个线程
+     * 分为3个线程
+     *
      * @param faceFeature 传入特征数据
      * @return 比对结果
      */
@@ -541,7 +553,7 @@ public class FaceServer {
         float maxSimilar = 0;
         int maxSimilarIndex = -1;
         isProcessing2 = true;
-        for (int i = faceNumber / 3; i < faceNumber/3*2; i++) {
+        for (int i = faceNumber / 3; i < faceNumber / 3 * 2; i++) {
             tempFaceFeature.setFeatureData(faceRegisterInfoList.get(i).getFeatureData());
             faceEngine2.compareFaceFeature(faceFeature, tempFaceFeature, faceSimilar);
             if (faceSimilar.getScore() > maxSimilar) {
@@ -566,7 +578,7 @@ public class FaceServer {
         float maxSimilar = 0;
         int maxSimilarIndex = -1;
         isProcessing3 = true;
-        for (int i = faceNumber/3*2; i < faceNumber; i++) {
+        for (int i = faceNumber / 3 * 2; i < faceNumber; i++) {
             tempFaceFeature.setFeatureData(faceRegisterInfoList.get(i).getFeatureData());
             faceEngine3.compareFaceFeature(faceFeature, tempFaceFeature, faceSimilar);
             if (faceSimilar.getScore() > maxSimilar) {

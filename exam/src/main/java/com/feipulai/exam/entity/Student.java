@@ -51,6 +51,7 @@ public class Student implements Serializable {
     @ToMany(joinProperties = {@JoinProperty(name = "studentCode", referencedName = "studentCode")})
     private List<StudentItem> studentItemList;
     private String portrait;//头像
+    private String faceFeature;
     @Unique
     private String remark1;
     private String remark2;
@@ -71,10 +72,10 @@ public class Student implements Serializable {
     public Student() {
     }
 
-    @Generated(hash = 1893806068)
+    @Generated(hash = 76774790)
     public Student(Long id, @NotNull String studentCode, String studentName, int sex, String idCardNo,
             String icCardNo, String className, String schoolName, String downloadTime, String portrait,
-            String remark1, String remark2, String remark3) {
+            String faceFeature, String remark1, String remark2, String remark3) {
         this.id = id;
         this.studentCode = studentCode;
         this.studentName = studentName;
@@ -85,6 +86,7 @@ public class Student implements Serializable {
         this.schoolName = schoolName;
         this.downloadTime = downloadTime;
         this.portrait = portrait;
+        this.faceFeature = faceFeature;
         this.remark1 = remark1;
         this.remark2 = remark2;
         this.remark3 = remark3;
@@ -192,6 +194,14 @@ public class Student implements Serializable {
 
     public void setRemark3(String remark3) {
         this.remark3 = remark3;
+    }
+
+    public String getFaceFeature() {
+        return faceFeature;
+    }
+
+    public void setFaceFeature(String faceFeature) {
+        this.faceFeature = faceFeature;
     }
 
     /**
