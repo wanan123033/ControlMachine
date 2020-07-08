@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.feipulai.common.utils.ActivityUtils;
 import com.feipulai.device.manager.RunTimerManager;
+import com.feipulai.device.serial.beans.RunTimerResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.entity.Student;
 
@@ -117,6 +118,7 @@ public class BasketBallShootActivity extends BaseShootActivity {
             case R.id.tv_led_setting:
                 break;
             case R.id.tv_print:
+
                 break;
             case R.id.tv_confirm:
                 break;
@@ -124,4 +126,17 @@ public class BasketBallShootActivity extends BaseShootActivity {
                 break;
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+    }
+
+    @Override
+    public void getResult(RunTimerResult result) {
+
+    }
+
+
 }

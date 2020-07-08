@@ -1,5 +1,7 @@
 package com.feipulai.exam.activity.pullup.test;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
@@ -15,7 +17,9 @@ import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.device.sitpullup.SitPullLinker;
+import com.feipulai.exam.activity.grip.GripWrapper;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.utils.FileUtils;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.utils.LogUtils;
@@ -194,10 +198,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
     }
 
 
-    private int tmp;
-    private int invalid;
-    private int hand;
-    ArmStateResult high, low;
+
 
     private synchronized void updateResult(PullUpStateResult pull) {
         if (sitUpLists.size() == 0) {
@@ -227,7 +228,13 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
         sitUpLists.clear();
     }
 
-    private synchronized void updateResult(ArmStateResult armState) {
+    private volatile int tmp;
+    private volatile int invalid;
+    private volatile int hand;
+    private ArmStateResult high, low;
+    private final int sendPull = 0xf1;
+    private volatile int delayPull;
+    private  void updateResult(ArmStateResult armState) {
         if (tmpResult == null)
             return;
         high = getHeightSitResult();
@@ -235,17 +242,39 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
         if (Math.abs(high.getAngle() - low.getAngle()) > 55) {
             if (tmpResult.getResult()>tmp){
                 tmp = tmpResult.getResult();
+                tmpResult.setValidCountNum(armState.getResult()-invalid);
+                sitUpLists.clear();
+                listener.onScoreArrived(tmpResult);
+                String displayInLed = "成绩:" + ResultDisplayUtils.getStrResultForDisplay(tmpResult.getResult());
+                ledManager.showString(SettingHelper.getSystemSetting().getHostId(), displayInLed, 1, 1, false, true);
             }else {
-                invalid++;
+                //此处可能是还没有收到数值变化，需要进一步判断再隔0.5s判断
+                mHandler.sendEmptyMessageDelayed(sendPull,500);
+                delayPull = armState.getResult();
             }
-            tmpResult.setValidCountNum(armState.getResult()-invalid);
-            sitUpLists.clear();
-            listener.onScoreArrived(tmpResult);
-            String displayInLed = "成绩:" + ResultDisplayUtils.getStrResultForDisplay(tmpResult.getResult());
-            ledManager.showString(SettingHelper.getSystemSetting().getHostId(), displayInLed, 1, 1, false, true);
+
         }
     }
 
+    private Handler mHandler = new Handler(Looper.myLooper()){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case sendPull:
+                    if (tmpResult.getResult()>tmp){
+                        tmp = tmpResult.getResult();
+                    }else {
+                        invalid++;
+                    }
+                    tmpResult.setValidCountNum(delayPull-invalid);
+                    sitUpLists.clear();
+                    listener.onScoreArrived(tmpResult);
+                    String displayInLed = "成绩:" + ResultDisplayUtils.getStrResultForDisplay(tmpResult.getResult());
+                    ledManager.showString(SettingHelper.getSystemSetting().getHostId(), displayInLed, 1, 1, false, true);
+                    break;
+            }
+        }
+    };
 
     private ArmStateResult getHeightSitResult() {
 //        for (ArmStateResult armState : sitUpLists) {
