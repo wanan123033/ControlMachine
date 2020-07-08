@@ -73,7 +73,7 @@ android {
     }
     greendao {
         //上个版本为3
-        schemaVersion 9 //数据库版本号，升级数据库需要修改版本号
+        schemaVersion 10 //数据库版本号，升级数据库需要修改版本号
     }
 }
 

@@ -41,6 +41,7 @@ public class Student implements Serializable {
     private String studentCode;//考号
     private String studentName;//姓名
     private String portrait;//头像
+    private String faceFeature;
     private int sex;//性别 0-男  1-女
     @Unique
     private String idCardNo;//身份证号
@@ -77,14 +78,16 @@ public class Student implements Serializable {
     public Student() {
     }
 
-    @Generated(hash = 1230306058)
-    public Student(Long id, @NotNull String studentCode, String studentName, String portrait, int sex,
-            String idCardNo, String icCardNo, String schoolName, String className, String gradeName,
-            String majorName, String facultyName, String remark1, String remark2, String remark3) {
+    @Generated(hash = 117727302)
+    public Student(Long id, @NotNull String studentCode, String studentName, String portrait,
+            String faceFeature, int sex, String idCardNo, String icCardNo, String schoolName,
+            String className, String gradeName, String majorName, String facultyName, String remark1,
+            String remark2, String remark3) {
         this.id = id;
         this.studentCode = studentCode;
         this.studentName = studentName;
         this.portrait = portrait;
+        this.faceFeature = faceFeature;
         this.sex = sex;
         this.idCardNo = idCardNo;
         this.icCardNo = icCardNo;
@@ -96,6 +99,14 @@ public class Student implements Serializable {
         this.remark1 = remark1;
         this.remark2 = remark2;
         this.remark3 = remark3;
+    }
+
+    public String getFaceFeature() {
+        return faceFeature;
+    }
+
+    public void setFaceFeature(String faceFeature) {
+        this.faceFeature = faceFeature;
     }
 
     public Long getId() {

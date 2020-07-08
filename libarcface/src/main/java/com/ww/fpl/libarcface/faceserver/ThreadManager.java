@@ -22,8 +22,8 @@ public class ThreadManager {
             //枷锁
             synchronized (ThreadManager.class) {
                 if (threadPool == null) {
-                    //核心线程数，等于处理器个数乘2
-                    int corePoolSize = Runtime.getRuntime().availableProcessors() * 2;
+                    //核心线程数，理论上等于处理器个数乘2(某些设备*2创建ThreadPoolExecutor时会崩溃，所以此处不乘2)
+                    int corePoolSize = Runtime.getRuntime().availableProcessors();
                     int maximumPoolSize = 10;
                     long keepAliveTime = 0L;
                     threadPool = new ThreadPool(corePoolSize, maximumPoolSize, keepAliveTime);

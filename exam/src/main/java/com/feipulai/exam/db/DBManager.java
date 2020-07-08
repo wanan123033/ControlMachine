@@ -250,6 +250,10 @@ public class DBManager {
         return student;
     }
 
+    public List<Student> queryStudentFeatures() {
+        return studentDao.queryBuilder().where(StudentDao.Properties.FaceFeature.isNotNull()).list();
+    }
+
     public List<StudentItem> queryStudentItemByItemCode(String itemCode) {
         return studentItemDao.queryBuilder().where(StudentItemDao.Properties.ItemCode.eq(itemCode)).list();
     }

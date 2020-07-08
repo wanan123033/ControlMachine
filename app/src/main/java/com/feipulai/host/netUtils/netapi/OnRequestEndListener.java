@@ -8,4 +8,6 @@ public interface OnRequestEndListener {
     void onSuccess(int bizType);
 
     void onFault(int bizType);
+
+    void onRequestData(Object data);
 }

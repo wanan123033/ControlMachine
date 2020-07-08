@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,6 +59,7 @@ import com.github.mjdev.libaums.fs.UsbFile;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
+import com.ww.fpl.libarcface.model.FaceRegisterInfo;
 import com.ww.fpl.libarcface.widget.ProgressDialog;
 import com.yhy.gvp.listener.OnItemClickListener;
 import com.yhy.gvp.widget.GridViewPager;
@@ -106,6 +108,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
     private boolean isProcessingData;
     private List<TypeListBean> typeDatas;
     private ProgressDialog progressDialog;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_data_manage;
@@ -123,9 +126,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
         progressStorage.setProgress(100 - FileUtil.getPercentRemainStorage());
 
         initGridView();
-        if (!FaceServer.getInstance().init(DataManageActivity.this)) {
-            ToastUtils.showShort("人脸识别引擎初始化失败");
-        }
+
 
         progressDialog = new ProgressDialog(this);
     }
@@ -141,7 +142,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
         String[] typeName = getResources().getStringArray(R.array.data_admin);
         int[] typeRes = new int[]{R.mipmap.icon_data_import, R.mipmap.icon_data_down
                 , R.mipmap.icon_data_backup, R.mipmap.icon_data_restore, R.mipmap.icon_data_look, R.mipmap.icon_data_clear, R.mipmap.icon_result_upload,
-                R.mipmap.icon_result_import, R.mipmap.icon_template_export, R.mipmap.icon_position_import, R.mipmap.icon_position_down};
+                R.mipmap.icon_result_import, R.mipmap.icon_template_export, R.mipmap.icon_position_import, R.mipmap.icon_position_down, R.mipmap.icon_position_down};
         for (int i = 0; i < typeName.length; i++) {
             TypeListBean bean = new TypeListBean();
             bean.setName(typeName[i]);
@@ -273,6 +274,10 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                         LogUtils.operation("用户点击了头像检入...");
                         uploadPortrait();
                         break;
+                    case 11://人脸特征
+                        LogUtils.operation("用户点击了人脸特征检入...");
+                        uploadFace();
+                        break;
                 }
             }
         });
@@ -359,6 +364,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
         }
 
     }
+
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     private void doRegister(final String file) {
@@ -505,6 +511,70 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
 
     }
 
+    public void uploadFace() {
+        DataBaseExecutor.addTask(new DataBaseTask(this, "获取考生人脸特征，请稍后...", false) {
+            @Override
+            public DataBaseRespon executeOper() {
+                return new DataBaseRespon(true, "", DBManager.getInstance().getItemStudent(-1, 0));
+            }
+
+            @Override
+            public void onExecuteSuccess(DataBaseRespon respon) {
+                final List<Student> studentList = (List<Student>) respon.getObject();
+                if (studentList.size() == 0) {
+                    ToastUtils.showShort("当前所有考生无头像信息，请先进行名单下载");
+                    return;
+                }
+                executorService.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        final int totalCount = studentList.size();
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressDialog.setMaxProgress(totalCount);
+                                progressDialog.show();
+                            }
+                        });
+                        List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
+                        for (int i = 0; i < studentList.size(); i++) {
+
+
+                            Student student = studentList.get(i);
+                            registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+                            final int finalI = i;
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (progressDialog != null) {
+                                        progressDialog.refreshProgress(finalI);
+                                    }
+                                }
+                            });
+                        }
+                        FaceServer.getInstance().addFaceList(registerInfoList);
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ToastUtils.showShort("人脸特征检入成功");
+                                progressDialog.dismiss();
+                            }
+                        });
+                        Log.i("DataManageActivity", "run: " + executorService.isShutdown());
+                    }
+                });
+            }
+
+            @Override
+            public void onExecuteFail(DataBaseRespon respon) {
+
+            }
+        });
+
+
+    }
 
     @Override
     public void onBackPressed() {

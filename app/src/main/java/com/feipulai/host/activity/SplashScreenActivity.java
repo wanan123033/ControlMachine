@@ -8,9 +8,13 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Base64;
 
 import com.arcsoft.face.ErrorInfo;
 import com.arcsoft.face.FaceEngine;
+import com.feipulai.host.activity.setting.SettingHelper;
+import com.feipulai.host.db.DBManager;
+import com.feipulai.host.entity.Student;
 import com.orhanobut.logger.utils.LogUtils;
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.SoundPlayUtils;
@@ -22,8 +26,12 @@ import com.feipulai.host.activity.base.BaseActivity;
 import com.feipulai.host.activity.main.MainActivity;
 import com.feipulai.host.tts.TtsConfig;
 import com.ww.fpl.libarcface.common.Constants;
+import com.ww.fpl.libarcface.model.FaceRegisterInfo;
 import com.ww.fpl.libarcface.util.ConfigUtil;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -71,7 +79,9 @@ public class SplashScreenActivity extends BaseActivity {
 
     private void init() {
         boolean isEngine = ConfigUtil.getISEngine(this);
-        if (!isEngine) {
+        if (isEngine) {
+            initLocalFace();
+        } else {
             activeEngine();
         }
         SoundPlayUtils.init(MyApplication.getInstance());
@@ -80,9 +90,20 @@ public class SplashScreenActivity extends BaseActivity {
         //这里初始化时间很长,大约需要3s左右
         TtsManager.getInstance().init(this, TtsConfig.APP_ID, TtsConfig.APP_KEY, TtsConfig.SECRET_KEY);
 
-        //本地人脸库初始化
-        FaceServer.getInstance().init(this);
 
+    }
+
+    private void initLocalFace() {
+        //本地人脸库初始化
+        FaceServer.getInstance().init(SplashScreenActivity.this);
+        if (SettingHelper.getSystemSetting().getCheckTool() == 4) {
+            List<Student> studentList = DBManager.getInstance().queryStudentFeatures();
+            List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
+            for (Student student : studentList) {
+                registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+            }
+            FaceServer.getInstance().addFaceList(registerInfoList);
+        }
     }
 
     private static final int ACTION_REQUEST_PERMISSIONS = 0x001;
@@ -119,7 +140,10 @@ public class SplashScreenActivity extends BaseActivity {
                     public void onNext(Integer activeCode) {
                         if (activeCode == ErrorInfo.MOK) {
                             ToastUtils.showShort(getString(R.string.active_success));
+
                             ConfigUtil.setISEngine(SplashScreenActivity.this, true);
+                            //本地人脸库初始化
+                            initLocalFace();
                         } else if (activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
 //                            ToastUtils.showShort(getString(R.string.already_activated));
                         } else {

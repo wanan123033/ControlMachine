@@ -53,8 +53,8 @@ public class SystemSetting {
      * 1　身份证
      * 2　IC卡
      * 3  外接扫描枪
-     * 4　指纹（暂无）后续增加
-     * 5　人脸识别（暂无）后续增加
+     * 4　人脸识别（暂无）后续增加
+     * 5　指纹（暂无）后续增加
      */
     private int checkTool = 0;
 
@@ -62,9 +62,13 @@ public class SystemSetting {
      * 登录用户名
      */
     private String userName;
-    /**是否自由测试*/
+    /**
+     * 是否自由测试
+     */
     private boolean isFreedomTest;
-    /**单屏0 多屏1*/
+    /**
+     * 单屏0 多屏1
+     */
     private int ledMode = 0;
     private int ledVersion = 0;
 
@@ -192,6 +196,7 @@ public class SystemSetting {
     public static final int CHECK_TOOL_QR = 0;
     public static final int CHECK_TOOL_IDCARD = 1;
     public static final int CHECK_TOOL_ICCARD = 2;
+
     @Override
     public String toString() {
         return "SystemSetting{" +
@@ -224,6 +229,7 @@ public class SystemSetting {
     public void setLedVersion(int ledVersion) {
         this.ledVersion = ledVersion;
     }
+
     /***
      * 使用信道
      * @return

@@ -21,6 +21,7 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import okio.Buffer;
+import okio.BufferedSource;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
 
@@ -124,16 +125,22 @@ public class MGsonConverterFactory extends Converter.Factory {
         public T convert(ResponseBody value) throws IOException {
             try {
                 String httpValue = value.string();
+                Logger.i("string====>");
+
                 HttpResult<Object> httpResult = new Gson().fromJson(httpValue, HttpResult.class);
                 if (httpResult.getState() != 0) {
                     return (T) httpResult;
                 }
+                Logger.i("httpResult====>");
                 JsonParser jsonParser = new JsonParser();
                 if (httpResult.getEncrypt() == HttpResult.ENCRYPT_TRUE && !TextUtils.isEmpty(httpResult.getBody().toString())) {
                     String decodeBody = EncryptUtil.decodeHttpData(httpResult);
+                    Logger.i("decodeBody====>");
                     httpResult.setBody(jsonParser.parse(decodeBody));
                     String json = gson.toJson(httpResult);
+                    Logger.i("toJson====>");
                     T t = gson.fromJson(json, type);
+                    Logger.i("fromJson====>");
                     return t;
                 } else {
                     try {

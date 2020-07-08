@@ -203,7 +203,6 @@
             </RelativeLayout>
 
 
-
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -309,6 +308,7 @@
                     android:layout_alignParentRight="true"
                     android:button="@drawable/checkbox_switch_selected" />
             </RelativeLayout>
+
             <View
                 style="@style/divider_gray_horizontal_style"
                 android:layout_marginTop="8dp" />
@@ -317,7 +317,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="30dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -334,6 +333,17 @@
 
             </LinearLayout>
 
+            <Button
+                android:id="@+id/btn_face_init"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginBottom="30dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/btn_click_bg_selected"
+                android:text="人脸识别激活"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_16" />
         </LinearLayout>
+
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

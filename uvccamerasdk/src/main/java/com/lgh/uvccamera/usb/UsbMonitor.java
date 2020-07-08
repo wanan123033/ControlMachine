@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
+import android.util.Log;
 
 import com.lgh.uvccamera.callback.ConnectCallback;
 import com.lgh.uvccamera.config.CameraConfig;
@@ -154,8 +155,11 @@ public class UsbMonitor implements IMonitor {
      * @return
      */
     public boolean isUsbCamera(UsbDevice usbDevice) {
-        return usbDevice != null && 239 == usbDevice.getDeviceClass() && 2 == usbDevice.getDeviceSubclass();
+        boolean isusb = usbDevice != null && 239 == usbDevice.getDeviceClass() && 2 == usbDevice.getDeviceSubclass();
+        Log.e("isUsbCamera","--->"+isusb);
+        return isusb;
     }
+
 
     /**
      * 是否目标设备，是相机并且产品id和供应商id跟配置的一致

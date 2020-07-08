@@ -326,6 +326,10 @@ public class DBManager {
     }
 
 
+    public List<Student> queryStudentFeatures() {
+        return studentDao.queryBuilder().where(StudentDao.Properties.FaceFeature.isNotNull()).list();
+    }
+
     /**
      * 获取当前测试项目的所有学生信息
      *

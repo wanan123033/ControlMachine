@@ -34,6 +34,7 @@ import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.netUtils.CommonUtils;
+import com.ww.fpl.libarcface.faceserver.FaceServer;
 
 import java.util.List;
 
@@ -194,6 +195,7 @@ public class MainActivity extends BaseActivity {
         super.onDestroy();
         if (mIsExiting) {
             System.exit(0);
+            FaceServer.getInstance().unInit();
         }
     }
 

@@ -24,4 +24,15 @@ public class FaceRegisterInfo {
     public void setFeatureData(byte[] featureData) {
         this.featureData = featureData;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof FaceRegisterInfo) {
+            FaceRegisterInfo faceRegisterInfo = (FaceRegisterInfo) obj;
+            if (faceRegisterInfo.name.equals(faceRegisterInfo.name)) {
+                return true;
+            }
+        }
+        return super.equals(obj);
+    }
 }

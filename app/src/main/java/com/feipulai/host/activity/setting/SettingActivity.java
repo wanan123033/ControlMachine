@@ -15,8 +15,11 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.arcsoft.face.ErrorInfo;
+import com.arcsoft.face.FaceEngine;
 import com.feipulai.common.utils.AudioUtil;
 import com.feipulai.common.utils.NetWorkUtils;
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.RadioManager;
@@ -25,10 +28,13 @@ import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
+import com.feipulai.host.activity.SplashScreenActivity;
 import com.feipulai.host.activity.base.BaseTitleActivity;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.netUtils.HttpManager;
 import com.feipulai.host.netUtils.netapi.UserSubscriber;
+import com.ww.fpl.libarcface.common.Constants;
+import com.ww.fpl.libarcface.util.ConfigUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +43,13 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class SettingActivity extends BaseTitleActivity implements TextWatcher {
 
@@ -66,6 +79,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     private SystemSetting setting;
     @BindView(R.id.sb_volume)
     SeekBar sb_volume;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_system_setting;
@@ -149,10 +163,9 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         }
     }
 
-    @OnClick({R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting, R.id.cb_custom_channel})
+    @OnClick({R.id.btn_face_init, R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting, R.id.cb_custom_channel})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-
             case R.id.sw_auto_broadcast:
                 setting.setAutoBroadcast(mSwAutoBroadcast.isChecked());
                 break;
@@ -179,8 +192,52 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
             case R.id.btn_net_setting:
                 startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                 break;
+            case R.id.btn_face_init:
+                activeFace();
+                break;
 
         }
+
+    }
+
+    private void activeFace() {
+        Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
+                int activeCode = FaceEngine.activeOnline(SettingActivity.this, Constants.APP_ID, Constants.SDK_KEY);
+                emitter.onNext(activeCode);
+            }
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Integer activeCode) {
+                        if (activeCode == ErrorInfo.MOK) {
+                            ToastUtils.showShort(getString(R.string.active_success));
+                            ConfigUtil.setISEngine(SettingActivity.this, true);
+                        } else if (activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
+                            ToastUtils.showShort(getString(R.string.already_activated));
+                        } else {
+                            ToastUtils.showShort(getString(R.string.active_failed));
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
 
     }
 

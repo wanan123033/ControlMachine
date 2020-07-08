@@ -36,6 +36,7 @@
         <item>模版导出</item>
         <item>体温查看</item>
         <item>体温导出</item>
+        <item>人脸特征检入</item>
     </array>
 
     <array name="check_tool">
