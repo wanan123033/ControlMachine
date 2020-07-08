@@ -261,12 +261,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             faceHelper = null;
         }
 
-        FaceServer.getInstance().unInit();
-
-        faceInfoList = null;
-        facePreviewInfoList = null;
         faceRectView2 = null;
-        faceFeature = null;
         drawHelper = null;
         mUVCCamera = null;
     }
@@ -297,7 +292,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         }
 
         //本地人脸库初始化
-        FaceServer.getInstance().init(mContext);
+//        FaceServer.getInstance().init(mContext);
         faceNumber = FaceServer.getInstance().getFaceNumber(mContext);
     }
 
@@ -370,10 +365,6 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         });
         mUVCCamera.setPreviewCallback(this);
     }
-
-    private List<FaceInfo> faceInfoList = new ArrayList<>();
-    private List<FacePreviewInfo> facePreviewInfoList = new ArrayList<>();
-    private FaceFeature faceFeature;
 
     @Override
     public void onPreviewFrame(byte[] yuv) {

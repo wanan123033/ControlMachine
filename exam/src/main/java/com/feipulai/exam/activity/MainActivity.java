@@ -4,8 +4,10 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -46,7 +48,10 @@ import com.feipulai.exam.netUtils.CommonUtils;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.service.UploadService;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
+import com.ww.fpl.videolibrary.StorageUtils;
+import com.ww.fpl.videolibrary.play.util.PUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -127,7 +132,28 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
             ServerMessage.subscriber0.stopSendTcpThread();
         }
 //        testUpload();
+
+//        createFile();
     }
+
+    public String PATH = Environment.getExternalStorageDirectory() + "/HKVideo/";
+
+    private void createFile() {
+        ArrayList<StorageUtils.Volume> storys = StorageUtils.getVolume(this);
+        for (StorageUtils.Volume volume : storys
+                ) {
+            if (volume.isRemovable() && volume.getState().equals("mounted")) {
+                PATH = volume.getPath() + "/HKVideo/";
+                break;
+            }
+        }
+        Log.i("PATH", "1--->" + PATH);
+        if (!PUtil.createFile(PATH)) {
+            PATH = Environment.getExternalStorageDirectory() + "/HKVideo/";
+        }
+        Log.i("PATH", "2--->" + PATH);
+    }
+
 
     private void addTestResult() {
         RoundResult roundResult = new RoundResult();
