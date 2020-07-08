@@ -155,7 +155,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
         initUVCCamera();
 
-        drawHelper = new DrawHelper(mWidth, mHeight, textureView2.getWidth(), textureView2.getHeight(), 0
+        drawHelper = new DrawHelper(mWidth, mHeight, mWidth, mHeight, 0
                 , 0, false, false, false);
 
         faceHelper = new FaceHelper.Builder()
@@ -333,34 +333,34 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             @Override
             public void onAttached(UsbDevice usbDevice) {
 //                Log.i("mUVCCamera", "onAttached--------");
-                mUVCCamera.requestPermission(usbDevice);
+                mUVCCamera.requestPermission(usbDevice);// USB设备授权
             }
 
             @Override
             public void onGranted(UsbDevice usbDevice, boolean granted) {
 //                Log.i("mUVCCamera", "onGranted--------" + granted);
                 if (granted) {
-                    mUVCCamera.connectDevice(usbDevice);
+                    mUVCCamera.connectDevice(usbDevice);// 连接USB设备
                 }
             }
 
             @Override
             public void onConnected(UsbDevice usbDevice) {
 //                Log.i("mUVCCamera", "onConnected--------");
-                mUVCCamera.openCamera();
+                mUVCCamera.openCamera();// 打开相机
             }
 
             @Override
             public void onCameraOpened() {
 //                Log.i("mUVCCamera", "onCameraOpened--------");
-                mUVCCamera.setPreviewSize(mWidth, mHeight);
-                mUVCCamera.startPreview();
+                mUVCCamera.setPreviewSize(mWidth, mHeight);// 设置预览尺寸
+                mUVCCamera.startPreview();// 开始预览
             }
 
             @Override
             public void onDetached(UsbDevice usbDevice) {
 //                Log.i("mUVCCamera", "onDetached--------");
-                mUVCCamera.closeCamera();
+                mUVCCamera.closeCamera();// 关闭相机
             }
         });
         mUVCCamera.setPreviewCallback(this);
@@ -428,7 +428,6 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
      * @param facePreviewInfoList
      */
     private void drawPreviewInfo(List<FacePreviewInfo> facePreviewInfoList) {
-//        Log.i(TAG, "drawPreviewInfo-------" + facePreviewInfoList.toString());
         List<DrawInfo> drawInfoList = new ArrayList<>();
         for (int i = 0; i < facePreviewInfoList.size(); i++) {
             String name = faceHelper.getName(facePreviewInfoList.get(i).getTrackId());
