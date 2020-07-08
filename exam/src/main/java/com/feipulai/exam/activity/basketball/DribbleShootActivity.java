@@ -13,6 +13,7 @@ import com.feipulai.common.utils.ActivityUtils;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.manager.RunTimerManager;
+import com.feipulai.device.serial.beans.RunTimerResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.basketball.adapter.DribbleShootAdapter;
@@ -122,6 +123,11 @@ public class DribbleShootActivity extends BaseShootActivity {
         tvStudentCode.setText(student.getStudentCode());
         tvStudentName.setText(student.getStudentName());
         tvGender.setText(student.getSex() == 0 ? "男" : "女");
+    }
+
+    @Override
+    public void getResult(RunTimerResult result) {
+
     }
 
 

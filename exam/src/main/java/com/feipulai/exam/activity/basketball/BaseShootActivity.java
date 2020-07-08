@@ -135,7 +135,7 @@ public abstract class BaseShootActivity extends BaseTitleActivity
     private RunTimerImpl runTimer = new RunTimerImpl(new RunTimerImpl.RunTimerListener() {
         @Override
         public void onGetTime(RunTimerResult result) {
-
+            getResult(result);
         }
 
         @Override
@@ -154,4 +154,6 @@ public abstract class BaseShootActivity extends BaseTitleActivity
         super.onDestroy();
         deviceManager.setRS232ResiltListener(null);
     }
+
+    public abstract void getResult(RunTimerResult result);
 }
