@@ -135,7 +135,7 @@ public class BasketBallShootActivity extends BaseShootActivity {
 
     @Override
     public void getResult(RunTimerResult result) {
-
+        //根据折返点拦截次数更新投篮次数
     }
 
 

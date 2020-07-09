@@ -39,7 +39,7 @@ public class GripPairPresenter extends SitPullUpPairPresenter {
 
     @Override
     protected int getDeviceSum() {
-        return setting.getTestRound();
+        return setting.getDeviceSum();
     }
 
     @Override

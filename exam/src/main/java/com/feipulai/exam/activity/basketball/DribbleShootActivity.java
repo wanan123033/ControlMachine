@@ -127,7 +127,7 @@ public class DribbleShootActivity extends BaseShootActivity {
 
     @Override
     public void getResult(RunTimerResult result) {
-
+        //根据不同的投篮点投篮次数来更新并计时
     }
 
 
