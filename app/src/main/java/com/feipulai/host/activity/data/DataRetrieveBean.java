@@ -84,6 +84,8 @@ public class DataRetrieveBean implements Serializable {
     }
 
     public String getResult() {
+        if (result.equals("-1000"))
+            return "";
         return result;
     }
 

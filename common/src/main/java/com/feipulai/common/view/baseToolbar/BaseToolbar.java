@@ -152,7 +152,7 @@ public class BaseToolbar extends Toolbar {
      * 设置返回按钮
      */
     public void setBackButton(@DrawableRes int resId) {
-        if (resId <= 0) {
+        if (resId == 0) {
             return;
         }
 

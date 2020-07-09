@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.jump_rope.base.check.AbstractRadioCheckActivity;
@@ -21,6 +22,7 @@ import com.feipulai.exam.activity.jump_rope.pair.JumpRopePairActivity;
 import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSetting;
 import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSettingActivity;
 import com.feipulai.exam.activity.jump_rope.test.JumpRopeTestActivity;
+import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 
 import java.util.List;
@@ -82,6 +84,11 @@ public class JumpRopeCheckActivity
         tvConflict.setVisibility(View.VISIBLE);
         llDeviceGroup.setVisibility(View.VISIBLE);
 
+    }
+
+    @Override
+    protected int setAFRFrameLayoutResID() {
+        return R.id.frame_camera;
     }
 
     // @Override
@@ -222,7 +229,7 @@ public class JumpRopeCheckActivity
     }
 
 
-    @OnClick({R.id.btn_change_hand_group, R.id.btn_kill_devices})
+    @OnClick({R.id.btn_change_hand_group, R.id.btn_kill_devices,R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
@@ -234,9 +241,31 @@ public class JumpRopeCheckActivity
 //                ((JumpRopeCheckContract.Presenter) presenter).killAllDevices();
                 showkillAllWarning();
                 break;
+            case R.id.img_AFR:
+                showAFR();
+                break;
 
         }
     }
+    public void showAFR() {
+        if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
+            ToastUtils.showShort("未选择人脸识别检录功能");
+            return;
+        }
+        if (afrFrameLayout == null) {
+            return;
+        }
+
+        boolean isGoto = afrFragment.gotoUVCFaceCamera(!afrFragment.isOpenCamera);
+        if (isGoto) {
+            if (afrFragment.isOpenCamera) {
+                afrFrameLayout.setVisibility(View.VISIBLE);
+            } else {
+                afrFrameLayout.setVisibility(View.GONE);
+            }
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

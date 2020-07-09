@@ -149,7 +149,7 @@ public class SitReachMoreActivity extends BaseMoreActivity {
         manager.setEmpty(deviceId, SettingHelper.getSystemSetting().getHostId());
     }
 
-    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair})
+    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair,R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_led_setting:
@@ -167,6 +167,9 @@ public class SitReachMoreActivity extends BaseMoreActivity {
                     startActivity(new Intent(this, SitReachPairActivity.class));
                 }
 
+                break;
+            case R.id.img_AFR:
+                showAFR();
                 break;
         }
     }

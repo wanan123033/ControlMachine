@@ -120,7 +120,7 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
 
     }
 
-    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair})
+    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair,R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_led_setting:
@@ -138,6 +138,9 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
                     startActivity(new Intent(this, StandJumpPairActivity.class));
                 }
 
+                break;
+            case R.id.img_AFR:
+                showAFR();
                 break;
         }
     }

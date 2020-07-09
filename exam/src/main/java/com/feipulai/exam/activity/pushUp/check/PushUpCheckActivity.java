@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.exam.R;
 import com.feipulai.exam.activity.pushUp.PushUpSetting;
 import com.feipulai.exam.activity.pushUp.PushUpSettingActivity;
 import com.feipulai.exam.activity.pushUp.PushUpIndividualActivity;
@@ -15,6 +16,11 @@ import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 
 public class PushUpCheckActivity extends SitPullUpCheckActivity {
+
+    @Override
+    protected int setAFRFrameLayoutResID() {
+        return R.id.frame_camera;
+    }
 
     @Override
     protected SitPullUpCheckPresenter getPresenter() {

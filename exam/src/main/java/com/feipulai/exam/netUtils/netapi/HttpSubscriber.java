@@ -563,8 +563,8 @@ public class HttpSubscriber {
                         roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
                         roundResult.setStumbleCount(score.getStumbleCount());
                         roundResult.setTestTime(score.getTestTime());
-                        roundResult.setEndTime(DateUtil.getCurrentTime() + "");
-                        roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
+                        roundResult.setEndTime(DateUtil.getCurrentTime()+"");
+                        roundResult.setMtEquipment(CommonUtils.getDeviceId(MyApplication.getInstance()));
                         RoundResult bestResult = DBManager.getInstance().queryBestScore(studentCode, TestConfigs.sCurrentItem.getTestNum());
                         if (bestResult != null) {
                             // 原有最好成绩犯规 或者原有最好成绩没有犯规但是现在成绩更好

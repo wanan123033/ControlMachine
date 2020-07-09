@@ -2,13 +2,17 @@ package com.feipulai.exam.activity.setting;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.arcsoft.face.ErrorInfo;
+import com.arcsoft.face.FaceEngine;
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
@@ -20,9 +24,19 @@ import com.feipulai.exam.activity.situp.setting.SitUpSetting;
 import com.feipulai.exam.activity.standjump.StandJumpSetting;
 import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
 import com.feipulai.exam.config.SharedPrefsConfigs;
+import com.ww.fpl.libarcface.common.Constants;
+import com.ww.fpl.libarcface.util.ConfigUtil;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import butterknife.OnItemSelected;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by zzs on 2018/11/23
@@ -162,6 +176,50 @@ public class AdvancedSettingActivity extends BaseTitleActivity
                 standJumpSetting.setPenalize(isChecked);
                 break;
         }
+    }
+
+    @OnClick({R.id.btn_face_init})
+    public void onClick(View view){
+
+    }
+    private void activeFace() {
+        Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
+                int activeCode = FaceEngine.activeOnline(getApplicationContext(), Constants.APP_ID, Constants.SDK_KEY);
+                emitter.onNext(activeCode);
+            }
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Integer activeCode) {
+                        if (activeCode == ErrorInfo.MOK) {
+                            ToastUtils.showShort(getString(R.string.active_success));
+                            ConfigUtil.setISEngine(getApplicationContext(), true);
+                        } else if (activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
+                            ToastUtils.showShort(getString(R.string.already_activated));
+                        } else {
+                            ToastUtils.showShort(getString(R.string.active_failed));
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
 
     }
 

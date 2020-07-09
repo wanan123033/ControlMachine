@@ -49,6 +49,5 @@ public class DefaultExceptionHandler implements Thread.UncaughtExceptionHandler 
 
 		//This will stop your application and take out from it.
 		System.exit(2);
-
 	}
 }

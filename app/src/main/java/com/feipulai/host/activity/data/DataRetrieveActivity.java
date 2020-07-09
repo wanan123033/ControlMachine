@@ -466,7 +466,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
                     //获取学生信息
                     student = studentList.get(i);
                     String result = displaStuResult(student.getStudentCode());
-                    mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), TextUtils.equals(result, "-1000") ? 0 : 1, result, mCbSelectAll.isChecked()));
+                    mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), TextUtils.equals(result, "-1000") ? 0 : 1, TextUtils.equals(result,"-1000")?"":result, mCbSelectAll.isChecked()));
                 }
                 mRefreshView.finishRefreshAndLoad();
                 mAdapter.notifyDataSetChanged();
@@ -519,7 +519,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
                 for (int i = 0; i < students.size(); i++) {
                     Student student = students.get(i);
                     String result = displaStuResult(student.getStudentCode());
-                    mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), TextUtils.equals(result, "-1000") ? 0 : 1, result, mCbSelectAll.isChecked()));
+                    mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), TextUtils.equals(result, "-1000") ? 0 : 1, TextUtils.equals(result,"-1000")?"":result, mCbSelectAll.isChecked()));
 
                 }
                 mRefreshView.finishRefreshAndLoad();
@@ -553,7 +553,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
         } else {
             RoundResult result = DBManager.getInstance().queryResultsByStudentCodeIsLastResult(studentCode);
             if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_SL){
-                return result != null ? ("左"+ResultDisplayUtils.getStrResultForDisplay(result.getResult())+",右"+ResultDisplayUtils.getStrResultForDisplay(result.getWeightResult())):"";
+                return result != null ? ("左"+ResultDisplayUtils.getStrResultForDisplay(result.getResult())+",右"+ResultDisplayUtils.getStrResultForDisplay(result.getWeightResult())):"-1000";
             }
             return result != null ? (result.getResultState() == RoundResult.RESULT_STATE_FOUL ? "X" : result.getResult()) + "" : "-1000";
         }
@@ -615,13 +615,14 @@ public class DataRetrieveActivity extends BaseTitleActivity
                     //是否刷选已测或未测
                     if (cbTested.isChecked() || cbUnTested.isChecked()) {
                         if (cbTested.isChecked()) {
-                            mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), 1, displaStuResult(student.getStudentCode()), mCbSelectAll.isChecked()));
+                            String result = displaStuResult(student.getStudentCode());
+                            mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), 1, TextUtils.equals(result,"-1000")?"":result, mCbSelectAll.isChecked()));
                         } else {
-                            mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), 0, "-1000", mCbSelectAll.isChecked()));
+                            mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), 0, "", mCbSelectAll.isChecked()));
                         }
                     } else if (cbUploaded.isChecked() || cbUnUpload.isChecked()) {
-
-                        mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), 1, displaStuResult(student.getStudentCode()), mCbSelectAll.isChecked()));
+                        String result = displaStuResult(student.getStudentCode());
+                        mList.add(new DataRetrieveBean(student.getStudentCode(), student.getStudentName(), student.getSex(), 1, TextUtils.equals(result,"-1000")?"":result, mCbSelectAll.isChecked()));
                     }
                 }
                 mAdapter.notifyDataSetChanged();

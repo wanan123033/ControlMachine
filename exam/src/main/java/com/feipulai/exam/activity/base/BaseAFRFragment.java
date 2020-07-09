@@ -240,7 +240,8 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    mUVCCamera.startPreview();
+                    if (mUVCCamera != null)
+                        mUVCCamera.startPreview();
                 }
             }, 100);
         } else {

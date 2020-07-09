@@ -49,6 +49,7 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.entity.StudentThermometer;
+import com.feipulai.exam.netUtils.CommonUtils;
 import com.feipulai.exam.netUtils.OnResultListener;
 import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
 import com.feipulai.exam.utils.StringChineseUtil;
@@ -387,7 +388,7 @@ public class IndividualCheckFragment
             boolean flag = false;
             List<RoundScoreBean.ScoreBean> roundList = result.getRoundList();
             for (RoundScoreBean.ScoreBean scoreBean : roundList){
-                if (!scoreBean.mtEquipment.equals(SettingHelper.getSystemSetting().getBindDeviceName())){
+                if (!scoreBean.mtEquipment.equals(CommonUtils.getDeviceInfo())){
                     flag = true;
                     break;
                 }else {

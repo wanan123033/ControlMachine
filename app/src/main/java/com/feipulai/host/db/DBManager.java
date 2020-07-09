@@ -178,6 +178,7 @@ public class DBManager {
 
         Student student = studentDao.queryBuilder()
                 .where(StudentDao.Properties.StudentCode.eq(stuCode))
+                .limit(1)
                 .unique();
         return student;
     }
@@ -247,6 +248,7 @@ public class DBManager {
         return studentDao
                 .queryBuilder()
                 .where(StudentDao.Properties.IdCardNo.eq(idcardNo))
+                .limit(1)
                 .unique();
     }
 
@@ -572,6 +574,7 @@ public class DBManager {
         return itemDao
                 .queryBuilder()
                 .where(ItemDao.Properties.ItemName.eq(itemName))
+                .limit(1)
                 .unique();
     }
 
@@ -590,6 +593,7 @@ public class DBManager {
                 .queryBuilder()
                 .where(ItemDao.Properties.MachineCode.eq(machineCode))
                 .where(ItemDao.Properties.ItemCode.eq(itemCode))
+                .limit(1)
                 .unique();
     }
 
@@ -695,6 +699,7 @@ public class DBManager {
                 .where(StudentItemDao.Properties.StudentCode.eq(studentCode))
                 .where(StudentItemDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(StudentItemDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .limit(1)
                 .unique();
     }
 
@@ -922,6 +927,7 @@ public class DBManager {
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(RoundResultDao.Properties.IsLastResult.eq(1))
+                .limit(1)
                 .unique();
     }
 
@@ -933,6 +939,7 @@ public class DBManager {
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
                 .where(RoundResultDao.Properties.IsLastResult.eq(1))
+                .limit(1)
                 .unique();
     }
 
@@ -949,7 +956,8 @@ public class DBManager {
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.IsLastResult.eq("1"))
-                .unique();
+                .limit(1)
+                 .unique();
     }
 
     public List<RoundResult> queryResultsByStuItem(StudentItem stuItem) {

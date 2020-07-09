@@ -31,5 +31,16 @@
         android:textSize="20dp"
         android:visibility="gone" />
 
-
+    <ImageView
+        android:id="@+id/img_AFR"
+        android:layout_width="60dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="10dp"
+        android:layout_toLeftOf="@+id/tv_pair"
+        android:background="@drawable/btn_bg_green"
+        android:gravity="center"
+        android:padding="5dp"
+        android:src="@mipmap/icon_afr"
+        android:textColor="@color/white"
+        android:textSize="20dp" />
 </LinearLayout>

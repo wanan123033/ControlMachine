@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -15,6 +16,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.NumberPicker;
@@ -31,6 +33,7 @@ import com.feipulai.device.manager.PullUpManager;
 import com.feipulai.device.serial.beans.PullUpStateResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
+import com.feipulai.exam.activity.base.BaseAFRFragment;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
@@ -62,7 +65,7 @@ import butterknife.OnClick;
 
 public class PullUpIndividualActivity extends BaseTitleActivity
         implements PullUpTestFacade.Listener,
-        IndividualCheckFragment.OnIndividualCheckInListener {
+        IndividualCheckFragment.OnIndividualCheckInListener, BaseAFRFragment.onAFRCompareListener {
 
     private static final int UPDATE_SCORE = 0x3;
 
@@ -110,7 +113,8 @@ public class PullUpIndividualActivity extends BaseTitleActivity
     private SystemSetting systemSetting;
     private List<StuDevicePair> pairs = new ArrayList<>(1);
     private WaitDialog changBadDialog;
-
+    private FrameLayout afrFrameLayout;
+    private BaseAFRFragment afrFragment;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_individual_pullup;
@@ -137,6 +141,21 @@ public class PullUpIndividualActivity extends BaseTitleActivity
         facade = new PullUpTestFacade(SettingHelper.getSystemSetting().getHostId(), this);
         ledManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
         prepareForCheckIn();
+
+        if (SettingHelper.getSystemSetting().getCheckTool() == 4 && setAFRFrameLayoutResID() != 0) {
+            afrFrameLayout = findViewById(setAFRFrameLayoutResID());
+            afrFragment = new BaseAFRFragment();
+            afrFragment.setCompareListener(this);
+            initAFR();
+        }
+    }
+    public int setAFRFrameLayoutResID() {
+        return R.id.frame_camera;
+    }
+    private void initAFR() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(setAFRFrameLayoutResID(), afrFragment);
+        transaction.commitAllowingStateLoss();// 提交更改
     }
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -231,7 +250,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
     }
 
     @OnClick({R.id.tv_start_test, R.id.tv_stop_test, R.id.tv_print, R.id.tv_led_setting, R.id.tv_confirm,
-            R.id.tv_punish, R.id.tv_abandon_test, R.id.tv_finish_test, R.id.tv_exit_test, R.id.tv_pair})
+            R.id.tv_punish, R.id.tv_abandon_test, R.id.tv_finish_test, R.id.tv_exit_test, R.id.tv_pair,R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
@@ -285,6 +304,9 @@ public class PullUpIndividualActivity extends BaseTitleActivity
 
             case R.id.tv_pair:
                 changeBadDevice();
+                break;
+            case R.id.img_AFR:
+                showAFR();
                 break;
 
         }
@@ -588,4 +610,54 @@ public class PullUpIndividualActivity extends BaseTitleActivity
         toastSpeak("设备连接成功");
     }
 
+    @Override
+    public void compareStu(final Student student) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                afrFrameLayout.setVisibility(View.GONE);
+            }
+        });
+        if (student == null) {
+            InteractUtils.toastSpeak(this, "该考生不存在");
+            return;
+        }
+        final StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+        if (studentItem == null) {
+            InteractUtils.toastSpeak(this, "无此项目");
+            return;
+        }
+        final List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
+        if (results != null && results.size() >= TestConfigs.getMaxTestCount(this)) {
+            InteractUtils.toastSpeak(this, "该考生已测试");
+            return;
+        }
+        // 可以直接检录
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                onIndividualCheckIn(student,studentItem,results);
+            }
+        });
+
+    }
+    public void showAFR() {
+        if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
+            ToastUtils.showShort("未选择人脸识别检录功能");
+            return;
+        }
+        if (afrFrameLayout == null) {
+            return;
+        }
+
+        boolean isGoto = afrFragment.gotoUVCFaceCamera(!afrFragment.isOpenCamera);
+        if (isGoto) {
+            if (afrFragment.isOpenCamera) {
+                afrFrameLayout.setVisibility(View.VISIBLE);
+            } else {
+                afrFrameLayout.setVisibility(View.GONE);
+            }
+        }
+    }
 }

@@ -4,6 +4,7 @@ import android.graphics.Paint;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -21,6 +23,7 @@ import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.manager.BallManager;
 import com.feipulai.device.serial.RadioManager;
@@ -28,6 +31,7 @@ import com.feipulai.device.serial.beans.Basketball868Result;
 import com.feipulai.device.udp.UdpLEDUtil;
 import com.feipulai.device.udp.result.BasketballResult;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.base.BaseAFRFragment;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.basketball.BasketBallListener;
 import com.feipulai.exam.activity.basketball.BasketBallRadioFacade;
@@ -66,7 +70,7 @@ import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class FootballIndividualActivity extends BaseTitleActivity implements IndividualCheckFragment.OnIndividualCheckInListener,
-        TimerUtil.TimerAccepListener, BasketBallListener.BasketBallResponseListener {
+        TimerUtil.TimerAccepListener, BasketBallListener.BasketBallResponseListener, BaseAFRFragment.onAFRCompareListener {
     private static final String TAG = "FootballActivity";
     @BindView(R.id.ll_stu_detail)
     LinearLayout llStuDetail;
@@ -120,6 +124,9 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
     private BasketBallRadioFacade facade;
     private long timerDate;
     private String startTime;
+    private FrameLayout afrFrameLayout;
+    private BaseAFRFragment afrFragment;
+
 
     @Override
     protected int setLayoutResID() {
@@ -187,6 +194,13 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
             cbLed.setVisibility(View.VISIBLE);
         }
         testDate = DateUtil.getCurrentTime() + "";
+
+        if (SettingHelper.getSystemSetting().getCheckTool() == 4 && setAFRFrameLayoutResID() != 0) {
+            afrFrameLayout = findViewById(setAFRFrameLayoutResID());
+            afrFragment = new BaseAFRFragment();
+            afrFragment.setCompareListener(this);
+            initAFR();
+        }
     }
 
     @Override
@@ -727,7 +741,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
     }
 
     @OnClick({R.id.tv_punish_add, R.id.tv_punish_subtract, R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal, R.id.tv_print, R.id.tv_confirm
-            , R.id.txt_waiting, R.id.txt_illegal_return, R.id.txt_continue_run, R.id.txt_stop_timing, R.id.txt_finish_test})
+            , R.id.txt_waiting, R.id.txt_illegal_return, R.id.txt_continue_run, R.id.txt_stop_timing, R.id.txt_finish_test,R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_waiting://等待发令
@@ -846,6 +860,27 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                 }
 
                 break;
+            case R.id.img_AFR:
+                showAFR();
+                break;
+        }
+    }
+    public void showAFR() {
+        if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
+            ToastUtils.showShort("未选择人脸识别检录功能");
+            return;
+        }
+        if (afrFrameLayout == null) {
+            return;
+        }
+
+        boolean isGoto = afrFragment.gotoUVCFaceCamera(!afrFragment.isOpenCamera);
+        if (isGoto) {
+            if (afrFragment.isOpenCamera) {
+                afrFrameLayout.setVisibility(View.VISIBLE);
+            } else {
+                afrFrameLayout.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -1292,5 +1327,40 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
 
         }
 
+    }
+    private void initAFR() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(setAFRFrameLayoutResID(), afrFragment);
+        transaction.commitAllowingStateLoss();// 提交更改
+    }
+    public int setAFRFrameLayoutResID() {
+        return R.id.frame_camera;
+    }
+
+    @Override
+    public void compareStu(Student student) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                afrFrameLayout.setVisibility(View.GONE);
+            }
+        });
+
+        if (student == null) {
+            InteractUtils.toastSpeak(this, "该考生不存在");
+            return;
+        }
+        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+        if (studentItem == null) {
+            InteractUtils.toastSpeak(this, "无此项目");
+            return;
+        }
+        List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
+        if (results != null && results.size() >= TestConfigs.getMaxTestCount(this)) {
+            InteractUtils.toastSpeak(this, "该考生已测试");
+            return;
+        }
+        // 可以直接检录
+        onIndividualCheckIn(student,studentItem,results);
     }
 }

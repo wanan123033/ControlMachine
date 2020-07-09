@@ -137,7 +137,7 @@ public class GripMoreActivity extends BaseMoreActivity {
                 deviceId, 0x03);
     }
 
-    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair})
+    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair,R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_led_setting:
@@ -155,6 +155,10 @@ public class GripMoreActivity extends BaseMoreActivity {
                     startActivity(new Intent(this, GripPairActivity.class));
                 }
 
+                break;
+            case R.id.img_AFR:
+                Log.e("TAG","=============");
+                showAFR();
                 break;
         }
     }

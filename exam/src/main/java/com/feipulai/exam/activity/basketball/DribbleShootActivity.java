@@ -1,9 +1,11 @@
 package com.feipulai.exam.activity.basketball;
 
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -12,13 +14,21 @@ import android.widget.TextView;
 import com.feipulai.common.utils.ActivityUtils;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.manager.RunTimerManager;
 import com.feipulai.device.serial.beans.RunTimerResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
+import com.feipulai.exam.activity.base.BaseAFRFragment;
 import com.feipulai.exam.activity.basketball.adapter.DribbleShootAdapter;
 import com.feipulai.exam.activity.basketball.result.BasketBallResult;
+import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
+import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.entity.StudentItem;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
@@ -30,7 +40,7 @@ import butterknife.OnClick;
 /**
  * 运球投篮测试个人模式
  */
-public class DribbleShootActivity extends BaseShootActivity {
+public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFragment.onAFRCompareListener {
 
     @BindView(R.id.iv_portrait)
     ImageView ivPortrait;
@@ -83,6 +93,8 @@ public class DribbleShootActivity extends BaseShootActivity {
     private DribbleShootAdapter mAdapter;
     private String[] interceptRound = new String[]{"1起点", "2折返1", "3投篮", "4折返2", "5投篮", "6折返1", "7投篮", "8折返2", "9投篮"};
     private ShootSetting setting;
+    private FrameLayout afrFrameLayout;
+    private BaseAFRFragment afrFragment;
 
     @Override
     protected int setLayoutResID() {
@@ -98,6 +110,13 @@ public class DribbleShootActivity extends BaseShootActivity {
         mAdapter = new DribbleShootAdapter(this, dateList);
         rvState.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         rvState.setAdapter(mAdapter);
+
+        if (SettingHelper.getSystemSetting().getCheckTool() == 4 && setAFRFrameLayoutResID() != 0) {
+            afrFrameLayout = findViewById(setAFRFrameLayoutResID());
+            afrFragment = new BaseAFRFragment();
+            afrFragment.setCompareListener(this);
+            initAFR();
+        }
     }
 
     @Override
@@ -132,7 +151,7 @@ public class DribbleShootActivity extends BaseShootActivity {
 
 
     @OnClick({R.id.txt_waiting, R.id.txt_illegal_return, R.id.txt_stop_timing,
-            R.id.tv_led_setting, R.id.tv_print, R.id.tv_confirm, R.id.txt_finish_test})
+            R.id.tv_led_setting, R.id.tv_print, R.id.tv_confirm, R.id.txt_finish_test,R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_waiting:
@@ -161,6 +180,63 @@ public class DribbleShootActivity extends BaseShootActivity {
             case R.id.txt_finish_test:
                 LogUtils.operation("篮球运球投篮点击了结束测试...");
                 break;
+            case R.id.img_AFR:
+                showAFR();
+                break;
         }
+    }
+    public void showAFR() {
+        if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
+            ToastUtils.showShort("未选择人脸识别检录功能");
+            return;
+        }
+        if (afrFrameLayout == null) {
+            return;
+        }
+
+        boolean isGoto = afrFragment.gotoUVCFaceCamera(!afrFragment.isOpenCamera);
+        if (isGoto) {
+            if (afrFragment.isOpenCamera) {
+                afrFrameLayout.setVisibility(View.VISIBLE);
+            } else {
+                afrFrameLayout.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void initAFR() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(setAFRFrameLayoutResID(), afrFragment);
+        transaction.commitAllowingStateLoss();// 提交更改
+    }
+    public int setAFRFrameLayoutResID() {
+        return R.id.frame_camera;
+    }
+
+    @Override
+    public void compareStu(Student student) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                afrFrameLayout.setVisibility(View.GONE);
+            }
+        });
+
+        if (student == null) {
+            InteractUtils.toastSpeak(this, "该考生不存在");
+            return;
+        }
+        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+        if (studentItem == null) {
+            InteractUtils.toastSpeak(this, "无此项目");
+            return;
+        }
+        List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
+        if (results != null && results.size() >= TestConfigs.getMaxTestCount(this)) {
+            InteractUtils.toastSpeak(this, "该考生已测试");
+            return;
+        }
+        // 可以直接检录
+        onIndividualCheckIn(student,studentItem,results);
     }
 }

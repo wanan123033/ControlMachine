@@ -25,14 +25,12 @@ import butterknife.BindView;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 public class MachineSelectActivity extends BaseTitleActivity {
-
     @BindView(R.id.tab_layout)
     TabLayout tabLayout;
     @BindView(R.id.view_pager)
     ViewPager viewPager;
     private List<Fragment> fragments = new ArrayList<>();
     private String[] titles;
-
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_machine_select;
@@ -58,11 +56,9 @@ public class MachineSelectActivity extends BaseTitleActivity {
             public void destroyItem(ViewGroup container, int position, Object object) {
                 super.destroyItem(container, position, object);
             }
-
             @Nullable
             @Override
             public CharSequence getPageTitle(int position) {
-
                 return titles[position];
             }
         });
@@ -77,6 +73,4 @@ public class MachineSelectActivity extends BaseTitleActivity {
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
         return builder.setTitle(R.string.machine_select_title);
     }
-
-
 }

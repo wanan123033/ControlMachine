@@ -170,13 +170,15 @@ public class VisionTestActivity extends BasePersonTestActivity {
             ClientManager.connectDevice(blueBind.getBluetoothMac(), bleConnectResponse);
             ClientManager.getClient().registerConnectStatusListener(blueBind.getBluetoothMac(), mConnectStatusListener);
         }
-        mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
+        if (mLEDManager != null)
+            mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
     }
 
 
-    //    @Override
+//        @Override
 //    protected void addStudent(Student student) {
 //        super.addStudent(student);
+//        Logger.i("stu===>"+student.toString());
 //        if (student != null){
 //            pair.setResult(25);
 //            pair.setBaseHeight(41);
@@ -206,7 +208,8 @@ public class VisionTestActivity extends BasePersonTestActivity {
     public void stuSkip() {
         pair.setStudent(null);
         refreshTxtStu(null);
-        mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
+        if (mLEDManager != null)
+            mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
     }
 
     private void showThermometerOpenDialog() {
@@ -270,10 +273,12 @@ public class VisionTestActivity extends BasePersonTestActivity {
         result.setRoundNo(1);
         RoundResult bestResult = DBManager.getInstance().queryBestScore(pair.getStudent().getStudentCode());
         if (bestResult != null) {
+            Logger.i("bestResult==>"+bestResult.toString());
             result.setIsLastResult(1);
             bestResult.setIsLastResult(0);
             DBManager.getInstance().updateRoundResult(bestResult);
         } else {
+            Logger.i("bestResult==>null");
             // 第一次测试
             result.setIsLastResult(1);
         }

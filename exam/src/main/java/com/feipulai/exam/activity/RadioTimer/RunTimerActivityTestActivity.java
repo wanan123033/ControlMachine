@@ -5,11 +5,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -23,6 +25,8 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.beans.RunTimerResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
+import com.feipulai.exam.activity.base.BaseAFRFragment;
+import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.adapter.PopAdapter;
 import com.feipulai.exam.adapter.RunNumberAdapter;
@@ -103,6 +107,8 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     private int currentTestTime = 0;
     private SoundPlayUtils playUtils;
     private String startTime;
+    private FrameLayout afrFrameLayout;
+    private BaseAFRFragment afrFragment;
 
     @Override
     protected int setLayoutResID() {
@@ -188,6 +194,13 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
 
         getToolbar().getLeftView(0).setOnClickListener(backListener);
         getToolbar().getLeftView(1).setOnClickListener(backListener);
+
+        if (SettingHelper.getSystemSetting().getCheckTool() == 4 && setAFRFrameLayoutResID() != 0) {
+            afrFrameLayout = findViewById(setAFRFrameLayoutResID());
+            afrFragment = new BaseAFRFragment();
+            afrFragment.setCompareListener(this);
+            initAFR();
+        }
     }
 
     View.OnClickListener backListener = new View.OnClickListener() {
@@ -257,7 +270,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     }
 
     @OnClick({R.id.btn_start, R.id.btn_led, R.id.tv_wait_start, R.id.tv_force_start,
-            R.id.tv_fault_back, R.id.tv_mark_confirm, R.id.tv_wait_ready,R.id.tv_get_time})
+            R.id.tv_fault_back, R.id.tv_mark_confirm, R.id.tv_wait_ready,R.id.tv_get_time,R.id.img_AFR})
     //R.id.tv_project_setting,
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -351,8 +364,12 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
                 getTime();
                 LogUtils.operation("红外计时点击了获取时间");
                 break;
+            case R.id.img_AFR:
+                showAFR();
+                break;
         }
     }
+
 
 
     @Override
@@ -572,4 +589,36 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
+
+    private void initAFR() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(setAFRFrameLayoutResID(), afrFragment);
+        transaction.commitAllowingStateLoss();// 提交更改
+    }
+    public int setAFRFrameLayoutResID() {
+        return R.id.frame_camera;
+    }
+
+    @Override
+    public void compareStu(Student student) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                afrFrameLayout.setVisibility(View.GONE);
+            }
+        });
+
+        if (student == null) {
+            InteractUtils.toastSpeak(this, "该考生不存在");
+            return;
+        }
+        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+        if (studentItem == null) {
+            InteractUtils.toastSpeak(this, "无此项目");
+            return;
+        }
+        // 可以直接检录
+        checkInUIThread(student,studentItem);
+    }
+
 }

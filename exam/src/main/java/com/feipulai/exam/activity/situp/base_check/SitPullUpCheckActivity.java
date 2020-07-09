@@ -9,12 +9,15 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.StopUseButton;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.jump_rope.base.check.AbstractRadioCheckActivity;
 import com.feipulai.exam.activity.jump_rope.base.check.RadioCheckContract;
+import com.feipulai.exam.activity.setting.SettingHelper;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 public abstract class SitPullUpCheckActivity<Setting>
 		extends AbstractRadioCheckActivity<Setting>
@@ -124,5 +127,29 @@ public abstract class SitPullUpCheckActivity<Setting>
 	protected String getChangeBadTitle() {
 		return "请重启待连接设备";
 	}
-	
+
+	@OnClick({R.id.img_AFR})
+	public void onClick(View view){
+		showAFR();
+	}
+	public void showAFR() {
+		if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
+			ToastUtils.showShort("未选择人脸识别检录功能");
+			return;
+		}
+		if (afrFrameLayout == null) {
+			return;
+		}
+
+		boolean isGoto = afrFragment.gotoUVCFaceCamera(!afrFragment.isOpenCamera);
+		if (isGoto) {
+			if (afrFragment.isOpenCamera) {
+				afrFrameLayout.setVisibility(View.VISIBLE);
+			} else {
+				afrFrameLayout.setVisibility(View.GONE);
+			}
+		}
+	}
+
+
 }

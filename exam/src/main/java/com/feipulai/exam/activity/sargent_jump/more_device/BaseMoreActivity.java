@@ -8,11 +8,13 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -23,6 +25,7 @@ import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
+import com.feipulai.exam.activity.base.BaseAFRFragment;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.BaseDeviceState;
@@ -851,7 +854,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         }
     }
 
-    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair})
+    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair,R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_led_setting:
@@ -871,6 +874,9 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 }
 
                 break;
+            case R.id.img_AFR:
+                showAFR();
+                break;
         }
     }
 
@@ -882,8 +888,6 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             BaseStuPair pair = (BaseStuPair) msg.obj;
             setShowLed(pair, pair.getBaseDevice().getDeviceId() - 1);
         }
-
-
     }
 
     private class ClearHandler extends Handler {
@@ -953,6 +957,57 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
             }
         }
+    }
+
+    public void showAFR() {
+        if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
+            ToastUtils.showShort("未选择人脸识别检录功能");
+            return;
+        }
+        if (afrFrameLayout == null) {
+            return;
+        }
+
+        boolean isGoto = afrFragment.gotoUVCFaceCamera(!afrFragment.isOpenCamera);
+        if (isGoto) {
+            if (afrFragment.isOpenCamera) {
+                afrFrameLayout.setVisibility(View.VISIBLE);
+            } else {
+                afrFrameLayout.setVisibility(View.GONE);
+            }
+        }
+    }
+    @Override
+    public void compareStu(Student student) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                afrFrameLayout.setVisibility(View.GONE);
+            }
+        });
+
+        if (student == null) {
+            InteractUtils.toastSpeak(this, "该考生不存在");
+            return;
+        }
+        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+        if (studentItem == null) {
+            InteractUtils.toastSpeak(this, "无此项目");
+            return;
+        }
+        List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
+        if (results != null && results.size() >= TestConfigs.getMaxTestCount(this)) {
+            InteractUtils.toastSpeak(this, "该考生已测试");
+            return;
+        }
+        // 可以直接检录
+        checkInUIThread(student,studentItem);
+
+    }
+
+    @Override
+    public int setAFRFrameLayoutResID() {
+        return R.id.frame_camera;
     }
 }
 

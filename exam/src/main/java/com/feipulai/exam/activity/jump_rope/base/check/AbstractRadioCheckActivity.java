@@ -6,11 +6,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -19,6 +21,7 @@ import com.feipulai.common.utils.ActivityUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
+import com.feipulai.exam.activity.base.BaseAFRFragment;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.jump_rope.adapter.CheckPairAdapter;
 import com.feipulai.exam.activity.jump_rope.base.result.RadioResultActivity;
@@ -32,7 +35,10 @@ import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.view.DividerItemDecoration;
 import com.feipulai.exam.view.WaitDialog;
 
@@ -47,7 +53,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
         extends BaseTitleActivity
         implements RadioCheckContract.View<Setting>,
         CheckPairAdapter.OnItemClickListener,
-        View.OnClickListener {
+        View.OnClickListener, BaseAFRFragment.onAFRCompareListener {
 
     private static final int UPDATE_STATES = 0x1;
     private static final int UPDATE_SPECIFIC_ITEM = 0x2;
@@ -59,6 +65,8 @@ public abstract class AbstractRadioCheckActivity<Setting>
     private Handler mHandler = new MyHandler(this);
     private CheckPairAdapter mAdapter;
     private IndividualCheckFragment individualCheckFragment;
+    protected FrameLayout afrFrameLayout;
+    protected BaseAFRFragment afrFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,7 +146,16 @@ public abstract class AbstractRadioCheckActivity<Setting>
         getStartTestView().setOnClickListener(this);
         getLedSettingView().setOnClickListener(this);
         getPairView().setOnClickListener(this);
+
+        if (SettingHelper.getSystemSetting().getCheckTool() == 4 && setAFRFrameLayoutResID() != 0) {
+            afrFrameLayout = findViewById(setAFRFrameLayoutResID());
+            afrFragment = new BaseAFRFragment();
+            afrFragment.setCompareListener(this);
+            initAFR();
+        }
     }
+
+    protected abstract int setAFRFrameLayoutResID();
 
     @Override
     public void onClick(View v) {
@@ -371,6 +388,39 @@ public abstract class AbstractRadioCheckActivity<Setting>
         super.onDestroy();
         TestCache.getInstance().clear();
         presenter.finishGetStateAndDisplay();
+    }
+
+    private void initAFR() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(setAFRFrameLayoutResID(), afrFragment);
+        transaction.commitAllowingStateLoss();// 提交更改
+    }
+
+    @Override
+    public void compareStu(Student student) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                afrFrameLayout.setVisibility(View.GONE);
+            }
+        });
+        if (student == null) {
+            InteractUtils.toastSpeak(this, "该考生不存在");
+            return;
+        }
+        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+        if (studentItem == null) {
+            InteractUtils.toastSpeak(this, "无此项目");
+            return;
+        }
+        List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
+        if (results != null && results.size() >= TestConfigs.getMaxTestCount(this)) {
+            InteractUtils.toastSpeak(this, "该考生已测试");
+            return;
+        }
+        // 可以直接检录
+        presenter.onIndividualCheckIn(student,studentItem,results);
+
     }
 
     protected abstract RadioCheckContract.Presenter getPresenter();
