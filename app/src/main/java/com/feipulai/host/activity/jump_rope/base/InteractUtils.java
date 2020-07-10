@@ -2,9 +2,12 @@ package com.feipulai.host.activity.jump_rope.base;
 
 
 import android.app.Activity;
+import android.text.TextUtils;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
@@ -234,11 +237,17 @@ public class InteractUtils {
         TextView mTvStudentCode = (TextView) llStuDetail.findViewById(R.id.tv_studentCode);
         TextView mTvGender = (TextView) llStuDetail.findViewById(R.id.tv_gender);
         TextView mTvGrade = (TextView) llStuDetail.findViewById(R.id.tv_grade);
-
+        ImageView imgPortrait = llStuDetail.findViewById(R.id.iv_portrait);
         mTvStudentCode.setText(student == null ? "" : student.getStudentCode());
         mTvStudentName.setText(student == null ? "" : student.getStudentName());
         mTvGender.setText(student == null ? "" : student.getSex() == 0 ? "男" : "女");
         mTvGrade.setText(InteractUtils.getDisplayResult(lastResult));
+        if (student == null || TextUtils.isEmpty(student.getPortrait())) {
+            imgPortrait.setImageResource(R.mipmap.icon_head_photo);
+        } else {
+            Glide.with(imgPortrait.getContext()).load(MyApplication.PATH_IMAGE + student.getStudentCode() + ".jpg")
+                    .error(R.mipmap.icon_head_photo).placeholder(R.mipmap.icon_head_photo).into(imgPortrait);
+        }
     }
 
     /**

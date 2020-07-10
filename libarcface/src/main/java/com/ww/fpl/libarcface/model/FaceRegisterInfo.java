@@ -29,7 +29,7 @@ public class FaceRegisterInfo {
     public boolean equals(Object obj) {
         if (obj instanceof FaceRegisterInfo) {
             FaceRegisterInfo faceRegisterInfo = (FaceRegisterInfo) obj;
-            if (faceRegisterInfo.name.equals(faceRegisterInfo.name)) {
+            if (faceRegisterInfo.name.equals(name)) {
                 return true;
             }
         }

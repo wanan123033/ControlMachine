@@ -14,11 +14,13 @@ import com.kk.taurus.playerbase.config.PlayerConfig;
 import com.kk.taurus.playerbase.config.PlayerLibrary;
 import com.kk.taurus.playerbase.record.PlayRecordManager;
 import com.orhanobut.logger.utils.LogUtils;
+import com.ww.fpl.libarcface.faceserver.FaceServer;
 
 
 public class MyApplication extends MultiDexApplication {
 
     public static final String PATH_SPECIFICATION = FileUtil.PATH_BASE + "KS/";
+    public static final String PATH_IMAGE = FileUtil.PATH_BASE + "KS_IMAGE/";
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -38,17 +40,18 @@ public class MyApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        LogUtils.initLogger(true,true);
-        CrashHandler.getInstance().init(this);
+        LogUtils.initLogger(true, true);
+//        CrashHandler.getInstance().init(this);
         SettingHelper.init(this);
         BlueToothHelper.init(this);
         TOKEN = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.TOKEN, "");
         //默认打开WiFi，虹软sdk需要读物唯一标识，某些机器WiFi断开情况下读不到
 //        NetUtil.openWifi(this);
-
+        FaceServer.ROOT_PATH = FileUtil.PATH_BASE + "KS_FACE/";
         FileUtil.createAllFile();
         FileUtil.mkdirs(PATH_SPECIFICATION);
-
+        FileUtil.mkdirs(PATH_IMAGE);
+        FileUtil.mkdirs(FaceServer.ROOT_PATH);
         //视频播放初始化库
         PlayerLibrary.init(this);
 //        IjkPlayer.init(this);

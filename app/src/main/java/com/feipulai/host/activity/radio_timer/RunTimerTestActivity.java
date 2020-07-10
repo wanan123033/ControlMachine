@@ -10,18 +10,20 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.beans.RunTimerResult;
-
+import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.setting.LEDSettingActivity;
@@ -29,10 +31,10 @@ import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.adapter.PopAdapter;
 import com.feipulai.host.adapter.RunNumberAdapter;
 import com.feipulai.host.adapter.RunNumberAdapter2;
+import com.feipulai.host.bean.RunStudent;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
-import com.feipulai.host.bean.RunStudent;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.entity.StudentItem;
 import com.feipulai.host.view.CommonPopupWindow;
@@ -85,6 +87,8 @@ public class RunTimerTestActivity extends BaseRunTimerActivity {
     TextView tvRunState;
     @BindView(R.id.tv_wait_ready)
     TextView tvWaitReady;
+    @BindView(R.id.img_portrait)
+    ImageView imgPortrait;
     private List<RunStudent> mList = new ArrayList<>();
     private RunNumberAdapter2 mAdapter2;
     private RunNumberAdapter mAdapter;
@@ -236,7 +240,7 @@ public class RunTimerTestActivity extends BaseRunTimerActivity {
     }
 
     @OnClick({R.id.btn_start, R.id.btn_led, R.id.tv_wait_start, R.id.tv_force_start,
-            R.id.tv_fault_back, R.id.tv_mark_confirm, R.id.tv_wait_ready,R.id.tv_get_time})
+            R.id.tv_fault_back, R.id.tv_mark_confirm, R.id.tv_wait_ready, R.id.tv_get_time})
     //R.id.tv_project_setting,
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -375,6 +379,8 @@ public class RunTimerTestActivity extends BaseRunTimerActivity {
         txtStuCode.setText(student.getStudentCode());
         txtStuName.setText(student.getStudentName());
         txtStuSex.setText(student.getSex() == 0 ? "男" : "女");
+        Glide.with(imgPortrait.getContext()).load(MyApplication.PATH_IMAGE + student.getStudentCode() + ".jpg")
+                .error(R.mipmap.icon_head_photo).placeholder(R.mipmap.icon_head_photo).into(imgPortrait);
     }
 
 
@@ -470,7 +476,7 @@ public class RunTimerTestActivity extends BaseRunTimerActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        switch (keyCode){
+        switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
                 getBack();
                 return true;

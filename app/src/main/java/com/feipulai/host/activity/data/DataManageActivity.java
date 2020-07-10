@@ -537,6 +537,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                                 progressDialog.show();
                             }
                         });
+                        FaceServer.getFaceRegisterInfoList().clear();
                         List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
                         for (int i = 0; i < studentList.size(); i++) {
 

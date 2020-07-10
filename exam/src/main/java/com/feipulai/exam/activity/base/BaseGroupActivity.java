@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
@@ -20,6 +21,7 @@ import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.led.RunLEDManager;
 import com.feipulai.device.serial.MachineCode;
+import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.medicineBall.MedicineBallSetting;
@@ -300,11 +302,13 @@ public class BaseGroupActivity extends BaseTitleActivity {
         tvStudentCode.setText(student.getStudentCode());
         tvStudentName.setText(student.getStudentName());
         tvGender.setText(student.getSex() == 0 ? "男" : "女");
-        if (student.getBitmapPortrait() != null) {
-            imgPortrait.setImageBitmap(student.getBitmapPortrait());
-        } else {
-            imgPortrait.setImageResource(R.mipmap.icon_head_photo);
-        }
+//        if (student.getBitmapPortrait() != null) {
+//            imgPortrait.setImageBitmap(student.getBitmapPortrait());
+//        } else {
+//            imgPortrait.setImageResource(R.mipmap.icon_head_photo);
+//        }
+        Glide.with(imgPortrait.getContext()).load(MyApplication.PATH_IMAGE + student.getStudentCode() + ".jpg")
+                .error(R.mipmap.icon_head_photo).placeholder(R.mipmap.icon_head_photo).into(imgPortrait);
         resultList = getResults(student.getStudentCode());
 //        InteractUtils.showStuInfo(llStuDetail, student, results);
         resultsAdapter = new ResultsAdapter(resultList);

@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.ToastUtils;
@@ -26,6 +27,7 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
+import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
@@ -494,10 +496,11 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             txtStuName.setText(student.getStudentName());
             txtStuSex.setText((student.getSex() == 0 ? "男" : "女"));
             txtStuCode.setText(student.getStudentCode());
-            if (student.getBitmapPortrait() != null) {
-                imgPortrait.setImageBitmap(student.getBitmapPortrait());
-            }
-
+//            if (student.getBitmapPortrait() != null) {
+//                imgPortrait.setImageBitmap(student.getBitmapPortrait());
+//            }
+            Glide.with(imgPortrait.getContext()).load(MyApplication.PATH_IMAGE + student.getStudentCode() + ".jpg")
+                    .error(R.mipmap.icon_head_photo).placeholder(R.mipmap.icon_head_photo).into(imgPortrait);
         } else {
             txtStuName.setText("");
             txtStuSex.setText("");

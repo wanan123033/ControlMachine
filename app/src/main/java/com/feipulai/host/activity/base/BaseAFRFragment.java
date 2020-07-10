@@ -30,6 +30,7 @@ import com.feipulai.host.view.OperateProgressBar;
 import com.lgh.uvccamera.UVCCameraProxy;
 import com.lgh.uvccamera.callback.ConnectCallback;
 import com.lgh.uvccamera.callback.PreviewCallback;
+import com.orhanobut.logger.Logger;
 import com.ww.fpl.libarcface.faceserver.CompareResult;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.libarcface.faceserver.ThreadManager;
@@ -95,12 +96,14 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
     private ThreadManager.ThreadPool threadPool;
     private FaceFeature mFaceFeature;
     private Integer faceId;
+    private boolean isStartFace = false;
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
                     drawPreviewInfo(null);
+                    requestFeatureStatusMap.clear();
                     break;
                 default:
                     break;
@@ -108,6 +111,8 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             return false;
         }
     });
+
+    private boolean isLodingServer = false;
 
     @Override
     protected int getLayoutId() {
@@ -131,6 +136,9 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             //请求FR的回调
             @Override
             public void onFaceFeatureInfoGet(@Nullable final FaceFeature faceFeature, final Integer requestId, final Integer errorCode) {
+                if (!isStartFace) {
+                    return;
+                }
                 //FR成功
                 //本地无人脸库
                 if (faceNumber == 0) {
@@ -149,6 +157,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 //                    searchFace(faceFeature, requestId);
                     faceId = requestId;
                     mFaceFeature = faceFeature;
+
                     threadPool.execute(searchFace1);
                     threadPool.execute(searchFace2);
                     threadPool.execute(searchFace3);
@@ -267,7 +276,9 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
 
     public boolean gotoUVCFaceCamera(boolean isOpen) {
+        isLodingServer = false;
         if (isOpen) {
+            isStartFace = true;
             isOpenCamera = true;
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -533,10 +544,20 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                 faceHelper.setName(faceId, mContext.getString(R.string.recognize_success_notice, lastCompareResult.getUserName()));
                 Student student = DBManager.getInstance().queryStudentByCode(lastCompareResult.getUserName());
                 mHandler.sendEmptyMessage(0);
+                Logger.d("compareResult==>");
+                isStartFace=false;
                 compareListener.compareStu(student);
             } else {
+                isStartFace=false;
+                Logger.d("compareResult==>null");
 //                compareListener.compareStu(null);
-                showAddHint();
+                if (isLodingServer) {
+                    compareListener.compareStu(null);
+                } else {
+                    compareListener.compareStu(null);
+                    showAddHint();
+                }
+
             }
         }
 
@@ -601,23 +622,31 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 //    }
 
     private void showAddHint() {
-        new SweetAlertDialog(mContext).setTitleText(getString(R.string.student_nonentity))
-                .setContentText("是否进行服务器信息识别")
-                .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-            @Override
-            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                sweetAlertDialog.dismissWithAnimation();
-                getStudent();
 
-            }
-        }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+        ((Activity) mContext).runOnUiThread(new Runnable() {
             @Override
-            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                sweetAlertDialog.dismissWithAnimation();
-                mHandler.sendEmptyMessage(0);
-                compareListener.compareStu(null);
+            public void run() {
+                new SweetAlertDialog(mContext).setTitleText(getString(R.string.student_nonentity))
+                        .setContentText("是否进行服务器信息识别")
+                        .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                        getStudent();
+
+                    }
+                }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                        mHandler.sendEmptyMessage(0);
+                        compareListener.compareStu(null);
+                        isLodingServer = false;
+                    }
+                }).show();
             }
-        }).show();
+        });
+
 
     }
 
@@ -628,6 +657,8 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         itemSubscriber.setOnRequestEndListener(new OnRequestEndListener() {
             @Override
             public void onSuccess(int bizType) {
+                isLodingServer = true;
+                OperateProgressBar.removeLoadingUiIfExist((Activity) mContext);
                 threadPool.execute(searchFace1);
                 threadPool.execute(searchFace2);
                 threadPool.execute(searchFace3);
@@ -635,11 +666,13 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
             @Override
             public void onFault(int bizType) {
-
+                OperateProgressBar.removeLoadingUiIfExist((Activity) mContext);
             }
 
             @Override
             public void onRequestData(Object data) {
+                isLodingServer = true;
+                OperateProgressBar.removeLoadingUiIfExist((Activity) mContext);
                 List<Student> studentList = (List<Student>) data;
                 List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
                 for (Student student : studentList) {

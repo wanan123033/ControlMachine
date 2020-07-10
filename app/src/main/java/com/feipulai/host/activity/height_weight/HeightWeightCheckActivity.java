@@ -1,20 +1,26 @@
 package com.feipulai.host.activity.height_weight;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.DateUtil;
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.HeightWeightResult;
+import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseActivity;
 import com.feipulai.host.activity.base.BaseCheckActivity;
@@ -32,6 +38,7 @@ import com.feipulai.host.utils.ResultUtils;
 import com.feipulai.host.view.StuSearchEditText;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
@@ -61,6 +68,8 @@ public class HeightWeightCheckActivity
     TextView txtWeightResult;
     @BindView(R.id.lv_results)
     ListView lvResults;
+    @BindView(R.id.img_portrait)
+    ImageView imgPortrait;
     // 身高体重LED显示暂时不做
     private LEDManager mLEDManager = new LEDManager();
 
@@ -75,6 +84,12 @@ public class HeightWeightCheckActivity
     private ItemSubscriber itemSubscriber;
     private long startTime;
     private long endTime;
+
+    @Override
+    public int setAFRFrameLayoutResID() {
+        return R.id.frame_camera;
+    }
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_height_weight_check;
@@ -133,6 +148,8 @@ public class HeightWeightCheckActivity
         txtStuSex.setText(mStudent.getSex() == Student.MALE ? R.string.male : R.string.female);
         txtStuCode.setText(mStudent.getStudentCode());
         txtStuName.setText(mStudent.getStudentName());
+        Glide.with(imgPortrait.getContext()).load(MyApplication.PATH_IMAGE + mStudent.getStudentCode() + ".jpg")
+                .error(R.mipmap.icon_head_photo).placeholder(R.mipmap.icon_head_photo).into(imgPortrait);
         startTime = DateUtil.getCurrentTime();
     }
 
@@ -206,8 +223,8 @@ public class HeightWeightCheckActivity
 
                 mHeightResult = ResultUtils.generateRoughResultWithRaw(mStudent, result, 1);
                 mWeightResult = ResultUtils.generateRoughResultWithRaw(mStudent, result, 2);
-                mWeightResult.setTestTime(startTime+"");
-                mWeightResult.setPrintTime(endTime+"");
+                mWeightResult.setTestTime(startTime + "");
+                mWeightResult.setPrintTime(endTime + "");
                 mHeightResult.setWeightResult(mWeightResult.getResult());
                 ResultUtils.saveResults(this, mHeightResult, mLastHeightResult);
                 ResultUtils.saveResults(this, mWeightResult, mLastWeightResult);
@@ -250,16 +267,10 @@ public class HeightWeightCheckActivity
             mHandler.sendEmptyMessage(CLEAR_DATA);
     }
 
-    //@OnClick({R.id.tv_led_setting})
-    //public void onViewClicked(View view){
-    //	switch(view.getId()){
-    //
-    //		case R.id.tv_led_setting:
-    //			startActivity(new Intent(this,LEDSettingActivity.class));
-    //			break;
-    //
-    //	}
-    //}
+    @OnClick(R.id.img_AFR)
+    public void onImgAFRClicked() {
+        showAFR();
+    }
 
 
 }

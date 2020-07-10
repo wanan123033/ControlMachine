@@ -157,7 +157,7 @@ public class FaceServer {
             if (ROOT_PATH == null) {
                 ROOT_PATH = context.getFilesDir().getAbsolutePath();
             }
-            File featureDir = new File(ROOT_PATH + File.separator + SAVE_FEATURE_DIR);
+            File featureDir = new File(ROOT_PATH);
             if (!featureDir.exists() || !featureDir.isDirectory()) {
                 return;
             }
@@ -185,12 +185,7 @@ public class FaceServer {
     public void addFaceList(List<FaceRegisterInfo> faces) {
         if (faceRegisterInfoList != null) {
 
-            for (FaceRegisterInfo face : faces) {
-                if (!faceRegisterInfoList.contains(face)) {
-                    faceRegisterInfoList.add(face);
-                }
-            }
-//            faceRegisterInfoList.addAll(faces);
+            faceRegisterInfoList.addAll(faces);
         } else {
             faceRegisterInfoList = new ArrayList<>();
             faceRegisterInfoList.addAll(faces);
@@ -528,7 +523,7 @@ public class FaceServer {
         float maxSimilar = 0;
         int maxSimilarIndex = -1;
         isProcessing = true;
-        for (int i = 0; i < faceNumber / 3; i++) {
+        for (int i = 0; i < (faceNumber < 3 ? faceNumber : faceNumber / 3); i++) {
             tempFaceFeature.setFeatureData(faceRegisterInfoList.get(i).getFeatureData());
             faceEngine.compareFaceFeature(faceFeature, tempFaceFeature, faceSimilar);
             if (faceSimilar.getScore() > maxSimilar) {
@@ -553,7 +548,7 @@ public class FaceServer {
         float maxSimilar = 0;
         int maxSimilarIndex = -1;
         isProcessing2 = true;
-        for (int i = faceNumber / 3; i < faceNumber / 3 * 2; i++) {
+        for (int i = faceNumber / 3; i < (faceNumber < 3 ? faceNumber : faceNumber / 3 * 2); i++) {
             tempFaceFeature.setFeatureData(faceRegisterInfoList.get(i).getFeatureData());
             faceEngine2.compareFaceFeature(faceFeature, tempFaceFeature, faceSimilar);
             if (faceSimilar.getScore() > maxSimilar) {

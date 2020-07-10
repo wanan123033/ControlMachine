@@ -7,11 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.bean.DeviceDetail;
@@ -154,11 +157,13 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                         Student student = item.getStuDevicePair().getStudent();
                         moreHelper.txtStuCode.setText(student.getStudentCode());
                         moreHelper.txtStuName.setText(student.getStudentName());
-                        if (TextUtils.isEmpty(item.getStuDevicePair().getStudent().getPortrait())) {
-                            moreHelper.setImageResource(R.id.item_img_portrait, R.mipmap.icon_head_photo);
-                        } else {
-                            moreHelper.setImageBitmap(R.id.item_img_portrait, item.getStuDevicePair().getStudent().getBitmapPortrait());
-                        }
+//                        if (TextUtils.isEmpty(item.getStuDevicePair().getStudent().getPortrait())) {
+//                            moreHelper.setImageResource(R.id.item_img_portrait, R.mipmap.icon_head_photo);
+//                        } else {
+//                            moreHelper.setImageBitmap(R.id.item_img_portrait, item.getStuDevicePair().getStudent().getBitmapPortrait());
+//                        }
+                        Glide.with(mContext).load(MyApplication.PATH_IMAGE + student.getStudentCode() + ".jpg")
+                                .error(R.mipmap.icon_head_photo).placeholder(R.mipmap.icon_head_photo).into(moreHelper.imgPortrait);
                     } else {
                         moreHelper.txtStuCode.setText("");
                         moreHelper.txtStuName.setText("");
@@ -248,11 +253,13 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                         Student student = item.getStuDevicePair().getStudent();
                         oneViewHolder.txtStuCode.setText(student.getStudentCode());
                         oneViewHolder.txtStuName.setText(student.getStudentName());
-                        if (TextUtils.isEmpty(student.getPortrait())) {
-                            oneViewHolder.setImageResource(R.id.img_portrait, R.mipmap.icon_head_photo);
-                        } else {
-                            oneViewHolder.setImageBitmap(R.id.img_portrait, student.getBitmapPortrait());
-                        }
+//                        if (TextUtils.isEmpty(student.getPortrait())) {
+//                            oneViewHolder.setImageResource(R.id.img_portrait, R.mipmap.icon_head_photo);
+//                        } else {
+//                            oneViewHolder.setImageBitmap(R.id.img_portrait, student.getBitmapPortrait());
+//                        }
+                        Glide.with(mContext).load(MyApplication.PATH_IMAGE + student.getStudentCode() + ".jpg")
+                                .error(R.mipmap.icon_head_photo).placeholder(R.mipmap.icon_head_photo).into(oneViewHolder.imgPortrait);
                     } else {
                         oneViewHolder.txtStuCode.setText("");
                         oneViewHolder.txtStuName.setText("");
@@ -279,6 +286,8 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
         TextView txtStuName;
         @BindView(R.id.txt_stu_code)
         TextView txtStuCode;
+        @BindView(R.id.img_portrait)
+        ImageView imgPortrait;
         @BindView(R.id.txt_skip)
         TextView txtSkip;
         @BindView(R.id.txt_start)
@@ -311,6 +320,8 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
         TextView txtStuName;
         @BindView(R.id.txt_stu_code)
         TextView txtStuCode;
+        @BindView(R.id.img_portrait)
+        ImageView imgPortrait;
         @BindView(R.id.txt_skip)
         TextView txtSkip;
         @BindView(R.id.txt_start)

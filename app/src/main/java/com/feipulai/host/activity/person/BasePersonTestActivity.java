@@ -16,12 +16,14 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
+import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseCheckActivity;
 import com.feipulai.host.activity.base.BaseDeviceState;
@@ -353,13 +355,14 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             txtStuName.setText(student.getStudentName());
             txtStuSex.setText((student.getSex() == Student.MALE ? R.string.male : R.string.female));
             txtStuCode.setText(student.getStudentCode());
-
+            Glide.with(imgPortrait.getContext()).load(MyApplication.PATH_IMAGE + student.getStudentCode() + ".jpg")
+                    .error(R.mipmap.icon_head_photo).placeholder(R.mipmap.icon_head_photo).into(imgPortrait);
         } else {
             txtStuName.setText("");
             txtStuSex.setText("");
             txtStuCode.setText("");
             txtStuResult.setText("");
-
+            imgPortrait.setImageResource(R.mipmap.icon_head_photo);
         }
     }
 

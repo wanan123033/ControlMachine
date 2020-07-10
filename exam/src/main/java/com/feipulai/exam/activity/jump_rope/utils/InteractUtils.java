@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
@@ -420,8 +421,11 @@ public class InteractUtils {
         if (student == null || TextUtils.isEmpty(student.getPortrait())) {
             imgPortrait.setImageResource(R.mipmap.icon_head_photo);
         } else {
-            imgPortrait.setImageBitmap(student.getBitmapPortrait());
+//            imgPortrait.setImageBitmap(student.getBitmapPortrait());
+            Glide.with(imgPortrait.getContext()).load(MyApplication.PATH_IMAGE + student.getStudentCode() + ".jpg")
+                    .error(R.mipmap.icon_head_photo).placeholder(R.mipmap.icon_head_photo).into(imgPortrait);
         }
+
         if (results == null || results.size() == 0) {
             mTvGrade.setText("");
         } else {
