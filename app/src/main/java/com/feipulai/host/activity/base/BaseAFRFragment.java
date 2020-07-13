@@ -13,7 +13,6 @@ import com.arcsoft.face.AgeInfo;
 import com.arcsoft.face.ErrorInfo;
 import com.arcsoft.face.FaceEngine;
 import com.arcsoft.face.FaceFeature;
-import com.arcsoft.face.FaceInfo;
 import com.arcsoft.face.GenderInfo;
 import com.arcsoft.face.LivenessInfo;
 import com.arcsoft.face.enums.DetectFaceOrientPriority;
@@ -103,7 +102,6 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             switch (msg.what) {
                 case 0:
                     drawPreviewInfo(null);
-                    requestFeatureStatusMap.clear();
                     break;
                 default:
                     break;
@@ -139,19 +137,20 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                 if (!isStartFace) {
                     return;
                 }
+                isStartFace = false;
                 //FR成功
                 //本地无人脸库
-                if (faceNumber == 0) {
-                    faceHelper.setName(requestId, getString(R.string.recognize_failed_notice, "无注册信息"));
-                    requestFeatureStatusMap.put(requestId, RequestFeatureStatus.FAILED);
-                    mUVCCamera.stopPreview();
-                    isOpenCamera = false;
-                    requestFeatureStatusMap.clear();
-                    extractErrorRetryMap.clear();
-                    mHandler.sendEmptyMessage(0);
-                    compareListener.compareStu(null);
-                    return;
-                }
+//                if (faceNumber == 0) {
+//                    faceHelper.setName(requestId, getString(R.string.recognize_failed_notice, "无注册信息"));
+//                    requestFeatureStatusMap.put(requestId, RequestFeatureStatus.FAILED);
+//                    mUVCCamera.stopPreview();
+//                    isOpenCamera = false;
+//                    requestFeatureStatusMap.clear();
+//                    extractErrorRetryMap.clear();
+//                    mHandler.sendEmptyMessage(0);
+//                    compareListener.compareStu(null);
+//                    return;
+//                }
                 if (faceFeature != null) {
                     //不做活体检测的情况，直接搜索
 //                    searchFace(faceFeature, requestId);
@@ -165,25 +164,21 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                 //特征提取失败
                 else {
                     if (increaseAndGetValue(extractErrorRetryMap, requestId) > MAX_RETRY_TIME) {
-//                        extractErrorRetryMap.put(requestId, 0);
-//                        String msg;
+                        extractErrorRetryMap.put(requestId, 0);
+                        String msg;
 //                        // 传入的FaceInfo在指定的图像上无法解析人脸，此处使用的是RGB人脸数据，一般是人脸模糊
-//                        if (errorCode != null && errorCode == ErrorInfo.MERR_FSDK_FACEFEATURE_LOW_CONFIDENCE_LEVEL) {
-//                            msg = getString(R.string.low_confidence_level);
-//                        } else {
-//                            msg = "ExtractCode:" + errorCode;
-//                            if (faceNumber == 0) {
-//                                msg = "无注册信息";
-//                            }
-//                        }
-//                        faceHelper.setName(requestId, getString(R.string.recognize_failed_notice, msg));
+                        if (errorCode != null && errorCode == ErrorInfo.MERR_FSDK_FACEFEATURE_LOW_CONFIDENCE_LEVEL) {
+                            msg = getString(R.string.low_confidence_level);
+                        } else {
+                            msg = "";
+                            if (faceNumber == 0) {
+                                msg = "无注册信息";
+                            }
+                        }
+                        faceHelper.setName(requestId, getString(R.string.recognize_failed_notice, msg));
 //                        // 在尝试最大次数后，特征提取仍然失败，则认为识别未通过
-//                        requestFeatureStatusMap.put(requestId, RequestFeatureStatus.FAILED);
+                        requestFeatureStatusMap.put(requestId, RequestFeatureStatus.FAILED);
 //                        retryRecognizeDelayed(requestId);
-                        mUVCCamera.stopPreview();
-                        isOpenCamera = false;
-                        requestFeatureStatusMap.clear();
-                        extractErrorRetryMap.clear();
                         mHandler.sendEmptyMessage(0);
                         compareListener.compareStu(null);
                     } else {
@@ -243,6 +238,9 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
      * @param requestId 人脸ID
      */
     private void retryRecognizeDelayed(final Integer requestId) {
+        if (faceHelper == null) {
+            return;
+        }
         requestFeatureStatusMap.put(requestId, RequestFeatureStatus.FAILED);
         Observable.timer(FAIL_RETRY_INTERVAL, TimeUnit.MILLISECONDS)
                 .subscribe(new Observer<Long>() {
@@ -267,7 +265,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                     @Override
                     public void onComplete() {
                         // 将该人脸特征提取状态置为FAILED，帧回调处理时会重新进行人脸识别
-                        faceHelper.setName(requestId, Integer.toString(requestId));
+//                        faceHelper.setName(requestId, Integer.toString(requestId));
                         requestFeatureStatusMap.put(requestId, RequestFeatureStatus.TO_RETRY);
                         delayFaceTaskCompositeDisposable.remove(disposable);
                     }
@@ -283,6 +281,14 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    //每次恢复初始状态
+                    if (faceHelper != null) {
+                        faceHelper.clearFace();
+                        faceId = 0;
+                        requestFeatureStatusMap.clear();
+                        extractErrorRetryMap.clear();
+                        delayFaceTaskCompositeDisposable.clear();
+                    }
                     mUVCCamera.startPreview();
                 }
             }, 100);
@@ -337,8 +343,6 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             ToastUtils.showShort(error);
         }
 
-        //本地人脸库初始化
-//        FaceServer.getInstance().init(mContext);
         faceNumber = FaceServer.getInstance().getFaceNumber();
     }
 
@@ -407,6 +411,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         if (facePreviewInfoList != null && faceRectView2 != null && drawHelper != null) {
             drawPreviewInfo(facePreviewInfoList);
         }
+
         clearLeftFace(facePreviewInfoList);
 
         if (facePreviewInfoList != null && facePreviewInfoList.size() > 0) {
@@ -486,8 +491,6 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
     private float SIMILAR_THRESHOLD = 0.82f;
 
-    private CompareResult lastCompareResult;
-
     //3个线程查找
     private CompareResult compareResult1;
     private Runnable searchFace1 = new Runnable() {
@@ -522,6 +525,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         }
 
         if (compareResult1 != null && compareResult2 != null && compareResult3 != null) {
+            CompareResult lastCompareResult;
             if (compareResult1.getSimilar() > compareResult2.getSimilar()) {
                 if (compareResult1.getSimilar() > compareResult3.getSimilar()) {
                     lastCompareResult = compareResult1;
@@ -541,16 +545,15 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             compareResult3 = null;
             if (lastCompareResult.getSimilar() > SIMILAR_THRESHOLD) {
                 requestFeatureStatusMap.put(faceId, RequestFeatureStatus.SUCCEED);
-                faceHelper.setName(faceId, mContext.getString(R.string.recognize_success_notice, lastCompareResult.getUserName()));
+//                faceHelper.setName(faceId, mContext.getString(R.string.recognize_success_notice, lastCompareResult.getUserName()));
                 Student student = DBManager.getInstance().queryStudentByCode(lastCompareResult.getUserName());
-                mHandler.sendEmptyMessage(0);
                 Logger.d("compareResult==>");
-                isStartFace=false;
+                mHandler.sendEmptyMessage(0);
                 compareListener.compareStu(student);
             } else {
-                isStartFace=false;
                 Logger.d("compareResult==>null");
 //                compareListener.compareStu(null);
+                mHandler.sendEmptyMessage(0);
                 if (isLodingServer) {
                     compareListener.compareStu(null);
                 } else {

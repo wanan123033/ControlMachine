@@ -25,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -165,6 +166,7 @@ public class FaceServer {
             if (featureFiles == null || featureFiles.length == 0) {
                 return;
             }
+            Log.i("faceRegisterInfoList", Arrays.toString(featureFiles));
             faceRegisterInfoList = new ArrayList<>();
             for (File featureFile : featureFiles) {
                 try {
@@ -184,7 +186,6 @@ public class FaceServer {
 
     public void addFaceList(List<FaceRegisterInfo> faces) {
         if (faceRegisterInfoList != null) {
-
             faceRegisterInfoList.addAll(faces);
         } else {
             faceRegisterInfoList = new ArrayList<>();
@@ -194,30 +195,30 @@ public class FaceServer {
         Log.i("faceRegisterInfoList", "2----------" + faceNumber);
     }
 
-    public int getFaceNumber(Context context) {
-        synchronized (this) {
-            if (context == null) {
-                return 0;
-            }
-            if (ROOT_PATH == null) {
-                ROOT_PATH = context.getFilesDir().getAbsolutePath();
-            }
-
-            File featureFileDir = new File(ROOT_PATH + File.separator + SAVE_FEATURE_DIR);
-            int featureCount = 0;
-            if (featureFileDir.exists() && featureFileDir.isDirectory()) {
-                String[] featureFiles = featureFileDir.list();
-                featureCount = featureFiles == null ? 0 : featureFiles.length;
-            }
-            int imageCount = 0;
-            File imgFileDir = new File(ROOT_PATH + File.separator + SAVE_IMG_DIR);
-            if (imgFileDir.exists() && imgFileDir.isDirectory()) {
-                String[] imageFiles = imgFileDir.list();
-                imageCount = imageFiles == null ? 0 : imageFiles.length;
-            }
-            return featureCount > imageCount ? imageCount : featureCount;
-        }
-    }
+//    public int getFaceNumber(Context context) {
+//        synchronized (this) {
+//            if (context == null) {
+//                return 0;
+//            }
+//            if (ROOT_PATH == null) {
+//                ROOT_PATH = context.getFilesDir().getAbsolutePath();
+//            }
+//
+//            File featureFileDir = new File(ROOT_PATH + File.separator + SAVE_FEATURE_DIR);
+//            int featureCount = 0;
+//            if (featureFileDir.exists() && featureFileDir.isDirectory()) {
+//                String[] featureFiles = featureFileDir.list();
+//                featureCount = featureFiles == null ? 0 : featureFiles.length;
+//            }
+//            int imageCount = 0;
+//            File imgFileDir = new File(ROOT_PATH + File.separator + SAVE_IMG_DIR);
+//            if (imgFileDir.exists() && imgFileDir.isDirectory()) {
+//                String[] imageFiles = imgFileDir.list();
+//                imageCount = imageFiles == null ? 0 : imageFiles.length;
+//            }
+//            return featureCount > imageCount ? imageCount : featureCount;
+//        }
+//    }
 
     public int getFaceNumber() {
         if (faceRegisterInfoList != null) {
