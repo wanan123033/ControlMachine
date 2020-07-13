@@ -57,7 +57,8 @@ public class DataRetrieveBean implements Serializable {
         this.testState = testState;
         this.result = result;
     }
-    public DataRetrieveBean(String studentCode, String studentName, int sex, String portrait, int testState, String result, boolean checked) {
+
+    public DataRetrieveBean(String studentCode, String studentName, int sex, int testState, String result, boolean checked) {
         this.studentCode = studentCode;
         this.studentName = studentName;
         this.sex = sex;
@@ -66,7 +67,8 @@ public class DataRetrieveBean implements Serializable {
         this.result = result;
         this.isChecked = checked;
     }
-//    public DataRetrieveBean(String studentCode, String studentName, int sex, int testState, String result, boolean checked) {
+
+    //    public DataRetrieveBean(String studentCode, String studentName, int sex, int testState, String result, boolean checked) {
 //        this.studentCode = studentCode;
 //        this.studentName = studentName;
 //        this.sex = sex;
@@ -123,6 +125,7 @@ public class DataRetrieveBean implements Serializable {
     public void setUploadState(int uploadState) {
         this.uploadState = uploadState;
     }
+
     public Bitmap getBitmapPortrait() {
         if (TextUtils.isEmpty(portrait)) {
             return null;

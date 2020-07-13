@@ -640,7 +640,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismissWithAnimation();
                         mHandler.sendEmptyMessage(0);
-                        compareListener.compareStu(null);
+//                        compareListener.compareStu(null);
                         isLodingServer = false;
                     }
                 }).show();
