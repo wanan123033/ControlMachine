@@ -101,6 +101,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
+                    isOpenCamera=false;
                     drawPreviewInfo(null);
                     break;
                 default:
@@ -137,7 +138,6 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                 if (!isStartFace) {
                     return;
                 }
-                isStartFace = false;
                 //FR成功
                 //本地无人脸库
 //                if (faceNumber == 0) {
@@ -156,7 +156,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 //                    searchFace(faceFeature, requestId);
                     faceId = requestId;
                     mFaceFeature = faceFeature;
-
+                    isStartFace = false;
                     threadPool.execute(searchFace1);
                     threadPool.execute(searchFace2);
                     threadPool.execute(searchFace3);
@@ -489,7 +489,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         drawHelper.draw(faceRectView2, drawInfoList);
     }
 
-    private float SIMILAR_THRESHOLD = 0.82f;
+    private final float SIMILAR_THRESHOLD = 0.82f;
 
     //3个线程查找
     private CompareResult compareResult1;
@@ -523,7 +523,6 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             requestFeatureStatusMap.put(faceId, RequestFeatureStatus.FAILED);
             return;
         }
-
         if (compareResult1 != null && compareResult2 != null && compareResult3 != null) {
             CompareResult lastCompareResult;
             if (compareResult1.getSimilar() > compareResult2.getSimilar()) {
