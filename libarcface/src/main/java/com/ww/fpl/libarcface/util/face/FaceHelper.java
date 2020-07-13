@@ -145,17 +145,17 @@ public class FaceHelper {
         }
     }
 
-    /**
-     * 请求获取活体检测结果，需要传入活体的参数，以下参数同
-     *
-     * @param nv21         NV21格式的图像数据
-     * @param faceInfo     人脸信息
-     * @param width        图像宽度
-     * @param height       图像高度
-     * @param format       图像格式
-     * @param trackId      请求人脸特征的唯一请求码，一般使用trackId
-     * @param livenessType 活体检测类型
-     */
+//    /**
+//     * 请求获取活体检测结果，需要传入活体的参数，以下参数同
+//     *
+//     * @param nv21         NV21格式的图像数据
+//     * @param faceInfo     人脸信息
+//     * @param width        图像宽度
+//     * @param height       图像高度
+//     * @param format       图像格式
+//     * @param trackId      请求人脸特征的唯一请求码，一般使用trackId
+//     * @param livenessType 活体检测类型
+//     */
 //    public void requestFaceLiveness(byte[] nv21, FaceInfo faceInfo, int width, int height, int format, Integer trackId, LivenessType livenessType) {
 //        if (faceListener != null) {
 //            if (flEngine != null && flThreadQueue.remainingCapacity() > 0) {
@@ -165,6 +165,15 @@ public class FaceHelper {
 //            }
 //        }
 //    }
+
+    public void clearFace(){
+        faceInfoList.clear();
+        currentTrackIdList.clear();
+        facePreviewInfoList.clear();
+        nameMap.clear();
+        trackedFaceCount=0;
+        currentMaxFaceId=0;
+    }
 
     /**
      * 释放对象
@@ -260,7 +269,6 @@ public class FaceHelper {
             if (faceListener != null && nv21Data != null) {
                 if (frEngine != null) {
                     FaceFeature faceFeature = new FaceFeature();
-                    long frStartTime = System.currentTimeMillis();
                     int frCode;
                     synchronized (frEngine) {
                         frCode = frEngine.extractFaceFeature(nv21Data, width, height, format, faceInfo, faceFeature);
