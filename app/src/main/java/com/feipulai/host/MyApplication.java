@@ -9,10 +9,11 @@ import com.feipulai.common.utils.FileUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.SharedPrefsConfigs;
+import com.ww.fpl.libarcface.faceserver.FaceServer;
 
 public class MyApplication extends MultiDexApplication {
     public static final String PATH_SPECIFICATION = FileUtil.PATH_BASE + "TC/";
-
+    public static final String PATH_IMAGE= FileUtil.PATH_BASE + "TC_IMAGE/";
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -34,8 +35,11 @@ public class MyApplication extends MultiDexApplication {
         TOKEN = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.TOKEN, "");
         // 初始化工作已经移至mainactivity中,保证尽快进入界面,减少白屏时间
 //        CrashHandler.getInstance().init(this);
+        FaceServer.ROOT_PATH = FileUtil.PATH_BASE + "TC_FACE/";
         FileUtil.createAllFile();
         FileUtil.mkdirs(PATH_SPECIFICATION);
+        FileUtil.mkdirs(PATH_IMAGE);
+        FileUtil.mkdirs(FaceServer.ROOT_PATH);
     }
 
     public static MyApplication getInstance() {

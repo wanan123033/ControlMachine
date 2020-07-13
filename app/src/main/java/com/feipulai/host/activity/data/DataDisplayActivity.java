@@ -4,12 +4,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseTitleActivity;
 import com.feipulai.host.activity.height_weight.HWConfigs;
@@ -43,6 +47,8 @@ public class DataDisplayActivity extends BaseTitleActivity {
     LinearLayout llStuResult;
     @BindView(R.id.rv_result)
     RecyclerView rvResult;
+    @BindView(R.id.img_portrait)
+    ImageView imgPortrait;
     private DataRetrieveBean mDataRetrieveBean;
 
     private Comparator<RoundResult> roundResultComparator = Collections.reverseOrder(new Comparator<RoundResult>() {
@@ -67,7 +73,12 @@ public class DataDisplayActivity extends BaseTitleActivity {
         txtStuName.setText(mDataRetrieveBean.getStudentName());
         txtStuSex.setText(mDataRetrieveBean.getSex() == Student.MALE ? getString(R.string.male) : getString(R.string.female));
         rvResult.setLayoutManager(new LinearLayoutManager(this));
+
+        Glide.with(imgPortrait.getContext()).load(MyApplication.PATH_IMAGE + mDataRetrieveBean.getStudentCode() + ".jpg")
+                .error(R.mipmap.icon_head_photo).placeholder(R.mipmap.icon_head_photo).into(imgPortrait);
+
         displayResults();
+
     }
 
     @Nullable

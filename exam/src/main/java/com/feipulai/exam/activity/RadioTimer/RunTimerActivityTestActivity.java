@@ -18,11 +18,13 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.beans.RunTimerResult;
+import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseAFRFragment;
@@ -468,11 +470,13 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
         txtStuCode.setText(student.getStudentCode());
         txtStuName.setText(student.getStudentName());
         txtStuSex.setText(student.getSex() == 0 ? "男" : "女");
-        if (student.getBitmapPortrait() != null) {
-            imgPortrait.setImageBitmap(student.getBitmapPortrait());
-        } else {
-            imgPortrait.setImageResource(R.mipmap.icon_head_photo);
-        }
+//        if (student.getBitmapPortrait() != null) {
+//            imgPortrait.setImageBitmap(student.getBitmapPortrait());
+//        } else {
+//            imgPortrait.setImageResource(R.mipmap.icon_head_photo);
+//        }
+        Glide.with(imgPortrait.getContext()).load(MyApplication.PATH_IMAGE + student.getStudentCode() + ".jpg")
+                .error(R.mipmap.icon_head_photo).placeholder(R.mipmap.icon_head_photo).into(imgPortrait);
     }
 
 //    private void selectTestDialog(final Student student) {

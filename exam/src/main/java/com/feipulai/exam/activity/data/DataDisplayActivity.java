@@ -10,8 +10,10 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.data.adapter.ResultDetailAdapter;
@@ -71,13 +73,16 @@ public class DataDisplayActivity extends BaseTitleActivity {
         mTvStuCode.setText(mDataRetrieveBean.getStudentCode());
         mTvStuName.setText(mDataRetrieveBean.getStudentName());
         mTvSex.setText(mDataRetrieveBean.getSex() == 0 ? "男" : "女");
-        if (TextUtils.isEmpty(mDataRetrieveBean.getPortrait())) {
-            imgPortrait.setImageResource(R.mipmap.icon_head_photo);
-        } else {
-            imgPortrait.setImageBitmap(mDataRetrieveBean.getBitmapPortrait());
-        }
-        displayResults();
+//        if (TextUtils.isEmpty(mDataRetrieveBean.getPortrait())) {
+//            imgPortrait.setImageResource(R.mipmap.icon_head_photo);
+//        } else {
+//            imgPortrait.setImageBitmap(mDataRetrieveBean.getBitmapPortrait());
+//        }
+        Glide.with(imgPortrait.getContext()).load(MyApplication.PATH_IMAGE + mDataRetrieveBean.getStudentCode() + ".jpg")
+                .error(R.mipmap.icon_head_photo).placeholder(R.mipmap.icon_head_photo).into(imgPortrait);
+
         rvResult.setLayoutManager(new LinearLayoutManager(this));
+        displayResults();
     }
 
     @Nullable

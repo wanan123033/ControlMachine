@@ -52,6 +52,7 @@ public abstract class BaseCheckActivity
     private FrameLayout afrFrameLayout;
     private BaseAFRFragment afrFragment;
     private ScannerGunManager scannerGunManager;
+
     public void setOpenDevice(boolean openDevice) {
         isOpenDevice = openDevice;
     }
@@ -81,20 +82,24 @@ public abstract class BaseCheckActivity
             }
         });
     }
+
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if (scannerGunManager.dispatchKeyEvent(event)) {
+        if (scannerGunManager != null && scannerGunManager.dispatchKeyEvent(event)) {
             return true;
         }
         return super.dispatchKeyEvent(event);
     }
+
     @Override
     protected int setLayoutResID() {
         return 0;
     }
+
     public int setAFRFrameLayoutResID() {
         return 0;
     }
+
     @Override
     protected void onResume() {
         if (isOpenDevice) {
@@ -124,6 +129,7 @@ public abstract class BaseCheckActivity
             CheckDeviceOpener.getInstance().destroy();
         }
     }
+
     private void initAFR() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(setAFRFrameLayoutResID(), afrFragment);
@@ -325,7 +331,7 @@ public abstract class BaseCheckActivity
             if (activity == null) {
                 return;
             }
-            activity.handlerMessage( msg);
+            activity.handlerMessage(msg);
         }
     }
 

@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -17,6 +18,7 @@ import com.feipulai.device.CheckDeviceOpener;
 import com.feipulai.device.ic.ICCardDealer;
 import com.feipulai.device.ic.NFCDevice;
 import com.feipulai.device.ic.entity.StuInfo;
+import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.data.adapter.ThermometerSearchAdapter;
@@ -134,12 +136,13 @@ public class ThermometerSearchActivity extends BaseTitleActivity implements Chec
         txtStuCode.setText(student.getStudentCode());
         txtStuName.setText(student.getStudentName());
         txtStuSex.setText(student.getSex() == 0 ? "男" : "女");
-        if (TextUtils.isEmpty(student.getPortrait())) {
-            imgPortrait.setImageResource(R.mipmap.icon_head_photo);
-        } else {
-            imgPortrait.setImageBitmap(student.getBitmapPortrait());
-        }
-
+//        if (TextUtils.isEmpty(student.getPortrait())) {
+//            imgPortrait.setImageResource(R.mipmap.icon_head_photo);
+//        } else {
+//            imgPortrait.setImageBitmap(student.getBitmapPortrait());
+//        }
+        Glide.with(imgPortrait.getContext()).load(MyApplication.PATH_IMAGE + student.getStudentCode() + ".jpg")
+                .error(R.mipmap.icon_head_photo).placeholder(R.mipmap.icon_head_photo).into(imgPortrait);
 
     }
 

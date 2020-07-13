@@ -5,9 +5,14 @@ import android.content.DialogInterface;
 import android.text.TextUtils;
 import android.util.Base64;
 
+import com.arcsoft.face.ErrorInfo;
+import com.arcsoft.face.FaceEngine;
+import com.feipulai.common.utils.ImageUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.host.MyApplication;
+import com.feipulai.host.R;
+import com.feipulai.host.activity.SplashScreenActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.bean.BatchBean;
 import com.feipulai.host.bean.ItemBean;
@@ -27,13 +32,21 @@ import com.feipulai.host.netUtils.HttpResult;
 import com.feipulai.host.netUtils.OnResultListener;
 import com.feipulai.host.netUtils.RequestSub;
 import com.orhanobut.logger.Logger;
+import com.ww.fpl.libarcface.common.Constants;
+import com.ww.fpl.libarcface.util.ConfigUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by pengjf on 2018/10/18.
@@ -190,7 +203,8 @@ public class ItemSubscriber {
                 Logger.i("下载考生数量====》" + size);
                 final List<Student> studentList = new ArrayList<>();
                 final List<StudentItem> studentItemList = new ArrayList<>();
-
+                //TODO 头像保存数据库导致数据过大OOM， 保存成图片保存固定位置使用
+                savePortrait(result.getDataInfo());
                 for (StudentBean studentBean : result.getDataInfo()) {
                     if (!stuList.contains(studentBean.getIdCard())) {
                         stuList.add(studentBean.getIdCard());
@@ -208,7 +222,11 @@ public class ItemSubscriber {
                     student.setMajorName(studentBean.getSubject());
                     student.setStudentName(studentBean.getStudentName());
                     student.setStudentCode(studentBean.getStudentCode());
-                    student.setPortrait(studentBean.getPhotoData());
+//                    student.setPortrait(studentBean.getPhotoData());
+//
+//                    if (studentBean.getPhotoData() != null) {
+//                        ImageUtil.saveBitmapToFile(MyApplication.PATH_IMAGE, studentBean.getStudentCode() + ".jpg", ImageUtil.base64ToBitmap(studentBean.getPhotoData()));
+//                    }
                     student.setFaceFeature(studentBean.getFaceFeature());
                     student.setIdCardNo(TextUtils.isEmpty(studentBean.getIdCard()) ? null : studentBean.getIdCard());
                     studentList.add(student);
@@ -250,6 +268,20 @@ public class ItemSubscriber {
 
     }
 
+    private void savePortrait(final List<StudentBean> studentBeanList) {
+        Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
+                for (StudentBean studentBean : studentBeanList) {
+                    if (studentBean.getPhotoData() != null) {
+                        ImageUtil.saveBitmapToFile(MyApplication.PATH_IMAGE, studentBean.getStudentCode() + ".jpg", ImageUtil.base64ToBitmap(studentBean.getPhotoData()));
+                    }
+                }
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+    }
 
     /**
      * 上传多个成绩

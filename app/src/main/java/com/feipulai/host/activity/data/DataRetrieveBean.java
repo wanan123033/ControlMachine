@@ -1,5 +1,10 @@
 package com.feipulai.host.activity.data;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.text.TextUtils;
+import android.util.Base64;
+
 import java.io.Serializable;
 
 /**
@@ -12,6 +17,7 @@ public class DataRetrieveBean implements Serializable {
     private String studentCode;//学号
     private String studentName;//姓名
     private int sex;//性别 0-男  1-女
+    private String portrait;
     private int testState;//成绩状态,0未测 1已测
     private String result;//成绩
     private int uploadState;
@@ -23,6 +29,14 @@ public class DataRetrieveBean implements Serializable {
 
     public void setChecked(boolean checked) {
         isChecked = checked;
+    }
+
+    public String getPortrait() {
+        return portrait;
+    }
+
+    public void setPortrait(String portrait) {
+        this.portrait = portrait;
     }
 
     public DataRetrieveBean() {
@@ -43,14 +57,25 @@ public class DataRetrieveBean implements Serializable {
         this.testState = testState;
         this.result = result;
     }
+
     public DataRetrieveBean(String studentCode, String studentName, int sex, int testState, String result, boolean checked) {
         this.studentCode = studentCode;
         this.studentName = studentName;
         this.sex = sex;
+        this.portrait = portrait;
         this.testState = testState;
         this.result = result;
         this.isChecked = checked;
     }
+
+    //    public DataRetrieveBean(String studentCode, String studentName, int sex, int testState, String result, boolean checked) {
+//        this.studentCode = studentCode;
+//        this.studentName = studentName;
+//        this.sex = sex;
+//        this.testState = testState;
+//        this.result = result;
+//        this.isChecked = checked;
+//    }
     public String getStudentCode() {
         return studentCode;
     }
@@ -99,5 +124,14 @@ public class DataRetrieveBean implements Serializable {
 
     public void setUploadState(int uploadState) {
         this.uploadState = uploadState;
+    }
+
+    public Bitmap getBitmapPortrait() {
+        if (TextUtils.isEmpty(portrait)) {
+            return null;
+        }
+        byte[] bytes = Base64.decode(portrait, Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        return bitmap;
     }
 }

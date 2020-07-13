@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.feipulai.common.utils.DateUtil;
+import com.feipulai.common.utils.ImageUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.ic.utils.ItemDefault;
@@ -366,7 +367,11 @@ public class HttpSubscriber {
                     student.setClassName(studentBean.getClassName());
                     student.setStudentName(studentBean.getStudentName());
                     student.setStudentCode(studentBean.getStudentCode());
-                    student.setPortrait(studentBean.getPhotoData());
+                    //                    student.setPortrait(studentBean.getPhotoData());
+                    //TODO 头像保存数据库导致数据过大OOM， 保存成图片保存固定位置使用
+                    if (studentBean.getPhotoData()!=null){
+                        ImageUtil.saveBitmapToFile(MyApplication.PATH_IMAGE,studentBean.getStudentCode()+".jpg", ImageUtil.base64ToBitmap(studentBean.getPhotoData()));
+                    }
                     student.setFaceFeature(studentBean.getFaceFeature());
                     student.setIdCardNo(TextUtils.isEmpty(studentBean.getIdCard()) ? null : studentBean.getIdCard());
                     studentList.add(student);

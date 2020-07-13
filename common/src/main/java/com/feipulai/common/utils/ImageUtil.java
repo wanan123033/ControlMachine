@@ -6,7 +6,11 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Created by zzs on  2020/1/9
@@ -15,15 +19,17 @@ import java.io.ByteArrayOutputStream;
 public class ImageUtil {
     /**
      * 将bitmap转为base64格式的字符串
+     *
      * @param bit 传入的bitmap
      * @return
      */
-    public static String bitmapToStrByBase64(Bitmap bit){
-        ByteArrayOutputStream bos=new ByteArrayOutputStream();
+    public static String bitmapToStrByBase64(Bitmap bit) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
         bit.compress(Bitmap.CompressFormat.JPEG, 100, bos);//参数100表示不压缩
-        byte[] bytes=bos.toByteArray();
+        byte[] bytes = bos.toByteArray();
         return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
+
     public static Bitmap base64ToBitmap(String base64Data) {
         byte[] bytes = Base64.decode(base64Data, Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
@@ -65,4 +71,35 @@ public class ImageUtil {
         return inSampleSize;
     }
 
+    /**
+     * 图片压缩比例
+     */
+    private int compressScale = 50;
+
+    /**
+     * 保存位图到本地文件
+     * <p/>
+     * <br/> Version: 1.0
+     * <br/> CreateAuthor:  CodeApe
+     * <br/> UpdateAuthor:  CodeApe
+     * <br/> UpdateInfo:  (此处输入修改内容,若无修改可不写.)
+     *
+     * @param saveParentPath // 文件保存目录
+     * @param fileName       文件名称
+     * @param bitmap         位图对象
+     */
+    public static void saveBitmapToFile(String saveParentPath, String fileName, Bitmap bitmap) {
+        if (bitmap == null) {
+            return;
+        }
+        try {
+            File saveimg = new File(saveParentPath + fileName);
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(saveimg));
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bos);
+            bos.flush();
+            bos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
