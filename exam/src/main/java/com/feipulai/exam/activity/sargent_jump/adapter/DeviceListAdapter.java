@@ -286,7 +286,7 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
         TextView txtStuName;
         @BindView(R.id.txt_stu_code)
         TextView txtStuCode;
-        @BindView(R.id.img_portrait)
+        @BindView(R.id.item_img_portrait)
         ImageView imgPortrait;
         @BindView(R.id.txt_skip)
         TextView txtSkip;
@@ -320,7 +320,7 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
         TextView txtStuName;
         @BindView(R.id.txt_stu_code)
         TextView txtStuCode;
-        @BindView(R.id.item_img_portrait)
+        @BindView(R.id.img_portrait)
         ImageView imgPortrait;
         @BindView(R.id.txt_skip)
         TextView txtSkip;
