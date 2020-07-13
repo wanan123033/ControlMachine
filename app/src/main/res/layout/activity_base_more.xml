@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".activity.base.BaseMoreActivity">
+
     <LinearLayout
         android:id="@+id/ll_top"
         android:layout_width="match_parent"
@@ -26,6 +27,17 @@
             android:layout_marginLeft="150dp"
             android:layout_marginRight="3dp" />
 
+        <ImageView
+            android:id="@+id/img_AFR"
+            android:layout_width="60dp"
+            android:layout_height="35dp"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/btn_bg_green"
+            android:gravity="center"
+            android:padding="5dp"
+            android:src="@mipmap/icon_afr"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
 
         <TextView
             android:id="@+id/txt_led_setting"
@@ -41,13 +53,14 @@
             android:paddingRight="8dp"
             android:text="外接屏幕"
             android:textColor="@color/white"
-            android:textSize="20dp" />
+            android:textSize="20dp"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tv_device_pair"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="26dp"
+            android:layout_marginLeft="20dp"
             android:background="@color/colorAccent"
             android:gravity="center"
             android:paddingLeft="8dp"
@@ -57,12 +70,13 @@
             android:textSize="20dp"
             android:visibility="visible" />
     </LinearLayout>
+
     <android.support.v7.widget.RecyclerView
-        android:layout_below="@+id/ll_top"
         android:id="@+id/rv_device_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"/>
+        android:layout_below="@+id/ll_top"
+        android:layout_alignParentBottom="true" />
 
 
     <ListView
@@ -78,5 +92,14 @@
         android:paddingTop="@dimen/dp_10"
         android:paddingRight="20dp"
         android:paddingBottom="@dimen/dp_10"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:id="@+id/frame_camera"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ll_top"
+        android:layout_marginLeft="258dp"
+        android:background="@color/black"
         android:visibility="gone" />
 </RelativeLayout>

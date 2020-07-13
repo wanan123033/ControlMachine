@@ -49,7 +49,7 @@ public abstract class BaseCheckActivity
     private static final int ID_CARD_NO = 0x1;
     private static final int CHECK_IN = 0x0;
     private boolean needAdd = true;
-    private FrameLayout afrFrameLayout;
+    public FrameLayout afrFrameLayout;
     private BaseAFRFragment afrFragment;
     private ScannerGunManager scannerGunManager;
 

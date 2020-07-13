@@ -541,12 +541,13 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             compareResult3 = null;
             if (lastCompareResult.getSimilar() > SIMILAR_THRESHOLD) {
                 requestFeatureStatusMap.put(faceId, RequestFeatureStatus.SUCCEED);
-                faceHelper.setName(faceId, mContext.getString(R.string.recognize_success_notice, lastCompareResult.getUserName()));
+//                faceHelper.setName(faceId, mContext.getString(R.string.recognize_success_notice, lastCompareResult.getUserName()));
                 Student student = DBManager.getInstance().queryStudentByCode(lastCompareResult.getUserName());
-                mHandler.sendEmptyMessage(0);
                 Logger.d("compareResult==>");
                 isStartFace=false;
                 compareListener.compareStu(student);
+                mHandler.sendEmptyMessage(0);
+
             } else {
                 isStartFace=false;
                 Logger.d("compareResult==>null");
