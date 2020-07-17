@@ -1,5 +1,6 @@
 package com.feipulai.exam.activity.basketball;
 
+import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,9 +34,16 @@ import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.Observable;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * 运球投篮测试个人模式
@@ -58,12 +66,6 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
     LinearLayout llIndividualCheck;
     @BindView(R.id.tv_pair)
     TextView tvPair;
-    @BindView(R.id.cb_near)
-    CheckBox cbNear;
-    @BindView(R.id.cb_far)
-    CheckBox cbFar;
-    @BindView(R.id.cb_led)
-    CheckBox cbLed;
     @BindView(R.id.tv_result)
     TextView tvResult;
     @BindView(R.id.txt_device_status)
@@ -95,6 +97,7 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
     private ShootSetting setting;
     private FrameLayout afrFrameLayout;
     private BaseAFRFragment afrFragment;
+    private int hostId;
 
     @Override
     protected int setLayoutResID() {
@@ -104,6 +107,7 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
     @Override
     protected void initData() {
         super.initData();
+        hostId = SettingHelper.getSystemSetting().getHostId();
         individualCheckFragment.setResultView(lvResults);
         ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), individualCheckFragment, R.id.ll_individual_check);
 
@@ -156,7 +160,16 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
         switch (view.getId()) {
             case R.id.txt_waiting:
                 LogUtils.operation("篮球运球投篮点击了等待发令...");
-                RunTimerManager.waitStart();
+                RunTimerManager.radioWait(hostId,1,1);
+                RunTimerManager.radioWait(hostId,1,1);
+                RunTimerManager.radioWait(hostId,1,1);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        RunTimerManager.radioSendWaitState(hostId,1,1);
+                    }
+                },1000);
+//                RunTimerManager.waitStart();
                 break;
             case R.id.txt_illegal_return:
                 LogUtils.operation("篮球运球投篮点击了违规返回...");
@@ -239,4 +252,6 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
         // 可以直接检录
         onIndividualCheckIn(student,studentItem,results);
     }
+
+
 }

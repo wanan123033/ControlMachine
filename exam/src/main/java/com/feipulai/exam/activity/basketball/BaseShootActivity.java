@@ -1,5 +1,6 @@
 package com.feipulai.exam.activity.basketball;
 
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -7,11 +8,15 @@ import android.view.KeyEvent;
 import android.view.View;
 
 import com.feipulai.common.utils.IntentUtil;
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.manager.RunTimerManager;
+import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.RunTimerConnectState;
 import com.feipulai.device.serial.beans.RunTimerResult;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.RadioTimer.RunTimerSetting;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.basketball.util.RunTimerImpl;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
@@ -27,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BaseShootActivity extends BaseTitleActivity
-        implements IndividualCheckFragment.OnIndividualCheckInListener {
+        implements IndividualCheckFragment.OnIndividualCheckInListener, RadioManager.OnRadioArrivedListener {
 
     protected IndividualCheckFragment individualCheckFragment;
     private static final int WAIT_FREE = 0x0;
@@ -39,13 +44,25 @@ public abstract class BaseShootActivity extends BaseTitleActivity
     protected volatile int state = WAIT_FREE;
     private List<StuDevicePair> pairs = new ArrayList<>();
     private SerialDeviceManager deviceManager;
+    private RadioManager radioManager;
+    private ShootSetting setting;
     @Override
     protected void initData() {
         pairs.add(new StuDevicePair());
         individualCheckFragment = new IndividualCheckFragment();
         individualCheckFragment.setOnIndividualCheckInListener(this);
         deviceManager = SerialDeviceManager.getInstance();
-        deviceManager.setRS232ResiltListener(runTimer);
+        radioManager = RadioManager.getInstance();
+        radioManager.init();
+        radioManager.setOnRadioArrived(this);
+        int hostId = SettingHelper.getSystemSetting().getHostId();
+        //获取项目设置
+        setting = SharedPrefsUtil.loadFormSource(this, ShootSetting.class);
+        if (setting == null)
+            setting = new ShootSetting();
+        RunTimerManager.radioSetting(hostId,1,1);
+
+        RunTimerManager.cmdSetting(1,hostId,1,-1,-1,-1);
     }
 
 
@@ -128,7 +145,18 @@ public abstract class BaseShootActivity extends BaseTitleActivity
     protected abstract void updateStudent(Student student);
 
     private boolean isFullSkip(int result, int resultState) {
+        Student student = pairs.get(0).getStudent();
+        if (setting.isFullSkip() && resultState == RoundResult.RESULT_STATE_NORMAL) {
+//            int result = testResult.getSelectMachineResult() + (testResult.getPenalizeNum() * setting.getPenaltySecond() * 1000);
+            if (student.getSex() == Student.MALE) {
 
+                return setting.getTestType() == 2? result <= setting.getMaleFullDribble()*1000:
+                        result<=setting.getMaleFullShoot();
+            } else {
+                return setting.getTestType() == 2? result <= setting.getFemaleFullDribble()*1000:
+                        result<=setting.getFemaleFullShoot();
+            }
+        }
         return false;
     }
 
@@ -153,7 +181,13 @@ public abstract class BaseShootActivity extends BaseTitleActivity
     protected void onDestroy() {
         super.onDestroy();
         deviceManager.setRS232ResiltListener(null);
+        radioManager.setOnRadioArrived(null);
     }
 
     public abstract void getResult(RunTimerResult result);
+
+    @Override
+    public void onRadioArrived(Message msg) {
+
+    }
 }

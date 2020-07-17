@@ -1,7 +1,8 @@
 package com.feipulai.exam.activity.basketball;
 
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.CheckBox;
@@ -26,11 +27,15 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * 投篮测试个人模式
@@ -69,8 +74,8 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
     TextView txtWaiting;
     @BindView(R.id.txt_illegal_return)
     TextView txtIllegalReturn;
-    @BindView(R.id.txt_continue_run)
-    TextView txtContinueRun;
+    @BindView(R.id.txt_run)
+    TextView txtRun;
     @BindView(R.id.txt_stop_timing)
     TextView txtStopTiming;
     @BindView(R.id.rv_state)
@@ -173,19 +178,28 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
         }
     }
 
-    @OnClick({R.id.txt_waiting, R.id.txt_illegal_return, R.id.txt_continue_run, R.id.txt_add,
+    @OnClick({R.id.txt_waiting, R.id.txt_illegal_return, R.id.txt_run, R.id.txt_add,
             R.id.txt_minus, R.id.txt_stop_timing, R.id.tv_led_setting, R.id.tv_print,
             R.id.tv_confirm, R.id.txt_finish_test})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_waiting:
-                RunTimerManager.waitStart();
+//                RunTimerManager.waitStart();
+                RunTimerManager.radioWait(1,2,1);
+                RunTimerManager.radioWait(1,2,1);
+                RunTimerManager.radioWait(1,2,1);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        RunTimerManager.radioSendWaitState(1,2,1);
+                    }
+                },1000);
                 break;
             case R.id.txt_illegal_return:
                 RunTimerManager.illegalBack();
                 break;
-            case R.id.txt_continue_run:
-
+            case R.id.txt_run:
+                countDownTime(10);
                 break;
             case R.id.txt_add:
 
@@ -194,6 +208,9 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
 
                 break;
             case R.id.txt_stop_timing:
+                if (timer != null){
+                    timer.dispose();
+                }
                 break;
             case R.id.tv_led_setting:
                 break;
@@ -216,7 +233,36 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
     @Override
     public void getResult(RunTimerResult result) {
         //根据折返点拦截次数更新投篮次数
+        if (result.getTrackNum() == 1){//投篮的拦截的道号必须设定为1道
+            int order = result.getOrder();//第几次
+
+        }
     }
 
+    private Disposable timer;
+    private void countDownTime(final int time){
+        timer = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.io()).
+                observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<Long>() {
+            @Override
+            public void accept(Long aLong) throws Exception {
+                if (timer == null){
+                    return;
+                }
+                if (!timer.isDisposed() && aLong<= time){
+                    tvResult.setText(""+ (time-aLong));
+                }
 
+            }
+        });
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (timer!=null ){
+            timer.dispose();
+            timer = null;
+        }
+    }
 }
