@@ -3,6 +3,7 @@ package com.feipulai.exam.activity.pullup.test;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.feipulai.common.jump_rope.task.GetReadyCountDownTimer;
@@ -17,9 +18,7 @@ import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.device.sitpullup.SitPullLinker;
-import com.feipulai.exam.activity.grip.GripWrapper;
 import com.feipulai.exam.activity.setting.SettingHelper;
-import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.utils.FileUtils;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.utils.LogUtils;
@@ -29,6 +28,12 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.functions.BiFunction;
+import io.reactivex.functions.Consumer;
 
 /**
  * 引体向上与仰卧起坐合并
@@ -150,7 +155,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
         RadioManager.getInstance().setOnRadioArrived(null);
     }
 
-    private volatile PullUpStateResult tmpResult;
+    private volatile PullUpStateResult tmpResult = new PullUpStateResult();
 
 
     @Override
@@ -165,12 +170,12 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
                     if (result.getDeviceId() != 1) {
                         return;
                     }
-                    tmpResult = result;
+//                    tmpResult = result;
 //                    listener.onScoreArrived(result);
-//                    if (tmpResult == null || result.getResult() != tmpResult.getResult()) {
-//                        tmpResult = result;
+                    if (tmpResult == null || result.getResult() != tmpResult.getResult()) {
+                        tmpResult = result;
 //                        updateResult(tmpResult);
-//                    }
+                    }
 
                 }
 
@@ -186,8 +191,10 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
                     }
                     sitUpLists.add(result);
                     if(result.getResult() != hand){
-                        updateResult(result);
+//                        updateResult(result);
                         hand = result.getResult();
+                        high = result;
+                        updateResult();
                     }
 
                     FileUtils.log("手臂检测====" + result.toString());
@@ -231,7 +238,8 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
     private volatile int tmp;
     private volatile int invalid;
     private volatile int hand;
-    private ArmStateResult high, low;
+    private ArmStateResult high = new ArmStateResult();
+    private ArmStateResult low;
     private final int sendPull = 0xf1;
     private volatile int delayPull;
     private  void updateResult(ArmStateResult armState) {
@@ -254,6 +262,54 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
             }
 
         }
+    }
+
+    private void updateResult(){
+        Observable.zip(getStringObservable(), getIntegerObservable(), new BiFunction<PullUpStateResult, ArmStateResult, Integer>() {
+            @Override
+            public Integer apply(@NonNull PullUpStateResult s, @NonNull ArmStateResult result) throws Exception {
+                if (s.getResult()-tmp>2){
+                    invalid += s.getResult()-tmp;
+                    FileUtils.log("invalid:"+invalid);
+                }
+                tmp = s.getResult();
+
+                return s.getResult();
+            }
+        }).subscribe(new Consumer<Integer>() {
+            @Override
+            public void accept(@NonNull Integer r) throws Exception {
+                tmpResult.setValidCountNum(r-invalid);
+                listener.onScoreArrived(tmpResult);
+                String displayInLed = "成绩:" + ResultDisplayUtils.getStrResultForDisplay(tmpResult.getResult());
+                ledManager.showString(SettingHelper.getSystemSetting().getHostId(), displayInLed, 1, 1, false, true);
+            }
+        });
+    }
+    private Observable<PullUpStateResult> getStringObservable() {
+        return Observable.create(new ObservableOnSubscribe<PullUpStateResult>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<PullUpStateResult> e) throws Exception {
+                if (!e.isDisposed() && tmpResult!= null) {
+                    e.onNext(tmpResult);
+                    Log.i("pullArm",tmpResult.toString());
+                    FileUtils.log(tmpResult.toString());
+                }
+            }
+        });
+    }
+
+    private Observable<ArmStateResult> getIntegerObservable() {
+        return Observable.create(new ObservableOnSubscribe<ArmStateResult>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<ArmStateResult> e) throws Exception {
+                if (!e.isDisposed() && high!=null) {
+                    e.onNext(high);
+                    Log.i("pullArm",high.toString());
+                    FileUtils.log(high.toString());
+                }
+            }
+        });
     }
 
     private Handler mHandler = new Handler(Looper.myLooper()){

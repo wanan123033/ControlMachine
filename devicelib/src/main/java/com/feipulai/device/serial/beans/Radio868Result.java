@@ -262,6 +262,9 @@ public class Radio868Result {
                     }
 
                 }
+                if (data[0] == 0xab && data[data.length-1] == 0x56){
+                    Log.i("红外=====================",StringUtility.bytesToHexString(data));
+                }
                 break;
 
             case ItemDefault.CODE_FHL:

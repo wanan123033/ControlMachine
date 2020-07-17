@@ -113,4 +113,51 @@ public class RunTimerManager {
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                 cmd));
     }
+
+    /**
+     * 无线参数设置
+     * @param hostId
+     * @param interceptType
+     * @param interceptNum
+     */
+    public static void radioSetting(int hostId ,int interceptType,int interceptNum){
+        byte [] cmd = {(byte) 0xaa,0x0f,0x01, (byte) 0xa9,0x01,0x05,0x01,0x02,0x01,0x00,0x00,0x00,0x00,0x00,0x55};
+        cmd[6] = (byte) hostId;
+        cmd[7] = (byte) interceptType;
+        cmd[8] = (byte) interceptNum;
+        for (int i = 0; i < 13; i++) {
+            cmd[13] += cmd[i];
+        }
+        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,cmd));
+    }
+
+    public static void radioWait(int hostId ,int interceptType,int interceptNum){
+        byte [] cmd = {(byte) 0xaa,0x0f,0x01, (byte) 0x02,0x00,0x00,0x01,0x02,0x01,0x00,0x00,0x00,0x00,0x00,0x55};
+
+        cmd[6] = (byte) hostId;
+        cmd[7] = (byte) interceptType;
+        cmd[8] = (byte) interceptNum;
+        for (int i = 0; i < 13; i++) {
+            cmd[13] += cmd[i];
+        }
+        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,cmd));
+    }
+
+    public static void radioSendWaitState(int hostId ,int interceptType,int interceptNum){
+//        byte [] cmd = {(byte) 0xaa,0x0f,0x02, (byte) 0x03,0x00,0x00,0x01,0x02,0x01,0x00,0x00,0x00,0x00,0x00,0x55};
+        byte [] cmd = {(byte) 0xaa,0x0d,0x01, (byte) 0x03,0x00,0x00,0x000,0x00,0x00,0x00,0x00,0x00,0x55};
+        cmd[3] = (byte) hostId;
+        cmd[4] = (byte) interceptType;
+        cmd[5] = (byte) interceptNum;
+        for (int i = 0; i < 11; i++) {
+            cmd[11] += cmd[i];
+        }
+//        cmd[6] = (byte) hostId;
+//        cmd[7] = (byte) interceptType;
+//        cmd[8] = (byte) interceptNum;
+//        for (int i = 0; i < 13; i++) {
+//            cmd[11] += cmd[i];
+//        }
+        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,cmd));
+    }
 }

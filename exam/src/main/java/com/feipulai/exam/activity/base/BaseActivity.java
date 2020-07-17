@@ -45,11 +45,11 @@ public class BaseActivity extends FragmentActivity {
     /**
      * 广播接收器
      */
-    public BroadcastReceiver receiver;
+//    public BroadcastReceiver receiver;
     /**
      * 广播过滤器
      */
-    public IntentFilter filter = new IntentFilter();
+//    public IntentFilter filter = new IntentFilter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,10 +70,10 @@ public class BaseActivity extends FragmentActivity {
                 .DEFAULT_MACHINE_CODE);
 
 
-        filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-        filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
-        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(receiver = new WifiReceiver(), filter);
+//        filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+//        filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+//        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+//        registerReceiver(receiver = new WifiReceiver(), filter);
     }
 
     @Override
@@ -117,9 +117,9 @@ public class BaseActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (null != receiver) {
-            unregisterReceiver(receiver);
-        }
+//        if (null != receiver) {
+//            unregisterReceiver(receiver);
+//        }
         ActivityCollector.getInstance().onDestroy(this);
         EventBus.getDefault().unregister(this);
     }

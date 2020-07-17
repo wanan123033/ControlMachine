@@ -377,4 +377,19 @@ public abstract class BaseCheckActivity
             }
         });
     }
+
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        // 是否触发按键为back键
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (afrFragment != null && afrFragment.isOpenCamera) {
+                showAFR();
+                return true;
+            }
+            return super.onKeyDown(keyCode, event);
+        } else { // 如果不是back键正常响应
+            return super.onKeyDown(keyCode, event);
+        }
+    }
 }

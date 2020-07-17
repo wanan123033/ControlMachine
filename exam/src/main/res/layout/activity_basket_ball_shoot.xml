@@ -173,14 +173,14 @@
                     android:textSize="18dp" />
 
                 <TextView
-                    android:id="@+id/txt_continue_run"
+                    android:id="@+id/txt_run"
                     android:layout_width="120dp"
                     android:layout_height="45dp"
                     android:layout_marginLeft="30dp"
                     android:layout_weight="1"
                     android:background="@drawable/btn_background"
                     android:gravity="center"
-                    android:text="继续运行"
+                    android:text="开始计时"
                     android:textColor="@color/white"
                     android:textSize="18dp" />
 
