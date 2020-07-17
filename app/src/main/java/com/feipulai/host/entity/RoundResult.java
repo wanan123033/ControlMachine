@@ -16,7 +16,7 @@ import java.io.Serializable;
 @Entity
 public class RoundResult implements Serializable {
 
-    public static final int RESULT_STATE_NORMAL = 0;
+    public static final int RESULT_STATE_NORMAL = 1;
     public static final int RESULT_STATE_FOUL = -1;
     public static final int RESULT_STATE_BACK = 3;
     public static final int RESULT_STATE_WAIVE = 4;
