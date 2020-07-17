@@ -45,8 +45,7 @@ public class MedicineBallSelectActivity extends SubItemsSelectActivity {
                     } else {
                         IntentUtil.gotoActivity(MedicineBallSelectActivity.this, MedicineBallTestActivity.class);
                     }
-                    startActivity(new Intent(MedicineBallSelectActivity.this,
-                            MedicineBallTestActivity.class));
+
                 } else {
                     if (SettingHelper.getSystemSetting().isFreedomTest()) {
                         IntentUtil.gotoActivity(MedicineBallSelectActivity.this, MedicineBallRadioFreedomActivity.class);

@@ -101,7 +101,10 @@ public class JumpRopeCheckActivity
     protected int setLayoutResID() {
         return R.layout.activity_jump_rope_check;
     }
-
+    @Override
+    public int setAFRFrameLayoutResID() {
+        return R.id.frame_camera;
+    }
     @Override
     protected void initData() {
         super.initData();
@@ -182,10 +185,12 @@ public class JumpRopeCheckActivity
     }
 
     @OnClick({R.id.btn_device_pair, R.id.btn_change_hand_group, R.id.btn_change_bad, R.id.btn_start_test,
-            R.id.btn_stop_use, R.id.btn_led_setting, R.id.btn_delete_student, R.id.btn_del_all, R.id.btn_kill_devices})
+            R.id.btn_stop_use, R.id.btn_led_setting, R.id.btn_delete_student, R.id.btn_del_all, R.id.btn_kill_devices, R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-
+            case R.id.img_AFR:
+                showAFR();
+                break;
             case R.id.btn_device_pair:
                 startActivity(new Intent(this, JumpRopePairActivity.class));
                 break;

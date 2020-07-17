@@ -48,8 +48,8 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
     }
 
     @Override
-    public void initData() {
-
+    protected void initData() {
+        super.initData();
     }
 
     @Override

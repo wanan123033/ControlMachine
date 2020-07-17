@@ -11,136 +11,151 @@
         android:layout_height="match_parent"
         android:background="@color/black" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-
-            <LinearLayout
-                android:id="@+id/rl_check_in"
-                android:layout_width="match_parent"
-                android:layout_height="65dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="128dp"
-                    android:layout_height="38dp"
-                    android:layout_marginLeft="29dp"
-                    android:src="@mipmap/icon_test_logo" />
-
-                <com.feipulai.host.view.StuSearchEditText
-                    android:id="@+id/et_select"
-                    android:layout_width="420dp"
-                    android:layout_height="35dp"
-                    android:layout_margin="30dp" />
-
-
-            </LinearLayout>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_pairs"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/rl_check_in" />
-
-            <ListView
-                android:id="@+id/lv_results"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/rl_check_in"
-                android:divider="@color/sbc_header_text"
-                android:dividerHeight="1dp"
-                android:visibility="gone" />
-
-        </RelativeLayout>
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/view_bottom"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <View
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/black" />
+                android:layout_height="0dp"
+                android:layout_weight="1">
 
-            <include layout="@layout/ll_device_state_illustrate"/>
+                <LinearLayout
+                    android:id="@+id/rl_check_in"
+                    android:layout_width="match_parent"
+                    android:layout_height="65dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/black" />
+                    <ImageView
+                        android:layout_width="128dp"
+                        android:layout_height="38dp"
+                        android:layout_marginLeft="29dp"
+                        android:src="@mipmap/icon_test_logo" />
+
+                    <com.feipulai.host.view.StuSearchEditText
+                        android:id="@+id/et_select"
+                        android:layout_width="420dp"
+                        android:layout_height="35dp"
+                        android:layout_margin="30dp" />
+                    <ImageView
+                        android:id="@+id/img_AFR"
+                        android:layout_width="60dp"
+                        android:layout_height="35dp"
+                        android:background="@drawable/btn_bg_green"
+                        android:gravity="center"
+                        android:padding="5dp"
+                        android:src="@mipmap/icon_afr"
+                        android:textColor="@color/white"
+                        android:textSize="20dp" />
+
+                </LinearLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_pairs"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/rl_check_in" />
+
+                <ListView
+                    android:id="@+id/lv_results"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/rl_check_in"
+                    android:divider="@color/sbc_header_text"
+                    android:dividerHeight="1dp"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
 
             <LinearLayout
+                android:id="@+id/view_bottom"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
-                <Button
-                    android:id="@+id/btn_start_test"
-                    style="@style/style_rectangle_btn"
-                    android:text="开始" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/black" />
 
-                <com.feipulai.common.view.StopUseButton
-                    android:id="@+id/btn_stop_use"
-                    style="@style/style_rectangle_btn"
-                    android:drawableTop="@drawable/pause"
-                    android:text="暂停使用" />
+                <include layout="@layout/ll_device_state_illustrate" />
 
-                <Button
-                    android:id="@+id/btn_change_bad"
-                    style="@style/style_rectangle_btn"
-                    android:drawableTop="@drawable/change_bad"
-                    android:text="故障更换" />
-
-                <Button
-                    android:id="@+id/btn_device_pair"
-                    style="@style/style_rectangle_btn"
-                    android:drawableTop="@drawable/pair"
-                    android:text="设备连接" />
-
-                <Button
-                    android:id="@+id/btn_led_setting"
-                    style="@style/style_rectangle_btn"
-                    android:drawableTop="@drawable/led_screen"
-                    android:text="外接屏幕" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/black" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
                     <Button
-                        android:id="@+id/btn_delete_student"
-                        android:layout_width="150dp"
-                        android:layout_height="0dp"
-                        android:layout_margin="5dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_rectangle_red_selector"
-                        android:gravity="center"
-                        android:text="删除"
-                        android:textColor="@color/white"
-                        android:textSize="18sp" />
+                        android:id="@+id/btn_start_test"
+                        style="@style/style_rectangle_btn"
+                        android:text="开始" />
+
+                    <com.feipulai.common.view.StopUseButton
+                        android:id="@+id/btn_stop_use"
+                        style="@style/style_rectangle_btn"
+                        android:drawableTop="@drawable/pause"
+                        android:text="暂停使用" />
 
                     <Button
-                        android:id="@+id/btn_del_all"
-                        android:layout_width="150dp"
-                        android:layout_height="0dp"
-                        android:layout_margin="5dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_rectangle_red_selector"
-                        android:gravity="center"
-                        android:text="全删除"
-                        android:textColor="@color/white"
-                        android:textSize="18sp" />
+                        android:id="@+id/btn_change_bad"
+                        style="@style/style_rectangle_btn"
+                        android:drawableTop="@drawable/change_bad"
+                        android:text="故障更换" />
+
+                    <Button
+                        android:id="@+id/btn_device_pair"
+                        style="@style/style_rectangle_btn"
+                        android:drawableTop="@drawable/pair"
+                        android:text="设备连接" />
+
+                    <Button
+                        android:id="@+id/btn_led_setting"
+                        style="@style/style_rectangle_btn"
+                        android:drawableTop="@drawable/led_screen"
+                        android:text="外接屏幕" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <Button
+                            android:id="@+id/btn_delete_student"
+                            android:layout_width="150dp"
+                            android:layout_height="0dp"
+                            android:layout_margin="5dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/btn_rectangle_red_selector"
+                            android:gravity="center"
+                            android:text="删除"
+                            android:textColor="@color/white"
+                            android:textSize="18sp" />
+
+                        <Button
+                            android:id="@+id/btn_del_all"
+                            android:layout_width="150dp"
+                            android:layout_height="0dp"
+                            android:layout_margin="5dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/btn_rectangle_red_selector"
+                            android:gravity="center"
+                            android:text="全删除"
+                            android:textColor="@color/white"
+                            android:textSize="18sp" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -148,6 +163,12 @@
 
         </LinearLayout>
 
-    </LinearLayout>
-
+        <FrameLayout
+            android:id="@+id/frame_camera"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="65dp"
+            android:background="@color/black"
+            android:visibility="gone" />
+    </RelativeLayout>
 </LinearLayout>
