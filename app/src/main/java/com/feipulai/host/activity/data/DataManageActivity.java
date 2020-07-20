@@ -270,9 +270,10 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                         intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
                         startActivityForResult(intent, REQUEST_CODE_PHOTO);
                         break;
-                    case 10://头像检入
+                    case 10://头像检入  todo 头像不保存在数据库些功能没作用，弃用
                         LogUtils.operation("用户点击了头像检入...");
-                        uploadPortrait();
+//                        uploadPortrait();
+                        ToastUtils.showShort("功能未开放，敬请期待");
                         break;
                     case 11://人脸特征
                         LogUtils.operation("用户点击了人脸特征检入...");
@@ -415,9 +416,9 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                         continue;
                     }
                     Student student = DBManager.getInstance().queryStudentByStuCode(jpgFile.getName().substring(0, jpgFile.getName().indexOf(".")));
-                    if (student != null && TextUtils.isEmpty(student.getPortrait())) {
-                        student.setPortrait(ImageUtil.bitmapToStrByBase64(bitmap));
-                        DBManager.getInstance().updateStudent(student);
+                    if (student != null) {
+                        ImageUtil.saveBitmapToFile(MyApplication.PATH_IMAGE, student.getStudentCode() + ".jpg", bitmap);
+
                     }
 //                    bitmap = ImageUtils.alignBitmapForBgr24(bitmap);
                     bitmap = ArcSoftImageUtil.getAlignedBitmap(bitmap, true);
@@ -452,70 +453,70 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
         });
     }
 
-    public void uploadPortrait() {
-        final List<Student> studentList = DBManager.getInstance().getStudentByPortrait();
-        if (studentList.size() == 0) {
-            ToastUtils.showShort("当前所有考生无头像信息，请先进行名单下载");
-            return;
-        }
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                final int totalCount = studentList.size();
-
-                int successCount = 0;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressDialog.setMaxProgress(totalCount);
-                        progressDialog.show();
-                    }
-                });
-                for (int i = 0; i < totalCount; i++) {
-                    final int finalI = i;
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (progressDialog != null) {
-                                progressDialog.refreshProgress(finalI);
-                            }
-                        }
-                    });
-                    Bitmap bitmap = studentList.get(i).getBitmapPortrait();
-                    if (bitmap == null) {
-                        continue;
-                    }
-                    bitmap = ImageUtils.alignBitmapForBgr24(bitmap);
-                    if (bitmap == null) {
-                        continue;
-                    }
-                    byte[] bgr24 = ImageUtils.bitmapToBgr24(bitmap);
-                    boolean success = FaceServer.getInstance().registerBgr24(DataManageActivity.this, bgr24, bitmap.getWidth(), bitmap.getHeight(),
-                            studentList.get(i).getStudentCode());
-                    if (!success) {
-                        Log.e("faceRegister", "人脸注册失败" + studentList.get(i).getStudentCode());
-                    } else {
-                        successCount++;
-                    }
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ToastUtils.showShort("头像导入成功");
-                        progressDialog.dismiss();
-                    }
-                });
-                Log.i("DataManageActivity", "run: " + executorService.isShutdown());
-            }
-        });
-
-    }
+//    public void uploadPortrait() {
+//        final List<Student> studentList = DBManager.getInstance().getStudentByPortrait();
+//        if (studentList.size() == 0) {
+//            ToastUtils.showShort("当前所有考生无头像信息，请先进行名单下载");
+//            return;
+//        }
+//        executorService.execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                final int totalCount = studentList.size();
+//
+//                int successCount = 0;
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        progressDialog.setMaxProgress(totalCount);
+//                        progressDialog.show();
+//                    }
+//                });
+//                for (int i = 0; i < totalCount; i++) {
+//                    final int finalI = i;
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            if (progressDialog != null) {
+//                                progressDialog.refreshProgress(finalI);
+//                            }
+//                        }
+//                    });
+//                    Bitmap bitmap = studentList.get(i).getBitmapPortrait();
+//                    if (bitmap == null) {
+//                        continue;
+//                    }
+//                    bitmap = ImageUtils.alignBitmapForBgr24(bitmap);
+//                    if (bitmap == null) {
+//                        continue;
+//                    }
+//                    byte[] bgr24 = ImageUtils.bitmapToBgr24(bitmap);
+//                    boolean success = FaceServer.getInstance().registerBgr24(DataManageActivity.this, bgr24, bitmap.getWidth(), bitmap.getHeight(),
+//                            studentList.get(i).getStudentCode());
+//                    if (!success) {
+//                        Log.e("faceRegister", "人脸注册失败" + studentList.get(i).getStudentCode());
+//                    } else {
+//                        successCount++;
+//                    }
+//                }
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        ToastUtils.showShort("头像导入成功");
+//                        progressDialog.dismiss();
+//                    }
+//                });
+//                Log.i("DataManageActivity", "run: " + executorService.isShutdown());
+//            }
+//        });
+//
+//    }
 
     public void uploadFace() {
         DataBaseExecutor.addTask(new DataBaseTask(this, "获取考生人脸特征，请稍后...", false) {
             @Override
             public DataBaseRespon executeOper() {
-                return new DataBaseRespon(true, "", DBManager.getInstance().getItemStudent(-1, 0));
+                return new DataBaseRespon(true, "", DBManager.getInstance().queryStudentFeatures());
             }
 
             @Override
@@ -725,12 +726,34 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
 
     @Override
     public void onClearDBConfirmed() {
-        DBManager.getInstance().clear();
-        SharedPrefsUtil.putValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
-        DBManager.getInstance().initDB();
-        TestConfigs.init(this, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), null);
-        Logger.i("数据清空完成");
-        ToastUtils.showShort(R.string.clear_data_succeed);
+
+        DataBaseExecutor.addTask(new DataBaseTask(this, "数据清除中，请稍后。。。", false) {
+            @Override
+            public DataBaseRespon executeOper() {
+                boolean autoBackup = backupManager.autoBackup();
+                Logger.i(autoBackup ? "自动备份成功" : "自动备份失败");
+                DBManager.getInstance().clear();
+                SharedPrefsUtil.putValue(DataManageActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
+                DBManager.getInstance().initDB();
+                TestConfigs.init(DataManageActivity.this, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), null);
+                FileUtil.delete(MyApplication.PATH_IMAGE);
+                FileUtil.mkdirs(MyApplication.PATH_IMAGE);
+                Logger.i("进行数据清空");
+                return new DataBaseRespon(true, "", "");
+            }
+
+            @Override
+            public void onExecuteSuccess(DataBaseRespon respon) {
+                Logger.i("数据清空完成");
+                ToastUtils.showShort("数据清空完成");
+            }
+
+            @Override
+            public void onExecuteFail(DataBaseRespon respon) {
+
+            }
+        });
+
     }
 
     // @Override

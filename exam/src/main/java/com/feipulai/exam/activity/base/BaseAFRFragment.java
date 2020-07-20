@@ -291,8 +291,14 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                 }
             }, 100);
         } else {
-            if (mUVCCamera != null)
-                mUVCCamera.stopPreview();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (mUVCCamera != null)
+                        mUVCCamera.stopPreview();
+                }
+            }, 100);
+
             isOpenCamera = false;
 
         }

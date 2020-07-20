@@ -14,6 +14,9 @@ import android.util.Log;
 import com.arcsoft.face.ActiveFileInfo;
 import com.arcsoft.face.ErrorInfo;
 import com.arcsoft.face.FaceEngine;
+import com.feipulai.common.db.DataBaseExecutor;
+import com.feipulai.common.db.DataBaseRespon;
+import com.feipulai.common.db.DataBaseTask;
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.utils.ToastUtils;
@@ -26,6 +29,7 @@ import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Student;
+import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.common.Constants;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
@@ -103,14 +107,40 @@ public class SplashScreenActivity extends BaseActivity {
 
     private void initLocalFace() {
         //本地人脸库初始化
-        FaceServer.getInstance().init(SplashScreenActivity.this);
-        if (SettingHelper.getSystemSetting().getCheckTool() == 5) {
-            List<Student> studentList = DBManager.getInstance().queryStudentFeatures();
-            List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
-            for (Student student : studentList) {
-                registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
-            }
-            FaceServer.getInstance().addFaceList(registerInfoList);
+        boolean isFaceInit = FaceServer.getInstance().init(SplashScreenActivity.this);
+        Logger.d("initLocalFace====>" + isFaceInit);
+        if (SettingHelper.getSystemSetting().getCheckTool() == 4) {
+
+            DataBaseExecutor.addTask(new DataBaseTask(this, "数据加载中...", true) {
+                @Override
+                public DataBaseRespon executeOper() {
+                    List<Student> studentList = DBManager.getInstance().queryStudentFeatures();
+                    Log.i("faceRegisterInfoList", "->"+studentList.size());
+                    List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
+                    for (Student student : studentList) {
+                        registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+                    }
+                    FaceServer.getInstance().addFaceList(registerInfoList);
+                    return new DataBaseRespon(true, "", null);
+                }
+
+                @Override
+                public void onExecuteSuccess(DataBaseRespon respon) {
+                    Intent intent = new Intent();
+                    intent.setClass(SplashScreenActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
+                }
+
+                @Override
+                public void onExecuteFail(DataBaseRespon respon) {
+
+                }
+            });
+
+
         }
     }
 

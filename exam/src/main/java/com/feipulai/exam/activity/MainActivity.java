@@ -162,7 +162,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
         String itemCode = TestConfigs.sCurrentItem.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : TestConfigs.sCurrentItem.getItemCode();
         roundResult.setItemCode(itemCode);
         roundResult.setResult(122);
-        roundResult.setResultState(0);
+        roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
         roundResult.setTestTime(DateUtil.getCurrentTime() + "");
         roundResult.setRoundNo(1);
         roundResult.setTestNo(1);

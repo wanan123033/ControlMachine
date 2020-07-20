@@ -343,6 +343,7 @@ public class FaceServer {
                         faceRegisterInfoList = new ArrayList<>();
                     }
                     faceRegisterInfoList.add(new FaceRegisterInfo(faceFeature.getFeatureData(), userName));
+                    faceNumber = faceRegisterInfoList.size();
                     return true;
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -374,7 +375,7 @@ public class FaceServer {
                 ROOT_PATH = context.getFilesDir().getAbsolutePath();
             }
             //特征存储的文件夹
-            File featureDir = new File(ROOT_PATH + File.separator + SAVE_FEATURE_DIR);
+            File featureDir = new File(ROOT_PATH);
             if (!featureDir.exists() && !featureDir.mkdirs()) {
                 Log.e(TAG, "registerBgr24: can not create feature directory");
                 return false;
@@ -428,6 +429,9 @@ public class FaceServer {
                             faceRegisterInfoList = new ArrayList<>();
                         }
                         faceRegisterInfoList.add(new FaceRegisterInfo(faceFeature.getFeatureData(), userName));
+
+                        faceNumber = faceRegisterInfoList.size();
+                        Log.e(TAG, "faceRegisterInfoList: 3-----------------" + faceRegisterInfoList.size());
                         return true;
                     } else {
                         Log.e(TAG, "registerBgr24: extract face feature failed, code is " + code);
@@ -532,7 +536,7 @@ public class FaceServer {
                 maxSimilarIndex = i;
             }
         }
-        Log.i("getTopOfFaceLib1", "---------------------->");
+        Log.i("getTopOfFaceLib1", "---------------------->" + maxSimilarIndex);
         isProcessing = false;
         if (maxSimilarIndex != -1) {
             return new CompareResult(faceRegisterInfoList.get(maxSimilarIndex).getName(), maxSimilar);

@@ -128,7 +128,9 @@ public class ResultDisplayTools {
             case "米":
                 strResult = analyzeLengthResult(dbResult, digital, carryMode, unit, isReturnUnit);
                 break;
-
+            case "分/秒":
+            case "分.秒":
+            case "分:秒":
             case "分'秒":
             case "秒":
                 //TODO 时间显示默认显示百分位

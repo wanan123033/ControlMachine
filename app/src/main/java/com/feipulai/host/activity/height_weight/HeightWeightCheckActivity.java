@@ -1,12 +1,10 @@
 package com.feipulai.host.activity.height_weight;
 
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -14,7 +12,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.DateUtil;
-import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.serial.SerialConfigs;
@@ -30,7 +27,6 @@ import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.netUtils.UploadResultUtil;
-import com.feipulai.host.netUtils.netapi.ItemSubscriber;
 import com.feipulai.host.netUtils.netapi.ServerIml;
 import com.feipulai.host.utils.PrinterUtils;
 import com.feipulai.host.utils.ResultDisplayUtils;
@@ -38,7 +34,6 @@ import com.feipulai.host.utils.ResultUtils;
 import com.feipulai.host.view.StuSearchEditText;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
@@ -81,7 +76,6 @@ public class HeightWeightCheckActivity
     private volatile RoundResult mWeightResult;
     private RoundResult mLastHeightResult;
     private RoundResult mLastWeightResult;
-    private ItemSubscriber itemSubscriber;
     private long startTime;
     private long endTime;
 
@@ -118,11 +112,8 @@ public class HeightWeightCheckActivity
     }
 
     private void init() {
-        if (SettingHelper.getSystemSetting().isRtUpload()) {
-            itemSubscriber = new ItemSubscriber();
-        }
+
         etInputText.setData(lvResults, this);
-        itemSubscriber = new ItemSubscriber();
     }
 
     private void prepareForCheckIn() {
@@ -206,6 +197,7 @@ public class HeightWeightCheckActivity
                 txtStuName.setText("");
                 isTesting = false;
                 isTestFinished = false;
+                imgPortrait.setImageResource(R.mipmap.icon_head_photo);
                 break;
         }
     }
@@ -257,7 +249,6 @@ public class HeightWeightCheckActivity
         super.onPause();
         SerialDeviceManager.getInstance().setRS232ResiltListener(null);
         SerialDeviceManager.getInstance().close();
-        finish();
     }
 
 

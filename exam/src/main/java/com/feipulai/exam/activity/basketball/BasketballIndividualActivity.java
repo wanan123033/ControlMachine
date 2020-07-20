@@ -697,7 +697,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                     ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 3);
                 } else {
                     Basketball868Result result = new Basketball868Result();
-                    int[] time = TimeUtil.getTestResult(timerDate);
+                    int[] time = TimeUtil.getTestTime(timerDate);
                     if (time != null) {
                         result.setHour(time[0]);
                         result.setMinth(time[1]);
@@ -1007,19 +1007,19 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 }
 //                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, testResult.getPenalizeNum() + "", Paint.Align.CENTER);
 
-                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.LEFT);
+                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
                 break;
             case RoundResult.RESULT_STATE_FOUL:
 //                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "犯规", testResult.getPenalizeNum() + "", Paint.Align.CENTER);
-                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "犯规", Paint.Align.LEFT);
+                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "犯规", Paint.Align.RIGHT);
                 break;
             case RoundResult.RESULT_STATE_BACK:
 //                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "中退", testResult.getPenalizeNum() + "", Paint.Align.CENTER);
-                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "中退", Paint.Align.LEFT);
+                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "中退", Paint.Align.RIGHT);
                 break;
             case RoundResult.RESULT_STATE_WAIVE:
 //                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "弃权", testResult.getPenalizeNum() + "", Paint.Align.CENTER);
-                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "弃权", Paint.Align.LEFT);
+                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "弃权", Paint.Align.RIGHT);
                 break;
 
         }

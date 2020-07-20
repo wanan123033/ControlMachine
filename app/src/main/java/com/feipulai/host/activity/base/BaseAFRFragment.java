@@ -122,6 +122,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
     protected void initData() {
         initEngine();
         initCamera();
+
     }
 
     private void initCamera() {
@@ -344,6 +345,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         }
 
         faceNumber = FaceServer.getInstance().getFaceNumber();
+        Log.i("faceRegisterInfoList", "4----------" + faceNumber);
     }
 
     /**

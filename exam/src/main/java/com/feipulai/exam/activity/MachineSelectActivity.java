@@ -59,9 +59,6 @@ public class MachineSelectActivity extends BaseTitleActivity
         mTupleList.add(new Tuple(ItemDefault.CODE_WLJ, "握力", R.mipmap.grip, 3));
 //        mTupleList.add(new Tuple(ItemDefault.CODE_JGCJ, "激光测距", R.mipmap.icon_jgcj, 3));
 
-
-
-
         RecyclerView recyclerView = findViewById(R.id.rv_item);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 12);
         recyclerView.setLayoutManager(layoutManager);
