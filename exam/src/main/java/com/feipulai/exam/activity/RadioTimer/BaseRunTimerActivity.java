@@ -67,7 +67,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
     public RunTimerDisposeManager disposeManager;
     private int interceptWay;
     private int settingSensor;
-    public boolean reLoad;
+//    public boolean reLoad;
     private boolean isBaseTime ;//是否已经计算误差时间
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,21 +88,21 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        reLoad = false;
-        runTimerSetting = SharedPrefsUtil.loadFormSource(this, RunTimerSetting.class);
-        if (null == runTimerSetting) {
-            runTimerSetting = new RunTimerSetting();
-        }
-        if (TestConfigs.sCurrentItem.getTestNum() != 0) {
-            maxTestTimes = TestConfigs.sCurrentItem.getTestNum();
-        } else {
-            maxTestTimes = runTimerSetting.getTestTimes();
-        }
-        if (runNum != Integer.parseInt(runTimerSetting.getRunNum()) || interceptPoint != runTimerSetting.getInterceptPoint()
-                || interceptWay != runTimerSetting.getInterceptWay() || settingSensor != runTimerSetting.getSensor()) {
-            getSetting();
-            reLoad = true;
-        }
+//        reLoad = false;
+//        runTimerSetting = SharedPrefsUtil.loadFormSource(this, RunTimerSetting.class);
+//        if (null == runTimerSetting) {
+//            runTimerSetting = new RunTimerSetting();
+//        }
+//        if (TestConfigs.sCurrentItem.getTestNum() != 0) {
+//            maxTestTimes = TestConfigs.sCurrentItem.getTestNum();
+//        } else {
+//            maxTestTimes = runTimerSetting.getTestTimes();
+//        }
+//        if (runNum != Integer.parseInt(runTimerSetting.getRunNum()) || interceptPoint != runTimerSetting.getInterceptPoint()
+//                || interceptWay != runTimerSetting.getInterceptWay() || settingSensor != runTimerSetting.getSensor()) {
+//            getSetting();
+//            reLoad = true;
+//        }
     }
 
     /**

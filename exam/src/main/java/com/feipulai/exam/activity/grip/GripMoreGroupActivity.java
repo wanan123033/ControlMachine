@@ -7,11 +7,13 @@ import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.manager.GripManager;
 import com.feipulai.device.serial.RadioManager;
+import com.feipulai.exam.R;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.sargent_jump.more_device.BaseMoreGroupActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.DeviceDetail;
+import com.feipulai.exam.entity.RoundResult;
 
 /**
  * Created by pengjf on 2020/7/1.
@@ -24,19 +26,22 @@ public class GripMoreGroupActivity extends BaseMoreGroupActivity {
     private final static int GET_STATE = 1;
     private final static int GET_RESULT = 2;
     private static final String TAG = "GripMoreGroupActivity";
+    private boolean update;
     @Override
     protected void initData() {
-        super.initData();
         setting = SharedPrefsUtil.loadFormSource(this, GripSetting.class);
         if (null == setting) {
             setting = new GripSetting();
         }
+        deviceState = new int[setting.getDeviceSum()];
         getState();
         RadioManager.getInstance().setOnRadioArrived(gripRadio);
+        super.initData();
+
     }
 
     private void getState() {
-        for (int i = 0; i < deviceState.length; i++) {
+        for (int i = 0; i < deviceDetails.size(); i++) {
             BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
             if (deviceState[i] == 0) {
                 if (baseDevice.getState() != BaseDeviceState.STATE_ERROR) {
@@ -72,6 +77,11 @@ public class GripMoreGroupActivity extends BaseMoreGroupActivity {
         updateDevice(pair.getBaseDevice());
         GripManager.sendCommand(SettingHelper.getSystemSetting().getHostId(),
                 pair.getBaseDevice().getDeviceId(), 0x03);
+        if (setting.getDeviceSum() == 1){
+            setTxtEnable(R.id.txt_start,false);
+            update = true;
+        }
+
     }
 
     @Override
@@ -107,6 +117,10 @@ public class GripMoreGroupActivity extends BaseMoreGroupActivity {
                         }
 
                     }
+                    if (setting.getDeviceSum() == 1){
+                        setTxtEnable(R.id.txt_start,true);
+                    }
+
                     break;
             }
 
@@ -120,8 +134,17 @@ public class GripMoreGroupActivity extends BaseMoreGroupActivity {
         stuPair.setEndTime(DateUtil.getCurrentTime() + "");
         result = result * 100;//握力需要乘100
         stuPair.setResult(result);
+        stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
         updateTestResult(stuPair);
-        updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, stuPair.getBaseDevice().getDeviceId()));
+        if (setting.getDeviceSum() == 1){
+            if (update){
+                updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, stuPair.getBaseDevice().getDeviceId()));
+                update = false;
+            }
+        }else {
+            updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, stuPair.getBaseDevice().getDeviceId()));
+        }
+
     }
 
     private WirelessVitalListener gripRadio = new WirelessVitalListener(new WirelessVitalListener.WirelessListener() {

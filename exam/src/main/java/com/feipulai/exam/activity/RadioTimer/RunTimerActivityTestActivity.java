@@ -230,9 +230,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     protected void onResume() {
         super.onResume();
         LogUtils.life("RunTimerActivityTestActivity onResume");
-        if (reLoad) {
-            initView();
-        }
+
     }
 
     private void showPop(int pos, View view) {

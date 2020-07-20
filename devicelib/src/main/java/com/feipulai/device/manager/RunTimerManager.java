@@ -30,7 +30,7 @@ public class RunTimerManager {
      *
      * @param runNum 拦截器对数
      * @param hostId 主机号
-     * @param interceptPoint 拦截点 不需要传入-1
+     * @param interceptPoint 拦截点(起点1，终点2，起终点3) 不需要传入-1
      * @param interceptWay 触发方式 不需要传入-1
      * @param settingSensor 传感器信道 不需要传入-1
      * @param senNum 灵敏度 不需要传入-1
@@ -72,7 +72,11 @@ public class RunTimerManager {
         }
 
     }
-
+    public static void cmdInterceptTime(int time){
+        byte [] cmd = cmd((byte) 0xc1,(byte) 0x07,(byte) time);
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---红外计时设置拦截间隔指令");
+        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd));//拦截间隔
+    }
 
     public static void forceStart(){
         byte[] cmd = cmd((byte) 0xc4, (byte) 0x00, (byte) 0x00);
