@@ -15,6 +15,7 @@ import com.feipulai.exam.activity.sargent_jump.more_device.BaseMoreGroupActivity
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.sitreach.SitReachSetting;
 import com.feipulai.exam.bean.DeviceDetail;
+import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 
 public class SitReachMoreGroupActivity extends BaseMoreGroupActivity {
@@ -35,19 +36,20 @@ public class SitReachMoreGroupActivity extends BaseMoreGroupActivity {
             setting = new SitReachSetting();
         }
         resultUpdate = new boolean[setting.getTestDeviceCount()];
-        super.initData();
-        manager = new SitReachManager(SitReachManager.PROJECT_CODE_SIT_REACH);
+        deviceState = new int[setting.getTestDeviceCount()];
         for (int i = 0; i < deviceState.length; i++) {
             deviceState[i] = 0;
             resultUpdate[i] = true;
         }
+        super.initData();
+        manager = new SitReachManager(SitReachManager.PROJECT_CODE_SIT_REACH);
         getState();
         RadioManager.getInstance().setOnRadioArrived(sitReachRadio);
     }
 
     private void getState() {
         Log.i(TAG, "james_send_getState");
-        for (int i = 0; i < setting.getTestDeviceCount(); i++) {
+        for (int i = 0; i < deviceDetails.size(); i++) {
             BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
             if (deviceState[i] == 0) {
                 if (baseDevice.getState() != BaseDeviceState.STATE_ERROR) {
@@ -141,6 +143,7 @@ public class SitReachMoreGroupActivity extends BaseMoreGroupActivity {
                 stuPair.setFullMark(result >= setting.getWomenFull() * 10);
             }
         }
+        stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
         stuPair.setEndTime(DateUtil.getCurrentTime() + "");
         stuPair.setResult(result);
         updateTestResult(stuPair);
@@ -160,7 +163,7 @@ public class SitReachMoreGroupActivity extends BaseMoreGroupActivity {
                     mHandler.sendMessage(msg);
                     resultUpdate[result.getDeviceId()-1] = false;
                 }else {
-                    toastSpeak("数据错误请重测");
+//                    toastSpeak("数据错误请重测");
                 }
                 backFlag = true;
             }

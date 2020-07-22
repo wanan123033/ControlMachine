@@ -18,6 +18,7 @@ import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.sargent_jump.more_device.BaseMoreActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.DeviceDetail;
+import com.feipulai.exam.entity.RoundResult;
 import com.orhanobut.logger.utils.LogUtils;
 
 import butterknife.OnClick;
@@ -195,6 +196,7 @@ public class GripMoreActivity extends BaseMoreActivity {
         stuPair.setEndTime(DateUtil.getCurrentTime() + "");
         result = result * 100;//握力需要乘100
         stuPair.setResult(result);
+        stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
         updateResult(stuPair);
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, stuPair.getBaseDevice().getDeviceId()));
     }
