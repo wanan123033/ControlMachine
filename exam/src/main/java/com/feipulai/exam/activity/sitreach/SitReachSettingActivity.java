@@ -28,6 +28,7 @@ import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.activity.sitreach.more_device.pair.SitReachPairActivity;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
@@ -66,7 +67,8 @@ public class SitReachSettingActivity extends BaseTitleActivity implements Compou
     RadioButton rbCirculationTest;
     @BindView(R.id.rg_test_pattern)
     RadioGroup rgTestPattern;
-
+    @BindView(R.id.tv_match)
+    TextView tvMatch;
 
     private Integer[] testRound = new Integer[]{1, 2, 3};
 
@@ -130,6 +132,14 @@ public class SitReachSettingActivity extends BaseTitleActivity implements Compou
         cbFullReturn.setChecked(reachSetting.isFullReturn());
         SerialDeviceManager.getInstance().setRS232ResiltListener(listener);
         setEditTextWatcherListener();
+
+        tvMatch.setVisibility(SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN ? View.GONE : View.VISIBLE);//个人模式隐藏
+        tvMatch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(SitReachSettingActivity.this, SitReachPairActivity.class));
+            }
+        });
     }
 
     @Nullable

@@ -38,6 +38,7 @@ public class SerialConfigs {
         sProChannels.put(ItemDefault.CODE_ZQYQ, 95);//足球运球
         sProChannels.put(ItemDefault.CODE_WLJ, 101);//握力计
         sProChannels.put(ItemDefault.CODE_JGCJ, 63);//激光测距
+        sProChannels.put(ItemDefault.CODE_SHOOT, 120);//篮球投篮
     }
 
     public static final String[] GROUP_NAME = {"A", "B", "C"};

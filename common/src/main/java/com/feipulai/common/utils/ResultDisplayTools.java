@@ -36,6 +36,7 @@ public class ResultDisplayTools {
             case ItemDefault.CODE_YTXS:
             case ItemDefault.CODE_PQ:
             case ItemDefault.CODE_FWC:
+            case ItemDefault.CODE_SHOOT:
                 if ("次".equals(unit) || "个".equals(unit)) {
                     result = unit;
                 } else
@@ -153,12 +154,11 @@ public class ResultDisplayTools {
                 strResult = dbResult + (isReturnUnit ? unit : "");
                 break;
             case "":
-                strResult = String.valueOf((double)dbResult / 10.0);
+                strResult = String.valueOf((double) dbResult / 10.0);
                 break;
         }
         return strResult;
     }
-
 
 
     private static String analyzeWeightResult(int dbResult, String unit, int digital, int carryMode, boolean isReturnUnit) {

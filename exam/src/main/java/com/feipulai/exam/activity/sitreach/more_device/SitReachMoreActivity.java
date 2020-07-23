@@ -21,6 +21,7 @@ import com.feipulai.exam.activity.sitreach.SitReachSetting;
 import com.feipulai.exam.activity.sitreach.SitReachSettingActivity;
 import com.feipulai.exam.activity.sitreach.more_device.pair.SitReachPairActivity;
 import com.feipulai.exam.bean.DeviceDetail;
+import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
@@ -220,7 +221,7 @@ public class SitReachMoreActivity extends BaseMoreActivity {
                     mHandler.sendMessage(msg);
                     resultUpdate[result.getDeviceId()-1] = false;
                 }else {
-                    toastSpeak("数据错误请重测");
+//                    toastSpeak("数据错误请重测");
                 }
                 backFlag = true;
             }
@@ -260,6 +261,7 @@ public class SitReachMoreActivity extends BaseMoreActivity {
                 stuPair.setFullMark(result >= setting.getWomenFull() * 10);
             }
         }
+        stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
         stuPair.setEndTime(DateUtil.getCurrentTime() + "");
         stuPair.setResult(result);
         updateResult(stuPair);

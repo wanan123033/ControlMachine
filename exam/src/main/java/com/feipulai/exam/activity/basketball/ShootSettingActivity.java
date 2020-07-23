@@ -113,9 +113,15 @@ public class ShootSettingActivity extends BaseTitleActivity implements CompoundB
         ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testRound);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTestNo.setAdapter(adapter);
-        spTestNo.setSelection(TestConfigs.getMaxTestCount(this) - 1);
-        // 数据库中已经指定了测试次数,就不能再设置了
-        spTestNo.setEnabled(TestConfigs.sCurrentItem.getTestNum() == 0);
+
+        if (TestConfigs.sCurrentItem.getTestNum() != 0){
+            spTestNo.setEnabled(false);
+            // 数据库中已经指定了测试次数,就不能再设置了
+            spTestNo.setSelection(TestConfigs.sCurrentItem.getTestNum() - 1);
+            setting.setTestNo(TestConfigs.sCurrentItem.getTestNum());
+        }else {
+            spTestNo.setSelection(setting.getTestNo()-1);
+        }
 
         //设置进位
         ArrayAdapter adapter1 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, carryMode);
@@ -252,5 +258,11 @@ public class ShootSettingActivity extends BaseTitleActivity implements CompoundB
                 setting.setBack2No(position);
                 break;
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SharedPrefsUtil.save(this, setting);
     }
 }

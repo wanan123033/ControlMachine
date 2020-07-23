@@ -142,7 +142,7 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
     }
 
     @Override
-    protected void updateStudent(Student student) {
+    protected void updateStudent(Student student , List<RoundResult> results) {
         tvStudentCode.setText(student.getStudentCode());
         tvStudentName.setText(student.getStudentName());
         tvGender.setText(student.getSex() == 0 ? "男" : "女");

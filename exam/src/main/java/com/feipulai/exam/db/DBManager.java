@@ -119,7 +119,7 @@ public class DBManager {
                 ItemDefault.CODE_LDTY, ItemDefault.CODE_ZWTQQ,
                 ItemDefault.CODE_HWSXQ, ItemDefault.CODE_FHL, ItemDefault.CODE_ZFP,
                 ItemDefault.CODE_PQ, ItemDefault.CODE_MG, ItemDefault.CODE_FWC, ItemDefault.CODE_LQYQ,
-                ItemDefault.CODE_ZQYQ, ItemDefault.CODE_ZCP, ItemDefault.CODE_JGCJ,ItemDefault.CODE_WLJ
+                ItemDefault.CODE_ZQYQ, ItemDefault.CODE_ZCP, ItemDefault.CODE_JGCJ,ItemDefault.CODE_WLJ,ItemDefault.CODE_SHOOT
         };
         for (int machineCode : supportMachineCodes) {
             //查询是否已经存在该机器码的项,如果存在就放弃,避免重复添加
@@ -189,7 +189,9 @@ public class DBManager {
                 case ItemDefault.CODE_WLJ:
                     insertItem(machineCode, "握力", "千克", TEST_TYPE_POWER);
                     break;
-
+                case ItemDefault.CODE_SHOOT:
+                    insertItem(machineCode, "篮球投篮", "个", TEST_TYPE_COUNT);
+                    break;
             }
         }
         Logger.i("数据库初始化完成");

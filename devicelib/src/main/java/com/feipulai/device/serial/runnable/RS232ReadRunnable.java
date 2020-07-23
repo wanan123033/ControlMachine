@@ -51,6 +51,8 @@ public class RS232ReadRunnable extends SerialReadRunnable {
                     parser = new HWParser();
                     break;
                 case ItemDefault.CODE_ZFP:
+                case ItemDefault.CODE_LQYQ:
+                case ItemDefault.CODE_SHOOT:
                     parser = new RunTimerParser();
                     break;
                 // 立定跳远
