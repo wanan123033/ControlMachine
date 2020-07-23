@@ -528,7 +528,7 @@ public class FaceServer {
         float maxSimilar = 0;
         int maxSimilarIndex = -1;
         isProcessing = true;
-        for (int i = 0; i < (faceNumber < 3 ? faceNumber : faceNumber / 3); i++) {
+        for (int i = 0; i < (faceNumber <= 9 ? faceNumber : faceNumber / 3); i++) {
             tempFaceFeature.setFeatureData(faceRegisterInfoList.get(i).getFeatureData());
             faceEngine.compareFaceFeature(faceFeature, tempFaceFeature, faceSimilar);
             if (faceSimilar.getScore() > maxSimilar) {
