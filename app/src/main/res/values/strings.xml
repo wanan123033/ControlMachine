@@ -191,6 +191,6 @@
     <string name="low_battery_goto_hint">存在低电量设备,是否进入测试?</string>
     <string name="print_more_hint">选择打印考生数量过多，确定继续打印？</string>
 
-
+    <string name="download_photo_select">继续下载（%1$d / %2$d）</string>
 
 </resources>

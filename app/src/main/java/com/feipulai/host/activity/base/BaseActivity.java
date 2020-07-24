@@ -128,7 +128,7 @@ public class BaseActivity extends FragmentActivity {
         });
     }
 
-    protected static class MyHandler extends Handler {
+    public static class MyHandler extends Handler {
 
         private WeakReference<BaseActivity> mWeakReference;
 

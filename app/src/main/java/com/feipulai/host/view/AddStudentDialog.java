@@ -103,13 +103,16 @@ public class AddStudentDialog {
     }
 
     private void addStudent() {
-        Student student = new Student();
-        student.setStudentCode(editStuCode.getText().toString().trim());
-        student.setStudentName(editStuName.getText().toString().trim());
-        student.setSex(sex);
-        // 插入学生信息
-        DBManager.getInstance().insertStudent(student);
+        Student student = DBManager.getInstance().queryStudentByCode(editStuCode.getText().toString().trim());
+        if (student == null) {
+            student = new Student();
+            student.setStudentCode(editStuCode.getText().toString().trim());
+            student.setStudentName(editStuName.getText().toString().trim());
+            student.setSex(sex);
+            // 插入学生信息
+            DBManager.getInstance().insertStudent(student);
 
+        }
         StudentItem studentItem = new StudentItem();
         studentItem.setStudentCode(editStuCode.getText().toString());
         studentItem.setItemCode(TestConfigs.getCurrentItemCode());

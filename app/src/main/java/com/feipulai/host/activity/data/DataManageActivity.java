@@ -8,9 +8,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
@@ -20,7 +20,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.arcsoft.face.util.ImageUtils;
 import com.arcsoft.imageutil.ArcSoftImageFormat;
 import com.arcsoft.imageutil.ArcSoftImageUtil;
 import com.arcsoft.imageutil.ArcSoftImageUtilError;
@@ -33,16 +32,20 @@ import com.feipulai.common.dbutils.FileSelectActivity;
 import com.feipulai.common.exl.ExlListener;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.FileUtil;
+import com.feipulai.common.utils.HandlerUtil;
 import com.feipulai.common.utils.ImageUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.StringChineseUtil;
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.common.utils.archiver.IArchiverListener;
+import com.feipulai.common.utils.archiver.ZipArchiver;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.common.view.dialog.EditDialog;
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseTitleActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
+import com.feipulai.host.activity.setting.SystemSetting;
 import com.feipulai.host.bean.UploadResults;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.config.TestConfigs;
@@ -51,8 +54,13 @@ import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.exl.ResultExlWriter;
 import com.feipulai.host.exl.StuItemExLReader;
+import com.feipulai.host.netUtils.CommonUtils;
 import com.feipulai.host.netUtils.UploadResultUtil;
+import com.feipulai.host.netUtils.download.DownService;
+import com.feipulai.host.netUtils.download.DownloadHelper;
+import com.feipulai.host.netUtils.download.DownloadUtils;
 import com.feipulai.host.netUtils.netapi.ServerIml;
+import com.feipulai.host.netUtils.download.DownloadListener;
 import com.feipulai.host.view.DBDataCleaner;
 import com.feipulai.host.view.OperateProgressBar;
 import com.github.mjdev.libaums.fs.UsbFile;
@@ -76,11 +84,15 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import butterknife.BindView;
+import okhttp3.Headers;
 
 /**
  * 数据管理
@@ -108,6 +120,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
     private boolean isProcessingData;
     private List<TypeListBean> typeDatas;
     private ProgressDialog progressDialog;
+    private MyHandler myHandler = new MyHandler(this);
 
     @Override
     protected int setLayoutResID() {
@@ -273,7 +286,8 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                     case 10://头像检入  todo 头像不保存在数据库些功能没作用，弃用
                         LogUtils.operation("用户点击了头像检入...");
 //                        uploadPortrait();
-                        ToastUtils.showShort("功能未开放，敬请期待");
+//                        ToastUtils.showShort("功能未开放，敬请期待");
+                        showDownLoadPhotoDialog();
                         break;
                     case 11://人脸特征
                         LogUtils.operation("用户点击了人脸特征检入...");
@@ -282,6 +296,182 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                 }
             }
         });
+    }
+
+    private Headers saveHeaders;
+    private DownLoadPhotoHeaders photoHeaders;
+    private DownLoadProgressDialog downLoadProgressDialog;
+    private DownloadUtils downloadUtils = new DownloadUtils();
+
+    private void uploadPhotos(int batch, final String uploadTime) {
+        HashMap<String, String> parameData = new HashMap<>();
+        parameData.put("batch", batch + "");
+        parameData.put("uploadTime", uploadTime);
+        parameData.put("itemcode", TestConfigs.getCurrentItemCode());
+        downloadUtils.downloadFile(DownloadHelper.getInstance().buildRetrofit(CommonUtils.getIp()).createService(DownService.class)
+                        .downloadFile("bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery("10001", parameData)),
+                MyApplication.PATH_IMAGE, DateUtil.getCurrentTime() + ".zip", new DownloadListener() {
+                    @Override
+                    public void onStart(String fileName) {
+                        downLoadProgressDialog.setDownFileName(fileName);
+                    }
+
+                    @Override
+                    public void onResponse(Headers headers) {
+                        saveHeaders = headers;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                downLoadProgressDialog.showDialog();
+                                downLoadProgressDialog.setMaxProgress(Integer.valueOf(saveHeaders.get("BatchTotal")));
+                                downLoadProgressDialog.setProgress(Integer.valueOf(saveHeaders.get("PageNo")) - 1);
+                            }
+                        });
+
+                    }
+
+                    @Override
+                    public void onProgress(String fileName, int progress) {
+
+                    }
+
+                    @Override
+                    public void onFinish(String fileName) {
+                        if (!new File(MyApplication.PATH_IMAGE + fileName).exists()) {
+                            return;
+                        }
+
+                        if (photoHeaders == null) {
+                            photoHeaders = SharedPrefsUtil.loadFormSource(DataManageActivity.this, DownLoadPhotoHeaders.class);
+                        }
+                        photoHeaders.setInit(Integer.valueOf(saveHeaders.get("PageNo")), Integer.valueOf(saveHeaders.get("BatchTotal")), saveHeaders.get("UploadTime"));
+                        SharedPrefsUtil.save(DataManageActivity.this, photoHeaders);
+                        if (photoHeaders.getPageNo() != photoHeaders.getBatchTotal()) {
+//                            runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    downLoadProgressDialog.dismissDialog();
+//                                }
+//                            });
+
+//                        } else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    downLoadProgressDialog.setMaxProgress(Integer.valueOf(saveHeaders.get("BatchTotal")));
+                                    downLoadProgressDialog.setProgress(Integer.valueOf(saveHeaders.get("PageNo")));
+                                }
+                            });
+                            uploadPhotos(photoHeaders.getPageNo() + 1, uploadTime);
+                        }
+                        int isDismiss = photoHeaders.getPageNo() == photoHeaders.getBatchTotal() ? 1 : 0;
+                        HandlerUtil.sendMessage(myHandler, 0, isDismiss, fileName);
+                    }
+
+                    @Override
+                    public void onFailure(String fileName, String errorInfo) {
+
+                    }
+                });
+    }
+
+    @Override
+    public void handleMessage(Message msg) {
+        super.handleMessage(msg);
+        fileZipArchiver((String) msg.obj, msg.arg1 == 1);
+    }
+
+
+    private void fileZipArchiver(final String fileName, final boolean isDismissDialog) {
+
+        new ZipArchiver().doUnArchiver(MyApplication.PATH_IMAGE + fileName, MyApplication.PATH_IMAGE, "", new IArchiverListener() {
+            @Override
+            public void onStartArchiver() {
+
+            }
+
+            @Override
+            public void onProgressArchiver(int current, int total) {
+                if (current == total) {
+                    //解压完成删除文件
+                    new File(MyApplication.PATH_IMAGE + fileName).delete();
+                    if (isDismissDialog) {
+                        downLoadProgressDialog.dismissDialog();
+
+                    }
+
+                }
+            }
+
+            @Override
+            public void onEndArchiver() {
+
+            }
+        });
+
+    }
+
+    int selectWhich = 0;
+
+    private void showDownLoadPhotoDialog() {
+        downLoadProgressDialog = new DownLoadProgressDialog(this);
+        downLoadProgressDialog.setCancelClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                downloadUtils.stopDown(downLoadProgressDialog.getDownFileName());
+                downLoadProgressDialog.dismissDialog();
+            }
+        });
+        final DownLoadPhotoHeaders photoHeaders = SharedPrefsUtil.loadFormSource(this, DownLoadPhotoHeaders.class);
+        List<String> itemList = new ArrayList<>();
+        if (photoHeaders == null || photoHeaders.getPageNo() == 0) {
+            uploadPhotos(1, "");
+            return;
+        } else {
+            if (photoHeaders.getBatchTotal() != photoHeaders.getPageNo()) {
+                itemList.add(String.format(getString(R.string.download_photo_select), photoHeaders.getPageNo(), photoHeaders.getBatchTotal()));
+            }
+            itemList.add("更新下载");
+            itemList.add("全部下载");
+        }
+        String[] item = itemList.toArray(new String[itemList.size()]);
+
+        new AlertDialog.Builder(this)
+                .setTitle("头像下载")
+                .setSingleChoiceItems(item, 0, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        selectWhich = which;
+                    }
+                })
+                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        switch (selectWhich) {
+                            case 0:
+                                if (photoHeaders.getBatchTotal() != photoHeaders.getPageNo()) {
+                                    uploadPhotos(photoHeaders.getPageNo() + 1, "");
+                                } else {
+                                    uploadPhotos(1, photoHeaders.getUploadTime());
+                                }
+                                break;
+                            case 1:
+                                if (photoHeaders.getBatchTotal() != photoHeaders.getPageNo()) {
+                                    uploadPhotos(1, photoHeaders.getUploadTime());
+                                } else {
+                                    uploadPhotos(1, "");
+                                }
+                                break;
+                            case 2:
+                                uploadPhotos(1, "");
+                                break;
+                        }
+
+
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null).show();
     }
 
     private void showDownLoadDialog() {
@@ -432,10 +622,12 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                     if (transformCode != ArcSoftImageUtilError.CODE_SUCCESS) {
                         continue;
                     }
+                    String studentCode = jpgFile.getName().substring(0, jpgFile.getName().lastIndexOf("."));
                     boolean success = FaceServer.getInstance().registerBgr24(DataManageActivity.this, bgr24, bitmap.getWidth(), bitmap.getHeight(),
-                            jpgFile.getName().substring(0, jpgFile.getName().lastIndexOf(".")));
+                            studentCode);
+
                     if (!success) {
-                        Log.e("faceRegister", "人脸注册失败" + jpgFile.getName().substring(0, jpgFile.getName().lastIndexOf(".")));
+                        Log.e("faceRegister", "人脸注册失败" + studentCode);
 
                     } else {
                         successCount++;
@@ -737,6 +929,8 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                 DBManager.getInstance().initDB();
                 TestConfigs.init(DataManageActivity.this, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), null);
                 FileUtil.delete(MyApplication.PATH_IMAGE);
+                FileUtil.delete(FaceServer.ROOT_PATH);
+                FileUtil.mkdirs2(FaceServer.ROOT_PATH);
                 FileUtil.mkdirs(MyApplication.PATH_IMAGE);
                 Logger.i("进行数据清空");
                 return new DataBaseRespon(true, "", "");
