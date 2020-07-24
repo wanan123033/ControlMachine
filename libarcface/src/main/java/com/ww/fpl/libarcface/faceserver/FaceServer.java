@@ -381,11 +381,11 @@ public class FaceServer {
                 return false;
             }
             //图片存储的文件夹
-            File imgDir = new File(ROOT_PATH + File.separator + SAVE_IMG_DIR);
-            if (!imgDir.exists() && !imgDir.mkdirs()) {
-                Log.e(TAG, "registerBgr24: can not create image directory");
-                return false;
-            }
+//            File imgDir = new File(ROOT_PATH + File.separator + SAVE_IMG_DIR);
+//            if (!imgDir.exists() && !imgDir.mkdirs()) {
+//                Log.e(TAG, "registerBgr24: can not create image directory");
+//                return false;
+//            }
             //人脸检测
             List<FaceInfo> faceInfoList = new ArrayList<>();
             int code = faceEngine.detectFaces(bgr24, width, height, FaceEngine.CP_PAF_BGR24, faceInfoList);
@@ -399,25 +399,25 @@ public class FaceServer {
                     //保存注册结果（注册图、特征数据）
                     if (code == ErrorInfo.MOK) {
                         //为了美观，扩大rect截取注册图
-                        Rect cropRect = getBestRect(width, height, faceInfoList.get(0).getRect());
-                        if (cropRect == null) {
-                            Log.e(TAG, "registerBgr24: cropRect is null");
-                            return false;
-                        }
-
-                        cropRect.left &= ~3;
-                        cropRect.top &= ~3;
-                        cropRect.right &= ~3;
-                        cropRect.bottom &= ~3;
-
-                        File file = new File(imgDir + File.separator + userName + IMG_SUFFIX_JPG);
-                        FileOutputStream fosImage = new FileOutputStream(file);
-
-                        // 创建一个头像的Bitmap，存放旋转结果图
-                        Bitmap headBmp = getHeadImage(bgr24, width, height, faceInfoList.get(0).getOrient(), cropRect, ArcSoftImageFormat.BGR24);
-                        // 保存到本地
-                        headBmp.compress(Bitmap.CompressFormat.JPEG, 100, fosImage);
-                        fosImage.close();
+//                        Rect cropRect = getBestRect(width, height, faceInfoList.get(0).getRect());
+//                        if (cropRect == null) {
+//                            Log.e(TAG, "registerBgr24: cropRect is null");
+//                            return false;
+//                        }
+//
+//                        cropRect.left &= ~3;
+//                        cropRect.top &= ~3;
+//                        cropRect.right &= ~3;
+//                        cropRect.bottom &= ~3;
+                        //todo 不进行头像图片保存,已有图片会出现重复保存冗余
+//                        File file = new File(imgDir + File.separator + userName + IMG_SUFFIX_JPG);
+//                        FileOutputStream fosImage = new FileOutputStream(file);
+//
+//                        // 创建一个头像的Bitmap，存放旋转结果图
+//                        Bitmap headBmp = getHeadImage(bgr24, width, height, faceInfoList.get(0).getOrient(), cropRect, ArcSoftImageFormat.BGR24);
+//                        // 保存到本地
+//                        headBmp.compress(Bitmap.CompressFormat.JPEG, 100, fosImage);
+//                        fosImage.close();
 
                         // 保存特征数据
                         FileOutputStream fosFeature = new FileOutputStream(featureDir + File.separator + userName);

@@ -39,10 +39,9 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':logger')
     compile project(':devicelib')
-
     compile 'com.github.mjdev:libaums:0.6.0'
-//    compile 'com.github.mjdev:libaums-httpserver:0.5.3'
-//    compile 'com.github.mjdev:libaums-storageprovider:0.5.1'
+    //    compile 'com.github.mjdev:libaums-httpserver:0.5.3'
+    //    compile 'com.github.mjdev:libaums-storageprovider:0.5.1'
     // USB 读写
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.android.support:appcompat-v7:26.1.0'

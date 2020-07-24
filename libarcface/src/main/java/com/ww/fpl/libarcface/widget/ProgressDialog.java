@@ -3,6 +3,7 @@ package com.ww.fpl.libarcface.widget;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;

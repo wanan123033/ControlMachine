@@ -286,11 +286,11 @@ public class FileUtil {
         }
         return s;
     }
+
     /**
      * 删除文件，可以是文件或文件夹
      *
-     * @param fileName
-     *            要删除的文件名
+     * @param fileName 要删除的文件名
      * @return 删除成功返回true，否则返回false
      */
     public static boolean delete(String fileName) {
@@ -309,8 +309,7 @@ public class FileUtil {
     /**
      * 删除单个文件
      *
-     * @param fileName
-     *            要删除的文件的文件名
+     * @param fileName 要删除的文件的文件名
      * @return 单个文件删除成功返回true，否则返回false
      */
     public static boolean deleteFile(String fileName) {
@@ -333,8 +332,7 @@ public class FileUtil {
     /**
      * 删除目录及目录下的文件
      *
-     * @param dir
-     *            要删除的目录的文件路径
+     * @param dir 要删除的目录的文件路径
      * @return 目录删除成功返回true，否则返回false
      */
     public static boolean deleteDirectory(String dir) {
@@ -377,16 +375,17 @@ public class FileUtil {
             return false;
         }
     }
-        /**
-         * 创建根文件夹
-         * <p/>
-         * <br/>version
-         * <br/>createTime 2016/12/27 , 下午10:58
-         * <br/>updateTime 2016/12/27 , 下午10:58
-         * <br/>createAuthor wzl
-         * <br/>updateAuthor wzl
-         * <br/>updateInfo
-         */
+
+    /**
+     * 创建根文件夹
+     * <p/>
+     * <br/>version
+     * <br/>createTime 2016/12/27 , 下午10:58
+     * <br/>updateTime 2016/12/27 , 下午10:58
+     * <br/>createAuthor wzl
+     * <br/>updateAuthor wzl
+     * <br/>updateInfo
+     */
     public static void createAllFile() {
         mkdirs(PATH_BASE);
         mkdirs(BackupManager.AUTO_BACKUP_DIR);
@@ -418,5 +417,22 @@ public class FileUtil {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 构建文件夹路径
+     * <p>
+     * <br/> Version: 1.0
+     * <br/> CreateTime:  2013-11-3,下午12:08:58
+     * <br/> UpdateTime:  2013-11-3,下午12:08:58
+     * <br/> CreateAuthor:  CodeApe
+     * <br/> UpdateAuthor:  CodeApe
+     * <br/> UpdateInfo:  (此处输入修改内容,若无修改可不写.)
+     *
+     * @param path
+     */
+    public static void mkdirs2(String path) {
+        new File(path).mkdirs();
+
     }
 }
