@@ -230,7 +230,9 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     protected void onResume() {
         super.onResume();
         LogUtils.life("RunTimerActivityTestActivity onResume");
-
+        if (reLoad) {
+            initView();
+        }
     }
 
     private void showPop(int pos, View view) {
@@ -520,7 +522,9 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     public void updateConnect(HashMap<String, Integer> map) {
         for (int i = 0; i < runNum; i++) {
             if (mList.get(i) != null) {
-                mList.get(i).setConnectState(map.get(("runNum" + i)));
+                if (map.get(("runNum" + i))!= null){
+                    mList.get(i).setConnectState(map.get(("runNum" + i)));
+                }
             }
         }
         mAdapter2.notifyDataSetChanged();
