@@ -1,6 +1,5 @@
 package com.feipulai.exam.activity.basketball;
 
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -12,13 +11,10 @@ import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.manager.RunTimerManager;
-import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.RunTimerConnectState;
 import com.feipulai.device.serial.beans.RunTimerResult;
 import com.feipulai.exam.R;
-import com.feipulai.exam.activity.RadioTimer.RunTimerSetting;
-import com.feipulai.exam.activity.base.BaseAFRFragment;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.basketball.util.RunTimerImpl;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
@@ -35,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BaseShootActivity extends BaseTitleActivity
-        implements IndividualCheckFragment.OnIndividualCheckInListener, RadioManager.OnRadioArrivedListener {
+        implements IndividualCheckFragment.OnIndividualCheckInListener{
     private static final String TAG = "BaseShootActivity";
     protected IndividualCheckFragment individualCheckFragment;
     private static final int WAIT_FREE = 0x0;
@@ -47,9 +43,8 @@ public abstract class BaseShootActivity extends BaseTitleActivity
     protected volatile int state = WAIT_FREE;
     private List<StuDevicePair> pairs = new ArrayList<>();
     private SerialDeviceManager deviceManager;
-    private RadioManager radioManager;
     private ShootSetting setting;
-    private BaseAFRFragment afrFragment;
+    public long baseTimer ;
     private long startTime;
     @Override
     protected void initData() {
@@ -59,17 +54,11 @@ public abstract class BaseShootActivity extends BaseTitleActivity
 
         deviceManager = SerialDeviceManager.getInstance();
         deviceManager.setRS232ResiltListener(runTimer);
-//        radioManager = RadioManager.getInstance();
-//        radioManager.init();
-//        radioManager.setOnRadioArrived(this);
-        int hostId = SettingHelper.getSystemSetting().getHostId();
+
         //获取项目设置
         setting = SharedPrefsUtil.loadFormSource(this, ShootSetting.class);
         if (setting == null)
             setting = new ShootSetting();
-        if (setting.getTestType() ==2){
-            RunTimerManager.cmdSetting(setting.getInterceptNo(),hostId,1,-1,-1,5);
-        }
 
     }
 
@@ -247,6 +236,7 @@ public abstract class BaseShootActivity extends BaseTitleActivity
                     changeState(new boolean[]{true,false,false,false,false});
                     break;
                 case 2://等待计时
+                    baseTimer = System.currentTimeMillis();
                     startTime = System.currentTimeMillis();
                     changeState(new boolean[]{false, true, true, false, false});
                     break;
@@ -284,8 +274,5 @@ public abstract class BaseShootActivity extends BaseTitleActivity
 
     public abstract void getResult(RunTimerResult result);
 
-    @Override
-    public void onRadioArrived(Message msg) {
 
-    }
 }

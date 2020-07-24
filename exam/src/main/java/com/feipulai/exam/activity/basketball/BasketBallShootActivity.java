@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
@@ -26,6 +27,8 @@ import com.feipulai.exam.activity.basketball.adapter.ShootResultAdapter;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.config.BaseEvent;
+import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.RoundResult;
@@ -145,7 +148,7 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
         changeState(new boolean[]{true, false, false, false, false, false});
         getSetting().setTestType(3);
         int hostId = SettingHelper.getSystemSetting().getHostId();
-        RunTimerManager.cmdSetting(1, hostId, 1, -1, -1, 5);
+        RunTimerManager.cmdSetting(1, hostId, 1, -1, -1, -1);
         RunTimerManager.cmdInterceptTime(1);
         checkConnect();
     }
@@ -317,11 +320,7 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
         PrinterManager.getInstance().print("\n");
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
 
-    }
 
     @Override
     public void getResult(RunTimerResult result) {
@@ -405,20 +404,29 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
     }
 
     @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (individualCheckFragment.dispatchKeyEvent(event)) {
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+    @Override
+    public void onEventMainThread(BaseEvent baseEvent) {
+        if (baseEvent.getTagInt() == EventConfigs.TEMPORARY_ADD_STU) {
+            Student student = (Student) baseEvent.getData();
+            StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+            onIndividualCheckIn(student, studentItem, new ArrayList<RoundResult>());
+        }
+    }
+
+    @Override
     public void disposeConnect(RunTimerConnectState connectState) {
         mHandler.sendEmptyMessage(CONNECT);
         connect = 0;
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (timer != null) {
-            timer.dispose();
-            timer = null;
-        }
-        service.shutdown();
-    }
+
 
     private static final int CONNECT = 1;
     private static final int UN_CONNECT = 2;
@@ -436,4 +444,19 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
             return false;
         }
     });
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (timer != null) {
+            timer.dispose();
+            timer = null;
+        }
+        service.shutdown();
+    }
 }
