@@ -15,12 +15,12 @@ import com.feipulai.exam.activity.RadioTimer.RunTimerActivityGroupActivity;
 import com.feipulai.exam.activity.RadioTimer.RunTimerActivityTestActivity;
 import com.feipulai.exam.activity.RadioTimer.RunTimerSetting;
 import com.feipulai.exam.activity.RadioTimer.RunTimerSettingActivity;
-import com.feipulai.exam.activity.basketball.BaseShootActivity;
 import com.feipulai.exam.activity.basketball.BasketBallGroupActivity;
 import com.feipulai.exam.activity.basketball.BasketBallSelectActivity;
 import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.basketball.BasketBallSettingActivity;
 import com.feipulai.exam.activity.basketball.BasketBallShootActivity;
+import com.feipulai.exam.activity.basketball.BasketBallShootGroupActivity;
 import com.feipulai.exam.activity.basketball.ShootSetting;
 import com.feipulai.exam.activity.basketball.ShootSettingActivity;
 import com.feipulai.exam.activity.footBall.FootBallGroupActivity;
@@ -50,7 +50,6 @@ import com.feipulai.exam.activity.sargent_jump.SargentGroupActivity;
 import com.feipulai.exam.activity.sargent_jump.SargentItemSelectActivity;
 import com.feipulai.exam.activity.sargent_jump.SargentSetting;
 import com.feipulai.exam.activity.sargent_jump.SargentSettingActivity;
-import com.feipulai.exam.activity.setting.SettingActivity;
 import com.feipulai.exam.activity.sitreach.SitReachGroupTestActivity;
 import com.feipulai.exam.activity.sitreach.SitReachSelectActivity;
 import com.feipulai.exam.activity.sitreach.SitReachSetting;
@@ -416,6 +415,7 @@ public class TestConfigs {
         TestConfigs.groupActivity.put(ItemDefault.CODE_ZQYQ, FootBallGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_JGCJ, RangerMoreActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_WLJ, GripMoreGroupActivity.class);
+        TestConfigs.groupActivity.put(ItemDefault.CODE_SHOOT, BasketBallShootGroupActivity.class);
 
         // 每个机器码对应的机器名称
         TestConfigs.machineNameMap.put(ItemDefault.CODE_ZWTQQ, "坐位体前屈");
