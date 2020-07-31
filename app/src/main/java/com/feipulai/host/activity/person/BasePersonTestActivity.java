@@ -524,7 +524,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         }
 
         ServerIml.uploadResult(UploadResultUtil.getUploadData(roundResult, lastResult));
-
+//        ServerIml.uploadResult(this, UploadResultUtil.getUploadData(results));
     }
 
     /**

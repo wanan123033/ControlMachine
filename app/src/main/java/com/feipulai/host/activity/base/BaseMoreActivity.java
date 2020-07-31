@@ -78,7 +78,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     private LedHandler ledHandler = new LedHandler();
     private boolean isNextClickStart = true;
     private boolean isPenalize;
-
+    private long startTime;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_base_more;
@@ -211,6 +211,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                             stuSkip(pos);
                             return;
                         }
+                        startTime = System.currentTimeMillis();
                         if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
                             sendTestCommand(pair, pos);
 //                            view.setBackgroundColor(ContextCompat.getColor(BaseMoreActivity.this, R.color.gray_btn_bg_color));
@@ -619,8 +620,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         roundResult.setResult(baseStuPair.getResult());
         roundResult.setResultState(baseStuPair.getResultState());
         //DateUtil.getCurrentTime2("yyyy-MM-dd HH:mm:ss")
-        roundResult.setTestTime(baseStuPair.getStartTime() + "");
-        roundResult.setPrintTime(baseStuPair.getEndTime() + "");
+        roundResult.setTestTime(startTime + "");
+        roundResult.setPrintTime(System.currentTimeMillis() + "");
         roundResult.setRoundNo(1);
         RoundResult bestResult = DBManager.getInstance().queryBestScore(baseStuPair.getStudent().getStudentCode());
         if (bestResult != null) {
