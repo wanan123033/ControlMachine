@@ -329,7 +329,10 @@ public class DBManager {
 
 
     public List<Student> queryStudentFeatures() {
-        return studentDao.queryBuilder().where(StudentDao.Properties.FaceFeature.isNotNull()).list();
+        return studentDao.queryBuilder()
+                .where(StudentDao.Properties.FaceFeature.isNotNull())
+                .where(StudentDao.Properties.FaceFeature.notEq(""))
+                .list();
     }
 
     /**

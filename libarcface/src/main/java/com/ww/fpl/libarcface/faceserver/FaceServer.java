@@ -528,7 +528,7 @@ public class FaceServer {
         float maxSimilar = 0;
         int maxSimilarIndex = -1;
         isProcessing = true;
-        for (int i = 0; i < (faceNumber <= 9 ? faceNumber : faceNumber / 3); i++) {
+        for (int i = 0; i < (faceRegisterInfoList.size() < 9 ? faceRegisterInfoList.size() : faceRegisterInfoList.size() / 3); i++) {
             tempFaceFeature.setFeatureData(faceRegisterInfoList.get(i).getFeatureData());
             faceEngine.compareFaceFeature(faceFeature, tempFaceFeature, faceSimilar);
             if (faceSimilar.getScore() > maxSimilar) {
@@ -553,7 +553,7 @@ public class FaceServer {
         float maxSimilar = 0;
         int maxSimilarIndex = -1;
         isProcessing2 = true;
-        for (int i = faceNumber / 3; i < (faceNumber < 3 ? faceNumber : faceNumber / 3 * 2); i++) {
+        for (int i = faceRegisterInfoList.size() / 3; i < (faceRegisterInfoList.size() < 3 ? faceRegisterInfoList.size() : faceRegisterInfoList.size() / 3 * 2); i++) {
             tempFaceFeature.setFeatureData(faceRegisterInfoList.get(i).getFeatureData());
             faceEngine2.compareFaceFeature(faceFeature, tempFaceFeature, faceSimilar);
             if (faceSimilar.getScore() > maxSimilar) {
@@ -561,7 +561,7 @@ public class FaceServer {
                 maxSimilarIndex = i;
             }
         }
-        Log.i("getTopOfFaceLib2", "---------------------->");
+        Log.i("getTopOfFaceLib2", "---------------------->"+maxSimilarIndex);
         isProcessing2 = false;
         if (maxSimilarIndex != -1) {
             return new CompareResult(faceRegisterInfoList.get(maxSimilarIndex).getName(), maxSimilar);
@@ -578,7 +578,7 @@ public class FaceServer {
         float maxSimilar = 0;
         int maxSimilarIndex = -1;
         isProcessing3 = true;
-        for (int i = faceNumber / 3 * 2; i < faceNumber; i++) {
+        for (int i = faceRegisterInfoList.size() / 3 * 2; i < faceRegisterInfoList.size(); i++) {
             tempFaceFeature.setFeatureData(faceRegisterInfoList.get(i).getFeatureData());
             faceEngine3.compareFaceFeature(faceFeature, tempFaceFeature, faceSimilar);
             if (faceSimilar.getScore() > maxSimilar) {
@@ -586,7 +586,7 @@ public class FaceServer {
                 maxSimilarIndex = i;
             }
         }
-        Log.i("getTopOfFaceLib3", "---------------------->");
+        Log.i("getTopOfFaceLib3", "---------------------->"+maxSimilarIndex);
         isProcessing3 = false;
         if (maxSimilarIndex != -1) {
             return new CompareResult(faceRegisterInfoList.get(maxSimilarIndex).getName(), maxSimilar);

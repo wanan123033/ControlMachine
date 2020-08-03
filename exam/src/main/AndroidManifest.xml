@@ -8,7 +8,6 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
     <uses-permission android:name="android.permission.UPDATE_DEVICE_STATS" />
 
     <uses-feature
@@ -26,10 +25,9 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" /> <!-- 在SD卡中创建与删除文件权限 -->
+    <uses-permission android:name="android.permission.MOUNT_FORMAT_FILESYSTEMS" />
 
-    <!-- 在SD卡中创建与删除文件权限-->
-    <uses-permission android:name="android.permission.MOUNT_FORMAT_FILESYSTEMS"/>
     <uses-feature
         android:name="android.hardware.usb.host"
         android:required="true" />
@@ -44,12 +42,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.sitreach.more_device.SitReachMoreGroupActivity"></activity>
+        <activity android:name=".activity.basketball.BasketBallShootGroupActivity"></activity>
+        <activity android:name=".activity.sitreach.more_device.SitReachMoreGroupActivity" />
         <activity android:name=".activity.sitreach.more_device.pair.SitReachPairActivity" />
         <activity android:name=".activity.sitreach.more_device.SitReachMoreActivity" />
         <activity
             android:name=".activity.basketball.ShootSettingActivity"
-            android:windowSoftInputMode="adjustPan|stateHidden"></activity>
+            android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity android:name=".activity.basketball.DribbleShootActivity" />
         <activity android:name=".activity.basketball.BasketBallShootActivity" />
         <activity android:name=".activity.medicineBall.more_device.BallGroupMoreActivity" />
@@ -70,7 +69,7 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
-                <!--                <category android:name="android.intent.category.HOME" />-->
+                <!-- <category android:name="android.intent.category.HOME" /> -->
             </intent-filter>
         </activity>
         <activity
@@ -384,7 +383,6 @@
             android:name=".activity.data.ThermometerSearchActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-
         <activity
             android:name=".activity.ranger.RangerMoreActivity"
             android:configChanges="keyboardHidden|keyboard" />
@@ -395,6 +393,7 @@
         <receiver android:name="com.feipulai.device.spputils.SppReciver" />
 
         <service android:name="com.inuker.bluetooth.library.BluetoothService" />
+
         <receiver android:name=".receiver.WifiReceiver">
             <intent-filter>
                 <action android:name="android.net.wifi.RSSI_CHANGED" />
