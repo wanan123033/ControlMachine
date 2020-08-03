@@ -322,7 +322,7 @@ public class HttpSubscriber {
 //                    }
 //                }).create().show();
 //    }
-
+private List<String> stuList = new ArrayList<>();
     /**
      * 获取当前项目考生
      *
@@ -341,6 +341,9 @@ public class HttpSubscriber {
             @Override
             public void onSuccess(BatchBean<List<StudentBean>> result) {
 //                Logger.e("getStudent===>"+result);
+                if (result.getBatch() == 1) {
+                    stuList.clear();
+                }
                 Set<String> supplements = new HashSet<>();// 补考考生考号集合
                 if (result == null || result.getDataInfo() == null || result.getDataInfo().size() == 0) {
                     ToastUtils.showShort("当前无数据下载更新");
@@ -353,6 +356,11 @@ public class HttpSubscriber {
                 final List<StudentItem> studentItemList = new ArrayList<>();
 
                 for (StudentBean studentBean : result.getDataInfo()) {
+                    if (!stuList.contains(studentBean.getIdCard())) {
+                        stuList.add(studentBean.getIdCard());
+                    } else {
+                        Logger.i("重复考生====》" + studentBean.toString());
+                    }
                     if (studentBean.getExamType() != 2 && supplements.contains(studentBean.getStudentCode())) {
                         // 已经是补考的数据,有新的相同的数据过来,但是不是补考状态,不处理
                         continue;
@@ -569,7 +577,7 @@ public class HttpSubscriber {
                         roundResult.setStumbleCount(score.getStumbleCount());
                         roundResult.setTestTime(score.getTestTime());
                         roundResult.setEndTime(DateUtil.getCurrentTime()+"");
-                        roundResult.setMtEquipment(CommonUtils.getDeviceId(MyApplication.getInstance()));
+                        roundResult.setMtEquipment(score.getMtEquipment());
                         RoundResult bestResult = DBManager.getInstance().queryBestScore(studentCode, TestConfigs.sCurrentItem.getTestNum());
                         if (bestResult != null) {
                             // 原有最好成绩犯规 或者原有最好成绩没有犯规但是现在成绩更好
@@ -596,7 +604,8 @@ public class HttpSubscriber {
                         List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(studentCode);
                         boolean flag = false;
                         for (RoundResult re : results) {
-                            if (re.getTestTime().equals(score.testTime) && re.getResult() == roundResult.getResult()) {
+                            if (re.getRoundNo()==Integer.valueOf(score.roundNo) &&
+                                    re.getResult() == roundResult.getResult()) {
                                 flag = true;
                                 break;
                             } else {
