@@ -87,6 +87,8 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
     Spinner spTestMode;
     @BindView(R.id.tv_pair)
     TextView tvPair;
+    @BindView(R.id.tv_ip_connect)
+    TextView tvIpConnect;
     private Integer[] testRound;
     private String[] carryMode = new String[]{"四舍五入", "不进位", "非零进位"};
     private BasketBallSetting setting;
@@ -171,7 +173,15 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
             tvPair.setVisibility(View.VISIBLE);
             etPort.setEnabled(false);
             etHostIp.setEnabled(false);
+            tvIpConnect.setEnabled(false);
+            rgAccuracy.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        manager.init();
     }
 
     private int getAccuracy() {

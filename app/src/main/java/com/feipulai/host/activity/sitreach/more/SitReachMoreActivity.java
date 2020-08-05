@@ -31,9 +31,10 @@ public class SitReachMoreActivity extends BaseMoreActivity {
     private SitReachManager manager;
     private static final String TAG = "SitReachMoreActivity";
     private boolean backFlag = false;//推杆返回
-    private boolean [] resultUpdate  ;//成绩更新
+    private boolean[] resultUpdate;//成绩更新
     private final static int DISCONNECT_TIME = 3;
     private SitReachSetting setting;
+
     @Override
     protected void initData() {
         setting = SharedPrefsUtil.loadFormSource(this, SitReachSetting.class);
@@ -100,7 +101,7 @@ public class SitReachMoreActivity extends BaseMoreActivity {
         manager.setEmpty(deviceId, SettingHelper.getSystemSetting().getHostId());
     }
 
-    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair})
+    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair, R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_led_setting:
@@ -119,13 +120,16 @@ public class SitReachMoreActivity extends BaseMoreActivity {
                 }
 
                 break;
+            case R.id.img_AFR:
+                showAFR();
+                break;
         }
     }
 
     private void getState() {
         Log.i(TAG, "james_send_getState");
         for (int i = 0; i < setting.getTestDeviceCount(); i++) {
-            if (deviceDetails.size()<=i)
+            if (deviceDetails.size() <= i)
                 return;
             BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
             if (deviceState[i] == 0) {
@@ -153,30 +157,29 @@ public class SitReachMoreActivity extends BaseMoreActivity {
     }
 
 
-
     SitReachRadioImpl sitReachRadio = new SitReachRadioImpl(new SitReachRadioImpl.DisposeListener() {
         @Override
         public void onResultArrived(final SitReachWirelessResult result) {
             deviceState[result.getDeviceId() - 1] = DISCONNECT_TIME;//联机正常
             if (result.getState() == 4) {//测试结束
                 sendStop(result.getDeviceId());
-                if (result.getCapacity() > -200 && result.getCapacity() < 700 && resultUpdate[result.getDeviceId()-1]) {
+                if (result.getCapacity() > -200 && result.getCapacity() < 700 && resultUpdate[result.getDeviceId() - 1]) {
                     Message msg = mHandler.obtainMessage();
                     msg.obj = result;
                     msg.what = GET_RESULT;
                     mHandler.sendMessage(msg);
-                    resultUpdate[result.getDeviceId()-1] = false;
+                    resultUpdate[result.getDeviceId() - 1] = false;
                 }
                 backFlag = true;
             }
             if (backFlag && result.getState() == 1) {
                 sendFree(result.getDeviceId());
                 backFlag = false;
-                resultUpdate[result.getDeviceId()-1] = true;//标记可以下次测试
+                resultUpdate[result.getDeviceId() - 1] = true;//标记可以下次测试
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        setTxtEnable(result.getDeviceId(),true);
+                        setTxtEnable(result.getDeviceId(), true);
                     }
                 });
 
@@ -205,7 +208,7 @@ public class SitReachMoreActivity extends BaseMoreActivity {
                     break;
                 case GET_RESULT:
                     SitReachWirelessResult result = (SitReachWirelessResult) msg.obj;
-                    setTxtEnable(result.getDeviceId(),false);
+                    setTxtEnable(result.getDeviceId(), false);
                     for (DeviceDetail detail : deviceDetails) {
                         if (detail.getStuDevicePair().getBaseDevice().getDeviceId() == result.getDeviceId()) {
                             onResultArrived(result.getCapacity(), detail.getStuDevicePair());

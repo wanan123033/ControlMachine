@@ -95,7 +95,7 @@ public class SitReachResiltListener implements SerialDeviceManager.RS232ResiltLi
                                 stuPair.setResultState(result.isFoul() == true ? RoundResult.RESULT_STATE_FOUL : RoundResult.RESULT_STATE_NORMAL);
                                 stuPair.setBaseDevice(deviceState);
                                 //更新成绩
-                                handlerInterface.getResult(stuPair);
+                                handlerInterface.getResult(false, stuPair);
                                 //犯规则结束测试
                                 if (result.isFoul()) {
                                     deviceState.setDeviceId(1);
@@ -134,14 +134,14 @@ public class SitReachResiltListener implements SerialDeviceManager.RS232ResiltLi
                                     deviceState.setState(BaseDeviceState.STATE_ONUSE);
                                     stuPair.setResult(0);
                                     //更新成绩
-                                    handlerInterface.getResult(stuPair);
+                                    handlerInterface.getResult(false, stuPair);
                                     //设置设备状态
                                     handlerInterface.getDeviceState(deviceState);
                                     handlerInterface.AgainTest(deviceState);
                                     break;
                                 }
                                 //更新成绩
-                                handlerInterface.getResult(stuPair);
+                                handlerInterface.getResult(true, stuPair);
                                 //设置设备状态
                                 handlerInterface.getDeviceState(deviceState);
 
@@ -190,7 +190,7 @@ public class SitReachResiltListener implements SerialDeviceManager.RS232ResiltLi
          *
          * @param stuPair
          */
-        void getResult(BaseStuPair stuPair);
+        void getResult(boolean isEnd, BaseStuPair stuPair);
 
         /**
          * 测试结束

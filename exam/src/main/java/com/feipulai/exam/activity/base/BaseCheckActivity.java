@@ -412,7 +412,12 @@ public abstract class BaseCheckActivity
         SystemSetting setting = SettingHelper.getSystemSetting();
         if (setting.isAutoScore()){
             HttpSubscriber subscriber = new HttpSubscriber();
-            OperateProgressBar.showLoadingUi(this,"正在获取云端成绩...");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    OperateProgressBar.showLoadingUi(BaseCheckActivity.this,"正在获取云端成绩...");
+                }
+            });
             subscriber.getRoundResult(setting.getSitCode(), studentItem.getScheduleNo(), TestConfigs.getCurrentItemCode(), student.getStudentCode(),
                     null, null, null, String.valueOf(studentItem.getExamType()), this);
         }else {
