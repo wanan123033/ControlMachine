@@ -122,6 +122,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
     protected void initData() {
         initEngine();
         initCamera();
+
     }
 
     private void initCamera() {
@@ -344,6 +345,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         }
 
         faceNumber = FaceServer.getInstance().getFaceNumber();
+        Log.i("faceRegisterInfoList", "4----------" + faceNumber);
     }
 
     /**
@@ -549,6 +551,8 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                 Logger.d("compareResult==>");
                 mHandler.sendEmptyMessage(0);
                 compareListener.compareStu(student);
+                mHandler.sendEmptyMessage(0);
+
             } else {
                 Logger.d("compareResult==>null");
 //                compareListener.compareStu(null);

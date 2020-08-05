@@ -87,7 +87,7 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
 
 
     public void sendEmpty() {
-        for (int i = 0; i < deviceState.length; i++) {
+        for (int i = 0; i < deviceDetails.size(); i++) {
             BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
             if (deviceState[i] == 0) {
 

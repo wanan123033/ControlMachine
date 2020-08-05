@@ -16,8 +16,8 @@ import java.io.Serializable;
 @Entity
 public class RoundResult implements Serializable {
 
-    public static final int RESULT_STATE_NORMAL = 0;
-    public static final int RESULT_STATE_FOUL = -1;
+    public static final int RESULT_STATE_NORMAL = 1;
+    public static final int RESULT_STATE_FOUL = 2;
     public static final int RESULT_STATE_BACK = 3;
     public static final int RESULT_STATE_WAIVE = 4;
     private static final long serialVersionUID = -433841840345102180L;
@@ -39,7 +39,7 @@ public class RoundResult implements Serializable {
 	 * 取值为{@link #RESULT_STATE_NORMAL}或{@link #RESULT_STATE_FOUL}
 	 */
     @NotNull
-    private int resultState;//成绩状态 0正常  -1犯规    -2中退    -3放弃    体侧系统没有中退和放弃,且犯规均为机器判定的犯规
+    private int resultState;;//成绩状态 //是否犯规 0:未检录 1:正常 2:犯规 3:中退 4:弃权 5:测试     体侧系统没有中退和放弃,且犯规均为机器判定的犯规
     @NotNull
     private int isLastResult;//是否为最好成绩 0-不是 1-是     身高体重最后成绩即为最好成绩
     @NotNull

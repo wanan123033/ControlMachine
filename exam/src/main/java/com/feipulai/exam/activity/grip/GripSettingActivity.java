@@ -1,5 +1,6 @@
 package com.feipulai.exam.activity.grip;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -13,12 +14,12 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.grip.pair.GripPairActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
-
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -43,6 +44,8 @@ public class GripSettingActivity extends BaseTitleActivity implements RadioGroup
     LinearLayout full;
     @BindView(R.id.tv_device_check)
     TextView deviceCheck;
+    @BindView(R.id.tv_match)
+    TextView tvMatch;
     private Integer[] testRound = new Integer[]{1, 2, 3};
 
     private GripSetting gripSetting;
@@ -91,7 +94,13 @@ public class GripSettingActivity extends BaseTitleActivity implements RadioGroup
             rgTestPattern.check(R.id.rb_circulation_test);
         }
 
-
+        tvMatch.setVisibility(SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN ? View.GONE : View.VISIBLE);//个人模式隐藏
+        tvMatch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(GripSettingActivity.this, GripPairActivity.class));
+            }
+        });
 //        if (gripSetting.getManFull() > 0) {
 //            editManFull.setText(gripSetting.getManFull() + "");
 //        }

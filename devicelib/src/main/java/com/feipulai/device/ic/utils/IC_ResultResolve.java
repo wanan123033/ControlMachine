@@ -33,7 +33,7 @@ public class IC_ResultResolve {
         System.arraycopy(data, 20, stuNameBytes, 0, 11);
         String stuName = Converter.decode(stuNameBytes).trim();
 
-        int sex =( data[31] & 0xff) == 0 ? 0 : 1;
+        int sex = (data[31] & 0xff) == 0 ? 0 : 1;
 
         return new StuInfo(stuCode, stuName, sex);
     }
@@ -233,6 +233,7 @@ public class IC_ResultResolve {
             case ItemDefault.CODE_50M://50米
             case ItemDefault.CODE_ZQYQ://足球运球
             case ItemDefault.CODE_YY://游泳
+            case ItemDefault.CODE_SHOOT:
                 return getResult2(resultInBytes);
 
             //有判罚值高低字节的项目

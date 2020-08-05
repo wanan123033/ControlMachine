@@ -71,7 +71,7 @@ public class SplashScreenActivity extends BaseActivity {
             @Override
             public void run() {
                 init();
-                if (SettingHelper.getSystemSetting().getCheckTool() != 4){
+                if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
                     Intent intent = new Intent();
                     intent.setClass(SplashScreenActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -112,7 +112,7 @@ public class SplashScreenActivity extends BaseActivity {
                 @Override
                 public DataBaseRespon executeOper() {
                     List<Student> studentList = DBManager.getInstance().queryStudentFeatures();
-                    Log.i("faceRegisterInfoList", "->"+studentList.size());
+                    Log.i("faceRegisterInfoList", "->" + studentList.size());
                     List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
                     for (Student student : studentList) {
                         registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
@@ -179,12 +179,18 @@ public class SplashScreenActivity extends BaseActivity {
                             ConfigUtil.setISEngine(SplashScreenActivity.this, true);
                             //本地人脸库初始化
                             initLocalFace();
+                            return;
                         } else if (activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
 //                            ToastUtils.showShort(getString(R.string.already_activated));
                         } else {
                             ToastUtils.showShort(getString(R.string.active_failed));
                         }
-
+                        Intent intent = new Intent();
+                        intent.setClass(SplashScreenActivity.this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish();
 //                        ActiveFileInfo activeFileInfo = new ActiveFileInfo();
 //                        int res = FaceEngine.getActiveFileInfo(SplashScreenActivity.this, activeFileInfo);
 //                        if (res == ErrorInfo.MOK) {

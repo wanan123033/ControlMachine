@@ -262,6 +262,9 @@ public class Radio868Result {
                     }
 
                 }
+                if (data[0] == 0xab && data[data.length-1] == 0x56){
+                    Log.i("红外=====================",StringUtility.bytesToHexString(data));
+                }
                 break;
 
             case ItemDefault.CODE_FHL:
@@ -434,6 +437,7 @@ public class Radio868Result {
                 && data[0] == 0x54 && data[1] == 0x55 //[00] [01]：包头高字节0x54   低字节0x55
                 && data[3] == 0x10  //[02] [03]：长度高字节0x00   低字节0x10
                 && data[5] == 0x00b//[05]：项目编号   5—仰卧起坐    8—俯卧撑 0x0b引体向上手臂检测
+                && data[6] == 0x001//[06]：0x01引体向上手臂检测
                 && data[14] == 0x27 && data[15] == 0x0d//[14] [15]：包尾高字节0x27   低字节0x0d
         ) {
             // 仰卧起坐

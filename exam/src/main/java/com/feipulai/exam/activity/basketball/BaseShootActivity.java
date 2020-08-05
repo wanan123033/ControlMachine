@@ -3,11 +3,14 @@ package com.feipulai.exam.activity.basketball;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 
 import com.feipulai.common.utils.IntentUtil;
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.manager.RunTimerManager;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.RunTimerConnectState;
 import com.feipulai.device.serial.beans.RunTimerResult;
@@ -18,6 +21,7 @@ import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.fragment.IndividualCheckFragment;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
@@ -27,8 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BaseShootActivity extends BaseTitleActivity
-        implements IndividualCheckFragment.OnIndividualCheckInListener {
-
+        implements IndividualCheckFragment.OnIndividualCheckInListener{
+    private static final String TAG = "BaseShootActivity";
     protected IndividualCheckFragment individualCheckFragment;
     private static final int WAIT_FREE = 0x0;
     private static final int WAIT_CHECK_IN = 0x1;
@@ -39,13 +43,23 @@ public abstract class BaseShootActivity extends BaseTitleActivity
     protected volatile int state = WAIT_FREE;
     private List<StuDevicePair> pairs = new ArrayList<>();
     private SerialDeviceManager deviceManager;
+    private ShootSetting setting;
+    public long baseTimer ;
+    private long startTime;
     @Override
     protected void initData() {
         pairs.add(new StuDevicePair());
         individualCheckFragment = new IndividualCheckFragment();
         individualCheckFragment.setOnIndividualCheckInListener(this);
+
         deviceManager = SerialDeviceManager.getInstance();
         deviceManager.setRS232ResiltListener(runTimer);
+
+        //获取项目设置
+        setting = SharedPrefsUtil.loadFormSource(this, ShootSetting.class);
+        if (setting == null)
+            setting = new ShootSetting();
+
     }
 
 
@@ -77,7 +91,7 @@ public abstract class BaseShootActivity extends BaseTitleActivity
                     return;
                 }
             }
-            updateStudent(student);
+            updateStudent(student,results);
         }
 
 
@@ -125,11 +139,80 @@ public abstract class BaseShootActivity extends BaseTitleActivity
         return flag;
     }
 
-    protected abstract void updateStudent(Student student);
+    protected abstract void updateStudent(Student student,List<RoundResult> results);
 
     private boolean isFullSkip(int result, int resultState) {
+        Student student = pairs.get(0).getStudent();
+        if (setting.isFullSkip() && resultState == RoundResult.RESULT_STATE_NORMAL) {
+//            int result = testResult.getSelectMachineResult() + (testResult.getPenalizeNum() * setting.getPenaltySecond() * 1000);
+            if (student.getSex() == Student.MALE) {
 
+                return setting.getTestType() == 2? result <= setting.getMaleFullDribble()*1000:
+                        result<=setting.getMaleFullShoot();
+            } else {
+                return setting.getTestType() == 2? result <= setting.getFemaleFullDribble()*1000:
+                        result<=setting.getFemaleFullShoot();
+            }
+        }
         return false;
+    }
+
+    public void disposeResult(int order,Student student, int testRound ,int testNo) {
+
+        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+        RoundResult roundResult = new RoundResult();
+        roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
+        roundResult.setStudentCode(student.getStudentCode());
+        roundResult.setItemCode(TestConfigs.getCurrentItemCode());
+        roundResult.setResult(order);
+        roundResult.setMachineResult(order);
+        roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
+        roundResult.setTestTime(startTime+"");
+        //生成结束时间
+        roundResult.setEndTime(System.currentTimeMillis() + "");
+        roundResult.setRoundNo(testRound);
+        roundResult.setTestNo(testNo);
+        roundResult.setExamType(studentItem.getExamType());
+        roundResult.setScheduleNo(studentItem.getScheduleNo());
+        roundResult.setUpdateState(0);
+        roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
+
+        RoundResult bestResult = DBManager.getInstance().queryBestScore(studentItem.getStudentCode(), testNo);
+        if (bestResult != null) {
+            // 原有最好成绩犯规 或者原有最好成绩没有犯规但是现在成绩更好
+            if (bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL &&  bestResult.getResult() <= order) {
+                // 这个时候就要同时修改这两个成绩了
+                roundResult.setIsLastResult(1);
+                bestResult.setIsLastResult(0);
+                DBManager.getInstance().updateRoundResult(bestResult);
+//                updateLastResultLed(roundResult);
+            } else {
+                if (bestResult.getResultState() != RoundResult.RESULT_STATE_NORMAL) {
+                    roundResult.setIsLastResult(1);
+                    bestResult.setIsLastResult(0);
+                    DBManager.getInstance().updateRoundResult(bestResult);
+//                    updateLastResultLed(roundResult);
+                } else {
+                    roundResult.setIsLastResult(0);
+//                    updateLastResultLed(bestResult);
+                }
+            }
+        } else {
+            // 第一次测试
+            roundResult.setIsLastResult(1);
+//            updateLastResultLed(roundResult);
+        }
+
+        DBManager.getInstance().insertRoundResult(roundResult);
+        LogUtils.operation("保存成绩:" + roundResult.toString());
+    }
+
+
+    public ShootSetting getSetting() {
+        return setting;
+    }
+    public List<StuDevicePair> getPairs() {
+        return pairs;
     }
 
     private RunTimerImpl runTimer = new RunTimerImpl(new RunTimerImpl.RunTimerListener() {
@@ -140,14 +223,48 @@ public abstract class BaseShootActivity extends BaseTitleActivity
 
         @Override
         public void onConnected(RunTimerConnectState connectState) {
-
+            Log.i(TAG,connectState.toString());
+            disposeConnect(connectState);
         }
 
         @Override
-        public void onTestState(int state) {
-
+        public void onTestState(int testState) {
+            switch (testState) {
+                case 0:
+                case 1:
+                case 5://违规返回
+                    changeState(new boolean[]{true,false,false,false,false});
+                    break;
+                case 2://等待计时
+                    baseTimer = System.currentTimeMillis();
+                    startTime = System.currentTimeMillis();
+                    changeState(new boolean[]{false, true, true, false, false});
+                    break;
+                case 3://启动
+                    //算出误差时间
+                    changeState(new boolean[]{false, true, false, false, false});
+                    break;
+                case 4://获取到结果
+                    changeState(new boolean[]{false,true,false,false,false});
+                case 6://停止计时
+                    changeState(new boolean[]{true,true,false,true,true});
+                    break;
+            }
         }
     });
+
+    public void disposeConnect(RunTimerConnectState connectState) {
+
+    }
+
+
+    /**
+     * 0 等待 1 违规 2 计时 3 判罚+1 4 判罚-1
+     * @param state
+     */
+    public  void changeState(final boolean[] state){
+
+    }
 
     @Override
     protected void onDestroy() {
@@ -156,4 +273,6 @@ public abstract class BaseShootActivity extends BaseTitleActivity
     }
 
     public abstract void getResult(RunTimerResult result);
+
+
 }

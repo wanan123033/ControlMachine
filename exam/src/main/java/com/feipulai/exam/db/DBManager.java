@@ -119,7 +119,7 @@ public class DBManager {
                 ItemDefault.CODE_LDTY, ItemDefault.CODE_ZWTQQ,
                 ItemDefault.CODE_HWSXQ, ItemDefault.CODE_FHL, ItemDefault.CODE_ZFP,
                 ItemDefault.CODE_PQ, ItemDefault.CODE_MG, ItemDefault.CODE_FWC, ItemDefault.CODE_LQYQ,
-                ItemDefault.CODE_ZQYQ, ItemDefault.CODE_ZCP, ItemDefault.CODE_JGCJ,ItemDefault.CODE_WLJ
+                ItemDefault.CODE_ZQYQ, ItemDefault.CODE_ZCP, ItemDefault.CODE_JGCJ, ItemDefault.CODE_WLJ, ItemDefault.CODE_SHOOT
         };
         for (int machineCode : supportMachineCodes) {
             //查询是否已经存在该机器码的项,如果存在就放弃,避免重复添加
@@ -189,7 +189,9 @@ public class DBManager {
                 case ItemDefault.CODE_WLJ:
                     insertItem(machineCode, "握力", "千克", TEST_TYPE_POWER);
                     break;
-
+                case ItemDefault.CODE_SHOOT:
+                    insertItem(machineCode, "篮球投篮", "个", TEST_TYPE_COUNT);
+                    break;
             }
         }
         Logger.i("数据库初始化完成");
@@ -675,7 +677,7 @@ public class DBManager {
         } else {
             if (isTested || isUnTested) {
                 sqlBuf.append(" WHERE ");
-            }else {
+            } else {
                 sqlBuf.append(" AND ");
             }
         }
@@ -1552,6 +1554,26 @@ public class DBManager {
     }
 
     /**
+     * 查询对应考生当前项目最后一次成绩
+     *
+     * @param studentCode 考号
+     * @param exemType
+     * @return
+     */
+    public RoundResult queryFinallyRountScoreByExamType(String studentCode, String exemType) {
+        Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
+                + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\tIsLastResult:" + 1);
+        return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(RoundResultDao.Properties.ExamType.eq(exemType))
+                .orderDesc(RoundResultDao.Properties.TestNo)
+                .limit(1)
+                .unique();
+    }
+
+    /**
      * 查询分组对应考生当前项目最后一次成绩
      *
      * @param studentCode 考号
@@ -2053,6 +2075,7 @@ public class DBManager {
     /**
      * 同机器码多项目查询所有日程
      * 中长跑方法
+     *
      * @return
      */
     public List<Schedule> queryCurrentSchedules() {
@@ -2062,13 +2085,13 @@ public class DBManager {
                 .list();
         List<ItemSchedule> itemSchedules = new ArrayList<>();
         for (Item item : items
-                ) {
+        ) {
             itemSchedules.addAll(itemScheduleDao.queryBuilder().where(ItemScheduleDao.Properties.ItemCode.eq(item.getItemCode())).list());
         }
 
         List<Schedule> schedules = new ArrayList<>();
         for (ItemSchedule schedule : itemSchedules
-                ) {
+        ) {
             schedules.addAll(scheduleDao.queryBuilder().where(ScheduleDao.Properties.ScheduleNo.eq(schedule.getScheduleNo())).list());
         }
 
@@ -2098,7 +2121,7 @@ public class DBManager {
         sqlBuf.append(" LEFT JOIN " + ItemScheduleDao.TABLENAME + " I ");
         sqlBuf.append(" ON S." + ScheduleDao.Properties.ScheduleNo.columnName + " = I." + ItemScheduleDao.Properties.ScheduleNo.columnName);
         sqlBuf.append(" WHERE I." + GroupItemDao.Properties.ItemCode.columnName + " = '" + TestConfigs.getCurrentItemCode() + "'");
-        sqlBuf.append(" ORDER BY "+ ScheduleDao.Properties.ScheduleNo.columnName +" ASC" );
+        sqlBuf.append(" ORDER BY " + ScheduleDao.Properties.ScheduleNo.columnName + " ASC");
         List<Schedule> scheduleList = new ArrayList<>();
         Log.i("sql", sqlBuf.toString());
         Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), null);
@@ -2358,12 +2381,13 @@ public class DBManager {
     /**
      * 公共部分代码包含中长跑项目
      * 中长跑不能使用TestConfigs.getCurrentItemCode()
+     *
      * @param group
      * @param studentCode
      * @return
      */
     public GroupItem getItemStuGroupItem(Group group, String studentCode) {
-        if(TestConfigs.sCurrentItem.getMachineCode()==ItemDefault.CODE_ZCP){
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
             return groupItemDao.queryBuilder()
                     .where(GroupItemDao.Properties.ItemCode.eq(group.getItemCode()))
                     .where(GroupItemDao.Properties.ScheduleNo.eq(group.getScheduleNo()))
@@ -2372,7 +2396,7 @@ public class DBManager {
                     .where(GroupItemDao.Properties.GroupNo.eq(group.getGroupNo()))
                     .where(GroupItemDao.Properties.StudentCode.eq(studentCode))
                     .unique();
-        }else {
+        } else {
             return groupItemDao.queryBuilder()
                     .where(GroupItemDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                     .where(GroupItemDao.Properties.ScheduleNo.eq(group.getScheduleNo()))

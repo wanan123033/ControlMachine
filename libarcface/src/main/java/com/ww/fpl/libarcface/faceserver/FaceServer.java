@@ -343,6 +343,7 @@ public class FaceServer {
                         faceRegisterInfoList = new ArrayList<>();
                     }
                     faceRegisterInfoList.add(new FaceRegisterInfo(faceFeature.getFeatureData(), userName));
+                    faceNumber = faceRegisterInfoList.size();
                     return true;
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -374,17 +375,17 @@ public class FaceServer {
                 ROOT_PATH = context.getFilesDir().getAbsolutePath();
             }
             //特征存储的文件夹
-            File featureDir = new File(ROOT_PATH + File.separator + SAVE_FEATURE_DIR);
+            File featureDir = new File(ROOT_PATH);
             if (!featureDir.exists() && !featureDir.mkdirs()) {
                 Log.e(TAG, "registerBgr24: can not create feature directory");
                 return false;
             }
             //图片存储的文件夹
-            File imgDir = new File(ROOT_PATH + File.separator + SAVE_IMG_DIR);
-            if (!imgDir.exists() && !imgDir.mkdirs()) {
-                Log.e(TAG, "registerBgr24: can not create image directory");
-                return false;
-            }
+//            File imgDir = new File(ROOT_PATH + File.separator + SAVE_IMG_DIR);
+//            if (!imgDir.exists() && !imgDir.mkdirs()) {
+//                Log.e(TAG, "registerBgr24: can not create image directory");
+//                return false;
+//            }
             //人脸检测
             List<FaceInfo> faceInfoList = new ArrayList<>();
             int code = faceEngine.detectFaces(bgr24, width, height, FaceEngine.CP_PAF_BGR24, faceInfoList);
@@ -398,25 +399,25 @@ public class FaceServer {
                     //保存注册结果（注册图、特征数据）
                     if (code == ErrorInfo.MOK) {
                         //为了美观，扩大rect截取注册图
-                        Rect cropRect = getBestRect(width, height, faceInfoList.get(0).getRect());
-                        if (cropRect == null) {
-                            Log.e(TAG, "registerBgr24: cropRect is null");
-                            return false;
-                        }
-
-                        cropRect.left &= ~3;
-                        cropRect.top &= ~3;
-                        cropRect.right &= ~3;
-                        cropRect.bottom &= ~3;
-
-                        File file = new File(imgDir + File.separator + userName + IMG_SUFFIX_JPG);
-                        FileOutputStream fosImage = new FileOutputStream(file);
-
-                        // 创建一个头像的Bitmap，存放旋转结果图
-                        Bitmap headBmp = getHeadImage(bgr24, width, height, faceInfoList.get(0).getOrient(), cropRect, ArcSoftImageFormat.BGR24);
-                        // 保存到本地
-                        headBmp.compress(Bitmap.CompressFormat.JPEG, 100, fosImage);
-                        fosImage.close();
+//                        Rect cropRect = getBestRect(width, height, faceInfoList.get(0).getRect());
+//                        if (cropRect == null) {
+//                            Log.e(TAG, "registerBgr24: cropRect is null");
+//                            return false;
+//                        }
+//
+//                        cropRect.left &= ~3;
+//                        cropRect.top &= ~3;
+//                        cropRect.right &= ~3;
+//                        cropRect.bottom &= ~3;
+                        //todo 不进行头像图片保存,已有图片会出现重复保存冗余
+//                        File file = new File(imgDir + File.separator + userName + IMG_SUFFIX_JPG);
+//                        FileOutputStream fosImage = new FileOutputStream(file);
+//
+//                        // 创建一个头像的Bitmap，存放旋转结果图
+//                        Bitmap headBmp = getHeadImage(bgr24, width, height, faceInfoList.get(0).getOrient(), cropRect, ArcSoftImageFormat.BGR24);
+//                        // 保存到本地
+//                        headBmp.compress(Bitmap.CompressFormat.JPEG, 100, fosImage);
+//                        fosImage.close();
 
                         // 保存特征数据
                         FileOutputStream fosFeature = new FileOutputStream(featureDir + File.separator + userName);
@@ -428,6 +429,9 @@ public class FaceServer {
                             faceRegisterInfoList = new ArrayList<>();
                         }
                         faceRegisterInfoList.add(new FaceRegisterInfo(faceFeature.getFeatureData(), userName));
+
+                        faceNumber = faceRegisterInfoList.size();
+                        Log.e(TAG, "faceRegisterInfoList: 3-----------------" + faceRegisterInfoList.size());
                         return true;
                     } else {
                         Log.e(TAG, "registerBgr24: extract face feature failed, code is " + code);
@@ -524,7 +528,7 @@ public class FaceServer {
         float maxSimilar = 0;
         int maxSimilarIndex = -1;
         isProcessing = true;
-        for (int i = 0; i < (faceNumber < 3 ? faceNumber : faceNumber / 3); i++) {
+        for (int i = 0; i < (faceRegisterInfoList.size() < 9 ? faceRegisterInfoList.size() : faceRegisterInfoList.size() / 3); i++) {
             tempFaceFeature.setFeatureData(faceRegisterInfoList.get(i).getFeatureData());
             faceEngine.compareFaceFeature(faceFeature, tempFaceFeature, faceSimilar);
             if (faceSimilar.getScore() > maxSimilar) {
@@ -532,7 +536,7 @@ public class FaceServer {
                 maxSimilarIndex = i;
             }
         }
-        Log.i("getTopOfFaceLib1", "---------------------->");
+        Log.i("getTopOfFaceLib1", "---------------------->" + maxSimilarIndex);
         isProcessing = false;
         if (maxSimilarIndex != -1) {
             return new CompareResult(faceRegisterInfoList.get(maxSimilarIndex).getName(), maxSimilar);
@@ -549,7 +553,7 @@ public class FaceServer {
         float maxSimilar = 0;
         int maxSimilarIndex = -1;
         isProcessing2 = true;
-        for (int i = faceNumber / 3; i < (faceNumber < 3 ? faceNumber : faceNumber / 3 * 2); i++) {
+        for (int i = faceRegisterInfoList.size() / 3; i < (faceRegisterInfoList.size() < 3 ? faceRegisterInfoList.size() : faceRegisterInfoList.size() / 3 * 2); i++) {
             tempFaceFeature.setFeatureData(faceRegisterInfoList.get(i).getFeatureData());
             faceEngine2.compareFaceFeature(faceFeature, tempFaceFeature, faceSimilar);
             if (faceSimilar.getScore() > maxSimilar) {
@@ -557,7 +561,7 @@ public class FaceServer {
                 maxSimilarIndex = i;
             }
         }
-        Log.i("getTopOfFaceLib2", "---------------------->");
+        Log.i("getTopOfFaceLib2", "---------------------->"+maxSimilarIndex);
         isProcessing2 = false;
         if (maxSimilarIndex != -1) {
             return new CompareResult(faceRegisterInfoList.get(maxSimilarIndex).getName(), maxSimilar);
@@ -574,7 +578,7 @@ public class FaceServer {
         float maxSimilar = 0;
         int maxSimilarIndex = -1;
         isProcessing3 = true;
-        for (int i = faceNumber / 3 * 2; i < faceNumber; i++) {
+        for (int i = faceRegisterInfoList.size() / 3 * 2; i < faceRegisterInfoList.size(); i++) {
             tempFaceFeature.setFeatureData(faceRegisterInfoList.get(i).getFeatureData());
             faceEngine3.compareFaceFeature(faceFeature, tempFaceFeature, faceSimilar);
             if (faceSimilar.getScore() > maxSimilar) {
@@ -582,7 +586,7 @@ public class FaceServer {
                 maxSimilarIndex = i;
             }
         }
-        Log.i("getTopOfFaceLib3", "---------------------->");
+        Log.i("getTopOfFaceLib3", "---------------------->"+maxSimilarIndex);
         isProcessing3 = false;
         if (maxSimilarIndex != -1) {
             return new CompareResult(faceRegisterInfoList.get(maxSimilarIndex).getName(), maxSimilar);

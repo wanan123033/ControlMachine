@@ -92,8 +92,12 @@ public class ImageUtil {
         if (bitmap == null) {
             return;
         }
+
         try {
             File saveimg = new File(saveParentPath + fileName);
+            if (saveimg.exists()) {
+                return;
+            }
             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(saveimg));
             bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bos);
             bos.flush();
@@ -102,4 +106,5 @@ public class ImageUtil {
             e.printStackTrace();
         }
     }
+
 }

@@ -99,12 +99,16 @@ public class SitUpCheckActivity
     protected int setLayoutResID() {
         return R.layout.activity_sit_pull_up_check;
     }
+    @Override
+    public int setAFRFrameLayoutResID() {
+        return R.id.frame_camera;
+    }
 
     @Override
     protected void initData() {
+        super.initData();
         presenter = new SitUpCheckPresenter(this, this);
         presenter.start();
-
     }
 
     @Nullable
@@ -132,10 +136,12 @@ public class SitUpCheckActivity
     }
 
     @OnClick({R.id.btn_device_pair, R.id.btn_change_bad, R.id.btn_start_test,
-            R.id.btn_stop_use, R.id.btn_led_setting, R.id.btn_delete_student, R.id.btn_del_all})
+            R.id.btn_stop_use, R.id.btn_led_setting, R.id.btn_delete_student, R.id.btn_del_all,R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-
+            case R.id.img_AFR:
+                showAFR();
+                break;
             case R.id.btn_device_pair:
                 startActivity(new Intent(this, SitPullPairActivity.class));
                 break;

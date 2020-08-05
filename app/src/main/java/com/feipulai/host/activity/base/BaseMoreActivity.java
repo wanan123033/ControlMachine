@@ -12,7 +12,9 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -76,9 +78,15 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     private LedHandler ledHandler = new LedHandler();
     private boolean isNextClickStart = true;
     private boolean isPenalize;
+    private long startTime;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_base_more;
+    }
+
+    @Override
+    public int setAFRFrameLayoutResID() {
+        return R.id.frame_camera;
     }
 
     @Override
@@ -104,7 +112,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(),SettingHelper.getSystemSetting().getHostId());
+        mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
         for (int i = 0; i < setTestDeviceCount(); i++) {
             StringBuilder data = new StringBuilder();
             data.append(i + 1).append("号机");//1号机         空闲
@@ -136,6 +144,18 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             deviceDetails.add(detail);
         }
         initView();
+        if (afrFrameLayout != null) {
+            if (deviceCount == 1) {
+                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) afrFrameLayout.getLayoutParams();
+                layoutParams.setMargins(258, 0, 0, 0);
+                afrFrameLayout.setLayoutParams(layoutParams);
+            } else {
+                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) afrFrameLayout.getLayoutParams();
+                layoutParams.setMargins(0, 0, 0, 0);
+                afrFrameLayout.setLayoutParams(layoutParams);
+            }
+
+        }
     }
 
     private int setTestCount() {
@@ -191,6 +211,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                             stuSkip(pos);
                             return;
                         }
+                        startTime = System.currentTimeMillis();
                         if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
                             sendTestCommand(pair, pos);
 //                            view.setBackgroundColor(ContextCompat.getColor(BaseMoreActivity.this, R.color.gray_btn_bg_color));
@@ -226,17 +247,19 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 }).setNegativeButton("取消", null).show();
     }
 
-    public void setTxtEnable(int deviceId,boolean enable){
-        deviceListAdapter.setTxtStartEnable(deviceId,enable);
+    public void setTxtEnable(int deviceId, boolean enable) {
+        deviceListAdapter.setTxtStartEnable(deviceId, enable);
     }
 
     public void setNextClickStart(boolean nextClickStart) {
         isNextClickStart = nextClickStart;
         deviceListAdapter.setNextClickStart(nextClickStart);
     }
+
     public void setFaultEnable(boolean isPenalize) {
         this.isPenalize = isPenalize;
     }
+
     @Override
     public void onCheckIn(Student student) {
         int index = 0;
@@ -326,7 +349,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     }
 
 
-    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair})
+    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair,R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_led_setting:
@@ -339,6 +362,10 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                     startActivity(new Intent(this, VcPairActivity.class));
                 }
 
+                break;
+            case R.id.img_AFR:
+//                gotoUVCFaceCamera();
+                showAFR();
                 break;
         }
     }
@@ -353,7 +380,13 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机-" + SettingHelper.getSystemSetting().getTestName();
         }
 
-        return builder.setTitle(title).addRightText("项目设置", new View.OnClickListener() {
+        return builder.setTitle(title).addRightText("外接屏幕", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(BaseMoreActivity.this, LEDSettingActivity.class));
+            }
+        }).addRightText("项目设置", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 gotoItemSetting();
@@ -448,22 +481,19 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 }
                 Logger.i("设备成绩信息STATE_END==>" + deviceState.toString());
                 //状态为测试已结束
-                    if (isPenalize && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
+                if (isPenalize && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
 
-                        if (setTestDeviceCount() == 1) {
-                            showPenalize(index);
-                        } else {
-                            deviceDetails.get(index).setConfirmVisible(true);
-                            deviceListAdapter.notifyItemChanged(index);
-                        }
+                    if (setTestDeviceCount() == 1) {
+                        showPenalize(index);
                     } else {
-                        pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
-                        pair.setCanTest(true);
-                        doResult(pair, index);
+                        deviceDetails.get(index).setConfirmVisible(true);
+                        deviceListAdapter.notifyItemChanged(index);
                     }
-
-
-
+                } else {
+                    pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+                    pair.setCanTest(true);
+                    doResult(pair, index);
+                }
 
 
             }
@@ -498,6 +528,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         deviceDetails.get(index).setConfirmVisible(false);
         deviceListAdapter.notifyItemChanged(index);
     }
+
     public void refreshDevice(int index) {
         if (deviceDetails.get(index).getStuDevicePair().getBaseDevice() != null) {
             deviceListAdapter.notifyItemChanged(index);
@@ -589,8 +620,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         roundResult.setResult(baseStuPair.getResult());
         roundResult.setResultState(baseStuPair.getResultState());
         //DateUtil.getCurrentTime2("yyyy-MM-dd HH:mm:ss")
-        roundResult.setTestTime(baseStuPair.getStartTime()+"");
-        roundResult.setPrintTime(baseStuPair.getEndTime()+"");
+        roundResult.setTestTime(startTime + "");
+        roundResult.setPrintTime(System.currentTimeMillis() + "");
         roundResult.setRoundNo(1);
         RoundResult bestResult = DBManager.getInstance().queryBestScore(baseStuPair.getStudent().getStudentCode());
         if (bestResult != null) {

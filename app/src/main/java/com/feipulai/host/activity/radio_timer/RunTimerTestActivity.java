@@ -109,6 +109,11 @@ public class RunTimerTestActivity extends BaseRunTimerActivity {
     }
 
     @Override
+    public int setAFRFrameLayoutResID() {
+        return R.id.frame_camera;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_run_timer2);
@@ -240,10 +245,13 @@ public class RunTimerTestActivity extends BaseRunTimerActivity {
     }
 
     @OnClick({R.id.btn_start, R.id.btn_led, R.id.tv_wait_start, R.id.tv_force_start,
-            R.id.tv_fault_back, R.id.tv_mark_confirm, R.id.tv_wait_ready, R.id.tv_get_time})
+            R.id.tv_fault_back, R.id.tv_mark_confirm, R.id.tv_wait_ready, R.id.tv_get_time, R.id.img_AFR})
     //R.id.tv_project_setting,
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            case R.id.img_AFR:
+                showAFR();
+                break;
             case R.id.btn_start:
                 if (mList.get(0).getStudent() == null) {
                     ToastUtils.showShort("请先添加学生");

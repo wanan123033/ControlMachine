@@ -24,7 +24,7 @@ public class WifiReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals(WifiManager.RSSI_CHANGED_ACTION)) {
-            Log.i(TAG, "wifi信号强度变化");
+//            Log.i(TAG, "wifi信号强度变化");
         }
         //wifi连接上与否
         if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {

@@ -30,7 +30,7 @@ public class RunTimerManager {
      *
      * @param runNum 拦截器对数
      * @param hostId 主机号
-     * @param interceptPoint 拦截点 不需要传入-1
+     * @param interceptPoint 拦截点(起点1，终点2，起终点3) 不需要传入-1
      * @param interceptWay 触发方式 不需要传入-1
      * @param settingSensor 传感器信道 不需要传入-1
      * @param senNum 灵敏度 不需要传入-1
@@ -72,7 +72,11 @@ public class RunTimerManager {
         }
 
     }
-
+    public static void cmdInterceptTime(int time){
+        byte [] cmd = cmd((byte) 0xc1,(byte) 0x07,(byte) time);
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---红外计时设置拦截间隔指令");
+        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd));//拦截间隔
+    }
 
     public static void forceStart(){
         byte[] cmd = cmd((byte) 0xc4, (byte) 0x00, (byte) 0x00);
@@ -112,5 +116,52 @@ public class RunTimerManager {
         LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---红外计时获取时间指令");
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                 cmd));
+    }
+
+    /**
+     * 无线参数设置
+     * @param hostId
+     * @param interceptType
+     * @param interceptNum
+     */
+    public static void radioSetting(int hostId ,int interceptType,int interceptNum){
+        byte [] cmd = {(byte) 0xaa,0x0f,0x01, (byte) 0xa9,0x01,0x05,0x01,0x02,0x01,0x00,0x00,0x00,0x00,0x00,0x55};
+        cmd[6] = (byte) hostId;
+        cmd[7] = (byte) interceptType;
+        cmd[8] = (byte) interceptNum;
+        for (int i = 0; i < 13; i++) {
+            cmd[13] += cmd[i];
+        }
+        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,cmd));
+    }
+
+    public static void radioWait(int hostId ,int interceptType,int interceptNum){
+        byte [] cmd = {(byte) 0xaa,0x0f,0x01, (byte) 0x02,0x00,0x00,0x01,0x02,0x01,0x00,0x00,0x00,0x00,0x00,0x55};
+
+        cmd[6] = (byte) hostId;
+        cmd[7] = (byte) interceptType;
+        cmd[8] = (byte) interceptNum;
+        for (int i = 0; i < 13; i++) {
+            cmd[13] += cmd[i];
+        }
+        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,cmd));
+    }
+
+    public static void radioSendWaitState(int hostId ,int interceptType,int interceptNum){
+//        byte [] cmd = {(byte) 0xaa,0x0f,0x02, (byte) 0x03,0x00,0x00,0x01,0x02,0x01,0x00,0x00,0x00,0x00,0x00,0x55};
+        byte [] cmd = {(byte) 0xaa,0x0d,0x01, (byte) 0x03,0x00,0x00,0x000,0x00,0x00,0x00,0x00,0x00,0x55};
+        cmd[3] = (byte) hostId;
+        cmd[4] = (byte) interceptType;
+        cmd[5] = (byte) interceptNum;
+        for (int i = 0; i < 11; i++) {
+            cmd[11] += cmd[i];
+        }
+//        cmd[6] = (byte) hostId;
+//        cmd[7] = (byte) interceptType;
+//        cmd[8] = (byte) interceptNum;
+//        for (int i = 0; i < 13; i++) {
+//            cmd[11] += cmd[i];
+//        }
+        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,cmd));
     }
 }

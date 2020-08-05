@@ -100,7 +100,11 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
         }
         if (runNum != Integer.parseInt(runTimerSetting.getRunNum()) || interceptPoint != runTimerSetting.getInterceptPoint()
                 || interceptWay != runTimerSetting.getInterceptWay() || settingSensor != runTimerSetting.getSensor()) {
-            getSetting();
+//            getSetting();
+            runNum = Integer.parseInt(runTimerSetting.getRunNum());
+            interceptPoint = runTimerSetting.getInterceptPoint();
+            interceptWay = runTimerSetting.getInterceptWay();
+            settingSensor = runTimerSetting.getSensor();
             reLoad = true;
         }
     }

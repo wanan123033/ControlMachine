@@ -39,7 +39,7 @@ public class MyApplication extends MultiDexApplication {
         FileUtil.createAllFile();
         FileUtil.mkdirs(PATH_SPECIFICATION);
         FileUtil.mkdirs(PATH_IMAGE);
-        FileUtil.mkdirs(FaceServer.ROOT_PATH);
+        FileUtil.mkdirs2(FaceServer.ROOT_PATH);
     }
 
     public static MyApplication getInstance() {

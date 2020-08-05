@@ -739,7 +739,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         LogUtils.operation("更新摸高设备状态:deviceId="+deviceId+",deviceState="+deviceState.toString());
         BaseStuPair pair = null;
         int deviceIndex = 0;
-        for (int i = 0; i < deviceCount; i++) {
+        for (int i = 0; i < deviceDetails.size(); i++) {
             int id = deviceDetails.get(i).getStuDevicePair().getBaseDevice().getDeviceId();
             if (id == deviceId) {
                 pair = deviceDetails.get(i).getStuDevicePair();

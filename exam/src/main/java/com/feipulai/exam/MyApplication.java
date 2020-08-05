@@ -41,7 +41,7 @@ public class MyApplication extends MultiDexApplication {
         super.onCreate();
         instance = this;
         LogUtils.initLogger(true, true);
-//        CrashHandler.getInstance().init(this);
+        CrashHandler.getInstance().init(this);
         SettingHelper.init(this);
         BlueToothHelper.init(this);
         TOKEN = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.TOKEN, "");

@@ -57,12 +57,25 @@ public abstract class SitPullUpCheckActivity<Setting>
 	Button btnDeleteStudent;
 	@BindView(R.id.btn_del_all)
 	Button btnDelAll;
-	
+	@BindView(R.id.img_AFR)
+	ImageView imgAFR;
+
 	@Override
 	protected int setLayoutResID() {
 		return R.layout.activity_sit_pull_up_check;
 	}
-	
+
+	@Override
+	protected void initData() {
+		super.initData();
+		imgAFR.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				showAFR();
+			}
+		});
+	}
+
 	@Override
 	protected ListView getResultView() {
 		return mLvResults;
@@ -128,10 +141,10 @@ public abstract class SitPullUpCheckActivity<Setting>
 		return "请重启待连接设备";
 	}
 
-	@OnClick({R.id.img_AFR})
-	public void onClick(View view){
-		showAFR();
-	}
+//	@OnClick({R.id.img_AFR})
+//	public void onClick(View view){
+//		showAFR();
+//	}
 	public void showAFR() {
 		if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
 			ToastUtils.showShort("未选择人脸识别检录功能");

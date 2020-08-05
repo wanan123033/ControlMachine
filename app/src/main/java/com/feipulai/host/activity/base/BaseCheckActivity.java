@@ -49,7 +49,7 @@ public abstract class BaseCheckActivity
     private static final int ID_CARD_NO = 0x1;
     private static final int CHECK_IN = 0x0;
     private boolean needAdd = true;
-    private FrameLayout afrFrameLayout;
+    public FrameLayout afrFrameLayout;
     private BaseAFRFragment afrFragment;
     private ScannerGunManager scannerGunManager;
 
@@ -376,5 +376,20 @@ public abstract class BaseCheckActivity
 //                        .show();
             }
         });
+    }
+
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        // 是否触发按键为back键
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (afrFragment != null && afrFragment.isOpenCamera) {
+                showAFR();
+                return true;
+            }
+            return super.onKeyDown(keyCode, event);
+        } else { // 如果不是back键正常响应
+            return super.onKeyDown(keyCode, event);
+        }
     }
 }

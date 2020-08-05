@@ -27,7 +27,7 @@ public class RS232Result {
             return;
         }
         //Logger.i(StringUtility.bytesToHexString(data));
-        // Log.i("RS232Result", StringUtility.bytesToHexString(data));
+         Log.i("RS232Result", StringUtility.bytesToHexString(data));
         //Log.i("james","I got sth");
         if (MachineCode.machineCode == -1) {
             LogUtils.all(data.length + "---" + StringUtility.bytesToHexString(data) + "---当前测试项目代码为-1");
@@ -48,6 +48,7 @@ public class RS232Result {
 
             case ItemDefault.CODE_ZFP:
             case ItemDefault.CODE_LQYQ:
+            case ItemDefault.CODE_SHOOT:
                 if (data[data.length - 1] == 0x0d) {//包尾 ==0xd
                     switch (data[6]) {
                         case (byte) 0xc1://参数设置
@@ -191,7 +192,7 @@ public class RS232Result {
                             break;
                         case 0xa:
                             setType(SerialConfigs.JUMP_NEW_SELF_CHECK_RESPONSE);
-                            setResult(new JumpNewSelfCheckResult(0,data));
+                            setResult(new JumpNewSelfCheckResult(0, data));
                             break;
                         case 0x0c://测量垫版本
                             setType(SerialConfigs.JUMP_GET_VERSION_RESPONSE);

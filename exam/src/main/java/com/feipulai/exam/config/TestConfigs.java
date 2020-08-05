@@ -19,6 +19,10 @@ import com.feipulai.exam.activity.basketball.BasketBallGroupActivity;
 import com.feipulai.exam.activity.basketball.BasketBallSelectActivity;
 import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.basketball.BasketBallSettingActivity;
+import com.feipulai.exam.activity.basketball.BasketBallShootActivity;
+import com.feipulai.exam.activity.basketball.BasketBallShootGroupActivity;
+import com.feipulai.exam.activity.basketball.ShootSetting;
+import com.feipulai.exam.activity.basketball.ShootSettingActivity;
 import com.feipulai.exam.activity.footBall.FootBallGroupActivity;
 import com.feipulai.exam.activity.footBall.FootBallItemSelectActivity;
 import com.feipulai.exam.activity.footBall.FootBallSetting;
@@ -46,7 +50,6 @@ import com.feipulai.exam.activity.sargent_jump.SargentGroupActivity;
 import com.feipulai.exam.activity.sargent_jump.SargentItemSelectActivity;
 import com.feipulai.exam.activity.sargent_jump.SargentSetting;
 import com.feipulai.exam.activity.sargent_jump.SargentSettingActivity;
-import com.feipulai.exam.activity.setting.SettingActivity;
 import com.feipulai.exam.activity.sitreach.SitReachGroupTestActivity;
 import com.feipulai.exam.activity.sitreach.SitReachSelectActivity;
 import com.feipulai.exam.activity.sitreach.SitReachSetting;
@@ -371,6 +374,7 @@ public class TestConfigs {
         selectActivity.add(ItemDefault.CODE_LQYQ);
         selectActivity.add(ItemDefault.CODE_HWSXQ);
         selectActivity.add(ItemDefault.CODE_ZQYQ);
+        selectActivity.add(ItemDefault.CODE_ZWTQQ);
 
 
         // 每个项目对应的个人检录Activity
@@ -391,6 +395,7 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_ZQYQ, FootBallItemSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_JGCJ, RangerTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_WLJ, GripMoreActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_SHOOT, BasketBallShootActivity.class);
 
         // 每个项目对应的分组检录Acitivity
         TestConfigs.groupActivity.put(ItemDefault.CODE_LDTY, StandJumpGroupTestActivity.class);
@@ -410,6 +415,7 @@ public class TestConfigs {
         TestConfigs.groupActivity.put(ItemDefault.CODE_ZQYQ, FootBallGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_JGCJ, RangerMoreActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_WLJ, GripMoreGroupActivity.class);
+        TestConfigs.groupActivity.put(ItemDefault.CODE_SHOOT, BasketBallShootGroupActivity.class);
 
         // 每个机器码对应的机器名称
         TestConfigs.machineNameMap.put(ItemDefault.CODE_ZWTQQ, "坐位体前屈");
@@ -427,6 +433,7 @@ public class TestConfigs {
         TestConfigs.machineNameMap.put(ItemDefault.CODE_ZQYQ, "足球运球");
         TestConfigs.machineNameMap.put(ItemDefault.CODE_JGCJ, "激光测距");
         TestConfigs.machineNameMap.put(ItemDefault.CODE_WLJ, "握力");
+        TestConfigs.machineNameMap.put(ItemDefault.CODE_SHOOT, "篮球投篮");
 
         TestConfigs.settingActivity.put(ItemDefault.CODE_LDTY, StandJumpSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_ZWTQQ, SitReachSettingActivity.class);
@@ -442,6 +449,7 @@ public class TestConfigs {
         TestConfigs.settingActivity.put(ItemDefault.CODE_LQYQ, BasketBallSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_ZQYQ, FootBallSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_WLJ, GripSettingActivity.class);
+        TestConfigs.settingActivity.put(ItemDefault.CODE_SHOOT, ShootSettingActivity.class);
         // 每个机器码对应的机器名称
         TestConfigs.itemMinScope.put(ItemDefault.CODE_ZWTQQ, -200);
         TestConfigs.itemMaxScope.put(ItemDefault.CODE_ZWTQQ, 400);
@@ -522,6 +530,9 @@ public class TestConfigs {
                 break;
             case ItemDefault.CODE_ZCP:
                 result = 1;
+                break;
+            case ItemDefault.CODE_SHOOT:
+                result = SharedPrefsUtil.loadFormSource(context, ShootSetting.class).getTestNo();
                 break;
             case ItemDefault.CODE_MG:
                 result = SharedPrefsUtil.loadFormSource(context, SargentSetting.class).getTestTimes();

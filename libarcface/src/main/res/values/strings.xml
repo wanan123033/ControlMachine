@@ -56,7 +56,7 @@
     <string name="liveness_detect">活体检测</string>
 
     <!--人脸批量注册进度框-->
-    <string name="progress_dialog_batch_register">进度: %2$d / %2$d</string>
+    <string name="progress_dialog_batch_register">进度: %1$d / %2$d</string>
     <string name="progress_dialog_registering_please_wait">注册中，请稍等</string>
 
     <!--批量处理-->

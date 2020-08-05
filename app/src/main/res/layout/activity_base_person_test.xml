@@ -224,8 +224,7 @@
                         android:gravity="center"
                         android:text="跳过"
                         android:textColor="@color/white"
-                        android:textSize="22sp"
-                        android:visibility="gone" />
+                        android:textSize="22sp" />
 
                     <TextView
                         android:id="@+id/tv_start_test"
