@@ -24,7 +24,6 @@ import com.feipulai.device.serial.beans.RunTimerResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseAFRFragment;
 import com.feipulai.exam.activity.basketball.adapter.ShootResultAdapter;
-import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.BaseEvent;
@@ -35,7 +34,6 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.utils.ResultDisplayUtils;
-import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

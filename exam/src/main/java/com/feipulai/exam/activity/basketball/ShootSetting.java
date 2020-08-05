@@ -15,10 +15,10 @@ public class ShootSetting {
     private int maleFullShoot;//男子投篮
     private int femaleFullShoot;//女子投篮
     private int maleFullDribble;//男子运球
-    private int interceptNo = 3;
-    private int startNo = 1;
-    private int back1No = 2;
-    private int back2No = 3;
+    private int interceptNo = 4;
+    private int startNo = 2;
+    private int back1No = 3;
+    private int back2No = 4;
     public int getStartNo() {
         return startNo;
     }
