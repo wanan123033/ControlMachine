@@ -84,6 +84,8 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
     LinearLayout llUseMode;
     @BindView(R.id.tv_pair)
     TextView tvPair;
+    @BindView(R.id.tv_ip_connect)
+    TextView tvIpConnect;
     private Integer[] testRound;
     private String[] carryMode = new String[]{"四舍五入", "不进位", "非零进位"};
     private String[] useMode = {"单拦截", "2:起点1:终点", "2:终点1:起点", "2:折返点1:起终点", "2:起终点1:折返点"};
@@ -180,10 +182,17 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
             tvPair.setVisibility(View.VISIBLE);
             etPort.setEnabled(false);
             etHostIp.setEnabled(false);
+            tvIpConnect.setEnabled(false);
+            rgAccuracy.setVisibility(View.GONE);
         }
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        manager.init();
+    }
     private int getAccuracy() {
         switch (TestConfigs.sCurrentItem.getDigital()) {
             case 1:
