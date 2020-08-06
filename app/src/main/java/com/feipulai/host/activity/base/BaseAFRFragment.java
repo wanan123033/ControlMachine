@@ -101,7 +101,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-                    isOpenCamera=false;
+                    isOpenCamera = false;
                     drawPreviewInfo(null);
                     break;
                 default:
@@ -148,7 +148,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 //                    isOpenCamera = false;
 //                    requestFeatureStatusMap.clear();
 //                    extractErrorRetryMap.clear();
-//                    mHandler.sendEmptyMessage(0);
+//                    isOpenCamera=false;
 //                    compareListener.compareStu(null);
 //                    return;
 //                }
@@ -178,10 +178,10 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                         }
                         faceHelper.setName(requestId, getString(R.string.recognize_failed_notice, msg));
 //                        // 在尝试最大次数后，特征提取仍然失败，则认为识别未通过
-                        requestFeatureStatusMap.put(requestId, RequestFeatureStatus.FAILED);
-//                        retryRecognizeDelayed(requestId);
-                        mHandler.sendEmptyMessage(0);
-                        compareListener.compareStu(null);
+//                        requestFeatureStatusMap.put(requestId, RequestFeatureStatus.FAILED);
+                        retryRecognizeDelayed(requestId);
+//                        isOpenCamera=false;
+//                        compareListener.compareStu(null);
                     } else {
                         requestFeatureStatusMap.put(requestId, RequestFeatureStatus.TO_RETRY);
                     }
@@ -242,7 +242,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         if (faceHelper == null) {
             return;
         }
-        isStartFace=true;
+//        isStartFace=true;
         requestFeatureStatusMap.put(requestId, RequestFeatureStatus.FAILED);
         Observable.timer(FAIL_RETRY_INTERVAL, TimeUnit.MILLISECONDS)
                 .subscribe(new Observer<Long>() {
@@ -267,7 +267,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                     @Override
                     public void onComplete() {
                         // 将该人脸特征提取状态置为FAILED，帧回调处理时会重新进行人脸识别
-//                        faceHelper.setName(requestId, Integer.toString(requestId));
+                        faceHelper.setName(requestId, Integer.toString(requestId));
                         requestFeatureStatusMap.put(requestId, RequestFeatureStatus.TO_RETRY);
                         delayFaceTaskCompositeDisposable.remove(disposable);
                     }
@@ -492,7 +492,8 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         drawHelper.draw(faceRectView2, drawInfoList);
     }
 
-    private final float SIMILAR_THRESHOLD = 0.82f;
+    private final float SIMILAR_THRESHOLD = 0.80f;
+    private int hasTry = 0;
 
     //3个线程查找
     private CompareResult compareResult1;
@@ -550,23 +551,29 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 //                faceHelper.setName(faceId, mContext.getString(R.string.recognize_success_notice, lastCompareResult.getUserName()));
                 Student student = DBManager.getInstance().queryStudentByCode(lastCompareResult.getUserName());
                 Logger.d("compareResult==>");
-                mHandler.sendEmptyMessage(0);
+                isOpenCamera = false;
+                hasTry = 0;
                 compareListener.compareStu(student);
-                mHandler.sendEmptyMessage(0);
-
+//                isOpenCamera=false;
             } else {
+                hasTry++;
                 Logger.d("compareResult==>null");
-//                compareListener.compareStu(null);
-                mHandler.sendEmptyMessage(0);
-                if (isLodingServer) {
-                    compareListener.compareStu(null);
-//                    retryRecognizeDelayed(faceId);
-                    isStartFace = true;
+                if (hasTry < 3) {
+                    faceHelper.setName(faceId, getString(R.string.recognize_failed_notice, ""));
                 } else {
+                    hasTry = 0;
+                    faceHelper.setName(faceId, getString(R.string.recognize_failed_notice, ""));
+                    isOpenCamera = false;
                     compareListener.compareStu(null);
-                    showAddHint();
                 }
-
+                isStartFace = true;
+//                if (isLodingServer) {
+//                    compareListener.compareStu(null);
+//                    isStartFace = true;
+//                } else {
+//                    compareListener.compareStu(null);
+//                }
+                retryRecognizeDelayed(faceId);
             }
         }
 
@@ -648,7 +655,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismissWithAnimation();
-                        mHandler.sendEmptyMessage(0);
+                        isOpenCamera = false;
                         isStartFace = true;
 //                        compareListener.compareStu(null);
                         isLodingServer = false;
