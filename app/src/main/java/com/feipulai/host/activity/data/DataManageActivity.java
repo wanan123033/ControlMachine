@@ -805,10 +805,6 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                         break;
 
                     case ExlListener.EXEL_READ_FAIL:
-                        OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
-                        ToastUtils.showShort(reason);
-                        isProcessingData = false;
-                        break;
 
                     case ExlListener.EXEL_WRITE_SUCCESS:
                         OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
