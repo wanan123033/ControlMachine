@@ -227,7 +227,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         }
         //设置精度
         ballManager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), setting.getSensitivity(),
-                setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital()  -1);
+                setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() - 1);
     }
 
     @Override
@@ -269,8 +269,8 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
             Student student = (Student) baseEvent.getData();
             StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
             onIndividualCheckIn(student, studentItem, new ArrayList<RoundResult>());
-        }else if (baseEvent.getTagInt()==EventConfigs.WIFI_STATE){
-            if (setting.getTestType()==0&&baseEvent.getData()== NetworkInfo.State.CONNECTED){//有线模式UDP
+        } else if (baseEvent.getTagInt() == EventConfigs.WIFI_STATE) {
+            if (setting.getTestType() == 0 && baseEvent.getData() == NetworkInfo.State.CONNECTED) {//有线模式UDP
                 //配置网络
                 if (SettingHelper.getSystemSetting().isAddRoute() && !TextUtils.isEmpty(NetWorkUtils.getLocalIp())) {
                     String locatIp = NetWorkUtils.getLocalIp();
@@ -319,9 +319,8 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                                 : new ArrayList<RoundResult>(TestConfigs.getMaxTestCount(this)));
                 RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
                 testNo = testRoundResult == null ? 1 : testRoundResult.getTestNo() + 1;
-                testNo = 1;
                 if (student != null)
-                    LogUtils.operation("足球该学生未测试:" + student.getStudentCode() + ",testNo = 1");
+                    LogUtils.operation("足球该学生未测试:" + student.getStudentCode() + ",testNo =  " + testNo);
             } else {
                 TestCache.getInstance().getResults().put(student, results);
                 //是否有成绩，没有成绩查底该项目是否有成绩，没有成绩测试次数为1，有成绩测试次数+1
@@ -741,7 +740,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
     }
 
     @OnClick({R.id.tv_punish_add, R.id.tv_punish_subtract, R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal, R.id.tv_print, R.id.tv_confirm
-            , R.id.txt_waiting, R.id.txt_illegal_return, R.id.txt_continue_run, R.id.txt_stop_timing, R.id.txt_finish_test,R.id.img_AFR})
+            , R.id.txt_waiting, R.id.txt_illegal_return, R.id.txt_continue_run, R.id.txt_stop_timing, R.id.txt_finish_test, R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_waiting://等待发令
@@ -865,6 +864,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                 break;
         }
     }
+
     public void showAFR() {
         if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
             ToastUtils.showShort("未选择人脸识别检录功能");
@@ -1341,11 +1341,13 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         }
 
     }
+
     private void initAFR() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(setAFRFrameLayoutResID(), afrFragment);
         transaction.commitAllowingStateLoss();// 提交更改
     }
+
     public int setAFRFrameLayoutResID() {
         return R.id.frame_camera;
     }
@@ -1374,6 +1376,6 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
             return;
         }
         // 可以直接检录
-        onIndividualCheckIn(student,studentItem,results);
+        onIndividualCheckIn(student, studentItem, results);
     }
 }
