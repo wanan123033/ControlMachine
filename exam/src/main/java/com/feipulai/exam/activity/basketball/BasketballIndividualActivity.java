@@ -309,9 +309,11 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 TestCache.getInstance().getResults().put(student,
                         results != null ? results
                                 : new ArrayList<RoundResult>(TestConfigs.getMaxTestCount(this)));
-                testNo = 1;
+                //是否有成绩，没有成绩查底该项目是否有成绩，没有成绩测试次数为1，有成绩测试次数+1
+                RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
+                testNo = testRoundResult == null ? 1 : testRoundResult.getTestNo() + 1;
                 if (student != null)
-                    LogUtils.operation("篮球该学生未测试:" + student.getStudentCode() + ",testNo = 1");
+                    LogUtils.operation("足球该学生未测试:" + student.getStudentCode() + ",testNo =  " + testNo);
             } else {
                 TestCache.getInstance().getResults().put(student, results);
                 //是否有成绩，没有成绩查底该项目是否有成绩，没有成绩测试次数为1，有成绩测试次数+1
