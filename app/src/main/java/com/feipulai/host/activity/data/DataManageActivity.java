@@ -43,6 +43,7 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.common.view.dialog.EditDialog;
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
+import com.feipulai.host.activity.SplashScreenActivity;
 import com.feipulai.host.activity.base.BaseTitleActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.activity.setting.SystemSetting;
@@ -929,6 +930,8 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                 FileUtil.mkdirs2(FaceServer.ROOT_PATH);
                 FileUtil.mkdirs(MyApplication.PATH_IMAGE);
                 Logger.i("进行数据清空");
+                FaceServer.getInstance().unInit();
+                FaceServer.getInstance().init(DataManageActivity.this);
                 return new DataBaseRespon(true, "", "");
             }
 

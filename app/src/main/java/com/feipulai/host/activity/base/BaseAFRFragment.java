@@ -242,6 +242,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         if (faceHelper == null) {
             return;
         }
+        isStartFace=true;
         requestFeatureStatusMap.put(requestId, RequestFeatureStatus.FAILED);
         Observable.timer(FAIL_RETRY_INTERVAL, TimeUnit.MILLISECONDS)
                 .subscribe(new Observer<Long>() {
@@ -296,7 +297,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         } else {
             mUVCCamera.stopPreview();
             isOpenCamera = false;
-
+            isStartFace = false;
         }
         return true;
     }
@@ -559,6 +560,8 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                 mHandler.sendEmptyMessage(0);
                 if (isLodingServer) {
                     compareListener.compareStu(null);
+//                    retryRecognizeDelayed(faceId);
+                    isStartFace = true;
                 } else {
                     compareListener.compareStu(null);
                     showAddHint();
@@ -646,6 +649,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismissWithAnimation();
                         mHandler.sendEmptyMessage(0);
+                        isStartFace = true;
 //                        compareListener.compareStu(null);
                         isLodingServer = false;
                     }
@@ -665,9 +669,10 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             public void onSuccess(int bizType) {
                 isLodingServer = true;
                 OperateProgressBar.removeLoadingUiIfExist((Activity) mContext);
-                threadPool.execute(searchFace1);
-                threadPool.execute(searchFace2);
-                threadPool.execute(searchFace3);
+//                threadPool.execute(searchFace1);
+//                threadPool.execute(searchFace2);
+//                threadPool.execute(searchFace3);
+                isStartFace = true;
             }
 
             @Override
