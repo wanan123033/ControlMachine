@@ -140,23 +140,23 @@ public class ShootSettingActivity extends BaseTitleActivity implements CompoundB
         ArrayAdapter adapter3 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, backRound);
         adapter3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spBack1No.setAdapter(adapter3);
-        spBack1No.setSelection(setting.getBack1No());
+        spBack1No.setSelection(setting.getBack1No()-1);
         //设置2号折返点
         ArrayAdapter adapter4 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, backRound);
         adapter4.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spBack2No.setAdapter(adapter4);
-        spBack2No.setSelection(setting.getBack2No());
+        spBack2No.setSelection(setting.getBack2No()-1);
 
         //设置起点
         ArrayAdapter adapter5 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, backRound);
         adapter5.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spStartNo.setAdapter(adapter5);
-        spStartNo.setSelection(setting.getStartNo());
+        spStartNo.setSelection(setting.getStartNo()-1);
         //设置指定点
         ArrayAdapter adapter6 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, interceptRound);
         adapter6.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spInterceptNo.setAdapter(adapter6);
-        spInterceptNo.setSelection(setting.getInterceptNo());
+        spInterceptNo.setSelection(setting.getInterceptNo()-1);
     }
 
 
@@ -227,35 +227,35 @@ public class ShootSettingActivity extends BaseTitleActivity implements CompoundB
                 break;
             case R.id.sp_intercept_no:
                 if (position<3){
-                    spInterceptNo.setSelection(setting.getInterceptNo());
+                    spInterceptNo.setSelection(setting.getInterceptNo()-1);
                     toastSpeak("至少有一次投篮折返");
                     return;
                 }
-                setting.setInterceptNo(position);
+                setting.setInterceptNo(position+1);
                 break;
             case R.id.sp_start_no:
                 if (position == 0){
-                    spStartNo.setSelection(setting.getStartNo());
+                    spStartNo.setSelection(setting.getStartNo()-1);
                     toastSpeak("起始截点不能为1号");
                     return;
                 }
-                setting.setStartNo(position);
+                setting.setStartNo(position+1);
                 break;
             case R.id.sp_back1_no:
                 if (position == 0){
-                    spBack1No.setSelection(setting.getStartNo());
+                    spBack1No.setSelection(setting.getStartNo()-1);
                     toastSpeak("起始截点不能为1号");
                     return;
                 }
-                setting.setBack1No(position);
+                setting.setBack1No(position+1);
                 break;
             case R.id.sp_back2_no:
                 if (position == 0){
-                    spBack2No.setSelection(setting.getStartNo());
+                    spBack2No.setSelection(setting.getStartNo()-1);
                     toastSpeak("起始截点不能为1号");
                     return;
                 }
-                setting.setBack2No(position);
+                setting.setBack2No(position+1);
                 break;
         }
     }

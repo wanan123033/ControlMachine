@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.feipulai.exam.R;
+import com.feipulai.exam.entity.RoundResult;
 
 import java.util.List;
 
@@ -17,7 +18,14 @@ import java.util.List;
  */
 public class ShootResultAdapter extends BaseQuickAdapter<String, BaseViewHolder> {
 
+    private int selectPosition = -1;
+    public void setSelectPosition(int selectPosition) {
+        this.selectPosition = selectPosition;
+    }
 
+    public int getSelectPosition() {
+        return selectPosition;
+    }
     public ShootResultAdapter(@Nullable List<String> data) {
         super(R.layout.item_shoot_test_result, data);
 
@@ -51,5 +59,21 @@ public class ShootResultAdapter extends BaseQuickAdapter<String, BaseViewHolder>
                 break;
         }
 
+    }
+
+    private String setResultState(int state) {
+
+        switch (state) {
+            case RoundResult.RESULT_STATE_NORMAL:
+                return "正常";
+            case RoundResult.RESULT_STATE_FOUL:
+                return "犯规";
+            case RoundResult.RESULT_STATE_BACK:
+                return "中退";
+            case RoundResult.RESULT_STATE_WAIVE:
+                return "放弃";
+            default:
+                return "";
+        }
     }
 }
