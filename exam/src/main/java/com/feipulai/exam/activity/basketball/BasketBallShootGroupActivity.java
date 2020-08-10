@@ -1,10 +1,13 @@
 package com.feipulai.exam.activity.basketball;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -15,7 +18,6 @@ import com.feipulai.device.manager.RunTimerManager;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.RunTimerConnectState;
 import com.feipulai.device.serial.beans.RunTimerResult;
-import com.feipulai.device.udp.result.BasketballResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.basketball.adapter.ShootResultAdapter;
@@ -28,12 +30,17 @@ import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.adapter.VolleyBallGroupStuAdapter;
+import com.feipulai.exam.bean.RoundResultBean;
+import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.netUtils.netapi.ServerMessage;
+import com.feipulai.exam.utils.PrintResultUtil;
 import com.feipulai.exam.utils.ResultDisplayUtils;
+import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
@@ -68,19 +75,19 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
     TextView tvPunishAdd;
     @BindView(R.id.tv_punish_subtract)
     TextView tvPunishSubtract;
-    @BindView(R.id.tv_foul)
-    TextView tvFoul;
-    @BindView(R.id.tv_inBack)
-    TextView tvInBack;
-    @BindView(R.id.tv_abandon)
-    TextView tvAbandon;
-    @BindView(R.id.tv_normal)
-    TextView tvNormal;
+    //    @BindView(R.id.tv_foul)
+//    TextView tvFoul;
+//    @BindView(R.id.tv_inBack)
+//    TextView tvInBack;
+//    @BindView(R.id.tv_abandon)
+//    TextView tvAbandon;
+//    @BindView(R.id.tv_normal)
+//    TextView tvNormal;
     @BindView(R.id.txt_waiting)
     TextView txtWaiting;
     @BindView(R.id.txt_illegal_return)
     TextView txtIllegalReturn;
-    @BindView(R.id.txt_continue_run)
+    @BindView(R.id.txt_run)
     TextView txtContinueRun;
     @BindView(R.id.txt_stop_timing)
     TextView txtStopTiming;
@@ -111,9 +118,11 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
     private String[] result;
     private volatile int order;
     private static final String TAG = "BasketBallShootGroupAct";
-    private volatile int connect ;
+    private volatile int connect;
     private String name;
     private String testDate;
+    private boolean saved;
+
     protected int setLayoutResID() {
         return R.layout.activity_basket_ball_shoot_group;
     }
@@ -196,24 +205,22 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
         Map<Student, List<RoundResult>> map = TestCache.getInstance().getResults();
         if (map != null) {
             List<RoundResult> results = map.get(student);
-            if (results != null && results.size() > 0) {
-                //成绩
-                roundNo = results.size() + 1;
-                for (int i = 0; i < results.size(); i++) {
+            roundNo = (results == null ? 1 : results.size() + 1);
+            for (int i = 0; i < TestConfigs.getMaxTestCount(this); i++) {
+                if (results != null && results.size()>i) {
                     result[i] = InteractUtils.getDisplayResult(results.get(i));
                     ballShootResults.add(new BasketBallShootResult(roundNo, InteractUtils.getDisplayResult(results.get(i)),
                             results.get(i).getResult(), 0, results.get(i).getResultState()));
-                }
-                resultList.addAll(Arrays.asList(result));
-                //
-            } else {
-                roundNo = 1;
-                for (int i = 0;i<TestConfigs.getMaxTestCount(this);i++){
+                } else {
                     ballShootResults.add(new BasketBallShootResult(roundNo, "", -999, 0, -999));
+                    result[i] = "";
+                    if (resultAdapter.getSelectPosition() == -1) {
+                        resultAdapter.setSelectPosition(i);
+                    }
                 }
-                result = new String[TestConfigs.getMaxTestCount(this)];
-                resultList.addAll(Arrays.asList(result));
+
             }
+            resultList.addAll(Arrays.asList(result));
 
         } else {
             roundNo = 1;
@@ -231,7 +238,6 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
         tvResult.setText(name);
         state = WAIT_CHECK_IN;
         setOperationUI();
-
 //        ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, student.getLEDStuName(), Paint.Align.LEFT);
 //        ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "", Paint.Align.CENTER);
     }
@@ -321,7 +327,7 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
      * 根据测试状态显示操作UI
      */
     private void setOperationUI() {
-        switch (state){
+        switch (state) {
             case WAIT_BEGIN:
                 txtContinueRun.setEnabled(true);
                 txtIllegalReturn.setEnabled(true);
@@ -372,7 +378,7 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
     });
 
     private void getResult(RunTimerResult result) {
-        if (result.getTrackNum() == 1){//投篮必须是1号机
+        if (result.getTrackNum() == 1) {//投篮必须是1号机
             order = result.getOrder();
             mHandler.sendEmptyMessage(UPDATE_RESULT);
         }
@@ -384,11 +390,10 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
     }
 
     /**
-     *
      * @param testState
      */
     public void changeState(int testState) {
-        switch (testState){
+        switch (testState) {
             case 0://设置
             case 1:
             case 5://违规返回
@@ -400,7 +405,8 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
             case 3://启动
                 state = TESTING;
                 countDownTime(60);
-                testDate = System.currentTimeMillis()+"";
+                saved = false;
+                testDate = System.currentTimeMillis() + "";
                 break;
             case 4://获取到结果
                 state = TESTING;
@@ -440,6 +446,7 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
 
     ScheduledExecutorService service = Executors
             .newSingleThreadScheduledExecutor();
+
     private void checkConnect() {
         Runnable runnable = new Runnable() {
             public void run() {
@@ -468,14 +475,14 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
                     break;
                 case UPDATE_RESULT:
                     String result = ResultDisplayUtils.getStrResultForDisplay(order);
-                    tvResult.setText( name +result);
+                    tvResult.setText(name + result);
                     break;
             }
             return false;
         }
     });
 
-    @OnClick({R.id.txt_waiting, R.id.txt_illegal_return, R.id.txt_continue_run, R.id.txt_stop_timing,
+    @OnClick({R.id.txt_waiting, R.id.txt_illegal_return, R.id.txt_run, R.id.txt_stop_timing,
             R.id.tv_print, R.id.tv_confirm, R.id.txt_finish_test})
     public void onViewClicked(View view) {
 
@@ -486,21 +493,35 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
             case R.id.txt_illegal_return:
                 RunTimerManager.illegalBack();
                 break;
-            case R.id.txt_continue_run:
-
+            case R.id.txt_run:
+                RunTimerManager.forceStart();
                 break;
             case R.id.txt_stop_timing:
-                if (timer!=null && !timer.isDisposed()){
+                if (timer != null && !timer.isDisposed()) {
                     timer.dispose();
                 }
 
                 break;
 
             case R.id.tv_print:
-
+                if (state == TESTING){
+                    toastSpeak("测试中无法打印");
+                    return;
+                }
+                LogUtils.operation("篮球点击了打印");
+                showPrintDialog();
                 break;
             case R.id.tv_confirm:
+                if (state == TESTING){
+                    toastSpeak("测试中，不能保存");
+                    return;
+                }
+                if (saved) {
+                    toastSpeak("已保存，请勿重复点击");
+                    return;
+                }
                 saveResult();
+                saved = true;
                 break;
             case R.id.txt_finish_test:
 
@@ -508,14 +529,148 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
         }
     }
 
+    private void showPrintDialog() {
+        String[] printType = new String[]{"个人", "整组"};
+        new AlertDialog.Builder(this).setTitle("选择成绩打印类型")
+                .setItems(printType, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        TestCache testCache = TestCache.getInstance();
+                        switch (which) {
+                            case 0:
+                                List<RoundResult> stuResult = testCache.getResults().get(pairs.get(position()).getStudent());
+                                if (stuResult == null || stuResult.size() == 0) {
+                                    toastSpeak("该考生未进行考试");
+                                    return;
+                                }
+                                PrintResultUtil.printResult(pairs.get(position()).getStudent().getStudentCode());
+                                break;
+                            case 1:
+
+                                InteractUtils.printResults(group, testCache.getAllStudents(), testCache.getResults(),
+                                        TestConfigs.getMaxTestCount(BasketBallShootGroupActivity.this), testCache.getTrackNoMap());
+                                break;
+                        }
+                    }
+                }).create().show();
+    }
+
     private void saveResult() {
         if (pairs.get(position()) == null)
             return;
+        resultList.clear();
+        result[roundNo - 1] = ResultDisplayUtils.getStrResultForDisplay(order);
+        resultList.addAll(Arrays.asList(result));
+        resultAdapter.notifyDataSetChanged();
+        ballShootResults.get(roundNo - 1).setResult(order);
+        ballShootResults.get(roundNo - 1).setResultState(RoundResult.RESULT_STATE_NORMAL);
+        addRoundResult(order);
+        uploadResults();
+        nextTest();
+    }
+
+    /**
+     * 下一轮测试或下一个学生测试
+     */
+    private void nextTest() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //连续测试
+                if (setting.getTestPattern() == TestConfigs.GROUP_PATTERN_SUCCESIVE) {
+                    continuousTest();
+                } else {
+                    //循环
+                    loopTestNext();
+                }
+            }
+        }, 3000);
+    }
+
+    /**
+     * 连续测试
+     */
+    private void continuousTest() {
+        if (roundNo < TestConfigs.getMaxTestCount(this)) {
+            //是否存在可以测试位置
+            if (isExistTestPlace()) {
+                prepareForBegin();
+                toastSpeak(String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getSpeakStuName(), roundNo),
+                        String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getStudentName(), roundNo));
+                LogUtils.operation("篮球考生:" + pairs.get(position()).getStudent().getSpeakStuName() + "进行第" + roundNo + "轮测试");
+            } else {
+                continuousTestNext();
+            }
+        } else {
+            //是否测试到最后一位
+            if (position() == pairs.size() - 1) {
+                firstCheckTest();
+            } else {
+                continuousTestNext();
+            }
+
+
+        }
+    }
+
+    /**
+     * 连续测试下一位
+     */
+    private void continuousTestNext() {
+
+        for (int i = (position() + 1); i < pairs.size(); i++) {
+
+            if (isStuAllTest(pairs.get(i).getStudent().getStudentCode())) {
+                continue;
+            }
+            stuPairAdapter.setTestPosition(i);
+            rvTestingPairs.scrollToPosition(i);
+            prepareForBegin();
+            presetResult();
+            //最后一次测试的成绩
+            toastSpeak(String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getSpeakStuName(), roundNo),
+                    String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getStudentName(), roundNo));
+            LogUtils.operation("篮球考生:" + pairs.get(position()).getStudent().getSpeakStuName() + "进行第" + roundNo + "轮测试");
+
+            group.setIsTestComplete(2);
+            DBManager.getInstance().updateGroup(group);
+            stuPairAdapter.notifyDataSetChanged();
+
+            return;
+        }
+        //全部次数测试完，
+        firstCheckTest();
 
     }
 
     /**
-     * 添加
+     * 循环测试下一位测试
+     */
+    private void loopTestNext() {
+        for (int i = (position() + 1); i < pairs.size(); i++) {
+            if (isStuAllTest(pairs.get(i).getStudent().getStudentCode())) {
+                continue;
+            }
+            stuPairAdapter.setTestPosition(i);
+            rvTestingPairs.scrollToPosition(i);
+            presetResult();
+            prepareForBegin();
+            //最后一次测试的成绩
+            toastSpeak(String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getSpeakStuName(), roundNo),
+                    String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getStudentName(), roundNo));
+            LogUtils.operation("篮球考生" + pairs.get(position()).getStudent().getSpeakStuName() + "进行第" + 1 + "次的第" + roundNo + "轮测试");
+            stuPairAdapter.notifyDataSetChanged();
+
+            group.setIsTestComplete(2);
+            DBManager.getInstance().updateGroup(group);
+
+            return;
+        }
+        firstCheckTest();
+    }
+
+    /**
+     * 成绩数据库保存
      */
     private void addRoundResult(int result) {
         Student student = pairs.get(position()).getStudent();
@@ -553,12 +708,39 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
         //获取所有成绩设置为非最好成绩
         List<RoundResult> results = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");
         TestCache.getInstance().getResults().put(student, results);
+
+    }
+
+    /**
+     * 上传成绩
+     */
+    private void uploadResults() {
+        if (SettingHelper.getSystemSetting().isRtUpload()) {
+            Student student = pairs.get(position()).getStudent();
+            List<RoundResult> roundResultList = TestCache.getInstance().getResults().get(student);
+            if (TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
+                return;
+            }
+            if (roundResultList.size() == 0 || roundResultList == null) {
+                return;
+            }
+            List<UploadResults> uploadResults = new ArrayList<>();
+            String groupNo = group.getGroupNo() + "";
+            String scheduleNo = group.getScheduleNo();
+            String testNo = "1";
+            UploadResults uploadResult = new UploadResults(scheduleNo,
+                    TestConfigs.getCurrentItemCode(), student.getStudentCode()
+                    , testNo, group, RoundResultBean.beanCope(roundResultList, group));
+            uploadResults.add(uploadResult);
+            Logger.i("自动上传成绩:" + uploadResults.toString());
+            ServerMessage.uploadResult(uploadResults);
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (timer != null){
+        if (timer != null) {
             timer.dispose();
         }
     }

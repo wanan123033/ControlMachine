@@ -23,6 +23,8 @@ import com.feipulai.device.led.RunLEDManager;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.basketball.DribbleShootGroupActivity;
+import com.feipulai.exam.activity.basketball.ShootSetting;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.medicineBall.MedicineBallSetting;
 import com.feipulai.exam.activity.medicineBall.more_device.BallGroupMoreActivity;
@@ -487,6 +489,10 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 for (BaseStuPair pair : stuPairsList) {
                     if (pair.isCanTest()) {
                         pairs.add(pair);
+                        Student student = pair.getStudent();
+                        List<RoundResult> results = getResults(student.getStudentCode());
+                        // 获取到组的考生时,将所有成绩均添加到 baseGroupMap中
+                        TestConfigs.baseGroupMap.put(student, results);
                     }
                 }
                 if (pairs.size() <= 0) {
@@ -529,6 +535,12 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZWTQQ
                         && SharedPrefsUtil.loadFormSource(this, SitReachSetting.class).getTestType() == 1) {
                     startActivity(new Intent(this, SitReachMoreGroupActivity.class));
+                    return;
+                }
+
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ
+                        && SharedPrefsUtil.loadFormSource(this, ShootSetting.class).getTestType() == 2) {
+                    startActivity(new Intent(this, DribbleShootGroupActivity.class));
                     return;
                 }
                 startActivity(new Intent(this, TestConfigs.groupActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
