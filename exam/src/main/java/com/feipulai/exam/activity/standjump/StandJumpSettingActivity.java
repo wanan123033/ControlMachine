@@ -685,6 +685,7 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
                         activity.isSetPoints = true;
                         ToastUtils.showShort("设置成功");
                         activity.standSetting.setPointsScope(activity.scope);
+                        activity.standSetting.setTestPoints(activity.testPoints);
                         break;
                     case JUMP_SET_POINTS_FAILURE:
                         isDialogShow = false;

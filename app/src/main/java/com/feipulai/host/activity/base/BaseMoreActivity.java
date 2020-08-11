@@ -282,6 +282,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
         addStudent(student, index);
         if (!isNextClickStart) {
+            startTime = System.currentTimeMillis();
             deviceDetails.get(index).getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
             deviceDetails.get(index).getStuDevicePair().setResult(-999);
             deviceListAdapter.notifyItemChanged(index);

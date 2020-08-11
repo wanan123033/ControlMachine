@@ -1,5 +1,6 @@
 package com.feipulai.host.activity.base;
 
+import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 
 import java.io.Serializable;
@@ -13,7 +14,7 @@ public class BaseStuPair implements Serializable {
     private static final long serialVersionUID = -5114314856313860680L;
     //成绩
     private int result;
-    private int resultState;//成绩状态 0正常  -1犯规    -2中退    -3放弃
+    private int resultState= RoundResult.RESULT_STATE_NORMAL;//成绩状态 0正常  -1犯规    -2中退    -3放弃
     //学生
     private Student student;
     //设备

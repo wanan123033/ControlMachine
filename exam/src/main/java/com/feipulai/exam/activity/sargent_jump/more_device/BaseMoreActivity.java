@@ -19,6 +19,7 @@ import android.widget.ListView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.tts.TtsManager;
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.led.LEDManager;
@@ -140,8 +141,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         deviceListAdapter.notifyItemChanged(index);
     }
 
-    public void setShowGetData(int deviceId,boolean enable){
-        deviceListAdapter.setShowGetData(deviceId,enable);
+    public void setShowGetData(int deviceId, boolean enable) {
+        deviceListAdapter.setShowGetData(deviceId, enable);
     }
 
     @Override
@@ -222,6 +223,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         deviceListAdapter.notifyItemChanged(index);
 
         if (!isNextClickStart) {
+            deviceDetails.get(index).getStuDevicePair().setTestTime(DateUtil.getCurrentTime() + "");
             deviceDetails.get(index).getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
             deviceDetails.get(index).getStuDevicePair().setResult(-999);
             deviceListAdapter.notifyItemChanged(index);
@@ -334,6 +336,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                         }
                         if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE ||
                                 pair.getBaseDevice().getState() == BaseDeviceState.STATE_END) {
+                            pair.setTestTime(DateUtil.getCurrentTime() + "");
                             sendTestCommand(pair, pos);
                         }
                         break;
@@ -383,7 +386,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         }).show();
 
     }
-    public void getData(int pos){
+
+    public void getData(int pos) {
 
     }
 
@@ -491,7 +495,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     public synchronized void updateDevice(@NonNull BaseDeviceState deviceState) {
         int deviceId = deviceState.getDeviceId();
         if (deviceState != null)
-            LogUtils.operation("更新设备状态:deviceId="+deviceId+",deviceState="+deviceState.toString());
+            LogUtils.operation("更新设备状态:deviceId=" + deviceId + ",deviceState=" + deviceState.toString());
         BaseStuPair pair = null;
         int index = 0;
         for (int i = 0; i < deviceCount; i++) {
@@ -525,8 +529,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         refreshDevice(index);
     }
 
-    public void setTxtEnable(int deviceId,boolean enable){
-        deviceListAdapter.setTxtStartEnable(deviceId,enable);
+    public void setTxtEnable(int deviceId, boolean enable) {
+        deviceListAdapter.setTxtStartEnable(deviceId, enable);
     }
 
     /**
@@ -582,8 +586,10 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                                 deviceListAdapter.notifyItemChanged(index);
                             }
                         }, 3000);
+                        pair.setTestTime(DateUtil.getCurrentTime() + "");
                         sendTestCommand(pair, index);
                     } else {
+                        pair.setTestTime(DateUtil.getCurrentTime() + "");
                         sendTestCommand(pair, index);
                     }
 
@@ -645,7 +651,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         roundResult.setMachineResult(baseStuPair.getResult());
         roundResult.setResultState(baseStuPair.getResultState());
         roundResult.setTestTime(baseStuPair.getTestTime());
-        roundResult.setEndTime(baseStuPair.getEndTime());
+        roundResult.setEndTime(DateUtil.getCurrentTime() + "");
         roundResult.setRoundNo(deviceDetails.get(index).getRound());
         roundResult.setTestNo(testNo);
         roundResult.setExamType(studentItem.getExamType());
@@ -854,7 +860,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         }
     }
 
-    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair,R.id.img_AFR})
+    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair, R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_led_setting:
@@ -944,6 +950,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     public abstract void gotoItemSetting();
 
     protected abstract void sendTestCommand(BaseStuPair pair, int index);
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -977,6 +984,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             }
         }
     }
+
     @Override
     public void compareStu(Student student) {
         runOnUiThread(new Runnable() {
@@ -1001,7 +1009,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             return;
         }
         // 可以直接检录
-        checkInUIThread(student,studentItem);
+        checkInUIThread(student, studentItem);
 
     }
 

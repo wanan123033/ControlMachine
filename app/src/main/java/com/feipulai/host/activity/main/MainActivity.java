@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.feipulai.common.utils.ActivityCollector;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
@@ -194,8 +195,9 @@ public class MainActivity extends BaseActivity {
         RadioManager.getInstance().close();
         super.onDestroy();
         if (mIsExiting) {
-            System.exit(0);
             FaceServer.getInstance().unInit();
+            ActivityCollector.getInstance().finishAllActivity();
+            System.exit(0);
         }
     }
 

@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.feipulai.common.utils.ActivityCollector;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.NetWorkUtils;
@@ -289,9 +290,10 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
         RadioManager.getInstance().close();
         super.onDestroy();
         if (mIsExiting) {
-            System.exit(0);
             Intent tcpServiceIntent = new Intent(this, MyTcpService.class);
             stopService(tcpServiceIntent);
+            ActivityCollector.getInstance().finishAllActivity();
+            System.exit(0);
         }
     }
 
