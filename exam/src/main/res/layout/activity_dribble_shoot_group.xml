@@ -48,11 +48,11 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="230dp"
+            android:layout_height="200dp"
             android:background="#313131">
 
             <CheckBox
-                android:id="@+id/cb_connect"
+                android:id="@+id/cb_near"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -63,7 +63,7 @@
                 android:enabled="false"
                 android:drawablePadding="15dp"
                 android:drawableRight="@drawable/cb_device_state"
-                android:text="连接状态"
+                android:text="近红外"
                 android:textColor="@color/white"
 
                 android:textSize="20sp" />
@@ -72,17 +72,17 @@
                 android:id="@+id/cb_far"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
                 android:layout_below="@id/cb_near"
-                android:layout_marginRight="20dp"
+                android:layout_alignParentRight="true"
                 android:layout_marginTop="@dimen/dp_10"
+                android:layout_marginRight="20dp"
                 android:button="@null"
-                android:drawablePadding="15dp"
+                android:clickable="false"
                 android:drawableRight="@drawable/cb_device_state"
+                android:drawablePadding="15dp"
+                android:enabled="false"
                 android:text="远红外"
                 android:textColor="@color/white"
-                android:clickable="false"
-                android:enabled="false"
                 android:textSize="20sp" />
 
             <CheckBox
@@ -90,7 +90,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_below="@id/cb_far"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="@dimen/dp_10"
                 android:button="@null"
@@ -105,7 +104,7 @@
             <TextView
                 android:id="@+id/tv_result"
                 android:layout_width="350dp"
-                android:layout_height="160dp"
+                android:layout_height="100dp"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="30dp"
                 android:background="@mipmap/icon_test_result_bg"
@@ -123,12 +122,34 @@
                 android:textColor="@color/white"
                 android:textSize="18dp" />
 
-            <!--<LinearLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:gravity="center_horizontal"
                 android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_punish_add"
+                    android:layout_width="100dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/btn_background"
+                    android:gravity="center"
+                    android:text="判罚 +"
+                    android:textColor="@color/white"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:id="@+id/tv_punish_subtract"
+                    android:layout_width="100dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/btn_background"
+                    android:gravity="center"
+                    android:text="判罚 -"
+                    android:textColor="@color/white"
+                    android:textSize="18dp" />
 
 
                 <TextView
@@ -174,7 +195,7 @@
                     android:text="正常"
                     android:textColor="@color/white"
                     android:textSize="18dp" />
-            </LinearLayout>-->
+            </LinearLayout>
 
         </RelativeLayout>
 
@@ -210,14 +231,14 @@
                 android:textSize="18dp" />
 
             <TextView
-                android:id="@+id/txt_run"
+                android:id="@+id/txt_continue_run"
                 android:layout_width="120dp"
                 android:layout_height="45dp"
                 android:layout_marginLeft="30dp"
                 android:layout_weight="1"
                 android:background="@drawable/selector_blue_grey_press"
                 android:gravity="center"
-                android:text="开始计时"
+                android:text="继续运行"
                 android:textColor="@color/white"
                 android:textSize="18dp" />
 
@@ -234,39 +255,63 @@
                 android:textColor="@color/white"
                 android:textSize="18dp" />
 
-            <TextView
-                android:id="@+id/tv_punish_add"
-                android:layout_width="100dp"
-                android:layout_height="40dp"
-                android:layout_margin="10dp"
-                android:background="@drawable/btn_background"
-                android:gravity="center"
-                android:text="判罚 +"
-                android:textColor="@color/white"
-                android:textSize="18dp" />
-
-            <TextView
-                android:id="@+id/tv_punish_subtract"
-                android:layout_width="100dp"
-                android:layout_height="40dp"
-                android:layout_margin="10dp"
-                android:background="@drawable/btn_background"
-                android:gravity="center"
-                android:text="判罚 -"
-                android:textColor="@color/white"
-                android:textSize="18dp" />
-
         </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/view_list_head"
+                android:layout_width="620dp"
+                android:layout_height="35dp"
+                android:background="@color/grey_A8"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="轮次"
+                    android:textSize="@dimen/sp_16" />
+
+                <TextView
+                    android:layout_width="200dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="机器成绩"
+                    android:textSize="@dimen/sp_16" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="实际成绩"
+                    android:textSize="@dimen/sp_16" />
+
+                <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="违例数"
+                android:textSize="@dimen/sp_16" />
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="状态"
+                    android:textSize="@dimen/sp_16" />
+            </LinearLayout>
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_test_result"
                 android:layout_width="620dp"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/view_list_head"
-                android:background="#1C1C1C"
+                android:background="@color/white"
                 android:overScrollMode="never" />
 
             <LinearLayout

@@ -42,7 +42,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.basketball.BasketBallShootGroupActivity"></activity>
+        <activity android:name=".activity.basketball.DribbleShootGroupActivity"></activity>
+        <activity android:name=".activity.basketball.BasketBallShootGroupActivity" />
         <activity android:name=".activity.sitreach.more_device.SitReachMoreGroupActivity" />
         <activity android:name=".activity.sitreach.more_device.pair.SitReachPairActivity" />
         <activity android:name=".activity.sitreach.more_device.SitReachMoreActivity" />
