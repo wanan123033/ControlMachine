@@ -40,12 +40,73 @@ public class HpPrintManager {
         PrintUtil.doNotEncryptDeviceId = true;
     }
 
+    /**
+     * 打印pdf
+     * @param uri  pdf文件路径  要求以"content://"开头
+     */
     public void print(Uri uri) {
         userPickedUri = uri;
         createPrintJobData();
         PrintUtil.setPrintJobData(printJobData);
 //        PrintUtil.sendPrintMetrics = showMetricsDialog;
         PrintUtil.print((Activity) context);
+    }
+
+    /**
+     * 打印图片
+     * @param uri 图片文件路径  要求以"content://"开头
+     */
+    public void printImg(Uri uri){
+        userPickedUri = uri;
+        createUserSelectedImageJobData();
+        PrintUtil.setPrintJobData(printJobData);
+//        PrintUtil.sendPrintMetrics = showMetricsDialog;
+        PrintUtil.print((Activity) context);
+    }
+
+    /**
+     * 打印图片
+     */
+    public void printImg(Bitmap bitmap){
+        createUserSelectedImageJobData(bitmap);
+        PrintUtil.setPrintJobData(printJobData);
+//        PrintUtil.sendPrintMetrics = showMetricsDialog;
+        PrintUtil.print((Activity) context);
+    }
+
+    private void createUserSelectedImageJobData(Bitmap bitmap) {
+        Bitmap userPickedBitmap;
+        try {
+            userPickedBitmap = bitmap;
+            int width = userPickedBitmap.getWidth();
+            int height = userPickedBitmap.getHeight();
+
+            // if user picked bitmap is too big, just reduce the size, so it will not chock the print plugin
+            if (width * height > 5000) {
+                width = width / 2;
+                height = height / 2;
+                userPickedBitmap = Bitmap.createScaledBitmap(userPickedBitmap, width, height, true);
+            }
+
+            DisplayMetrics mDisplayMetric = context.getResources().getDisplayMetrics();
+            float widthInches =  TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN, width, mDisplayMetric);
+            float heightInches =  TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN, height, mDisplayMetric);
+
+            ImageAsset imageAsset = new ImageAsset(context,
+                    userPickedBitmap,
+                    ImageAsset.MeasurementUnits.INCHES,
+                    widthInches, heightInches);
+
+            PrintItem printItem4x6 = new ImagePrintItem(PrintAttributes.MediaSize.NA_INDEX_4X6,margins, scaleType, imageAsset);
+            PrintItem printItem85x11 = new ImagePrintItem(PrintAttributes.MediaSize.NA_LETTER,margins, scaleType, imageAsset);
+            PrintItem printItem5x7 = new ImagePrintItem(mediaSize5x7,margins, scaleType, imageAsset);
+
+            printJobData = new PrintJobData(context, printItem4x6);
+            printJobData.addPrintItem(printItem85x11);
+            printJobData.addPrintItem(printItem5x7);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void createPrintJobData() {
