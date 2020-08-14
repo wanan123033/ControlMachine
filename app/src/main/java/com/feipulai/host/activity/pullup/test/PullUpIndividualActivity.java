@@ -243,7 +243,7 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
                 if (!isStopped){
                     PullUpStateResult result = (PullUpStateResult) msg.obj;
                     pair.setResult(result.getResult());
-//                    updateResult(pair);
+                    updateResult(pair);
                 }
 
                 break;

@@ -39,12 +39,11 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
     private static final String TAG = "MedicineMoreActivity";
     private int[] deviceState = {};
     private MedicineBallSetting setting;
-    private final static int GET_SCORE_RESPONSE = 0x02;
 
     private final int SEND_EMPTY = 1;
     private int beginPoint;
     private boolean using;
-
+    private boolean isResume;
     @Override
     protected void initData() {
         setting = SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class);
@@ -73,7 +72,11 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
         beginPoint = Integer.parseInt(SharedPrefsUtil.getValue(this, "SXQ", "beginPoint", "0"));
 
         RadioManager.getInstance().setOnRadioArrived(medicineBall);
-        sendEmpty();
+        isResume = true;
+        if (isResume){
+            sendEmpty();
+        }
+
     }
 
     private void sendEmpty() {
@@ -174,7 +177,7 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
-                case GET_SCORE_RESPONSE:
+                case MedicineConstant.GET_SCORE_RESPONSE:
                     MedicineBallNewResult result = (MedicineBallNewResult) msg.obj;
                     for (DeviceDetail detail : deviceDetails) {
                         if (detail.getStuDevicePair().getBaseDevice().getDeviceId() == result.getDeviceId()) {
@@ -220,8 +223,9 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        mHandler.removeCallbacksAndMessages(null);
-        RadioManager.getInstance().setOnRadioArrived(null);
+        isResume = false;
+//        mHandler.removeCallbacksAndMessages(null);
+//        RadioManager.getInstance().setOnRadioArrived(null);
     }
 
     @OnClick({R.id.tv_device_pair})
@@ -231,7 +235,7 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
 
     private MedicineBallImpl medicineBall = new MedicineBallImpl(new MedicineBallImpl.MainThreadDisposeListener() {
         @Override
-        public void onResultArrived(MedicineBallNewResult result) {
+        public void onResultArrived(final MedicineBallNewResult result) {
             Log.i(TAG, result.toString());
 
             // MedicineBallNewResult{result=50, fault=false, sweepPoint=1, deviceId=2, frequency=0, state=2}
@@ -244,6 +248,8 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
             }
             disposeDevice(result);
         }
+
+
 
         @Override
         public void onStopTest() {
@@ -285,5 +291,6 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
     protected void onDestroy() {
         super.onDestroy();
         RadioManager.getInstance().setOnRadioArrived(null);
+        mHandler.removeCallbacksAndMessages(null);
     }
 }

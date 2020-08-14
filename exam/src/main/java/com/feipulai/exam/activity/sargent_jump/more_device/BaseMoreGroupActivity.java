@@ -872,7 +872,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
      * @param pair
      * @param deviceIndex
      */
-    private void matchStudent(BaseStuPair pair, int deviceIndex) {
+    private void matchStudent(final BaseStuPair pair, final int deviceIndex) {
         //非身份验证模式
         if (!SettingHelper.getSystemSetting().isIdentityMark()) {
             //连续测试
@@ -885,16 +885,14 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                         //测试下一个
                         continuousTestNext(deviceIndex);
                     } else {//继续测试同一个
-                        toastSpeak(String.format(getString(R.string.test_speak_hint),
-                                pair.getStudent().getStudentName(), testTimes),
-                                String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), testTimes));
-                        group.setIsTestComplete(2);
-                        DBManager.getInstance().updateGroup(group);
-                        if (!isNextClickStart) {
-                            deviceDetails.get(deviceIndex).getStuDevicePair().setTestTime(DateUtil.getCurrentTime() + "");
-                            toStart(deviceIndex);
-                            updateLastResultLed("", deviceIndex);
-                        }
+                        final int ts = testTimes;
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                testNextRound(pair, deviceIndex, ts);
+                            }
+                        },3000);
+
                     }
                 } else {//测试下一个
                     continuousTestNext(deviceIndex);
@@ -924,6 +922,25 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         } else {
             //身份验证下一轮
             identityMarkTest();
+        }
+    }
+
+    /**
+     * 连续测试测试下一轮
+     * @param pair
+     * @param deviceIndex
+     * @param testTimes
+     */
+    private void testNextRound(BaseStuPair pair, int deviceIndex, int testTimes) {
+        toastSpeak(String.format(getString(R.string.test_speak_hint),
+                pair.getStudent().getStudentName(), testTimes),
+                String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), testTimes));
+        group.setIsTestComplete(2);
+        DBManager.getInstance().updateGroup(group);
+        if (!isNextClickStart) {
+            deviceDetails.get(deviceIndex).getStuDevicePair().setTestTime(DateUtil.getCurrentTime() + "");
+            toStart(deviceIndex);
+            updateLastResultLed("", deviceIndex);
         }
     }
 

@@ -36,7 +36,6 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 public class MedicineBallRadioFreedomActivity extends BaseFreedomTestActivity {
     private static final String TAG = "RadioFreedomActivity";
     private MedicineBallSetting setting;
-    private final static int GET_SCORE_RESPONSE = 0x02;
     public List<DeviceDetail> deviceDetails = new ArrayList<>();
     private int[] deviceState = {};
     private final int SEND_EMPTY = 1;
@@ -191,7 +190,7 @@ public class MedicineBallRadioFreedomActivity extends BaseFreedomTestActivity {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
-                case GET_SCORE_RESPONSE:
+                case MedicineConstant.GET_SCORE_RESPONSE:
                     MedicineBallNewResult result = (MedicineBallNewResult) msg.obj;
                     for (DeviceDetail detail : deviceDetails) {
                         if (detail.getStuDevicePair().getBaseDevice().getDeviceId() == result.getDeviceId()) {

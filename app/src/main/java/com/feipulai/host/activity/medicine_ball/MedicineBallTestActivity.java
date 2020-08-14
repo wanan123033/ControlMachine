@@ -43,6 +43,8 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
     private ScheduledExecutorService executorService;
     private static final int START_DEVICE = 0X1002;
     private static final int DEVICE_CHECK = 0X1001;
+    private static final int DELAY = 0X1000;
+    private static final int UPDATE_DEVICE = 0X1001;
     private int startCount = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +76,8 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
         //因为新测试人员过来时需要重新初始化
         testState = TestState.UN_STARTED;
         decideBegin();
-        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
-                SerialConfigs.CMD_MEDICINE_BALL_FAST_EMPTY));
+//        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
+//                SerialConfigs.CMD_MEDICINE_BALL_FAST_EMPTY));
         //更新设备状态
         BaseDeviceState baseDevice = baseStuPair.getBaseDevice();
         if (baseDevice != null)
@@ -95,6 +97,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
     public void stuSkip() {
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
         sendFree();
+        setBegin(1);
     }
 
     private void sendCheck() {
@@ -138,6 +141,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
                     break;
 
                 case GET_SCORE_RESPONSE:
+                    activity.setBegin(1);
                     MedicineBallResult result = (MedicineBallResult) msg.obj;
                     BaseStuPair basePair = new BaseStuPair();
                     basePair.setBaseDevice(new BaseDeviceState(BaseDeviceState.STATE_END, 1));
@@ -148,14 +152,19 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
                     BaseDeviceState device1 = new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1);
                     activity.updateDevice(device1);
                     activity.toastSpeak("测试结束");
-                    SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
-                            SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
+//                    SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
+//                            SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
+                    break;
+                case DELAY:
+                    activity.sendFree();
+                    break;
+                case UPDATE_DEVICE:
+                    BaseDeviceState deviceState = new BaseDeviceState(BaseDeviceState.STATE_ERROR, 0);
+                    activity.updateDevice(deviceState);
+                    activity.sendFree();
                     break;
                 case START_DEVICE:
                     activity.toastSpeak("开始测试");
-                    break;
-                case DEVICE_CHECK:
-                    activity.sendCheck();
                     break;
                 default:
                     break;
@@ -172,13 +181,12 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
      */
     private void disposeCheck(MedicineBallSelfCheckResult selfCheckResult) {
         boolean isInCorrect = selfCheckResult.isInCorrect();
-        BaseDeviceState deviceState = new BaseDeviceState();
+        BaseDeviceState deviceState = pair.getBaseDevice();
         if (isInCorrect) {
             PROMPT_TIMES++;
-            checkFlag = false;
             sendFree();
-            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_FAST_EMPTY));
             if (PROMPT_TIMES >= 2 && PROMPT_TIMES < 4) {
+                checkFlag = false;
                 int[] errors = selfCheckResult.getIncorrectPoles();
                 for (int i = 1; i < errors.length + 1; i++) {
                     if (errors[i - 1] == 1) {
@@ -191,6 +199,8 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
             setBegin(0);
             deviceState.setState(BaseDeviceState.STATE_ERROR);
 
+
+//            mHandler.sendEmptyMessageDelayed(DELAY,1000);
         } else {
             PROMPT_TIMES = 0;
             checkFlag = true;
@@ -253,7 +263,6 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
 
     }
 
-
     private MedicineBallResultImpl resultImpl = new MedicineBallResultImpl(new MedicineBallResultImpl.MainThreadDisposeListener() {
         @Override
         public void onResultArrived(MedicineBallResult result) {
@@ -266,6 +275,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
         @Override
         public void onStopTest() {
             mHandler.sendEmptyMessage(END_TEST);
+            sendFree();
         }
 
         @Override
@@ -279,7 +289,6 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
         @Override
         public void onFree() {
             checkFlag = true;
-            startCount = 0 ;
         }
     });
 }
