@@ -76,6 +76,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
         //因为新测试人员过来时需要重新初始化
         testState = TestState.UN_STARTED;
         decideBegin();
+        pair.setStartTime(DateUtil.getCurrentTime());
 //        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
 //                SerialConfigs.CMD_MEDICINE_BALL_FAST_EMPTY));
         //更新设备状态
