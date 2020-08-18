@@ -70,6 +70,8 @@ public class DribbleShootResultAdapter extends BaseQuickAdapter<BasketBallTestRe
         helper.spRoundResult.setItemClick(new MySpinner.ItemClick() {
             @Override
             public void onClick(int position) {
+                item.setResult(item.getMachineResultList().get(position).getResult() );
+                item.setSelectMachineResult(item.getMachineResultList().get(position).getResult());
                 notifyDataSetChanged();
             }
         });

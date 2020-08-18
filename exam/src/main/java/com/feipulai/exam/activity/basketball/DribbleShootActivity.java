@@ -153,7 +153,7 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
         }
         hostId = SettingHelper.getSystemSetting().getHostId();
         //getSetting().getInterceptNo()
-        RunTimerManager.cmdSetting(2, hostId, 1, 0, -1, -1);
+        RunTimerManager.cmdSetting(setting.getInterceptNo(), hostId, 1, -1, -1, -1);
         checkConnect();
         GridLayoutManager layoutManager = new GridLayoutManager(this, getSetting().getTestNo());
         rvResult.setLayoutManager(layoutManager);
@@ -353,13 +353,19 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
         if (result.getTrackNum() == startNo && result.getOrder() == 1) {
 //            baseTimer = System.currentTimeMillis() - baseTimer;
             timeResult = 0;
+            if (timer!= null){
+                timer.dispose();
+            }
             keepTime();
         } else {
 //            timeResult = (int) (result.getResult() - baseTimer);
             timeResult = rxTime.intValue();
         }
         trackNum = result.getTrackNum();
-        mHandler.sendEmptyMessage(UPDATE_RESULT);
+        Message msg = mHandler.obtainMessage();
+        msg.what = UPDATE_RESULT;
+        msg.obj = result;
+        mHandler.sendMessage(msg);
     }
 
     @Override
@@ -442,7 +448,7 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
 
     }
 
-    Disposable timer;
+    private Disposable timer;
     private Long rxTime = new Long(0);
     private void keepTime() {
         timer = Observable.interval(100, TimeUnit.MILLISECONDS).subscribeOn(Schedulers.io()).
@@ -479,17 +485,35 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
                     break;
                 case UPDATE_RESULT:
                     tvResult.setText(ResultDisplayUtils.getStrResultForDisplay(rxTime.intValue(), false));
-
+                    RunTimerResult result = (RunTimerResult) msg.obj;
                     if (trackNum == 1){//投篮
-                        dateList.get(2).setState(true);
+                        if (result.getOrder() == 1){
+                            dateList.get(2).setState(true);
+                        }else if (dateList.size()>4 && result.getOrder() == 2){
+                            dateList.get(4).setState(true);
+                        }else if (dateList.size()>7 && result.getOrder() == 3){
+                            dateList.get(6).setState(true);
+                        }else if (dateList.size()==9 && result.getOrder() == 4){
+                            dateList.get(8).setState(true);
+                        }
                     }
                     else if (trackNum == startNo){//起点
                         dateList.get(0).setState(true);
                     }else if (trackNum == back1No){
-                        dateList.get(1).setState(true);
+                        if (result.getOrder() == 1){
+                            dateList.get(1).setState(true);
+                        }else if (dateList.size()>5 && result.getOrder() == 2){
+                            dateList.get(5).setState(true);
+                        }
+
                     }
                     else if (trackNum == back2No){
-                        dateList.get(3).setState(true);
+                        if (result.getOrder() == 1){
+                            dateList.get(3).setState(true);
+                        }else if (dateList.size()>8 && result.getOrder() == 2){
+                            dateList.get(7).setState(true);
+                        }
+
                     }
                     interceptAdapter.notifyDataSetChanged();
                     boolean stop = true;

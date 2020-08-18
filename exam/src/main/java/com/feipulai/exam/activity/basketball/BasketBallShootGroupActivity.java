@@ -404,6 +404,9 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
                 break;
             case 3://启动
                 state = TESTING;
+                if (timer!= null){
+                    timer.dispose();
+                }
                 countDownTime(60);
                 saved = false;
                 testDate = System.currentTimeMillis() + "";
