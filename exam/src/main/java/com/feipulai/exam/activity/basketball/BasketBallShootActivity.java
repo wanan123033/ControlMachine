@@ -254,6 +254,9 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
                 break;
             case R.id.txt_run:
                 RunTimerManager.forceStart();
+                if (timer!= null){
+                    timer.dispose();
+                }
                 countDownTime(60);
                 saved = false;
                 break;

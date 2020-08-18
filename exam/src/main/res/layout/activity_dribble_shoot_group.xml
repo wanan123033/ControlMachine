@@ -223,7 +223,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/selector_blue_grey_press"
                 android:gravity="center"
-                android:text="继续运行"
+                android:text="开始计时"
                 android:textColor="@color/white"
                 android:textSize="18dp" />
 

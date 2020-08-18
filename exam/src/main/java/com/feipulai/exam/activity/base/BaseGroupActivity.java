@@ -23,8 +23,11 @@ import com.feipulai.device.led.RunLEDManager;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.basketball.BasketBallSelectActivity;
+import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.basketball.DribbleShootGroupActivity;
 import com.feipulai.exam.activity.basketball.ShootSetting;
+import com.feipulai.exam.activity.basketball.ShootSettingActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.medicineBall.MedicineBallSetting;
 import com.feipulai.exam.activity.medicineBall.more_device.BallGroupMoreActivity;
@@ -150,7 +153,17 @@ public class BaseGroupActivity extends BaseTitleActivity {
     }
 
     private void gotoItemSetting() {
-        startActivity(new Intent(this, TestConfigs.settingActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ ){
+            BasketBallSetting setting = SharedPrefsUtil.loadFormSource(this, BasketBallSetting.class);
+            if (setting.getTestType() == 2){
+                startActivity(new Intent(this, ShootSettingActivity.class));
+            }else {
+                startActivity(new Intent(this, TestConfigs.settingActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
+            }
+        }else {
+            startActivity(new Intent(this, TestConfigs.settingActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
+        }
+
     }
 
 

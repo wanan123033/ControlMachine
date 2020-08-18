@@ -19,6 +19,7 @@ public class ShootSetting {
     private int startNo = 2;
     private int back1No = 3;
     private int back2No = 4;
+    private int penaltySecond;
     public int getStartNo() {
         return startNo;
     }
@@ -119,5 +120,13 @@ public class ShootSetting {
 
     public void setInterceptNo(int interceptNo) {
         this.interceptNo = interceptNo;
+    }
+
+    public int getPenaltySecond() {
+        return penaltySecond;
+    }
+
+    public void setPenaltySecond(int penaltySecond) {
+        this.penaltySecond = penaltySecond;
     }
 }
