@@ -61,6 +61,7 @@
         <activity android:name=".activity.sargent_jump.pair.SargentPairActivity" />
         <activity android:name=".activity.footBall.FootBallGroupActivity" />
         <activity android:name=".activity.sargent_jump.SargentItemSelectActivity" />
+
         <activity
             android:name=".activity.SplashScreenActivity"
             android:screenOrientation="landscape"
@@ -82,6 +83,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activity.data.print.PrintPreviewActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity
             android:name=".activity.LEDSettingActivity"
             android:configChanges="keyboardHidden|keyboard" />

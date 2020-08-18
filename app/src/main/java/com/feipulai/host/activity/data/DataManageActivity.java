@@ -7,10 +7,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
@@ -43,10 +43,8 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.common.view.dialog.EditDialog;
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
-import com.feipulai.host.activity.SplashScreenActivity;
 import com.feipulai.host.activity.base.BaseTitleActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
-import com.feipulai.host.activity.setting.SystemSetting;
 import com.feipulai.host.bean.UploadResults;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.config.TestConfigs;
@@ -59,9 +57,9 @@ import com.feipulai.host.netUtils.CommonUtils;
 import com.feipulai.host.netUtils.UploadResultUtil;
 import com.feipulai.host.netUtils.download.DownService;
 import com.feipulai.host.netUtils.download.DownloadHelper;
+import com.feipulai.host.netUtils.download.DownloadListener;
 import com.feipulai.host.netUtils.download.DownloadUtils;
 import com.feipulai.host.netUtils.netapi.ServerIml;
-import com.feipulai.host.netUtils.download.DownloadListener;
 import com.feipulai.host.view.DBDataCleaner;
 import com.feipulai.host.view.OperateProgressBar;
 import com.github.mjdev.libaums.fs.UsbFile;
@@ -85,10 +83,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -324,8 +320,11 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                             @Override
                             public void run() {
                                 downLoadProgressDialog.showDialog();
-                                downLoadProgressDialog.setMaxProgress(Integer.valueOf(saveHeaders.get("BatchTotal")));
-                                downLoadProgressDialog.setProgress(Integer.valueOf(saveHeaders.get("PageNo")) - 1);
+                                if (!TextUtils.isEmpty(saveHeaders.get("BatchTotal"))) {
+                                    downLoadProgressDialog.setMaxProgress(Integer.valueOf(saveHeaders.get("BatchTotal")));
+                                    downLoadProgressDialog.setProgress(Integer.valueOf(saveHeaders.get("PageNo")) - 1);
+                                }
+
                             }
                         });
 
@@ -371,7 +370,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
 
                     @Override
                     public void onFailure(String fileName, String errorInfo) {
-
+                        HandlerUtil.sendMessage(myHandler, 1, 1, "");
                     }
                 });
     }
@@ -380,6 +379,11 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
     public void handleMessage(Message msg) {
         super.handleMessage(msg);
         fileZipArchiver((String) msg.obj, msg.arg1 == 1);
+        if (TextUtils.isEmpty(msg.obj.toString()) && msg.what == 1) {
+            ToastUtils.showShort("服务访问失败");
+            downLoadProgressDialog.dismissDialog();
+
+        }
     }
 
 

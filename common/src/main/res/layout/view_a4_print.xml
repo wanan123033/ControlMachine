@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/view_content"
+        android:layout_width="1240dp"
+        android:layout_height="1754dp"
+        android:background="@color/white">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingLeft="56dp"
+            android:paddingTop="39dp"
+            android:paddingRight="56dp"
+            android:paddingBottom="56dp">
+
+
+            <ImageView
+                android:id="@+id/img_code"
+                android:layout_width="428dp"
+                android:layout_height="20dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_launcher" />
+
+            <TextView
+                android:id="@+id/txt_title"
+                style="@style/txt_black_songti"
+                android:layout_marginTop="19dp"
+                android:text="@string/app_name"
+                android:textSize="38sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="47dp">
+
+                <com.feipulai.common.utils.print.TextSongTiView
+                    android:id="@+id/txt_hand_name"
+                    style="@style/txt_black_songti"
+                    android:text="@string/app_name" />
+
+
+                <com.feipulai.common.utils.print.TextSongTiView
+                    android:id="@+id/txt_start_time"
+                    style="@style/txt_black_songti"
+                    android:layout_alignParentRight="true"
+                    android:text="@string/app_name" />
+            </RelativeLayout>
+
+            <View
+                style="@style/divider_black_horizontal_style"
+                android:layout_marginTop="8dp" />
+
+            <View
+                style="@style/divider_black_horizontal_style"
+                android:layout_marginTop="8dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:paddingTop="2dp"
+                android:orientation="horizontal">
+
+                <com.feipulai.common.utils.print.TextSongTiView
+                    android:id="@+id/txt_title1"
+                    style="@style/txt_black_songti"
+                    android:layout_width="68dp"
+                    android:layout_marginLeft="4dp"
+                    android:text="序号" />
+
+                <com.feipulai.common.utils.print.TextSongTiView
+                    android:id="@+id/txt_title2"
+                    style="@style/txt_black_songti"
+                    android:layout_width="201dp"
+                    android:layout_marginLeft="12dp"
+                    android:text="考号" />
+
+                <com.feipulai.common.utils.print.TextSongTiView
+                    android:id="@+id/txt_title3"
+                    style="@style/txt_black_songti"
+                    android:layout_width="112dp"
+                    android:layout_marginLeft="12dp"
+                    android:text="姓名" />
+
+                <com.feipulai.common.utils.print.TextSongTiView
+                    android:id="@+id/txt_title4"
+                    style="@style/txt_black_songti"
+                    android:layout_width="223dp"
+                    android:layout_marginLeft="12dp"
+                    android:text="学校" />
+
+                <com.feipulai.common.utils.print.TextSongTiView
+                    android:id="@+id/txt_title5"
+                    style="@style/txt_black_songti"
+                    android:layout_width="180dp"
+                    android:layout_marginLeft="12dp"
+                    android:text="成绩" />
+
+                <com.feipulai.common.utils.print.TextSongTiView
+                    android:id="@+id/txt_title6"
+                    style="@style/txt_black_songti"
+                    android:layout_width="65dp"
+                    android:layout_marginLeft="12dp"
+                    android:text="得分" />
+
+                <com.feipulai.common.utils.print.TextSongTiView
+                    android:id="@+id/txt_title7"
+                    style="@style/txt_black_songti"
+                    android:layout_width="65dp"
+                    android:layout_marginLeft="12dp"
+                    android:text="名次" />
+
+                <com.feipulai.common.utils.print.TextSongTiView
+                    android:id="@+id/txt_title8"
+                    style="@style/txt_black_songti"
+                    android:layout_width="132dp"
+                    android:layout_marginLeft="7dp"
+                    android:text="签名" />
+
+            </LinearLayout>
+
+            <View style="@style/divider_black_horizontal_style" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_data"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+
+            <View
+                style="@style/divider_black_horizontal_style"
+                android:layout_marginTop="8dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:orientation="horizontal">
+
+                <com.feipulai.common.utils.print.TextSongTiView
+                    android:id="@+id/txt_bottom1"
+                    style="@style/txt_black_songti"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/app_name" />
+
+                <com.feipulai.common.utils.print.TextSongTiView
+                    android:id="@+id/txt_bottom2"
+                    style="@style/txt_black_songti"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/app_name" />
+
+                <com.feipulai.common.utils.print.TextSongTiView
+                    android:id="@+id/txt_bottom3"
+                    style="@style/txt_black_songti"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/app_name" />
+
+                <com.feipulai.common.utils.print.TextSongTiView
+                    android:id="@+id/txt_bottom4"
+                    style="@style/txt_black_songti"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/app_name" />
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="65dp">
+
+                <com.feipulai.common.utils.print.TextSongTiView
+                    android:id="@+id/txt_print_time"
+                    style="@style/txt_black_songti"
+                    android:layout_alignParentBottom="true"
+                    android:text="@string/app_name" />
+
+                <com.feipulai.common.utils.print.TextSongTiView
+                    style="@style/txt_black_songti"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:text="菲普莱体育" />
+            </RelativeLayout>
+
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</LinearLayout>

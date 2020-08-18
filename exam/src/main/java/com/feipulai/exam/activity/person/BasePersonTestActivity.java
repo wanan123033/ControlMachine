@@ -294,16 +294,20 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             ToastUtils.showShort("查无此人");
             return;
         }
+        if (pair.getStudent() != null || pair.getBaseDevice().getState() != BaseDeviceState.STATE_FREE) {
+            toastSpeak("当前无设备可添加学生测试");
+            return;
+        }
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
         List<RoundResult> roundResultList = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(student.getStudentCode(), studentItem.getExamType());
         testNo = roundResultList == null || roundResultList.size() == 0 ? 1 : roundResultList.get(0).getTestNo();
         //保存成绩，并测试轮次大于测试轮次次数
         if (student != null)
-            LogUtils.operation("检入到学生:"+student.toString());
+            LogUtils.operation("检入到学生:" + student.toString());
         if (studentItem != null)
-            LogUtils.operation("检入到学生StudentItem:"+studentItem.toString());
+            LogUtils.operation("检入到学生StudentItem:" + studentItem.toString());
         if (roundResultList != null)
-            LogUtils.operation("检入到学生成绩:"+roundResultList.size()+"----"+roundResultList.toString());
+            LogUtils.operation("检入到学生成绩:" + roundResultList.size() + "----" + roundResultList.toString());
         if (roundResultList != null && roundResultList.size() >= setTestCount()) {
             //已测试，不重测
 //            roundNo = roundResult.getRoundNo();
@@ -315,7 +319,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             for (RoundResult roundResult : roundResultList) {
                 if (roundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && isResultFullReturn(student.getSex(), roundResult.getResult())) {
                     toastSpeak("满分");
-                    LogUtils.operation("该学生已满分跳过测试:"+roundResult.getStudentCode());
+                    LogUtils.operation("该学生已满分跳过测试:" + roundResult.getStudentCode());
                     return;
                 }
             }
@@ -333,7 +337,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         }
 
         roundNo = roundResultList.size() + 1;
-        LogUtils.operation("当前轮次 roundNo = "+roundNo);
+        LogUtils.operation("当前轮次 roundNo = " + roundNo);
         result = null;
         result = new String[setTestCount()];
         for (int i = 0; i < roundResultList.size(); i++) {
@@ -629,7 +633,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         }
         return false;
     }
+
     boolean clicked = false;
+
     /**
      * 展示判罚
      */
@@ -647,7 +653,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
 
-                if (!clicked){
+                if (!clicked) {
                     doResult();
                     clicked = true;
                 }
@@ -657,7 +663,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
-                if (!clicked){
+                if (!clicked) {
                     pair.setResultState(RoundResult.RESULT_STATE_FOUL);
                     updateResult(pair);
                     doResult();

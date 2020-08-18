@@ -82,11 +82,11 @@ public class HpPrintManager {
             int height = userPickedBitmap.getHeight();
 
             // if user picked bitmap is too big, just reduce the size, so it will not chock the print plugin
-            if (width * height > 5000) {
-                width = width / 2;
-                height = height / 2;
-                userPickedBitmap = Bitmap.createScaledBitmap(userPickedBitmap, width, height, true);
-            }
+//            if (width * height > 5000) {
+//                width = width / 2;
+//                height = height / 2;
+//                userPickedBitmap = Bitmap.createScaledBitmap(userPickedBitmap, width, height, true);
+//            }
 
             DisplayMetrics mDisplayMetric = context.getResources().getDisplayMetrics();
             float widthInches =  TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN, width, mDisplayMetric);
@@ -135,11 +135,11 @@ public class HpPrintManager {
             int height = userPickedBitmap.getHeight();
 
             // if user picked bitmap is too big, just reduce the size, so it will not chock the print plugin
-            if (width * height > 5000) {
-                width = width / 2;
-                height = height / 2;
-                userPickedBitmap = Bitmap.createScaledBitmap(userPickedBitmap, width, height, true);
-            }
+//            if (width * height > 5000) {
+//                width = width / 2;
+//                height = height / 2;
+//                userPickedBitmap = Bitmap.createScaledBitmap(userPickedBitmap, width, height, true);
+//            }
 
             DisplayMetrics mDisplayMetric = context.getResources().getDisplayMetrics();
             float widthInches =  TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN, width, mDisplayMetric);

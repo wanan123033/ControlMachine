@@ -14,7 +14,7 @@ public class BaseStuPair implements Serializable {
     private static final long serialVersionUID = -5114314856313860680L;
     //成绩
     private int result;
-    private int resultState= RoundResult.RESULT_STATE_NORMAL;//成绩状态 0正常  -1犯规    -2中退    -3放弃
+    private int resultState= RoundResult.RESULT_STATE_NORMAL;//成绩状态 1:正常 2:犯规 3:中退 4:弃权 5:测试
     //学生
     private Student student;
     //设备

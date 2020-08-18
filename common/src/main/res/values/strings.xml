@@ -18,4 +18,21 @@
     <string name="low_power">电量低</string>
     <string name="temporarily_closed">暂停使用</string>
     <string name="conflict">冲突</string>
+
+    <string-array name="print_table_hand">
+        <item>序号</item>
+        <item>考号</item>
+        <item>姓名</item>
+        <item>学校</item>
+        <item>成绩</item>
+        <item>得分</item>
+        <item>名次</item>
+        <item>签名</item>
+    </string-array>
+    <string-array name="print_table_bottom">
+        <item>计时裁判：</item>
+        <item>计录员：</item>
+        <item>主考官：</item>
+        <item>纪检员：</item>
+    </string-array>
 </resources>
