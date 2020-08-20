@@ -18,6 +18,7 @@ import com.hp.mss.hpprint.model.asset.ImageAsset;
 import com.hp.mss.hpprint.model.asset.PDFAsset;
 import com.hp.mss.hpprint.util.PrintUtil;
 
+import java.io.File;
 import java.io.IOException;
 
 public class HpPrintManager {
@@ -34,7 +35,8 @@ public class HpPrintManager {
 
     private PrintJobData printJobData;
     PrintAttributes.MediaSize mediaSize5x7;
-    private HpPrintManager(Activity context){
+
+    private HpPrintManager(Activity context) {
         this.context = context;
         mediaSize5x7 = new PrintAttributes.MediaSize("na_5x7_5x7in", "5 x 7", 5000, 7000);
         PrintUtil.doNotEncryptDeviceId = true;
@@ -42,7 +44,8 @@ public class HpPrintManager {
 
     /**
      * 打印pdf
-     * @param uri  pdf文件路径  要求以"content://"开头
+     *
+     * @param uri pdf文件路径  要求以"content://"开头
      */
     public void print(Uri uri) {
         userPickedUri = uri;
@@ -53,10 +56,24 @@ public class HpPrintManager {
     }
 
     /**
+     * 打印pdf
+     *
+     * @param fileUrl pdf文件路径
+     */
+    public void print(String fileUrl) {
+        userPickedUri = Uri.fromFile(new File(fileUrl));
+        createPrintJobData();
+        PrintUtil.setPrintJobData(printJobData);
+//        PrintUtil.sendPrintMetrics = showMetricsDialog;
+        PrintUtil.print((Activity) context);
+    }
+
+    /**
      * 打印图片
+     *
      * @param uri 图片文件路径  要求以"content://"开头
      */
-    public void printImg(Uri uri){
+    public void printImg(Uri uri) {
         userPickedUri = uri;
         createUserSelectedImageJobData();
         PrintUtil.setPrintJobData(printJobData);
@@ -67,7 +84,7 @@ public class HpPrintManager {
     /**
      * 打印图片
      */
-    public void printImg(Bitmap bitmap){
+    public void printImg(Bitmap bitmap) {
         createUserSelectedImageJobData(bitmap);
         PrintUtil.setPrintJobData(printJobData);
 //        PrintUtil.sendPrintMetrics = showMetricsDialog;
@@ -89,17 +106,17 @@ public class HpPrintManager {
 //            }
 
             DisplayMetrics mDisplayMetric = context.getResources().getDisplayMetrics();
-            float widthInches =  TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN, width, mDisplayMetric);
-            float heightInches =  TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN, height, mDisplayMetric);
+            float widthInches = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN, width, mDisplayMetric);
+            float heightInches = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN, height, mDisplayMetric);
 
             ImageAsset imageAsset = new ImageAsset(context,
                     userPickedBitmap,
                     ImageAsset.MeasurementUnits.INCHES,
                     widthInches, heightInches);
 
-            PrintItem printItem4x6 = new ImagePrintItem(PrintAttributes.MediaSize.NA_INDEX_4X6,margins, scaleType, imageAsset);
-            PrintItem printItem85x11 = new ImagePrintItem(PrintAttributes.MediaSize.NA_LETTER,margins, scaleType, imageAsset);
-            PrintItem printItem5x7 = new ImagePrintItem(mediaSize5x7,margins, scaleType, imageAsset);
+            PrintItem printItem4x6 = new ImagePrintItem(PrintAttributes.MediaSize.NA_INDEX_4X6, margins, scaleType, imageAsset);
+            PrintItem printItem85x11 = new ImagePrintItem(PrintAttributes.MediaSize.NA_LETTER, margins, scaleType, imageAsset);
+            PrintItem printItem5x7 = new ImagePrintItem(mediaSize5x7, margins, scaleType, imageAsset);
 
             printJobData = new PrintJobData(context, printItem4x6);
             printJobData.addPrintItem(printItem85x11);
@@ -122,10 +139,12 @@ public class HpPrintManager {
         printJobData.setPrintDialogOptions(printAttributes);
 
     }
+
     private String getMimeType(Uri uri) {
         Uri returnUri = uri;
         return context.getContentResolver().getType(returnUri);
     }
+
     private void createUserSelectedImageJobData() {
         Bitmap userPickedBitmap;
 
@@ -142,17 +161,17 @@ public class HpPrintManager {
 //            }
 
             DisplayMetrics mDisplayMetric = context.getResources().getDisplayMetrics();
-            float widthInches =  TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN, width, mDisplayMetric);
-            float heightInches =  TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN, height, mDisplayMetric);
+            float widthInches = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN, width, mDisplayMetric);
+            float heightInches = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN, height, mDisplayMetric);
 
             ImageAsset imageAsset = new ImageAsset(context,
                     userPickedBitmap,
                     ImageAsset.MeasurementUnits.INCHES,
                     widthInches, heightInches);
 
-            PrintItem printItem4x6 = new ImagePrintItem(PrintAttributes.MediaSize.NA_INDEX_4X6,margins, scaleType, imageAsset);
-            PrintItem printItem85x11 = new ImagePrintItem(PrintAttributes.MediaSize.NA_LETTER,margins, scaleType, imageAsset);
-            PrintItem printItem5x7 = new ImagePrintItem(mediaSize5x7,margins, scaleType, imageAsset);
+            PrintItem printItem4x6 = new ImagePrintItem(PrintAttributes.MediaSize.NA_INDEX_4X6, margins, scaleType, imageAsset);
+            PrintItem printItem85x11 = new ImagePrintItem(PrintAttributes.MediaSize.NA_LETTER, margins, scaleType, imageAsset);
+            PrintItem printItem5x7 = new ImagePrintItem(mediaSize5x7, margins, scaleType, imageAsset);
 
             printJobData = new PrintJobData(context, printItem4x6);
             printJobData.addPrintItem(printItem85x11);
@@ -161,6 +180,7 @@ public class HpPrintManager {
             e.printStackTrace();
         }
     }
+
     private void createUserSelectedPDFJobData() {
 //        try {
 ////            FileInputStream input = new FileInputStream(file);
@@ -190,9 +210,10 @@ public class HpPrintManager {
         printJobData.addPrintItem(printItem5x7);
 
     }
+
     private void createDefaultPrintJobData() {
 
-        if(contentType.equals("Image")) {
+        if (contentType.equals("Image")) {
             //Create image assets from the saved files.
             ImageAsset imageAsset4x5 = new ImageAsset(context, R.drawable.t4x5, ImageAsset.MeasurementUnits.INCHES, 4, 5);
             ImageAsset imageAsset4x6 = new ImageAsset(context, R.drawable.t4x6, ImageAsset.MeasurementUnits.INCHES, 4, 6);
@@ -201,10 +222,10 @@ public class HpPrintManager {
 
 
             //Create printitems from the assets. These define what asset is to be used for each media size.
-            PrintItem printItem4x6 = new ImagePrintItem(PrintAttributes.MediaSize.NA_INDEX_4X6,margins, scaleType, imageAsset4x6);
-            PrintItem printItem85x11 = new ImagePrintItem(PrintAttributes.MediaSize.NA_LETTER,margins, scaleType, assetdirectory);
-            PrintItem printItem5x7 = new ImagePrintItem(mediaSize5x7,margins, scaleType, imageAsset5x7);
-            PrintItem printItem5x8 = new ImagePrintItem(PrintAttributes.MediaSize.NA_INDEX_5X8,margins, scaleType, imageAsset4x5);
+            PrintItem printItem4x6 = new ImagePrintItem(PrintAttributes.MediaSize.NA_INDEX_4X6, margins, scaleType, imageAsset4x6);
+            PrintItem printItem85x11 = new ImagePrintItem(PrintAttributes.MediaSize.NA_LETTER, margins, scaleType, assetdirectory);
+            PrintItem printItem5x7 = new ImagePrintItem(mediaSize5x7, margins, scaleType, imageAsset5x7);
+            PrintItem printItem5x8 = new ImagePrintItem(PrintAttributes.MediaSize.NA_INDEX_5X8, margins, scaleType, imageAsset4x5);
 
             //Create the printJobData with the default print item
             PrintItem printItemDefault = new ImagePrintItem(margins, scaleType, imageAsset4x5);
@@ -232,9 +253,9 @@ public class HpPrintManager {
 //                Log.e("MainActivity", "Unable to create path string.");
 //            }
 
-            PrintItem printItem4x6 = new PDFPrintItem(PrintAttributes.MediaSize.NA_INDEX_4X6,margins, scaleType, pdf4x6);
-            PrintItem printItem5x7 = new PDFPrintItem(mediaSize5x7,margins, scaleType, pdf5x7);
-            PrintItem printItemLetter = new PDFPrintItem(PrintAttributes.MediaSize.NA_LETTER,margins, scaleType, pdfletter);
+            PrintItem printItem4x6 = new PDFPrintItem(PrintAttributes.MediaSize.NA_INDEX_4X6, margins, scaleType, pdf4x6);
+            PrintItem printItem5x7 = new PDFPrintItem(mediaSize5x7, margins, scaleType, pdf5x7);
+            PrintItem printItemLetter = new PDFPrintItem(PrintAttributes.MediaSize.NA_LETTER, margins, scaleType, pdfletter);
 
             printJobData = new PrintJobData(context, printItem4x6);
 
@@ -246,8 +267,9 @@ public class HpPrintManager {
 
 
     private static HpPrintManager printManager;
-    public static synchronized HpPrintManager getInstance(Context context){
-        if (printManager == null){
+
+    public static synchronized HpPrintManager getInstance(Context context) {
+        if (printManager == null) {
             printManager = new HpPrintManager((Activity) context);
         }
         return printManager;

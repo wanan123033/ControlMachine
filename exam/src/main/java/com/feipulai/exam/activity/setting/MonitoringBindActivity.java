@@ -81,8 +81,19 @@ public class MonitoringBindActivity extends BaseTitleActivity implements CheckDe
     }
 
     @Override
-    public void onQrArrived(String qrCode) {
-        etSerial.setText(qrCode);
+    public void onQrArrived(final String qrCode) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                etSerial.setText(qrCode);
+                if (!TextUtils.isEmpty(qrCode)){
+                    etSerial.setSelection(qrCode.length() - 1);
+                }
+
+            }
+        });
+
     }
 
     @Override

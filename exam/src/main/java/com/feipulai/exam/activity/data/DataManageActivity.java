@@ -846,8 +846,10 @@ public class DataManageActivity
                 SharedPrefsUtil.putValue(DataManageActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
                 DBManager.getInstance().initDB();
                 TestConfigs.init(DataManageActivity.this, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), null);
-                FileUtil.delete(MyApplication.PATH_IMAGE);
+                FileUtil.delete(MyApplication.PATH_IMAGE);//清理图片
                 FileUtil.mkdirs(MyApplication.PATH_IMAGE);
+                FileUtil.delete(MyApplication.PATH_PDF_IMAGE);//清理成绩PDF与图片
+                FileUtil.mkdirs(MyApplication.PATH_PDF_IMAGE);
                 Logger.i("进行数据清空");
                 return new DataBaseRespon(true, "", "");
             }

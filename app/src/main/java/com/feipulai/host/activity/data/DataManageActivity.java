@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.arcsoft.imageutil.ArcSoftImageFormat;
 import com.arcsoft.imageutil.ArcSoftImageUtil;
 import com.arcsoft.imageutil.ArcSoftImageUtilError;
+import com.bumptech.glide.Glide;
 import com.feipulai.common.db.ClearDataProcess;
 import com.feipulai.common.db.DataBaseExecutor;
 import com.feipulai.common.db.DataBaseRespon;
@@ -719,7 +720,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
             @Override
             public void onExecuteSuccess(DataBaseRespon respon) {
                 final List<Student> studentList = (List<Student>) respon.getObject();
-                if (studentList.size() == 0) {
+                if (studentList == null || studentList.size() == 0) {
                     ToastUtils.showShort("当前所有考生无头像信息，请先进行名单下载");
                     return;
                 }
@@ -735,7 +736,10 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                                 progressDialog.show();
                             }
                         });
-                        FaceServer.getFaceRegisterInfoList().clear();
+                        if (FaceServer.getFaceRegisterInfoList() != null) {
+                            FaceServer.getFaceRegisterInfoList().clear();
+                        }
+
                         List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
                         for (int i = 0; i < studentList.size(); i++) {
 
@@ -933,6 +937,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                 FileUtil.delete(FaceServer.ROOT_PATH);
                 FileUtil.mkdirs2(FaceServer.ROOT_PATH);
                 FileUtil.mkdirs(MyApplication.PATH_IMAGE);
+                Glide.get(DataManageActivity.this).clearDiskCache();
                 Logger.i("进行数据清空");
                 FaceServer.getInstance().unInit();
                 FaceServer.getInstance().init(DataManageActivity.this);

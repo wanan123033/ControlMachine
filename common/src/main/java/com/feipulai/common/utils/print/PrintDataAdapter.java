@@ -47,24 +47,24 @@ public class PrintDataAdapter extends RecyclerView.Adapter<PrintDataAdapter.View
         holder.txtTilte2.setText(mPrintDataBeans.get(position).getPrintString2());
 
         if (mPrintDataBeans.get(position).getPrintString3().length() > 4) {
-            holder.txtTilte3.setTextSize(21f);
-        } else {
             holder.txtTilte3.setTextSize(25f);
+        } else {
+            holder.txtTilte3.setTextSize(30f);
         }
 
         holder.txtTilte3.setText(mPrintDataBeans.get(position).getPrintString1());
 
         if (mPrintDataBeans.get(position).getPrintString4().length() > 8) {
-            holder.txtTilte3.setTextSize(21f);
-        } else {
             holder.txtTilte3.setTextSize(25f);
+        } else {
+            holder.txtTilte3.setTextSize(30f);
         }
         String printString4 = mPrintDataBeans.get(position).getPrintString4();
 
         if (TextUtils.equals(printString4, "\n")) {
             SpannableString spannableString = new SpannableString(printString4);
             int start = printString4.lastIndexOf("\n");
-            spannableString.setSpan(new AbsoluteSizeSpan(17, true), start, printString4.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannableString.setSpan(new AbsoluteSizeSpan(20, true), start, printString4.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             holder.txtTilte4.setText(spannableString);
         } else {
             holder.txtTilte4.setText(printString4);
