@@ -16,6 +16,7 @@ import com.arcsoft.face.FaceEngine;
 import com.feipulai.common.db.DataBaseExecutor;
 import com.feipulai.common.db.DataBaseRespon;
 import com.feipulai.common.db.DataBaseTask;
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.Student;
@@ -67,6 +68,7 @@ public class SplashScreenActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         // 这里是否还需要延时需要再测试后再修改
+        DateUtil.setTimeZone(this,"Asia/Shangha");
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

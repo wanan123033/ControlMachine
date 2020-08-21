@@ -21,7 +21,7 @@ public class MyApplication extends MultiDexApplication {
 
     public static final String PATH_SPECIFICATION = FileUtil.PATH_BASE + "KS/";
     public static final String PATH_IMAGE = FileUtil.PATH_BASE + "KS_IMAGE/";
-
+    public static final String PATH_PDF_IMAGE = FileUtil.PATH_BASE + "KS_PDF_IMAGE/";
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -51,6 +51,7 @@ public class MyApplication extends MultiDexApplication {
         FileUtil.createAllFile();
         FileUtil.mkdirs(PATH_SPECIFICATION);
         FileUtil.mkdirs(PATH_IMAGE);
+        FileUtil.mkdirs(PATH_PDF_IMAGE);
         FileUtil.mkdirs(FaceServer.ROOT_PATH);
         //视频播放初始化库
         PlayerLibrary.init(this);

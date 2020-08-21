@@ -15,7 +15,9 @@ import android.widget.TextView;
 
 import com.feipulai.common.R;
 import com.feipulai.common.utils.DateUtil;
+import com.itextpdf.text.DocumentException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,14 +48,13 @@ public class PrintA4Util {
     private TextView txtPrintTime;
     private NestedScrollView viewContent;
     private List<PrintBean.PrintDataBean> printDataBeans = new ArrayList<>();
-    private List<Bitmap> printImgList = new ArrayList<>();
+    private List<String> printImgPathList = new ArrayList<>();
     private PrintDataAdapter adapter;
     private View view;
 
-    public List<Bitmap> getPrintImgList() {
-        return printImgList;
+    public List<String> getPrintImgList() {
+        return printImgPathList;
     }
-
 
 
     public PrintA4Util(Context mContext) {
@@ -63,7 +64,7 @@ public class PrintA4Util {
 
     private void initView() {
         view = LayoutInflater.from(mContext).inflate(R.layout.view_a4_print, null);
-        viewContent=view.findViewById(R.id.view_content);
+        viewContent = view.findViewById(R.id.view_content);
         imgCode = view.findViewById(R.id.img_code);
         txtTitle = view.findViewById(R.id.txt_title);
         txtHandName = view.findViewById(R.id.txt_hand_name);
@@ -87,7 +88,7 @@ public class PrintA4Util {
         rvData.setAdapter(adapter);
     }
 
-    private  void setData(PrintBean printBean) {
+    private void setData(PrintBean printBean) {
         txtTitle.setText(printBean.getTitle());
         imgCode.setImageBitmap(QRCodeUtil.encodeAsBitmap(printBean.getCodeData(), imgCode.getWidth(), imgCode.getHeight()));
         //表格头部
@@ -204,9 +205,9 @@ public class PrintA4Util {
 
     }
 
-    public void createPrintImage(PrintBean printBean){
+    public void createPrintFile(PrintBean printBean, String filePath, String fileName) {
         if (printBean.getPrintDataBeans() != null) {
-            printImgList.clear();
+            printImgPathList.clear();
             int pageSum;
             if (printBean.getPrintDataBeans().size() % 20 == 0) {
                 pageSum = printBean.getPrintDataBeans().size() / 20;
@@ -230,11 +231,18 @@ public class PrintA4Util {
                 int height = metric.heightPixels;   // 屏幕高度（像素）
 
                 ViewImageUtils.layoutView(view, width, height);
-                Bitmap bitmap = ViewImageUtils.viewSaveToImage(viewContent);
-                if (bitmap != null) {
-                    printImgList.add(bitmap);
+                String imgPath = ViewImageUtils.viewSaveToImage(viewContent, filePath, fileName + "_" + pageNo);
+                if (!TextUtils.isEmpty(imgPath)) {
+                    printImgPathList.add(imgPath);
                 }
 
+            }
+            try {
+                PdfUtil.createPdf(filePath + fileName + ".pdf", printImgPathList);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (DocumentException e) {
+                e.printStackTrace();
             }
         }
     }

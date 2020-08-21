@@ -6,63 +6,63 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:orientation="horizontal"
-        android:paddingTop="2dp">
+        android:layout_height="76dp"
+        android:paddingTop="2dp"
+        android:orientation="horizontal">
 
         <com.feipulai.common.utils.print.TextSongTiView
             android:id="@+id/item_txt_title1"
             style="@style/txt_black_songti"
-            android:layout_width="68dp"
+            android:layout_width="81dp"
             android:layout_marginLeft="4dp"
             android:text="序号" />
 
         <com.feipulai.common.utils.print.TextSongTiView
             android:id="@+id/item_txt_title2"
             style="@style/txt_black_songti"
-            android:layout_width="201dp"
-            android:layout_marginLeft="12dp"
+            android:layout_width="241dp"
+            android:layout_marginLeft="14dp"
             android:text="考号" />
 
         <com.feipulai.common.utils.print.TextSongTiView
             android:id="@+id/item_txt_title3"
             style="@style/txt_black_songti"
-            android:layout_width="112dp"
-            android:layout_marginLeft="12dp"
+            android:layout_width="134dp"
+            android:layout_marginLeft="14dp"
             android:text="姓名" />
 
         <com.feipulai.common.utils.print.TextSongTiView
             android:id="@+id/item_txt_title4"
             style="@style/txt_black_songti"
-            android:layout_width="223dp"
-            android:layout_marginLeft="12dp"
+            android:layout_width="267dp"
+            android:layout_marginLeft="14dp"
             android:text="学校" />
 
         <com.feipulai.common.utils.print.TextSongTiView
             android:id="@+id/item_txt_title5"
             style="@style/txt_black_songti"
-            android:layout_width="180dp"
-            android:layout_marginLeft="12dp"
+            android:layout_width="216dp"
+            android:layout_marginLeft="14dp"
             android:text="成绩" />
 
         <com.feipulai.common.utils.print.TextSongTiView
             android:id="@+id/item_txt_title6"
             style="@style/txt_black_songti"
-            android:layout_width="65dp"
-            android:layout_marginLeft="12dp"
+            android:layout_width="78dp"
+            android:layout_marginLeft="14dp"
             android:text="得分" />
 
         <com.feipulai.common.utils.print.TextSongTiView
             android:id="@+id/item_txt_title7"
             style="@style/txt_black_songti"
-            android:layout_width="65dp"
-            android:layout_marginLeft="12dp"
+            android:layout_width="78dp"
+            android:layout_marginLeft="14dp"
             android:text="名次" />
 
         <com.feipulai.common.utils.print.TextSongTiView
             android:id="@+id/item_txt_title8"
             style="@style/txt_black_songti"
-            android:layout_width="132dp"
+            android:layout_width="158dp"
             android:layout_marginLeft="7dp"
             android:text="签名" />
 
