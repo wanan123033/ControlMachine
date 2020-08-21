@@ -70,7 +70,7 @@ public class SplashScreenActivity extends BaseActivity {
         super.onResume();
         // 这里是否还需要延时需要再测试后再修改
         RadioManager.getInstance().init();
-        DateUtil.setTimeZone(this,"Asia/Shangha");
+        DateUtil.setTimeZone(this,"Asia/Shanghai");
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
