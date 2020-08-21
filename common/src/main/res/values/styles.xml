@@ -50,7 +50,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:background">@color/white</item>
-        <item name="android:textSize">25sp</item>
+        <item name="android:textSize">30sp</item>
     </style>
 
     <!-- 横向线条-->

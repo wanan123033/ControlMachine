@@ -34,11 +34,11 @@ public class ViewImageUtils {
         v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
     }
 
-    public static Bitmap viewSaveToImage(View view ) {
+    public static String viewSaveToImage(View view, String filePath, String child) {
         // 把一个View转换成图片
         Bitmap cachebmp = loadBitmapFromView(view);
         view.destroyDrawingCache();
-        return cachebmp;
+        return savePic(cachebmp, filePath, child);
     }
 
     public static Bitmap loadBitmapFromView(View v) {
@@ -46,7 +46,7 @@ public class ViewImageUtils {
         int h = v.getHeight();
         Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(bmp);
-        c.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG));
+        c.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
         /** 如果不设置canvas画布为白色，则生成透明 */
         c.drawColor(Color.WHITE);
 
@@ -56,9 +56,9 @@ public class ViewImageUtils {
         return bmp;
     }
 
-//    保存在本地并一键分享
-    public static String savePic(Bitmap cachebmp, String child) {
-        final File qrImage = new File(FileUtil.PATH_BASE, child + ".jpg");
+    //    保存在本地并一键分享
+    public static String savePic(Bitmap cachebmp, String filePath, String child) {
+        final File qrImage = new File(filePath, child + ".jpg");
         if (qrImage.exists()) {
             qrImage.delete();
         }

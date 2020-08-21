@@ -1,10 +1,16 @@
 package com.feipulai.common.utils;
 
+import android.app.AlarmManager;
+import android.content.Context;
+
+import com.feipulai.device.udp.UdpLEDUtil;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -235,5 +241,36 @@ public class DateUtil {
         } else {
             return formatTime(caculTime, "dd HH:mm:ss" + hundDigital);
         }
+    }
+
+    /**
+     * 设置时区 Asia/Shangha
+     * @param context
+     * @param timeZone
+     */
+    public static void setTimeZone(Context context, String timeZone) {
+        final Calendar now = Calendar.getInstance();
+        TimeZone tz = TimeZone.getTimeZone(timeZone);
+        LogUtil.logDebugMessage("设置时区名=====》" + tz.getDisplayName());
+//        now.setTimeZone(tz);
+        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        am.setTimeZone(timeZone);
+    }
+
+    public static String getDefaultTimeZone() {
+        return TimeZone.getDefault().getDisplayName();
+    }
+
+
+
+    public static void setSysDate(Context mContext, long time) {
+//        String curr_time = "20160606.120403";
+//        UdpLEDUtil.shellExec("/system/bin/date -s " + curr_time+"\n clock -w\n");
+//        String curr_time = "052514412019.52";
+        String curr_time =formatTime(time,"MMddhhmmyyyy.ss");
+        LogUtil.logDebugMessage(curr_time);
+        UdpLEDUtil.shellExec("date " +
+                curr_time  + "\n busybox hwclock -w \n");
+
     }
 }

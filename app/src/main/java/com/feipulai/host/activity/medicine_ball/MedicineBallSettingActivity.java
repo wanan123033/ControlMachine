@@ -153,7 +153,7 @@ public class MedicineBallSettingActivity extends BaseTitleActivity {
 
                     break;
             }
-            if (alertDialog.isShowing()) {
+            if (alertDialog!= null && alertDialog.isShowing()) {
                 alertDialog.dismiss();
             }
 

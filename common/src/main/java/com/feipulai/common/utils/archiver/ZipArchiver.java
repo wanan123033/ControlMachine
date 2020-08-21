@@ -62,17 +62,20 @@ public class ZipArchiver {
                     LogUtils.normal("解压文件数量===》" + total);
                     for (int i = 0; i < zFile.getFileHeaders().size(); i++) {
                         fh = (FileHeader) zFile.getFileHeaders().get(i);
-//                String entrypath = "";
-//                if (fh.isFileNameUTF8Encoded()) {//解決中文乱码
-//                    entrypath = fh.getFileName().trim();
-//                } else {
-//                    entrypath = fh.getFileName().trim();
-//                }
-//                entrypath = entrypath.replaceAll("\\\\", "/");
-//
-//                File file = new File(unrarPath + entrypath);
-//                Log.d(TAG, "unrar entry file :" + file.getPath());
+                        String entrypath = "";
+                        if (fh.isFileNameUTF8Encoded()) {//解決中文乱码
+                            entrypath = fh.getFileName().trim();
+                        } else {
+                            entrypath = fh.getFileName().trim();
+                        }
+                        entrypath = entrypath.replaceAll("\\\\", "/");
 
+                        File file = new File(unrarPath + entrypath);
+//                Log.d(TAG, "unrar entry file :" + file.getPath());
+                        //文件夹中是否有存在文件，存在则删除文件再解压
+                        if (file.exists()) {
+                            file.delete();
+                        }
                         zFile.extractFile(fh, unrarPath);
 
                         if (listener != null) {

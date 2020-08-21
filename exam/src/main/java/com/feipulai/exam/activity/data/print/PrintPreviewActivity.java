@@ -15,6 +15,7 @@ import com.feipulai.common.utils.print.PrintA4Util;
 import com.feipulai.common.utils.print.PrintBean;
 import com.feipulai.common.utils.print.ViewImageUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.utils.HpPrintManager;
@@ -36,6 +37,7 @@ public class PrintPreviewActivity extends BaseTitleActivity {
     @BindView(R.id.view_content)
     LinearLayout viewContent;
     private PrintA4Util printUtil;
+    String fileName;
 
     @Override
     protected int setLayoutResID() {
@@ -64,24 +66,25 @@ public class PrintPreviewActivity extends BaseTitleActivity {
 
         }
         printBean.setPrintDataBeans(printDataBeans);
-
+        fileName = DateUtil.getCurrentTime() + "";
         printUtil = new PrintA4Util(this);
-        printUtil.createPrintImage(printBean);
+        printUtil.createPrintFile(printBean, MyApplication.PATH_PDF_IMAGE, fileName);
 
-        for (Bitmap bitmap : printUtil.getPrintImgList()) {
-            ImageView imageView = new ImageView(this);
-            imageView.setImageBitmap(bitmap);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.setMargins(0, 0, 0, 30);
-            viewContent.addView(imageView, params);
-        }
-
+//        for (Bitmap bitmap : printUtil.getPrintImgList()) {
+//            ImageView imageView = new ImageView(this);
+//            imageView.setImageBitmap(bitmap);
+//            imageView.setScaleType(ImageView.ScaleType.FIT_START);
+////            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+////            params.setMargins(0, 0, 0, 30);
+//            viewContent.addView(imageView);
+//        }
+        HpPrintManager.getInstance(this).print(MyApplication.PATH_PDF_IMAGE + fileName + ".pdf");
     }
 
 
     @OnClick(R.id.print_preview_print_btn)
     public void onViewClicked() {
 
-        HpPrintManager.getInstance(this).printImg(printUtil.getPrintImgList().get(0));
+        HpPrintManager.getInstance(this).print(MyApplication.PATH_PDF_IMAGE + fileName + ".pdf");
     }
 }
