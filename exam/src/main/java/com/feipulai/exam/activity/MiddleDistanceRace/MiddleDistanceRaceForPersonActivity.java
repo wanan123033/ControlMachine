@@ -101,6 +101,7 @@ import com.ww.fpl.videolibrary.play.play.ReceiverGroupManager;
 import com.ww.fpl.videolibrary.play.util.PUtil;
 import com.zyyoona7.popup.EasyPopup;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -233,7 +234,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                     break;
                 case 4:
                     for (TimingBean timingBean : timingLists
-                            ) {
+                    ) {
                         //开始计时之后，所有启动状态的计时器需要改变为正在计时状态
                         if (timingBean.getState() == TIMING_START) {
                             timingBean.setState(TIMING_STATE_TIMING);
@@ -310,6 +311,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
     private String hk_psw;
     private View parentView;
     private ScannerGunManager scannerGunManager;
+    private TextView tvVideoResult;
 
     @Override
     protected int setLayoutResID() {
@@ -571,7 +573,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                 public DataBaseRespon executeOper() {
                     List<Group> dbGroupList = DBManager.getInstance().getGroupByScheduleNoAndItem(scheduleNo, itemCode, groupStatePosition);
                     for (Group group : dbGroupList
-                            ) {
+                    ) {
                         String sex = "";
                         switch (group.getGroupType()) {
                             case 0:
@@ -610,7 +612,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
     @Override
     public void onBackPressed() {
         for (TimingBean timingBean : timingLists
-                ) {
+        ) {
             if (timingBean.getState() == TIMING_STATE_WAITING || timingBean.getState() == TIMING_STATE_TIMING) {
                 toastSpeak("考试中，请勿退出");
                 return;
@@ -750,6 +752,8 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         final EditText serverPort = mMachinePop.findViewById(R.id.et_server_port);
         final EditText cameraIP = mMachinePop.findViewById(R.id.et_camera_ip);
 
+        etHKUser.setText(hk_user);
+        etHKPassWord.setText(hk_psw);
         etIP.setText(machine_ip);
         etIP.setSelection(machine_ip.length());
         etPort.setText(machine_port);
@@ -1084,6 +1088,10 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                 dialogUtil.showCommonDialog(completeResults.get(track).getStudentCode() + "  获取最终成绩：" + videoResult, 0, new DialogUtil.DialogListener() {
                     @Override
                     public void onPositiveClick() {
+                        if (completeResults.get(track).getCycleResult() == null) {
+                            ToastUtils.showShort("无圈次成绩");
+                            return;
+                        }
                         ToastUtils.showShort(videoResult);
                         completeResults.get(track).setResult(videoPosition - seekTime);
                         int[] cResult = DataUtil.byteArray2RgbArray(completeResults.get(track).getCycleResult());
@@ -1107,7 +1115,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         btnVideoPlay = mSelectPop.findViewById(R.id.btn_video_play);
         btnVideoStartPause = mSelectPop.findViewById(R.id.btn_video_start_pause);
         ivControl = mSelectPop.findViewById(R.id.iv_video_control);
-
+        tvVideoResult = mSelectPop.findViewById(R.id.tv_video_result);
 //        String startTime = groupItemBeans.get(groupPosition).getGroup().getRemark1();
 //        if (TextUtils.isEmpty(startTime)) {
 //            rlVideo.setVisibility(View.GONE);
@@ -1165,8 +1173,10 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                     }
                 }
                 if (userPause) {
+                    tvVideoResult.setText("成绩：" + videoResult);
                     ivControl.setImageResource(R.mipmap.ic_video_player_btn_play);
                 } else {
+                    tvVideoResult.setText("成绩：");
                     ivControl.setImageResource(R.mipmap.ic_video_player_btn_pause);
                 }
             }
@@ -1246,7 +1256,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             }
             String[] timeLong = new String[0];
             for (String path : paths
-                    ) {
+            ) {
                 timeLong = path.replace(".mp4", "").split("_");
                 if (timeLong.length == 2 && Long.parseLong(startTime) >= Long.parseLong(timeLong[0]) && Long.parseLong(startTime) <= Long.parseLong(timeLong[1])) {
                     mDataSource.setData(hkCamera.PATH + path);
@@ -1254,7 +1264,8 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                     break;
                 }
             }
-            if (TextUtils.isEmpty(mDataSource.getData())) {
+            File dateFile = new File(mDataSource.getData());
+            if (TextUtils.isEmpty(mDataSource.getData()) || dateFile.length() < 1000) {
                 ToastUtils.showShort("找不到录像文件");
                 return;
             }
@@ -1470,7 +1481,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             resultShowTable.notifyContent();
 
             for (GroupItemBean bean : groupItemBeans
-                    ) {
+            ) {
                 if (bean.getGroup().getIsTestComplete() == TimingBean.GROUP_3) {
                     bean.getGroup().setIsTestComplete(GROUP_4);
                 }
@@ -1520,14 +1531,14 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
 
         List<Group> groupList = new ArrayList<>();
         for (Item item : itemList
-                ) {
+        ) {
             if (item.getItemCode() != null) {
                 groupList.addAll(DBManager.getInstance().queryGroupByItemCode(item.getItemCode()));
             }
         }
 
         for (Group group : groupList
-                ) {
+        ) {
             if (group.getIsTestComplete() == TimingBean.GROUP_3 || group.getIsTestComplete() == TimingBean.GROUP_WAIT || group.getIsTestComplete() == TimingBean.GROUP_TIMING) {
                 group.setIsTestComplete(TimingBean.GROUP_4);
             }
@@ -1600,7 +1611,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
     public void onMessageReceive(long time, final String[] cardIds) {
         boolean isFind = false;//标记当前一轮芯片是否有效
         for (String card : cardIds
-                ) {
+        ) {
             Log.i("card", "-------------" + card);
             ChipInfo chipInfo = DBManager.getInstance().queryChipInfoByID(card);
             if (chipInfo == null) {
@@ -1680,14 +1691,14 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
 //        Log.i("timingLists", timingLists.toString());
         int timerNo = 0;
         for (TimingBean timing : timingLists
-                ) {
+        ) {
             //当前处于等待状态的组别开始计时
             if (timing.getState() == TIMING_STATE_WAITING) {
                 timing.setState(TIMING_START);//开始计时
                 timing.setTime(time);
                 //将开始时间保存到每个人的数据中
                 for (RaceResultBean raceResultBean2 : resultDataList
-                        ) {
+                ) {
                     if (raceResultBean2.getColor() == timing.getColor()) {
                         raceResultBean2.setStartTime(time);
                     }
@@ -1852,7 +1863,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                 break;
             case R.id.btn_setting:
                 for (TimingBean timingBean : timingLists
-                        ) {
+                ) {
                     if (timingBean.getState() == TIMING_STATE_WAITING || timingBean.getState() == TIMING_STATE_TIMING) {
                         toastSpeak("考试中，请勿跳转其它界面");
                         return;
@@ -1969,7 +1980,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         timingLists.get(position).setState(TIMING_STATE_WAITING);
         //点击等待，须清除当前等待组的以往成绩
         for (RaceResultBean resultBean2 : resultDataList
-                ) {
+        ) {
             if (resultBean2.getColor() == timingLists.get(position).getColor()) {
                 resultBean2.setStartTime(0);
                 String[] result = resultBean2.getResults();
@@ -2005,7 +2016,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
 //                raceTimingAdapter.notifyDataSetChanged();
                 //初始化开始时间
                 for (RaceResultBean resultBean2 : resultDataList
-                        ) {
+                ) {
                     if (resultBean2.getColor() == timingLists.get(position).getColor()) {
                         resultBean2.setStartTime(0);
                     }
@@ -2034,7 +2045,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
     public void clickTimingCompleteListener(final int position, final RaceTimingAdapter.VH holder) {
         //先判断列表中是否有未结束的
         for (RaceResultBean resultBean2 : resultDataList
-                ) {
+        ) {
             if (resultBean2.getColor() == timingLists.get(position).getColor()) {
                 //最终成绩为空表示未结束
                 if (TextUtils.isEmpty(resultBean2.getResults()[2])) {
@@ -2045,6 +2056,9 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         }
         showFinishDialog(position, holder, "是否完成计时？", android.R.drawable.ic_dialog_info);
     }
+
+    private List<UploadResults> uploadResults = new ArrayList<>();
+    ;
 
     private void showFinishDialog(final int position, final RaceTimingAdapter.VH holder, String notice, int bitmapId) {
         dialogUtil.showCommonDialog(notice, bitmapId, new DialogUtil.DialogListener() {
@@ -2065,14 +2079,14 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                 }
 
                 long startTime = timingLists.get(position).getTime();
-                List<UploadResults> uploadResults = new ArrayList<>();
+                uploadResults.clear();
                 List<RoundResult> roundResults = new ArrayList<>();
 
                 Group dbGroupList = null;
                 if (timingLists.get(position).getItemCode().equals(itemList.get(mItemPosition).getItemCode())) {
                     //更新项目组状态
                     for (GroupItemBean groupItemBean : groupItemBeans
-                            ) {
+                    ) {
                         if (timingLists.get(position).getItemGroupName().equals(groupItemBean.getGroupItemName())) {
                             //当前组完成之后更新状态并移除
                             groupItemBean.getGroup().setIsTestComplete(GROUP_FINISH);
@@ -2096,7 +2110,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                 UploadResults uploadResult;
                 String itemName = null;
                 for (RaceResultBean resultBean2 : resultDataList
-                        ) {
+                ) {
                     if (resultBean2.getColor() == timingLists.get(position).getColor()) {
                         //初始化开始时间
                         resultBean2.setStartTime(0);
@@ -2341,7 +2355,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
     }
 
     private void showCompleteDialog() {
-        String[] selectItems = new String[]{"查看成绩", "打印成绩"};
+        String[] selectItems = new String[]{"查看成绩", "上传成绩", "打印成绩"};
         AlertDialog.Builder listDialog = new AlertDialog.Builder(this);
         listDialog.setTitle(groupName);
         listDialog.setItems(selectItems, new DialogInterface.OnClickListener() {
@@ -2362,7 +2376,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                         List<String> strings;
                         int resultCycles = 0;
                         for (GroupItem groupItem : groupItems
-                                ) {
+                        ) {
                             Student student = DBManager.getInstance().queryStudentByStuCode(groupItem.getStudentCode());
                             selectResultBean = new SelectResultBean();
                             selectResultBean.setStudentName(student.getStudentName());
@@ -2403,7 +2417,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                                 int[] results = DataUtil.byteArray2RgbArray(roundResult.getCycleResult());
                                 resultCycles = results.length;
                                 for (int result : results
-                                        ) {
+                                ) {
                                     String resultString;
                                     if (carryMode == 0) {
                                         resultString = DateUtil.caculateTime(result, 3, carryMode);
@@ -2436,29 +2450,24 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                         mSelectPop.showAtLocation(getWindow().getDecorView(), Gravity.CENTER, 0, 0);
                         break;
                     case 1:
-                        MiddlePrintUtil.print2(groupItemBeans.get(groupPosition), digital, carryMode);
+                        uploadResults.clear();
+                        List<GroupItem> groupItems2 = groupItemBeans.get(groupPosition).getGroupItems();
+                        Group group = groupItemBeans.get(groupPosition).getGroup();
+                        UploadResults uploadResult;
+                        String itemName = DBManager.getInstance().queryItemByCode(group.getItemCode()).getItemName();
+                        for (GroupItem groupItem : groupItems2
+                        ) {
+                            RoundResult roundResult = DBManager.getInstance().queryResultByStudentCode(groupItem.getStudentCode(), groupItem.getItemCode(), groupItemBeans.get(groupPosition).getGroup().getId());
+                            uploadResult = new UploadResults(groupItem.getScheduleNo(), roundResult.getItemCode()
+                                    , groupItem.getStudentCode(), "1", group, RoundResultBean.beanCope2(roundResult, group));//需要上传的成绩对象
+                            uploadResults.add(uploadResult);
+                        }
+                        if (itemName != null) {
+                            ServerMessage.uploadZCPResult(mContext, itemName, uploadResults);
+                        }
                         break;
                     case 2:
-//                        String startTime = groupItemBeans.get(groupPosition).getGroup().getRemark1();
-//                        List<String> paths = PUtil.getFilesAllName(hkCamera.PATH);
-//                        Log.i("timeLong", "paths---" + paths.toString());
-//                        String[] timeLong = new String[0];
-//                        for (String path : paths
-//                                ) {
-//                            timeLong = path.replace(".mp4", "").split("_");
-//                            Log.i("timeLong", "---" + timeLong.toString());
-//                            if (timeLong.length == 2 && Long.parseLong(startTime) >= Long.parseLong(timeLong[0]) && Long.parseLong(startTime) <= Long.parseLong(timeLong[1])) {
-//                                mDataSource.setData(hkCamera.PATH + path);
-//                                mDataSource.setTitle("发令时刻：" + DateUtil.formatTime2(Long.parseLong(startTime), "yyyy/MM/dd HH:mm:ss:SSS"));
-//                                break;
-//                            }
-//                        }
-//                        if (mDataSource.getData().isEmpty()) {
-//                            ToastUtils.showShort("找不到录像文件");
-//                            return;
-//                        }
-//                        int seekTime = (int) (Long.parseLong(startTime) - Long.parseLong(timeLong[0]));
-//                        Log.i("seekTime", "-----" + seekTime);
+                        MiddlePrintUtil.print2(groupItemBeans.get(groupPosition), digital, carryMode);
                         break;
                     default:
                         break;
@@ -2484,7 +2493,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                     case 0:
                         if (testComplete == GROUP_3) {
                             for (TimingBean timing : timingLists
-                                    ) {
+                            ) {
                                 if (groupItemBeans.get(groupPosition).getGroupItemName().equals(timing.getItemGroupName())) {
                                     toastSpeak("该组已选入比赛");
                                     return;
@@ -2517,7 +2526,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                     case 2:
                         if (testComplete == GROUP_3) {
                             for (TimingBean timing : timingLists
-                                    ) {
+                            ) {
                                 if (groupItemBeans.get(groupPosition).getGroupItemName().equals(timing.getItemGroupName())) {
                                     toastSpeak("该组已存在");
                                     return;
@@ -2585,7 +2594,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
      */
     private void addToTiming() {
         for (TimingBean timing : timingLists
-                ) {
+        ) {
             if (timing.getColor() == Integer.parseInt(groupItemBeans.get(groupPosition).getGroup().getColorId())) {
                 toastSpeak("当前颜色组已存在");
                 return;
