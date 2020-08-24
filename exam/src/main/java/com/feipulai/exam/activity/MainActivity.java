@@ -34,6 +34,7 @@ import com.feipulai.exam.activity.base.BaseActivity;
 import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.data.DataManageActivity;
 import com.feipulai.exam.activity.data.DataRetrieveActivity;
+import com.feipulai.exam.activity.data.print.PrintPreviewActivity;
 import com.feipulai.exam.activity.explain.ExplainActivity;
 import com.feipulai.exam.activity.setting.MonitoringBean;
 import com.feipulai.exam.activity.setting.MonitoringBindActivity;
@@ -142,7 +143,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
     private void createFile() {
         ArrayList<StorageUtils.Volume> storys = StorageUtils.getVolume(this);
         for (StorageUtils.Volume volume : storys
-                ) {
+        ) {
             if (volume.isRemovable() && volume.getState().equals("mounted")) {
                 PATH = volume.getPath() + "/HKVideo/";
                 break;
@@ -249,6 +250,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                 PrinterManager.getInstance().selfCheck();
                 PrinterManager.getInstance().print("\n\n");
 //                addTestResult();
+//                IntentUtil.gotoActivity(this,PrintPreviewActivity.class);
                 break;
             case R.id.card_parameter_setting:
                 startActivity(new Intent(MainActivity.this, SettingActivity.class));

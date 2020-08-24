@@ -15,9 +15,9 @@
     <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_marginBottom="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:layout_weight="1.2">
 
         <com.feipulai.exam.activity.MiddleDistanceRace.vhtableview.VHTableView
@@ -51,10 +51,10 @@
         android:id="@+id/rl_video"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_marginBottom="10dp"
-        android:layout_marginEnd="10dp"
         android:layout_marginStart="6dp"
         android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
         android:layout_weight="1.5"
         android:background="#000000">
 
@@ -66,6 +66,15 @@
             android:background="#000000" />
 
 
+        <TextView
+            android:id="@+id/tv_video_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="20dp"
+            android:textColor="@color/Red"
+            android:textSize="20sp" />
+
         <ImageView
             android:id="@+id/iv_video_control"
             android:layout_width="40dp"
@@ -73,8 +82,8 @@
             android:layout_below="@+id/baseVideoView"
             android:layout_centerHorizontal="true"
             android:layout_margin="10dp"
-            android:paddingEnd="6dp"
             android:paddingStart="6dp"
+            android:paddingEnd="6dp"
             android:src="@mipmap/ic_video_player_btn_play" />
 
         <Button

@@ -20,10 +20,8 @@ import com.arcsoft.face.enums.DetectMode;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.exam.R;
-import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Student;
-import com.feipulai.exam.view.OperateProgressBar;
 import com.lgh.uvccamera.UVCCameraProxy;
 import com.lgh.uvccamera.callback.ConnectCallback;
 import com.lgh.uvccamera.callback.PreviewCallback;
@@ -108,7 +106,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             return false;
         }
     });
-
+    private SweetAlertDialog uploadDataDialog;
     private boolean isLodingServer = false;
 
     @Override
@@ -120,6 +118,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
     protected void initData() {
         initEngine();
         initCamera();
+
     }
 
     private void initCamera() {
@@ -145,7 +144,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 //                    isOpenCamera = false;
 //                    requestFeatureStatusMap.clear();
 //                    extractErrorRetryMap.clear();
-//                    mHandler.sendEmptyMessage(0);
+//                    isOpenCamera=false;
 //                    compareListener.compareStu(null);
 //                    return;
 //                }
@@ -175,10 +174,10 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                         }
                         faceHelper.setName(requestId, getString(R.string.recognize_failed_notice, msg));
 //                        // 在尝试最大次数后，特征提取仍然失败，则认为识别未通过
-                        requestFeatureStatusMap.put(requestId, RequestFeatureStatus.FAILED);
-//                        retryRecognizeDelayed(requestId);
-                        mHandler.sendEmptyMessage(0);
-                        compareListener.compareStu(null);
+//                        requestFeatureStatusMap.put(requestId, RequestFeatureStatus.FAILED);
+                        retryRecognizeDelayed(requestId);
+//                        isOpenCamera=false;
+//                        compareListener.compareStu(null);
                     } else {
                         requestFeatureStatusMap.put(requestId, RequestFeatureStatus.TO_RETRY);
                     }
@@ -239,6 +238,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         if (faceHelper == null) {
             return;
         }
+//        isStartFace=true;
         requestFeatureStatusMap.put(requestId, RequestFeatureStatus.FAILED);
         Observable.timer(FAIL_RETRY_INTERVAL, TimeUnit.MILLISECONDS)
                 .subscribe(new Observer<Long>() {
@@ -263,7 +263,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                     @Override
                     public void onComplete() {
                         // 将该人脸特征提取状态置为FAILED，帧回调处理时会重新进行人脸识别
-//                        faceHelper.setName(requestId, Integer.toString(requestId));
+                        faceHelper.setName(requestId, Integer.toString(requestId));
                         requestFeatureStatusMap.put(requestId, RequestFeatureStatus.TO_RETRY);
                         delayFaceTaskCompositeDisposable.remove(disposable);
                     }
@@ -276,31 +276,28 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         if (isOpen) {
             isStartFace = true;
             isOpenCamera = true;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    //每次恢复初始状态
-                    if (faceHelper != null) {
-                        faceHelper.clearFace();
-                        faceId = 0;
-                        requestFeatureStatusMap.clear();
-                        extractErrorRetryMap.clear();
-                        delayFaceTaskCompositeDisposable.clear();
-                    }
-                    mUVCCamera.startPreview();
-                }
-            }, 100);
+            if (faceId == null) {
+                faceId = 0;
+            }
+            retryRecognizeDelayed(faceId);
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    //每次恢复初始状态
+//                    if (faceHelper != null) {
+//                        faceHelper.clearFace();
+//                        faceId = 0;
+//                        requestFeatureStatusMap.clear();
+//                        extractErrorRetryMap.clear();
+//                        delayFaceTaskCompositeDisposable.clear();
+//                    }
+//                    mUVCCamera.startPreview();
+//                }
+//            }, 100);
         } else {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (mUVCCamera != null)
-                        mUVCCamera.stopPreview();
-                }
-            }, 100);
-
+//            mUVCCamera.stopPreview();
             isOpenCamera = false;
-
+            isStartFace = false;
         }
         return true;
     }
@@ -349,6 +346,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         }
 
         faceNumber = FaceServer.getInstance().getFaceNumber();
+        Log.i("faceRegisterInfoList", "4----------" + faceNumber);
     }
 
     /**
@@ -409,6 +407,9 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
     @Override
     public void onPreviewFrame(byte[] yuv) {
+        if (!isStartFace) {
+            return;
+        }
         if (faceRectView2 != null) {
             faceRectView2.clearFaceInfo();
         }
@@ -494,7 +495,8 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         drawHelper.draw(faceRectView2, drawInfoList);
     }
 
-    private final float SIMILAR_THRESHOLD = 0.82f;
+    private final float SIMILAR_THRESHOLD = 0.80f;
+    private int hasTry = 0;
 
     //3个线程查找
     private CompareResult compareResult1;
@@ -552,21 +554,29 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 //                faceHelper.setName(faceId, mContext.getString(R.string.recognize_success_notice, lastCompareResult.getUserName()));
                 Student student = DBManager.getInstance().queryStudentByCode(lastCompareResult.getUserName());
                 Logger.d("compareResult==>");
-                mHandler.sendEmptyMessage(0);
+                isOpenCamera = false;
+                hasTry = 0;
                 compareListener.compareStu(student);
-                mHandler.sendEmptyMessage(0);
-
+//                isOpenCamera=false;
             } else {
+                hasTry++;
                 Logger.d("compareResult==>null");
-//                compareListener.compareStu(null);
-                mHandler.sendEmptyMessage(0);
-                if (isLodingServer) {
-                    compareListener.compareStu(null);
+                if (hasTry < 3) {
+                    faceHelper.setName(faceId, getString(R.string.recognize_failed_notice, ""));
                 } else {
-                    compareListener.compareStu(null);
-//                    showAddHint();
+                    hasTry = 0;
+                    faceHelper.setName(faceId, getString(R.string.recognize_failed_notice, ""));
+                    isOpenCamera = false;
+//                    compareListener.compareStu(null);
+                    if (isLodingServer) {
+                        compareListener.compareStu(null);
+                    } else {
+                        showAddHint();
+                        return;
+                    }
                 }
-
+                isStartFace = true;
+                retryRecognizeDelayed(faceId);
             }
         }
 
@@ -631,38 +641,74 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 //    }
 
     private void showAddHint() {
-
+        isStartFace = false;
         ((Activity) mContext).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                new SweetAlertDialog(mContext).setTitleText("该考生不存在")
-                        .setContentText("是否进行服务器信息识别")
-                        .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismissWithAnimation();
-                        getStudent();
+                if (uploadDataDialog == null || !uploadDataDialog.isShowing()) {
+                    uploadDataDialog = new SweetAlertDialog(mContext).setTitleText("该考生不存在")
+                            .setContentText("是否进行服务器信息识别")
+                            .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    sweetAlertDialog.dismissWithAnimation();
+//                                    getStudent();
 
-                    }
-                }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismissWithAnimation();
-                        mHandler.sendEmptyMessage(0);
-//                        compareListener.compareStu(null);
-                        isLodingServer = false;
-                    }
-                }).show();
+                                }
+                            }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    sweetAlertDialog.dismissWithAnimation();
+                                    isLodingServer = false;
+                                    isStartFace = true;
+                                    retryRecognizeDelayed(faceId);
+                                }
+                            });
+                    uploadDataDialog.show();
+                }
             }
         });
 
 
     }
 
-    private void getStudent() {
-        OperateProgressBar.showLoadingUi((Activity) mContext, "正在查询服务器信息...");
-
-    }
+//    private void getStudent() {
+//        OperateProgressBar.showLoadingUi((Activity) mContext, "正在查询服务器信息...");
+//        ItemSubscriber itemSubscriber = new ItemSubscriber();
+//        String lastDownLoadTime = SharedPrefsUtil.getValue(mContext, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.LAST_DOWNLOAD_TIME, "");
+//        itemSubscriber.setOnRequestEndListener(new OnRequestEndListener() {
+//            @Override
+//            public void onSuccess(int bizType) {
+//                isLodingServer = true;
+//                OperateProgressBar.removeLoadingUiIfExist((Activity) mContext);
+////                threadPool.execute(searchFace1);
+////                threadPool.execute(searchFace2);
+////                threadPool.execute(searchFace3);
+//                isStartFace = true;
+//                retryRecognizeDelayed(faceId);
+//            }
+//
+//            @Override
+//            public void onFault(int bizType) {
+//                OperateProgressBar.removeLoadingUiIfExist((Activity) mContext);
+//                isStartFace = true;
+//                retryRecognizeDelayed(faceId);
+//            }
+//
+//            @Override
+//            public void onRequestData(Object data) {
+//                isLodingServer = true;
+//                OperateProgressBar.removeLoadingUiIfExist((Activity) mContext);
+//                List<Student> studentList = (List<Student>) data;
+//                List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
+//                for (Student student : studentList) {
+//                    registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+//                }
+//                FaceServer.getInstance().addFaceList(registerInfoList);
+//            }
+//        });
+//        itemSubscriber.getStudentData(1, lastDownLoadTime);
+//    }
 
     private onAFRCompareListener compareListener;
 
