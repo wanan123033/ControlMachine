@@ -71,10 +71,12 @@ public class ShootSettingActivity extends BaseTitleActivity implements CompoundB
     Spinner spInterceptNo;
     @BindView(R.id.view_carryMode)
     LinearLayout viewCarryMode;
+    @BindView(R.id.ll_shoot_setting)
+    LinearLayout shootSetting;
 
     private Integer[] testRound = new Integer[]{1, 2, 3};
-    private String[] backRound = new String[]{"1号", "2号", "3号","4号", "5号", "6号","7号", "8号"};
-    private String[] interceptRound = new String[]{"1起点", "2折返1", "3投篮","4折返2", "5投篮", "6折返1","7投篮", "8折返2","9投篮"};
+    private String[] backRound = new String[]{"1号", "2号", "3号", "4号", "5号", "6号", "7号", "8号"};
+    private String[] interceptRound = new String[]{"1起点", "2折返1", "3投篮", "4折返2", "5投篮", "6折返1", "7投篮", "8折返2", "9投篮"};
     private String[] carryMode = new String[]{"四舍五入", "不进位", "非零进位"};
     private ShootSetting setting;
     private MyHandler mHandler = new MyHandler(this);
@@ -114,13 +116,13 @@ public class ShootSettingActivity extends BaseTitleActivity implements CompoundB
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTestNo.setAdapter(adapter);
 
-        if (TestConfigs.sCurrentItem.getTestNum() != 0){
+        if (TestConfigs.sCurrentItem.getTestNum() != 0) {
             spTestNo.setEnabled(false);
             // 数据库中已经指定了测试次数,就不能再设置了
             spTestNo.setSelection(TestConfigs.sCurrentItem.getTestNum() - 1);
             setting.setTestNo(TestConfigs.sCurrentItem.getTestNum());
-        }else {
-            spTestNo.setSelection(setting.getTestNo()-1);
+        } else {
+            spTestNo.setSelection(setting.getTestNo() - 1);
         }
 
         //设置进位
@@ -140,23 +142,24 @@ public class ShootSettingActivity extends BaseTitleActivity implements CompoundB
         ArrayAdapter adapter3 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, backRound);
         adapter3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spBack1No.setAdapter(adapter3);
-        spBack1No.setSelection(setting.getBack1No()-1);
+        spBack1No.setSelection(setting.getBack1No() - 1);
         //设置2号折返点
         ArrayAdapter adapter4 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, backRound);
         adapter4.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spBack2No.setAdapter(adapter4);
-        spBack2No.setSelection(setting.getBack2No()-1);
+        spBack2No.setSelection(setting.getBack2No() - 1);
 
         //设置起点
         ArrayAdapter adapter5 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, backRound);
         adapter5.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spStartNo.setAdapter(adapter5);
-        spStartNo.setSelection(setting.getStartNo()-1);
+        spStartNo.setSelection(setting.getStartNo() - 1);
         //设置指定点
         ArrayAdapter adapter6 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, interceptRound);
         adapter6.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spInterceptNo.setAdapter(adapter6);
-        spInterceptNo.setSelection(setting.getInterceptNo()-1);
+        spInterceptNo.setSelection(setting.getInterceptNo() - 1);
+        shootSetting.setVisibility(setting.getTestType() == 2 ? View.VISIBLE : View.GONE);
     }
 
 
@@ -215,8 +218,8 @@ public class ShootSettingActivity extends BaseTitleActivity implements CompoundB
         }
     }
 
-    @OnItemSelected({R.id.sp_carryMode, R.id.sp_test_no,R.id.sp_intercept_no,R.id.sp_start_no,
-            R.id.sp_back1_no,R.id.sp_back2_no})
+    @OnItemSelected({R.id.sp_carryMode, R.id.sp_test_no, R.id.sp_intercept_no, R.id.sp_start_no,
+            R.id.sp_back1_no, R.id.sp_back2_no})
     public void spinnerItemSelected(Spinner spinner, int position) {
         switch (spinner.getId()) {
             case R.id.sp_carryMode:
@@ -226,36 +229,36 @@ public class ShootSettingActivity extends BaseTitleActivity implements CompoundB
                 setting.setTestNo(position + 1);
                 break;
             case R.id.sp_intercept_no:
-                if (position<3){
-                    spInterceptNo.setSelection(setting.getInterceptNo()-1);
+                if (position < 3) {
+                    spInterceptNo.setSelection(setting.getInterceptNo() - 1);
                     toastSpeak("至少有一次投篮折返");
                     return;
                 }
-                setting.setInterceptNo(position+1);
+                setting.setInterceptNo(position + 1);
                 break;
             case R.id.sp_start_no:
-                if (position == 0){
-                    spStartNo.setSelection(setting.getStartNo()-1);
+                if (position == 0) {
+                    spStartNo.setSelection(setting.getStartNo() - 1);
                     toastSpeak("起始截点不能为1号");
                     return;
                 }
-                setting.setStartNo(position+1);
+                setting.setStartNo(position + 1);
                 break;
             case R.id.sp_back1_no:
-                if (position == 0){
-                    spBack1No.setSelection(setting.getStartNo()-1);
+                if (position == 0) {
+                    spBack1No.setSelection(setting.getStartNo() - 1);
                     toastSpeak("起始截点不能为1号");
                     return;
                 }
-                setting.setBack1No(position+1);
+                setting.setBack1No(position + 1);
                 break;
             case R.id.sp_back2_no:
-                if (position == 0){
-                    spBack2No.setSelection(setting.getStartNo()-1);
+                if (position == 0) {
+                    spBack2No.setSelection(setting.getStartNo() - 1);
                     toastSpeak("起始截点不能为1号");
                     return;
                 }
-                setting.setBack2No(position+1);
+                setting.setBack2No(position + 1);
                 break;
         }
     }

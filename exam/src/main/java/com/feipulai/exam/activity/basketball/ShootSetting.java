@@ -112,7 +112,7 @@ public class ShootSetting {
      * 分组测试模式 0 连续 1 循环
      */
     private int testPattern = TestConfigs.GROUP_PATTERN_SUCCESIVE;
-    private int testType = 2;
+    private int testType = 3;
 
     public int getInterceptNo() {
         return interceptNo;
