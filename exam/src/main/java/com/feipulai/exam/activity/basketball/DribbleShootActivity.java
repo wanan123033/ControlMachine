@@ -31,6 +31,7 @@ import com.feipulai.exam.activity.base.BaseAFRFragment;
 import com.feipulai.exam.activity.basketball.adapter.DribbleShootAdapter;
 import com.feipulai.exam.activity.basketball.adapter.ShootResultAdapter;
 import com.feipulai.exam.activity.basketball.result.BasketBallResult;
+import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.BaseEvent;
@@ -127,6 +128,13 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
     private int testNo = 1;
     private Student student;
     private boolean saved;
+    private static final int WAIT_FREE = 0x0;
+    private static final int WAIT_CHECK_IN = 0x1;
+    private static final int WAIT_BEGIN = 0x2;
+    private static final int TESTING = 0x3;
+    private static final int WAIT_STOP = 0x4;
+    private static final int WAIT_CONFIRM = 0x5;
+    protected volatile int state = WAIT_FREE;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_dribble_shoot_activity;
@@ -140,7 +148,7 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
         hostId = SettingHelper.getSystemSetting().getHostId();
         individualCheckFragment.setResultView(lvResults);
         ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), individualCheckFragment, R.id.ll_individual_check);
-
+        setting = SharedPrefsUtil.loadFormSource(this, ShootSetting.class);
         interceptAdapter = new DribbleShootAdapter(this, dateList);
         rvState.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         rvState.setAdapter(interceptAdapter);
@@ -163,7 +171,8 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
         resultAdapter = new ShootResultAdapter(resultList);
         //给RecyclerView设置适配器
         rvResult.setAdapter(resultAdapter);
-        changeState(new boolean[]{true, false, false, false, false, false});
+        state = WAIT_FREE;
+        setOperationUI();
     }
 
     @Override
@@ -289,6 +298,7 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
                 for (BasketBallResult basketBallResult : dateList) {
                     basketBallResult.setState(false);
                 }
+
                 break;
             case R.id.txt_illegal_return:
                 LogUtils.operation("篮球运球投篮点击了违规返回...");
@@ -328,7 +338,7 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
             case R.id.txt_finish_test:
                 LogUtils.operation("篮球运球投篮点击了结束测试...");
                 if (!saved){
-                    toastSpeak("当前测试中不能结束测试");
+                    toastSpeak("当前状态不能结束测试");
                 }else {
                     RunTimerManager.stopRun();
                 }
@@ -338,6 +348,8 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
                 break;
         }
     }
+
+
 
     @Override
     public void disposeConnect(RunTimerConnectState connectState) {
@@ -353,7 +365,7 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
         if (result.getTrackNum() == startNo && result.getOrder() == 1) {
 //            baseTimer = System.currentTimeMillis() - baseTimer;
             timeResult = 0;
-            if (timer!= null){
+            if (timer!= null && !timer.isDisposed()){
                 timer.dispose();
             }
             keepTime();
@@ -369,22 +381,63 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
     }
 
     @Override
-    public void changeState(final boolean[] state) {
+    public void changeState(final int testState) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                txtWaiting.setEnabled(state[0]);
-                txtWaiting.setSelected(state[0]);
+                switch (testState) {
+                    case 0://设置
+                    case 1:
+                    case 5://违规返回
+                        state = WAIT_FREE;
+                        break;
+                    case 2://等待计时
+                        state = WAIT_BEGIN;
+                        break;
+                    case 3://启动
+                        state = TESTING;
+                        break;
+                    case 4://获取到结果
+                        state = TESTING;
+                        break;
+                    case 6://停止计时
+                        state = WAIT_CONFIRM;
+                        break;
 
-                txtIllegalReturn.setEnabled(state[1]);
-                txtIllegalReturn.setSelected(state[1]);
-
-                txtStopTiming.setEnabled(true);
-                txtStopTiming.setSelected(true);
-
+                }
+                setOperationUI();
             }
         });
 
+    }
+
+    /**
+     * 根据测试状态显示操作UI
+     */
+    private void setOperationUI() {
+        switch (state) {
+            case WAIT_BEGIN:
+                txtContinueRun.setEnabled(true);
+                txtIllegalReturn.setEnabled(true);
+                txtStopTiming.setEnabled(false);
+                txtWaiting.setEnabled(false);
+                break;
+            case WAIT_FREE:
+                txtContinueRun.setEnabled(false);
+                txtIllegalReturn.setEnabled(false);
+                txtStopTiming.setEnabled(false);
+                txtWaiting.setEnabled(true);
+                break;
+            case TESTING:
+                txtContinueRun.setEnabled(false);
+                txtIllegalReturn.setEnabled(true);
+                txtStopTiming.setEnabled(true);
+                txtWaiting.setEnabled(false);
+                break;
+            case WAIT_CONFIRM:
+
+                break;
+        }
     }
 
     private void print() {

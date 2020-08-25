@@ -154,7 +154,7 @@
                     android:layout_height="45dp"
                     android:layout_marginLeft="10dp"
                     android:layout_weight="1"
-                    android:background="@drawable/selector_blue_grey"
+                    android:background="@drawable/selector_blue_grey_press"
                     android:gravity="center"
                     android:text="等待发令"
                     android:textColor="@color/white"
@@ -166,7 +166,7 @@
                     android:layout_height="45dp"
                     android:layout_marginLeft="30dp"
                     android:layout_weight="1"
-                    android:background="@drawable/selector_blue_grey"
+                    android:background="@drawable/selector_blue_grey_press"
                     android:gravity="center"
                     android:text="违规返回"
                     android:textColor="@color/white"
@@ -178,12 +178,12 @@
                     android:layout_height="45dp"
                     android:layout_marginLeft="30dp"
                     android:layout_weight="1"
-                    android:background="@drawable/btn_background"
+                    android:background="@drawable/selector_blue_grey_press"
                     android:gravity="center"
-                    android:text="继续运行"
+                    android:text="开始计时"
                     android:textColor="@color/white"
                     android:textSize="18dp"
-                    android:visibility="gone" />
+                     />
 
                 <TextView
                     android:id="@+id/txt_stop_timing"
@@ -192,7 +192,7 @@
                     android:layout_marginLeft="30dp"
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
-                    android:background="@drawable/selector_blue_grey"
+                    android:background="@drawable/selector_blue_grey_press"
                     android:gravity="center"
                     android:text="停止计时"
                     android:textColor="@color/white"

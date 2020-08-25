@@ -257,131 +257,137 @@
 
 
             </LinearLayout>
-
             <LinearLayout
-                android:id="@+id/view_carryMode"
+                android:id="@+id/ll_shoot_setting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_10"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
+                android:orientation="vertical">
+                <LinearLayout
+                    android:id="@+id/view_carryMode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="5dp"
-                    android:text="成绩进位方式：" />
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                <Spinner
-                    android:id="@+id/sp_carryMode"
-                    android:layout_width="120dp"
-                    android:layout_height="35dp"
-                    android:layout_marginLeft="40dp"
-                    android:background="@drawable/icon_spinner_bg" />
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="5dp"
+                        android:text="成绩进位方式：" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:layout_marginTop="@dimen/dp_10"
-                android:orientation="horizontal">
+                    <Spinner
+                        android:id="@+id/sp_carryMode"
+                        android:layout_width="120dp"
+                        android:layout_height="35dp"
+                        android:layout_marginLeft="40dp"
+                        android:background="@drawable/icon_spinner_bg" />
+                </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="起点拦截道号：" />
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:orientation="horizontal">
 
-                <Spinner
-                    android:id="@+id/sp_start_no"
-                    android:layout_width="100dp"
-                    android:layout_height="30dp"
-                    android:layout_marginLeft="50dp"
-                    android:background="@drawable/icon_spinner_bg" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="起点拦截道号：" />
 
-            </LinearLayout>
+                    <Spinner
+                        android:id="@+id/sp_start_no"
+                        android:layout_width="100dp"
+                        android:layout_height="30dp"
+                        android:layout_marginLeft="50dp"
+                        android:background="@drawable/icon_spinner_bg" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:layout_marginTop="@dimen/dp_10"
-                android:orientation="horizontal">
+                </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="篮筐：" />
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:orientation="horizontal">
 
-                <Spinner
-                    android:id="@+id/sp_shoot_no"
-                    android:layout_width="100dp"
-                    android:layout_height="30dp"
-                    android:layout_marginLeft="100dp"
-                    android:background="@drawable/icon_spinner_bg" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="篮筐：" />
 
-            </LinearLayout>
+                    <Spinner
+                        android:id="@+id/sp_shoot_no"
+                        android:layout_width="100dp"
+                        android:layout_height="30dp"
+                        android:layout_marginLeft="100dp"
+                        android:background="@drawable/icon_spinner_bg" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:layout_marginTop="@dimen/dp_10"
-                android:orientation="horizontal">
+                </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="折返点1道号：" />
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:orientation="horizontal">
 
-                <Spinner
-                    android:id="@+id/sp_back1_no"
-                    android:layout_width="100dp"
-                    android:layout_height="30dp"
-                    android:layout_marginLeft="50dp"
-                    android:background="@drawable/icon_spinner_bg" />
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="折返点1道号：" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:layout_marginTop="@dimen/dp_10"
-                android:orientation="horizontal">
+                    <Spinner
+                        android:id="@+id/sp_back1_no"
+                        android:layout_width="100dp"
+                        android:layout_height="30dp"
+                        android:layout_marginLeft="50dp"
+                        android:background="@drawable/icon_spinner_bg" />
+                </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="折返点2道号：" />
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:orientation="horizontal">
 
-                <Spinner
-                    android:id="@+id/sp_back2_no"
-                    android:layout_width="100dp"
-                    android:layout_height="30dp"
-                    android:layout_marginLeft="50dp"
-                    android:background="@drawable/icon_spinner_bg" />
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="折返点2道号：" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:layout_marginTop="@dimen/dp_10"
-                android:orientation="horizontal">
+                    <Spinner
+                        android:id="@+id/sp_back2_no"
+                        android:layout_width="100dp"
+                        android:layout_height="30dp"
+                        android:layout_marginLeft="50dp"
+                        android:background="@drawable/icon_spinner_bg" />
+                </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="指定拦截点：" />
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:orientation="horizontal">
 
-                <Spinner
-                    android:id="@+id/sp_intercept_no"
-                    android:layout_width="100dp"
-                    android:layout_height="30dp"
-                    android:layout_marginLeft="52dp"
-                    android:background="@drawable/icon_spinner_bg" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="指定拦截点：" />
+
+                    <Spinner
+                        android:id="@+id/sp_intercept_no"
+                        android:layout_width="100dp"
+                        android:layout_height="30dp"
+                        android:layout_marginLeft="52dp"
+                        android:background="@drawable/icon_spinner_bg" />
+                </LinearLayout>
             </LinearLayout>
+
 
             <TextView
                 android:id="@+id/tv_setting"

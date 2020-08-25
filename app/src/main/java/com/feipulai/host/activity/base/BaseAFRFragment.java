@@ -110,7 +110,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             return false;
         }
     });
-
+    private SweetAlertDialog uploadDataDialog;
     private boolean isLodingServer = false;
 
     @Override
@@ -280,22 +280,26 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         if (isOpen) {
             isStartFace = true;
             isOpenCamera = true;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    //每次恢复初始状态
-                    if (faceHelper != null) {
-                        faceHelper.clearFace();
-                        faceId = 0;
-                        requestFeatureStatusMap.clear();
-                        extractErrorRetryMap.clear();
-                        delayFaceTaskCompositeDisposable.clear();
-                    }
-                    mUVCCamera.startPreview();
-                }
-            }, 100);
+            if (faceId == null) {
+                faceId = 0;
+            }
+            retryRecognizeDelayed(faceId);
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    //每次恢复初始状态
+//                    if (faceHelper != null) {
+//                        faceHelper.clearFace();
+//                        faceId = 0;
+//                        requestFeatureStatusMap.clear();
+//                        extractErrorRetryMap.clear();
+//                        delayFaceTaskCompositeDisposable.clear();
+//                    }
+//                    mUVCCamera.startPreview();
+//                }
+//            }, 100);
         } else {
-            mUVCCamera.stopPreview();
+//            mUVCCamera.stopPreview();
             isOpenCamera = false;
             isStartFace = false;
         }
@@ -407,6 +411,9 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
     @Override
     public void onPreviewFrame(byte[] yuv) {
+        if (!isStartFace) {
+            return;
+        }
         if (faceRectView2 != null) {
             faceRectView2.clearFaceInfo();
         }
@@ -564,15 +571,15 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                     hasTry = 0;
                     faceHelper.setName(faceId, getString(R.string.recognize_failed_notice, ""));
                     isOpenCamera = false;
-                    compareListener.compareStu(null);
+//                    compareListener.compareStu(null);
+                    if (isLodingServer) {
+                        compareListener.compareStu(null);
+                    } else {
+                        showAddHint();
+                        return;
+                    }
                 }
                 isStartFace = true;
-//                if (isLodingServer) {
-//                    compareListener.compareStu(null);
-//                    isStartFace = true;
-//                } else {
-//                    compareListener.compareStu(null);
-//                }
                 retryRecognizeDelayed(faceId);
             }
         }
@@ -638,29 +645,31 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 //    }
 
     private void showAddHint() {
-
+        isStartFace = false;
         ((Activity) mContext).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                new SweetAlertDialog(mContext).setTitleText(getString(R.string.student_nonentity))
-                        .setContentText("是否进行服务器信息识别")
-                        .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismissWithAnimation();
-                        getStudent();
+                if (uploadDataDialog == null || !uploadDataDialog.isShowing()) {
+                    uploadDataDialog = new SweetAlertDialog(mContext).setTitleText(getString(R.string.student_nonentity))
+                            .setContentText("是否进行服务器信息识别")
+                            .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    sweetAlertDialog.dismissWithAnimation();
+                                    getStudent();
 
-                    }
-                }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismissWithAnimation();
-                        isOpenCamera = false;
-                        isStartFace = true;
-//                        compareListener.compareStu(null);
-                        isLodingServer = false;
-                    }
-                }).show();
+                                }
+                            }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    sweetAlertDialog.dismissWithAnimation();
+                                    isLodingServer = false;
+                                    isStartFace = true;
+                                    retryRecognizeDelayed(faceId);
+                                }
+                            });
+                    uploadDataDialog.show();
+                }
             }
         });
 
@@ -680,11 +689,14 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 //                threadPool.execute(searchFace2);
 //                threadPool.execute(searchFace3);
                 isStartFace = true;
+                retryRecognizeDelayed(faceId);
             }
 
             @Override
             public void onFault(int bizType) {
                 OperateProgressBar.removeLoadingUiIfExist((Activity) mContext);
+                isStartFace = true;
+                retryRecognizeDelayed(faceId);
             }
 
             @Override

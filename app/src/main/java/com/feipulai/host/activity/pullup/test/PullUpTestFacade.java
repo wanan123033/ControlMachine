@@ -129,8 +129,8 @@ public class PullUpTestFacade implements RadioManager.OnRadioArrivedListener,
                     }
                     listener.onScoreArrived(result);
                     if (tmpResult == null || result.getResult() != tmpResult.getResult()) {
-                        String displayInLed = "成绩:" + ResultDisplayUtils.getStrResultForDisplay(result.getResult());
-                        ledManager.showString(SettingHelper.getSystemSetting().getHostId(), displayInLed, 1, 1, false, true);
+//                        String displayInLed = "成绩:" + ResultDisplayUtils.getStrResultForDisplay(result.getResult());
+//                        ledManager.showString(SettingHelper.getSystemSetting().getHostId(), displayInLed, 1, 1, false, true);
                         tmpResult = result;
                     }
                 }

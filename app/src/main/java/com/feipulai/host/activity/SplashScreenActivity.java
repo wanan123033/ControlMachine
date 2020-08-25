@@ -68,7 +68,7 @@ public class SplashScreenActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         // 这里是否还需要延时需要再测试后再修改
-        DateUtil.setTimeZone(this,"Asia/Shangha");
+//        DateUtil.setTimeZone(this,"Asia/Shangha");
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

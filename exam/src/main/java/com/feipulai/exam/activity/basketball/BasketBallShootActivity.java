@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CheckBox;
@@ -24,6 +25,8 @@ import com.feipulai.device.serial.beans.RunTimerResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseAFRFragment;
 import com.feipulai.exam.activity.basketball.adapter.ShootResultAdapter;
+import com.feipulai.exam.activity.basketball.result.BasketBallTestResult;
+import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.BaseEvent;
@@ -34,6 +37,7 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.utils.ResultDisplayUtils;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -118,6 +122,13 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
     private Student student;
     private int testResult;
     private boolean saved;
+    private static final int WAIT_FREE = 0x0;
+    private static final int WAIT_CHECK_IN = 0x1;
+    private static final int WAIT_BEGIN = 0x2;
+    private static final int TESTING = 0x3;
+    private static final int WAIT_STOP = 0x4;
+    private static final int WAIT_CONFIRM = 0x5;
+    protected volatile int state = WAIT_FREE;
 
     @Override
     protected int setLayoutResID() {
@@ -143,12 +154,14 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
         adapter = new ShootResultAdapter(resultList);
         //给RecyclerView设置适配器
         rvResult.setAdapter(adapter);
-        changeState(new boolean[]{true, false, false, false, false, false});
+
         getSetting().setTestType(3);
         int hostId = SettingHelper.getSystemSetting().getHostId();
         RunTimerManager.cmdSetting(1, hostId, 1, -1, -1, -1);
         RunTimerManager.cmdInterceptTime(1);
         checkConnect();
+        state = WAIT_FREE;
+        setOperationUI();
     }
 
     @Override
@@ -170,6 +183,8 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
         adapter.notifyDataSetChanged();
         InteractUtils.showStuInfo(llStuDetail, student, results);
     }
+
+
 
     private void initAFR() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -254,17 +269,13 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
                 break;
             case R.id.txt_run:
                 RunTimerManager.forceStart();
-                if (timer!= null){
-                    timer.dispose();
-                }
-                countDownTime(60);
                 saved = false;
                 break;
             case R.id.txt_add:
-
+                setPunish(1);
                 break;
             case R.id.txt_minus:
-
+                setPunish(-1);
                 break;
             case R.id.txt_stop_timing:
                 if (timer != null) {
@@ -296,10 +307,50 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
                 adapter.notifyDataSetChanged();
                 testRound++;
                 saved = true;
+                state  = WAIT_FREE;
+                setOperationUI();
                 break;
             case R.id.txt_finish_test:
+                if (state!= WAIT_FREE){
+                    toastSpeak("测试中不允许结束");
+                    return;
+                }
+
+                prepareForCheckIn();
                 break;
         }
+    }
+
+    /**
+     * 判罚成绩
+     *
+     * @param punishType 正数 +1 负数 -1
+     */
+    private void setPunish(int punishType) {
+        if (state == TESTING || state == WAIT_BEGIN) {
+            toastSpeak("测试中,不允许更改考试成绩");
+        } else {
+            testResult+=punishType;
+            tvResult.setText(testResult+"");
+            result[testRound - 1] = (ResultDisplayUtils.getStrResultForDisplay(testResult));
+            resultList.clear();
+            resultList.addAll(Arrays.asList(result));
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    /**
+     * 检入
+     */
+    private void prepareForCheckIn() {
+        resultList.clear();
+        adapter.notifyDataSetChanged();
+        TestCache.getInstance().clear();
+        InteractUtils.showStuInfo(llStuDetail, null, null);
+        tvResult.setText("请检录");
+        state = WAIT_FREE;
+        setOperationUI();
+        student = null;
     }
 
     private void print() {
@@ -325,6 +376,7 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
 
     @Override
     public void getResult(RunTimerResult result) {
+        Log.i("拦截：",result.toString());
         //根据折返点拦截次数更新投篮次数
         if (result.getTrackNum() == 1 && !txtRun.isEnabled()) {//投篮的拦截的道号必须设定为1道
             testResult = result.getOrder();//第几次
@@ -364,31 +416,71 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
     }
 
     @Override
-    public void changeState(final boolean[] state) {
+    public void changeState(final int testState) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                txtWaiting.setEnabled(state[0]);
-                txtWaiting.setSelected(state[0]);
+                switch (testState) {
+                    case 0://设置
+                    case 1:
+                    case 5://违规返回
+                        state = WAIT_FREE;
+                        break;
+                    case 2://等待计时
+                        state = WAIT_BEGIN;
+                        break;
+                    case 3://启动
+                        state = TESTING;
+                        if (timer!= null && !timer.isDisposed()){
+                            timer.dispose();
+                        }
+                        countDownTime(60);
+                        break;
+                    case 4://获取到结果
+                        state = TESTING;
+                        break;
+                    case 6://停止计时
+                        state = WAIT_CONFIRM;
+                        break;
 
-                txtIllegalReturn.setEnabled(state[1]);
-                txtIllegalReturn.setSelected(state[1]);
-
-                txtRun.setEnabled(state[2]);
-                txtRun.setSelected(state[2]);
-
-                txtAdd.setEnabled(state[3]);
-                txtAdd.setSelected(state[3]);
-                txtMinus.setEnabled(state[4]);
-                txtMinus.setSelected(state[4]);
-
+                }
+                setOperationUI();
             }
         });
 
     }
 
+    /**
+     * 根据测试状态显示操作UI
+     */
+    private void setOperationUI() {
+        switch (state) {
+            case WAIT_BEGIN:
+                txtRun.setEnabled(true);
+                txtIllegalReturn.setEnabled(true);
+                txtWaiting.setEnabled(false);
+                break;
+            case WAIT_FREE:
+                txtRun.setEnabled(false);
+                txtIllegalReturn.setEnabled(false);
+                txtWaiting.setEnabled(true);
+                txtAdd.setEnabled(false);
+                txtMinus.setEnabled(false);
+                break;
+            case TESTING:
+                txtRun.setEnabled(false);
+                txtIllegalReturn.setEnabled(true);
+                txtWaiting.setEnabled(false);
+                break;
+            case WAIT_CONFIRM:
+                txtAdd.setEnabled(true);
+                txtMinus.setEnabled(true);
+                break;
+        }
+    }
+
     private volatile int connect;
-    ScheduledExecutorService service = Executors
+    private ScheduledExecutorService service = Executors
             .newSingleThreadScheduledExecutor();
 
     private void checkConnect() {

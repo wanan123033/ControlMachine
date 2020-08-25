@@ -229,27 +229,28 @@ public abstract class BaseShootActivity extends BaseTitleActivity
 
         @Override
         public void onTestState(int testState) {
-            switch (testState) {
-                case 0:
-                case 1:
-                case 5://违规返回
-                    changeState(new boolean[]{true,false,false,false,false});
-                    break;
-                case 2://等待计时
-                    baseTimer = System.currentTimeMillis();
-                    startTime = System.currentTimeMillis();
-                    changeState(new boolean[]{false, true, true, false, false});
-                    break;
-                case 3://启动
-                    //算出误差时间
-                    changeState(new boolean[]{false, true, false, false, false});
-                    break;
-                case 4://获取到结果
-                    changeState(new boolean[]{false,true,false,false,false});
-                case 6://停止计时
-                    changeState(new boolean[]{true,true,false,true,true});
-                    break;
-            }
+            changeState(testState);
+//            switch (testState) {
+//                case 0:
+//                case 1:
+//                case 5://违规返回
+//                    changeState(new boolean[]{true,false,false,false,false});
+//                    break;
+//                case 2://等待计时
+//                    baseTimer = System.currentTimeMillis();
+//                    startTime = System.currentTimeMillis();
+//                    changeState(new boolean[]{false, true, true, false, false});
+//                    break;
+//                case 3://启动
+//                    //算出误差时间
+//                    changeState(new boolean[]{false, true, false, false, false});
+//                    break;
+//                case 4://获取到结果
+//                    changeState(new boolean[]{false,true,false,false,false});
+//                case 6://停止计时
+//                    changeState(new boolean[]{true,true,false,true,true});
+//                    break;
+//            }
         }
     });
 
@@ -259,10 +260,9 @@ public abstract class BaseShootActivity extends BaseTitleActivity
 
 
     /**
-     * 0 等待 1 违规 2 计时 3 判罚+1 4 判罚-1
      * @param state
      */
-    public  void changeState(final boolean[] state){
+    public  void changeState(int state){
 
     }
 

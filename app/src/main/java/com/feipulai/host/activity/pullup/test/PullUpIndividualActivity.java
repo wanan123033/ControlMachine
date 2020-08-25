@@ -37,8 +37,11 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
     private static final int WAIT_CONFIRM = 0x3;
     private static final int UPDATE_SCORE = 0x3;
     private boolean isStopped;
+
     @Override
     protected void initData() {
+        super.initData();
+
         facade = new PullUpTestFacade(SettingHelper.getSystemSetting().getHostId(), this);
         state = WAIT_BEGIN;
         tvDevicePair.setVisibility(View.VISIBLE);
@@ -49,7 +52,7 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
             }
         });
         txtLedSetting.setVisibility(View.GONE);
-
+        setTextViewsVisibility(false, false, false, false, false);
     }
 
     @Nullable
