@@ -255,6 +255,28 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             return false;
         }
     });
+
+    private double freeTime;
+    private double freeSpace;
+    Runnable timeRun = new Runnable() {
+        @Override
+        public void run() {
+            if (dialogUtil == null || MiddleDistanceRaceForPersonActivity.this.isDestroyed()) {
+                return;
+            }
+            //每隔半小时扫描存储空间
+            //检查存储空间大小，给予提示，录像15M/sec
+            freeSpace = new BigDecimal((float) FileUtil.getFreeSpaceStorage() / (1024 * 1024 * 1024)).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            freeTime = new BigDecimal(freeSpace * 1024 / (15 * 60)).setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue();
+            //当可用空间支持录像时长小于1小时给出弹窗提示
+            if (freeTime < 1) {
+                showSpaceNotice();
+            } else {
+                ToastUtils.showShort("注意：当前存储空间支持录像约" + freeTime + "小时");
+            }
+            mHander.postDelayed(this, 1000 * 60 * 30);
+        }
+    };
     private NettyClient nettyClient;
     private MiddleRaceGroupAdapter groupAdapter;
     private ScheduleAdapter scheduleAdapter;
@@ -334,6 +356,8 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         instance = this;
 
         dialogUtil = new DialogUtil(mContext);
+
+        mHander.postDelayed(timeRun, 60 * 1000 * 30);
 
         height = DisplayUtil.getScreenHightPx(this);
         width = DisplayUtil.getScreenWidthPx(this);
@@ -486,22 +510,9 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         super.onConfigurationChanged(newConfig);
     }
 
-    private double freeTime;
-    private double freeSpace;
-
     private void initCamera() {
         camera_ip = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, CAMERA_IP, "");
         mDataSource = new DataSource();
-//        videoPlayer = new VideoPlayWindow(this);
-//        videoPlayer.initVideoWindow(eventHandler);
-
-        //检查存储空间大小，给予提示，录像15M/sec
-        freeSpace = new BigDecimal((float) FileUtil.getFreeSpaceStorage() / (1024 * 1024 * 1024)).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-        freeTime = new BigDecimal(freeSpace * 1024 / (15 * 60)).setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue();
-        //当可用空间支持录像时长小于9小时给出提示
-        if (freeTime < 9) {
-            showSpaceNotice();
-        }
     }
 
     private void showSpaceNotice() {
@@ -1526,6 +1537,8 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             nettyClient.disconnect();
         }
 
+        mHander.removeCallbacks(timeRun);
+        timeRun = null;
         unBindService();
         instance = null;
 
@@ -2058,7 +2071,6 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
     }
 
     private List<UploadResults> uploadResults = new ArrayList<>();
-    ;
 
     private void showFinishDialog(final int position, final RaceTimingAdapter.VH holder, String notice, int bitmapId) {
         dialogUtil.showCommonDialog(notice, bitmapId, new DialogUtil.DialogListener() {
@@ -2102,6 +2114,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                     dbGroupList = DBManager.getInstance().getGroupByNo(timingLists.get(position).getItemCode(), timingLists.get(position).getNo(), timingLists.get(position).getColor());
 
                     dbGroupList.setIsTestComplete(GROUP_FINISH);
+                    dbGroupList.setRemark1(startTime + "");//增加发令时刻
                     DBManager.getInstance().updateGroup(dbGroupList);
                 }
 
@@ -2426,6 +2439,12 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                                     }
                                     strings.add(resultString);
                                 }
+
+                                if (resultCycles < cycleNo) {
+                                    for (int i = resultCycles; i < cycleNo; i++) {
+                                        strings.add("X");
+                                    }
+                                }
                             }
                             selectResults.add(strings);
                         }
@@ -2438,6 +2457,12 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                         });
                         for (int i = 1; i < resultCycles + 1; i++) {
                             resultTitles.add("第" + i + "圈");
+                        }
+
+                        if (resultCycles < cycleNo) {
+                            for (int i = resultCycles; i < cycleNo; i++) {
+                                resultTitles.add("第" + (i + 1) + "圈");
+                            }
                         }
 
                         if (mSelectPop == null) {

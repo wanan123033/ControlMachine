@@ -58,6 +58,7 @@ import com.feipulai.exam.exl.ResultExlWriter;
 import com.feipulai.exam.exl.StuItemExLReader;
 import com.feipulai.exam.exl.ThermometerExlWriter;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
+import com.feipulai.exam.utils.FileUtils;
 import com.feipulai.exam.utils.ImageUtil;
 import com.feipulai.exam.utils.StringChineseUtil;
 import com.feipulai.exam.view.OperateProgressBar;
@@ -67,6 +68,7 @@ import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.libarcface.model.FaceRegisterInfo;
 import com.ww.fpl.libarcface.widget.ProgressDialog;
+import com.ww.fpl.videolibrary.camera.HkCameraManager;
 import com.yhy.gvp.listener.OnItemClickListener;
 import com.yhy.gvp.widget.GridViewPager;
 
@@ -156,7 +158,7 @@ public class DataManageActivity
         String[] typeName = getResources().getStringArray(R.array.data_admin);
         int[] typeRes = new int[]{R.mipmap.icon_data_import, R.mipmap.icon_group_import, R.mipmap.icon_data_down, R.mipmap.icon_position_import, R.mipmap.icon_position_down, R.mipmap.icon_delete_position
                 , R.mipmap.icon_data_backup, R.mipmap.icon_data_restore, R.mipmap.icon_data_look, R.mipmap.icon_data_clear, R.mipmap.icon_result_upload,
-                R.mipmap.icon_result_import, R.mipmap.icon_template_export, R.mipmap.icon_thermometer, R.mipmap.icon_result_import, R.mipmap.icon_position_down};
+                R.mipmap.icon_result_import, R.mipmap.icon_template_export, R.mipmap.icon_thermometer, R.mipmap.icon_result_import, R.mipmap.icon_position_down, R.mipmap.icon_data_backup};
         for (int i = 0; i < typeName.length; i++) {
             TypeListBean bean = new TypeListBean();
             bean.setName(typeName[i]);
@@ -281,7 +283,6 @@ public class DataManageActivity
                         intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
                         startActivityForResult(intent, REQUEST_CODE_BACKUP);
                         break;
-
                     case 7://数据恢复
                         LogUtils.operation("用户点击了数据恢复...");
                         new DBDataCleaner(DataManageActivity.this, ClearDataProcess.CLEAR_FOR_RESTORE, DataManageActivity.this).process();
@@ -339,6 +340,10 @@ public class DataManageActivity
                     case 15://人脸特征检入
                         LogUtils.operation("用户点击了人脸特征检入...");
                         uploadFace();
+                        break;
+                    case 16://备份中长跑视频到U盘并清空本地视频
+//                        String newFile = "";
+//                        FileUtils.copyFolder(HkCameraManager.PATH, newFile);
                         break;
                 }
             }

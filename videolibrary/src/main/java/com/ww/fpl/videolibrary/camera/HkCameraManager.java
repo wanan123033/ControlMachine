@@ -35,7 +35,7 @@ import java.util.List;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 public class HkCameraManager {
-    public String PATH = Environment.getExternalStorageDirectory() + "/HKVideo/";
+    public static String PATH = Environment.getExternalStorageDirectory() + "/HKVideo/";
     private static final String TAG = "HkCameraManager";
     private int m_iLogID = -1;
     private int m_iPlayID = -1;
