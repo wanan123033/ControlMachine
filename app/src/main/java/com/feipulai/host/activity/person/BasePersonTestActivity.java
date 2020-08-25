@@ -128,6 +128,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     public int setAFRFrameLayoutResID() {
         return R.id.frame_camera;
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -234,7 +235,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     }
 
     @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting,
-            R.id.tv_start_test, R.id.tv_exit_test, R.id.tv_stop_test, R.id.tv_abandon_test,R.id.img_AFR})
+            R.id.tv_start_test, R.id.tv_exit_test, R.id.tv_stop_test, R.id.tv_abandon_test, R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.img_AFR:
@@ -244,6 +245,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             case R.id.txt_led_setting:
                 toLedSetting();
                 break;
+            case R.id.tv_exit_test://退出与跳过功能一致
+
             case R.id.txt_stu_skip:
                 if (pair.getStudent() != null) {
                     stuSkipDialog();
@@ -257,13 +260,10 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 
                 break;
             case R.id.tv_start_test:
-                setTextViewsVisibility(false,false,false,true,true);
+                setTextViewsVisibility(false, false, false, true, true);
                 pullStart();
                 break;
-            case R.id.tv_exit_test:
-                pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
-                pullExit();
-                break;
+
             case R.id.tv_stop_test:
                 pullStop();
                 break;
@@ -374,13 +374,16 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
-                Logger.i("stuSkip:" + pair.getStudent().toString());
+                if (pair.getStudent() != null)
+                    Logger.i("stuSkip:" + pair.getStudent().toString());
                 //测试结束学生清除 ，设备设置空闲状态
                 roundNo = 1;
                 clearHandler.sendEmptyMessageDelayed(0, 0);
                 stuSkip();
                 mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
-
+                pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+                setTextViewsVisibility(false, false, false, false, false);
+                pullExit();
             }
         }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
@@ -542,8 +545,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         }
     }
 
-    public void updateVision(BaseStuPair baseStuPair){
-        txtStuResult.setText("左眼力:"+ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult())+"\n右眼力:"+ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getBaseHeight()));
+    public void updateVision(BaseStuPair baseStuPair) {
+        txtStuResult.setText("左眼力:" + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult()) + "\n右眼力:" + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getBaseHeight()));
         refreshDevice();
         mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "左视力：" + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult()),
                 0, 1, false, true);
@@ -690,7 +693,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         tvStopTest.setVisibility(stop ? View.VISIBLE : View.GONE);
         tvTimeCount.setVisibility(count ? View.VISIBLE : View.GONE);
         tvAbandonTest.setVisibility(abandon ? View.VISIBLE : View.GONE);
-        if (stop){
+        txtStuSkip.setVisibility(View.GONE);
+        if (stop) {
             txtStuResult.setText("");
         }
     }
