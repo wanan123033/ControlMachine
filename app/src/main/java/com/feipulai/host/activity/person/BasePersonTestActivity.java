@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -548,6 +549,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     public void updateVision(BaseStuPair baseStuPair) {
         txtStuResult.setText("左眼力:" + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult()) + "\n右眼力:" + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getBaseHeight()));
         refreshDevice();
+        Log.e("552",mLEDManager+"");
         mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "左视力：" + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult()),
                 0, 1, false, true);
         mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "右视力：" + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getBaseHeight()),
