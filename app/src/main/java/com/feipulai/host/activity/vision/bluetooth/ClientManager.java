@@ -61,11 +61,14 @@ public class ClientManager {
      */
     public static void getGattProfile(BleGattProfile profile) {
         List<BleGattService> services = profile.getServices();
+
         for (BleGattService service : services) {
-            if (BlueToothConfig.SERVICE_UUID.equalsIgnoreCase(service.getUUID().toString().toUpperCase())) {
+            Log.e("uuID",service.getUUID().toString());
+            if (BlueToothConfig.SERVICE_UUID.equalsIgnoreCase(service.getUUID().toString().trim().toUpperCase())) {
                 List<BleGattCharacter> characters = service.getCharacters();
                 BlueToothHelper.getBlueBind().setServerUUID(service.getUUID().toString().toUpperCase());
                 for (BleGattCharacter character : characters) {
+                    Log.e("uuID---",character.getUuid().toString());
                     if (BlueToothConfig.READ_NOTIFY_UUID.equalsIgnoreCase(character.getUuid().toString().toUpperCase())) {
                         BlueToothHelper.getBlueBind().setCharacterUUID(character.getUuid().toString().toUpperCase());
                         BlueToothHelper.updateBlueBindCache(BlueToothHelper.getBlueBind());
