@@ -37,6 +37,7 @@ import com.feipulai.exam.activity.jump_rope.check.CheckUtils;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.adapter.VolleyBallGroupStuAdapter;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
@@ -1163,6 +1164,12 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         LogUtils.operation("篮球分组模式测试完成");
         //全部次数测试完，
         toastSpeak("分组考生全部测试完成，请选择下一组");
+        if (group.getIsTestComplete() != 1 &&
+                SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN &&
+                SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 &&
+                SettingHelper.getSystemSetting().isAutoPrint()) {
+            InteractUtils.printA4Result(this, group);
+        }
         group.setIsTestComplete(1);
         DBManager.getInstance().updateGroup(group);
         state = WAIT_FREE;

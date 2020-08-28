@@ -1,6 +1,7 @@
 package com.feipulai.common.utils.print;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -8,7 +9,7 @@ import java.util.List;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 public class PrintBean implements Serializable {
-
+    public static final String ENCRY_KEY = "fairplayA4Print1";
     private String title;//标题
     private String codeData;//条码生成内容
     private String printHand;
@@ -154,6 +155,32 @@ public class PrintBean implements Serializable {
         public void setPrintString8(String printString8) {
             this.printString8 = printString8;
         }
+
+        @Override
+        public String toString() {
+            return "PrintDataBean{" +
+                    "printString1='" + printString1 + '\'' +
+                    ", printString2='" + printString2 + '\'' +
+                    ", printString3='" + printString3 + '\'' +
+                    ", printString4='" + printString4 + '\'' +
+                    ", printString5='" + printString5 + '\'' +
+                    ", printString6='" + printString6 + '\'' +
+                    ", printString7='" + printString7 + '\'' +
+                    ", printString8='" + printString8 + '\'' +
+                    '}';
+        }
     }
 
+    @Override
+    public String toString() {
+        return "PrintBean{" +
+                "title='" + title + '\'' +
+                ", codeData='" + codeData + '\'' +
+                ", printHand='" + printHand + '\'' +
+                ", printHandRight='" + printHandRight + '\'' +
+                ", printBottom=" + Arrays.toString(printBottom) +
+                ", printTableHand=" + Arrays.toString(printTableHand) +
+                ", printDataBeans=" + printDataBeans +
+                '}';
+    }
 }

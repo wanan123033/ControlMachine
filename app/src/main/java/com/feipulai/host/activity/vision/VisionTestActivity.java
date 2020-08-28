@@ -268,7 +268,7 @@ public class VisionTestActivity extends BasePersonTestActivity {
         result.setWeightResult(pair.getBaseHeight());
         result.setStudentCode(pair.getStudent().getStudentCode());
         result.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
-        result.setResultState(0);
+        result.setResultState(RoundResult.RESULT_STATE_NORMAL);
         result.setPrintTime(DateUtil.getCurrentTime()+"");
         result.setTestTime(pair.getStartTime()+"");
         result.setTestNo(1);

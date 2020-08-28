@@ -96,7 +96,7 @@ public class SplashScreenActivity extends BaseActivity {
             activeEngine();
         }
         SoundPlayUtils.init(MyApplication.getInstance());
-        LogUtils.initLogger(BuildConfig.DEBUG, BuildConfig.DEBUG);
+        LogUtils.initLogger(BuildConfig.DEBUG, BuildConfig.DEBUG, MyApplication.LOG_PATH_NAME);
         ToastUtils.init(getApplicationContext());
         //这里初始化时间很长,大约需要3s左右
         TtsManager.getInstance().init(this, TtsConfig.APP_ID, TtsConfig.APP_KEY, TtsConfig.SECRET_KEY);

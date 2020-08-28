@@ -247,10 +247,13 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 toLedSetting();
                 break;
             case R.id.tv_exit_test://退出与跳过功能一致
-
+                if (pair.getStudent() != null) {
+                    stuSkipDialog(1);
+                }
+                break;
             case R.id.txt_stu_skip:
                 if (pair.getStudent() != null) {
-                    stuSkipDialog();
+                    stuSkipDialog(0);
                 }
                 break;
             case R.id.txt_start_test:
@@ -367,8 +370,10 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         }
     }
 
-
-    private void stuSkipDialog() {
+    /**
+     * @param clickType 0 跳过 1 退出
+     */
+    private void stuSkipDialog(final int clickType) {
         new SweetAlertDialog(this)
                 .setTitleText(String.format(getString(R.string.dialog_skip_stu_title), pair.getStudent().getStudentName()))
                 .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
@@ -383,7 +388,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 stuSkip();
                 mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
                 pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
-                setTextViewsVisibility(false, false, false, false, false);
+                if (clickType == 1) {
+                    setTextViewsVisibility(false, false, false, false, false);
+                }
                 pullExit();
             }
         }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {

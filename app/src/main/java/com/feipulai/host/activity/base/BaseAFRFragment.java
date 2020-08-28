@@ -557,7 +557,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                 requestFeatureStatusMap.put(faceId, RequestFeatureStatus.SUCCEED);
 //                faceHelper.setName(faceId, mContext.getString(R.string.recognize_success_notice, lastCompareResult.getUserName()));
                 Student student = DBManager.getInstance().queryStudentByCode(lastCompareResult.getUserName());
-                Logger.d("compareResult==>");
+                Logger.d("compareResult==》特征识别成功");
                 isOpenCamera = false;
                 hasTry = 0;
                 compareListener.compareStu(student);

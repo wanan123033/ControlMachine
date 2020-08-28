@@ -211,6 +211,25 @@ public class HeightWeightCheckActivity
         switch (msg.what) {
             case SerialConfigs.HEIGHT_WEIGHT_RESULT:
                 HeightWeightResult result = (HeightWeightResult) msg.obj;
+
+                int heightMinValue = TestConfigs.sCurrentItem.getMinValue();
+                int heightMaxValue = TestConfigs.sCurrentItem.getMaxValue();
+                int weightMinValue = HWConfigs.WEIGHT_ITEM.getMinValue();
+                int weightMaxValue = HWConfigs.WEIGHT_ITEM.getMaxValue();
+
+                if (heightMinValue > 0 || heightMinValue > 0) {
+                    if (result.getHeight() < heightMinValue || result.getHeight() > heightMaxValue) {
+                        toastSpeak("身高数值不在有效范围内，请重测");
+                        return;
+                    }
+                }
+                if (weightMinValue > 0 || weightMaxValue > 0) {
+                    if (result.getWeight() < weightMinValue || result.getWeight() > weightMaxValue) {
+                        toastSpeak("体重数值不在有效范围内，请重测");
+                        return;
+                    }
+                }
+
                 endTime = DateUtil.getCurrentTime();
 
                 mHeightResult = ResultUtils.generateRoughResultWithRaw(mStudent, result, 1);

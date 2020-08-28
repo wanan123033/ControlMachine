@@ -27,9 +27,15 @@ public class PrintDataAdapter extends RecyclerView.Adapter<PrintDataAdapter.View
 
     private List<PrintBean.PrintDataBean> mPrintDataBeans;
 
+    public String[] lineShow;
+
     public PrintDataAdapter(Context context, List<PrintBean.PrintDataBean> printDataBeans) {
         mInflater = LayoutInflater.from(context);
         mPrintDataBeans = printDataBeans;
+    }
+
+    public void setLineShow(String[] lineShow) {
+        this.lineShow = lineShow;
     }
 
     @Override
@@ -64,7 +70,7 @@ public class PrintDataAdapter extends RecyclerView.Adapter<PrintDataAdapter.View
         if (TextUtils.equals(printString4, "\n")) {
             SpannableString spannableString = new SpannableString(printString4);
             int start = printString4.lastIndexOf("\n");
-            spannableString.setSpan(new AbsoluteSizeSpan(20, true), start, printString4.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannableString.setSpan(new AbsoluteSizeSpan(20, false), start, printString4.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             holder.txtTilte4.setText(spannableString);
         } else {
             holder.txtTilte4.setText(printString4);
@@ -74,6 +80,28 @@ public class PrintDataAdapter extends RecyclerView.Adapter<PrintDataAdapter.View
         holder.txtTilte6.setText(mPrintDataBeans.get(position).getPrintString6());
         holder.txtTilte7.setText(mPrintDataBeans.get(position).getPrintString7());
         holder.txtTilte8.setText(mPrintDataBeans.get(position).getPrintString8());
+
+        if (lineShow != null) {
+            holder.txtTilte1.setVisibility(lineShow[0] == null ? View.GONE : View.VISIBLE);
+            holder.txtTilte2.setVisibility(lineShow[1] == null ? View.GONE : View.VISIBLE);
+            holder.txtTilte3.setVisibility(lineShow[2] == null ? View.GONE : View.VISIBLE);
+            holder.txtTilte4.setVisibility(lineShow[3] == null ? View.GONE : View.VISIBLE);
+            holder.txtTilte5.setVisibility(lineShow[4] == null ? View.GONE : View.VISIBLE);
+            holder.txtTilte6.setVisibility(lineShow[5] == null ? View.GONE : View.VISIBLE);
+            holder.txtTilte7.setVisibility(lineShow[6] == null ? View.GONE : View.VISIBLE);
+            holder.txtTilte8.setVisibility(lineShow[7] == null ? View.GONE : View.VISIBLE);
+        } else {
+            holder.txtTilte1.setVisibility(View.VISIBLE);
+            holder.txtTilte2.setVisibility(View.VISIBLE);
+            holder.txtTilte3.setVisibility(View.VISIBLE);
+            holder.txtTilte4.setVisibility(View.VISIBLE);
+            holder.txtTilte5.setVisibility(View.VISIBLE);
+            holder.txtTilte6.setVisibility(View.VISIBLE);
+            holder.txtTilte7.setVisibility(View.VISIBLE);
+            holder.txtTilte8.setVisibility(View.VISIBLE);
+        }
+
+
     }
 
     @Override
