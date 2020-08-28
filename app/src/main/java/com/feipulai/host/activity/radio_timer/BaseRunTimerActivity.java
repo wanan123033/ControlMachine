@@ -93,7 +93,11 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
         }
         if (runNum != Integer.parseInt(runTimerSetting.getRunNum())|| interceptPoint != runTimerSetting.getInterceptPoint()
                 ||interceptWay!= runTimerSetting.getInterceptWay() || settingSensor!= runTimerSetting.getSensor()){
-            getSetting();
+//            getSetting();
+            runNum = Integer.parseInt(runTimerSetting.getRunNum());
+            interceptPoint = runTimerSetting.getInterceptPoint();
+            interceptWay = runTimerSetting.getInterceptWay();
+            settingSensor = runTimerSetting.getSensor();
             reLoad = true ;
         }
     }
@@ -120,7 +124,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
 //        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x05, (byte) (interceptWay + 1))));//触发方式
 //        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x08, (byte) settingSensor)));//传感器信道
 
-        RunTimerManager.cmdSetting(runNum,hostId,interceptPoint,interceptWay,settingSensor,5);
+        RunTimerManager.cmdSetting(runNum,hostId,interceptPoint,interceptWay,settingSensor,10);
     }
 
 
