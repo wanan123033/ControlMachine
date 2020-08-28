@@ -9,6 +9,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.ScannerGunManager;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.CheckDeviceOpener;
@@ -168,8 +169,10 @@ public abstract class BaseCheckActivity
             InteractUtils.toastSpeak(this, "该考生不存在");
             return;
         }
+        LogUtil.logDebugMessage("检入考生：" + student.toString());
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
         if (studentItem == null) {
+            LogUtil.logDebugMessage("检入考生：无此项目");
             InteractUtils.toastSpeak(this, "无此项目");
             return;
         }
@@ -205,6 +208,7 @@ public abstract class BaseCheckActivity
     @Override
     public void onIdCardRead(IDCardInfo idCardInfo) {
         boolean needAdd = checkQulification(idCardInfo.getId(), ID_CARD_NO);
+        Logger.i("IDCardInfo readInfo:" + idCardInfo.toString());
         if (needAdd) {
             Student student = new Student();
             student.setStudentName(idCardInfo.getName());
@@ -256,7 +260,7 @@ public abstract class BaseCheckActivity
             }
             return needAdd;
         }
-
+        LogUtil.logDebugMessage("检入考生：" + student.toString());
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
         if (studentItem == null) {
             if (needAdd) {

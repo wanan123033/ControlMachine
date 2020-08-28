@@ -38,6 +38,7 @@ import com.feipulai.exam.activity.pushUp.PushUpSetting;
 import com.feipulai.exam.activity.sargent_jump.SargentSetting;
 import com.feipulai.exam.activity.sargent_jump.more_device.SargentTestGroupActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.activity.sitreach.SitReachSetting;
 import com.feipulai.exam.activity.sitreach.more_device.SitReachMoreGroupActivity;
 import com.feipulai.exam.activity.standjump.StandJumpSetting;
@@ -153,14 +154,14 @@ public class BaseGroupActivity extends BaseTitleActivity {
     }
 
     private void gotoItemSetting() {
-        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ ){
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ) {
             BasketBallSetting setting = SharedPrefsUtil.loadFormSource(this, BasketBallSetting.class);
-            if (setting.getTestType() == 2){
+            if (setting.getTestType() == 2) {
                 startActivity(new Intent(this, ShootSettingActivity.class));
-            }else {
+            } else {
                 startActivity(new Intent(this, TestConfigs.settingActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
             }
-        }else {
+        } else {
             startActivity(new Intent(this, TestConfigs.settingActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
         }
 
@@ -260,7 +261,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
             getGroupList(scheduleText);
             txtGroupName.setText("请选择项目分组");
         }
-        LogUtils.operation("分组模式获取Schedules(日程):"+scheduleList.toString());
+        LogUtils.operation("分组模式获取Schedules(日程):" + scheduleList.toString());
     }
 
     /**
@@ -271,7 +272,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
         List<Group> dbGroupList = DBManager.getInstance().getGroupByScheduleNo(scheduleNo);
         groupList.addAll(dbGroupList);
         groupAdapter.notifyDataSetChanged();
-        LogUtils.operation("分组模式获取groupList(日程分组):"+groupList.toString());
+        LogUtils.operation("分组模式获取groupList(日程分组):" + groupList.toString());
     }
 
     // 选择分组
@@ -284,7 +285,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
         txtGroupName.setText(sb.toString());
         groupAdapter.setTestPosition(position);
         updateStudents(groupList.get(position));
-        LogUtils.operation("分组模式选择分组:"+groupList.get(position).toString());
+        LogUtils.operation("分组模式选择分组:" + groupList.get(position).toString());
     }
 
     /**
@@ -302,7 +303,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
         stuAdapter.notifyDataSetChanged();
         showLed(stuPairsList);
         if (stuPairsList.size() > 0) {
-            LogUtils.operation("分组模式获取分组学生:"+stuPairsList.toString());
+            LogUtils.operation("分组模式获取分组学生:" + stuPairsList.toString());
             showStuInfo(stuPairsList.get(0).getStudent());
         }
 
@@ -571,14 +572,19 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     BaseStuPair stuPair = stuPairsList.get(i);
                     Student student = stuPair.getStudent();
                     students.add(student);
-                    results.put(student, (List<RoundResult>) TestConfigs.baseGroupMap.get(student));
+                    results.put(student, getResults(student.getStudentCode()));
                     trackNoMap.put(student, stuPair.getTrackNo());
                 }
-                InteractUtils.printResults(groupList.get(groupAdapter.getTestPosition()),
-                        students,
-                        results,
-                        TestConfigs.getMaxTestCount(this),
-                        trackNoMap);
+                if (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4) {
+                    InteractUtils.printA4Result(this, groupList.get(groupAdapter.getTestPosition()));
+                } else {
+                    InteractUtils.printResults(groupList.get(groupAdapter.getTestPosition()),
+                            students,
+                            results,
+                            TestConfigs.getMaxTestCount(this),
+                            trackNoMap);
+                }
+
                 break;
         }
     }

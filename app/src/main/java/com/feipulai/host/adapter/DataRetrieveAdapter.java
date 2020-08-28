@@ -44,8 +44,8 @@ public class DataRetrieveAdapter extends BaseQuickAdapter<DataRetrieveBean, Data
         if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_HW) {
             viewHolder.mTvScore.setText(TextUtils.equals(retieveData.getResult(), "X") ? retieveData.getResult() : TextUtils.equals(retieveData.getResult(), "-1000") ? "" : retieveData.getResult());
         } else if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_SL) {
-            viewHolder.mTvScore.setText(retieveData.getResult());
-        }else {
+            viewHolder.mTvScore.setText(TextUtils.equals(retieveData.getResult(), "-1000") ? "" : retieveData.getResult());
+        } else {
             viewHolder.mTvScore.setText(TextUtils.equals(retieveData.getResult(), "X") ? retieveData.getResult() : TextUtils.equals(retieveData.getResult(), "-1000") ? "" :
                     ResultDisplayUtils.getStrResultForDisplay(Integer.valueOf(retieveData.getResult())));
         }

@@ -90,63 +90,63 @@ public class PrintA4Util {
 
     private void setData(PrintBean printBean) {
         txtTitle.setText(printBean.getTitle());
-        imgCode.setImageBitmap(QRCodeUtil.encodeAsBitmap(printBean.getCodeData(), imgCode.getWidth(), imgCode.getHeight()));
+        imgCode.setImageBitmap(QRCodeUtil.createQRCodeBitmap(printBean.getCodeData(), 260));
         //表格头部
         if (printBean.getPrintTableHand() == null) {
             printBean.setPrintTableHand(mContext.getResources().getStringArray(R.array.print_table_hand));
         }
-        if (TextUtils.isEmpty(printBean.getPrintTableHand()[0])) {
+        if (printBean.getPrintTableHand()[0] == null) {
             txtTilte1.setText("");
-            txtTilte1.setVisibility(View.INVISIBLE);
+            txtTilte1.setVisibility(View.GONE);
         } else {
             txtTilte1.setText(printBean.getPrintTableHand()[0]);
             txtTilte1.setVisibility(View.VISIBLE);
         }
-        if (TextUtils.isEmpty(printBean.getPrintTableHand()[1])) {
+        if (printBean.getPrintTableHand()[1] == null) {
             txtTilte2.setText("");
-            txtTilte2.setVisibility(View.INVISIBLE);
+            txtTilte2.setVisibility(View.GONE);
         } else {
             txtTilte2.setText(printBean.getPrintTableHand()[1]);
             txtTilte2.setVisibility(View.VISIBLE);
         }
-        if (TextUtils.isEmpty(printBean.getPrintTableHand()[2])) {
+        if (printBean.getPrintTableHand()[2] == null) {
             txtTilte3.setText("");
-            txtTilte3.setVisibility(View.INVISIBLE);
+            txtTilte3.setVisibility(View.GONE);
         } else {
             txtTilte3.setText(printBean.getPrintTableHand()[2]);
             txtTilte3.setVisibility(View.VISIBLE);
         }
-        if (TextUtils.isEmpty(printBean.getPrintTableHand()[3])) {
+        if (printBean.getPrintTableHand()[3] == null) {
             txtTilte4.setText("");
-            txtTilte4.setVisibility(View.INVISIBLE);
+            txtTilte4.setVisibility(View.GONE);
         } else {
             txtTilte4.setText(printBean.getPrintTableHand()[3]);
             txtTilte4.setVisibility(View.VISIBLE);
         }
-        if (TextUtils.isEmpty(printBean.getPrintTableHand()[4])) {
+        if (printBean.getPrintTableHand()[4] == null) {
             txtTilte5.setText("");
-            txtTilte5.setVisibility(View.INVISIBLE);
+            txtTilte5.setVisibility(View.GONE);
         } else {
             txtTilte5.setText(printBean.getPrintTableHand()[4]);
             txtTilte5.setVisibility(View.VISIBLE);
         }
-        if (TextUtils.isEmpty(printBean.getPrintTableHand()[5])) {
+        if (printBean.getPrintTableHand()[5] == null) {
             txtTilte6.setText("");
-            txtTilte6.setVisibility(View.INVISIBLE);
+            txtTilte6.setVisibility(View.GONE);
         } else {
             txtTilte6.setText(printBean.getPrintTableHand()[5]);
             txtTilte6.setVisibility(View.VISIBLE);
         }
-        if (TextUtils.isEmpty(printBean.getPrintTableHand()[6])) {
+        if (printBean.getPrintTableHand()[6] == null) {
             txtTilte7.setText("");
-            txtTilte7.setVisibility(View.INVISIBLE);
+            txtTilte7.setVisibility(View.GONE);
         } else {
             txtTilte7.setText(printBean.getPrintTableHand()[6]);
             txtTilte7.setVisibility(View.VISIBLE);
         }
-        if (TextUtils.isEmpty(printBean.getPrintTableHand()[7])) {
+        if (printBean.getPrintTableHand()[7] == null) {
             txtTilte8.setText("");
-            txtTilte8.setVisibility(View.INVISIBLE);
+            txtTilte8.setVisibility(View.GONE);
         } else {
             txtTilte8.setText(printBean.getPrintTableHand()[7]);
             txtTilte8.setVisibility(View.VISIBLE);
@@ -155,32 +155,32 @@ public class PrintA4Util {
         if (printBean.getPrintBottom() == null) {
             printBean.setPrintBottom(mContext.getResources().getStringArray(R.array.print_table_bottom));
         }
-        if (TextUtils.isEmpty(printBean.getPrintBottom()[0])) {
+        if (printBean.getPrintBottom()[0] == null) {
             txtBottom1.setText("");
-            txtBottom1.setVisibility(View.INVISIBLE);
+            txtBottom1.setVisibility(View.GONE);
         } else {
-            txtBottom1.setText(printBean.getPrintBottom()[0]);
+            txtBottom1.setText(printBean.getPrintBottom()[0] + ":");
             txtBottom1.setVisibility(View.VISIBLE);
         }
-        if (TextUtils.isEmpty(printBean.getPrintBottom()[1])) {
+        if (printBean.getPrintBottom()[1] == null) {
             txtBottom2.setText("");
-            txtBottom2.setVisibility(View.INVISIBLE);
+            txtBottom2.setVisibility(View.GONE);
         } else {
-            txtBottom2.setText(printBean.getPrintBottom()[1]);
+            txtBottom2.setText(printBean.getPrintBottom()[1] + ":");
             txtBottom2.setVisibility(View.VISIBLE);
         }
-        if (TextUtils.isEmpty(printBean.getPrintBottom()[2])) {
+        if (printBean.getPrintBottom()[2] == null) {
             txtBottom3.setText("");
-            txtBottom3.setVisibility(View.INVISIBLE);
+            txtBottom3.setVisibility(View.GONE);
         } else {
-            txtBottom3.setText(printBean.getPrintBottom()[2]);
+            txtBottom3.setText(printBean.getPrintBottom()[2] + ":");
             txtBottom3.setVisibility(View.VISIBLE);
         }
-        if (TextUtils.isEmpty(printBean.getPrintBottom()[3])) {
+        if (printBean.getPrintBottom()[3] == null) {
             txtBottom4.setText("");
-            txtBottom4.setVisibility(View.INVISIBLE);
+            txtBottom4.setVisibility(View.GONE);
         } else {
-            txtBottom4.setText(printBean.getPrintBottom()[3]);
+            txtBottom4.setText(printBean.getPrintBottom()[3] + ":");
             txtBottom4.setVisibility(View.VISIBLE);
         }
 
@@ -200,7 +200,7 @@ public class PrintA4Util {
             txtStartTime.setVisibility(View.VISIBLE);
         }
 
-        txtPrintTime.setText(DateUtil.getCurrentTime2("yyyy/MM/dd  HH:mm:ss"));
+        txtPrintTime.setText("打印时间：" + DateUtil.getCurrentTime2("yyyy/MM/dd  HH:mm:ss"));
 
 
     }
@@ -208,6 +208,7 @@ public class PrintA4Util {
     public void createPrintFile(PrintBean printBean, String filePath, String fileName) {
         if (printBean.getPrintDataBeans() != null) {
             printImgPathList.clear();
+
             int pageSum;
             if (printBean.getPrintDataBeans().size() % 20 == 0) {
                 pageSum = printBean.getPrintDataBeans().size() / 20;
@@ -216,6 +217,7 @@ public class PrintA4Util {
             }
             for (int pageNo = 0; pageNo < pageSum; pageNo++) {
                 initView();
+                adapter.setLineShow(printBean.getPrintTableHand());
                 setData(printBean);
 
                 printDataBeans.clear();

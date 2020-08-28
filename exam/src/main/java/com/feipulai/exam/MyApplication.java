@@ -19,9 +19,11 @@ import com.ww.fpl.libarcface.faceserver.FaceServer;
 
 public class MyApplication extends MultiDexApplication {
 
-    public static final String PATH_SPECIFICATION = FileUtil.PATH_BASE + "KS/";
-    public static final String PATH_IMAGE = FileUtil.PATH_BASE + "KS_IMAGE/";
-    public static final String PATH_PDF_IMAGE = FileUtil.PATH_BASE + "KS_PDF_IMAGE/";
+    public static final String PATH_SPECIFICATION = FileUtil.PATH_BASE + "KS/";//说明文档路径
+    public static final String PATH_IMAGE = FileUtil.PATH_BASE + "KS_IMAGE/";//图片存在路径
+    public static final String PATH_PDF_IMAGE = FileUtil.PATH_BASE + "KS_PDF_IMAGE/";//成绩图片与PDF文件存放路径
+    public static final String PATH_LOG_NAME = "KS_LOGGER";//日志文件夹名称
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -40,8 +42,8 @@ public class MyApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        LogUtils.initLogger(true, true);
-//        CrashHandler.getInstance().init(this);
+//        LogUtils.initLogger(true, true, PATH_LOG_NAME);
+        CrashHandler.getInstance().init(this);
         SettingHelper.init(this);
         BlueToothHelper.init(this);
         TOKEN = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.TOKEN, "");

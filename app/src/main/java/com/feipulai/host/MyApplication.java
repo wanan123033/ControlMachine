@@ -14,7 +14,9 @@ import com.ww.fpl.libarcface.faceserver.FaceServer;
 
 public class MyApplication extends MultiDexApplication {
     public static final String PATH_SPECIFICATION = FileUtil.PATH_BASE + "TC/";
-    public static final String PATH_IMAGE= FileUtil.PATH_BASE + "TC_IMAGE/";
+    public static final String PATH_IMAGE = FileUtil.PATH_BASE + "TC_IMAGE/";
+    public static final String LOG_PATH_NAME = "TC_LOGGER";
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);

@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
@@ -79,6 +80,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     private boolean isNextClickStart = true;
     private boolean isPenalize;
     private long startTime;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_base_more;
@@ -130,6 +132,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     }
 
     private void setDeviceCount(int deviceCount) {
+        LogUtil.logDebugMessage("使用设备数量：" + deviceCount);
         this.deviceCount = deviceCount;
         deviceDetails.clear();
         for (int i = 0; i < deviceCount; i++) {
@@ -202,17 +205,21 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 BaseStuPair pair = deviceDetails.get(pos).getStuDevicePair();
                 switch (view.getId()) {
                     case R.id.txt_start:
+                        LogUtil.logDebugMessage("使用设备点击开始 ：" + pair.toString());
                         if (pair.getStudent() == null) {
                             toastSpeak("当前无学生测试");
+                            LogUtil.logDebugMessage("使用设备点击开始 ：当前无学生测试");
                             return;
                         }
                         if (deviceDetails.get(pos).getRound() >= setTestCount()) {
                             toastSpeak("当前学生测试完成");
+                            LogUtil.logDebugMessage("使用设备点击开始 ：当前学生测试完成");
                             stuSkip(pos);
                             return;
                         }
                         startTime = System.currentTimeMillis();
                         if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
+                            LogUtil.logDebugMessage("使用设备点击开始 ：开始测试");
                             sendTestCommand(pair, pos);
 //                            view.setBackgroundColor(ContextCompat.getColor(BaseMoreActivity.this, R.color.gray_btn_bg_color));
                             deviceDetails.get(pos).getStuDevicePair().getTimeResult()[0] = "开始测试";
@@ -220,6 +227,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                         }
                         break;
                     case R.id.txt_skip:
+                        LogUtil.logDebugMessage("使用设备点击跳过 ： " + pair.toString());
                         if (pair.getStudent() != null) {
                             stuSkipDialog(pair.getStudent(), pos);
                         }
@@ -307,7 +315,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         int count = deviceDetail.getRound();
         toastSpeak(String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1)
                 , String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1));
-
+        LogUtil.logDebugMessage("添加测试学生：" + student.toString());
         setShowLed(deviceDetail.getStuDevicePair(), index);
         deviceListAdapter.notifyItemChanged(index);
     }
@@ -350,13 +358,15 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     }
 
 
-    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair,R.id.img_AFR})
+    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair, R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_led_setting:
+                LogUtil.logDebugMessage("点击LED设置：");
                 startActivity(new Intent(this, LEDSettingActivity.class));
                 break;
             case R.id.tv_device_pair:
+                LogUtil.logDebugMessage("点击设备配对");
                 if (machineCode == ItemDefault.CODE_WLJ) {
                     startActivity(new Intent(this, GripPairActivity.class));
                 } else {
@@ -365,6 +375,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
                 break;
             case R.id.img_AFR:
+                LogUtil.logDebugMessage("点击人脸识别按钮：");
 //                gotoUVCFaceCamera();
                 showAFR();
                 break;

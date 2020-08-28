@@ -139,7 +139,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
 
         TestCache.getInstance().init();
         pairs = CheckUtils.newPairs(((List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu")).size());
-        LogUtils.operation("俯卧撑获取到分组信息:"+pairs.toString());
+        LogUtils.operation("俯卧撑获取到分组信息:" + pairs.toString());
         CheckUtils.groupCheck(pairs);
 
         rvTestingPairs.setLayoutManager(new LinearLayoutManager(this));
@@ -277,7 +277,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
         StuDevicePair pair = pairs.get(position());
         Student student = pair.getStudent();
         List<RoundResult> roundResults = testCache.getResults().get(student);
-        Logger.i("成绩："+ResultDisplayUtils.getStrResultForDisplay(roundResults.get(roundResults.size() - 1).getResult()));
+        Logger.i("成绩：" + ResultDisplayUtils.getStrResultForDisplay(roundResults.get(roundResults.size() - 1).getResult()));
         if (systemSetting.isAutoBroadcast()) {
 
             TtsManager.getInstance().speak(
@@ -324,8 +324,13 @@ public class PushUpGroupActivity extends BaseTitleActivity
                 DBManager.getInstance().updateGroup(group);
                 if (systemSetting.isAutoPrint()) {
                     TestCache testCache = TestCache.getInstance();
-                    InteractUtils.printResults(group, testCache.getAllStudents(), testCache.getResults(),
-                            TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
+
+                    if (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4) {
+                        InteractUtils.printA4Result(this, group);
+                    } else {
+                        InteractUtils.printResults(group, testCache.getAllStudents(), testCache.getResults(),
+                                TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
+                    }
                 }
             }
         }
@@ -392,7 +397,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
             testNo = "1";
             UploadResults uploadResult = new UploadResults(scheduleNo,
                     TestConfigs.getCurrentItemCode(), student.getStudentCode()
-                    , testNo, group, RoundResultBean.beanCope(roundResultList,group));
+                    , testNo, group, RoundResultBean.beanCope(roundResultList, group));
             uploadResults.add(uploadResult);
             Logger.i("自动上传成绩:" + uploadResults.toString());
             ServerMessage.uploadResult(uploadResults);
@@ -439,7 +444,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
         tvResult.setText(student.getStudentName());
 
         List<RoundResult> results = TestCache.getInstance().getResults().get(student);
-        LogUtils.operation("俯卧撑当前测试考生:"+student.toString()+"---当前已有成绩results = "+results.toString());
+        LogUtils.operation("俯卧撑当前测试考生:" + student.toString() + "---当前已有成绩results = " + results.toString());
 
         prepareView(true,
                 results == null || results.size() < TestConfigs.getMaxTestCount(this),
@@ -457,7 +462,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
             ToastUtils.showShort("设备未连接,不能开始测试");
             return;
         }
-        LogUtils.operation("俯卧撑当前测试考生:stuCode="+pairs.get(position()).getStudent().getStudentCode()+",开始测试");
+        LogUtils.operation("俯卧撑当前测试考生:stuCode=" + pairs.get(position()).getStudent().getStudentCode() + ",开始测试");
         prepareView(false, false,
                 true, false, true, false,
                 false);
@@ -617,7 +622,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
     @Override
     public void onItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
         if (isConfigurableNow()) {
-            LogUtils.operation("俯卧撑更换了考生测试:"+pairs.get(i).getStudent().toString());
+            LogUtils.operation("俯卧撑更换了考生测试:" + pairs.get(i).getStudent().toString());
             stuPairAdapter.setTestPosition(i);
             stuPairAdapter.notifyDataSetChanged();
             prepareForBegin();
@@ -633,7 +638,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
         title = TestConfigs.machineNameMap.get(machineCode)
                 + SettingHelper.getSystemSetting().getHostId() + "号机"
                 + (isTestNameEmpty ? "" : ("-" + SettingHelper.getSystemSetting().getTestName()));
-        return builder.setTitle(title) ;
+        return builder.setTitle(title);
     }
 
     private int position() {

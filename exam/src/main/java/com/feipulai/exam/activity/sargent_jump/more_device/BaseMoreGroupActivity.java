@@ -26,11 +26,13 @@ import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
+import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.sargent_jump.adapter.DeviceListAdapter;
 import com.feipulai.exam.activity.sargent_jump.adapter.StuAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
@@ -93,7 +95,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         super.initData();
         PrinterManager.getInstance().init();
         group = (Group) TestConfigs.baseGroupMap.get("group");
-        LogUtils.operation("获取到分组数据:"+group.toString());
+        LogUtils.operation("获取到分组数据:" + group.toString());
         mLEDManager = new LEDManager();
         mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
@@ -104,7 +106,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         studentList = new ArrayList<>();
         pairList = new ArrayList<>();
         pairList.addAll((List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu"));
-        LogUtils.operation("获取到分组信息:basePairStu="+pairList.toString());
+        LogUtils.operation("获取到分组信息:basePairStu=" + pairList.toString());
         for (BaseStuPair pair : pairList) {
             studentList.add(pair.getStudent());
         }
@@ -284,7 +286,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                     case R.id.txt_skip://跳过
                         Student student = pair.getStudent();
                         if (student != null) {
-                            LogUtils.operation("点击了跳过:stuCode="+student.getStudentCode());
+                            LogUtils.operation("点击了跳过:stuCode=" + student.getStudentCode());
                             stuSkipDialog(student, pos);
                         }
                         break;
@@ -309,7 +311,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                         break;
                     case R.id.txt_confirm:
                         if (pair.getStudent() != null) {
-                            LogUtils.operation("点击了确认成绩:"+pair.getStudent().toString());
+                            LogUtils.operation("点击了确认成绩:" + pair.getStudent().toString());
                             confirmResult(pos);
                         }
                         break;
@@ -323,7 +325,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         });
     }
 
-    public void getData(int pos){
+    public void getData(int pos) {
 
     }
 
@@ -349,6 +351,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         }).show();
 
     }
+
     public void setFaultEnable(boolean isPenalize) {
         this.isPenalize = isPenalize;
     }
@@ -358,12 +361,12 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         deviceListAdapter.setNextClickStart(nextClickStart);
     }
 
-    public void setTxtEnable(int deviceId,boolean enable){
-        deviceListAdapter.setTxtStartEnable(deviceId,enable);
+    public void setTxtEnable(int deviceId, boolean enable) {
+        deviceListAdapter.setTxtStartEnable(deviceId, enable);
     }
 
-    public void setShowGetData(int deviceId,boolean enable){
-        deviceListAdapter.setShowGetData(deviceId,enable);
+    public void setShowGetData(int deviceId, boolean enable) {
+        deviceListAdapter.setShowGetData(deviceId, enable);
     }
 
     protected void stuSkipDialog(final Student student, final int index) {
@@ -532,12 +535,18 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
 
     private void allTestComplete() {
         //全部次数测试完，
-
+        if (stuAdapter.getTestPosition() != -1 &&
+                SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN &&
+                SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 &&
+                SettingHelper.getSystemSetting().isAutoPrint()) {
+            InteractUtils.printA4Result(this, group);
+        }
         toastSpeak("分组考生全部测试完成，请选择下一组");
         stuAdapter.setTestPosition(-1);
         stuAdapter.notifyDataSetChanged();
         group.setIsTestComplete(1);
         DBManager.getInstance().updateGroup(group);
+
     }
 
     /**
@@ -658,7 +667,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 deviceDetails.get(index).getStuDevicePair().setTimeResult(pairList.get(stuPos).getTimeResult());
                 toastSpeak(String.format(getString(R.string.test_speak_hint), studentList.get(stuPos).getStudentName(), testTimes + 1),
                         String.format(getString(R.string.test_speak_hint), studentList.get(stuPos).getStudentName(), testTimes + 1));
-                LogUtils.operation("考生:"+studentList.get(stuPos).getStudentName()+"进行第"+roundNo+"轮测试");
+                LogUtils.operation("考生:" + studentList.get(stuPos).getStudentName() + "进行第" + roundNo + "轮测试");
                 rvTestStu.scrollToPosition(stuPos);
                 stuAdapter.setTestPosition(stuPos);
                 stuAdapter.notifyDataSetChanged();
@@ -693,12 +702,12 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         if (SettingHelper.getSystemSetting().isIdentityMark() && studentList.size() > 0) {
             //考生分组测试的成绩
             List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");
-            LogUtils.operation("检入到学生成绩:"+roundResultList.toString());
+            LogUtils.operation("检入到学生成绩:" + roundResultList.toString());
             //学生在分组中是否有进行检入
             GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(group, student.getStudentCode());
             if ((roundResultList.size() == 0 || roundResultList.size() < setTestCount()) && groupItem != null) {
                 roundNo = roundResultList.size() == 0 ? 1 : roundResultList.size() + 1;
-                LogUtils.operation("检入到学生轮次:roundNo = "+roundNo);
+                LogUtils.operation("检入到学生轮次:roundNo = " + roundNo);
                 gotoTest(student);
                 groupItem.setIdentityMark(1);
                 DBManager.getInstance().updateStudentGroupItem(groupItem);
@@ -709,7 +718,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 toastSpeak(student.getSpeakStuName() + "考生已测试完成",
                         student.getStudentName() + "考生已测试完成");
             }
-            LogUtils.operation("检入到学生成绩:"+roundResultList.toString());
+            LogUtils.operation("检入到学生成绩:" + roundResultList.toString());
         }
     }
 
@@ -726,7 +735,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 pair.setCanTest(false);
                 pair.setStudent(student);
                 if (student != null)
-                    LogUtils.operation("添加考生信息:"+student.toString());
+                    LogUtils.operation("添加考生信息:" + student.toString());
                 break;
             }
 
@@ -736,7 +745,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
 
     public void updateDevice(BaseDeviceState deviceState) {
         int deviceId = deviceState.getDeviceId();
-        LogUtils.operation("更新摸高设备状态:deviceId="+deviceId+",deviceState="+deviceState.toString());
+        LogUtils.operation("更新摸高设备状态:deviceId=" + deviceId + ",deviceState=" + deviceState.toString());
         BaseStuPair pair = null;
         int deviceIndex = 0;
         for (int i = 0; i < deviceDetails.size(); i++) {
@@ -891,7 +900,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                             public void run() {
                                 testNextRound(pair, deviceIndex, ts);
                             }
-                        },3000);
+                        }, 3000);
 
                     }
                 } else {//测试下一个
@@ -927,6 +936,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
 
     /**
      * 连续测试测试下一轮
+     *
      * @param pair
      * @param deviceIndex
      * @param testTimes
@@ -1119,7 +1129,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
 
 
     private void saveResult(BaseStuPair baseStuPair, int roundNo, int index) {
-        LogUtils.operation("保存成绩:baseStuPair=" + baseStuPair.toString()+"---roundNo="+roundNo+"---index="+index);
+        LogUtils.operation("保存成绩:baseStuPair=" + baseStuPair.toString() + "---roundNo=" + roundNo + "---index=" + index);
         RoundResult roundResult = new RoundResult();
         roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
         roundResult.setStudentCode(baseStuPair.getStudent().getStudentCode());
@@ -1128,7 +1138,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         roundResult.setMachineResult(baseStuPair.getResult());
         roundResult.setResultState(baseStuPair.getResultState());
         roundResult.setTestTime(baseStuPair.getTestTime());
-        roundResult.setEndTime(DateUtil.getCurrentTime()+"");
+        roundResult.setEndTime(DateUtil.getCurrentTime() + "");
         roundResult.setRoundNo(roundNo);
         roundResult.setTestNo(1);
         roundResult.setGroupId(group.getId());
@@ -1200,8 +1210,8 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         } else {
             try {
                 int testRound = getRound(deviceDetails.get(index).getStuDevicePair().getTimeResult());
-                if (TextUtils.isEmpty(result)){
-                    testRound +=1;
+                if (TextUtils.isEmpty(result)) {
+                    testRound += 1;
                 }
 
                 byte[] data = new byte[16];

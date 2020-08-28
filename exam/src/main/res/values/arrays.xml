@@ -81,4 +81,12 @@
         <item>未完成</item>
         <item>已完成</item>
     </string-array>
+    <string-array name="print_tool">
+        <item>热敏打印机</item>
+        <item>A4激光打印</item>
+    </string-array>
+    <string-array name="print_A4_type">
+        <item>最好成绩</item>
+        <item>最好成绩+ 轮次成绩</item>
+    </string-array>
 </resources>

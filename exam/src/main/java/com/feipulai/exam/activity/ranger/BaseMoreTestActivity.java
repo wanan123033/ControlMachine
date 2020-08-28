@@ -26,12 +26,14 @@ import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.base.PenalizeDialog;
+import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseGroupTestActivity;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.person.adapter.BaseGroupTestStuAdapter;
 import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.BaseEvent;
@@ -1127,6 +1129,12 @@ public abstract class BaseMoreTestActivity extends BaseCheckActivity implements 
     private void allTestComplete() {
         //全部次数测试完，
         toastSpeak("分组考生全部测试完成，请选择下一组");
+        if (group.getIsTestComplete() != 1 &&
+                SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN &&
+                SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 &&
+                SettingHelper.getSystemSetting().isAutoPrint()) {
+            InteractUtils.printA4Result(this, group);
+        }
         roundNo = 1;
         stuAdapter.setTestPosition(-1);
         stuAdapter.notifyDataSetChanged();

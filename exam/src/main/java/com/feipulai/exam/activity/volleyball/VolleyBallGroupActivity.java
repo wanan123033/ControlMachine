@@ -134,7 +134,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         setting = SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class);
 
         group = (Group) TestConfigs.baseGroupMap.get("group");
-        LogUtils.operation("排球获取到分组信息:"+group.toString());
+        LogUtils.operation("排球获取到分组信息:" + group.toString());
         String type = "男女混合";
         if (group.getGroupType() == Group.MALE) {
             type = "男子";
@@ -145,7 +145,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
 
         TestCache.getInstance().init();
         pairs = CheckUtils.newPairs(((List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu")).size());
-        LogUtils.operation("排球获取分组信息:"+pairs.size()+"---"+pairs.toString());
+        LogUtils.operation("排球获取分组信息:" + pairs.size() + "---" + pairs.toString());
         CheckUtils.groupCheck(pairs);
 
         rvTestingPairs.setLayoutManager(new LinearLayoutManager(this));
@@ -338,8 +338,13 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
                 DBManager.getInstance().updateGroup(group);
                 if (systemSetting.isAutoPrint()) {
                     TestCache testCache = TestCache.getInstance();
-                    InteractUtils.printResults(group, testCache.getAllStudents(), testCache.getResults(),
-                            TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
+                    if (systemSetting.getPrintTool() == SystemSetting.PRINT_A4) {
+                        InteractUtils.printA4Result(this, group);
+                    } else {
+                        InteractUtils.printResults(group, testCache.getAllStudents(), testCache.getResults(),
+                                TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
+                    }
+
                 }
             }
         }
@@ -406,7 +411,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
             testNo = "1";
             UploadResults uploadResult = new UploadResults(scheduleNo,
                     TestConfigs.getCurrentItemCode(), student.getStudentCode()
-                    , testNo, group, RoundResultBean.beanCope(roundResultList,group));
+                    , testNo, group, RoundResultBean.beanCope(roundResultList, group));
             uploadResults.add(uploadResult);
             Logger.i("自动上传成绩:" + uploadResults.toString());
             ServerMessage.uploadResult(uploadResults);
@@ -477,7 +482,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
                 false);
 
         tvResult.setText("准备");
-        testDate = System.currentTimeMillis()+"";
+        testDate = System.currentTimeMillis() + "";
         facade.startTest();
         state = TESTING;
 
@@ -634,7 +639,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
                         }
                         pairs.get(position()).setPenalty(value);
                         ToastUtils.showShort("判罚成功");
-                        LogUtils.operation("排球判罚成功:value="+value);
+                        LogUtils.operation("排球判罚成功:value=" + value);
                     }
                 })
                 .setNegativeButton("取消", null).show();
@@ -700,7 +705,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
 
     public void changeBadDevice() {
         if (linker == null) {
-            linker = new NewProtocolLinker(TestConfigs.sCurrentItem.getMachineCode(), TARGET_FREQUENCY, this,SettingHelper.getSystemSetting().getHostId());
+            linker = new NewProtocolLinker(TestConfigs.sCurrentItem.getMachineCode(), TARGET_FREQUENCY, this, SettingHelper.getSystemSetting().getHostId());
             facade.setLinker(linker);
         } else {
             facade.setLinker(linker);
