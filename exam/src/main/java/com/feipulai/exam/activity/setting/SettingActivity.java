@@ -3,6 +3,7 @@ package com.feipulai.exam.activity.setting;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Paint;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -46,6 +48,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
 
@@ -100,10 +103,17 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     TextView btnThermometer;
     @BindView(R.id.txt_advanced)
     TextView txtAdvanced;
+
+    @BindView(R.id.btn_print_setting)
+    TextView btnPrintSetting;
     @BindView(R.id.cb_is_tcp)
     CheckBox cbIsTcp;
     @BindView(R.id.sw_auto_score)
     CheckBox mSwAutoScore;
+    @BindView(R.id.sp_print_tool)
+    Spinner spPrintTool;
+    @BindView(R.id.ll_print_tool)
+    LinearLayout llPrintTool;
     private String[] partternList = new String[]{"个人测试", "分组测试"};
     private List<Integer> hostIdList;
     private SystemSetting systemSetting;
@@ -154,10 +164,16 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         for (int i = 0; i < qrlength.length; i++) {
             qrlength[i] = i;
         }
+        //扫描长度
         ArrayAdapter spQrLengthAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, Arrays.asList(qrlength));
         spQrLengthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spQrLength.setAdapter(spQrLengthAdapter);
         spQrLength.setSelection(systemSetting.getQrLength());
+        //打印工具
+        ArrayAdapter printAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, Arrays.asList(getResources().getStringArray(R.array.print_tool)));
+        printAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spPrintTool.setAdapter(printAdapter);
+
 
         mSpHostId.setSelection(systemSetting.getHostId() - 1);
         mSwAutoBroadcast.setChecked(systemSetting.isAutoBroadcast());
@@ -170,6 +186,11 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
             spPattern.setSelection(0);
         } else {
             spPattern.setSelection(1);
+            llPrintTool.setVisibility(View.VISIBLE);
+            spPrintTool.setSelection(systemSetting.getPrintTool());
+            if (systemSetting.getPrintTool() == 1) {
+                btnPrintSetting.setVisibility(View.VISIBLE);
+            }
         }
 
         btnNetSetting.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
@@ -224,7 +245,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     }
 
 
-    @OnItemSelected({R.id.sp_host_id, R.id.sp_check_tool, R.id.sp_pattern, R.id.sp_qr_length})
+    @OnItemSelected({R.id.sp_host_id, R.id.sp_check_tool, R.id.sp_pattern, R.id.sp_qr_length, R.id.sp_print_tool})
     public void spinnerItemSelected(Spinner spinner, int position) {
         switch (spinner.getId()) {
             case R.id.sp_host_id:
@@ -232,7 +253,13 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                 txtChannel.setText((SerialConfigs.sProChannels.get(machineCode) + systemSetting.getHostId() - 1) + "");
                 break;
             case R.id.sp_pattern:
-                systemSetting.setTestPattern(position == 0 ? SystemSetting.PERSON_PATTERN : SystemSetting.GROUP_PATTERN);
+                if (position == SystemSetting.PERSON_PATTERN) {
+                    systemSetting.setTestPattern(SystemSetting.PERSON_PATTERN);
+                    llPrintTool.setVisibility(View.GONE);
+                } else {
+                    systemSetting.setTestPattern(SystemSetting.GROUP_PATTERN);
+                    llPrintTool.setVisibility(View.VISIBLE);
+                }
                 break;
             case R.id.sp_qr_length:
                 systemSetting.setQrLength(position);
@@ -240,18 +267,26 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
             case R.id.sp_check_tool:
                 systemSetting.setCheckTool(position);
                 break;
+            case R.id.sp_print_tool:
+                if (position == 0) {
+                    btnPrintSetting.setVisibility(View.INVISIBLE);
+                } else {
+                    btnPrintSetting.setVisibility(View.VISIBLE);
+                }
+                systemSetting.setPrintTool(position);
+                break;
         }
     }
 
     @OnClick({R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting
             , R.id.txt_advanced, R.id.sw_identity_mark, R.id.sw_add_student, R.id.cb_route, R.id.cb_custom_channel, R.id.cb_monitoring,
-            R.id.btn_monitoring_setting, R.id.btn_thermometer, R.id.cb_thermometer,R.id.cb_is_tcp,R.id.sw_auto_score})
+            R.id.btn_monitoring_setting, R.id.btn_thermometer, R.id.cb_thermometer, R.id.cb_is_tcp, R.id.sw_auto_score, R.id.btn_print_setting})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.cb_is_tcp:
+            case R.id.cb_is_tcp://是否使用TCP
                 systemSetting.setTCP(cbIsTcp.isChecked());
                 break;
-            case R.id.btn_thermometer:
+            case R.id.btn_thermometer://蓝牙体温抢设置
                 IntentUtil.gotoActivity(this, BlueToothListActivity.class);
                 break;
             case R.id.cb_thermometer:
@@ -260,7 +295,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
             case R.id.cb_monitoring: //绑定监控
                 systemSetting.setBindMonitoring(cbMonitoring.isChecked());
                 break;
-            case R.id.btn_monitoring_setting:
+            case R.id.btn_monitoring_setting://监控设置
                 IntentUtil.gotoActivity(this, MonitoringBindActivity.class);
                 break;
             case R.id.sw_auto_broadcast://自己播报
@@ -328,6 +363,9 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                     UdpLEDUtil.shellExec("ip route del  " + routeIp + ".0/24 dev eth0");
                     systemSetting.setAddRoute(false);
                 }
+                break;
+            case R.id.btn_print_setting://打印机设置
+                IntentUtil.gotoActivity(this, PrintSettingActivity.class);
                 break;
         }
 

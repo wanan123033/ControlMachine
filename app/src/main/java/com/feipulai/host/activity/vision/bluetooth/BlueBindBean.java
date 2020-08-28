@@ -40,4 +40,13 @@ public class BlueBindBean implements Serializable {
     public void setBluetoothMac(String bluetoothMac) {
         this.bluetoothMac = bluetoothMac;
     }
+
+    @Override
+    public String toString() {
+        return "BlueBindBean{" +
+                "bluetoothMac='" + bluetoothMac + '\'' +
+                ", serverUUID='" + serverUUID + '\'' +
+                ", characterUUID='" + characterUUID + '\'' +
+                '}';
+    }
 }

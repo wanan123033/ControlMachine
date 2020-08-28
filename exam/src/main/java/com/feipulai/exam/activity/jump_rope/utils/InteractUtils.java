@@ -1,26 +1,41 @@
 package com.feipulai.exam.activity.jump_rope.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.feipulai.common.db.DataBaseExecutor;
+import com.feipulai.common.db.DataBaseRespon;
+import com.feipulai.common.db.DataBaseTask;
 import com.feipulai.common.tts.TtsManager;
+import com.feipulai.common.utils.DateUtil;
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.common.utils.print.PrintA4Util;
+import com.feipulai.common.utils.print.PrintBean;
+import com.feipulai.common.view.LoadingDialog;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.IDeviceResult;
 import com.feipulai.device.serial.beans.JumpRopeResult;
+import com.feipulai.exam.BuildConfig;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSetting;
+import com.feipulai.exam.activity.person.BaseStuPair;
+import com.feipulai.exam.activity.setting.PrintSetting;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.bean.RoundResultBean;
@@ -32,6 +47,8 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
+import com.feipulai.exam.utils.EncryptUtil;
+import com.feipulai.exam.utils.HpPrintManager;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
@@ -39,9 +56,12 @@ import com.orhanobut.logger.utils.LogUtils;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Created by James on 2018/12/10 0010.
@@ -132,19 +152,19 @@ public class InteractUtils {
                     List<RoundResult> roundResultList = TestCache.getInstance().getResults().get(student);
                     if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN) {
                         Group group = TestCache.getInstance().getGroup();
-                        upGroup = group ;
+                        upGroup = group;
                         scheduleNo = group.getScheduleNo();
                         testNo = "1";
                     } else {
                         StudentItem studentItem = TestCache.getInstance().getStudentItemMap().get(student);
                         scheduleNo = studentItem.getScheduleNo();
-                        upGroup =null;
+                        upGroup = null;
                         testNo = TestCache.getInstance().getTestNoMap().get(student) + "";
                     }
                     if (roundResultList != null && roundResultList.size() != 0) {
                         UploadResults uploadResult = new UploadResults(scheduleNo,
                                 TestConfigs.getCurrentItemCode(), student.getStudentCode()
-                                , testNo, upGroup, RoundResultBean.beanCope(roundResultList,upGroup));
+                                , testNo, upGroup, RoundResultBean.beanCope(roundResultList, upGroup));
                         uploadResults.add(uploadResult);
                     }
 
@@ -206,7 +226,7 @@ public class InteractUtils {
             }
             roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
             roundResult.setTestTime(testDate);
-            roundResult.setEndTime(System.currentTimeMillis()+"");
+            roundResult.setEndTime(System.currentTimeMillis() + "");
 
             if (results == null) {
                 results = new ArrayList<>();
@@ -249,7 +269,7 @@ public class InteractUtils {
             Logger.i("保存成绩:" + roundResult.toString());
 
             DBManager.getInstance().insertRoundResult(roundResult);
-            LogUtils.operation("保存成绩:"+roundResult.toString());
+            LogUtils.operation("保存成绩:" + roundResult.toString());
         }
         ToastUtils.showShort("成绩保存成功");
     }
@@ -384,6 +404,123 @@ public class InteractUtils {
         }
         PrinterManager.getInstance().print("\n\n");
         Logger.i("成绩打印完成");
+    }
+
+
+    public static void printA4Result(Context context, Group group) {
+        LogUtils.operation("成绩打印开始...");
+
+        PrintSetting setting = SharedPrefsUtil.loadFormSource(context, PrintSetting.class);
+        if (setting == null) {
+            setting = new PrintSetting();
+        }
+        List<Student> students = new ArrayList<>();
+        Map<Student, List<RoundResult>> results = new HashMap<>();
+        //获取分组学生
+        List<Map<String, Object>> dbStudentList = DBManager.getInstance().getStudenByStuItemAndGroup(group);
+        for (Map<String, Object> map : dbStudentList) {
+            Student student = (Student) map.get("student");
+            //获取考生分组成绩
+            List<RoundResult> stuResultList = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");
+            students.add(student);
+            results.put(student, stuResultList);
+        }
+
+
+        PrintBean printBean = new PrintBean();
+        printBean.setTitle(SettingHelper.getSystemSetting().getTestName());
+
+        StringBuilder groupName = new StringBuilder();
+        groupName.append(group.getGroupType() == Group.MALE ? "男子" :
+                (group.getGroupType() == Group.FEMALE ? "女子" : "男女混合"))
+                .append(TestConfigs.sCurrentItem.getItemName())
+                .append(group.getSortName())
+                .append(String.format("第%1$d组", group.getGroupNo()));
+        printBean.setPrintHand(groupName.toString());
+        printBean.setPrintTableHand(setting.getTableString());
+        printBean.setPrintBottom(setting.getSignString());
+
+        Map<Student, String> laseResultMap = new HashMap<>();
+        long startTime = 0;
+        long codeEncrypt = 0;
+
+        // 获取所有的最好成绩 并打印
+        for (int i = 0; i < students.size(); i++) {
+            Student student = students.get(i);
+            List<RoundResult> resultList = results.get(student);
+            if (resultList != null && resultList.size() > 0) {
+
+                for (RoundResult roundResult : resultList) {
+                    if (startTime == 0 || Long.valueOf(roundResult.getTestTime()) < startTime) {
+                        startTime = Long.valueOf(roundResult.getTestTime());
+                    }
+                    if (roundResult.getIsLastResult() == 1 && roundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
+                        laseResultMap.put(student, ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult(), false));
+                        codeEncrypt += roundResult.getResult();
+                        break;
+                    } else {
+                        laseResultMap.put(student, "X");
+                    }
+                }
+            } else {
+                laseResultMap.put(student, "");
+            }
+        }
+        if (TextUtils.isEmpty(printBean.getPrintHandRight())) {
+            printBean.setPrintHandRight("开始时间：" + DateUtil.formatTime2(startTime, "yyyy/MM/dd  HH:mm:ss"));
+        }
+        List<PrintBean.PrintDataBean> dataBeanList = new ArrayList<>();
+        // 每个人的成绩,并打印
+        for (int i = 0; i < students.size(); i++) {
+            Student student = students.get(i);
+//            Integer trackNo = trackNoMap.get(student);
+
+            String printResult = laseResultMap.get(student);
+
+
+            List<RoundResult> resultList = results.get(student);
+            if (resultList != null && resultList.size() > 0 && setting.getPrintResultType() == 1) {
+                printResult += "\n";
+                for (int j = 0; j < resultList.size(); j++) {
+                    if (j == 0) {
+                        printResult += getPrintResultState(resultList.get(j));
+                    } else {
+                        printResult += "/";
+                        printResult += getPrintResultState(resultList.get(j));
+                    }
+
+                }
+            }
+            dataBeanList.add(new PrintBean.PrintDataBean((i + 1) + "", student.getStudentCode(),
+                    student.getStudentName(), student.getSchoolName(), printResult));
+        }
+        printBean.setPrintDataBeans(dataBeanList);
+
+        String fileName = DateUtil.getCurrentTime() + "";
+
+        String codeData = codeEncrypt + "?" + fileName + "?" + getDeviceId(context);
+
+        printBean.setCodeData(EncryptUtil.setEncryptString(PrintBean.ENCRY_KEY, codeData));
+        LogUtil.logDebugMessage(EncryptUtil.setDecodeData(printBean.getCodeData(),new SecretKeySpec(PrintBean.ENCRY_KEY.getBytes(), "AES") ));
+        LogUtil.logDebugMessage("A4打印信息:" + printBean.toString());
+        new PrintA4Util(context).createPrintFile(printBean, MyApplication.PATH_PDF_IMAGE, fileName);
+        HpPrintManager.getInstance(context).print(MyApplication.PATH_PDF_IMAGE + fileName + ".pdf");
+        Logger.i("成绩打印完成");
+    }
+
+    @SuppressLint({"HardwareIds", "MissingPermission"})
+    public static String getDeviceId(Context context) {
+
+        String id;
+        //android.telephony.TelephonyManager
+        TelephonyManager mTelephony = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        if (mTelephony.getDeviceId() != null) {
+            id = mTelephony.getDeviceId();
+        } else {
+            //android.provider.Settings;
+            id = Settings.Secure.getString(context.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        }
+        return id;
     }
 
     private static String getPrintResultState(RoundResult roundResult) {

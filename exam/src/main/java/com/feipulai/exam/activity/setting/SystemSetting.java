@@ -90,6 +90,12 @@ public class SystemSetting {
      */
     private int checkTool = 0;
     /**
+     * 打印工具 分组模式可以选择
+     * 0 热敏打印
+     * 1 A4打印
+     */
+    private int printTool = 0;
+    /**
      * 网络是否添加路由表
      */
     private boolean isAddRoute = false;
@@ -115,6 +121,14 @@ public class SystemSetting {
     private boolean autoScore = false;
     //考点ID
     private String sitCode;
+
+    public int getPrintTool() {
+        return printTool;
+    }
+
+    public void setPrintTool(int printTool) {
+        this.printTool = printTool;
+    }
 
     public int getQrLength() {
         return qrLength;
@@ -336,6 +350,7 @@ public class SystemSetting {
     public static final int PERSON_PATTERN = 0;
     public static final int GROUP_PATTERN = 1;
 
+    public static final int PRINT_A4 = 1;
     /**
      * 检录工具
      */

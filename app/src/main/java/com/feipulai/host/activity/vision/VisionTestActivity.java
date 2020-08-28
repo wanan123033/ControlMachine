@@ -6,6 +6,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -187,6 +188,7 @@ public class VisionTestActivity extends BasePersonTestActivity {
 //    }
 
     private void openBlueThermometerRead() {
+        Log.e("TAG",blueBind.toString());
         ClientManager.getClient().notify(blueBind.getBluetoothMac(), UUID.fromString(blueBind.getServerUUID())
                 , UUID.fromString(blueBind.getCharacterUUID()), mNotifyRsp);
     }
@@ -243,7 +245,7 @@ public class VisionTestActivity extends BasePersonTestActivity {
     }
 
     protected void handleMessage1(Message msg) {
-        if (msg.what == CHECK_THERMOMETER && pair.getStudent() != null){
+        if (msg.what == CHECK_THERMOMETER && pair != null && pair.getStudent() != null){
             byte[] bytearr = (byte[]) msg.obj;
             LogUtil.logDebugMessage("-------163"+StringUtility.bytesToHexString(bytearr));
             VisionResult result = new VisionResult(bytearr);
@@ -266,7 +268,7 @@ public class VisionTestActivity extends BasePersonTestActivity {
         result.setWeightResult(pair.getBaseHeight());
         result.setStudentCode(pair.getStudent().getStudentCode());
         result.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
-        result.setResultState(0);
+        result.setResultState(RoundResult.RESULT_STATE_NORMAL);
         result.setPrintTime(DateUtil.getCurrentTime()+"");
         result.setTestTime(pair.getStartTime()+"");
         result.setTestNo(1);
@@ -311,5 +313,13 @@ public class VisionTestActivity extends BasePersonTestActivity {
                 String.format(getString(R.string.print_result_time), TestConfigs.df.format(Calendar.getInstance().getTime())));
         PrinterManager.getInstance().print(" \n");
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ClientManager.getClient().disconnect(blueBind.getBluetoothMac());
+        handler.removeCallbacksAndMessages(null);
+        handler = null;
     }
 }

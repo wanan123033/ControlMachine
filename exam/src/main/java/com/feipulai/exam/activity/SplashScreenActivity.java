@@ -70,7 +70,7 @@ public class SplashScreenActivity extends BaseActivity {
         super.onResume();
         // 这里是否还需要延时需要再测试后再修改
         RadioManager.getInstance().init();
-        DateUtil.setTimeZone(this,"Asia/Shanghai");
+        DateUtil.setTimeZone(this, "Asia/Shanghai");
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -95,7 +95,7 @@ public class SplashScreenActivity extends BaseActivity {
             activeEngine();
         }
         SoundPlayUtils.init(MyApplication.getInstance());
-        LogUtils.initLogger(BuildConfig.DEBUG, BuildConfig.DEBUG);
+        LogUtils.initLogger(true, true, MyApplication.PATH_LOG_NAME);
         ToastUtils.init(getApplicationContext());
         //这里初始化时间很长,大约需要3s左右
         TtsManager.getInstance().init(this, APP_ID, APP_KEY, SECRET_KEY);
@@ -117,7 +117,7 @@ public class SplashScreenActivity extends BaseActivity {
                 @Override
                 public DataBaseRespon executeOper() {
                     List<Student> studentList = DBManager.getInstance().queryStudentFeatures();
-                    Log.i("faceRegisterInfoList", "->"+studentList.size());
+                    Log.i("faceRegisterInfoList", "->" + studentList.size());
                     List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
                     for (Student student : studentList) {
                         registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));

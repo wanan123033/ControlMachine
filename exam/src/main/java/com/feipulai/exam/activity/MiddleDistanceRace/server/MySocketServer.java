@@ -111,7 +111,7 @@ public class MySocketServer {
             // 从Socket当中得到InputStream对象
             InputStream inputStream = remotePeer.getInputStream();
             while (receiveData(inputStream)) {
-                Logger.i("中长跑接收上道软件数据："+new String(dataByte, 0, dataByte.length, "GB2312"));
+                Logger.i("中长跑接收上道软件数据：" + new String(dataByte, 0, dataByte.length, "GB2312"));
 //                Log.i(TAG, new String(dataByte, 0, dataByte.length, "GB2312") + "---" + dataByte.length);
                 remotePeer.getOutputStream().write(dataByte, 0, dataByte.length);//回客户端消息
                 remotePeer.getOutputStream().flush();
@@ -210,9 +210,7 @@ public class MySocketServer {
         JieXiStudent(result);
 
         if (endStr.substring(1, endStr.length() - 1).equals("FPTCP-PACKAGE-TAIL")) {
-            Log.e(TAG, "-----------");
-            Log.e("listener", "" + listener.toString());
-            if (listener != null) {
+            if (!isPass && listener != null) {
                 listener.onTcpReceiveResult(schedule, m_strEvent);
             }
 //            remotePeer.getOutputStream().write(time, 0, time.length);//把客户端传来的消息发送回去
@@ -223,7 +221,10 @@ public class MySocketServer {
         }
     }
 
+    private boolean isPass = false;
+
     private void JieXiStudent(String[] result) {
+        isPass = false;
         Log.i("result------------", Arrays.toString(result));
         if (result.length > 1) {
             String m_strClientName = result[0];
@@ -295,6 +296,8 @@ public class MySocketServer {
             int m_nGroupType = Integer.parseInt(result[22]);
 
             schedule = DBManager.getInstance().getSchedulesByNo(m_nField + "");
+
+
             if (schedule == null) {
                 schedule = DBManager.getInstance().insertSchedule(new Schedule(m_nField + "", m_strBeginTime, ""));
             }
@@ -304,7 +307,7 @@ public class MySocketServer {
             String itemCode;
             if (item == null) {
                 itemCode = "fpl_" + m_strEvent;//暂时用项目名代替
-                DBManager.getInstance().insertItem(TestConfigs.sCurrentItem.getMachineCode(), itemCode, m_strEvent, "分'秒",DBManager.TEST_TYPE_TIME);
+                DBManager.getInstance().insertItem(TestConfigs.sCurrentItem.getMachineCode(), itemCode, m_strEvent, "分'秒", DBManager.TEST_TYPE_TIME);
             } else {
                 if (TextUtils.isEmpty(item.getItemCode())) {
                     itemCode = "fpl_" + m_strEvent;
@@ -321,7 +324,13 @@ public class MySocketServer {
             itemSchedule.setScheduleNo(m_nField + "");
             DBManager.getInstance().insertItemSchedule(itemSchedule);
 
-            Group group = new Group();
+            Group group = DBManager.getInstance().queryGroup(itemCode, m_nGrp, schedule.getScheduleNo(), m_nSex);
+            if (group != null) {
+                isPass = true;
+                listener.OnTcpServerSuccess(true, "已过滤起点上道发送的重复数据");
+                return;
+            }
+            group = new Group();
             group.setGroupNo(m_nGrp);
             group.setGroupType(m_nSex);
             group.setItemCode(itemCode);

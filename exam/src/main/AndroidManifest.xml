@@ -27,9 +27,10 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" /> <!-- 在SD卡中创建与删除文件权限 -->
     <uses-permission android:name="android.permission.MOUNT_FORMAT_FILESYSTEMS" />
-    <uses-permission android:name="android.permission.SET_TIME_ZONE"/>
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
-    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS"/>
+    <uses-permission android:name="android.permission.SET_TIME_ZONE" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
+
     <uses-feature
         android:name="android.hardware.usb.host"
         android:required="true" />
@@ -396,6 +397,11 @@
         <activity
             android:name=".activity.ranger.bluetooth.BluetoothSettingActivity"
             android:configChanges="keyboardHidden|keyboard" />
+
+        <activity
+            android:name=".activity.setting.PrintSettingActivity"
+            android:configChanges="keyboardHidden|keyboard"
+            android:windowSoftInputMode="stateHidden" />
 
         <receiver android:name="com.feipulai.device.spputils.SppReciver" />
 

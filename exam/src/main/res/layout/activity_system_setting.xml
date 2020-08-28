@@ -15,14 +15,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="34dp"
             android:layout_marginTop="26dp"
+            android:layout_marginBottom="34dp"
             android:background="@drawable/btn_bg_white"
             android:gravity="center_vertical"
             android:orientation="vertical"
             android:paddingLeft="31dp"
-            android:paddingRight="25dp"
-            android:paddingTop="42dp">
+            android:paddingTop="42dp"
+            android:paddingRight="25dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -276,6 +276,43 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_print_tool"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/style_setting_tv_title"
+                    android:text="打印机选择:" />
+
+                <Spinner
+                    android:id="@+id/sp_print_tool"
+                    android:layout_width="290dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="10dp"
+                    android:background="@drawable/icon_spinner_bg" />
+
+
+                <TextView
+                    android:id="@+id/btn_print_setting"
+                    android:layout_width="100dp"
+                    android:layout_height="35dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toLeftOf="@+id/tv_start_test"
+                    android:background="@drawable/btn_click_bg_selected"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="打印设置"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_16"
+                    android:visibility="invisible" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -493,6 +530,7 @@
             <View
                 style="@style/divider_gray_horizontal_style"
                 android:layout_marginTop="8dp" />
+
             <RelativeLayout
                 android:layout_width="520dp"
                 android:layout_height="wrap_content"
@@ -515,6 +553,7 @@
             <View
                 style="@style/divider_gray_horizontal_style"
                 android:layout_marginTop="8dp" />
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -580,8 +619,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="40dp"
                     android:button="@null"
-                    android:drawablePadding="@dimen/dp_10"
-                    android:drawableRight="@drawable/checkbox_switch_selected" />
+                    android:drawableRight="@drawable/checkbox_switch_selected"
+                    android:drawablePadding="@dimen/dp_10" />
 
             </LinearLayout>
 
@@ -608,8 +647,8 @@
                 android:layout_width="186dp"
                 android:layout_height="35dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="28dp"
                 android:layout_marginTop="51dp"
+                android:layout_marginBottom="28dp"
                 android:background="@drawable/btn_click_bg_selected"
                 android:gravity="center"
                 android:text="@string/advanced_setting"

@@ -2331,6 +2331,15 @@ public class DBManager {
         return groupDao.queryBuilder().where(GroupDao.Properties.ItemCode.eq(itemCode)).where(GroupDao.Properties.GroupNo.eq(groupNo)).unique();
     }
 
+    public Group queryGroup(String itemCode, int groupNo, String scheduleNo, int sex) {
+        return groupDao.queryBuilder()
+                .where(GroupDao.Properties.ItemCode.eq(itemCode))
+                .where(GroupDao.Properties.GroupNo.eq(groupNo))
+                .where(GroupDao.Properties.ScheduleNo.eq(scheduleNo))
+                .where(GroupDao.Properties.GroupType.eq(sex))
+                .unique();
+    }
+
     public List<Group> queryGroup(String itemCode) {
         return groupDao.queryBuilder().where(GroupDao.Properties.ItemCode.eq(itemCode)).list();
     }

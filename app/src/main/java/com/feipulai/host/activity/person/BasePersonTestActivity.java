@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -246,10 +247,13 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 toLedSetting();
                 break;
             case R.id.tv_exit_test://退出与跳过功能一致
-
+                if (pair.getStudent() != null) {
+                    stuSkipDialog(1);
+                }
+                break;
             case R.id.txt_stu_skip:
                 if (pair.getStudent() != null) {
-                    stuSkipDialog();
+                    stuSkipDialog(0);
                 }
                 break;
             case R.id.txt_start_test:
@@ -366,8 +370,10 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         }
     }
 
-
-    private void stuSkipDialog() {
+    /**
+     * @param clickType 0 跳过 1 退出
+     */
+    private void stuSkipDialog(final int clickType) {
         new SweetAlertDialog(this)
                 .setTitleText(String.format(getString(R.string.dialog_skip_stu_title), pair.getStudent().getStudentName()))
                 .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
@@ -382,7 +388,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 stuSkip();
                 mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
                 pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
-                setTextViewsVisibility(false, false, false, false, false);
+                if (clickType == 1) {
+                    setTextViewsVisibility(false, false, false, false, false);
+                }
                 pullExit();
             }
         }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
@@ -548,6 +556,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     public void updateVision(BaseStuPair baseStuPair) {
         txtStuResult.setText("左眼力:" + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult()) + "\n右眼力:" + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getBaseHeight()));
         refreshDevice();
+        Log.e("552",mLEDManager+"");
         mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "左视力：" + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult()),
                 0, 1, false, true);
         mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "右视力：" + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getBaseHeight()),
