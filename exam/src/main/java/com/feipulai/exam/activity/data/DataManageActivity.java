@@ -30,7 +30,10 @@ import com.feipulai.common.db.DataBaseRespon;
 import com.feipulai.common.db.DataBaseTask;
 import com.feipulai.common.dbutils.BackupManager;
 import com.feipulai.common.dbutils.FileSelectActivity;
+import com.feipulai.common.dbutils.FileSelectAdapter;
+import com.feipulai.common.dbutils.UsbFileAdapter;
 import com.feipulai.common.exl.ExlListener;
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.FileUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
@@ -106,6 +109,7 @@ public class DataManageActivity
     private static final int REQUEST_CODE_PHOTO = 5;
     private static final int REQUEST_CODE_EXPORT_TEMPLATE = 6;
     private static final int REQUEST_CODE_EXPORT_THERMIMETER = 7;
+    private static final int REQUEST_CODE_BACKUP_VIDEO = 8;
     @BindView(R.id.grid_viewpager)
     GridViewPager gridViewpager;
     @BindView(R.id.indicator_container)
@@ -342,8 +346,10 @@ public class DataManageActivity
                         uploadFace();
                         break;
                     case 16://备份中长跑视频到U盘并清空本地视频
-//                        String newFile = "";
-//                        FileUtils.copyFolder(HkCameraManager.PATH, newFile);
+                        //选择备份到的文件夹
+//                        intent.setClass(DataManageActivity.this, FileSelectActivity.class);
+//                        intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
+//                        startActivityForResult(intent, REQUEST_CODE_BACKUP_VIDEO);
                         break;
                 }
             }
@@ -550,12 +556,22 @@ public class DataManageActivity
                     new StuItemExLReader(0, this).readExlData(FileSelectActivity.sSelectedFile);
                 }
                 break;
-
             case REQUEST_CODE_EXPORT:
                 showExportFileNameDialog();
                 break;
             case REQUEST_CODE_PHOTO:
                 doRegister(FileSelectActivity.sSelectedFile.getAbsolutePath());
+                break;
+            case REQUEST_CODE_BACKUP_VIDEO:
+                String videoFile = "HKVideo" + DateUtil.getCurrentTime("yyyyMMddHHmmss");
+                String newFile = FileSelectActivity.sSelectedFile.getName() + File.separator + videoFile;
+                Log.i("newFile", newFile);
+                try {
+                    FileSelectActivity.sSelectedFile.createDirectory(videoFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                FileUtils.copyFolder(HkCameraManager.PATH, newFile);
                 break;
         }
     }
