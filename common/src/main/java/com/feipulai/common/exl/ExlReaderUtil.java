@@ -56,9 +56,9 @@ public class ExlReaderUtil {
             postfix = ExlPostfixUtil.getPostfix(file.getName());
         }
         if (!ExlPostfixUtil.EMPTY.equals(postfix)) {
-            if (ExlPostfixUtil.OFFICE_EXCEL_2003_POSTFIX.equals(postfix)) {
+            if (ExlPostfixUtil.OFFICE_EXCEL_2003_POSTFIX.equals(postfix.toLowerCase())) {
                 readXls();
-            } else if (ExlPostfixUtil.OFFICE_EXCEL_2010_POSTFIX.equals(postfix)) {
+            } else if (ExlPostfixUtil.OFFICE_EXCEL_2010_POSTFIX.equals(postfix.toLowerCase())) {
                 readXlsx();
             }
         } else {
