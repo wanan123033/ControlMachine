@@ -1211,6 +1211,8 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
             nettyClient.sendMsgToServer(TcpConfig.CMD_NOTHING, null);
     }
 
+    //初始化完成之后才允许跳转其它界面
+    private boolean isInitOk = false;
 
     @Override
     protected void onResume() {
@@ -1226,15 +1228,18 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
                         mHander.postDelayed(new Runnable() {
                             @Override
                             public void run() {
+                                isInitOk = true;
                                 if (hkCamera.startPreview()) {
                                     btnCamera.performClick();
                                 }
                             }
                         }, 600);
                     } else {
+                        isInitOk = true;
                         ToastUtils.showShort("海康摄像头初始化失败");
                     }
                 } else {
+                    isInitOk = true;
                     hkCamera.startPreview();
                 }
             }
@@ -1631,12 +1636,15 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
                 showInput();
                 break;
             case R.id.btn_middle_back:
-                onBackPressed();
-                break;
             case R.id.tv_back:
                 onBackPressed();
                 break;
             case R.id.btn_setting:
+                if (!isInitOk) {
+                    ToastUtils.showShort("正在自动初始化，请稍候几秒");
+                    return;
+                }
+
                 for (TimingBean timingBean : timingLists
                 ) {
                     if (timingBean.getState() == TIMING_STATE_WAITING || timingBean.getState() == TIMING_STATE_TIMING) {

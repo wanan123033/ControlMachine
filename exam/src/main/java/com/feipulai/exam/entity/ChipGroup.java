@@ -60,4 +60,15 @@ public class ChipGroup {
     public void setGroupType(int groupType) {
         this.groupType = groupType;
     }
+
+    @Override
+    public String toString() {
+        return "ChipGroup{" +
+                "id=" + id +
+                ", colorGroupName='" + colorGroupName + '\'' +
+                ", studentNo=" + studentNo +
+                ", color=" + color +
+                ", groupType=" + groupType +
+                '}';
+    }
 }

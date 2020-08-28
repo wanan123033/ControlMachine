@@ -360,7 +360,7 @@ public class DBManager {
     }
 
     public List<ChipInfo> queryAllChipInfo() {
-        return chipInfoDao.queryBuilder().orderAsc(ChipInfoDao.Properties.Color, ChipInfoDao.Properties.VestNo).list();
+        return chipInfoDao.queryBuilder().orderAsc(ChipInfoDao.Properties.ColorGroupName, ChipInfoDao.Properties.VestNo).list();
     }
 
     public void updateChipInfo(ChipInfo chipInfo) {

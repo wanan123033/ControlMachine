@@ -99,7 +99,7 @@ public class ColorGroupExLReader extends ExlReader {
         ChipGroup chipGroup;
         //从芯片信息表中抽出颜色和人数来建立芯片颜色组表
         for (ChipInfo chipInfo : chipInfos
-                ) {
+        ) {
             //把所有芯片号数字单独组成集合
             chipNos.add(chipInfo.getVestNo());
             //颜色组对象
@@ -131,7 +131,7 @@ public class ColorGroupExLReader extends ExlReader {
                 chipGroups.get(i).setColor(colorIds[i]);
                 //填充颜色到芯片信息组
                 for (ChipInfo chip : chipInfos
-                        ) {
+                ) {
                     if (chip.getColorGroupName().equals(chipGroups.get(i).getColorGroupName())) {
                         chip.setColor(colorIds[i]);
                     }
@@ -291,9 +291,11 @@ public class ColorGroupExLReader extends ExlReader {
             String chipID1 = getStringVal(chipID1Cell);
             String chipID2 = getStringVal(chipID2Cell);
 
+//            Log.i("generateBeanFromRow", chipColor + "->" + chipNo + "->" + chipID1 + "->" + chipID2);
+
             chipInfo = new ChipInfo();
             chipInfo.setChipID1(TextUtils.isEmpty(chipID1) ? "" : chipID1);
-            chipInfo.setChipID2(TextUtils.isEmpty(chipID2) ? "" : chipID1);
+            chipInfo.setChipID2(TextUtils.isEmpty(chipID2) ? "" : chipID2);
             chipInfo.setColorGroupName(chipColor);
             chipInfo.setVestNo(Integer.parseInt(chipNo));
 

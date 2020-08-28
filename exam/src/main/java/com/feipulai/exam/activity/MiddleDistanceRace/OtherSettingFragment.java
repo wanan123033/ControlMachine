@@ -322,9 +322,6 @@ public class OtherSettingFragment extends Fragment implements AdapterView.OnItem
                         break;
 
                     case ExlListener.EXEL_READ_FAIL:
-                        OperateProgressBar.removeLoadingUiIfExist(getActivity());
-                        ToastUtils.showShort(reason);
-                        break;
 
                     case ExlListener.EXEL_WRITE_SUCCESS:
                         OperateProgressBar.removeLoadingUiIfExist(getActivity());
