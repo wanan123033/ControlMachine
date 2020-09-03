@@ -45,7 +45,7 @@ public interface RadioTestContract {
 		
 		void tickInUI(String text);
 		
-		// void updateStates();
+		 void updateStates();
 		
 		void enableStopRestartTest(boolean enable);
 		

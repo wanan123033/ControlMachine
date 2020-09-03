@@ -115,7 +115,7 @@ public class SitUpTestPresenter
         }
 
         // WAIT_BGIN 和 TEST_COUNTING 状态没有成绩|| testState == TEST_COUNTING
-        if (testState == WAIT_BGIN) {
+        if (testState == WAIT_BGIN || testState == TEST_COUNTING) {
             pair.setDeviceResult(null);
         } else if (pair.getStudent() != null) {
             IDeviceResult deviceResult = pair.getDeviceResult();

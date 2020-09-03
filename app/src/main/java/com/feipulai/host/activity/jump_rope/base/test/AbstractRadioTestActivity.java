@@ -23,6 +23,7 @@ import com.feipulai.host.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.host.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.TestConfigs;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.List;
 
@@ -40,6 +41,7 @@ public abstract class AbstractRadioTestActivity<Setting>
 
     private static final int TIME_COUNT = 0x1;
     private static final int UPDATE_SPECIFIC_ITEM = 0x2;
+    private static final int UPDATE_STATES = 0X3;
     private static final int SHOW_WAIT_DIALOG = 0x4;
     private static final int DISMISS_WAIT_DIALOG = 0x5;
     private static final int SHOW_VIEW_FOR_CONFIRM_RESULTS = 0x6;
@@ -182,10 +184,10 @@ public abstract class AbstractRadioTestActivity<Setting>
         }
     }
 
-    // @Override
-    // public void updateStates() {
-    // 	mHandler.sendEmptyMessage(UPDATE_STATES);
-    // }
+     @Override
+     public void updateStates() {
+     	mHandler.sendEmptyMessage(UPDATE_STATES);
+     }
 
     @Override
     public void enableStopRestartTest(final boolean enable) {
@@ -260,7 +262,10 @@ public abstract class AbstractRadioTestActivity<Setting>
             case UPDATE_SPECIFIC_ITEM:
                 mAdapter.notifyItemChanged(msg.arg1);
                 break;
-
+            case UPDATE_STATES:
+                LogUtils.operation("更新设备状态...");
+                mAdapter.notifyDataSetChanged();
+                break;
             case TIME_COUNT:
                 tvCount.setText((CharSequence) msg.obj);
                 break;
