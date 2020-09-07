@@ -619,7 +619,6 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
 //                    bitmap = ImageUtils.alignBitmapForBgr24(bitmap);
                     bitmap = ArcSoftImageUtil.getAlignedBitmap(bitmap, true);
                     if (bitmap == null) {
-
                         continue;
                     }
 

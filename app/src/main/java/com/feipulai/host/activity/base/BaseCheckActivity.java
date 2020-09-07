@@ -1,5 +1,6 @@
 package com.feipulai.host.activity.base;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -53,6 +54,7 @@ public abstract class BaseCheckActivity
     public FrameLayout afrFrameLayout;
     private BaseAFRFragment afrFragment;
     private ScannerGunManager scannerGunManager;
+    private BaseCatupeFragment catureFragment;
 
     public void setOpenDevice(boolean openDevice) {
         isOpenDevice = openDevice;
@@ -69,7 +71,9 @@ public abstract class BaseCheckActivity
             afrFrameLayout = findViewById(setAFRFrameLayoutResID());
             afrFragment = new BaseAFRFragment();
             afrFragment.setCompareListener(this);
-            initAFR();
+            if (SettingHelper.getSystemSetting().isNetCheckTool()){
+                catureFragment = new BaseCatupeFragment();
+            }
         }
         scannerGunManager = new ScannerGunManager(new ScannerGunManager.OnScanListener() {
             @Override
@@ -136,8 +140,15 @@ public abstract class BaseCheckActivity
         transaction.replace(setAFRFrameLayoutResID(), afrFragment);
         transaction.commitAllowingStateLoss();// 提交更改
     }
-
+    private void initCature(Student student) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        catureFragment.setStudent(student);
+        catureFragment.setCompareListener(this);
+        transaction.replace(setAFRFrameLayoutResID(), catureFragment);
+        transaction.commitAllowingStateLoss();// 提交更改
+    }
     public void showAFR() {
+        initAFR();
         if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
             ToastUtils.showShort("未选择人脸识别检录功能");
             return;
@@ -156,6 +167,10 @@ public abstract class BaseCheckActivity
         }
     }
 
+    public void gotoCatureFragment(Student student) {
+        initCature(student);
+        afrFrameLayout.setVisibility(View.VISIBLE);
+    }
     @Override
     public void compareStu(final Student student) {
         runOnUiThread(new Runnable() {
@@ -167,6 +182,12 @@ public abstract class BaseCheckActivity
         });
         if (student == null) {
             InteractUtils.toastSpeak(this, "该考生不存在");
+            if (SettingHelper.getSystemSetting().isNetCheckTool()){
+                showAddHint(student);
+            }
+            //TODO 同步更新数据与头像信息
+            Intent intent = new Intent(this, UpdateService.class);
+            startService(intent);
             return;
         }
         LogUtil.logDebugMessage("检入考生：" + student.toString());
@@ -298,7 +319,11 @@ public abstract class BaseCheckActivity
     public void onEventMainThread(BaseEvent baseEvent) {
         super.onEventMainThread(baseEvent);
         if (baseEvent.getTagInt() == EventConfigs.TEMPORARY_ADD_STU) {
-            onCheckIn((Student) baseEvent.getData());
+            if (SettingHelper.getSystemSetting().isNetCheckTool() && SettingHelper.getSystemSetting().getCheckTool() == 4) {
+                gotoCatureFragment((Student) baseEvent.getData());
+            }else {
+                onCheckIn((Student) baseEvent.getData());
+            }
         }
     }
 

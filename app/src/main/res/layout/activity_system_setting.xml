@@ -289,6 +289,30 @@
             <View
                 style="@style/divider_gray_horizontal_style"
                 android:layout_marginTop="8dp" />
+            <RelativeLayout
+                android:id="@+id/rl_net"
+                android:layout_width="520dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:padding="1dp">
+
+                <TextView
+                    style="@style/style_setting_tv_title"
+                    android:text="在线识别:" />
+
+                <CheckBox
+                    android:id="@+id/sw_net"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:button="@drawable/checkbox_switch_selected" />
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/view_itemd"
+                style="@style/divider_gray_horizontal_style"
+                android:layout_marginTop="8dp" />
 
             <RelativeLayout
                 android:layout_width="520dp"

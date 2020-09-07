@@ -1,10 +1,14 @@
 package com.feipulai.host.activity.base;
 
 import android.app.Activity;
+import android.graphics.ImageFormat;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.hardware.usb.UsbDevice;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.TextureView;
@@ -20,6 +24,8 @@ import com.arcsoft.face.enums.DetectMode;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.host.R;
+import com.feipulai.host.activity.setting.SettingHelper;
+import com.feipulai.host.bean.UserPhoto;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.Student;
@@ -44,6 +50,7 @@ import com.ww.fpl.libarcface.util.face.RecognizeColor;
 import com.ww.fpl.libarcface.util.face.RequestFeatureStatus;
 import com.ww.fpl.libarcface.widget.FaceRectView;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -57,6 +64,8 @@ import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * 人脸识别
@@ -112,6 +121,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
     });
     private SweetAlertDialog uploadDataDialog;
     private boolean isLodingServer = false;
+    private boolean isNetWork;
 
     @Override
     protected int getLayoutId() {
@@ -410,7 +420,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
     }
 
     @Override
-    public void onPreviewFrame(byte[] yuv) {
+    public void onPreviewFrame(final byte[] yuv) {
         if (!isStartFace) {
             return;
         }
@@ -439,6 +449,45 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                 }
             }
         }
+        if (isNetWork){
+            isNetWork = false;
+            Observable.just("sss").map(new Function<String, Object>() {
+                @Override
+                public Object apply(String s) throws Exception {
+                    YuvImage image = new YuvImage(yuv, ImageFormat.NV21,mWidth,mHeight,null);
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    image.compressToJpeg(new Rect(0,0,mWidth,mHeight),100,bos);
+                    bos.flush();
+                    String sss = Base64.encodeToString(bos.toByteArray(),Base64.DEFAULT);
+                    ItemSubscriber subscriber = new ItemSubscriber();
+                    subscriber.netSb(sss, new OnRequestEndListener() {
+                        @Override
+                        public void onSuccess(int bizType) {
+
+                        }
+
+                        @Override
+                        public void onFault(int bizType) {
+                            compareListener.compareStu(null);
+                        }
+
+                        @Override
+                        public void onRequestData(Object data) {
+                            UserPhoto photo = (UserPhoto) data;
+                            if(TextUtils.isEmpty(photo.getStudentCode())){
+                                compareListener.compareStu(null);
+                            }else {
+                                Student student = new Student();
+                                student.setStudentCode(photo.getStudentCode());
+                                compareListener.compareStu(student);
+                            }
+                        }
+                    });
+                    return new Object();
+                }
+            }).observeOn(Schedulers.io()).subscribe();
+        }
+
     }
 
     /**
@@ -532,6 +581,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
     private void compareResult() {
         if (compareResult1 == null && compareResult2 == null && compareResult3 == null || faceHelper == null) {
             requestFeatureStatusMap.put(faceId, RequestFeatureStatus.FAILED);
+            showAddHint();
             return;
         }
         if (compareResult1 != null && compareResult2 != null && compareResult3 != null) {
@@ -562,6 +612,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                 hasTry = 0;
                 compareListener.compareStu(student);
 //                isOpenCamera=false;
+				isStartFace = false;
             } else {
                 hasTry++;
                 Logger.d("compareResult==>null");
@@ -646,32 +697,50 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
     private void showAddHint() {
         isStartFace = false;
-        ((Activity) mContext).runOnUiThread(new Runnable() {
+        ((Activity)mContext).runOnUiThread(new Runnable() {
+
+
             @Override
             public void run() {
-                if (uploadDataDialog == null || !uploadDataDialog.isShowing()) {
-                    uploadDataDialog = new SweetAlertDialog(mContext).setTitleText(getString(R.string.student_nonentity))
-                            .setContentText("是否进行服务器信息识别")
-                            .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                @Override
-                                public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                    sweetAlertDialog.dismissWithAnimation();
-                                    getStudent();
-
-                                }
-                            }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                @Override
-                                public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                    sweetAlertDialog.dismissWithAnimation();
-                                    isLodingServer = false;
-                                    isStartFace = true;
-                                    retryRecognizeDelayed(faceId);
-                                }
-                            });
-                    uploadDataDialog.show();
+                if (SettingHelper.getSystemSetting().isNetCheckTool()){
+                    isNetWork = true;
+                    isLodingServer = false;
+                    isStartFace = true;
+                    retryRecognizeDelayed(faceId);
+                }else {
+                    getStudent();
+                    isLodingServer = false;
+                    isStartFace = true;
+                    retryRecognizeDelayed(faceId);
                 }
             }
         });
+//        ((Activity) mContext).runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (uploadDataDialog == null || !uploadDataDialog.isShowing()) {
+//                    uploadDataDialog = new SweetAlertDialog(mContext).setTitleText(getString(R.string.student_nonentity))
+//                            .setContentText("是否进行服务器信息识别")
+//                            .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+//                                @Override
+//                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                                    sweetAlertDialog.dismissWithAnimation();
+//                                    getStudent();
+//
+//                                }
+//                            }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+//                                @Override
+//                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                                    sweetAlertDialog.dismissWithAnimation();
+//                                    isLodingServer = false;
+//                                    isStartFace = true;
+//                                    retryRecognizeDelayed(faceId);
+//                                }
+//                            });
+//                    uploadDataDialog.show();
+//                }
+//            }
+//        });
 
 
     }

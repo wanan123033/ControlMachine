@@ -11,6 +11,7 @@ import com.feipulai.host.bean.ItemBean;
 import com.feipulai.host.bean.StudentBean;
 import com.feipulai.host.bean.UploadResults;
 import com.feipulai.host.bean.UserBean;
+import com.feipulai.host.bean.UserPhoto;
 import com.feipulai.host.netUtils.HttpResult;
 import com.feipulai.host.netUtils.ResponseParame;
 
@@ -59,4 +60,9 @@ public interface HttpApi {
     @POST(UPLOAD_RESULT_ACTION)
     @Headers("Content-Type:application/json;charset=UTF-8")
     Observable<HttpResult<List<UploadResults>>> uploadResult(@Header("Authorization") String token, @Body ResponseParame data);
+
+    @POST("run/compareFaceFeature")
+    @Headers("Content-Type:application/json;charset=UTF-8")
+    Observable<HttpResult<UserPhoto>> netSh(@Header("Authorization") String token, @Body ResponseParame data);
+
 }
