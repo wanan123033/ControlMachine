@@ -23,7 +23,9 @@ import com.feipulai.exam.bean.ItemBean;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.RoundScoreBean;
 import com.feipulai.exam.bean.ScheduleBean;
+import com.feipulai.exam.bean.SoftApp;
 import com.feipulai.exam.bean.StudentBean;
+import com.feipulai.exam.bean.UpdateApp;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.bean.UserBean;
 import com.feipulai.exam.config.BaseEvent;
@@ -45,9 +47,13 @@ import com.feipulai.exam.netUtils.HttpResult;
 import com.feipulai.exam.netUtils.OnResultListener;
 import com.feipulai.exam.netUtils.RequestSub;
 import com.feipulai.exam.netUtils.TCPResultPackage;
+import com.feipulai.exam.netUtils.download.DownLoadProgressDialog;
+import com.feipulai.exam.netUtils.download.DownloadListener;
+import com.feipulai.exam.netUtils.download.DownloadUtils;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,6 +63,9 @@ import java.util.Map;
 import java.util.Set;
 
 import io.reactivex.Observable;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+
 
 /**
  * Created by zzs on  2018/12/29
@@ -274,7 +283,7 @@ public class HttpSubscriber {
         }));
     }
 
-//    /**
+    //    /**
 //     * 这里将所有表中为项目代码为default的表内容改为已知的项目代码
 //     */
 //    private void fillItemCodes() {
@@ -322,7 +331,8 @@ public class HttpSubscriber {
 //                    }
 //                }).create().show();
 //    }
-private List<String> stuList = new ArrayList<>();
+    private List<String> stuList = new ArrayList<>();
+
     /**
      * 获取当前项目考生
      *
@@ -609,7 +619,7 @@ private List<String> stuList = new ArrayList<>();
                         List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(studentCode);
                         boolean flag = false;
                         for (RoundResult re : results) {
-                            if (re.getRoundNo()==Integer.valueOf(score.roundNo) &&
+                            if (re.getRoundNo() == Integer.valueOf(score.roundNo) &&
                                     re.getResult() == roundResult.getResult()) {
                                 flag = true;
                                 break;
@@ -911,10 +921,73 @@ private List<String> stuList = new ArrayList<>();
         }));
     }
 
+    public void getApps(Context context, String version, final OnResultListener listener) {
+        Map<String, String> parameData = new HashMap<>();
+        parameData.put("softwareUuid", MyApplication.SOFTWAREUUID);
+        parameData.put("hardwareUuid", MyApplication.HARDWAREUUID);
+        parameData.put("version", version);
+        parameData.put("deviceCode", MyApplication.DEVICECODE);
+        final RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/json"), new JSONObject(parameData).toString());
+        Observable<HttpResult<List<SoftApp>>>observable = HttpManager.getInstance().getHttpApi().getSoftApp(requestBody);
+        HttpManager.getInstance().changeBaseUrl("https://api.soft.fplcloud.com");
+        HttpManager.getInstance().toSubscribe(observable,new RequestSub<List<SoftApp>>(new OnResultListener<List<SoftApp>>() {
+            @Override
+            public void onSuccess(List<SoftApp> result) {
+                Log.i("SoftApp","Observable");
+                listener.onSuccess(result);
+            }
+
+            @Override
+            public void onFault(int code, String errorMsg) {
+                Log.i("SoftApp",errorMsg);
+                listener.onFault(code,errorMsg);
+            }
+        }));
+    }
+
+    /**
+     * 获取APP更新的url
+     * @param context
+     * @param version
+     * @param updateSoftwareVersion
+     * @param authorizeCode
+     * @param listener
+     */
+    public void updateApp(String version,String updateSoftwareVersion,String authorizeCode,
+                       final OnResultListener listener) {
+        Map<String, String> parameData = new HashMap<>();
+        parameData.put("softwareUuid", MyApplication.SOFTWAREUUID);
+        parameData.put("hardwareUuid", MyApplication.HARDWAREUUID);
+        parameData.put("version", version);
+        parameData.put("updateSoftwareVersion",updateSoftwareVersion);
+        parameData.put("authorizeCode",authorizeCode);
+        parameData.put("enableCompression","0");
+        parameData.put("deviceCode", MyApplication.DEVICECODE);
+        final RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/json"), new JSONObject(parameData).toString());
+        Observable<HttpResult<UpdateApp>>observable = HttpManager.getInstance().getHttpApi().updateSoftApp(requestBody);
+        HttpManager.getInstance().changeBaseUrl("https://api.soft.fplcloud.com");
+        HttpManager.getInstance().toSubscribe(observable,new RequestSub<UpdateApp>(new OnResultListener<UpdateApp>() {
+            @Override
+            public void onSuccess(UpdateApp result) {
+                listener.onSuccess(result);
+            }
+
+            @Override
+            public void onFault(int code, String errorMsg) {
+                Log.i("UpdateApp",code +errorMsg);
+                listener.onFault(code,errorMsg);
+            }
+        }));
+
+
+
+    }
 
     public interface OnRequestEndListener {
         void onSuccess(int bizType);
 
         void onFault(int bizType);
     }
+
+
 }

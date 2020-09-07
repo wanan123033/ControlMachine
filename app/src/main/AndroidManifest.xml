@@ -8,7 +8,6 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
     <uses-permission android:name="android.permission.UPDATE_DEVICE_STATS" />
 
     <uses-feature
@@ -25,12 +24,12 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
-
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.SET_TIME_ZONE"/>
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
-    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS"/>
+    <uses-permission android:name="android.permission.SET_TIME_ZONE" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
+
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -41,12 +40,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.pullup.pair.PullUpPairActivity"/>
-        <activity android:name=".activity.pullup.check.PullUpCheckActivity"
+        <activity android:name=".activity.data.UpdateAppActivity"></activity>
+        <activity android:name=".activity.pullup.pair.PullUpPairActivity" />
+        <activity
+            android:name=".activity.pullup.check.PullUpCheckActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity android:name=".activity.pullup.test.PullUpIndividualActivity"/>
-        <activity android:name=".activity.pullup.test.PullUpTestActivity"/>
-        <activity android:name=".activity.pullup.setting.PullUpSettingActivity"/>
+        <activity android:name=".activity.pullup.test.PullUpIndividualActivity" />
+        <activity android:name=".activity.pullup.test.PullUpTestActivity" />
+        <activity android:name=".activity.pullup.setting.PullUpSettingActivity" />
         <activity android:name=".activity.pullup.PullUpSelectActivity" />
         <activity android:name=".activity.medicine_ball.MedicineBallSettingActivity" />
         <activity android:name=".activity.medicine_ball.MedicineBallFreeTestActivity" />
@@ -61,7 +62,7 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
-<!--                <category android:name="android.intent.category.HOME" />-->
+                <!-- <category android:name="android.intent.category.HOME" /> -->
             </intent-filter>
         </activity>
         <activity android:name=".activity.main.MainActivity">
@@ -79,7 +80,8 @@
         <activity android:name=".activity.data.DataManageActivity" />
         <activity android:name=".activity.data.DataDisplayActivity" /> <!-- jump rope -->
         <activity android:name=".activity.jump_rope.pair.JumpRopePairActivity" />
-        <activity android:name=".activity.jump_rope.check.JumpRopeCheckActivity"
+        <activity
+            android:name=".activity.jump_rope.check.JumpRopeCheckActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity android:name=".activity.jump_rope.setting.JumpRopeSettingActivity" />
         <activity android:name=".activity.jump_rope.test.JumpRopeTestActivity" />
@@ -90,11 +92,14 @@
         <!-- <activity android:name=".activity.situp.SitUpTimingActivity" /> -->
         <!-- <activity android:name=".activity.situp.SitUpResultActivity" /> -->
         <activity android:name=".activity.situp.setting.SitUpSettingActivity" />
-        <activity android:name=".activity.situp.test.SitUpTestActivity"
+        <activity
+            android:name=".activity.situp.test.SitUpTestActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity android:name=".activity.situp.check.SitUpCheckActivity"
+        <activity
+            android:name=".activity.situp.check.SitUpCheckActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity android:name=".activity.height_weight.HeightWeightCheckActivity"
+        <activity
+            android:name=".activity.height_weight.HeightWeightCheckActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" /> <!-- sit reach -->
         <activity
             android:name=".activity.sitreach.SitReachTestActivity"
@@ -163,6 +168,7 @@
         <activity android:name=".activity.ranger.RangerPersonTestActivity" />
 
         <service android:name="com.inuker.bluetooth.library.BluetoothService" />
+
         <activity
             android:name=".activity.explain.ExplainActivity"
             android:windowSoftInputMode="stateHidden" />

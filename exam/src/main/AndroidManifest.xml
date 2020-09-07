@@ -45,7 +45,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.basketball.DribbleShootGroupActivity"></activity>
+        <activity android:name=".activity.data.UpdateAppActivity"></activity>
+        <activity android:name=".activity.basketball.DribbleShootGroupActivity" />
         <activity android:name=".activity.basketball.BasketBallShootGroupActivity" />
         <activity android:name=".activity.sitreach.more_device.SitReachMoreGroupActivity" />
         <activity android:name=".activity.sitreach.more_device.pair.SitReachPairActivity" />
@@ -64,7 +65,6 @@
         <activity android:name=".activity.sargent_jump.pair.SargentPairActivity" />
         <activity android:name=".activity.footBall.FootBallGroupActivity" />
         <activity android:name=".activity.sargent_jump.SargentItemSelectActivity" />
-
         <activity
             android:name=".activity.SplashScreenActivity"
             android:screenOrientation="landscape"
@@ -397,7 +397,6 @@
         <activity
             android:name=".activity.ranger.bluetooth.BluetoothSettingActivity"
             android:configChanges="keyboardHidden|keyboard" />
-
         <activity
             android:name=".activity.setting.PrintSettingActivity"
             android:configChanges="keyboardHidden|keyboard"

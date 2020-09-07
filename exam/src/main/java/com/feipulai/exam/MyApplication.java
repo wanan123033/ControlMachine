@@ -13,7 +13,6 @@ import com.feipulai.exam.utils.bluetooth.BlueToothHelper;
 import com.kk.taurus.playerbase.config.PlayerConfig;
 import com.kk.taurus.playerbase.config.PlayerLibrary;
 import com.kk.taurus.playerbase.record.PlayRecordManager;
-import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 
 
@@ -21,8 +20,12 @@ public class MyApplication extends MultiDexApplication {
 
     public static final String PATH_SPECIFICATION = FileUtil.PATH_BASE + "KS/";//说明文档路径
     public static final String PATH_IMAGE = FileUtil.PATH_BASE + "KS_IMAGE/";//图片存在路径
+    public static final String PATH_APK = FileUtil.PATH_BASE + "KS_APK/";//图片存在路径
     public static final String PATH_PDF_IMAGE = FileUtil.PATH_BASE + "KS_PDF_IMAGE/";//成绩图片与PDF文件存放路径
     public static final String PATH_LOG_NAME = "KS_LOGGER";//日志文件夹名称
+    public static final String SOFTWAREUUID = "FPL_KS_2020_09_01_000000";//软件识别码
+    public static final String HARDWAREUUID = "FPL_ANDROID_KS_2020_09_01_000000";//硬件识别码
+    public static final String DEVICECODE = "111";//硬件识别码
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -31,7 +34,7 @@ public class MyApplication extends MultiDexApplication {
     }
 
     private static MyApplication instance;
-    //全局context
+    //全局CONTEXT
     //private static Context mContext;
     /**
      * 绑定成功时返回的令牌
