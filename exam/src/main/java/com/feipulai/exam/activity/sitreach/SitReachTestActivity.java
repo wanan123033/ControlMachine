@@ -196,7 +196,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
     @Override
     public void getResult(boolean isEnd, BaseStuPair stuPair) {
         if (isEnd) {
-            if (stuPair.getResult() <= -15) {
+            if (stuPair.getResult()/10 <= -15) {
                 confirmResult(stuPair);
             }
         }
