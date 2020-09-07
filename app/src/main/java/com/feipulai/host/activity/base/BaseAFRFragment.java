@@ -704,8 +704,6 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             public void run() {
                 if (SettingHelper.getSystemSetting().isNetCheckTool()){
                     isNetWork = true;
-                    isLodingServer = false;
-                    isStartFace = true;
                     retryRecognizeDelayed(faceId);
                 }else {
                     getStudent();
