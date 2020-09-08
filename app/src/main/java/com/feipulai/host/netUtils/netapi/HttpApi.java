@@ -8,7 +8,9 @@ package com.feipulai.host.netUtils.netapi;
 
 import com.feipulai.host.bean.BatchBean;
 import com.feipulai.host.bean.ItemBean;
+import com.feipulai.host.bean.SoftApp;
 import com.feipulai.host.bean.StudentBean;
+import com.feipulai.host.bean.UpdateApp;
 import com.feipulai.host.bean.UploadResults;
 import com.feipulai.host.bean.UserBean;
 import com.feipulai.host.netUtils.HttpResult;
@@ -17,6 +19,7 @@ import com.feipulai.host.netUtils.ResponseParame;
 import java.util.List;
 
 import io.reactivex.Observable;
+import okhttp3.RequestBody;
 import retrofit2.http.Body;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
@@ -44,6 +47,9 @@ public interface HttpApi {
      */
     String UPLOAD_RESULT_ACTION = "/run/uploadStudentResult";
 
+    String GET_SOFT_APP = "/public/checkSoftwareVersion";
+    String UPDATE_SOFT_APP = "/public/updateSoftware";
+
     @POST(DEVICE_BINDING_ACTION)
     @Headers("Content-Type:application/json;charset=UTF-8")
     Observable<HttpResult<UserBean>> bind(@Header("Authorization") String token, @Body ResponseParame data);
@@ -59,4 +65,12 @@ public interface HttpApi {
     @POST(UPLOAD_RESULT_ACTION)
     @Headers("Content-Type:application/json;charset=UTF-8")
     Observable<HttpResult<List<UploadResults>>> uploadResult(@Header("Authorization") String token, @Body ResponseParame data);
+
+    @POST(GET_SOFT_APP)
+    @Headers("Content-Type:application/json;charset=UTF-8")
+    Observable<HttpResult<List<SoftApp>>> getSoftApp(@Body RequestBody body);
+
+    @POST(UPDATE_SOFT_APP)
+    @Headers("Content-Type:application/json;charset=UTF-8")
+    Observable<HttpResult<UpdateApp>> updateSoftApp(@Body RequestBody body);
 }

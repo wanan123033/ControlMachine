@@ -37,6 +37,7 @@ import com.feipulai.common.utils.HandlerUtil;
 import com.feipulai.common.utils.ImageUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.StringChineseUtil;
+import com.feipulai.common.utils.SystemBrightUtils;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.utils.archiver.IArchiverListener;
 import com.feipulai.common.utils.archiver.ZipArchiver;
@@ -46,6 +47,7 @@ import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseTitleActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
+import com.feipulai.host.bean.SoftApp;
 import com.feipulai.host.bean.UploadResults;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.config.TestConfigs;
@@ -55,6 +57,8 @@ import com.feipulai.host.entity.Student;
 import com.feipulai.host.exl.ResultExlWriter;
 import com.feipulai.host.exl.StuItemExLReader;
 import com.feipulai.host.netUtils.CommonUtils;
+import com.feipulai.host.netUtils.HttpSubscriber;
+import com.feipulai.host.netUtils.OnResultListener;
 import com.feipulai.host.netUtils.UploadResultUtil;
 import com.feipulai.host.netUtils.download.DownService;
 import com.feipulai.host.netUtils.download.DownloadHelper;
@@ -83,6 +87,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.Common
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -153,7 +158,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
         String[] typeName = getResources().getStringArray(R.array.data_admin);
         int[] typeRes = new int[]{R.mipmap.icon_data_import, R.mipmap.icon_data_down
                 , R.mipmap.icon_data_backup, R.mipmap.icon_data_restore, R.mipmap.icon_data_look, R.mipmap.icon_data_clear, R.mipmap.icon_result_upload,
-                R.mipmap.icon_result_import, R.mipmap.icon_template_export, R.mipmap.icon_position_import, R.mipmap.icon_position_down, R.mipmap.icon_position_down};
+                R.mipmap.icon_result_import, R.mipmap.icon_template_export, R.mipmap.icon_position_import, R.mipmap.icon_position_down, R.mipmap.icon_position_down,R.mipmap.icon_position_down};
         for (int i = 0; i < typeName.length; i++) {
             TypeListBean bean = new TypeListBean();
             bean.setName(typeName[i]);
@@ -291,9 +296,41 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                         LogUtils.operation("用户点击了人脸特征检入...");
                         uploadFace();
                         break;
+                    case 12://软件更新
+                        LogUtils.operation("用户点击了软件更新...");
+                        getAPPS();
+                        break;
                 }
             }
         });
+    }
+
+    private void getAPPS() {
+//        OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在获取软件列表...");
+            final HttpSubscriber subscriber = new HttpSubscriber();
+            String version = SystemBrightUtils.getCurrentVersion(this);
+            subscriber.getApps(this, version, new OnResultListener<List<SoftApp>>() {
+
+                @Override
+                public void onSuccess(List<SoftApp> result) {
+
+                    if (result.size()>0){
+                        showAppDataDialog(result);
+                    }
+                }
+
+                @Override
+                public void onFault(int code, String errorMsg) {
+                    toastSpeak(errorMsg);
+                }
+            });
+    }
+
+    /**app版本选择*/
+    private void showAppDataDialog(final List<SoftApp> result) {
+        Intent intent = new Intent(this,UpdateAppActivity.class);
+        intent.putExtra("SoftApp", (Serializable) result);
+        startActivity(intent);
     }
 
     private Headers saveHeaders;

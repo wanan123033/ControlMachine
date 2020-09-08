@@ -85,6 +85,13 @@ public class UpdateAppActivity extends BaseTitleActivity {
      */
     private void updateApp(String updateVersion,String auCode){
         downLoadProgressDialog = new DownLoadProgressDialog(this);
+        downLoadProgressDialog.setCancelClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                downloadUtils.stopDown(downLoadProgressDialog.getDownFileName());
+                downLoadProgressDialog.dismissDialog();
+            }
+        });
         //UL39Y5
         final HttpSubscriber subscriber = new HttpSubscriber();
         String version = SystemBrightUtils.getCurrentVersion(this);

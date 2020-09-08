@@ -134,7 +134,7 @@ public class CommonUtils {
     public static String getIp() {
         String ipAddress = SettingHelper.getSystemSetting().getServerIp();
         if (TextUtils.isEmpty(ipAddress)) {
-            ipAddress = "http://syn3y6.natappfree.cc/app/";
+            ipAddress = "https://api.soft.fplcloud.com";
         }
         if (!ipAddress.startsWith("http")) {
             ipAddress = "http://" + ipAddress + "/app/";

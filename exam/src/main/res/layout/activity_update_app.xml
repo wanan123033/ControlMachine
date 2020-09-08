@@ -5,16 +5,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".activity.data.UpdateAppActivity">
-    <!--<TextView-->
-        <!--android:id="@+id/tv_setting"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="30dp"-->
-        <!--android:layout_marginTop="15dp"-->
-        <!--android:text="软件更新"-->
-        <!--android:textColor="@color/black"-->
-        <!--android:textSize="18sp"-->
-        <!--android:gravity="center"-->
-         <!--/>-->
 
         <LinearLayout
             android:id="@+id/item_view_head"

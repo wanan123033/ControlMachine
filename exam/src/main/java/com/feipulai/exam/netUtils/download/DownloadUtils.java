@@ -13,6 +13,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -33,6 +35,8 @@ public class DownloadUtils {
     private File mFile;
     private Thread mThread;
     private String mPath; //下载到本地的路径
+    private List<String> stopList = new ArrayList<>();
+    private List<String> downList = new ArrayList<>();
 
     public DownloadUtils() {
         if (mApi == null) {
@@ -41,7 +45,17 @@ public class DownloadUtils {
         }
     }
 
-    public void downloadFile(String url, String fileName, final DownloadListener downloadListener) {
+    public void stopDown(String fileName) {
+        if (downList.contains(fileName)) {
+            stopList.add(fileName);
+        }
+        if (mApi != null)
+            mApi = null;
+        if (mCall != null)
+            mCall = null;
+    }
+
+    public void downloadFile(String url, final String fileName, final DownloadListener downloadListener) {
         File targetFile = new File(DOWNLOAD_PATH);
         if (!targetFile.exists()) {
             targetFile.mkdirs();
@@ -59,6 +73,7 @@ public class DownloadUtils {
             Log.e(TAG, "download: 下载接口为空了");
             return;
         }
+        downList.add(fileName);
         mCall = mApi.download(url);
         mCall.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -77,6 +92,7 @@ public class DownloadUtils {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                downList.remove(fileName);
                 downloadListener.onFailure("网络错误！");
             }
         });
