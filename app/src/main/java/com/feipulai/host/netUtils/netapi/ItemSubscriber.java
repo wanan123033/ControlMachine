@@ -19,6 +19,7 @@ import com.feipulai.host.bean.ItemBean;
 import com.feipulai.host.bean.RoundResultBean;
 import com.feipulai.host.bean.StudentBean;
 import com.feipulai.host.bean.UploadResults;
+import com.feipulai.host.bean.UserPhoto;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
@@ -38,6 +39,7 @@ import com.ww.fpl.libarcface.util.ConfigUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -360,6 +362,23 @@ public class ItemSubscriber {
                 if (onRequestEndListener != null) {
                     onRequestEndListener.onFault(UPLOAD_BIZ);
                 }
+            }
+        }));
+    }
+    public void netSb(String photoData, final OnRequestEndListener onRequestEndListener){
+        Map<String,String> params = new HashMap<>();
+        params.put("photoData",photoData);
+        Observable<HttpResult<UserPhoto>> observable = HttpManager.getInstance().getHttpApi().netSh("bearer " + MyApplication.TOKEN,
+                CommonUtils.encryptQuery( "8001", params));
+        HttpManager.getInstance().toSubscribe(observable,new RequestSub<UserPhoto>(new OnResultListener<UserPhoto>() {
+            @Override
+            public void onSuccess(UserPhoto result) {
+                onRequestEndListener.onRequestData(result);
+            }
+
+            @Override
+            public void onFault(int code, String errorMsg) {
+                onRequestEndListener.onFault(8001);
             }
         }));
     }
