@@ -1,5 +1,6 @@
 package com.feipulai.exam.activity.MiddleDistanceRace;
 
+import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
@@ -12,6 +13,7 @@ import com.feipulai.exam.activity.MiddleDistanceRace.bean.GroupPrintBean;
 import com.feipulai.exam.activity.MiddleDistanceRace.bean.RaceResultBean;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.GroupItem;
@@ -64,7 +66,7 @@ public class MiddlePrintUtil {
         List<GroupPrintBean> totalResult = new ArrayList<>();
 
         for (RaceResultBean resultBean : raceResultBean2s
-                ) {
+        ) {
             int lastResult = Integer.parseInt(TextUtils.isEmpty(resultBean.getResults()[2]) ? "0" : resultBean.getResults()[2]);
             String lastResultText;
             if (carryMode == 0) {
@@ -96,7 +98,7 @@ public class MiddlePrintUtil {
         PrinterManager.getInstance().print(printTime + "\n");
 
         for (GroupPrintBean groupPrintBean : totalResult
-                ) {
+        ) {
             PrinterManager.getInstance().print(title);
             PrinterManager.getInstance().print("道次:" + groupPrintBean.getTrackNo());
             PrinterManager.getInstance().print("考  号: " + groupPrintBean.getStudentCode());
@@ -125,7 +127,7 @@ public class MiddlePrintUtil {
         }
         //更新数据库中打印时间
         for (RoundResult roundresult : roundResults
-                ) {
+        ) {
             roundresult.setPrintTime(printTimeLong);
         }
         DBManager.getInstance().updateRoundResults(roundResults);
@@ -138,7 +140,11 @@ public class MiddlePrintUtil {
      * @param digital
      * @param carryMode
      */
-    public static void print2(GroupItemBean groupItemBean, int digital, int carryMode) {
+    public static void print2(Context context, GroupItemBean groupItemBean, int digital, int carryMode) {
+        if (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4) {
+            InteractUtils.printA4Result(context, groupItemBean.getGroup());
+            return;
+        }
         Date date = Calendar.getInstance().getTime();
         String printTime = TestConfigs.df.format(date);
         String printTimeLong = date.getTime() + "";
@@ -164,7 +170,7 @@ public class MiddlePrintUtil {
         List<GroupPrintBean> totalResult = new ArrayList<>();
         List<RoundResult> roundResults = new ArrayList<>();
         for (GroupItem groupItem : groups
-                ) {
+        ) {
             Student student = DBManager.getInstance().queryStudentByStuCode(groupItem.getStudentCode());
             RoundResult result = DBManager.getInstance().queryResultByStudentCode(groupItem.getStudentCode(), groupItem.getItemCode(), groupItemBean.getGroup().getId());
 
@@ -201,7 +207,7 @@ public class MiddlePrintUtil {
         PrinterManager.getInstance().print(printTime + "\n");
 
         for (GroupPrintBean groupPrintBean : totalResult
-                ) {
+        ) {
             PrinterManager.getInstance().print(title);
             PrinterManager.getInstance().print("道次:" + groupPrintBean.getTrackNo());
             PrinterManager.getInstance().print("考  号: " + groupPrintBean.getStudentCode());
@@ -231,7 +237,7 @@ public class MiddlePrintUtil {
 
         //更新数据库中打印时间
         for (RoundResult roundresult : roundResults
-                ) {
+        ) {
             roundresult.setPrintTime(printTimeLong);
         }
         DBManager.getInstance().updateRoundResults(roundResults);
