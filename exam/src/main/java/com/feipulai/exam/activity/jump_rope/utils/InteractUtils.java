@@ -433,8 +433,8 @@ public class InteractUtils {
         StringBuilder groupName = new StringBuilder();
         groupName.append(group.getGroupType() == Group.MALE ? "男子" :
                 (group.getGroupType() == Group.FEMALE ? "女子" : "男女混合"))
-                .append(TestConfigs.sCurrentItem.getItemName())
                 .append(group.getSortName())
+                .append(TestConfigs.sCurrentItem.getItemName())
                 .append(String.format("第%1$d组", group.getGroupNo()));
         printBean.setPrintHand(groupName.toString());
         printBean.setPrintTableHand(setting.getTableString());
@@ -459,7 +459,7 @@ public class InteractUtils {
                         codeEncrypt += roundResult.getResult();
                         break;
                     } else {
-                        laseResultMap.put(student, "X");
+                        laseResultMap.put(student, getPrintResultState(roundResult));
                     }
                 }
             } else {
@@ -467,7 +467,12 @@ public class InteractUtils {
             }
         }
         if (TextUtils.isEmpty(printBean.getPrintHandRight())) {
-            printBean.setPrintHandRight("开始时间：" + DateUtil.formatTime2(startTime, "yyyy/MM/dd  HH:mm:ss"));
+            if (startTime == 0) {
+                printBean.setPrintHandRight("");
+            } else {
+                printBean.setPrintHandRight("开始时间：" + DateUtil.formatTime2(startTime, "yyyy/MM/dd  HH:mm:ss"));
+            }
+
         }
         List<PrintBean.PrintDataBean> dataBeanList = new ArrayList<>();
         // 每个人的成绩,并打印
@@ -501,7 +506,7 @@ public class InteractUtils {
         String codeData = codeEncrypt + "?" + fileName + "?" + getDeviceId(context);
 
         printBean.setCodeData(EncryptUtil.setEncryptString(PrintBean.ENCRY_KEY, codeData));
-        LogUtil.logDebugMessage(EncryptUtil.setDecodeData(printBean.getCodeData(),new SecretKeySpec(PrintBean.ENCRY_KEY.getBytes(), "AES") ));
+        LogUtil.logDebugMessage(EncryptUtil.setDecodeData(printBean.getCodeData(), new SecretKeySpec(PrintBean.ENCRY_KEY.getBytes(), "AES")));
         LogUtil.logDebugMessage("A4打印信息:" + printBean.toString());
         new PrintA4Util(context).createPrintFile(printBean, MyApplication.PATH_PDF_IMAGE, fileName);
         HpPrintManager.getInstance(context).print(MyApplication.PATH_PDF_IMAGE + fileName + ".pdf");
@@ -524,19 +529,35 @@ public class InteractUtils {
     }
 
     private static String getPrintResultState(RoundResult roundResult) {
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+            switch (roundResult.getResultState()) {
+                case 1:
+                    return ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult(), false);
+                case 2:
+                    return "DQ";
 
-        switch (roundResult.getResultState()) {
-            case RoundResult.RESULT_STATE_NORMAL:
-                return ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult(), false);
-            case RoundResult.RESULT_STATE_FOUL:
-                return "X";
-            case RoundResult.RESULT_STATE_BACK:
-                return roundResult.getResult() == 0 ? "中退" : ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult(), false) + "[中退]";
-            case RoundResult.RESULT_STATE_WAIVE:
-                return roundResult.getResult() == 0 ? "放弃" : ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult(), false) + "[放弃]";
-            default:
-                return "";
+                case 3:
+                    return "DNF";
+                case 4:
+                    return "DNS";
+                case 5:
+                    return "DT";
+            }
+        } else {
+            switch (roundResult.getResultState()) {
+                case RoundResult.RESULT_STATE_NORMAL:
+                    return ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult(), false);
+                case RoundResult.RESULT_STATE_FOUL:
+                    return "X";
+                case RoundResult.RESULT_STATE_BACK:
+                    return roundResult.getResult() == 0 ? "中退" : ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult(), false) + "[中退]";
+                case RoundResult.RESULT_STATE_WAIVE:
+                    return roundResult.getResult() == 0 ? "放弃" : ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult(), false) + "[放弃]";
+                default:
+                    return "";
+            }
         }
+        return ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult(), false);
     }
 
     /**
