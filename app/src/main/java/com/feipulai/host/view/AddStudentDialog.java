@@ -13,6 +13,7 @@ import android.widget.Spinner;
 
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.host.R;
+import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.BaseEvent;
 import com.feipulai.host.config.EventConfigs;
 import com.feipulai.host.config.TestConfigs;
@@ -110,15 +111,24 @@ public class AddStudentDialog {
             student.setStudentName(editStuName.getText().toString().trim());
             student.setSex(sex);
             // 插入学生信息
-            DBManager.getInstance().insertStudent(student);
+            if (SettingHelper.getSystemSetting().isNetCheckTool()){
+
+            }else {
+                DBManager.getInstance().insertStudent(student);
+            }
 
         }
         StudentItem studentItem = new StudentItem();
         studentItem.setStudentCode(editStuCode.getText().toString());
         studentItem.setItemCode(TestConfigs.getCurrentItemCode());
         studentItem.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
-        DBManager.getInstance().insertStudentItem(studentItem);
-        ToastUtils.showShort("考生添加成功");
+        if (SettingHelper.getSystemSetting().isNetCheckTool()){
+
+        }else {
+            DBManager.getInstance().insertStudentItem(studentItem);
+            ToastUtils.showShort("考生添加成功");
+        }
+
         EventBus.getDefault().post(new BaseEvent(student, EventConfigs.TEMPORARY_ADD_STU));
         dismissDialog();
     }
@@ -130,8 +140,12 @@ public class AddStudentDialog {
      * @param isCanceledOnTouchOutside 收点击dialog 之外 dialog消失
      */
     public void showDialog(Student student, Boolean isCanceledOnTouchOutside) {
-        if (student == null)
+        if (student == null) {
+            if (dialog != null && !dialog.isShowing()) {
+                dialog.show();
+            }
             return;
+        }
         editStuCode.setText(student.getStudentCode());
         editStuName.setText(student.getStudentName());
         spStuSex.setSelection(student.getSex());

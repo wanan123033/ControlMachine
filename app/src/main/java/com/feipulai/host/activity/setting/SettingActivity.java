@@ -263,7 +263,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
      * 绑定服务器
      */
     private void bind() {
-        String url = mEtSeverIp.getText().toString().trim() + "/app/";
+        String url = mEtSeverIp.getText().toString().trim() + "/";
         if (!url.startsWith("http")) {//修改IP
             url = "http://" + url;
         }

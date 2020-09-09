@@ -1,6 +1,8 @@
 package com.feipulai.host.netUtils;
 
 
+import android.util.Log;
+
 import com.feipulai.host.netUtils.netapi.HttpApi;
 
 import java.io.IOException;
@@ -67,7 +69,7 @@ public class HttpManager {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override
             public void log(String message) {
-//                Logger.d(message);
+                Log.d("TAG",message);
             }
 
 
