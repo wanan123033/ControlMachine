@@ -34,22 +34,22 @@ public interface HttpApi {
     /**
      * 设备绑定接口
      */
-    String DEVICE_BINDING_ACTION = "/run/deviceBind";
+    String DEVICE_BINDING_ACTION = "/app/run/deviceBind";
     /**
      * 获取项目信息接口
      */
-    String GET_ITEM_ALL_ACTION = " /run/downItemInfo";
+    String GET_ITEM_ALL_ACTION = "/app/run/downItemInfo";
     /**
      * 分页获取学生信息
      */
-    String GET_STUDENT_ACTION = "/run/downSiteScheduleItemStudent";
+    String GET_STUDENT_ACTION = "/app/run/downSiteScheduleItemStudent";
     /**
      * 成绩上传接口
      */
-    String UPLOAD_RESULT_ACTION = "/run/uploadStudentResult";
+    String UPLOAD_RESULT_ACTION = "/app/run/uploadStudentResult";
 
-    String GET_SOFT_APP = "/public/checkSoftwareVersion";
-    String UPDATE_SOFT_APP = "/public/updateSoftware";
+    String GET_SOFT_APP = "/app/public/checkSoftwareVersion";
+    String UPDATE_SOFT_APP = "/app/public/updateSoftware";
 
     @POST(DEVICE_BINDING_ACTION)
     @Headers("Content-Type:application/json;charset=UTF-8")

@@ -128,6 +128,7 @@ public class BaseCatupeFragment extends BaseFragment implements PreviewCallback 
                     .map(new Function<File, Student>() {
                         @Override
                         public Student apply(File file) throws Exception {
+                            //插入数据库并导入到指定位置
                             student.setPortrait(MyApplication.PATH_IMAGE+File.separator+student.getStudentCode() + ".jpg");
                             DBManager.getInstance().insertStudent(student);
                             doRegister(file);
@@ -145,7 +146,7 @@ public class BaseCatupeFragment extends BaseFragment implements PreviewCallback 
                 public void onNext(Student o) {
                     ToastUtils.showShort("图片已保存");
                     if (compareListener != null)
-                    compareListener.compareStu(student);
+                        compareListener.compareStu(student);
                 }
 
                 @Override
