@@ -38,6 +38,7 @@
         <item>体温导出</item>
         <item>人脸特征检入</item>
         <item>备份视频</item>
+        <item>软件更新</item>
     </array>
 
     <array name="check_tool">

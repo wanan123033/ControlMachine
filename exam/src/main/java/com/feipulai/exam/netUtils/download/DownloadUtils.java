@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
-
 import com.feipulai.exam.netUtils.URLConstant;
 
 import java.io.File;
@@ -14,6 +13,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -27,13 +28,15 @@ import retrofit2.Response;
 
 public class DownloadUtils {
     private static final String TAG = "DownloadUtil";
-    private static final String DOWNLOAD_PATH = Environment.getExternalStorageDirectory() + "/DownloadFile";
+    private static final String DOWNLOAD_PATH = Environment.getExternalStorageDirectory() + "/DownloadFile/";
     //视频下载相关
     protected ApiInterface mApi;
     private Call<ResponseBody> mCall;
     private File mFile;
     private Thread mThread;
     private String mPath; //下载到本地的路径
+    private List<String> stopList = new ArrayList<>();
+    private List<String> downList = new ArrayList<>();
 
     public DownloadUtils() {
         if (mApi == null) {
@@ -42,52 +45,58 @@ public class DownloadUtils {
         }
     }
 
-    public void downloadFile(String url, final DownloadListener downloadListener) {
-        //通过Url得到保存到本地的文件名
-        String name = url;
-        if (FileUtils.createOrExistsDir(DOWNLOAD_PATH)) {
-            int i = name.lastIndexOf('/');//一定是找最后一个'/'出现的位置
-            if (i != -1) {
-                name = name.substring(i);
-                mPath = DOWNLOAD_PATH +
-                        name;
+    public void stopDown(String fileName) {
+        if (downList.contains(fileName)) {
+            stopList.add(fileName);
+        }
+        if (mApi != null)
+            mApi = null;
+        if (mCall != null)
+            mCall = null;
+    }
+
+    public void downloadFile(String url, final String fileName, final DownloadListener downloadListener) {
+        File targetFile = new File(DOWNLOAD_PATH);
+        if (!targetFile.exists()) {
+            targetFile.mkdirs();
+        }
+        mPath = DOWNLOAD_PATH + fileName;
+        mFile = new File(mPath);
+        if (mFile.exists()) {//文件不存在则新建
+            try {
+                mFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
-        if (TextUtils.isEmpty(mPath)) {
-            Log.e(TAG, "downloadVideo: 存储路径为空了");
+        if (mApi == null) {
+            Log.e(TAG, "download: 下载接口为空了");
             return;
         }
-        //建立一个文件
-        mFile = new File(mPath);
-        if (!FileUtils.isFileExists(mFile) && FileUtils.createOrExistsFile(mFile)) {
-            if (mApi == null) {
-                Log.e(TAG, "download: 下载接口为空了");
-                return;
+        downList.add(fileName);
+        mCall = mApi.download(url);
+        mCall.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NonNull final Call<ResponseBody> call, @NonNull final Response<ResponseBody> response) {
+                //下载文件放在子线程
+                mThread = new Thread() {
+                    @Override
+                    public void run() {
+                        super.run();
+                        //保存到本地
+                        writeFile2Disk(response, mFile, downloadListener);
+                    }
+                };
+                mThread.start();
             }
-            mCall = mApi.download(url);
-            mCall.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(@NonNull final Call<ResponseBody> call, @NonNull final Response<ResponseBody> response) {
-                    //下载文件放在子线程
-                    mThread = new Thread() {
-                        @Override
-                        public void run() {
-                            super.run();
-                            //保存到本地
-                            writeFile2Disk(response, mFile, downloadListener);
-                        }
-                    };
-                    mThread.start();
-                }
 
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    downloadListener.onFailure("网络错误！");
-                }
-            });
-        } else {
-            downloadListener.onFinish(mPath);
-        }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                downList.remove(fileName);
+                downloadListener.onFailure("网络错误！");
+            }
+        });
+
     }
 
     private void writeFile2Disk(Response<ResponseBody> response, File file, DownloadListener downloadListener) {

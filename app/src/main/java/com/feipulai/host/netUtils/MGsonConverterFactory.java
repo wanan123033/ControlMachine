@@ -125,7 +125,7 @@ public class MGsonConverterFactory extends Converter.Factory {
         public T convert(ResponseBody value) throws IOException {
             try {
                 String httpValue = value.string();
-                Logger.i("string====>");
+                Logger.i("string====>"+httpValue);
 
                 HttpResult<Object> httpResult = new Gson().fromJson(httpValue, HttpResult.class);
                 if (httpResult.getState() != 0) {

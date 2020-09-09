@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -33,10 +35,12 @@ import com.feipulai.common.dbutils.FileSelectActivity;
 import com.feipulai.common.dbutils.FileSelectAdapter;
 import com.feipulai.common.dbutils.UsbFileAdapter;
 import com.feipulai.common.exl.ExlListener;
+import com.feipulai.common.utils.ActivityUtils;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.FileUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.utils.SystemBrightUtils;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.common.view.dialog.EditDialog;
@@ -47,7 +51,9 @@ import com.feipulai.exam.activity.LoginActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.adapter.IndexTypeAdapter;
+import com.feipulai.exam.bean.SoftApp;
 import com.feipulai.exam.bean.TypeListBean;
+import com.feipulai.exam.bean.UpdateApp;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
@@ -60,6 +66,11 @@ import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.exl.ResultExlWriter;
 import com.feipulai.exam.exl.StuItemExLReader;
 import com.feipulai.exam.exl.ThermometerExlWriter;
+import com.feipulai.exam.netUtils.OnResultListener;
+import com.feipulai.exam.netUtils.download.DownLoadProgressDialog;
+import com.feipulai.exam.netUtils.download.DownloadListener;
+import com.feipulai.exam.netUtils.download.DownloadUtils;
+import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.FileUtils;
 import com.feipulai.exam.utils.ImageUtil;
@@ -86,6 +97,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.Common
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -162,7 +174,7 @@ public class DataManageActivity
         String[] typeName = getResources().getStringArray(R.array.data_admin);
         int[] typeRes = new int[]{R.mipmap.icon_data_import, R.mipmap.icon_group_import, R.mipmap.icon_data_down, R.mipmap.icon_position_import, R.mipmap.icon_position_down, R.mipmap.icon_delete_position
                 , R.mipmap.icon_data_backup, R.mipmap.icon_data_restore, R.mipmap.icon_data_look, R.mipmap.icon_data_clear, R.mipmap.icon_result_upload,
-                R.mipmap.icon_result_import, R.mipmap.icon_template_export, R.mipmap.icon_thermometer, R.mipmap.icon_result_import, R.mipmap.icon_position_down, R.mipmap.icon_data_backup};
+                R.mipmap.icon_result_import, R.mipmap.icon_template_export, R.mipmap.icon_thermometer, R.mipmap.icon_result_import, R.mipmap.icon_position_down, R.mipmap.icon_data_backup, R.mipmap.icon_data_backup};
         for (int i = 0; i < typeName.length; i++) {
             TypeListBean bean = new TypeListBean();
             bean.setName(typeName[i]);
@@ -351,10 +363,60 @@ public class DataManageActivity
 //                        intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
 //                        startActivityForResult(intent, REQUEST_CODE_BACKUP_VIDEO);
                         break;
+                    case 17://软件更新
+                        getAPPS();
+                        break;
+                    default:
+                        break;
                 }
             }
         });
     }
+
+    private void getAPPS() {
+//        OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在获取软件列表...");
+        final HttpSubscriber subscriber = new HttpSubscriber();
+        String version = SystemBrightUtils.getCurrentVersion(this);
+        subscriber.getApps(this, version, new OnResultListener<List<SoftApp>>() {
+
+            @Override
+            public void onSuccess(List<SoftApp> result) {
+
+                if (result.size()>0){
+                    showAppDataDialog(result);
+                }
+            }
+
+            @Override
+            public void onFault(int code, String errorMsg) {
+                toastSpeak(errorMsg);
+            }
+        });
+    }
+
+    /**app版本选择*/
+    private void showAppDataDialog(final List<SoftApp> result) {
+        Intent intent = new Intent(this,UpdateAppActivity.class);
+        intent.putExtra("SoftApp", (Serializable) result);
+        startActivity(intent);
+//        String [] exemType = new String[result.size()];
+//        for (int i = 0;i< result.size() ;i++) {
+//            SoftApp softApp = result.get(i);
+//            Log.i("softApp",result.get(i).toString());
+//            exemType[i] = softApp.getSoftwareName()+softApp.getRemark()+softApp.getVersion();
+//        }
+//
+//
+//        new AlertDialog.Builder(this).setTitle("选择下载App版本")
+//                .setItems(exemType, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        showAuthCodeDialog(result.get(which).getVersion());
+//                    }
+//                }).create().show();
+    }
+
+
 
     private int choice;
 

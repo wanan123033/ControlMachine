@@ -1,6 +1,7 @@
 package com.feipulai.exam.netUtils;
 
 import com.feipulai.exam.netUtils.netapi.HttpApi;
+import com.feipulai.exam.netUtils.netapi.SSLSocketClient;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -42,6 +43,9 @@ public class HttpManager {
     private HttpManager() {
         //手动创建一个OkHttpClient并设置超时时间
         okHttpBuilder = new OkHttpClient.Builder();
+//        okHttpBuilder.sslSocketFactory(SSLSocketClient.getSSLSocketFactory());
+//        okHttpBuilder.hostnameVerifier(SSLSocketClient.getHostnameVerifier());
+
         /**
          * 设置头信息
          */

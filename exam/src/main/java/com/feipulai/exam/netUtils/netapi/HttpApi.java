@@ -11,16 +11,20 @@ import com.feipulai.exam.bean.GroupBean;
 import com.feipulai.exam.bean.ItemBean;
 import com.feipulai.exam.bean.RoundScoreBean;
 import com.feipulai.exam.bean.ScheduleBean;
+import com.feipulai.exam.bean.SoftApp;
 import com.feipulai.exam.bean.StudentBean;
+import com.feipulai.exam.bean.UpdateApp;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.bean.UserBean;
 import com.feipulai.exam.netUtils.HttpResult;
 import com.feipulai.exam.netUtils.ResponseParame;
+import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Map;
-
 import io.reactivex.Observable;
+import okhttp3.RequestBody;
+import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
@@ -68,7 +72,8 @@ public interface HttpApi {
      */
     String GET_RESULT_ACTION = "/run/checkTerminalStudentSingleTest";
 
-
+    String GET_SOFT_APP = "/public/checkSoftwareVersion";
+    String UPDATE_SOFT_APP = "/public/updateSoftware";
 
     @POST(LOGIN_ACTION)
     @FormUrlEncoded
@@ -101,4 +106,13 @@ public interface HttpApi {
     @POST(GET_RESULT_ACTION)
     @Headers("Content-Type:application/json;charset=UTF-8")
     Observable<HttpResult<RoundScoreBean>> getRoundScore(@Header("Authorization")String token, @Body ResponseParame data);
+
+    @POST(GET_SOFT_APP)
+    @Headers("Content-Type:application/json;charset=UTF-8")
+    Observable<HttpResult<List<SoftApp>>> getSoftApp(@Body RequestBody body);
+
+    @POST(UPDATE_SOFT_APP)
+    @Headers("Content-Type:application/json;charset=UTF-8")
+    Observable<HttpResult<UpdateApp>> updateSoftApp(@Body RequestBody body);
+
 }

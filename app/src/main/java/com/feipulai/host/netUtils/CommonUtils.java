@@ -125,6 +125,11 @@ public class CommonUtils {
 //        respost.setSign(EncryptUtil.getSignData(signMap));
         Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
         respost.setSign(EncryptUtil.getSignData(gson.toJson(object)));
+        if (bizType.equals("7001")){
+            respost.setData(gson.toJson(object));
+        }else {
+            respost.setData(EncryptUtil.setEncryptData(object));
+        }
         respost.setData(EncryptUtil.setEncryptData(object));
         respost.setRequestTime(String.valueOf(System.currentTimeMillis()));
         Logger.i("json:============="+respost.toString());
@@ -134,10 +139,10 @@ public class CommonUtils {
     public static String getIp() {
         String ipAddress = SettingHelper.getSystemSetting().getServerIp();
         if (TextUtils.isEmpty(ipAddress)) {
-            ipAddress = "http://syn3y6.natappfree.cc/app/";
+            ipAddress = "https://api.soft.fplcloud.com";
         }
         if (!ipAddress.startsWith("http")) {
-            ipAddress = "http://" + ipAddress + "/app/";
+            ipAddress = "http://" + ipAddress + "/";
         }
         return ipAddress;
     }

@@ -16,7 +16,9 @@ public class MyApplication extends MultiDexApplication {
     public static final String PATH_SPECIFICATION = FileUtil.PATH_BASE + "TC/";
     public static final String PATH_IMAGE = FileUtil.PATH_BASE + "TC_IMAGE/";
     public static final String LOG_PATH_NAME = "TC_LOGGER";
-
+    public static final String SOFTWAREUUID = "FPL_KS_2020_09_01_000000";//软件识别码
+    public static final String HARDWAREUUID = "FPL_ANDROID_KS_2020_09_01_000000";//硬件识别码
+    public static final String DEVICECODE = "111";//硬件识别码
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
