@@ -38,7 +38,7 @@ public interface HttpApi {
     /**
      * 获取项目信息接口
      */
-    String GET_ITEM_ALL_ACTION = " /run/downItemInfo";
+    String GET_ITEM_ALL_ACTION = "/run/downItemInfo";
     /**
      * 分页获取学生信息
      */
@@ -48,8 +48,8 @@ public interface HttpApi {
      */
     String UPLOAD_RESULT_ACTION = "/run/uploadStudentResult";
 
-    String GET_SOFT_APP = "/public/checkSoftwareVersion";
-    String UPDATE_SOFT_APP = "/public/updateSoftware";
+    String GET_SOFT_APP = "/app/public/checkSoftwareVersion";
+    String UPDATE_SOFT_APP = "/app/public/updateSoftware";
 
     @POST(DEVICE_BINDING_ACTION)
     @Headers("Content-Type:application/json;charset=UTF-8")

@@ -15,8 +15,10 @@ import com.feipulai.common.utils.ImageUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
+import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.Student;
+import com.feipulai.host.entity.StudentItem;
 import com.lgh.uvccamera.UVCCameraProxy;
 import com.lgh.uvccamera.callback.ConnectCallback;
 import com.lgh.uvccamera.callback.PreviewCallback;
@@ -68,6 +70,8 @@ public class BaseCatupeFragment extends BaseFragment implements PreviewCallback 
             @Override
             public void onGranted(UsbDevice usbDevice, boolean granted) {
                 if (granted) {
+                    mUVCCamera.connectDevice(usbDevice);
+                }else {
                     mUVCCamera.connectDevice(usbDevice);
                 }
             }
@@ -128,8 +132,15 @@ public class BaseCatupeFragment extends BaseFragment implements PreviewCallback 
                     .map(new Function<File, Student>() {
                         @Override
                         public Student apply(File file) throws Exception {
+                            //插入数据库并导入到指定位置
+
                             student.setPortrait(MyApplication.PATH_IMAGE+File.separator+student.getStudentCode() + ".jpg");
                             DBManager.getInstance().insertStudent(student);
+                            StudentItem studentItem = new StudentItem();
+                            studentItem.setStudentCode(student.getStudentCode());
+                            studentItem.setItemCode(TestConfigs.getCurrentItemCode());
+                            studentItem.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
+                            DBManager.getInstance().insertStudentItem(studentItem);
                             doRegister(file);
                             return student;
                         }
@@ -145,7 +156,7 @@ public class BaseCatupeFragment extends BaseFragment implements PreviewCallback 
                 public void onNext(Student o) {
                     ToastUtils.showShort("图片已保存");
                     if (compareListener != null)
-                    compareListener.compareStu(student);
+                        compareListener.compareStu(student);
                 }
 
                 @Override

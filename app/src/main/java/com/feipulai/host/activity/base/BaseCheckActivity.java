@@ -184,10 +184,10 @@ public abstract class BaseCheckActivity
             InteractUtils.toastSpeak(this, "该考生不存在");
             if (SettingHelper.getSystemSetting().isNetCheckTool()){
                 showAddHint(student);
+                //TODO 同步更新数据与头像信息
+                Intent intent = new Intent(this, UpdateService.class);
+                startService(intent);
             }
-            //TODO 同步更新数据与头像信息
-            Intent intent = new Intent(this, UpdateService.class);
-            startService(intent);
             return;
         }
         LogUtil.logDebugMessage("检入考生：" + student.toString());

@@ -51,6 +51,7 @@ import com.ww.fpl.libarcface.util.face.RequestFeatureStatus;
 import com.ww.fpl.libarcface.widget.FaceRectView;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -121,7 +122,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
     });
     private SweetAlertDialog uploadDataDialog;
     private boolean isLodingServer = false;
-    private boolean isNetWork;
+    private boolean isNetWork = false;
 
     @Override
     protected int getLayoutId() {
@@ -449,45 +450,49 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                 }
             }
         }
-        if (isNetWork){
+        if(isNetWork){
             isNetWork = false;
-            Observable.just("sss").map(new Function<String, Object>() {
-                @Override
-                public Object apply(String s) throws Exception {
-                    YuvImage image = new YuvImage(yuv, ImageFormat.NV21,mWidth,mHeight,null);
-                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                    image.compressToJpeg(new Rect(0,0,mWidth,mHeight),100,bos);
-                    bos.flush();
-                    String sss = Base64.encodeToString(bos.toByteArray(),Base64.DEFAULT);
-                    ItemSubscriber subscriber = new ItemSubscriber();
-                    subscriber.netSb(sss, new OnRequestEndListener() {
-                        @Override
-                        public void onSuccess(int bizType) {
+            isStartFace = false;
+            ItemSubscriber itemSubscriber = new ItemSubscriber();
+            if (mFaceFeature != null) {
+                itemSubscriber.setOnRequestEndListener(new OnRequestEndListener() {
+                    @Override
+                    public void onSuccess(int bizType) {
 
-                        }
+                    }
 
-                        @Override
-                        public void onFault(int bizType) {
+                    @Override
+                    public void onFault(int bizType) {
+                        if (bizType == -1){
+                            isStartFace = false;
                             compareListener.compareStu(null);
+                        }else {
+                            isStartFace = true;
+                            retryRecognizeDelayed(faceId);
+                            ToastUtils.showShort("网络异常");
+                        }
+                    }
+
+                    @Override
+                    public void onRequestData(Object data) {
+                        isStartFace = false;
+                        isLodingServer = false;
+                        UserPhoto photo = (UserPhoto) data;
+                        if(TextUtils.isEmpty(photo.getStudentCode())){
+                            //新增学生
+                            compareListener.compareStu(null);
+                        }else {
+                            Student student = new Student();
+                            student.setStudentCode(photo.getStudentCode());
+                            compareListener.compareStu(student);
                         }
 
-                        @Override
-                        public void onRequestData(Object data) {
-                            UserPhoto photo = (UserPhoto) data;
-                            if(TextUtils.isEmpty(photo.getStudentCode())){
-                                compareListener.compareStu(null);
-                            }else {
-                                Student student = new Student();
-                                student.setStudentCode(photo.getStudentCode());
-                                compareListener.compareStu(student);
-                            }
-                        }
-                    });
-                    return new Object();
-                }
-            }).observeOn(Schedulers.io()).subscribe();
+
+                    }
+                });
+                itemSubscriber.sendFaceOnline("", "", Base64.encodeToString(mFaceFeature.getFeatureData(), Base64.DEFAULT));
+            }
         }
-
     }
 
     /**
@@ -581,7 +586,11 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
     private void compareResult() {
         if (compareResult1 == null && compareResult2 == null && compareResult3 == null || faceHelper == null) {
             requestFeatureStatusMap.put(faceId, RequestFeatureStatus.FAILED);
-            showAddHint();
+            if (SettingHelper.getSystemSetting().isNetCheckTool()) {
+                isNetWork = true;
+                isStartFace = true;
+                retryRecognizeDelayed(faceId);
+            }
             return;
         }
         if (compareResult1 != null && compareResult2 != null && compareResult3 != null) {
@@ -599,7 +608,6 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                     lastCompareResult = compareResult2;
                 }
             }
-
             compareResult1 = null;
             compareResult2 = null;
             compareResult3 = null;
@@ -613,15 +621,19 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                 compareListener.compareStu(student);
 //                isOpenCamera=false;
 				isStartFace = false;
+                isNetWork = false;
             } else {
                 hasTry++;
                 Logger.d("compareResult==>null");
                 if (hasTry < 3) {
                     faceHelper.setName(faceId, getString(R.string.recognize_failed_notice, ""));
+                    isStartFace = true;
+                    retryRecognizeDelayed(faceId);
                 } else {
                     hasTry = 0;
                     faceHelper.setName(faceId, getString(R.string.recognize_failed_notice, ""));
                     isOpenCamera = false;
+                    isStartFace = false;
 //                    compareListener.compareStu(null);
                     if (isLodingServer) {
                         compareListener.compareStu(null);
@@ -704,6 +716,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             public void run() {
                 if (SettingHelper.getSystemSetting().isNetCheckTool()){
                     isNetWork = true;
+                    isStartFace = true;
                     retryRecognizeDelayed(faceId);
                 }else {
                     getStudent();
@@ -739,8 +752,6 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 //                }
 //            }
 //        });
-
-
     }
 
     private void getStudent() {
