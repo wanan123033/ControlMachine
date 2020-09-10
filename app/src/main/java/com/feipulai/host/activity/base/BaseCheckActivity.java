@@ -148,11 +148,11 @@ public abstract class BaseCheckActivity
         transaction.commitAllowingStateLoss();// 提交更改
     }
     public void showAFR() {
-        initAFR();
         if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
             ToastUtils.showShort("未选择人脸识别检录功能");
             return;
         }
+        initAFR();
         if (afrFrameLayout == null) {
             return;
         }
