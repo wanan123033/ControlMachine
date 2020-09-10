@@ -121,7 +121,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
     private BasketBallRadioFacade facade;
     private long timerDate;
     private String startTime; //开始时间
-
+    private boolean startTest = true;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_group_basketball;
@@ -640,6 +640,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                 if (state == WAIT_CONFIRM || state == WAIT_BEGIN) {
                     ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
                     ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 1);
+                    startTest = false;
                 }
                 if (state != TESTING) {
                     tvResult.setText("");
@@ -855,7 +856,11 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
             for (int i = 0; i < resultList.size(); i++) {
                 if (resultList.get(i).getResultState() == -999) {
                     resultAdapter.setSelectPosition(i);
-                    roundNo = i + 1;
+                    if (startTest){
+                        roundNo = i + 1;
+                        startTest = false;
+                    }
+
                     resultAdapter.notifyDataSetChanged();
                     return true;
                 } else {

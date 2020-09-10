@@ -334,6 +334,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
     protected void onDestroy() {
         super.onDestroy();
         mHandler.removeCallbacks(null);
+        deviceManager.setRS232ResiltListener(null);
         deviceManager.close();
 //        if (runnable != null) {
 //            runnable = null;
