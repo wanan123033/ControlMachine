@@ -38,6 +38,7 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -261,33 +262,39 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
                     toastSpeak("已测试完成");
                     return;
                 }
+                LogUtils.operation("篮球投篮点击了等待发令...");
                 RunTimerManager.waitStart();
                 tvResult.setText("");
                 break;
             case R.id.txt_illegal_return:
                 RunTimerManager.illegalBack();
+                LogUtils.operation("篮球投篮点击了违规返回...");
                 break;
             case R.id.txt_run:
                 RunTimerManager.forceStart();
                 saved = false;
+                LogUtils.operation("篮球投篮点击了开始...");
                 break;
             case R.id.txt_add:
+                LogUtils.operation("篮球投篮点击了判罚加一...");
                 setPunish(1);
                 break;
             case R.id.txt_minus:
                 setPunish(-1);
+                LogUtils.operation("篮球投篮点击了判罚减一...");
                 break;
             case R.id.txt_stop_timing:
                 if (timer != null) {
                     timer.dispose();
                 }
                 RunTimerManager.stopRun();
+                LogUtils.operation("篮球投篮点击了结束...");
                 break;
             case R.id.tv_led_setting:
 
                 break;
             case R.id.tv_print:
-
+                LogUtils.operation("篮球投篮点击了打印...");
                 print();
                 break;
             case R.id.tv_confirm:
@@ -377,6 +384,7 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
     @Override
     public void getResult(RunTimerResult result) {
         Log.i("拦截：",result.toString());
+        LogUtils.operation("篮球投篮拦截："+result.toString());
         //根据折返点拦截次数更新投篮次数
         if (result.getTrackNum() == 1 && !txtRun.isEnabled()) {//投篮的拦截的道号必须设定为1道
             testResult = result.getOrder();//第几次
@@ -417,6 +425,7 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
 
     @Override
     public void changeState(final int testState) {
+        LogUtils.operation("篮球投篮状态..."+testState);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
