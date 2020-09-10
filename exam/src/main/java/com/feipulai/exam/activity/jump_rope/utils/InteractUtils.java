@@ -576,7 +576,7 @@ public class InteractUtils {
         mTvStudentCode.setText(student == null ? "" : student.getStudentCode());
         mTvStudentName.setText(student == null ? "" : student.getStudentName());
         mTvGender.setText(student == null ? "" : student.getSex() == 0 ? "男" : "女");
-        if (student == null || TextUtils.isEmpty(student.getPortrait())) {
+        if (student == null) {
             imgPortrait.setImageResource(R.mipmap.icon_head_photo);
         } else {
 //            imgPortrait.setImageBitmap(student.getBitmapPortrait());

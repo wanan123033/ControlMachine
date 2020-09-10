@@ -158,7 +158,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
         String[] typeName = getResources().getStringArray(R.array.data_admin);
         int[] typeRes = new int[]{R.mipmap.icon_data_import, R.mipmap.icon_data_down
                 , R.mipmap.icon_data_backup, R.mipmap.icon_data_restore, R.mipmap.icon_data_look, R.mipmap.icon_data_clear, R.mipmap.icon_result_upload,
-                R.mipmap.icon_result_import, R.mipmap.icon_template_export, R.mipmap.icon_position_import, R.mipmap.icon_position_down, R.mipmap.icon_position_down,R.mipmap.icon_position_down};
+                R.mipmap.icon_result_import, R.mipmap.icon_template_export, R.mipmap.icon_position_import, R.mipmap.icon_position_down, R.mipmap.icon_position_down, R.mipmap.icon_position_down};
         for (int i = 0; i < typeName.length; i++) {
             TypeListBean bean = new TypeListBean();
             bean.setName(typeName[i]);
@@ -307,28 +307,30 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
 
     private void getAPPS() {
 //        OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在获取软件列表...");
-            final HttpSubscriber subscriber = new HttpSubscriber();
-            String version = SystemBrightUtils.getCurrentVersion(this);
-            subscriber.getApps(this, version, new OnResultListener<List<SoftApp>>() {
+        final HttpSubscriber subscriber = new HttpSubscriber();
+        String version = SystemBrightUtils.getCurrentVersion(this);
+        subscriber.getApps(this, version, new OnResultListener<List<SoftApp>>() {
 
-                @Override
-                public void onSuccess(List<SoftApp> result) {
+            @Override
+            public void onSuccess(List<SoftApp> result) {
 
-                    if (result.size()>0){
-                        showAppDataDialog(result);
-                    }
+                if (result.size() > 0) {
+                    showAppDataDialog(result);
                 }
+            }
 
-                @Override
-                public void onFault(int code, String errorMsg) {
-                    toastSpeak(errorMsg);
-                }
-            });
+            @Override
+            public void onFault(int code, String errorMsg) {
+                toastSpeak(errorMsg);
+            }
+        });
     }
 
-    /**app版本选择*/
+    /**
+     * app版本选择
+     */
     private void showAppDataDialog(final List<SoftApp> result) {
-        Intent intent = new Intent(this,UpdateAppActivity.class);
+        Intent intent = new Intent(this, UpdateAppActivity.class);
         intent.putExtra("SoftApp", (Serializable) result);
         startActivity(intent);
     }
@@ -382,9 +384,10 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                         if (photoHeaders == null) {
                             photoHeaders = SharedPrefsUtil.loadFormSource(DataManageActivity.this, DownLoadPhotoHeaders.class);
                         }
-                        photoHeaders.setInit(Integer.valueOf(saveHeaders.get("PageNo")), Integer.valueOf(saveHeaders.get("BatchTotal")), saveHeaders.get("UploadTime"));
-                        SharedPrefsUtil.save(DataManageActivity.this, photoHeaders);
-                        if (photoHeaders.getPageNo() != photoHeaders.getBatchTotal()) {
+                        if (saveHeaders != null && !TextUtils.isEmpty(saveHeaders.get("BatchTotal"))) {
+                            photoHeaders.setInit(Integer.valueOf(saveHeaders.get("PageNo")), Integer.valueOf(saveHeaders.get("BatchTotal")), saveHeaders.get("UploadTime"));
+                            SharedPrefsUtil.save(DataManageActivity.this, photoHeaders);
+                            if (photoHeaders.getPageNo() != photoHeaders.getBatchTotal()) {
 //                            runOnUiThread(new Runnable() {
 //                                @Override
 //                                public void run() {
@@ -393,17 +396,21 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
 //                            });
 
 //                        } else {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    downLoadProgressDialog.setMaxProgress(Integer.valueOf(saveHeaders.get("BatchTotal")));
-                                    downLoadProgressDialog.setProgress(Integer.valueOf(saveHeaders.get("PageNo")));
-                                }
-                            });
-                            uploadPhotos(photoHeaders.getPageNo() + 1, uploadTime);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        downLoadProgressDialog.setMaxProgress(Integer.valueOf(saveHeaders.get("BatchTotal")));
+                                        downLoadProgressDialog.setProgress(Integer.valueOf(saveHeaders.get("PageNo")));
+                                    }
+                                });
+                                uploadPhotos(photoHeaders.getPageNo() + 1, uploadTime);
+                            }
+                            int isDismiss = photoHeaders.getPageNo() == photoHeaders.getBatchTotal() ? 1 : 0;
+                            HandlerUtil.sendMessage(myHandler, 0, isDismiss, fileName);
+                        } else {
+                            HandlerUtil.sendMessage(myHandler, 1, 1, "");
                         }
-                        int isDismiss = photoHeaders.getPageNo() == photoHeaders.getBatchTotal() ? 1 : 0;
-                        HandlerUtil.sendMessage(myHandler, 0, isDismiss, fileName);
+
                     }
 
                     @Override
@@ -416,11 +423,13 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
     @Override
     public void handleMessage(Message msg) {
         super.handleMessage(msg);
-        fileZipArchiver((String) msg.obj, msg.arg1 == 1);
+
         if (TextUtils.isEmpty(msg.obj.toString()) && msg.what == 1) {
             ToastUtils.showShort("服务访问失败");
             downLoadProgressDialog.dismissDialog();
 
+        } else {
+            fileZipArchiver((String) msg.obj, msg.arg1 == 1);
         }
     }
 

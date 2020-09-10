@@ -2,6 +2,7 @@ package com.feipulai.host.netUtils.download;
 
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.feipulai.common.utils.LogUtil;
@@ -112,10 +113,11 @@ public class DownloadUtils {
         OutputStream os = null;
         downloadListener.onResponse(response.headers());
         InputStream is = response.body().byteStream();
-        long totalLength ;
-        if (response.headers()!= null && response.headers().get("FileTotalSize")!= null){
-          totalLength =  Long.valueOf(response.headers().get("FileTotalSize"));
-        }else {
+        long totalLength;
+        if (response.headers() != null && response.headers().get("FileTotalSize") != null &&
+                TextUtils.equals(response.headers().get("FileTotalSize"), "0")) {
+            totalLength = Long.valueOf(response.headers().get("FileTotalSize"));
+        } else {
             totalLength = response.body().contentLength();
         }
         LogUtil.logDebugMessage("totalLength: " + totalLength);
@@ -136,20 +138,23 @@ public class DownloadUtils {
                 LogUtil.logDebugMessage("当前长度: " + currentLength);
                 LogUtil.logDebugMessage("当前进度: " + (int) (100 * currentLength / totalLength));
                 downloadListener.onProgress(file.getName(), (int) (100 * currentLength / totalLength));
-                if ((int) (100 * currentLength / totalLength) == 100 && mApi!= null) {
+                if ((int) (100 * currentLength / totalLength) == 100 && mApi != null) {
                     downloadListener.onFinish(mPath);
                 }
             }
 
         } catch (FileNotFoundException e) {
+            LogUtil.logDebugMessage("未找到文件: " + currentLength);
             downloadListener.onFailure(file.getName(), "未找到文件！");
             e.printStackTrace();
             file.delete();
         } catch (IOException e) {
+            LogUtil.logDebugMessage("IO错误: " + currentLength);
             downloadListener.onFailure(file.getName(), "IO错误！");
             e.printStackTrace();
             file.delete();
         } catch (ServerResponseException e) {
+            LogUtil.logDebugMessage("取消下载: " + currentLength);
             downloadListener.onFailure(file.getName(), "取消下载");
             e.printStackTrace();
             file.delete();
@@ -184,7 +189,7 @@ public class DownloadUtils {
                 mFile.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
-                downloadListener.onFailure(fileName,"文件未找到");
+                downloadListener.onFailure(fileName, "文件未找到");
                 return;
             }
         }
@@ -216,7 +221,7 @@ public class DownloadUtils {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 downList.remove(fileName);
-                downloadListener.onFailure("网络错误！","IO错误");
+                downloadListener.onFailure("网络错误！", "IO错误");
             }
         });
 
