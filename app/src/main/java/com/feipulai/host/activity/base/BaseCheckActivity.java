@@ -182,7 +182,7 @@ public abstract class BaseCheckActivity
         });
         if (student == null) {
             InteractUtils.toastSpeak(this, "该考生不存在");
-            if (SettingHelper.getSystemSetting().isNetCheckTool()){
+            if (SettingHelper.getSystemSetting().isNetCheckTool() && SettingHelper.getSystemSetting().isTemporaryAddStu()){
                 showAddHint(student);
                 //TODO 同步更新数据与头像信息
                 Intent intent = new Intent(this, UpdateService.class);
