@@ -174,7 +174,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
             etPort.setEnabled(false);
             etHostIp.setEnabled(false);
             tvIpConnect.setEnabled(false);
-            rgAccuracy.setVisibility(View.GONE);
+            llIp.setVisibility(View.GONE);
         }
     }
 
