@@ -115,6 +115,11 @@ public class CommonUtils {
         return gson.toJson(paramData);
     }
 
+    public static ResponseParame encryptQuery(String bizType, String lastUpdateTime, Object object) {
+        ResponseParame respost = encryptQuery(bizType, object);
+        respost.setLastUpdateTime(lastUpdateTime);
+        return respost;
+    }
     public static ResponseParame encryptQuery(String bizType, Object object) {
         ResponseParame respost = new ResponseParame();
         respost.setBizType(bizType);
@@ -125,16 +130,16 @@ public class CommonUtils {
 //        respost.setSign(EncryptUtil.getSignData(signMap));
         Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
         respost.setSign(EncryptUtil.getSignData(gson.toJson(object)));
-        if (bizType.equals("7001")){
+        if (bizType.equals("8001")){
             respost.setData(gson.toJson(object));
         }else {
             respost.setData(EncryptUtil.setEncryptData(object));
         }
-        respost.setData(EncryptUtil.setEncryptData(object));
         respost.setRequestTime(String.valueOf(System.currentTimeMillis()));
         Logger.i("json:============="+respost.toString());
         return respost;
     }
+
 
     public static String getIp() {
         String ipAddress = SettingHelper.getSystemSetting().getServerIp();

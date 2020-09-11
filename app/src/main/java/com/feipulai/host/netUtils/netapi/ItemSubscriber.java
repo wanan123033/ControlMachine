@@ -178,16 +178,23 @@ public class ItemSubscriber {
 
     // 获取学生信息
     public void getStudentData(final int pageNo, final String lastDownLoadTime) {
+        getStudentData(pageNo, lastDownLoadTime, null);
+    }
 
+    public void getStudentData(final int pageNo, final String lastDownLoadTime, String... studentCode) {
+        long loadTime = TextUtils.isEmpty(lastDownLoadTime) ? 0 : Long.parseLong(lastDownLoadTime);
         HashMap<String, Object> parameData = new HashMap<>();
         parameData.put("batch", pageNo);
         parameData.put("pageSize", "200");
-        parameData.put("upLoadTime", TextUtils.isEmpty(lastDownLoadTime) ? 0 : Long.parseLong(lastDownLoadTime));
+        parameData.put("upLoadTime", loadTime);
 //        parameData.put("itemName", TestConfigs.sCurrentItem.getItemName());
-        parameData.put("examItemCode", TestConfigs.sCurrentItem.getItemCode());
+//        parameData.put("examItemCode", TestConfigs.sCurrentItem.getItemCode());
+        if (studentCode.length != 0) {
+            parameData.put("studentCodeList", studentCode);
+        }
 //        parameData.put("machineCode", TestConfigs.sCurrentItem.getMachineCode() + "");
         Observable<HttpResult<BatchBean<List<StudentBean>>>> observable = HttpManager.getInstance().getHttpApi().getStudentData(
-                "bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery(DWON_STAUENT_DATA + "", parameData));
+                "bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery(DWON_STAUENT_DATA + "", loadTime + "", parameData));
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<BatchBean<List<StudentBean>>>(new OnResultListener<BatchBean<List<StudentBean>>>() {
             @Override
             public void onSuccess(BatchBean<List<StudentBean>> result) {
@@ -204,7 +211,6 @@ public class ItemSubscriber {
                 size += result.getDataInfo().size();
                 Logger.i("下载考生数量====》" + size);
                 final List<Student> studentList = new ArrayList<>();
-                final List<StudentItem> studentItemList = new ArrayList<>();
                 //TODO 头像保存数据库导致数据过大OOM， 保存成图片保存固定位置使用
                 savePortrait(result.getDataInfo());
                 for (StudentBean studentBean : result.getDataInfo()) {
@@ -232,14 +238,9 @@ public class ItemSubscriber {
                     student.setFaceFeature(studentBean.getFaceFeature());
                     student.setIdCardNo(TextUtils.isEmpty(studentBean.getIdCard()) ? null : studentBean.getIdCard());
                     studentList.add(student);
-                    StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
-                            studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
-                            studentBean.getExamType(), studentBean.getScheduleNo());
-                    studentItemList.add(studentItem);
                 }
 
                 DBManager.getInstance().insertStudentList(studentList);
-                DBManager.getInstance().insertStuItemList(studentItemList);
                 if (onRequestEndListener != null) {
                     onRequestEndListener.onRequestData(studentList);
                 }
@@ -266,8 +267,6 @@ public class ItemSubscriber {
                 ToastUtils.showShort(errorMsg);
             }
         }));
-
-
     }
 
     private void savePortrait(final List<StudentBean> studentBeanList) {

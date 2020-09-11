@@ -350,7 +350,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                 MyApplication.PATH_IMAGE, DateUtil.getCurrentTime() + ".zip", new DownloadListener() {
                     @Override
                     public void onStart(String fileName) {
-                        downLoadProgressDialog.setDownFileName(fileName);
+
                     }
 
                     @Override

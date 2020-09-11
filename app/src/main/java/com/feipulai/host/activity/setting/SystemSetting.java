@@ -76,6 +76,7 @@ public class SystemSetting {
     private int channel;
     //是否使用自定义信道
     private boolean isCustomChannel;
+    //在线识别
     private boolean netCheckTool;
 
     public boolean isFreedomTest() {
@@ -238,6 +239,7 @@ public class SystemSetting {
     public int getUseChannel() {
         return isCustomChannel ? channel : SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode()) + hostId - 1;
     }
+
 
     public boolean isNetCheckTool() {
         return netCheckTool;

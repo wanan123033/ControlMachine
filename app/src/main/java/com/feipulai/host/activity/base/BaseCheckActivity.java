@@ -184,9 +184,6 @@ public abstract class BaseCheckActivity
             InteractUtils.toastSpeak(this, "该考生不存在");
             if (SettingHelper.getSystemSetting().isNetCheckTool() && SettingHelper.getSystemSetting().isTemporaryAddStu()){
                 showAddHint(student);
-                //TODO 同步更新数据与头像信息
-                Intent intent = new Intent(this, UpdateService.class);
-                startService(intent);
             }
             return;
         }
@@ -372,25 +369,30 @@ public abstract class BaseCheckActivity
                 break;
         }
     }
-
+    private SweetAlertDialog dialog;
     private void showAddHint(final Student student) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                new SweetAlertDialog(BaseCheckActivity.this).setTitleText(getString(R.string.addStu_dialog_title))
-                        .setContentText(getString(R.string.addStu_dialog_content))
-                        .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismissWithAnimation();
-                        new AddStudentDialog(BaseCheckActivity.this).showDialog(student, false);
-                    }
-                }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismissWithAnimation();
-                    }
-                }).show();
+                if (dialog == null) {
+                    new SweetAlertDialog(BaseCheckActivity.this).setTitleText(getString(R.string.addStu_dialog_title))
+                            .setContentText(getString(R.string.addStu_dialog_content))
+                            .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismissWithAnimation();
+                            new AddStudentDialog(BaseCheckActivity.this).showDialog(student, false);
+                        }
+                    }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismissWithAnimation();
+                        }
+                    });
+                }
+                if (!dialog.isShowing()){
+                    dialog.show();
+                }
 
 //                new AlertDialog.Builder(BaseCheckActivity.this)
 //                        .setCancelable(false)
