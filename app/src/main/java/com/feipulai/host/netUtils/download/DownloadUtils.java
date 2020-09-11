@@ -115,7 +115,7 @@ public class DownloadUtils {
         InputStream is = response.body().byteStream();
         long totalLength;
         if (response.headers() != null && response.headers().get("FileTotalSize") != null &&
-                TextUtils.equals(response.headers().get("FileTotalSize"), "0")) {
+                !TextUtils.equals(response.headers().get("FileTotalSize"), "0")) {
             totalLength = Long.valueOf(response.headers().get("FileTotalSize"));
         } else {
             totalLength = response.body().contentLength();
