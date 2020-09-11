@@ -67,7 +67,7 @@ public class UpdateService extends IntentService {
         parameData.put("uploadTime", uploadTime);
         parameData.put("itemcode", TestConfigs.getCurrentItemCode());
         downloadUtils.downloadFile(DownloadHelper.getInstance().buildRetrofit(CommonUtils.getIp()).createService(DownService.class)
-                        .downloadFile("bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery("10001", parameData)),
+                        .downloadFile("bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery("10001",uploadTime, parameData)),
                 MyApplication.PATH_IMAGE, DateUtil.getCurrentTime() + ".zip", new DownloadListener() {
                     @Override
                     public void onStart(String fileName) {

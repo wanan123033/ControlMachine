@@ -81,10 +81,5 @@ public class ResponseParame {
                 ", lastUpdateTime='" + lastUpdateTime + '\'' +
                 '}';
     }
-    public void setLastUpdateTime(String lastUpdateTime) {
-        this.lastUpdateTime = lastUpdateTime;
-    }
-    public String getLastUpdateTime() {
-        return lastUpdateTime;
-    }
+
 }
