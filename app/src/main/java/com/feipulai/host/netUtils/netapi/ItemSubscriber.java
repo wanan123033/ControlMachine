@@ -178,16 +178,25 @@ public class ItemSubscriber {
 
     // 获取学生信息
     public void getStudentData(final int pageNo, final String lastDownLoadTime) {
+        getStudentData(pageNo, lastDownLoadTime, null);
+//        getStudentData(pageNo, lastDownLoadTime, new String[]{"2015214104","2016904122"});
+    }
 
+    // 获取学生信息
+    public void getStudentData(final int pageNo, final String lastDownLoadTime, String... studentCode) {
+        long loadTime = TextUtils.isEmpty(lastDownLoadTime) ? 0 : Long.parseLong(lastDownLoadTime);
         HashMap<String, Object> parameData = new HashMap<>();
         parameData.put("batch", pageNo);
         parameData.put("pageSize", "200");
-        parameData.put("upLoadTime", TextUtils.isEmpty(lastDownLoadTime) ? 0 : Long.parseLong(lastDownLoadTime));
+        parameData.put("upLoadTime", loadTime);
 //        parameData.put("itemName", TestConfigs.sCurrentItem.getItemName());
         parameData.put("examItemCode", TestConfigs.sCurrentItem.getItemCode());
+        if (studentCode.length != 0) {
+            parameData.put("studentCodeList", studentCode);
+        }
 //        parameData.put("machineCode", TestConfigs.sCurrentItem.getMachineCode() + "");
         Observable<HttpResult<BatchBean<List<StudentBean>>>> observable = HttpManager.getInstance().getHttpApi().getStudentData(
-                "bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery(DWON_STAUENT_DATA + "", parameData));
+                "bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery(DWON_STAUENT_DATA + "", loadTime + "", parameData));
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<BatchBean<List<StudentBean>>>(new OnResultListener<BatchBean<List<StudentBean>>>() {
             @Override
             public void onSuccess(BatchBean<List<StudentBean>> result) {
@@ -365,15 +374,16 @@ public class ItemSubscriber {
             }
         }));
     }
-    public void netSb(String photoData, final OnRequestEndListener onRequestEndListener){
-        Map<String,String> params = new HashMap<>();
-        params.put("photoData",photoData);
+
+    public void netSb(String photoData, final OnRequestEndListener onRequestEndListener) {
+        Map<String, String> params = new HashMap<>();
+        params.put("photoData", photoData);
         Observable<HttpResult<UserPhoto>> observable = HttpManager.getInstance().getHttpApi().netSh(
-                "bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery(  "8001", params));
+                "bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery("8001", params));
 
 //        Observable<HttpResult<UserPhoto>> observable = HttpManager.getInstance().getHttpApi().netSh("bearer " + MyApplication.TOKEN,
 //                CommonUtils.encryptQuery( "8001", params));
-        HttpManager.getInstance().toSubscribe(observable,new RequestSub<UserPhoto>(new OnResultListener<UserPhoto>() {
+        HttpManager.getInstance().toSubscribe(observable, new RequestSub<UserPhoto>(new OnResultListener<UserPhoto>() {
             @Override
             public void onSuccess(UserPhoto result) {
                 onRequestEndListener.onRequestData(result);
@@ -385,14 +395,15 @@ public class ItemSubscriber {
             }
         }));
     }
+
     public void sendFaceOnline(String studentCode, String base64Face, String base64Feature) {
         HashMap<String, Object> parameData = new HashMap<>();
         parameData.put("photoData", base64Face);
         parameData.put("studentCode", studentCode);
         parameData.put("faceFeature", base64Feature);
         Observable<HttpResult<UserPhoto>> observable = HttpManager.getInstance().getHttpApi().netSh(
-                "bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery( "7001", parameData));
-        HttpManager.getInstance().toSubscribe(observable,new RequestSub<UserPhoto>(new OnResultListener<UserPhoto>() {
+                "bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery("7001", parameData));
+        HttpManager.getInstance().toSubscribe(observable, new RequestSub<UserPhoto>(new OnResultListener<UserPhoto>() {
 
             @Override
             public void onSuccess(UserPhoto result) {

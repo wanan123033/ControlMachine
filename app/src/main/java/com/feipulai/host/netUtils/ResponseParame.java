@@ -11,6 +11,7 @@ public class ResponseParame {
     private String requestTime;
     private String sign;
     private String data;
+    private String lastUpdateTime;
 
     public String getBizType() {
         return bizType;
@@ -60,15 +61,24 @@ public class ResponseParame {
         this.data = data;
     }
 
+    public String getLastUpdateTime() {
+        return lastUpdateTime;
+    }
+
+    public void setLastUpdateTime(String lastUpdateTime) {
+        this.lastUpdateTime = lastUpdateTime;
+    }
+
     @Override
     public String toString() {
-        return "Respost{" +
+        return "ResponseParame{" +
                 "bizType='" + bizType + '\'' +
                 ", token='" + token + '\'' +
                 ", msEquipment='" + msEquipment + '\'' +
                 ", requestTime='" + requestTime + '\'' +
                 ", sign='" + sign + '\'' +
                 ", data='" + data + '\'' +
+                ", lastUpdateTime='" + lastUpdateTime + '\'' +
                 '}';
     }
 }
