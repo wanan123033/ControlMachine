@@ -547,9 +547,10 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         if ((compareResult1 == null && compareResult2 == null && compareResult3 == null) || faceHelper == null) {
             Log.e("TAG", "BaseAFRFragment compareResult if ");
             requestFeatureStatusMap.put(faceId, RequestFeatureStatus.FAILED);
-            if (SettingHelper.getSystemSetting().isNetCheckTool()) {
+            if (SettingHelper.getSystemSetting().isNetCheckTool() && !isNetface) {
                 isNetWork = true;
                 isStartFace = false;
+                Log.e("TAG","++++++++++++++++++++++++netFace553");
                 netFace();
             }
             return;
@@ -597,8 +598,9 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                     isOpenCamera = false;
                     isStartFace = false;
 
-                    if (SettingHelper.getSystemSetting().isNetCheckTool()) {
+                    if (SettingHelper.getSystemSetting().isNetCheckTool() && !isNetface) {
                         isNetWork = true;
+                        Log.e("TAG","++++++++++++++++++++++++netFace602");
                         netFace();
                     } else {
                         if (isLodingServer) {
@@ -615,9 +617,10 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         }
 
     }
-
+    private boolean isNetface = false;
     public void netFace() {
         if (isNetWork) {
+            isNetface = true;
             isNetWork = false;
             isStartFace = false;
             if (mFaceFeature != null) {
@@ -629,6 +632,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
                     @Override
                     public void onFault(int bizType) {
+                        isNetface = false;
                         if (bizType == -1) {//在线未识别成功
                             isStartFace = false;
                             ToastUtils.showShort("在线识别失败");
@@ -642,6 +646,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
                     @Override
                     public void onRequestData(Object data) {
+                        isNetface = false;
                         isStartFace = false;
                         isLodingServer = false;
                         UserPhoto photo = (UserPhoto) data;

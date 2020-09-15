@@ -138,7 +138,7 @@ public class MGsonConverterFactory extends Converter.Factory {
                     Logger.i("decodeBody====>");
                     httpResult.setBody(jsonParser.parse(decodeBody));
                     String json = gson.toJson(httpResult);
-                    Logger.i("toJson====>"+json);
+                    Logger.i("toJson====>");
                     T t = gson.fromJson(json, type);
                     Logger.i("fromJson====>");
                     return t;
