@@ -38,6 +38,7 @@ import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.view.StuSearchEditText;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.List;
 
@@ -142,18 +143,21 @@ public class JumpRopeCheckActivity
 
     @Override
     protected void onRestart() {
+        LogUtils.operation("JumpRopeCheckActivity onRestart");
         super.onRestart();
         presenter.settingChanged();
     }
 
     @Override
     protected void onResume() {
+        LogUtils.operation("JumpRopeCheckActivity onResume");
         super.onResume();
         presenter.resumeGetStateAndDisplay();
     }
 
     @Override
     public void initView(JumpRopeSetting setting, List pairs) {
+
         etSelect.setData(lvResults, this);
         mTvGroup.setText(String.format(getString(R.string.group_name), SerialConfigs.GROUP_NAME[setting.getDeviceGroup()]));
 
@@ -189,25 +193,31 @@ public class JumpRopeCheckActivity
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.img_AFR:
+                LogUtils.operation("用户点击了人脸识别");
                 showAFR();
                 break;
             case R.id.btn_device_pair:
+                LogUtils.operation("用户点击了配对设备");
                 startActivity(new Intent(this, JumpRopePairActivity.class));
                 break;
 
             case R.id.btn_change_hand_group:
+                LogUtils.operation("用户点击了切换分组");
                 presenter.changeDeviceGroup();
                 break;
 
             case R.id.btn_change_bad:
+                LogUtils.operation("用户点击了切换设备");
                 presenter.changeBadDevice();
                 break;
 
             case R.id.btn_start_test:
+                LogUtils.operation("用户点击了开始测试");
                 presenter.startTest();
                 break;
 
             case R.id.btn_stop_use:
+                LogUtils.operation("用户点击了停止使用");
                 String text = mBtnStopUse.getText().toString().trim();
                 if (text.equals(RESUME_USE)) {
                     presenter.resumeUse();
@@ -219,18 +229,22 @@ public class JumpRopeCheckActivity
                 break;
 
             case R.id.btn_led_setting:
+                LogUtils.operation("用户点击了LED");
                 startActivity(new Intent(this, LEDSettingActivity.class));
                 break;
 
             case R.id.btn_delete_student:
+                LogUtils.operation("用户点击了删除学生");
                 presenter.deleteStudent();
                 break;
 
             case R.id.btn_del_all:
+                LogUtils.operation("用户点击了删除所有");
                 showkillAllWarning();
 
                 break;
             case R.id.btn_kill_devices:
+                LogUtils.operation("用户点击了清除设备");
 //                presenter.killAllDevices();
                 showDeleteAllWarning();
                 break;

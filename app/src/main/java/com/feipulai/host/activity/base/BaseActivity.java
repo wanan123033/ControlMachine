@@ -15,6 +15,7 @@ import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.host.config.BaseEvent;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -101,6 +102,7 @@ public class BaseActivity extends FragmentActivity {
             @Override
             public void run() {
                 // 播报时间间隔必须>500ms
+                LogUtils.operation("语音提示:"+msg);
                 long tmp = System.currentTimeMillis();
                 if (tmp - lastBroadcastTime > 500) {
                     lastBroadcastTime = tmp;

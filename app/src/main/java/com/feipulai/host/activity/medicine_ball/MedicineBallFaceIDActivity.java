@@ -16,6 +16,7 @@ import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.activity.vccheck.TestState;
 import com.feipulai.host.entity.RoundResult;
+import com.orhanobut.logger.utils.LogUtils;
 
 import org.greenrobot.greendao.annotation.NotNull;
 
@@ -47,6 +48,7 @@ public class MedicineBallFaceIDActivity extends BasePersonFaceIDActivity {
 
     @Override
     public void sendTestCommand(@NotNull BaseStuPair baseStuPair) {
+        LogUtils.operation("实心球开始:"+baseStuPair.toString());
         stuPair = baseStuPair;
         if (mSerialManager == null) {
             mSerialManager = SerialDeviceManager.getInstance();
@@ -96,6 +98,7 @@ public class MedicineBallFaceIDActivity extends BasePersonFaceIDActivity {
 
                 case SELF_CHECK_RESPONSE:
                     MedicineBallSelfCheckResult selfCheckResult = (MedicineBallSelfCheckResult) msg.obj;
+                    LogUtils.operation("实心球自检:"+selfCheckResult.toString());
                     BaseStuPair pair = new BaseStuPair();
                     BaseDeviceState device = new BaseDeviceState();
                     //TODO 设备ID 需要讨论
@@ -106,6 +109,7 @@ public class MedicineBallFaceIDActivity extends BasePersonFaceIDActivity {
 
                 case GET_SCORE_RESPONSE:
                     MedicineBallResult result = (MedicineBallResult) msg.obj;
+                    LogUtils.operation("实心球获取结果:"+result.toString());
                     BaseStuPair basePair = new BaseStuPair();
                     basePair.setBaseDevice(new BaseDeviceState(BaseDeviceState.STATE_END, 1));
                     int beginPoint = Integer.parseInt(SharedPrefsUtil.getValue(activity,"SXQ","beginPoint","0"));
@@ -113,6 +117,7 @@ public class MedicineBallFaceIDActivity extends BasePersonFaceIDActivity {
                     break;
                 case END_TEST:
                     BaseDeviceState device1 = new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1);
+                    LogUtils.operation("实心球获结束测试:"+device1);
                     activity.updateDevice(device1);
                     activity.toastSpeak("测试结束");
 //                    activity.mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
@@ -121,6 +126,7 @@ public class MedicineBallFaceIDActivity extends BasePersonFaceIDActivity {
                     sendEmptyMessageDelayed(11, 5000);
                     break;
                 case 11:
+                    LogUtils.operation("实心球获测试重新开始");
                     activity.restart();
                     break;
                 default:
@@ -146,6 +152,7 @@ public class MedicineBallFaceIDActivity extends BasePersonFaceIDActivity {
      */
     private void onResultArrived(int result, boolean fault) {
         if (testState == TestState.WAIT_RESULT) {
+            LogUtils.operation("实心球成绩处理:result="+result+"----fault="+fault);
             stuPair.setResult(result);
             stuPair.setResultState(fault ? RoundResult.RESULT_STATE_FOUL : RoundResult.RESULT_STATE_NORMAL);
 
@@ -177,6 +184,7 @@ public class MedicineBallFaceIDActivity extends BasePersonFaceIDActivity {
      * @param selfCheckResult 自检校验
      */
     private void disposeCheck(MedicineBallSelfCheckResult selfCheckResult) {
+        LogUtils.operation("实心球自检处理:"+selfCheckResult.toString());
         boolean isInCorrect = selfCheckResult.isInCorrect();
         BaseDeviceState deviceState = stuPair.getBaseDevice();
         if (isInCorrect) {
@@ -197,6 +205,7 @@ public class MedicineBallFaceIDActivity extends BasePersonFaceIDActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        LogUtils.operation("MedicineBallFaceIDActivity onDestroy");
         mHandler.removeCallbacksAndMessages(null);
         if (!executorService.isShutdown())
             executorService.shutdown();

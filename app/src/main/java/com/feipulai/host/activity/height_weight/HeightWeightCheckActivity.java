@@ -32,6 +32,7 @@ import com.feipulai.host.utils.PrinterUtils;
 import com.feipulai.host.utils.ResultDisplayUtils;
 import com.feipulai.host.utils.ResultUtils;
 import com.feipulai.host.view.StuSearchEditText;
+import com.orhanobut.logger.utils.LogUtils;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -92,6 +93,7 @@ public class HeightWeightCheckActivity
     @Override
     protected void initData() {
         super.initData();
+
         init();
         prepareForCheckIn();
     }
@@ -117,11 +119,13 @@ public class HeightWeightCheckActivity
     }
 
     private void prepareForCheckIn() {
+        LogUtils.operation("HeightWeightCheckActivity prepareForCheckIn");
         isTesting = false;
         isTestFinished = false;
     }
 
     private void prepareForTest() {
+        LogUtils.operation("HeightWeightCheckActivity prepareForTest "+mStudent.toString());
         isTesting = true;
         isTestFinished = false;
 
@@ -146,6 +150,7 @@ public class HeightWeightCheckActivity
 
     @Override
     protected void onResume() {
+        LogUtils.operation("HeightWeightCheckActivity onResume");
         super.onResume();
         SerialDeviceManager.getInstance().setRS232ResiltListener(this);
         //mLEDManager.resetLEDScreen(hostId,TestConfigs.machineNameMap.get(ItemDefault.CODE_HW));
@@ -161,6 +166,7 @@ public class HeightWeightCheckActivity
         prepareForTest();
         mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), mStudent.getLEDStuName(), mLEDManager.getX(mStudent.getLEDStuName()), 0, true, true);
         toastSpeak(mStudent.getSpeakStuName() + "请准备");
+        LogUtils.operation("检入到学生信息:"+mStudent.toString());
     }
 
     @Override
@@ -170,6 +176,8 @@ public class HeightWeightCheckActivity
             case UPDATE_NEW_RESULT:
                 String displayHeight = ResultDisplayUtils.getStrResultForDisplay(mHeightResult.getResult(), HWConfigs.HEIGHT_ITEM);
                 String displayWeight = ResultDisplayUtils.getStrResultForDisplay(mWeightResult.getResult(), HWConfigs.WEIGHT_ITEM);
+                LogUtils.operation("获取到学生成绩:mHeightResult="+mHeightResult.toString());
+                LogUtils.operation("获取到学生成绩:mWeightResult="+mWeightResult.toString());
                 txtHeightResult.setText(displayHeight);
                 txtWeightResult.setText(displayWeight);
                 txtTestResult.setText(displayHeight + "\n" + displayWeight);
@@ -266,6 +274,7 @@ public class HeightWeightCheckActivity
     @Override
     protected void onPause() {
         super.onPause();
+        LogUtils.operation("HeightWeightCheckActivity onPause");
         SerialDeviceManager.getInstance().setRS232ResiltListener(null);
         SerialDeviceManager.getInstance().close();
     }
@@ -273,12 +282,15 @@ public class HeightWeightCheckActivity
 
     @OnClick(R.id.txt_skip)
     public void onViewClicked() {
+        if (mStudent != null)
+            LogUtils.operation("用户点击跳过:"+mStudent.toString());
         if (!isTestFinished)
             mHandler.sendEmptyMessage(CLEAR_DATA);
     }
 
     @OnClick(R.id.img_AFR)
     public void onImgAFRClicked() {
+        LogUtils.operation("用户点击了人脸识别");
         showAFR();
     }
 

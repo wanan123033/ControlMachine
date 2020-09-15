@@ -16,6 +16,8 @@ import com.feipulai.host.activity.base.BasePersonFaceIDActivity;
 import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.utils.ResultDisplayUtils;
+import com.feipulai.host.utils.StringUtility;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.ExecutorService;
@@ -45,6 +47,7 @@ public class SitReachFaceIDActivity extends BasePersonFaceIDActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LogUtils.operation("SitReachFaceIDActivity onCreate");
         //将回调放在super前，避免第一次检测设备失败
         mLEDManager = new LEDManager();
         if (SerialDeviceManager.getInstance() != null) {
@@ -65,6 +68,7 @@ public class SitReachFaceIDActivity extends BasePersonFaceIDActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        LogUtils.operation("SitReachFaceIDActivity onResume");
         if (SerialDeviceManager.getInstance() != null) {
             SerialDeviceManager.getInstance().setRS232ResiltListener(sitReachResiltListener);
         } else {
@@ -75,6 +79,7 @@ public class SitReachFaceIDActivity extends BasePersonFaceIDActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        LogUtils.operation("SitReachFaceIDActivity onDestroy");
         if (SerialDeviceManager.getInstance() != null) {
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_END));
         }
@@ -97,6 +102,7 @@ public class SitReachFaceIDActivity extends BasePersonFaceIDActivity {
 
     @Override
     public void sendTestCommand(@NonNull BaseStuPair baseStuPair) {
+        LogUtils.operation("坐位体前屈开始测试:"+baseStuPair.toString());
         this.baseStuPair = baseStuPair;
         //3秒检测设备间隔
         mHandler.sendEmptyMessageDelayed(MSG_START_TEST, 3000);
@@ -191,9 +197,11 @@ public class SitReachFaceIDActivity extends BasePersonFaceIDActivity {
         statesRunnable.setTestState(sitReachResiltListener.getTestState());
         if (SerialDeviceManager.getInstance() != null) {
             //开始测试
+            LogUtils.normal("坐位体前屈开始指令:"+StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_START));
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_START));
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "请测试", 5, 1, true, true);
             //获取数据
+            LogUtils.normal("坐位体前屈获取数据:"+StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_GET_SCORE));
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_GET_SCORE));
         }
     }
@@ -213,7 +221,7 @@ public class SitReachFaceIDActivity extends BasePersonFaceIDActivity {
             if (activity != null) {
                 switch (msg.what) {
                     case MSG_DISCONNECT:
-                        Log.i("james", "2MSG_DISCONNECT:" + activity.isDisconnect);
+                        LogUtils.operation("坐位体前屈 2MSG_DISCONNECT:" + activity.isDisconnect);
                         if (activity.isDisconnect) {
                             // 判断2次点击事件时间
 
@@ -256,7 +264,7 @@ public class SitReachFaceIDActivity extends BasePersonFaceIDActivity {
         public void run() {
             while (!isFinish) {
                 if (testState != SitReachResiltListener.TestState.UN_STARTED) {
-                    Log.i("zzs", "===>" + "sendCommand");
+                    LogUtils.normal("坐位体前屈获取成绩指令:"+ StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_GET_SCORE));
                     if (SerialDeviceManager.getInstance() != null)
                         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_GET_SCORE));
                 }
@@ -291,12 +299,12 @@ public class SitReachFaceIDActivity extends BasePersonFaceIDActivity {
                 if (testState == SitReachResiltListener.TestState.UN_STARTED) {
                     Log.i("zzs", "===>" + "sendCheckCommand");
                     if (SerialDeviceManager.getInstance() != null) {
-
                         try {
                             //设备自检,校验连接是否正常
                             isDisconnect = true;
                             if (SerialDeviceManager.getInstance() != null) {
                                 //设备自检,校验连接是否正常
+                                LogUtils.normal("坐位体前屈设备自检指令:"+ StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_EMPTY));
                                 SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_EMPTY));
                                 mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
                             }

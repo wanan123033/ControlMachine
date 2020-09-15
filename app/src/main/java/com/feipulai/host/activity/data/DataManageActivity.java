@@ -377,6 +377,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
 
                     @Override
                     public void onFinish(String fileName) {
+
                         if (!new File(MyApplication.PATH_IMAGE + fileName).exists()) {
                             return;
                         }

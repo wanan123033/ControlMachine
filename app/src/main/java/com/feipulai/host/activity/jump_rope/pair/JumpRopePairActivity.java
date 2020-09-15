@@ -17,6 +17,7 @@ import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseTitleActivity;
 import com.feipulai.host.activity.jump_rope.adapter.DevicePairAdapter;
 import com.feipulai.host.activity.jump_rope.setting.JumpRopeSetting;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.List;
 
@@ -134,6 +135,7 @@ public class JumpRopePairActivity extends BaseTitleActivity
     public void btnOnClick(View v) {
         switch (v.getId()) {
             case R.id.sw_auto_pair:
+                LogUtils.operation("自动配对已开启");
                 presenter.changeAutoPair(mSwAutoPair.isChecked());
                 break;
         }
@@ -142,6 +144,7 @@ public class JumpRopePairActivity extends BaseTitleActivity
     @Override
     protected void onPause() {
         super.onPause();
+        LogUtils.operation("JumpRopePairActivity onPause");
         presenter.pausePair();
         presenter.saveSettings();
     }
@@ -149,6 +152,7 @@ public class JumpRopePairActivity extends BaseTitleActivity
     @Override
     protected void onStop() {
         super.onStop();
+        LogUtils.operation("JumpRopePairActivity onStop");
         presenter.stopPair();
     }
 

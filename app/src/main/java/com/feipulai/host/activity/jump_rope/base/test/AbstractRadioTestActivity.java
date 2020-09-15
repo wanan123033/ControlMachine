@@ -119,6 +119,7 @@ public abstract class AbstractRadioTestActivity<Setting>
         switch (view.getId()) {
 
             case R.id.btn_stop_using:
+                LogUtils.operation("用户点击了停止使用");
                 String text = btnStopUsing.getText().toString().trim();
                 if (text.equals(RESUME_USE)) {
                     presenter.resumeUse();
@@ -130,7 +131,7 @@ public abstract class AbstractRadioTestActivity<Setting>
                 break;
 
             case R.id.btn_restart:
-
+                LogUtils.operation("用户点击了重新开始");
                 new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.warning))
                         .setContentText(getString(R.string.restart_confirm_hint))
                         .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
@@ -149,10 +150,12 @@ public abstract class AbstractRadioTestActivity<Setting>
                 break;
 
             case R.id.btn_quit_test:
+                LogUtils.operation("用户点击了退出测试");
                 showQuitDialog();
                 break;
 
             case R.id.btn_confirm_results:
+                LogUtils.operation("用户点击了确认成绩");
                 presenter.confirmResults();
                 break;
 

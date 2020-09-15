@@ -10,6 +10,7 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.print.FontsUtil;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.SharedPrefsConfigs;
+import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 
 public class MyApplication extends MultiDexApplication {
@@ -40,7 +41,7 @@ public class MyApplication extends MultiDexApplication {
         TOKEN = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.TOKEN, "");
         // 初始化工作已经移至mainactivity中,保证尽快进入界面,减少白屏时间
         CrashHandler.getInstance().init(this);
-
+        LogUtils.initLogger(true,true,"/sdcard/TClogger");
         FaceServer.ROOT_PATH = FileUtil.PATH_BASE + "TC_FACE/";
         FileUtil.createAllFile();
         FileUtil.mkdirs(PATH_SPECIFICATION);

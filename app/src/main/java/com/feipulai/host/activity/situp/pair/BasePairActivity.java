@@ -14,6 +14,7 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseTitleActivity;
 import com.feipulai.host.activity.jump_rope.adapter.DevicePairAdapter;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.List;
 
@@ -89,6 +90,7 @@ public abstract class BasePairActivity extends BaseTitleActivity
 
     @Override
     public void select(int position) {
+        LogUtils.operation("用户选择了配对:position="+position);
         int oldSelectPosition = mAdapter.getSelected();
         mAdapter.setSelected(position);
         updateSpecificItem(oldSelectPosition);
@@ -108,6 +110,7 @@ public abstract class BasePairActivity extends BaseTitleActivity
     public void btnOnClick(View v) {
         switch (v.getId()) {
             case R.id.sw_auto_pair:
+                LogUtils.operation("用户点击了自动配对");
                 presenter.changeAutoPair(mSwAutoPair.isChecked());
                 break;
         }
@@ -119,6 +122,7 @@ public abstract class BasePairActivity extends BaseTitleActivity
 
     @Override
     protected void onPause() {
+        LogUtils.operation("BasePairActivity onPause");
         super.onPause();
         presenter.saveSettings();
         presenter.stopPair();
