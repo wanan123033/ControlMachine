@@ -189,7 +189,7 @@ public class ItemSubscriber {
         parameData.put("upLoadTime", loadTime);
 //        parameData.put("itemName", TestConfigs.sCurrentItem.getItemName());
 //        parameData.put("examItemCode", TestConfigs.sCurrentItem.getItemCode());
-        if (studentCode == null || studentCode.length != 0) {
+        if (studentCode != null && studentCode.length != 0) {
             parameData.put("studentCodeList", studentCode);
         }
 //        parameData.put("machineCode", TestConfigs.sCurrentItem.getMachineCode() + "");
