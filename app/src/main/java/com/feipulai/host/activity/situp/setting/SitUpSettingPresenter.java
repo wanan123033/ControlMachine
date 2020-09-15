@@ -46,7 +46,7 @@ public class SitUpSettingPresenter extends AbstractRadioSettingPresenter {
 
     @Override
     protected int getMaxDeviceSum() {
-        return 10;
+        return 28;
     }
 
     @Override
