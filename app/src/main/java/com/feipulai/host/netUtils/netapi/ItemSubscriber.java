@@ -8,6 +8,7 @@ import android.util.Base64;
 import com.arcsoft.face.ErrorInfo;
 import com.arcsoft.face.FaceEngine;
 import com.feipulai.common.utils.ImageUtil;
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.host.MyApplication;
@@ -181,17 +182,18 @@ public class ItemSubscriber {
         getStudentData(pageNo, lastDownLoadTime, null);
     }
 
-    public void getStudentData(final int pageNo, final String lastDownLoadTime, String... studentCode) {
+    public void getStudentData(final int pageNo, final String lastDownLoadTime, final String... studentCode) {
         long loadTime = TextUtils.isEmpty(lastDownLoadTime) ? 0 : Long.parseLong(lastDownLoadTime);
         HashMap<String, Object> parameData = new HashMap<>();
         parameData.put("batch", pageNo);
         parameData.put("pageSize", "200");
         parameData.put("upLoadTime", loadTime);
 //        parameData.put("itemName", TestConfigs.sCurrentItem.getItemName());
-//        parameData.put("examItemCode", TestConfigs.sCurrentItem.getItemCode());
+        parameData.put("examItemCode", TestConfigs.sCurrentItem.getItemCode());
         if (studentCode != null && studentCode.length != 0) {
             parameData.put("studentCodeList", studentCode);
         }
+        LogUtil.logDebugMessage(parameData.toString());
 //        parameData.put("machineCode", TestConfigs.sCurrentItem.getMachineCode() + "");
         Observable<HttpResult<BatchBean<List<StudentBean>>>> observable = HttpManager.getInstance().getHttpApi().getStudentData(
                 "bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery(DWON_STAUENT_DATA + "", loadTime + "", parameData));
@@ -211,6 +213,7 @@ public class ItemSubscriber {
                 size += result.getDataInfo().size();
                 Logger.i("下载考生数量====》" + size);
                 final List<Student> studentList = new ArrayList<>();
+                final List<StudentItem> studentItemList = new ArrayList<>();
                 //TODO 头像保存数据库导致数据过大OOM， 保存成图片保存固定位置使用
                 savePortrait(result.getDataInfo());
                 for (StudentBean studentBean : result.getDataInfo()) {
@@ -238,9 +241,14 @@ public class ItemSubscriber {
                     student.setFaceFeature(studentBean.getFaceFeature());
                     student.setIdCardNo(TextUtils.isEmpty(studentBean.getIdCard()) ? null : studentBean.getIdCard());
                     studentList.add(student);
+                    StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
+                            studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
+                            studentBean.getExamType(), studentBean.getScheduleNo());
+                    studentItemList.add(studentItem);
                 }
 
                 DBManager.getInstance().insertStudentList(studentList);
+                DBManager.getInstance().insertStuItemList(studentItemList);
                 if (onRequestEndListener != null) {
                     onRequestEndListener.onRequestData(studentList);
                 }
@@ -252,8 +260,9 @@ public class ItemSubscriber {
                     }
                     ToastUtils.showShort("数据下载成功");
                     if (result.getDataInfo() != null && result.getDataInfo().size() > 0) {
-                        SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS,
-                                SharedPrefsConfigs.LAST_DOWNLOAD_TIME, result.getDataInfo().get(result.getDataInfo().size() - 1).getDownloadTime());
+                        if (studentCode != null && studentCode.length != 0)
+                            SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS,
+                                    SharedPrefsConfigs.LAST_DOWNLOAD_TIME, result.getDataInfo().get(result.getDataInfo().size() - 1).getDownloadTime());
                     }
                 }
 
@@ -364,15 +373,16 @@ public class ItemSubscriber {
             }
         }));
     }
-    public void netSb(String photoData, final OnRequestEndListener onRequestEndListener){
-        Map<String,String> params = new HashMap<>();
-        params.put("photoData",photoData);
+
+    public void netSb(String photoData, final OnRequestEndListener onRequestEndListener) {
+        Map<String, String> params = new HashMap<>();
+        params.put("photoData", photoData);
         Observable<HttpResult<UserPhoto>> observable = HttpManager.getInstance().getHttpApi().netSh(
-                "bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery(  "8001", params));
+                "bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery("8001", params));
 
 //        Observable<HttpResult<UserPhoto>> observable = HttpManager.getInstance().getHttpApi().netSh("bearer " + MyApplication.TOKEN,
 //                CommonUtils.encryptQuery( "8001", params));
-        HttpManager.getInstance().toSubscribe(observable,new RequestSub<UserPhoto>(new OnResultListener<UserPhoto>() {
+        HttpManager.getInstance().toSubscribe(observable, new RequestSub<UserPhoto>(new OnResultListener<UserPhoto>() {
             @Override
             public void onSuccess(UserPhoto result) {
                 onRequestEndListener.onRequestData(result);
@@ -384,14 +394,15 @@ public class ItemSubscriber {
             }
         }));
     }
+
     public void sendFaceOnline(String studentCode, String base64Face, String base64Feature) {
         HashMap<String, Object> parameData = new HashMap<>();
         parameData.put("photoData", base64Face);
         parameData.put("studentCode", studentCode);
         parameData.put("faceFeature", base64Feature);
         Observable<HttpResult<UserPhoto>> observable = HttpManager.getInstance().getHttpApi().netSh(
-                "bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery( "7001", parameData));
-        HttpManager.getInstance().toSubscribe(observable,new RequestSub<UserPhoto>(new OnResultListener<UserPhoto>() {
+                "bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery("8001", parameData));
+        HttpManager.getInstance().toSubscribe(observable, new RequestSub<UserPhoto>(new OnResultListener<UserPhoto>() {
 
             @Override
             public void onSuccess(UserPhoto result) {

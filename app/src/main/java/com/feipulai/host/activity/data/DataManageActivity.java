@@ -356,6 +356,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                     @Override
                     public void onResponse(Headers headers) {
                         saveHeaders = headers;
+                        LogUtils.operation("saveHeaders="+saveHeaders.toString());
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {

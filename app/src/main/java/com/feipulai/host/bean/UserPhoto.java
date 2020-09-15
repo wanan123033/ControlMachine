@@ -9,14 +9,14 @@ public class UserPhoto {
         this.faceSimilar = faceSimilar;
     }
 
-    public String getStudentCode() {
-        return studentCode;
+    public String getStudentcode() {
+        return studentcode;
     }
 
-    public void setStudentCode(String studentCode) {
-        this.studentCode = studentCode;
+    public void setStudentcode(String studentCode) {
+        this.studentcode = studentCode;
     }
 
     private double faceSimilar;
-    private String studentCode;
+    private String studentcode;
 }
