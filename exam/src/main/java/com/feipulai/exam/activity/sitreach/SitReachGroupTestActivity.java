@@ -15,6 +15,7 @@ import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseGroupTestActivity;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.entity.RoundResult;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
@@ -201,6 +202,7 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
         if (isEnd) {
             if (stuPair.getResult()/10 <= -15) {
                 confirmResult(stuPair);
+                return;
             }
         }
         if (reachSetting.isFullReturn()) {
@@ -268,10 +270,17 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
                     msg.what = UPDATE_RESULT;
                     mHandler.sendMessage(msg);
                     clicked = true;
+
+                    //设置设备状态
+                    BaseDeviceState deviceState = stuPair.getBaseDevice();
+                    deviceState.setState(BaseDeviceState.STATE_END);
+                    getDeviceState(deviceState);
+                    //结束设备
+                    EndDevice(stuPair.getResultState() == RoundResult.RESULT_STATE_FOUL, stuPair.getResult());
                 }
 
             }
-        }).setCancelText(getString(R.string.foul)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+        }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();

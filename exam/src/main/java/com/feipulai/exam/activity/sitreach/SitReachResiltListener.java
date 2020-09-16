@@ -142,11 +142,14 @@ public class SitReachResiltListener implements SerialDeviceManager.RS232ResiltLi
                                 }
                                 //更新成绩
                                 handlerInterface.getResult(true, stuPair);
-                                //设置设备状态
-                                handlerInterface.getDeviceState(deviceState);
+                                if (result.getScore() / 10 > -15) {
+                                    //设置设备状态
+                                    handlerInterface.getDeviceState(deviceState);
 
-                                //结束设备
-                                handlerInterface.EndDevice(result.isFoul(), result.getScore());
+                                    //结束设备
+                                    handlerInterface.EndDevice(result.isFoul(), result.getScore());
+                                }
+
 
                                 break;
                         }
