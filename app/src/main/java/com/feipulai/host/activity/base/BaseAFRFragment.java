@@ -549,6 +549,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             requestFeatureStatusMap.put(faceId, RequestFeatureStatus.FAILED);
             if (SettingHelper.getSystemSetting().isNetCheckTool()) {
                 isNetWork = true;
+                isStartFace = false;
                 netFace();
             }
             return;
@@ -624,7 +625,6 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                 itemSubscriber.setOnRequestEndListener(new OnRequestEndListener() {
                     @Override
                     public void onSuccess(int bizType) {
-
                     }
 
                     @Override
@@ -645,19 +645,21 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                         isStartFace = false;
                         isLodingServer = false;
                         UserPhoto photo = (UserPhoto) data;
-                        if (TextUtils.isEmpty(photo.getStudentCode())) {
+                        if (TextUtils.isEmpty(photo.getStudentcode())) {
                             //新增学生
                             ToastUtils.showShort("在线识别失败");
                             compareListener.compareStu(null);
+
                         } else {
                             //识别成功，当前考生是否存在，不存在下载当前考生数据
-                            Student student = DBManager.getInstance().queryStudentByCode(photo.getStudentCode());
+                            Student student = DBManager.getInstance().queryStudentByCode(photo.getStudentcode());
+                            Log.e("TAG", "STUDENT=" + student);
                             if (student != null) {
                                 compareListener.compareStu(student);
                                 Intent intent = new Intent(mContext, UpdateService.class);
                                 mContext.startService(intent);
                             } else {
-                                getStudent(photo.getStudentCode());
+                                getStudent(photo.getStudentcode());
                             }
 
                         }
@@ -703,7 +705,6 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
     private void getStudent(final String studentCode) {
         OperateProgressBar.showLoadingUi((Activity) mContext, "正在查询服务器信息...");
         ItemSubscriber itemSubscriber = new ItemSubscriber();
-        String lastDownLoadTime = SharedPrefsUtil.getValue(mContext, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.LAST_DOWNLOAD_TIME, "");
         itemSubscriber.setOnRequestEndListener(new OnRequestEndListener() {
             @Override
             public void onSuccess(int bizType) {
@@ -742,7 +743,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
             }
         });
-        itemSubscriber.getStudentData(1, lastDownLoadTime, studentCode);
+        itemSubscriber.getStudentData(1, "", studentCode);
     }
 
     private onAFRCompareListener compareListener;

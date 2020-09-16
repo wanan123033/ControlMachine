@@ -1,0 +1,274 @@
+[
+  {
+    "distance": 5.0,
+    "visions": [
+      {
+        "LogMAR_5": 4.0,
+        "LogMAR_Decimals": 0.1,
+        "E_DP": 321
+      },
+      {
+        "LogMAR_5": 4.1,
+        "LogMAR_Decimals": 0.12,
+        "E_DP": 255
+      },
+      {
+        "LogMAR_5": 4.2,
+        "LogMAR_Decimals": 0.15,
+        "E_DP": 202
+      },
+      {
+        "LogMAR_5": 4.3,
+        "LogMAR_Decimals": 0.2,
+        "E_DP": 160
+      },
+      {
+        "LogMAR_5": 4.4,
+        "LogMAR_Decimals": 0.25,
+        "E_DP": 127
+      },
+      {
+        "LogMAR_5": 4.5,
+        "LogMAR_Decimals": 0.3,
+        "E_DP": 101
+      },  {
+        "LogMAR_5": 4.6,
+        "LogMAR_Decimals": 0.4,
+        "E_DP": 80
+      },
+      {
+        "LogMAR_5": 4.7,
+        "LogMAR_Decimals": 0.5,
+        "E_DP": 64
+      },
+      {
+        "LogMAR_5": 4.8,
+        "LogMAR_Decimals": 0.6,
+        "E_DP": 50
+      },
+      {
+        "LogMAR_5": 4.9,
+        "LogMAR_Decimals": 0.8,
+        "E_DP": 40
+      },
+      {
+        "LogMAR_5": 5.0,
+        "LogMAR_Decimals": 1.0,
+        "E_DP": 32
+      },
+      {
+        "LogMAR_5": 5.1,
+        "LogMAR_Decimals": 1.2,
+        "E_DP": 25
+      },
+      {
+        "LogMAR_5": 5.2,
+        "LogMAR_Decimals": 1.5,
+        "E_DP": 20
+      },
+      {
+        "LogMAR_5": 5.3,
+        "LogMAR_Decimals": 2.0,
+        "E_DP": 16
+      }
+    ]
+  },
+  {
+    "distance": 2.5,
+    "visions": [
+      {
+        "LogMAR_5": 3.7,
+        "LogMAR_Decimals": 0.05,
+        "E_DP": 321
+      },
+      {
+        "LogMAR_5": 3.8,
+        "LogMAR_Decimals": 0.06,
+        "E_DP": 255
+      },
+      {
+        "LogMAR_5":3.9,
+        "LogMAR_Decimals": 0.08,
+        "E_DP": 202
+      },
+      {
+        "LogMAR_5": 4.0,
+        "LogMAR_Decimals": 0.1,
+        "E_DP": 160
+      },
+      {
+        "LogMAR_5": 4.1,
+        "LogMAR_Decimals": 0.12,
+        "E_DP": 127
+      },
+      {
+        "LogMAR_5": 4.2,
+        "LogMAR_Decimals": 0.15,
+        "E_DP": 101
+      },
+      {
+        "LogMAR_5": 4.3,
+        "LogMAR_Decimals": 0.2,
+        "E_DP": 80
+      },
+      {
+        "LogMAR_5": 4.4,
+        "LogMAR_Decimals": 0.25,
+        "E_DP": 64
+      },
+      {
+        "LogMAR_5": 4.5,
+        "LogMAR_Decimals": 0.3,
+        "E_DP": 50
+      },   {
+        "LogMAR_5": 4.6,
+        "LogMAR_Decimals": 0.4,
+        "E_DP": 40
+      },
+      {
+        "LogMAR_5": 4.7,
+        "LogMAR_Decimals": 0.5,
+        "E_DP": 32
+      },
+      {
+        "LogMAR_5": 4.8,
+        "LogMAR_Decimals": 0.6,
+        "E_DP": 25
+      },
+      {
+        "LogMAR_5": 4.9,
+        "LogMAR_Decimals": 0.8,
+        "E_DP": 20
+      },
+      {
+        "LogMAR_5": 5.0,
+        "LogMAR_Decimals": 1.0,
+        "E_DP": 16
+      },
+      {
+        "LogMAR_5": 5.1,
+        "LogMAR_Decimals": 1.2,
+        "E_DP": 12
+      },
+      {
+        "LogMAR_5": 5.2,
+        "LogMAR_Decimals": 1.5,
+        "E_DP": 10
+      },
+      {
+        "LogMAR_5": 5.3,
+        "LogMAR_Decimals": 2.0,
+        "E_DP": 8
+      }
+    ]
+  },
+  {
+    "distance": 1.0,
+    "visions": [
+      {
+        "LogMAR_5": 3.3,
+        "LogMAR_Decimals": 0.02,
+        "E_DP": 321
+      },
+      {
+        "LogMAR_5": 3.4,
+        "LogMAR_Decimals": 0.025,
+        "E_DP": 255
+      },
+      {
+        "LogMAR_5": 3.5,
+        "LogMAR_Decimals": 0.03,
+        "E_DP": 202
+      },
+      {
+        "LogMAR_5": 3.6,
+        "LogMAR_Decimals": 0.04,
+        "E_DP": 160
+      },
+      {
+        "LogMAR_5": 3.7,
+        "LogMAR_Decimals": 0.05,
+        "E_DP": 127
+      },
+      {
+        "LogMAR_5": 3.8,
+        "LogMAR_Decimals": 0.06,
+        "E_DP": 101
+      },
+      {
+        "LogMAR_5":3.9,
+        "LogMAR_Decimals": 0.08,
+        "E_DP": 80
+      },
+      {
+        "LogMAR_5": 4.0,
+        "LogMAR_Decimals": 0.1,
+        "E_DP": 64
+      },
+      {
+        "LogMAR_5": 4.1,
+        "LogMAR_Decimals": 0.12,
+        "E_DP": 50
+      },
+      {
+        "LogMAR_5": 4.2,
+        "LogMAR_Decimals": 0.15,
+        "E_DP": 40
+      },
+      {
+        "LogMAR_5": 4.3,
+        "LogMAR_Decimals": 0.2,
+        "E_DP": 32
+      },
+      {
+        "LogMAR_5": 4.4,
+        "LogMAR_Decimals": 0.25,
+        "E_DP": 25
+      },
+      {
+        "LogMAR_5": 4.5,
+        "LogMAR_Decimals": 0.3,
+        "E_DP": 20
+      },   {
+        "LogMAR_5": 4.6,
+        "LogMAR_Decimals": 0.4,
+        "E_DP": 16
+      },
+      {
+        "LogMAR_5": 4.7,
+        "LogMAR_Decimals": 0.5,
+        "E_DP": 12
+      },
+      {
+        "LogMAR_5": 4.8,
+        "LogMAR_Decimals": 0.6,
+        "E_DP": 10
+      },
+      {
+        "LogMAR_5": 4.9,
+        "LogMAR_Decimals": 0.8,
+        "E_DP": 8
+      },
+      {
+        "LogMAR_5": 5.0,
+        "LogMAR_Decimals": 1.0,
+        "E_DP": 6
+      },
+      {
+        "LogMAR_5": 5.1,
+        "LogMAR_Decimals": 1.2,
+        "E_DP": 5
+      },
+      {
+        "LogMAR_5": 5.2,
+        "LogMAR_Decimals": 1.5,
+        "E_DP": 4
+      },
+      {
+        "LogMAR_5": 5.3,
+        "LogMAR_Decimals": 2.0,
+        "E_DP": 3
+      }
+    ]
+  }
+]
