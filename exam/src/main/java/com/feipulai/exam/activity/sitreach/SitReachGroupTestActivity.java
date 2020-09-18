@@ -229,7 +229,7 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
     public void AgainTest(BaseDeviceState deviceState) {
         resultRunnable.setTestState(sitReachResiltListener.getTestState());
         statesRunnable.setTestState(sitReachResiltListener.getTestState());
-        toastSpeak("设备错误重测");
+        toastSpeak("错误重测");
     }
 
     @Override
@@ -245,60 +245,65 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
     boolean clicked;
 
     private void confirmResult(final BaseStuPair stuPair) {
-
-        clicked = false;
-        SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
-        alertDialog.setTitleText(getString(R.string.confirm_result));
-        alertDialog.setContentText("当前成绩是否为最终成绩");
-        alertDialog.setCancelable(false);
-        alertDialog.setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+        runOnUiThread(new Runnable() {
             @Override
-            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                sweetAlertDialog.dismissWithAnimation();
+            public void run() {
+                clicked = false;
+                SweetAlertDialog alertDialog = new SweetAlertDialog(SitReachGroupTestActivity.this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
+                alertDialog.setTitleText(getString(R.string.confirm_result));
+                alertDialog.setContentText("当前成绩是否为最终成绩");
+                alertDialog.setCancelable(false);
+                alertDialog.setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
 
-                if (!clicked) {
-                    if (reachSetting.isFullReturn()) {
-                        if (baseStuPair.getStudent().getSex() == 0) {//男子
-                            stuPair.setFullMark(stuPair.getResult() >= reachSetting.getManFull() * 10);
-                        } else {
-                            stuPair.setFullMark(stuPair.getResult() >= reachSetting.getWomenFull() * 10);
+                        if (!clicked) {
+                            if (reachSetting.isFullReturn()) {
+                                if (baseStuPair.getStudent().getSex() == 0) {//男子
+                                    stuPair.setFullMark(stuPair.getResult() >= reachSetting.getManFull() * 10);
+                                } else {
+                                    stuPair.setFullMark(stuPair.getResult() >= reachSetting.getWomenFull() * 10);
+                                }
+                            }
+                            Logger.i(TAG + ":getResult--->" + stuPair.toString());
+                            Message msg = mHandler.obtainMessage();
+                            msg.obj = stuPair;
+                            msg.what = UPDATE_RESULT;
+                            mHandler.sendMessage(msg);
+                            clicked = true;
+
+                            //设置设备状态
+                            BaseDeviceState deviceState = stuPair.getBaseDevice();
+                            deviceState.setState(BaseDeviceState.STATE_END);
+                            getDeviceState(deviceState);
+                            //结束设备
+                            EndDevice(stuPair.getResultState() == RoundResult.RESULT_STATE_FOUL, stuPair.getResult());
                         }
+
                     }
-                    Logger.i(TAG + ":getResult--->" + stuPair.toString());
-                    Message msg = mHandler.obtainMessage();
-                    msg.obj = stuPair;
-                    msg.what = UPDATE_RESULT;
-                    mHandler.sendMessage(msg);
-                    clicked = true;
+                }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                        if (!clicked) {
+                            sitReachResiltListener.setTestState(SitReachResiltListener.TestState.WAIT_RESULT);
+                            //重测设置设备正在使用中
+                            stuPair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
+                            stuPair.setResult(0);
+                            //更新成绩
+                            getResult(false, stuPair);
+                            //设置设备状态
+                            getDeviceState(stuPair.getBaseDevice());
+                            AgainTest(stuPair.getBaseDevice());
+                            clicked = true;
+                        }
 
-                    //设置设备状态
-                    BaseDeviceState deviceState = stuPair.getBaseDevice();
-                    deviceState.setState(BaseDeviceState.STATE_END);
-                    getDeviceState(deviceState);
-                    //结束设备
-                    EndDevice(stuPair.getResultState() == RoundResult.RESULT_STATE_FOUL, stuPair.getResult());
-                }
-
+                    }
+                }).show();
             }
-        }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-            @Override
-            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                sweetAlertDialog.dismissWithAnimation();
-                if (!clicked) {
-                    sitReachResiltListener.setTestState(SitReachResiltListener.TestState.WAIT_RESULT);
-                    //重测设置设备正在使用中
-                    stuPair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
-                    stuPair.setResult(0);
-                    //更新成绩
-                    getResult(false, stuPair);
-                    //设置设备状态
-                    getDeviceState(stuPair.getBaseDevice());
-                    AgainTest(stuPair.getBaseDevice());
-                    clicked = true;
-                }
+        });
 
-            }
-        }).show();
     }
 
     private static class MyHandler extends Handler {

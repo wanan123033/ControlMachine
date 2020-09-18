@@ -235,7 +235,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
     public void AgainTest(BaseDeviceState deviceState) {
         resultRunnable.setTestState(sitReachResiltListener.getTestState());
         statesRunnable.setTestState(sitReachResiltListener.getTestState());
-        toastSpeak("设备错误重测");
+        toastSpeak("错误重测");
     }
 
     @Override
