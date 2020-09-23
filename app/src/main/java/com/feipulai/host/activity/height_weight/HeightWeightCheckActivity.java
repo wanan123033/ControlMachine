@@ -125,7 +125,7 @@ public class HeightWeightCheckActivity
     }
 
     private void prepareForTest() {
-        LogUtils.operation("HeightWeightCheckActivity prepareForTest "+mStudent.toString());
+        LogUtils.operation("HeightWeightCheckActivity prepareForTest " + mStudent.toString());
         isTesting = true;
         isTestFinished = false;
 
@@ -166,7 +166,7 @@ public class HeightWeightCheckActivity
         prepareForTest();
         mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), mStudent.getLEDStuName(), mLEDManager.getX(mStudent.getLEDStuName()), 0, true, true);
         toastSpeak(mStudent.getSpeakStuName() + "请准备");
-        LogUtils.operation("检入到学生信息:"+mStudent.toString());
+        LogUtils.operation("检入到学生信息:" + mStudent.toString());
     }
 
     @Override
@@ -176,8 +176,8 @@ public class HeightWeightCheckActivity
             case UPDATE_NEW_RESULT:
                 String displayHeight = ResultDisplayUtils.getStrResultForDisplay(mHeightResult.getResult(), HWConfigs.HEIGHT_ITEM);
                 String displayWeight = ResultDisplayUtils.getStrResultForDisplay(mWeightResult.getResult(), HWConfigs.WEIGHT_ITEM);
-                LogUtils.operation("获取到学生成绩:mHeightResult="+mHeightResult.toString());
-                LogUtils.operation("获取到学生成绩:mWeightResult="+mWeightResult.toString());
+                LogUtils.operation("获取到学生成绩:mHeightResult=" + mHeightResult.toString());
+                LogUtils.operation("获取到学生成绩:mWeightResult=" + mWeightResult.toString());
                 txtHeightResult.setText(displayHeight);
                 txtWeightResult.setText(displayWeight);
                 txtTestResult.setText(displayHeight + "\n" + displayWeight);
@@ -225,14 +225,14 @@ public class HeightWeightCheckActivity
                 int weightMinValue = HWConfigs.WEIGHT_ITEM.getMinValue();
                 int weightMaxValue = HWConfigs.WEIGHT_ITEM.getMaxValue();
 
-                if (heightMinValue > 0 || heightMinValue > 0) {
-                    if (result.getHeight() < heightMinValue || result.getHeight() > heightMaxValue) {
+                if (heightMinValue > 0 || heightMaxValue > 0) {
+                    if (result.getHeight() * 10 < heightMinValue || result.getHeight() * 10 > heightMaxValue) {
                         toastSpeak("身高数值不在有效范围内，请重测");
                         return;
                     }
                 }
                 if (weightMinValue > 0 || weightMaxValue > 0) {
-                    if (result.getWeight() < weightMinValue || result.getWeight() > weightMaxValue) {
+                    if (result.getWeight() * 1000 < weightMinValue || result.getWeight() * 1000 > weightMaxValue) {
                         toastSpeak("体重数值不在有效范围内，请重测");
                         return;
                     }
@@ -283,7 +283,7 @@ public class HeightWeightCheckActivity
     @OnClick(R.id.txt_skip)
     public void onViewClicked() {
         if (mStudent != null)
-            LogUtils.operation("用户点击跳过:"+mStudent.toString());
+            LogUtils.operation("用户点击跳过:" + mStudent.toString());
         if (!isTestFinished)
             mHandler.sendEmptyMessage(CLEAR_DATA);
     }

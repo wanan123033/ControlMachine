@@ -46,6 +46,8 @@ public class VisionBean implements Serializable {
         private int eDP;
         @SerializedName("LogMAR_Decimals")
         private double logMAR_Decimals;
+        @SerializedName("Error_Count")
+        private int errorCount;
 
         public double getLogMAR_5() {
             return logMAR_5;
@@ -71,12 +73,21 @@ public class VisionBean implements Serializable {
             this.logMAR_Decimals = logMAR_Decimals;
         }
 
+        public int getErrorCount() {
+            return errorCount;
+        }
+
+        public void setErrorCount(int errorCount) {
+            this.errorCount = errorCount;
+        }
+
         @Override
         public String toString() {
             return "VisionData{" +
                     "logMAR_5=" + logMAR_5 +
                     ", eDP=" + eDP +
                     ", logMAR_Decimals=" + logMAR_Decimals +
+                    ", errorCount=" + errorCount +
                     '}';
         }
     }
