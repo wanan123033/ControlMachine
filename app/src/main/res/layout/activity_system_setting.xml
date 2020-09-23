@@ -309,6 +309,7 @@
                     android:button="@drawable/checkbox_switch_selected" />
             </RelativeLayout>
 
+
             <View
                 android:id="@+id/view_itemd"
                 style="@style/divider_gray_horizontal_style"

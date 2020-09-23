@@ -12,6 +12,7 @@ import com.feipulai.common.view.PullToRefreshView;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseTitleActivity;
+import com.feipulai.host.view.OperateProgressBar;
 import com.inuker.bluetooth.library.connect.listener.BleConnectStatusListener;
 import com.inuker.bluetooth.library.connect.listener.BluetoothStateListener;
 import com.inuker.bluetooth.library.connect.response.BleConnectResponse;
@@ -82,6 +83,7 @@ public class BlueToothListActivity extends BaseTitleActivity {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                OperateProgressBar.showLoadingUi(BlueToothListActivity.this,"正在连接蓝牙...");
                 mDevice = BluetoothUtils.getRemoteDevice(mDevices.get(position).getAddress());
                 BlueToothHelper.getBlueBind().setBluetoothMac(mDevice.getAddress());
                 ClientManager.getClient().registerConnectStatusListener(mDevice.getAddress(), mConnectStatusListener);
@@ -131,6 +133,7 @@ public class BlueToothListActivity extends BaseTitleActivity {
                         //设置读取
                         ClientManager.getGattProfile(bleGattProfile);
                         toastSpeak("连接成功");
+                        OperateProgressBar.removeLoadingUiIfExist(BlueToothListActivity.this);
                         finish();
 
                     }

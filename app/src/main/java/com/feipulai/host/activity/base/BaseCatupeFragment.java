@@ -142,6 +142,8 @@ public class BaseCatupeFragment extends BaseFragment implements PreviewCallback 
                             studentItem.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
                             DBManager.getInstance().insertStudentItem(studentItem);
                             doRegister(file);
+                            mUVCCamera.clearCache();
+                            mUVCCamera.closeCamera();
                             return student;
                         }
                     })

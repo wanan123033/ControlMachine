@@ -1,6 +1,5 @@
 package com.feipulai.host.activity.base;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -25,7 +24,6 @@ import com.feipulai.host.config.BaseEvent;
 import com.feipulai.host.config.EventConfigs;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
-import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.entity.StudentItem;
 import com.feipulai.host.view.AddStudentDialog;
@@ -33,7 +31,6 @@ import com.orhanobut.logger.Logger;
 import com.zkteco.android.biometric.module.idcard.meta.IDCardInfo;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -182,8 +179,9 @@ public abstract class BaseCheckActivity
         });
         if (student == null) {
             InteractUtils.toastSpeak(this, "该考生不存在");
-            if (SettingHelper.getSystemSetting().isNetCheckTool() && SettingHelper.getSystemSetting().isTemporaryAddStu()){
+            if (SettingHelper.getSystemSetting().isNetCheckTool()){
                 showAddHint(student);
+                afrFrameLayout.setVisibility(View.GONE);
             }
             return;
         }
@@ -374,7 +372,6 @@ public abstract class BaseCheckActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (dialog == null) {
                     new SweetAlertDialog(BaseCheckActivity.this).setTitleText(getString(R.string.addStu_dialog_title))
                             .setContentText(getString(R.string.addStu_dialog_content))
                             .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
@@ -388,11 +385,8 @@ public abstract class BaseCheckActivity
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
                             sweetAlertDialog.dismissWithAnimation();
                         }
-                    });
-                }
-                if (!dialog.isShowing()){
-                    dialog.show();
-                }
+                    }).show();
+
 
 //                new AlertDialog.Builder(BaseCheckActivity.this)
 //                        .setCancelable(false)
@@ -422,6 +416,14 @@ public abstract class BaseCheckActivity
             return super.onKeyDown(keyCode, event);
         } else { // 如果不是back键正常响应
             return super.onKeyDown(keyCode, event);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (afrFragment != null && afrFragment.isOpenCamera) {
+            showAFR();
         }
     }
 }

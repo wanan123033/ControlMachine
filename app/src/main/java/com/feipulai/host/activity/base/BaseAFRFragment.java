@@ -166,8 +166,8 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                     mFaceFeature = faceFeature;
                     isStartFace = false;
                     threadPool.execute(searchFace1);
-                    threadPool.execute(searchFace2);
-                    threadPool.execute(searchFace3);
+//                    threadPool.execute(searchFace2);
+//                    threadPool.execute(searchFace3);
 
 
                 }
@@ -518,26 +518,28 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         @Override
         public void run() {
             compareResult1 = FaceServer.getInstance().getTopOfFaceLib(mFaceFeature);
-            compareResult();
-        }
-    };
-    private CompareResult compareResult2;
-    private Runnable searchFace2 = new Runnable() {
-        @Override
-        public void run() {
             compareResult2 = FaceServer.getInstance().getTopOfFaceLib2(mFaceFeature);
-            compareResult();
-        }
-    };
-
-    private CompareResult compareResult3;
-    private Runnable searchFace3 = new Runnable() {
-        @Override
-        public void run() {
             compareResult3 = FaceServer.getInstance().getTopOfFaceLib3(mFaceFeature);
             compareResult();
         }
     };
+    private CompareResult compareResult2;
+//    private Runnable searchFace2 = new Runnable() {
+//        @Override
+//        public void run() {
+//            compareResult2 = FaceServer.getInstance().getTopOfFaceLib2(mFaceFeature);
+//            compareResult();
+//        }
+//    };
+//
+    private CompareResult compareResult3;
+//    private Runnable searchFace3 = new Runnable() {
+//        @Override
+//        public void run() {
+//            compareResult3 = FaceServer.getInstance().getTopOfFaceLib3(mFaceFeature);
+//            compareResult();
+//        }
+//    };
 
     private void compareResult() {
         Log.e("TAG", "BaseAFRFragment compareResult " + compareResult1);
@@ -575,7 +577,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             compareResult2 = null;
             compareResult3 = null;
             if (lastCompareResult.getSimilar() > SIMILAR_THRESHOLD) {
-                requestFeatureStatusMap.put(faceId, RequestFeatureStatus.SUCCEED);
+                    requestFeatureStatusMap.put(faceId, RequestFeatureStatus.SUCCEED);
 //                faceHelper.setName(faceId, mContext.getString(R.string.recognize_success_notice, lastCompareResult.getUserName()));
                 Student student = DBManager.getInstance().queryStudentByCode(lastCompareResult.getUserName());
                 Logger.e("compareResult==》特征识别成功" + student);
@@ -587,7 +589,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 //                isOpenCamera=false;
             } else {
                 hasTry++;
-                Logger.e("compareResult==>null");
+                Logger.e("compareResult==>null----"+hasTry);
                 if (hasTry < 3) {
                     faceHelper.setName(faceId, getString(R.string.recognize_failed_notice, ""));
                     isStartFace = true;
@@ -602,6 +604,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                         isNetWork = true;
                         Log.e("TAG","++++++++++++++++++++++++netFace602");
                         netFace();
+                        return;
                     } else {
                         if (isLodingServer) {
                             compareListener.compareStu(null);
@@ -610,33 +613,59 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                             return;
                         }
                     }
-
                 }
 
             }
+        }else {
+            isStartFace = true;
+            retryRecognizeDelayed(faceId);
         }
 
     }
-    private boolean isNetface = false;
+    private boolean isNetface = false; //控制netFace()是否还没有走完  只有走完了才能再次调用哟
     public void netFace() {
         if (isNetWork) {
             isNetface = true;
             isNetWork = false;
             isStartFace = false;
+            if (getActivity() != null)
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        OperateProgressBar.showLoadingUi(getActivity(),"在线识别中...");
+                    }
+                });
+
             if (mFaceFeature != null) {
                 ItemSubscriber itemSubscriber = new ItemSubscriber();
                 itemSubscriber.setOnRequestEndListener(new OnRequestEndListener() {
                     @Override
                     public void onSuccess(int bizType) {
+                        if (getActivity() != null)
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    OperateProgressBar.removeLoadingUiIfExist(getActivity());
+                                }
+                            });
+
                     }
 
                     @Override
                     public void onFault(int bizType) {
+                        if (getActivity() != null)
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    OperateProgressBar.removeLoadingUiIfExist(getActivity());
+                                }
+                            });
                         isNetface = false;
                         if (bizType == -1) {//在线未识别成功
-                            isStartFace = false;
+                            isStartFace = true;
                             ToastUtils.showShort("在线识别失败");
                             compareListener.compareStu(null);
+
                         } else {
                             isStartFace = true;
                             retryRecognizeDelayed(faceId);
@@ -646,6 +675,13 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
                     @Override
                     public void onRequestData(Object data) {
+                        if (getActivity() != null)
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    OperateProgressBar.removeLoadingUiIfExist(getActivity());
+                                }
+                            });
                         isNetface = false;
                         isStartFace = false;
                         isLodingServer = false;
@@ -666,10 +702,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                             } else {
                                 getStudent(photo.getStudentcode());
                             }
-
                         }
-
-
                     }
                 });
                 itemSubscriber.sendFaceOnline("", "", Base64.encodeToString(mFaceFeature.getFeatureData(), Base64.DEFAULT));
@@ -696,6 +729,8 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                                 @Override
                                 public void onClick(SweetAlertDialog sweetAlertDialog) {
                                     sweetAlertDialog.dismissWithAnimation();
+                                    isStartFace = true;
+                                    retryRecognizeDelayed(faceId);
 
                                 }
                             });
@@ -714,7 +749,13 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             @Override
             public void onSuccess(int bizType) {
                 isLodingServer = true;
-                OperateProgressBar.removeLoadingUiIfExist((Activity) mContext);
+                if (getActivity() != null)
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            OperateProgressBar.removeLoadingUiIfExist(getActivity());
+                        }
+                    });
                 isStartFace = true;
                 retryRecognizeDelayed(faceId);
                 //下载学生
@@ -725,7 +766,13 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
             @Override
             public void onFault(int bizType) {
-                OperateProgressBar.removeLoadingUiIfExist((Activity) mContext);
+                if (getActivity() != null)
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            OperateProgressBar.removeLoadingUiIfExist(getActivity());
+                        }
+                    });
                 isStartFace = true;
                 isLodingServer = true;
                 retryRecognizeDelayed(faceId);
@@ -734,7 +781,13 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             @Override
             public void onRequestData(Object data) {
                 isLodingServer = true;
-                OperateProgressBar.removeLoadingUiIfExist((Activity) mContext);
+                if (getActivity() != null)
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            OperateProgressBar.removeLoadingUiIfExist(getActivity());
+                        }
+                    });
 
                 List<Student> studentList = (List<Student>) data;
                 List<FaceRegisterInfo> registerInfoList = new ArrayList<>();

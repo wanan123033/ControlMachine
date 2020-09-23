@@ -174,6 +174,14 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                 break;
             case R.id.sp_check_tool:
                 setting.setCheckTool(position);
+                if (position == 4){
+                    rl_net.setVisibility(View.VISIBLE);
+                    view_itemd.setVisibility(View.VISIBLE);
+                    sw_net.setChecked(setting.isNetCheckTool());
+                }else {
+                    rl_net.setVisibility(View.GONE);
+                    view_itemd.setVisibility(View.GONE);
+                }
                 break;
         }
     }

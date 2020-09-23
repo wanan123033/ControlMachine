@@ -165,10 +165,11 @@ public class VisionTestActivity extends BasePersonTestActivity {
         BlueToothHelper.init(MyApplication.getInstance());
         pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
         refreshDevice();
+
         blueBind = BlueToothHelper.getBlueBind();
         if (!TextUtils.isEmpty(blueBind.getBluetoothMac())) {
-            OperateProgressBar.showLoadingUi(this,"正在重连蓝牙:"+blueBind.getBluetoothMac());
-            ClientManager.connectDevice(blueBind.getBluetoothMac(), bleConnectResponse);
+//            OperateProgressBar.showLoadingUi(this,"正在重连蓝牙:"+blueBind.getBluetoothMac());
+//            ClientManager.connectDevice(blueBind.getBluetoothMac(), bleConnectResponse);
             ClientManager.getClient().registerConnectStatusListener(blueBind.getBluetoothMac(), mConnectStatusListener);
         }
         if (mLEDManager != null)
