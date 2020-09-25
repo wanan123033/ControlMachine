@@ -164,7 +164,7 @@
         <activity android:name=".activity.ranger.bluetooth.BluetoothSettingActivity" />
         <activity android:name=".activity.vision.VisionTestActivity" />
         <activity android:name=".activity.vision.VisionSettingActivity" />
-        <activity android:name=".activity.vision.VisionFreedomTestActivity" />
+        <activity android:name=".activity.vision.Radio.VisionFreedomTestActivity" />
 
         <activity android:name=".activity.vision.bluetooth.BlueToothListActivity" />
         <activity android:name=".activity.ranger.RangerPersonTestActivity" />

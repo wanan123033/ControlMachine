@@ -1,4 +1,4 @@
-package com.feipulai.host.activity.vision;
+package com.feipulai.host.activity.vision.Radio;
 
 import com.google.gson.annotations.SerializedName;
 
