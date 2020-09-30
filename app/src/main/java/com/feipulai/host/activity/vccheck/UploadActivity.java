@@ -12,7 +12,7 @@ import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.netUtils.UploadResultUtil;
 import com.feipulai.host.netUtils.netapi.ServerIml;
-
+@Deprecated
 public class UploadActivity extends Activity {
 
     @Override

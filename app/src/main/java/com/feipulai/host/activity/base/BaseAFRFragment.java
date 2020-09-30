@@ -328,7 +328,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             faceHelper.release();
             faceHelper = null;
         }
-
+        mUVCCamera.stopPreview();
         faceRectView2 = null;
         drawHelper = null;
         mUVCCamera = null;
@@ -583,9 +583,31 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                 Logger.e("compareResult==》特征识别成功" + student);
                 isOpenCamera = false;
                 hasTry = 0;
-                compareListener.compareStu(student);
-                isStartFace = false;
-                isNetWork = false;
+                if (student==null){
+                    hasTry = 0;
+                    faceHelper.setName(faceId, getString(R.string.recognize_failed_notice, ""));
+                    isOpenCamera = false;
+                    isStartFace = false;
+
+                    if (SettingHelper.getSystemSetting().isNetCheckTool() && !isNetface) {
+                        isNetWork = true;
+                        Log.e("TAG","++++++++++++++++++++++++netFace602");
+                        netFace();
+                        return;
+                    } else {
+                        if (isLodingServer) {
+                            compareListener.compareStu(null);
+                        } else {
+                            showAddHint();
+                            return;
+                        }
+                    }
+                }else{
+                    compareListener.compareStu(student);
+                    isStartFace = false;
+                    isNetWork = false;
+                }
+
 //                isOpenCamera=false;
             } else {
                 hasTry++;

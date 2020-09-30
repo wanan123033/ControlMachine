@@ -606,25 +606,28 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     }
 
     @Override
-    public void compareStu(Student student) {
+    public void compareStu(final Student student) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                afrFrameLayout.setVisibility(View.GONE);
+
+                if (student == null) {
+                    InteractUtils.toastSpeak(RunTimerActivityTestActivity.this, "该考生不存在");
+                    return;
+                }else{
+                    afrFrameLayout.setVisibility(View.GONE);
+                }
+                StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+                if (studentItem == null) {
+                    InteractUtils.toastSpeak(RunTimerActivityTestActivity.this, "无此项目");
+                    return;
+                }
+                // 可以直接检录
+                checkInUIThread(student,studentItem);
             }
         });
 
-        if (student == null) {
-            InteractUtils.toastSpeak(this, "该考生不存在");
-            return;
-        }
-        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
-        if (studentItem == null) {
-            InteractUtils.toastSpeak(this, "无此项目");
-            return;
-        }
-        // 可以直接检录
-        checkInUIThread(student,studentItem);
+
     }
 
 }

@@ -26,6 +26,7 @@ import com.arcsoft.face.util.ImageUtils;
 import com.arcsoft.imageutil.ArcSoftImageFormat;
 import com.arcsoft.imageutil.ArcSoftImageUtil;
 import com.arcsoft.imageutil.ArcSoftImageUtilError;
+import com.bumptech.glide.Glide;
 import com.feipulai.common.db.ClearDataProcess;
 import com.feipulai.common.db.DataBaseExecutor;
 import com.feipulai.common.db.DataBaseRespon;
@@ -159,7 +160,7 @@ public class DataManageActivity
 //        if (!FaceServer.getInstance().init(this)) {
 //            ToastUtils.showShort("人脸识别引擎初始化失败");
 //        }
-        progressDialog = new ProgressDialog(this);
+
         initGridView();
     }
 
@@ -657,6 +658,7 @@ public class DataManageActivity
                         || name.endsWith(FaceServer.IMG_SUFFIX_JPG.toUpperCase()) || name.endsWith(FaceServer.IMG_SUFFIX_PNG.toUpperCase());
             }
         });
+        progressDialog = new ProgressDialog(this);
         executorService.execute(new Runnable() {
             @Override
             public void run() {
@@ -749,7 +751,6 @@ public class DataManageActivity
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
-        FaceServer.getInstance().unInit();
     }
 
     @Override
@@ -933,7 +934,13 @@ public class DataManageActivity
                 FileUtil.mkdirs(MyApplication.PATH_IMAGE);
                 FileUtil.delete(MyApplication.PATH_PDF_IMAGE);//清理成绩PDF与图片
                 FileUtil.mkdirs(MyApplication.PATH_PDF_IMAGE);
+                FileUtil.delete(FaceServer.ROOT_PATH);
+                FileUtil.mkdirs2(FaceServer.ROOT_PATH);
+                Glide.get(DataManageActivity.this).clearDiskCache();
+                FaceServer.getInstance().unInit();
+                FaceServer.getInstance().init(DataManageActivity.this);
                 Logger.i("进行数据清空");
+
                 return new DataBaseRespon(true, "", "");
             }
 

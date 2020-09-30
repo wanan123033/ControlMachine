@@ -21,6 +21,8 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.arcsoft.face.ErrorInfo;
+import com.arcsoft.face.FaceEngine;
 import com.feipulai.common.utils.AudioUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.NetWorkUtils;
@@ -42,6 +44,8 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.netUtils.HttpManager;
 import com.feipulai.exam.utils.bluetooth.BlueToothListActivity;
 import com.orhanobut.logger.utils.LogUtils;
+import com.ww.fpl.libarcface.common.Constants;
+import com.ww.fpl.libarcface.util.ConfigUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,6 +55,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     @BindView(R.id.et_test_name)
@@ -276,6 +287,52 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                 systemSetting.setPrintTool(position);
                 break;
         }
+    }
+
+    private void activeFace() {
+        Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
+                int activeCode = FaceEngine.activeOnline(SettingActivity.this, Constants.APP_ID, Constants.SDK_KEY);
+                emitter.onNext(activeCode);
+            }
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Integer activeCode) {
+                        if (activeCode == ErrorInfo.MOK) {
+                            ToastUtils.showShort(getString(R.string.active_success));
+                            ConfigUtil.setISEngine(SettingActivity.this, true);
+                        } else if (activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
+                            ToastUtils.showShort(getString(R.string.already_activated));
+                        } else {
+                            ToastUtils.showShort(getString(R.string.active_failed));
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+
+    }
+
+    @OnClick({R.id.btn_face_init})
+    public void onClickFaceInit() {
+        activeFace();
     }
 
     @OnClick({R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting

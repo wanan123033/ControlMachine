@@ -5,9 +5,10 @@
     android:orientation="horizontal">
 
     <include
-        layout="@layout/layout_stu_data"
+        layout="@layout/layout_stu_info"
         android:layout_width="250dp"
         android:layout_height="match_parent" />
+
 
     <View
         android:layout_width="8dp"
@@ -109,8 +110,10 @@
 
 
             <TextView
+                android:id="@+id/txt_result"
                 style="@style/txt_black_style"
                 android:layout_centerInParent="true"
+                android:lineSpacingExtra="15dp"
                 android:text="请检录"
                 android:textSize="45sp" />
 
@@ -119,18 +122,19 @@
 
         <ListView
             android:id="@+id/lv_results"
-            android:layout_width="321dp"
+            android:layout_width="340dp"
             android:layout_height="260dp"
             android:layout_marginLeft="160dp"
-            android:layout_marginTop="40dp"
-            android:background="@drawable/bg_white_radius_10"
+            android:layout_marginTop="55dp"
+            android:background="@drawable/bg_grey_radius_10"
             android:divider="@color/sbc_header_text"
             android:dividerHeight="1dp"
             android:paddingLeft="20dp"
+            android:visibility="gone"
             android:paddingTop="@dimen/dp_10"
             android:paddingRight="20dp"
             android:paddingBottom="@dimen/dp_10"
-            android:visibility="gone" />
+           />
 
         <FrameLayout
             android:id="@+id/frame_camera"

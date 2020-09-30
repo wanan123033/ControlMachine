@@ -289,4 +289,6 @@ public class SerialConfigs {
     //新增引体向上手臂检测
     public static final int PULL_UP_GET_GYRO_DATA = 0x80;
     public static final int PULL_UP_GET_ANGLE_DATA = 0x81;
+
+    public static final int VISION_KEY = 0x82;
 }

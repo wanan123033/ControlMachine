@@ -10,7 +10,10 @@ import java.util.List;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 public class VisionBean implements Serializable {
-
+    public static final int DIRECTION_TOP = 4;
+    public static final int DIRECTION_LEFT = 3;
+    public static final int DIRECTION_BOTTOM = 2;
+    public static final int DIRECTION_RIGHT = 1;
     private double distance;//距离长度 5 ，2.5 ，1
     private List<VisionData> visions;
 

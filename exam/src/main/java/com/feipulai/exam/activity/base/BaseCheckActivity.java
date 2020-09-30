@@ -377,11 +377,12 @@ public abstract class BaseCheckActivity
     }
 
     @Override
-    public void compareStu(Student student) {
+    public void compareStu(final Student student) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                afrFrameLayout.setVisibility(View.GONE);
+                if (student != null)
+                    afrFrameLayout.setVisibility(View.GONE);
             }
         });
 

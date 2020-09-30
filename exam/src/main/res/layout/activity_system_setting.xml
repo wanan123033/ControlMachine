@@ -644,17 +644,27 @@
             <TextView
                 android:id="@+id/txt_advanced"
                 style="@style/style_setting_tv_title"
-                android:layout_width="186dp"
-                android:layout_height="35dp"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="51dp"
-                android:layout_marginBottom="28dp"
+                android:layout_marginBottom="10dp"
                 android:background="@drawable/btn_click_bg_selected"
                 android:gravity="center"
                 android:text="@string/advanced_setting"
                 android:textColor="@color/white" />
 
-
+            <Button
+                android:id="@+id/btn_face_init"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/btn_click_bg_selected"
+                android:text="人脸识别激活"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_16" />
         </LinearLayout>
 
     </LinearLayout>

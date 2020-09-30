@@ -18,8 +18,8 @@ import com.feipulai.host.activity.sitreach.SitReachSelectActivity;
 import com.feipulai.host.activity.situp.check.SitUpCheckActivity;
 import com.feipulai.host.activity.standjump.StandJumpSelectActivity;
 import com.feipulai.host.activity.vccheck.VitalTestActivity;
-import com.feipulai.host.activity.vision.Radio.VisionFreedomTestActivity;
-import com.feipulai.host.activity.vision.VisionTestActivity;
+import com.feipulai.host.activity.vision.Radio.VisionCheckActivity;
+import com.feipulai.host.activity.vision.Radio.VisionTestActivity;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.db.MachineItemCodeUtil;
 import com.feipulai.host.entity.Item;
@@ -77,9 +77,9 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_ZFP, RunTimerTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_WLJ, VitalTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_YTXS, PullUpSelectActivity.class);
-        TestConfigs.proActivity.put(ItemDefault.CODE_SL, VisionTestActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_SL, VisionCheckActivity.class);
 
-        TestConfigs.freedomActivity.put(ItemDefault.CODE_SL, VisionFreedomTestActivity.class);
+        TestConfigs.freedomActivity.put(ItemDefault.CODE_SL, VisionTestActivity.class);
         TestConfigs.freedomActivity.put(ItemDefault.CODE_JGCJ, RangerTestActivity.class);
         TestConfigs.freedomActivity.put(ItemDefault.CODE_LDTY, StandJumpSelectActivity.class);
         TestConfigs.freedomActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallSelectActivity.class);
