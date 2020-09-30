@@ -62,22 +62,30 @@
             android:id="@+id/txt_stop_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
             android:text="视标停留时间："
+            app:layout_constraintBottom_toBottomOf="@+id/et_stop_time"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/sp_stop_time"
-            app:layout_constraintTop_toBottomOf="@+id/sp_result_type" />
+            app:layout_constraintRight_toLeftOf="@+id/et_stop_time"
+            app:layout_constraintTop_toTopOf="@+id/et_stop_time" />
 
-        <Spinner
-            android:id="@+id/sp_stop_time"
+        <EditText
+            android:id="@+id/et_stop_time"
             android:layout_width="150dp"
             android:layout_height="30dp"
             android:layout_marginTop="15dp"
-            android:background="@drawable/icon_spinner_bg"
+            android:background="@drawable/edit_search_bg"
+            android:gravity="center"
+            android:inputType="number"
             app:layout_constraintLeft_toRightOf="@+id/txt_stop_time"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sp_result_type" />
 
-
+        <TextView
+            style="@style/txt_black_style"
+            android:layout_marginLeft="3dp"
+            android:text="秒"
+            app:layout_constraintBottom_toBottomOf="@+id/et_stop_time"
+            app:layout_constraintLeft_toRightOf="@+id/et_stop_time"
+            app:layout_constraintTop_toTopOf="@+id/et_stop_time" />
     </android.support.constraint.ConstraintLayout>
 </android.support.v4.widget.NestedScrollView>

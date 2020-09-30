@@ -13,7 +13,7 @@ public class VisionSetting implements Serializable {
 
     private int testType = 0;// 0 ：5分  1 ： 小数
 
-    private int stopTime = 0;//0不限时
+    private int stopTime = 5;//0不限时
 
     public int getDistance() {
         return distance;

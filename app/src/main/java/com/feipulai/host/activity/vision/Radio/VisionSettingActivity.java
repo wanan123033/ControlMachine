@@ -1,10 +1,15 @@
 package com.feipulai.host.activity.vision.Radio;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.host.R;
@@ -27,15 +32,19 @@ public class VisionSettingActivity extends BaseTitleActivity {
     Spinner spTestDistance;
     @BindView(R.id.sp_result_type)
     Spinner spResultType;
-    @BindView(R.id.sp_stop_time)
-    Spinner spStopTime;
+    @BindView(R.id.et_stop_time)
+    EditText etStopTime;
     private VisionSetting visionSetting;
 
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_vision_setting;
     }
-
+    @Nullable
+    @Override
+    protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
+        return builder.setTitle("项目设置");
+    }
     @Override
     protected void initData() {
         //获取项目设置
@@ -54,15 +63,10 @@ public class VisionSettingActivity extends BaseTitleActivity {
         spResultTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spResultType.setAdapter(spResultTypeAdapter);
         spResultType.setSelection(visionSetting.getTestType());
-
-        ArrayAdapter spStopTimeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,
-                getResources().getStringArray(R.array.vision_stop_time));
-        spStopTimeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spStopTime.setAdapter(spStopTimeAdapter);
-        spStopTime.setSelection(visionSetting.getStopTime() == 0 ? 0 : visionSetting.getStopTime() == 3 ? 1 : 2);
+        etStopTime.setText(visionSetting.getStopTime() + "");
     }
 
-    @OnItemSelected({R.id.sp_stop_time, R.id.sp_result_type, R.id.sp_test_distance})
+    @OnItemSelected({R.id.sp_result_type, R.id.sp_test_distance})
     public void spinnerItemSelected(Spinner spinner, int position) {
 
         switch (spinner.getId()) {
@@ -72,9 +76,7 @@ public class VisionSettingActivity extends BaseTitleActivity {
             case R.id.sp_result_type:
                 visionSetting.setTestType(position);
                 break;
-            case R.id.sp_stop_time:
-                visionSetting.setTestType(position == 0 ? 0 : position == 1 ? 3 : 5);
-                break;
+
         }
 
     }
@@ -82,6 +84,9 @@ public class VisionSettingActivity extends BaseTitleActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        if (!TextUtils.isEmpty(etStopTime.getText().toString())) {
+            visionSetting.setStopTime(Integer.valueOf(etStopTime.getText().toString().trim()));
+        }
         SharedPrefsUtil.save(this, visionSetting);
 
     }

@@ -1,6 +1,8 @@
 package com.feipulai.host.activity.vision.Radio;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -49,7 +51,7 @@ public class VisionCheckActivity extends BaseCheckActivity implements RadioManag
     public final int TARGET_FREQUENCY = SettingHelper.getSystemSetting().getUseChannel();
     private Student mStudent;
     private LEDManager ledManager = new LEDManager();
-    private MyHandler myHandler = new MyHandler(this);
+
     private static final int CLEAR_INFO = 100;
 
     @Override
@@ -126,22 +128,23 @@ public class VisionCheckActivity extends BaseCheckActivity implements RadioManag
             sb.append("\n");
             sb.append("右视力：" + ResultDisplayUtils.getStrResultForDisplay(roundResult.getWeightResult()));
             txtResult.setText(sb);
-            myHandler.sendEmptyMessageDelayed(CLEAR_INFO, 3000);
+            myHandler.sendEmptyMessageDelayed(CLEAR_INFO, 4000);
 
         }
     }
-
-    @Override
-    protected void handleMessage(Message msg) {
-        super.handleMessage(msg);
-        if (msg.what == CLEAR_INFO) {
-            mStudent = null;
-            InteractUtils.showStuInfo(llStuDetail, null, null);
-            txtResult.setText("请检录");
-            myHandler.removeMessages(0);
+    private Handler myHandler = new Handler(Looper.getMainLooper() ){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == CLEAR_INFO) {
+                mStudent = null;
+                InteractUtils.showStuInfo(llStuDetail, null, null);
+                txtResult.setText("请检录");
+                myHandler.removeMessages(CLEAR_INFO);
+            }
         }
+    };
 
-    }
 
     @OnClick({R.id.btn_scan, R.id.img_AFR, R.id.txt_led_setting, R.id.tv_device_pair})
     public void onViewClicked(View view) {

@@ -1,6 +1,8 @@
 package com.feipulai.host.activity.vision.Radio;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -30,12 +32,14 @@ import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.utils.ResultDisplayUtils;
+import com.feipulai.host.utils.TimerIntervalUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,8 +57,8 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
 
     @BindView(R.id.iv_e)
     ImageView ivE;
-    @BindView(R.id.txt_stu_name)
-    TextView txtStuName;
+    @BindView(R.id.txt_time)
+    TextView txt_time;
     @BindView(R.id.txt_mar)
     TextView txtMar;
     @BindView(R.id.txt_hint)
@@ -73,6 +77,12 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
 
     private RoundResult roundResult = new RoundResult();
     private LEDManager ledManager = new LEDManager();
+
+//    private int timeLimit = 0;
+//    private boolean isStartThrand = true;//是否启动线程计时
+//    private boolean isStartCheck = true;
+
+    private TimerIntervalUtil intervalUtil;
 
     @Nullable
     @Override
@@ -95,7 +105,7 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
 
         if (getIntent().getExtras() != null) {
             student = (Student) getIntent().getExtras().getSerializable("STUDENT");
-            txtStuName.setText(student.getStudentName());
+//            txtStuName.setText(student.getStudentName());
         }
 
         String JsonData = GetJsonDataUtil.getJson(this, "vision.json");//获取assets目录下的json文件数据
@@ -107,6 +117,44 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
         visionData = visionBean.getVisions().get(index);
         setImageWidth();
         initResult();
+
+        intervalUtil = new TimerIntervalUtil(new TimerIntervalUtil.TimerAccepListener() {
+            @Override
+            public void timer(Long time) {
+                String showtime = (visionSetting.getStopTime() - time) + "";
+                txt_time.setText(showtime);
+
+                byte[] data = new byte[16];
+                try {
+                    byte[] resultData = student.getLEDStuName().getBytes("GB2312");
+                    System.arraycopy(resultData, 0, data, 0, resultData.length);
+                    resultData = showtime.getBytes("GB2312");
+                    System.arraycopy(resultData, 0, data, 14, resultData.length);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                ledManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 3, false, true);
+
+                if (time == visionSetting.getStopTime()) {
+                    intervalUtil.stop();
+                    ++errorCount;
+                    if (visionData.getErrorCount() == errorCount) {//结束
+                        saveResult();
+                    } else {
+                        intervalUtil.startTime();
+                        setImageWidth();
+                    }
+                }
+
+            }
+        });
+        if (visionSetting.getStopTime() != 0) {
+//            timeThread.start();
+            txt_time.setText(visionSetting.getStopTime() + "");
+            intervalUtil.startTime();
+        } else {
+            txt_time.setVisibility(View.GONE);
+        }
     }
 
     private void initResult() {
@@ -123,6 +171,7 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
         super.onResume();
         RadioManager.getInstance().setOnRadioArrived(this);
     }
+
 
     @Override
     public void onRadioArrived(final Message msg) {
@@ -154,6 +203,8 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
                             txtHint.setVisibility(View.GONE);
                             visionData = visionBean.getVisions().get(index);
                             setImageWidth();
+                            intervalUtil.startTime();
+//                            isStartCheck = true;
                         }
                         break;
                 }
@@ -166,6 +217,9 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
         if (index == -1) {
             return;
         }
+        intervalUtil.stop();
+        intervalUtil.startTime();
+        txt_time.setText(visionSetting.getStopTime() + "");
         Logger.d("checkKey===>keyDirection:" + keyDirection + "       direction:" + direction);
         if (keyDirection == direction) {
             if (visionBean.getVisions().size() == index + 1) {//结束测试
@@ -195,6 +249,7 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
             ivE.clearAnimation();
             ivE.setVisibility(View.GONE);
             showLed(roundResult);
+
         } else {//是否在测试右视力 结束
             roundResult.setWeightResult((int) (visionData.getLogMAR_5() * 10));
 
@@ -209,6 +264,7 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
             EventBus.getDefault().post(new BaseEvent(roundResult, EventConfigs.VISION_TEST_SUCCEED));
             finish();
         }
+
     }
 
     private void setImageWidth() {
@@ -245,9 +301,65 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
         } else {
             txtMar.setText(visionData.getLogMAR_Decimals() + "");
         }
-
-
     }
+
+//    private Handler mHandler = new Handler(Looper.getMainLooper()) {
+//        @Override
+//        public void handleMessage(Message msg) {
+//            super.handleMessage(msg);
+//            if (msg.what == 1) {
+//                String time = (visionSetting.getStopTime() - timeLimit) + "";
+//                txt_time.setText(time);
+//
+//                byte[] data = new byte[16];
+//                try {
+//                    byte[] resultData = student.getLEDStuName().getBytes("GB2312");
+//                    System.arraycopy(resultData, 0, data, 0, resultData.length);
+//                    resultData = time.getBytes("GB2312");
+//                    System.arraycopy(resultData, 0, data, 14, resultData.length);
+//                } catch (UnsupportedEncodingException e) {
+//                    e.printStackTrace();
+//                }
+//                ledManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 3, false, true);
+//
+//
+//            } else {
+//                if (visionData.getErrorCount() == errorCount) {//结束
+//                    saveResult();
+//                } else {
+//                    setImageWidth();
+//                }
+//            }
+//
+//
+//        }
+//    };
+//    private Thread timeThread = new Thread(new Runnable() {
+//        @Override
+//        public void run() {
+//            while (isStartThrand) {
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                if (isStartCheck) {
+//                    ++timeLimit;
+//                    if (timeLimit == visionSetting.getStopTime()) {
+//                        ++errorCount;
+//                        mHandler.sendEmptyMessage(0);
+//                    } else {
+//                        mHandler.sendEmptyMessage(1);
+//                    }
+//                    if (visionData.getErrorCount() == errorCount) {//结束
+//                        isStartCheck = false;
+//                    }
+//                }
+//
+//            }
+//        }
+//    });
+
 
     private void showLed(RoundResult roundResult) {
 
@@ -258,5 +370,13 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
                     0, 2, false, true);
         }
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+//        isStartThrand = false;
+//        isStartCheck = false;
+        intervalUtil.stop();
     }
 }
