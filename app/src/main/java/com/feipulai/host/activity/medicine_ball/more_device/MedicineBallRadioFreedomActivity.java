@@ -22,6 +22,7 @@ import com.feipulai.host.activity.medicine_ball.pair.MedicineBallPairActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.bean.DeviceDetail;
 import com.feipulai.host.entity.RoundResult;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,7 @@ public class MedicineBallRadioFreedomActivity extends BaseFreedomTestActivity {
     public void startTest() {
         DeviceDetail deviceDetail = deviceDetails.get(0);
         BaseStuPair pair = deviceDetail.getStuDevicePair();
+        LogUtils.operation("MedicineBallRadioFreedomActivity 开始测试:pair="+pair.toString());
         pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
         setDeviceState(pair.getBaseDevice());
         int id = pair.getBaseDevice().getDeviceId();
@@ -62,6 +64,7 @@ public class MedicineBallRadioFreedomActivity extends BaseFreedomTestActivity {
 
     @Override
     protected void onResume() {
+        LogUtils.operation("MedicineBallRadioFreedomActivity onResume");
         super.onResume();
         sendEmpty();
     }
@@ -90,11 +93,13 @@ public class MedicineBallRadioFreedomActivity extends BaseFreedomTestActivity {
     @OnClick({R.id.txt_device_pair})
     public void devicePair(View view) {
         if (!isStartTest) {
+            LogUtils.operation("MedicineBallRadioFreedomActivity 用户点击了配对");
             startActivity(new Intent(this, MedicineBallPairActivity.class));
         }
     }
     
     private void sendEmpty() {
+        LogUtils.operation("MedicineBallRadioFreedomActivity sendEmpty");
         for (int i = 0; i < deviceDetails.size(); i++) {
             BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
             if (deviceState[i] == 0) {
@@ -122,10 +127,12 @@ public class MedicineBallRadioFreedomActivity extends BaseFreedomTestActivity {
     }
 
     private void sendStart(byte id) {
+        LogUtils.operation("MedicineBallRadioFreedomActivity 开始测试:"+id);
         MedicineBallMore.sendStart(SettingHelper.getSystemSetting().getHostId(),id);
     }
 
     private void sendFree(int deviceId) {
+        LogUtils.operation("MedicineBallRadioFreedomActivity sendFree:"+deviceId);
         MedicineBallMore.sendEmpty(SettingHelper.getSystemSetting().getHostId(),deviceId);
     }
 
@@ -159,7 +166,7 @@ public class MedicineBallRadioFreedomActivity extends BaseFreedomTestActivity {
     private MedicineBallImpl medicineBall = new MedicineBallImpl(new MedicineBallImpl.MainThreadDisposeListener() {
         @Override
         public void onResultArrived(MedicineBallNewResult result) {
-            Log.i(TAG, result.toString());
+            LogUtils.operation("实心球获取到结果:"+result.toString());
 
             // MedicineBallNewResult{result=50, fault=false, sweepPoint=1, deviceId=2, frequency=0, state=2}
             if (result.getState() == 2) {
@@ -255,12 +262,14 @@ public class MedicineBallRadioFreedomActivity extends BaseFreedomTestActivity {
 
     @Override
     protected void onStop() {
+        LogUtils.operation("MedicineBallRadioFreedomActivity onStop");
         super.onStop();
         mHandler.removeCallbacksAndMessages(null);
     }
 
     @Override
     protected void onDestroy() {
+        LogUtils.operation("MedicineBallRadioFreedomActivity onDestroy");
         super.onDestroy();
         RadioManager.getInstance().setOnRadioArrived(null);
     }

@@ -231,16 +231,7 @@
             <!--android:drawablePadding="20dp"-->
             <!--android:drawableRight="@drawable/checkbox_switch_selected"-->
             <!--android:text="重测功能（全部项目）" />-->
-            <Button
-                android:id="@+id/btn_face_init"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginBottom="30dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/btn_click_bg_selected"
-                android:text="人脸识别激活"
-                android:textColor="@color/white"
-                android:textSize="@dimen/sp_16" />
+
         </LinearLayout>
 
     </LinearLayout>

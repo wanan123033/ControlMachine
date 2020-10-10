@@ -2186,7 +2186,7 @@ public class DBManager {
         sqlBuf.append("  FROM " + StudentDao.TABLENAME + " S");
         sqlBuf.append(" LEFT JOIN " + GroupItemDao.TABLENAME + " I ");
         sqlBuf.append(" ON S." + StudentDao.Properties.StudentCode.columnName + " = I." + GroupItemDao.Properties.StudentCode.columnName);
-        sqlBuf.append(" WHERE I." + GroupItemDao.Properties.ItemCode.columnName + " = '" + TestConfigs.getCurrentItemCode() + "'");
+        sqlBuf.append(" WHERE I." + GroupItemDao.Properties.ItemCode.columnName + " = '" +group.getItemCode() + "'");
         sqlBuf.append(" AND I." + GroupItemDao.Properties.ScheduleNo.columnName + " = " + group.getScheduleNo());
         sqlBuf.append(" AND I." + GroupItemDao.Properties.GroupType.columnName + " =  " + group.getGroupType());
         sqlBuf.append(" AND I." + GroupItemDao.Properties.SortName.columnName + " = '" + group.getSortName() + "'");

@@ -71,7 +71,9 @@ import com.feipulai.exam.activity.MiddleDistanceRace.bean.ServiceTcpBean;
 import com.feipulai.exam.activity.MiddleDistanceRace.vhtableview.VHTableAdapter;
 import com.feipulai.exam.activity.MiddleDistanceRace.vhtableview.VHTableResultAdapter;
 import com.feipulai.exam.activity.MiddleDistanceRace.vhtableview.VHTableView;
+import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.adapter.ScheduleAdapter;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
@@ -2225,7 +2227,14 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                 }
                 Logger.i(TAG + "成绩", roundResults.toString());
                 //自动打印
-                MiddlePrintUtil.print(roundResults, completeBeans, digital, carryMode);
+
+                if (SettingHelper.getSystemSetting().isAutoPrint() &&
+                        SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4) {
+                    InteractUtils.printA4Result(mContext, dbGroupList);
+
+                } else {
+                    MiddlePrintUtil.print(roundResults, completeBeans, digital, carryMode);
+                }
             }
 
             @Override
@@ -2502,7 +2511,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                         }
                         break;
                     case 2:
-                        MiddlePrintUtil.print2(groupItemBeans.get(groupPosition), digital, carryMode);
+                        MiddlePrintUtil.print2(mContext,groupItemBeans.get(groupPosition), digital, carryMode);
                         break;
                     default:
                         break;

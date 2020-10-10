@@ -8,15 +8,19 @@ package com.feipulai.host.netUtils.netapi;
 
 import com.feipulai.host.bean.BatchBean;
 import com.feipulai.host.bean.ItemBean;
+import com.feipulai.host.bean.SoftApp;
 import com.feipulai.host.bean.StudentBean;
+import com.feipulai.host.bean.UpdateApp;
 import com.feipulai.host.bean.UploadResults;
 import com.feipulai.host.bean.UserBean;
+import com.feipulai.host.bean.UserPhoto;
 import com.feipulai.host.netUtils.HttpResult;
 import com.feipulai.host.netUtils.ResponseParame;
 
 import java.util.List;
 
 import io.reactivex.Observable;
+import okhttp3.RequestBody;
 import retrofit2.http.Body;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
@@ -34,7 +38,7 @@ public interface HttpApi {
     /**
      * 获取项目信息接口
      */
-    String GET_ITEM_ALL_ACTION = " /run/downItemInfo";
+    String GET_ITEM_ALL_ACTION = "/run/downItemInfo";
     /**
      * 分页获取学生信息
      */
@@ -43,6 +47,9 @@ public interface HttpApi {
      * 成绩上传接口
      */
     String UPLOAD_RESULT_ACTION = "/run/uploadStudentResult";
+
+    String GET_SOFT_APP = "/app/public/checkSoftwareVersion";
+    String UPDATE_SOFT_APP = "/app/public/updateSoftware";
 
     @POST(DEVICE_BINDING_ACTION)
     @Headers("Content-Type:application/json;charset=UTF-8")
@@ -59,4 +66,17 @@ public interface HttpApi {
     @POST(UPLOAD_RESULT_ACTION)
     @Headers("Content-Type:application/json;charset=UTF-8")
     Observable<HttpResult<List<UploadResults>>> uploadResult(@Header("Authorization") String token, @Body ResponseParame data);
+
+    @POST(GET_SOFT_APP)
+    @Headers("Content-Type:application/json;charset=UTF-8")
+    Observable<HttpResult<List<SoftApp>>> getSoftApp(@Body RequestBody body);
+
+    @POST(UPDATE_SOFT_APP)
+    @Headers("Content-Type:application/json;charset=UTF-8")
+    Observable<HttpResult<UpdateApp>> updateSoftApp(@Body RequestBody body);
+
+    @POST("run/compareFaceFeature")
+    @Headers("Content-Type:application/json;charset=UTF-8")
+    Observable<HttpResult<UserPhoto>> netSh(@Header("Authorization") String token, @Body ResponseParame data);
+
 }

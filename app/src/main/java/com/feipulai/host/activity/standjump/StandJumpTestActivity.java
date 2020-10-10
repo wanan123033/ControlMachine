@@ -13,6 +13,7 @@ import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.person.BasePersonTestActivity;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.lang.ref.WeakReference;
 
@@ -74,6 +75,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity implements Sta
 
     @Override
     public void sendTestCommand(BaseStuPair stuPair) {
+        LogUtils.operation("立定跳远开始测试:"+stuPair.toString());
         sendCheck();
         standResiltListener.setTestState(StandResiltListener.TestState.START_TEST);
         //开始测试
@@ -85,6 +87,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity implements Sta
 
     @Override
     protected void onResume() {
+        LogUtils.operation("StandJumpTestActivity onResume ");
         super.onResume();
         SerialDeviceManager.getInstance().setRS232ResiltListener(standResiltListener);
         sendCheck();
@@ -93,6 +96,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity implements Sta
     @Override
     protected void onPause() {
         super.onPause();
+        LogUtils.operation("StandJumpTestActivity onPause ");
         //结束测试 发送结束指令
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_END_JUMP));
         SerialDeviceManager.getInstance().close();
@@ -104,6 +108,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity implements Sta
     private void sendCheck() {
         isDisconnect = true;
         if (SerialDeviceManager.getInstance() != null) {
+            LogUtils.operation("StandJumpTestActivity 发送自检 ");
             //测量垫自检,校验连接是否正常
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SELF_CHECK_JUMP));
             mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
@@ -134,6 +139,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity implements Sta
             if (activity != null) {
                 switch (msg.what) {
                     case MSG_DISCONNECT://连接失败
+                        LogUtils.operation("坐位体前屈连接失败 MSG_DISCONNECT :"+activity.isDisconnect);
                         if (activity.isDisconnect) {
                             activity.toastSpeak(activity.getString(R.string.device_noconnect));
                             //设置当前设置为不可用断开状态
@@ -141,15 +147,17 @@ public class StandJumpTestActivity extends BasePersonTestActivity implements Sta
                         }
                         break;
                     case INIT_AGAIN://重新检测设备，初始化设备
+                        LogUtils.operation("坐位体前屈初始化 INIT_AGAIN");
                         activity.sendCheck();
                         break;
                     case UPDATE_DEVICE:
                         activity.updateDevice((BaseDeviceState) msg.obj);
+                        LogUtils.operation("坐位体前屈更新设备 UPDATE_DEVICE:"+msg.obj.toString());
                         break;
 
                     case UPDATE_RESULT:
-
                         activity.updateResult((BaseStuPair) msg.obj);
+                        LogUtils.operation("坐位体前屈更新设备 UPDATE_RESULT:"+msg.obj.toString());
                         break;
                 }
             }

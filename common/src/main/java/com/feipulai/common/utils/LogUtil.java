@@ -2,6 +2,8 @@ package com.feipulai.common.utils;
 
 import android.util.Log;
 
+import com.orhanobut.logger.Logger;
+
 /**
  * 打印类.
  *
@@ -45,16 +47,7 @@ public class LogUtil {
         return logSwitch;
     }
 
-    /**
-     * 打印信息.
-     *
-     * @updateInfo
-     */
-    public static void logMessage(String tag, String message) {
-        if (logSwitch) {
-            Log.i(tag, printFlag + message);
-        }
-    }
+
 
     /**
      * 打印调试信息.
@@ -63,47 +56,8 @@ public class LogUtil {
      */
     public static void logDebugMessage(String message) {
         if (logSwitch) {
-            Log.i("debug", printFlag + message);
+            Logger.i( printFlag + message);
         }
     }
 
-    /**
-     * 打印系统信息.
-     *
-     * @updateInfo
-     */
-    public static void logSystemMessage(String message) {
-        if (logSwitch) {
-            Log.i("system", printFlag + message);
-        }
-    }
-
-    /**
-     * 打印错误信息.
-     *
-     * @updateInfo
-     */
-    public static void logErrorMessage(String error) {
-        if (logSwitch) {
-            Log.i("error", printFlag + error);
-            Log.e("error", printFlag + error);
-        }
-    }
-
-    /**
-     * 打印长日志
-     * <p/>
-     */
-
-    public static void logLongMessage(String message) {
-
-        if (message.length() > 4000) {
-            for (int i = 0; i < message.length(); i += 4000) {
-                if (i + 4000 < message.length())
-                    Log.i(printFlag + "--------" + i + "----------", message.substring(i, i + 4000) + "\n--------");
-                else
-                    Log.i(printFlag + "--------" + i + "----------", message.substring(i, message.length()) + "\n--------");
-            }
-        } else Log.i("\n--------" + printFlag, message + "\n--------");
-    }
 }

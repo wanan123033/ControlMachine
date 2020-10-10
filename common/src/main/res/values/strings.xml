@@ -18,7 +18,7 @@
     <string name="low_power">电量低</string>
     <string name="temporarily_closed">暂停使用</string>
     <string name="conflict">冲突</string>
-
+    <string name="auth_code">请输入授权码</string>
     <string-array name="print_table_hand">
         <item>序号</item>
         <item>考号</item>

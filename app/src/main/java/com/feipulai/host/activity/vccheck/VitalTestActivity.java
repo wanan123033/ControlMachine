@@ -18,6 +18,8 @@ import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.bean.DeviceDetail;
 import com.feipulai.host.entity.RoundResult;
+import com.feipulai.host.utils.StringUtility;
+import com.orhanobut.logger.utils.LogUtils;
 
 /**
  * Created by pengjf on 2019/10/8.
@@ -61,6 +63,7 @@ public class VitalTestActivity extends BaseMoreActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        LogUtils.operation("VitalTestActivity onResume");
         RadioManager.getInstance().setOnRadioArrived(resultImpl);
         RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(frequency)));
 
@@ -69,6 +72,7 @@ public class VitalTestActivity extends BaseMoreActivity {
 
     @Override
     public void sendTestCommand(BaseStuPair pair, int index) {
+        LogUtils.operation("VitalTestActivity 测试开始:"+pair.toString()+"---"+index);
         pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
         updateDevice(pair.getBaseDevice());
         int id = pair.getBaseDevice().getDeviceId();
@@ -97,6 +101,7 @@ public class VitalTestActivity extends BaseMoreActivity {
             sum += data[i];
         }
         data[14] = (byte) sum;
+        LogUtils.normal("肺活量开始测试指令:"+ StringUtility.bytesToHexString(data));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
 
     }
@@ -118,11 +123,12 @@ public class VitalTestActivity extends BaseMoreActivity {
             sum += data[i];
         }
         data[16] = (byte) sum;
-
+        LogUtils.normal("肺活量开始测试指令:"+ StringUtility.bytesToHexString(data));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
     }
 
     public void sendEmpty() {
+        LogUtils.operation("肺活量 sendEmpty");
         Log.i(TAG, "send_empty");
         for (int i = 0; i < deviceState.length; i++) {
             BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
@@ -198,6 +204,7 @@ public class VitalTestActivity extends BaseMoreActivity {
             switch (msg.what) {
                 case GET_SCORE_RESPONSE:
                     VcWrapper result = (VcWrapper) msg.obj;
+                    LogUtils.operation("肺活量获取成绩:"+result.toString());
                     for (DeviceDetail detail : deviceDetails) {
                         if (detail.getStuDevicePair().getBaseDevice().getDeviceId() == result.getDeviceId()) {
                             onResultArrived(result.getResult(), detail.getStuDevicePair());
@@ -228,6 +235,7 @@ public class VitalTestActivity extends BaseMoreActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        LogUtils.operation("VitalTestActivity onStop");
         mHandler.removeCallbacksAndMessages(null);
     }
 }

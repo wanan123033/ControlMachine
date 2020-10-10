@@ -120,8 +120,8 @@ public class InteractUtils {
             roundResult.setItemCode(TestConfigs.getCurrentItemCode());
             roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
             roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
-            roundResult.setTestTime(pair.getStartTime()+"");
-            roundResult.setPrintTime(pair.getEndTime()+"");
+            roundResult.setTestTime(pair.getStartTime() + "");
+            roundResult.setPrintTime(pair.getEndTime() + "");
             roundResult.setRoundNo(1);
 
             switch (TestConfigs.sCurrentItem.getMachineCode()) {
@@ -242,8 +242,13 @@ public class InteractUtils {
         mTvStudentName.setText(student == null ? "" : student.getStudentName());
         mTvGender.setText(student == null ? "" : student.getSex() == 0 ? "男" : "女");
         mTvGrade.setText(InteractUtils.getDisplayResult(lastResult));
-        Glide.with(imgPortrait.getContext()).load(MyApplication.PATH_IMAGE + student.getStudentCode() + ".jpg")
-                .error(R.mipmap.icon_head_photo).placeholder(R.mipmap.icon_head_photo).into(imgPortrait);
+        if (student == null) {
+            imgPortrait.setImageResource(R.mipmap.icon_head_photo);
+        } else {
+            Glide.with(imgPortrait.getContext()).load(MyApplication.PATH_IMAGE + student.getStudentCode() + ".jpg")
+                    .error(R.mipmap.icon_head_photo).placeholder(R.mipmap.icon_head_photo).into(imgPortrait);
+        }
+
     }
 
     /**

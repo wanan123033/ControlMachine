@@ -1,9 +1,7 @@
 package com.feipulai.exam.activity.setting;
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -19,7 +17,6 @@ import com.google.gson.Gson;
 import java.util.Arrays;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
 
@@ -83,6 +80,14 @@ public class PrintSettingActivity extends BaseTitleActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_default:
+                printSetting.setTableHeadleJson("");
+                printSetting.setSignatureJson("");
+                tableAdapter = new PrintSettingAdapter(printSetting.getTableHeadleList());
+                signAdapter = new PrintSettingAdapter(printSetting.getSignatureList());
+                rvTable.setAdapter(tableAdapter);
+                rvSign.setAdapter(signAdapter);
+                printSetting.setSignatureJson(gson.toJson(signAdapter.getData()));
+                printSetting.setTableHeadleJson(gson.toJson(tableAdapter.getData()));
                 break;
             case R.id.txt_write:
                 if (tableAdapter.isWrite()) {//保存

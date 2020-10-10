@@ -35,6 +35,7 @@ import com.feipulai.exam.activity.base.BaseAFRFragment;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.basketball.BasketBallListener;
 import com.feipulai.exam.activity.basketball.BasketBallRadioFacade;
+import com.feipulai.exam.activity.basketball.BasketballIndividualActivity;
 import com.feipulai.exam.activity.basketball.TimeUtil;
 import com.feipulai.exam.activity.basketball.bean.BallDeviceState;
 import com.feipulai.exam.activity.basketball.pair.BasketBallPairActivity;
@@ -1353,29 +1354,30 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
     }
 
     @Override
-    public void compareStu(Student student) {
+    public void compareStu(final Student student) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                afrFrameLayout.setVisibility(View.GONE);
+
+                if (student == null) {
+                    InteractUtils.toastSpeak(FootballIndividualActivity.this, "该考生不存在");
+                    return;
+                } else {
+                    afrFrameLayout.setVisibility(View.GONE);
+                }
+                StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+                if (studentItem == null) {
+                    InteractUtils.toastSpeak(FootballIndividualActivity.this, "无此项目");
+                    return;
+                }
+                List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
+                if (results != null && results.size() >= TestConfigs.getMaxTestCount(FootballIndividualActivity.this)) {
+                    InteractUtils.toastSpeak(FootballIndividualActivity.this, "该考生已测试");
+                    return;
+                }
+                // 可以直接检录
+                onIndividualCheckIn(student, studentItem, results);
             }
         });
-
-        if (student == null) {
-            InteractUtils.toastSpeak(this, "该考生不存在");
-            return;
-        }
-        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
-        if (studentItem == null) {
-            InteractUtils.toastSpeak(this, "无此项目");
-            return;
-        }
-        List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
-        if (results != null && results.size() >= TestConfigs.getMaxTestCount(this)) {
-            InteractUtils.toastSpeak(this, "该考生已测试");
-            return;
-        }
-        // 可以直接检录
-        onIndividualCheckIn(student, studentItem, results);
     }
 }

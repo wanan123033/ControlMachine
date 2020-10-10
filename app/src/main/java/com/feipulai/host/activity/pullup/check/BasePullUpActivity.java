@@ -40,6 +40,7 @@ import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.view.StuSearchEditText;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.List;
 
@@ -168,22 +169,27 @@ public class BasePullUpActivity extends BaseCheckActivity implements RadioCheckC
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.img_AFR:
+                LogUtils.operation("用户点击了人脸识别");
                 showAFR();
                 break;
             case R.id.btn_device_pair:
+                LogUtils.operation("用户点击了设备配对");
                 startActivity(new Intent(this, PullUpPairActivity.class));
                 break;
 
 
             case R.id.btn_change_bad:
+                LogUtils.operation("用户点击了更换设备");
                 presenter.changeBadDevice();
                 break;
 
             case R.id.btn_start_test:
+                LogUtils.operation("用户点击了开始测试");
                 presenter.startTest();
                 break;
 
             case R.id.btn_stop_use:
+                LogUtils.operation("用户点击了停止使用");
                 String text = btnStopUse.getText().toString().trim();
                 if (text.equals(RESUME_USE)) {
                     presenter.resumeUse();
@@ -195,14 +201,17 @@ public class BasePullUpActivity extends BaseCheckActivity implements RadioCheckC
                 break;
 
             case R.id.btn_led_setting:
+                LogUtils.operation("用户点击了LED设置");
                 startActivity(new Intent(this, LEDSettingActivity.class));
                 break;
 
             case R.id.btn_delete_student:
+                LogUtils.operation("用户点击了删除学生");
                 presenter.deleteStudent();
                 break;
 
             case R.id.btn_del_all:
+                LogUtils.operation("用户点击了删除所有");
                 presenter.deleteAll();
                 break;
         }
@@ -211,18 +220,21 @@ public class BasePullUpActivity extends BaseCheckActivity implements RadioCheckC
 
     @Override
     protected void onRestart() {
+        LogUtils.operation("BasePullUpActivity onRestart");
         super.onRestart();
         presenter.settingChanged();
     }
 
     @Override
     protected void onResume() {
+        LogUtils.operation("BasePullUpActivity onResume");
         super.onResume();
         presenter.resumeGetStateAndDisplay();
     }
 
     @Override
     protected void onPause() {
+        LogUtils.operation("BasePullUpActivity onPause");
         super.onPause();
         presenter.cancelChangeBad();
         presenter.pauseGetStateAndDisplay();
@@ -231,6 +243,7 @@ public class BasePullUpActivity extends BaseCheckActivity implements RadioCheckC
 
     @Override
     protected void onDestroy() {
+        LogUtils.operation("BasePullUpActivity onDestroy");
         super.onDestroy();
         TestCache.getInstance().clear();
         presenter.finishGetStateAndDisplay();
@@ -239,6 +252,7 @@ public class BasePullUpActivity extends BaseCheckActivity implements RadioCheckC
 
     @Override
     public void updateSpecificItem(int index) {
+        LogUtils.operation("BasePullUpActivity updateSpecificItem index="+index);
         Message msg = Message.obtain();
         msg.what = UPDATE_SPECIFIC_ITEM;
         msg.arg1 = index;

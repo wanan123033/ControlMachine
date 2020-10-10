@@ -409,7 +409,7 @@ public class VolleyBallMoreGroupActivity extends BaseGroupActivity {
             joinNextPerson(pos);
             return false;
         }
-        deviceDetail.getStuDevicePair().setResultState(0);
+        deviceDetail.getStuDevicePair().setResultState(1);
         deviceDetail.setRound(deviceDetail.getStuDevicePair().getRoundNo() + 1);
         deviceDetail.getStuDevicePair().setPenaltyNum(0);
         addStudent(deviceDetail.getStuDevicePair().getStudent(), pos, false);

@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 
@@ -13,6 +14,7 @@ import com.ww.fpl.libarcface.util.DrawHelper;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Logger;
 
 /**
  * 用于显示人脸信息的控件
@@ -38,11 +40,16 @@ public class FaceRectView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (drawInfoList != null && drawInfoList.size() > 0) {
-            for (int i = 0; i < drawInfoList.size(); i++) {
-                if (drawInfoList.size() > i)
-                    DrawHelper.drawFaceRect(canvas, drawInfoList.get(i), DEFAULT_FACE_RECT_THICKNESS, paint);
+        // try catch 防止程序因ArrayIndexOutOfBoundsException闪退
+        try {
+            if (drawInfoList != null && drawInfoList.size() > 0) {
+                for (int i = 0; i < drawInfoList.size(); i++) {
+                    if (drawInfoList.size() > i)
+                        DrawHelper.drawFaceRect(canvas, drawInfoList.get(i), DEFAULT_FACE_RECT_THICKNESS, paint);
+                }
             }
+        }catch (ArrayIndexOutOfBoundsException e){
+            e.printStackTrace();
         }
     }
 

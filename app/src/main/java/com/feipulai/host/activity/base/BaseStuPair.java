@@ -4,6 +4,7 @@ import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * Created by zzs on 2018/7/16
@@ -116,5 +117,21 @@ public class BaseStuPair implements Serializable {
 
     public void setEndTime(long endTime) {
         this.endTime = endTime;
+    }
+
+    @Override
+    public String toString() {
+        return "BaseStuPair{" +
+                "result=" + result +
+                ", resultState=" + resultState +
+                ", student=" + student +
+                ", baseDevice=" + baseDevice +
+                ", timeResult=" + Arrays.toString(timeResult) +
+                ", canTest=" + canTest +
+                ", baseHeight=" + baseHeight +
+                ", power=" + power +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                '}';
     }
 }

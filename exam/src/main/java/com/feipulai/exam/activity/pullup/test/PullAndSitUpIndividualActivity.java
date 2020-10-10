@@ -662,31 +662,27 @@ public class PullAndSitUpIndividualActivity extends BaseTitleActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                afrFrameLayout.setVisibility(View.GONE);
-            }
-        });
-        if (student == null) {
-            InteractUtils.toastSpeak(this, "该考生不存在");
-            return;
-        }
-        final StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
-        if (studentItem == null) {
-            InteractUtils.toastSpeak(this, "无此项目");
-            return;
-        }
-        final List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
-        if (results != null && results.size() >= TestConfigs.getMaxTestCount(this)) {
-            InteractUtils.toastSpeak(this, "该考生已测试");
-            return;
-        }
-        // 可以直接检录
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
 
+                if (student == null) {
+                    InteractUtils.toastSpeak(PullAndSitUpIndividualActivity.this, "该考生不存在");
+                    return;
+                }else{
+                    afrFrameLayout.setVisibility(View.GONE);
+                }
+                final StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+                if (studentItem == null) {
+                    InteractUtils.toastSpeak(PullAndSitUpIndividualActivity.this, "无此项目");
+                    return;
+                }
+                final List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
+                if (results != null && results.size() >= TestConfigs.getMaxTestCount(PullAndSitUpIndividualActivity.this)) {
+                    InteractUtils.toastSpeak(PullAndSitUpIndividualActivity.this, "该考生已测试");
+                    return;
+                }
                 onIndividualCheckIn(student,studentItem,results);
             }
         });
+
 
     }
 }

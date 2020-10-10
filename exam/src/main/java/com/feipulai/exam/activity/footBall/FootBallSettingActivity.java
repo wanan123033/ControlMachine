@@ -69,7 +69,8 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
     EditText etHostIp;
     @BindView(R.id.et_port)
     EditText etPort;
-
+    @BindView(R.id.ll_ip)
+    LinearLayout llIp;
     @BindView(R.id.rg_accuracy)
     RadioGroup rgAccuracy;
     @BindView(R.id.sp_carryMode)
@@ -183,7 +184,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
             etPort.setEnabled(false);
             etHostIp.setEnabled(false);
             tvIpConnect.setEnabled(false);
-            rgAccuracy.setVisibility(View.GONE);
+            llIp.setVisibility(View.GONE);
         }
 
     }

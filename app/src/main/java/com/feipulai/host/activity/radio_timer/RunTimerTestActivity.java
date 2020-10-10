@@ -202,6 +202,7 @@ public class RunTimerTestActivity extends BaseRunTimerActivity {
 
     @Override
     protected void onResume() {
+        LogUtils.operation("RunTimerTestActivity onResume");
         super.onResume();
         if (reLoad) {
             initView();

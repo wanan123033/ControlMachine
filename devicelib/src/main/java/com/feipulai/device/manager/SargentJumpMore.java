@@ -57,11 +57,27 @@ public class SargentJumpMore {
                 cmd));
     }
 
+    public static void lightUp(){
+        byte[] cmd = CMD_SARGENT_JUMP_LIGHT_UP;
+        cmd[4] = (byte) 1;
+        cmd[10] = (byte) sum(cmd, 10);
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
+                cmd));
+    }
+
     public static void lightDown(int deviceId){
         byte[] cmd = CMD_SARGENT_JUMP_LIGHT_DOWN;
         cmd[4] = (byte) deviceId;
         cmd[10] = (byte) sum(cmd, 10);
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
+                cmd));
+    }
+
+    public static void lightDown(){
+        byte[] cmd = CMD_SARGENT_JUMP_LIGHT_DOWN;
+        cmd[4] = (byte) 1;
+        cmd[10] = (byte) sum(cmd, 10);
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                 cmd));
     }
 
@@ -74,12 +90,36 @@ public class SargentJumpMore {
                 cmd));
     }
 
+    /**
+     * 有线模式自检
+     */
+    public static void checkSelf(){
+        byte[] cmd = CMD_SARGENT_JUMP_CHECK_SELF;
+        cmd[4] = (byte) 0;
+        cmd[8] = (byte) sum(cmd, 8);
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---摸高自检指令");
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
+                cmd));
+    }
+
     public static void ignoreBad(int deviceId){
         byte[] cmd = CMD_SARGENT_JUMP_IGNORE_BREAK_POINT;
         cmd[4] = (byte) deviceId;
         cmd[8] = (byte) sum(cmd, 8);
         LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---摸高0点设置指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
+                cmd));
+    }
+
+    /**
+     * 有线模式忽略坏点
+     */
+    public static void ignoreBad(){
+        byte[] cmd = CMD_SARGENT_JUMP_IGNORE_BREAK_POINT;
+        cmd[4] = (byte) 1;
+        cmd[8] = (byte) sum(cmd, 8);
+        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---摸高0点设置指令");
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                 cmd));
     }
 

@@ -1,6 +1,8 @@
 package com.feipulai.host.netUtils;
 
 
+import android.util.Log;
+
 import com.feipulai.host.netUtils.netapi.HttpApi;
 
 import java.io.IOException;
@@ -50,7 +52,7 @@ public class HttpManager {
             public Response intercept(Chain chain) throws IOException {
                 Request originalRequest = chain.request();
                 Request.Builder requestBuilder = originalRequest.newBuilder()
-                        .addHeader("Accept-Encoding", "gzip")
+//                        .addHeader("Accept-Encoding", "gzip")
                         .addHeader("Accept", "application/json")
                         .addHeader("Content-Type", "application/json; charset=utf-8")
                         .method(originalRequest.method(), originalRequest.body());
@@ -67,7 +69,7 @@ public class HttpManager {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override
             public void log(String message) {
-//                Logger.d(message);
+                Log.d("TAG",message);
             }
 
 

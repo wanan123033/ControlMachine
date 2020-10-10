@@ -52,7 +52,8 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-public class SargentSettingActivity extends BaseTitleActivity implements CompoundButton.OnCheckedChangeListener, AdapterView.OnItemSelectedListener, RadioGroup.OnCheckedChangeListener, RadioManager.OnRadioArrivedListener {
+public class SargentSettingActivity extends BaseTitleActivity implements CompoundButton.OnCheckedChangeListener,
+        AdapterView.OnItemSelectedListener, RadioGroup.OnCheckedChangeListener, RadioManager.OnRadioArrivedListener, SerialDeviceManager.RS232ResiltListener {
     @BindView(R.id.cb_run_up)
     CheckBox cbRunUp;
     @BindView(R.id.sp_device_count)
@@ -208,9 +209,13 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
         radioManager.setOnRadioArrived(this);
         initSpinners();
 
-        if (sargentSetting.getType() != 2) {
+        if (sargentSetting.getType() < 2) {
             llLight.setVisibility(View.GONE);
             llCheck.setVisibility(View.GONE);
+        }
+
+        if (sargentSetting.getType() == 3){
+            SerialDeviceManager.getInstance().setRS232ResiltListener(this);
         }
     }
 
@@ -349,10 +354,20 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
                 }
                 break;
             case R.id.tv_light_minus:
-                SargentJumpMore.lightDown(deviceId);
+                if (sargentSetting.getType() == 2){
+                    SargentJumpMore.lightDown(deviceId);
+                }else {
+                    SargentJumpMore.lightDown();
+                }
+
                 break;
             case R.id.tv_light_add:
-                SargentJumpMore.lightUp(deviceId);
+                if(sargentSetting.getType() == 2){
+                    SargentJumpMore.lightUp(deviceId);
+                }else {
+                    SargentJumpMore.lightUp();
+                }
+
                 break;
             case R.id.tv_device_check:
                 SargentJumpMore.checkSelf(deviceId);
@@ -402,28 +417,39 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
                 break;
 
             case SerialConfigs.SARGENT_JUMP_CHECK:
-                SargentJumpResult jumpResult = (SargentJumpResult) msg.obj;
-                byte[] incorrectPoles = jumpResult.getIncorrectPoles();
-                if (incorrectPoles == null ||incorrectPoles.length == 0 )
-                    return;
-                boolean check = true;
-                flagBad = 0;
-                for (int i = 0; i < incorrectPoles.length; i++) {
-                    if (incorrectPoles[i] == 1) {
-                        toastSpeak(MessageFormat.format("第{0}对杆出现异常", i + 1));
-                        check = false;
-                        flagBad++;
-                    }
+                if (msg.obj instanceof SargentJumpResult ){
+                    SargentJumpResult jumpResult = (SargentJumpResult) msg.obj;
+                    selfCheckResult(jumpResult);
                 }
-                if (!check && flagBad < 6) {
-                    mHandler.sendEmptyMessage(CAN_BE_IGNORE);
-                    ignoreDeviceId = jumpResult.getDeviceId();
-                } else if (check && flagBad > 5) {
-                    toastSpeak("当前设备坏点数超过5点");
-                } else if (check) {
-                    toastSpeak("当前设备正常");
-                } else
-                    break;
+
+                break;
+        }
+    }
+
+    /**
+     * 自检
+     * @param jumpResult
+     */
+    private void selfCheckResult(SargentJumpResult jumpResult) {
+        byte[] incorrectPoles = jumpResult.getIncorrectPoles();
+        if (incorrectPoles == null ||incorrectPoles.length == 0 )
+            return;
+        boolean check = true;
+        flagBad = 0;
+        for (int i = 0; i < incorrectPoles.length; i++) {
+            if (incorrectPoles[i] == 1) {
+                toastSpeak(MessageFormat.format("第{0}对杆出现异常", i + 1));
+                check = false;
+                flagBad++;
+            }
+        }
+        if (!check && flagBad < 6) {
+            mHandler.sendEmptyMessage(CAN_BE_IGNORE);
+            ignoreDeviceId = jumpResult.getDeviceId();
+        } else if (check && flagBad > 5) {
+            toastSpeak("当前设备坏点数超过5点");
+        } else if (check) {
+            toastSpeak("当前设备正常");
         }
     }
 
@@ -471,7 +497,12 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
                             sweetAlertDialog.dismissWithAnimation();
-                            SargentJumpMore.ignoreBad(ignoreDeviceId);
+                            if (sargentSetting.getType() == 2){
+                                SargentJumpMore.ignoreBad(ignoreDeviceId);
+                            }else {
+                                SargentJumpMore.ignoreBad();
+                            }
+
                         }
                     }).setCancelText("否").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override
@@ -487,4 +518,15 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
     });
 
 
+    @Override
+    public void onRS232Result(Message msg) {
+        switch (msg.what){
+            case SerialConfigs.SARGENT_JUMP_CHECK:
+                if (msg.obj instanceof SargentJumpResult ){
+                    SargentJumpResult jumpResult = (SargentJumpResult) msg.obj;
+                    selfCheckResult(jumpResult);
+                }
+                break;
+        }
+    }
 }

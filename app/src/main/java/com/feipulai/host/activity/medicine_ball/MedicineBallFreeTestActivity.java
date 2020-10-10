@@ -15,6 +15,7 @@ import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.freedom.BaseFreedomTestActivity;
 import com.feipulai.host.activity.vccheck.TestState;
 import com.feipulai.host.entity.RoundResult;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -36,6 +37,7 @@ public class MedicineBallFreeTestActivity extends BaseFreedomTestActivity {
     private final int CHECK_DEVICE = 0xf1;
     @Override
     protected void onResume() {
+        LogUtils.operation("MedicineBallFreeTestActivity onResume");
         super.onResume();
         SerialDeviceManager.getInstance().setRS232ResiltListener(resultImpl);
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
@@ -48,6 +50,7 @@ public class MedicineBallFreeTestActivity extends BaseFreedomTestActivity {
 
     @Override
     public void startTest() {
+        LogUtils.operation("MedicineBallFreeTestActivity 开始测试");
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                 SerialConfigs.CMD_MEDICINE_BALL_FAST_EMPTY));
         startFlag = true;
@@ -57,6 +60,7 @@ public class MedicineBallFreeTestActivity extends BaseFreedomTestActivity {
 
     @Override
     public void stopTest() {
+        LogUtils.operation("MedicineBallFreeTestActivity 结束测试");
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
         setDeviceState(new BaseDeviceState(BaseDeviceState.STATE_FREE));
     }
@@ -64,7 +68,7 @@ public class MedicineBallFreeTestActivity extends BaseFreedomTestActivity {
     @Override
     protected void onPause() {
         super.onPause();
-
+        LogUtils.operation("MedicineBallFreeTestActivity onPause");
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_STOP));
         SerialDeviceManager.getInstance().close();
     }
@@ -111,6 +115,7 @@ public class MedicineBallFreeTestActivity extends BaseFreedomTestActivity {
 
                 case GET_SCORE_RESPONSE:
                     MedicineBallResult result = (MedicineBallResult) msg.obj;
+                    LogUtils.operation("实心球成绩处理:"+result.toString());
                     BaseStuPair basePair = new BaseStuPair();
                     basePair.setResultState(result.isFault() ? RoundResult.RESULT_STATE_FOUL : RoundResult.RESULT_STATE_NORMAL);
                     basePair.setBaseDevice(new BaseDeviceState(BaseDeviceState.STATE_END, 1));
@@ -119,6 +124,7 @@ public class MedicineBallFreeTestActivity extends BaseFreedomTestActivity {
                     break;
                 case END_TEST:
                     BaseDeviceState device1 = new BaseDeviceState(BaseDeviceState.STATE_END, 1);
+                    LogUtils.operation("实心球测试结束");
                     setDeviceState(device1);
                     toastSpeak("测试结束");
                     SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
@@ -181,6 +187,7 @@ public class MedicineBallFreeTestActivity extends BaseFreedomTestActivity {
      * @param selfCheckResult 自检校验
      */
     private void disposeCheck(MedicineBallSelfCheckResult selfCheckResult) {
+        LogUtils.operation("实心球自检处理:"+selfCheckResult.toString());
         boolean isInCorrect = selfCheckResult.isInCorrect();
         BaseDeviceState deviceState = new BaseDeviceState();
         if (isInCorrect) {

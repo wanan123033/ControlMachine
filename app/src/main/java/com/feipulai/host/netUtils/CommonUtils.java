@@ -115,6 +115,11 @@ public class CommonUtils {
         return gson.toJson(paramData);
     }
 
+    public static ResponseParame encryptQuery(String bizType, String lastUpdateTime, Object object) {
+        ResponseParame respost = encryptQuery(bizType, object);
+        respost.setLastUpdateTime(lastUpdateTime);
+        return respost;
+    }
     public static ResponseParame encryptQuery(String bizType, Object object) {
         ResponseParame respost = new ResponseParame();
         respost.setBizType(bizType);
@@ -125,19 +130,24 @@ public class CommonUtils {
 //        respost.setSign(EncryptUtil.getSignData(signMap));
         Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
         respost.setSign(EncryptUtil.getSignData(gson.toJson(object)));
-        respost.setData(EncryptUtil.setEncryptData(object));
+        if (bizType.equals("8001")){
+            respost.setData(gson.toJson(object));
+        }else {
+            respost.setData(EncryptUtil.setEncryptData(object));
+        }
         respost.setRequestTime(String.valueOf(System.currentTimeMillis()));
         Logger.i("json:============="+respost.toString());
         return respost;
     }
 
+
     public static String getIp() {
         String ipAddress = SettingHelper.getSystemSetting().getServerIp();
         if (TextUtils.isEmpty(ipAddress)) {
-            ipAddress = "http://syn3y6.natappfree.cc/app/";
+            ipAddress = "https://api.soft.fplcloud.com";
         }
         if (!ipAddress.startsWith("http")) {
-            ipAddress = "http://" + ipAddress + "/app/";
+            ipAddress = "http://" + ipAddress + "/";
         }
         return ipAddress;
     }

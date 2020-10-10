@@ -28,7 +28,7 @@ public class SerialConfigs {
         sProChannels.put(ItemDefault.CODE_YWQZ, 10);//仰卧起坐
         sProChannels.put(ItemDefault.CODE_ZWTQQ, 41);//坐位体
         sProChannels.put(ItemDefault.CODE_TS, 1);//跳绳计数
-        sProChannels.put(ItemDefault.CODE_SL, 0);//视力
+        sProChannels.put(ItemDefault.CODE_SL, 1);//视力
         sProChannels.put(ItemDefault.CODE_YTXS, 25);//引体向上
         sProChannels.put(ItemDefault.CODE_HWSXQ, 70);//实心球
         sProChannels.put(ItemDefault.CODE_ZCP, 0);//中长跑
@@ -289,4 +289,6 @@ public class SerialConfigs {
     //新增引体向上手臂检测
     public static final int PULL_UP_GET_GYRO_DATA = 0x80;
     public static final int PULL_UP_GET_ANGLE_DATA = 0x81;
+
+    public static final int VISION_KEY = 0x82;
 }

@@ -44,7 +44,7 @@ public class LogUtils {
         DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd", Locale.CHINA);
         String logFileName = dateFormat.format(Calendar.getInstance().getTime()) + ".txt";
         // 非加密日志存储在在sd卡中“logger”目录中
-        String diskLogFilePath = Environment.getExternalStorageDirectory() + pathName + logFileName;
+        String diskLogFilePath = Environment.getExternalStorageDirectory() + "/" + pathName + "/" + logFileName;
         Logger.addLogAdapter(new DiskLogAdapter(diskLogFilePath));
 
         //加密日志存储
@@ -52,13 +52,13 @@ public class LogUtils {
         Logger.addLogAdapter(new EncryptDiskLogAdapter(encryptLogFilePath, LOG_ENCRYPT_KEY));
 
         // 保存正常日志
-        String exam_normal = Environment.getExternalStorageDirectory() + pathName + "/examlogger/" + "exam_normal_" + logFileName;
+        String exam_normal = Environment.getExternalStorageDirectory() + "/" + pathName + "/" + "/examlogger/" + "exam_normal_" + logFileName;
         Logger.addLogAdapter(new DiskLogAdapter(new NormalLogAdapter(exam_normal)));
         // 保存操作日志
-        String exam_operation = Environment.getExternalStorageDirectory() + pathName + "/examlogger/" + "exam_operation_" + logFileName;
+        String exam_operation = Environment.getExternalStorageDirectory() + "/" + pathName + "/" + "/examlogger/" + "exam_operation_" + logFileName;
         Logger.addLogAdapter(new DiskLogAdapter(new OperaLogAdapter(exam_operation)));
 
-        String exam_crash = Environment.getExternalStorageDirectory() + pathName + "/examlogger/" + "exam_crash_" + logFileName;
+        String exam_crash = Environment.getExternalStorageDirectory() + "/" + pathName + "/" + "/examlogger/" + "exam_crash_" + logFileName;
         Logger.addLogAdapter(new DiskLogAdapter(new CrashLogAdapter(exam_crash)));
 
 

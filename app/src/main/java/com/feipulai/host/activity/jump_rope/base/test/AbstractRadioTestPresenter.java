@@ -36,11 +36,12 @@ public abstract class AbstractRadioTestPresenter<Setting>
     protected static final int INVALID_PIV = -100;
     protected CountTimingTestFacade facade;
 
-    // 状态  WAIT_BGIN--->TESTING--->WAIT_MACHINE_RESULTS--->WAIT_CONFIRM_RESULTS---->WAIT_BGIN
+    // 状态  WAIT_BGIN--->TEST_COUNTING--->TESTING--->WAIT_MACHINE_RESULTS--->WAIT_CONFIRM_RESULTS---->WAIT_BGIN
     protected static final int WAIT_BGIN = 0x0;// 等待开始测试
-    protected static final int TESTING = 0x1;// 测试过程中
-    protected static final int WAIT_MACHINE_RESULTS = 0x2;// 测试结束,等待获取机器成绩
-    protected static final int WAIT_CONFIRM_RESULTS = 0x3;
+    protected static final int TEST_COUNTING = 0x1;// 等待开始测试
+    protected static final int TESTING = 0x2;// 测试过程中
+    protected static final int WAIT_MACHINE_RESULTS = 0x3;// 测试结束,等待获取机器成绩
+    protected static final int WAIT_CONFIRM_RESULTS = 0x4;// 已获取到机器成绩,等待用户点击确认成绩(此时成绩已经保存)
     protected volatile int testState = WAIT_BGIN;
 
     protected volatile int[] currentConnect;
@@ -116,7 +117,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
         resetDevices();
         view.setViewForStart();
         facade.start();
-        testState = TESTING;
+        testState = TEST_COUNTING;
     }
 
     @Override
@@ -135,9 +136,19 @@ public abstract class AbstractRadioTestPresenter<Setting>
     public void restartTest() {
         facade.stop();
         testState = WAIT_BGIN;
+        resetDeviceResults();
         startTest();
     }
-
+    private void resetDeviceResults() {
+        for (StuDevicePair pair : pairs) {
+            BaseDeviceState deviceState = pair.getBaseDevice();
+            if (deviceState.getState() == BaseDeviceState.STATE_STOP_USE) {
+                deviceState.setState(BaseDeviceState.STATE_DISCONNECT);
+            }
+            pair.setDeviceResult(null);
+        }
+        view.updateStates();
+    }
     private boolean checkFinalResults() {
         for (StuDevicePair pair : pairs) {
             Student student = pair.getStudent();
@@ -212,6 +223,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
         }
         view.enableStopUse(true);
         view.tickInUI(context.getString(R.string.begin));
+        testState = TESTING;
     }
 
     @Override

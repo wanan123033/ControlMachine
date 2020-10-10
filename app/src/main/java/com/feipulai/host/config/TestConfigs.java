@@ -9,20 +9,17 @@ import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.height_weight.HeightWeightCheckActivity;
 import com.feipulai.host.activity.jump_rope.check.JumpRopeCheckActivity;
-import com.feipulai.host.activity.medicine_ball.MedicineBallFreeTestActivity;
 import com.feipulai.host.activity.medicine_ball.MedicineBallSelectActivity;
-import com.feipulai.host.activity.medicine_ball.MedicineBallTestActivity;
 import com.feipulai.host.activity.pullup.PullUpSelectActivity;
 import com.feipulai.host.activity.radio_timer.RunTimerFreeTestActivity;
 import com.feipulai.host.activity.radio_timer.RunTimerTestActivity;
-import com.feipulai.host.activity.ranger.RangerPersonTestActivity;
 import com.feipulai.host.activity.ranger.RangerTestActivity;
 import com.feipulai.host.activity.sitreach.SitReachSelectActivity;
-import com.feipulai.host.activity.sitreach.SitReachTestActivity;
 import com.feipulai.host.activity.situp.check.SitUpCheckActivity;
 import com.feipulai.host.activity.standjump.StandJumpSelectActivity;
 import com.feipulai.host.activity.vccheck.VitalTestActivity;
-import com.feipulai.host.activity.vision.VisionTestActivity;
+import com.feipulai.host.activity.vision.Radio.VisionCheckActivity;
+import com.feipulai.host.activity.vision.Radio.VisionTestActivity;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.db.MachineItemCodeUtil;
 import com.feipulai.host.entity.Item;
@@ -80,13 +77,13 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_ZFP, RunTimerTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_WLJ, VitalTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_YTXS, PullUpSelectActivity.class);
-        TestConfigs.proActivity.put(ItemDefault.CODE_SL, VisionTestActivity.class);
-        TestConfigs.proActivity.put(ItemDefault.CODE_JGCJ, RangerPersonTestActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_SL, VisionCheckActivity.class);
 
+        TestConfigs.freedomActivity.put(ItemDefault.CODE_SL, VisionTestActivity.class);
+        TestConfigs.freedomActivity.put(ItemDefault.CODE_JGCJ, RangerTestActivity.class);
         TestConfigs.freedomActivity.put(ItemDefault.CODE_LDTY, StandJumpSelectActivity.class);
         TestConfigs.freedomActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallSelectActivity.class);
         TestConfigs.freedomActivity.put(ItemDefault.CODE_ZFP, RunTimerFreeTestActivity.class);
-        TestConfigs.freedomActivity.put(ItemDefault.CODE_JGCJ, RangerTestActivity.class);
         // 每个机器码对应的机器名称
         TestConfigs.machineNameMap.put(ItemDefault.CODE_TS, MyApplication.getInstance().getString(R.string.jump_rope));
         TestConfigs.machineNameMap.put(ItemDefault.CODE_YWQZ, MyApplication.getInstance().getString(R.string.sit_up));
@@ -210,7 +207,7 @@ public class TestConfigs {
         }
 
         final List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(machineCode);
-        Logger.e("machineCode="+machineCode+"----"+itemList);
+        Logger.e("machineCode=" + machineCode + "----" + itemList);
         String newItemCode = itemList.get(0).getItemCode();
 //        // 还是没有 itemCode
 //        if (newItemCode == null) {

@@ -73,7 +73,7 @@ public class ResultExlWriter extends ExlWriter {
 
     private void generateRows(Item item, List<Student> studentList) {
 
-        List<Map<String, Object>> resultsList = DBManager.getInstance().getResultsByStu(item.getItemCode(), studentList);
+        List<Map<String, Object>> resultsList = DBManager.getInstance().getResultsByStu(TestConfigs.getItemCode(item), studentList);
         if (resultsList == null) {
             return;
         }
@@ -98,7 +98,7 @@ public class ResultExlWriter extends ExlWriter {
                     rowData[8] = "";
                 } else {
                     Schedule schedule = DBManager.getInstance().getSchedulesByNo(uploadResults.get(j).getSiteScheduleNo());
-                    if (schedule!=null){
+                    if (schedule != null) {
                         rowData[7] = DateUtil.formatTime2(Long.valueOf(schedule.getBeginTime()), "yyyy-MM-dd HH:mm:ss");
                     }
                     rowData[8] = uploadResults.get(j).getGroupNo();

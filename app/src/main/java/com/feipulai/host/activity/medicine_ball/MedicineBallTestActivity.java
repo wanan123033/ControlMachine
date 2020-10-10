@@ -21,6 +21,7 @@ import com.feipulai.host.entity.RoundResult;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -49,6 +50,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LogUtils.operation("MedicineBallTestActivity onCreate");
         init();
     }
 
@@ -61,6 +63,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        LogUtils.operation("MedicineBallTestActivity onResume");
         SerialDeviceManager.getInstance().setRS232ResiltListener(resultImpl);
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
     }
@@ -68,10 +71,12 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
 
     @Override
     public void sendTestCommand(BaseStuPair baseStuPair) {
+
         if (baseStuPair.getStudent() == null) {
             toastSpeak("当前无学生测试");
             return;
         }
+        LogUtils.operation("MedicineBallTestActivity 开始测试:"+baseStuPair.toString());
 //        stuPair = baseStuPair;
         //因为新测试人员过来时需要重新初始化
         testState = TestState.UN_STARTED;
@@ -96,6 +101,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
 
     @Override
     public void stuSkip() {
+        LogUtils.operation("MedicineBallTestActivity 跳过:"+pair.toString());
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
         sendFree();
         setBegin(1);
@@ -138,6 +144,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
 
                 case SELF_CHECK_RESPONSE:
                     MedicineBallSelfCheckResult selfCheckResult = (MedicineBallSelfCheckResult) msg.obj;
+
                     activity.disposeCheck(selfCheckResult);
                     break;
 
@@ -153,10 +160,12 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
                     BaseDeviceState device1 = new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1);
                     activity.updateDevice(device1);
                     activity.toastSpeak("测试结束");
+                    LogUtils.operation("实心球测试结束");
 //                    SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
 //                            SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
                     break;
                 case DELAY:
+                    LogUtils.operation("实心球 发送空闲指令");
                     activity.sendFree();
                     break;
                 case UPDATE_DEVICE:
@@ -181,6 +190,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
      * @param selfCheckResult 自检校验
      */
     private void disposeCheck(MedicineBallSelfCheckResult selfCheckResult) {
+        LogUtils.operation("实心球处理自检:"+selfCheckResult.toString());
         boolean isInCorrect = selfCheckResult.isInCorrect();
         BaseDeviceState deviceState = pair.getBaseDevice();
         if (isInCorrect) {
@@ -220,6 +230,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
 
     private void onResultArrived(int result, boolean fault, BaseStuPair stuPair) {
         if (testState == TestState.WAIT_RESULT) {
+            LogUtils.operation("实心球显示结果:"+result+"---"+fault+"---"+stuPair.toString());
             stuPair.setResult(result);
             stuPair.setResultState(fault ? RoundResult.RESULT_STATE_FOUL : RoundResult.RESULT_STATE_NORMAL);
             updateResult(stuPair);
@@ -234,6 +245,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
 
     @Override
     protected void onDestroy() {
+        LogUtils.operation("MedicineBallTestActivity onDestroy");
         super.onDestroy();
         mHandler.removeCallbacksAndMessages(null);
         if (executorService != null && !executorService.isShutdown())
@@ -252,6 +264,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
             public void run() {
                 if (checkFlag && testState == TestState.UN_STARTED) {
                     testState = TestState.WAIT_RESULT;
+                    LogUtils.operation("实心球开始:"+ StringUtility.bytesToHexString(SerialConfigs.CMD_MEDICINE_BALL_START));
                     SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                             SerialConfigs.CMD_MEDICINE_BALL_START));
                     mHandler.sendEmptyMessageDelayed(START_DEVICE,1000);

@@ -63,7 +63,7 @@ public class ItemDefault {
         HOST_IDS_MAP.put(ItemDefault.CODE_ZCP, 15);
         HOST_IDS_MAP.put(ItemDefault.CODE_WLJ, 10);
         HOST_IDS_MAP.put(ItemDefault.CODE_JGCJ, 10);
-        HOST_IDS_MAP.put(ItemDefault.CODE_SL, 10);
+        HOST_IDS_MAP.put(ItemDefault.CODE_SL, 20);
         HOST_IDS_MAP.put(ItemDefault.CODE_SHOOT, 10);
     }
 }

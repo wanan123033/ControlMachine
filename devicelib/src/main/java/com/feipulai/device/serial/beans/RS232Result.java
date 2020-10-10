@@ -255,8 +255,14 @@ public class RS232Result {
                             break;
 
                         case 4:
-                            setType(SerialConfigs.MEDICINE_BALL_GET_SCORE_RESPONSE);
-                            setResult(new MedicineBallResult(data));
+                            if (data.length == 24){
+                                setType(SerialConfigs.SARGENT_JUMP_CHECK);
+                                setResult(new SargentJumpResult(data));
+                            }else {
+                                setType(SerialConfigs.MEDICINE_BALL_GET_SCORE_RESPONSE);
+                                setResult(new MedicineBallResult(data));
+                            }
+
                             break;
 
                         case 0x07:

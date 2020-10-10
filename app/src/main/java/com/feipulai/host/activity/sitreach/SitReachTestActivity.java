@@ -12,7 +12,9 @@ import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.person.BasePersonTestActivity;
+import com.feipulai.host.utils.StringUtility;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.ExecutorService;
@@ -72,13 +74,16 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
         if (SerialDeviceManager.getInstance() != null && sitReachResiltListener.getTestState() != SitReachResiltListener.TestState.UN_STARTED) {
             //开始测试
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_START));
+            LogUtils.normal("坐位体前屈开始指令:"+ StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_START));
             //获取数据
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_GET_SCORE));
+            LogUtils.normal("坐位体前屈获取数据:"+ StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_GET_SCORE));
         }
     }
 
     @Override
     public void stuSkip() {
+        LogUtils.normal("坐位体前屈跳过测试:"+StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_END));
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_END));
         sitReachResiltListener.setTestState(SitReachResiltListener.TestState.UN_STARTED);
         resultRunnable.setTestState(sitReachResiltListener.getTestState());
@@ -89,6 +94,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
     @Override
     public void sendTestCommand(BaseStuPair baseStuPair) {
         this.baseStuPair = baseStuPair;
+        LogUtils.normal("坐位体前屈开始测试:"+baseStuPair.toString());
         Logger.i(TAG + ":sendTestCommand发送开始测试");
         sitReachResiltListener.setTestState(SitReachResiltListener.TestState.WAIT_RESULT);
         resultRunnable.setTestState(sitReachResiltListener.getTestState());
@@ -111,6 +117,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
 
     @Override
     protected void onPause() {
+        LogUtils.operation("SitReachTestActivity onPause");
         super.onPause();
         if (SerialDeviceManager.getInstance() != null) {
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_END));
@@ -139,7 +146,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
 
     @Override
     public void getDeviceState(BaseDeviceState deviceState) {
-        Logger.i(TAG + ":getDeviceState--->" + deviceState.toString());
+        LogUtils.operation(TAG + ":getDeviceState--->" + deviceState.toString());
         BaseDeviceState state = new BaseDeviceState();
         state.setState(deviceState.getState());
         Message msg = mHandler.obtainMessage();
@@ -152,7 +159,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
     @Override
     public void getResult(BaseStuPair stuPair) {
 
-        Logger.i(TAG + ":getResult--->" + stuPair.toString());
+        LogUtils.operation(TAG + ":getResult--->" + stuPair.toString());
         Message msg = mHandler.obtainMessage();
         msg.obj = stuPair;
         msg.what = UPDATE_RESULT;
@@ -161,14 +168,14 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
 
     @Override
     public void EndDevice(boolean isFoul, int result) {
-        Logger.i(TAG + ":EndDevice--->");
+        LogUtils.operation(TAG + ":EndDevice--->");
         resultRunnable.setTestState(sitReachResiltListener.getTestState());
         statesRunnable.setTestState(sitReachResiltListener.getTestState());
     }
 
     @Override
     public void AgainTest(BaseDeviceState deviceState) {
-        Logger.i(TAG + ":AgainTest--->");
+        LogUtils.operation(TAG + ":AgainTest--->");
         resultRunnable.setTestState(sitReachResiltListener.getTestState());
         statesRunnable.setTestState(sitReachResiltListener.getTestState());
         toastSpeak("设备错误重测");
@@ -181,7 +188,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
 
     @Override
     public void ready(int deviveId) {
-        Logger.i(TAG + ":ready--->");
+        LogUtils.operation(TAG + ":ready--->");
         mHandler.sendEmptyMessageDelayed(TOAST_SPEAK, 1000);
     }
 
@@ -206,7 +213,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
                         activity.updateResult((BaseStuPair) msg.obj);
                         break;
                     case MSG_DISCONNECT:
-                        Logger.i(TAG + ":1MSG_DISCONNECT:" + activity.isDisconnect);
+                        LogUtils.operation(TAG + ":1MSG_DISCONNECT:" + activity.isDisconnect);
                         if (activity.isDisconnect) {
                             // 判断2次提示时间
                             if (!activity.isDestroyed() && (System.currentTimeMillis() - activity.disconnectTime) > 30000) {
@@ -253,7 +260,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
         public void run() {
             while (!isFinish) {
                 if (testState != SitReachResiltListener.TestState.UN_STARTED) {
-                    Log.i("james", "===>" + "sendCommand");
+                    LogUtils.operation( "坐位体前屈===>" + "sendCommand");
                     if (SerialDeviceManager.getInstance() != null)
                         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_GET_SCORE));
                 }
@@ -287,7 +294,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
             while (!isFinish) {
                 //开始测试不发送自检指令，会出现4秒内未收到返回数据 ，因为在这个时间段还在接收获取成绩的数据
                 if (testState == SitReachResiltListener.TestState.UN_STARTED) {
-                    Log.i("james", "===>" + "sendCheckCommand");
+                    LogUtils.operation("坐位体前屈===>" + "sendCheckCommand");
                     if (SerialDeviceManager.getInstance() != null) {
 
                         try {

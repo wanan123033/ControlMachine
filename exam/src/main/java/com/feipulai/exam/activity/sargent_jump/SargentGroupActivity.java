@@ -62,11 +62,12 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
         }
         Logger.i(TAG + ":sargentSetting ->" + sargentSetting.toString());
 
-        if (sargentSetting.getType() == 0) {
-            SerialDeviceManager.getInstance().setRS232ResiltListener(resultImpl);
-        } else {
+        if (sargentSetting.getType() == 1) {
             RadioManager.getInstance().init();
             RadioManager.getInstance().setOnRadioArrived(resultImpl);
+
+        } else {
+            SerialDeviceManager.getInstance().setRS232ResiltListener(resultImpl);
         }
 
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
@@ -145,11 +146,12 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
 
         check++;
         LogUtils.normal(SerialConfigs.CMD_SARGENT_JUMP_EMPTY.length+"---"+StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_EMPTY)+"---摸高空指令");
-        if (sargentSetting.getType() == 0) {
-            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
+        if (sargentSetting.getType() == 1) {
+            RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                     SerialConfigs.CMD_SARGENT_JUMP_EMPTY));
         } else {
-            RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
+
+            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                     SerialConfigs.CMD_SARGENT_JUMP_EMPTY));
         }
 
@@ -182,11 +184,11 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
         baseStuPair = stuPair;
         LogUtils.normal(SerialConfigs.CMD_SARGENT_JUMP_EMPTY.length+"---"+StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_EMPTY)+"---摸高空指令");
 
-        if (sargentSetting.getType() == 0) {
-            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
+        if (sargentSetting.getType() == 1) {
+            RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                     SerialConfigs.CMD_SARGENT_JUMP_EMPTY));
         } else {
-            RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
+            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                     SerialConfigs.CMD_SARGENT_JUMP_EMPTY));
         }
 
@@ -200,11 +202,11 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
         updateDevice(baseDevice);
         if (isConnect) {
             LogUtils.normal(SerialConfigs.CMD_SARGENT_JUMP_START.length+"---"+StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_START)+"---摸高开始测试指令");
-            if (sargentSetting.getType() == 0) {
-                SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
+            if (sargentSetting.getType() == 1) {
+                RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                         SerialConfigs.CMD_SARGENT_JUMP_START));
             } else {
-                RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
+                SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                         SerialConfigs.CMD_SARGENT_JUMP_START));
             }
 
@@ -355,10 +357,10 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
             updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, 1));
             // 发送结束命令
             LogUtils.normal(SerialConfigs.CMD_SARGENT_JUMP_STOP.length+"---"+StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_STOP)+"---摸高结束指令");
-            if (sargentSetting.getType() == 0) {
-                SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SARGENT_JUMP_STOP));
-            } else {
+            if (sargentSetting.getType() == 1) {
                 RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, SerialConfigs.CMD_SARGENT_JUMP_STOP));
+            } else {
+                SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SARGENT_JUMP_STOP));
             }
 //            testState = TestState.UN_STARTED;
         }

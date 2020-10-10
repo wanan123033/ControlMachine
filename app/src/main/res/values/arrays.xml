@@ -23,6 +23,7 @@
         <item>头像导入</item>
         <item>头像下载</item>
         <item>人脸特征检入</item>
+        <item>软件更新</item>
     </array>
 
 
@@ -50,4 +51,22 @@
         <item>体测模式</item>
         <item>自由模式</item>
     </array>
+
+    <array name="vision_distance">
+        <item>5米</item>
+        <item>2.5米</item>
+        <item>1米</item>
+    </array>
+
+    <array name="vision_result_type">
+        <item>5分记录</item>
+        <item>小数记录</item>
+    </array>
+
+    <array name="vision_stop_time">
+        <item>0(不限时)</item>
+        <item>3</item>
+        <item>5</item>
+    </array>
+
 </resources>

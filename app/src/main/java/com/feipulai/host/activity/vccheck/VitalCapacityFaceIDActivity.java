@@ -9,6 +9,7 @@ import android.util.Log;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
+import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.beans.VCResult;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.host.activity.base.BaseDeviceState;
@@ -16,6 +17,7 @@ import com.feipulai.host.activity.base.BasePersonFaceIDActivity;
 import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.TestConfigs;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.ExecutorService;
@@ -27,6 +29,7 @@ import static com.feipulai.host.activity.vccheck.VCConstant.UPDATE_DEVICE;
 
 public class VitalCapacityFaceIDActivity extends BasePersonFaceIDActivity  {
     private static final String TAG = "VitalCapacityFaceIDActi";
+
     private ExecutorService mExecutorService ;
     private GetResultRunnable resultRunnable = new GetResultRunnable();
     private VitalHandler mHandler = new VitalHandler(this);
@@ -35,6 +38,7 @@ public class VitalCapacityFaceIDActivity extends BasePersonFaceIDActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LogUtils.operation("VitalCapacityFaceIDActivity onCreate");
         mLEDManager = new LEDManager();
 	    mSerialManager = SerialDeviceManager.getInstance();
         mSerialManager.setRS232ResiltListener(vcResultImpl);
@@ -52,6 +56,7 @@ public class VitalCapacityFaceIDActivity extends BasePersonFaceIDActivity  {
     @Override
     public void sendTestCommand(@NonNull BaseStuPair baseStuPair) {
         vcResultImpl.setTestState(TestState.WAIT_RESULT);
+        LogUtils.operation("肺活量开始测试:"+baseStuPair.toString());
         if (mLEDManager == null){
             mLEDManager = new LEDManager();
             mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(),TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
@@ -87,7 +92,7 @@ public class VitalCapacityFaceIDActivity extends BasePersonFaceIDActivity  {
                     if (sendTimes > 30 ){
                         mHandler.sendEmptyMessage(SerialConfigs.VITAL_CAPACITY_ERROR_MSG);
                     }
-                    Log.i(TAG, "===>" + "sendCommand");
+                    LogUtils.operation("肺活量发送指令===>" + StringUtility.bytesToHexString(retrieve));
                     mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, retrieve));
                 }
 
@@ -144,6 +149,7 @@ public class VitalCapacityFaceIDActivity extends BasePersonFaceIDActivity  {
     }
 
     private void onResultUpdate(VCResult result) {
+        LogUtils.operation("肺活量更新设备:"+result.toString());
         BaseStuPair stuPair = new BaseStuPair();
         BaseDeviceState device = new BaseDeviceState(BaseDeviceState.STATE_ONUSE, 1);
         stuPair.setBaseDevice(device);
@@ -152,6 +158,7 @@ public class VitalCapacityFaceIDActivity extends BasePersonFaceIDActivity  {
     }
 
     private void onResultArrived(VCResult result) {
+        LogUtils.operation("肺活量获取结果:"+result.toString());
         BaseDeviceState device = new BaseDeviceState(BaseDeviceState.STATE_END, 1);
         BaseStuPair stuPair = new BaseStuPair();
         stuPair.setResult(result.getResult());
@@ -198,6 +205,7 @@ public class VitalCapacityFaceIDActivity extends BasePersonFaceIDActivity  {
 
     @Override
     protected void onDestroy() {
+        LogUtils.operation("VitalCapacityFaceIDActivity onDestroy");
         super.onDestroy();
         mExecutorService.shutdown();
         mSerialManager.close();

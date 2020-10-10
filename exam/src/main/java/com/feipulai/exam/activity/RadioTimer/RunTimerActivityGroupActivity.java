@@ -272,6 +272,8 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
 
                 } else {//循环测试
                     for (int i = 0; i < runNum; i++) {
+                        if (mList.size()<i+1)
+                            return;
                         mList.get(i).setMark("");
                         mList.get(i).setStudent(null);
                     }
@@ -314,10 +316,16 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
      */
     private void continueRun() {
         currentTestTime++;
+        for (int i = 0; i < runNum; i++) {
+            if (mList.size()< i+1)
+                return;
+            mList.get(i).setMark("");
+        }
+
         if (currentTestTime < maxTestTimes) {//当前跑道学生是否测试完
-            for (int i = 0; i < runNum; i++) {
-                mList.get(i).setMark("");
-            }
+//            for (int i = 0; i < runNum; i++) {
+//                mList.get(i).setMark("");
+//            }
         } else {
             currentTestTime = 0;
             if (tempGroup.size() <= 0) {
@@ -353,6 +361,8 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
      */
     private void addToRunWay() {
         for (int i = 0; i < runNum; i++) {
+            if (mList.size()< i+1)
+                return;
             if (tempGroup.size() > i) {
                 int size = DBManager.getInstance().
                         queryGroupRound(tempGroup.get(i).getStudent().getStudentCode(), group.getId() + "").size();
@@ -512,6 +522,8 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
     public void updateConnect(HashMap<String, Integer> map) {
 
         for (int i = 0; i < runNum; i++) {
+            if (mList.size() <i+1)
+                return;
             if (mList.get(i) != null) {
                 mList.get(i).setConnectState(map.get(("runNum" + i)));
             }
@@ -561,6 +573,9 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
         toastSpeak("分组考生全部测试完成，请选择下一组");
         group.setIsTestComplete(1);
         DBManager.getInstance().updateGroup(group);
+        mList.clear();
+        tempGroup.clear();
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override

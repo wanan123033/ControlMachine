@@ -25,6 +25,7 @@ import com.feipulai.host.bean.DeviceDetail;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -57,6 +58,7 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        LogUtils.operation("MedicineBallMoreActivity onResume");
         setting = SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class);
         if (null == setting) {
             setting = new MedicineBallSetting();
@@ -80,6 +82,7 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
     }
 
     private void sendEmpty() {
+        LogUtils.operation("MedicineBallMoreActivity sendEmpty");
         Log.i(TAG, "james_send_empty");
         for (int i = 0; i < setting.getTestDeviceCount(); i++) {
             BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
@@ -127,6 +130,7 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
 
     @Override
     public void sendTestCommand(BaseStuPair pair, int index) {
+        LogUtils.operation("开始测试:pair="+pair.toString()+"----index="+index);
         pair.setStartTime(DateUtil.getCurrentTime());
         pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
         updateDevice(pair.getBaseDevice());
@@ -137,10 +141,12 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
 
 
     private void sendStart(byte id) {
+        LogUtils.operation("MedicineBallMoreActivity sendStart id="+id);
         MedicineBallMore.sendStart(SettingHelper.getSystemSetting().getHostId(),id);
     }
 
     private void sendFree(int deviceId) {
+        LogUtils.operation("MedicineBallMoreActivity sendFree deviceId="+deviceId);
         MedicineBallMore.sendEmpty(SettingHelper.getSystemSetting().getHostId(),deviceId);
     }
 
@@ -224,19 +230,21 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
     protected void onStop() {
         super.onStop();
         isResume = false;
+        LogUtils.operation("MedicineBallMoreActivity onStop");
 //        mHandler.removeCallbacksAndMessages(null);
 //        RadioManager.getInstance().setOnRadioArrived(null);
     }
 
     @OnClick({R.id.tv_device_pair})
     public void onClick(View view) {
+        LogUtils.operation("MedicineBallMoreActivity 用户点击了设备配对");
         startActivity(new Intent(this, MedicineBallPairActivity.class));
     }
 
     private MedicineBallImpl medicineBall = new MedicineBallImpl(new MedicineBallImpl.MainThreadDisposeListener() {
         @Override
         public void onResultArrived(final MedicineBallNewResult result) {
-            Log.i(TAG, result.toString());
+            LogUtils.operation("MedicineBallMoreActivity 获取到结果:"+result.toString());
 
             // MedicineBallNewResult{result=50, fault=false, sweepPoint=1, deviceId=2, frequency=0, state=2}
             if (result.getState() == 2) {
@@ -258,6 +266,7 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
 
         @Override
         public void onStarTest(int deviceId) {
+
             Student student = deviceDetails.get(deviceId - 1).getStuDevicePair().getStudent();
             if (student != null) {
                 toastSpeak(MessageFormat.format("请{0}开始测试", student.getStudentName()));
@@ -290,6 +299,7 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        LogUtils.operation("MedicineBallMoreActivity onDestroy");
         RadioManager.getInstance().setOnRadioArrived(null);
         mHandler.removeCallbacksAndMessages(null);
     }

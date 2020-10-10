@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -79,6 +80,12 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     private SystemSetting setting;
     @BindView(R.id.sb_volume)
     SeekBar sb_volume;
+    @BindView(R.id.rl_net)
+    RelativeLayout rl_net;
+    @BindView(R.id.view_itemd)
+    View view_itemd;
+    @BindView(R.id.sw_net)
+    CheckBox sw_net;
 
     @Override
     protected int setLayoutResID() {
@@ -117,6 +124,14 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         spCheckTool.setAdapter(spCheckToolAdapter);
 
         spCheckTool.setSelection(setting.getCheckTool());
+        if (setting.getCheckTool() == 4){
+            rl_net.setVisibility(View.VISIBLE);
+            view_itemd.setVisibility(View.VISIBLE);
+            sw_net.setChecked(setting.isNetCheckTool());
+        }else {
+            rl_net.setVisibility(View.GONE);
+            view_itemd.setVisibility(View.GONE);
+        }
 
         txtChannel.setText((SerialConfigs.sProChannels.get(machineCode) + setting.getHostId() - 1) + "");
 
@@ -159,11 +174,19 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                 break;
             case R.id.sp_check_tool:
                 setting.setCheckTool(position);
+                if (position == 4){
+                    rl_net.setVisibility(View.VISIBLE);
+                    view_itemd.setVisibility(View.VISIBLE);
+                    sw_net.setChecked(setting.isNetCheckTool());
+                }else {
+                    rl_net.setVisibility(View.GONE);
+                    view_itemd.setVisibility(View.GONE);
+                }
                 break;
         }
     }
 
-    @OnClick({R.id.btn_face_init, R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting, R.id.cb_custom_channel})
+    @OnClick({R.id.btn_face_init, R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting, R.id.cb_custom_channel,R.id.sw_net})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.sw_auto_broadcast:
@@ -194,6 +217,9 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                 break;
             case R.id.btn_face_init:
                 activeFace();
+                break;
+            case R.id.sw_net:
+                setting.setNetCheckTool(sw_net.isChecked());
                 break;
 
         }
@@ -245,7 +271,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
      * 绑定服务器
      */
     private void bind() {
-        String url = mEtSeverIp.getText().toString().trim() + "/app/";
+        String url = mEtSeverIp.getText().toString().trim() + "/";
         if (!url.startsWith("http")) {//修改IP
             url = "http://" + url;
         }

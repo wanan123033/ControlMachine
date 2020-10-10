@@ -8,6 +8,7 @@ import android.util.Base64;
 import com.arcsoft.face.ErrorInfo;
 import com.arcsoft.face.FaceEngine;
 import com.feipulai.common.utils.ImageUtil;
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.host.MyApplication;
@@ -19,6 +20,7 @@ import com.feipulai.host.bean.ItemBean;
 import com.feipulai.host.bean.RoundResultBean;
 import com.feipulai.host.bean.StudentBean;
 import com.feipulai.host.bean.UploadResults;
+import com.feipulai.host.bean.UserPhoto;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
@@ -38,6 +40,7 @@ import com.ww.fpl.libarcface.util.ConfigUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -176,16 +179,24 @@ public class ItemSubscriber {
 
     // 获取学生信息
     public void getStudentData(final int pageNo, final String lastDownLoadTime) {
+        getStudentData(pageNo, lastDownLoadTime, null);
+    }
 
+    public void getStudentData(final int pageNo, final String lastDownLoadTime, final String... studentCode) {
+        long loadTime = TextUtils.isEmpty(lastDownLoadTime) ? 0 : Long.parseLong(lastDownLoadTime);
         HashMap<String, Object> parameData = new HashMap<>();
         parameData.put("batch", pageNo);
         parameData.put("pageSize", "200");
-        parameData.put("upLoadTime", TextUtils.isEmpty(lastDownLoadTime) ? 0 : Long.parseLong(lastDownLoadTime));
+        parameData.put("upLoadTime", loadTime);
 //        parameData.put("itemName", TestConfigs.sCurrentItem.getItemName());
         parameData.put("examItemCode", TestConfigs.sCurrentItem.getItemCode());
+        if (studentCode != null && studentCode.length != 0) {
+            parameData.put("studentCodeList", studentCode);
+        }
+        LogUtil.logDebugMessage(parameData.toString());
 //        parameData.put("machineCode", TestConfigs.sCurrentItem.getMachineCode() + "");
         Observable<HttpResult<BatchBean<List<StudentBean>>>> observable = HttpManager.getInstance().getHttpApi().getStudentData(
-                "bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery(DWON_STAUENT_DATA + "", parameData));
+                "bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery(DWON_STAUENT_DATA + "", loadTime + "", parameData));
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<BatchBean<List<StudentBean>>>(new OnResultListener<BatchBean<List<StudentBean>>>() {
             @Override
             public void onSuccess(BatchBean<List<StudentBean>> result) {
@@ -249,8 +260,9 @@ public class ItemSubscriber {
                     }
                     ToastUtils.showShort("数据下载成功");
                     if (result.getDataInfo() != null && result.getDataInfo().size() > 0) {
-                        SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS,
-                                SharedPrefsConfigs.LAST_DOWNLOAD_TIME, result.getDataInfo().get(result.getDataInfo().size() - 1).getDownloadTime());
+                        if (studentCode != null && studentCode.length != 0)
+                            SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS,
+                                    SharedPrefsConfigs.LAST_DOWNLOAD_TIME, result.getDataInfo().get(result.getDataInfo().size() - 1).getDownloadTime());
                     }
                 }
 
@@ -264,8 +276,6 @@ public class ItemSubscriber {
                 ToastUtils.showShort(errorMsg);
             }
         }));
-
-
     }
 
     private void savePortrait(final List<StudentBean> studentBeanList) {
@@ -360,6 +370,48 @@ public class ItemSubscriber {
                 if (onRequestEndListener != null) {
                     onRequestEndListener.onFault(UPLOAD_BIZ);
                 }
+            }
+        }));
+    }
+
+    public void netSb(String photoData, final OnRequestEndListener onRequestEndListener) {
+        Map<String, String> params = new HashMap<>();
+        params.put("photoData", photoData);
+        Observable<HttpResult<UserPhoto>> observable = HttpManager.getInstance().getHttpApi().netSh(
+                "bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery("8001", params));
+
+//        Observable<HttpResult<UserPhoto>> observable = HttpManager.getInstance().getHttpApi().netSh("bearer " + MyApplication.TOKEN,
+//                CommonUtils.encryptQuery( "8001", params));
+        HttpManager.getInstance().toSubscribe(observable, new RequestSub<UserPhoto>(new OnResultListener<UserPhoto>() {
+            @Override
+            public void onSuccess(UserPhoto result) {
+                onRequestEndListener.onRequestData(result);
+            }
+
+            @Override
+            public void onFault(int code, String errorMsg) {
+                onRequestEndListener.onFault(8001);
+            }
+        }));
+    }
+
+    public void sendFaceOnline(String studentCode, String base64Face, String base64Feature) {
+        HashMap<String, Object> parameData = new HashMap<>();
+        parameData.put("photoData", base64Face);
+        parameData.put("studentCode", studentCode);
+        parameData.put("faceFeature", base64Feature);
+        Observable<HttpResult<UserPhoto>> observable = HttpManager.getInstance().getHttpApi().netSh(
+                "bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery("8001", parameData));
+        HttpManager.getInstance().toSubscribe(observable, new RequestSub<UserPhoto>(new OnResultListener<UserPhoto>() {
+
+            @Override
+            public void onSuccess(UserPhoto result) {
+                onRequestEndListener.onRequestData(result);
+            }
+
+            @Override
+            public void onFault(int code, String errorMsg) {
+                onRequestEndListener.onFault(code);
             }
         }));
     }

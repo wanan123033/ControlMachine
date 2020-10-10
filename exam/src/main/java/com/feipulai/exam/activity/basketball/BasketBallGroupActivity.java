@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -118,7 +119,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
     private BasketBallRadioFacade facade;
     private long timerDate;
     private String startTime;  //开始时间
-
+    private boolean startTest = true;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_group_basketball;
@@ -148,7 +149,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         }
         //设置精度
         ballManager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), setting.getSensitivity(),
-                setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital()  -1);
+                setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() - 1);
 
         timerUtil = new TimerUtil(this);
         //分组标题
@@ -271,8 +272,8 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             if (deviceState.getDeviceId() == 0) {
                 cbLed.setChecked(deviceState.getState() != BaseDeviceState.STATE_DISCONNECT);
             }
-        }else if (baseEvent.getTagInt()==EventConfigs.WIFI_STATE){
-            if (setting.getTestType()==0&&baseEvent.getData()== NetworkInfo.State.CONNECTED){//有线模式UDP
+        } else if (baseEvent.getTagInt() == EventConfigs.WIFI_STATE) {
+            if (setting.getTestType() == 0 && baseEvent.getData() == NetworkInfo.State.CONNECTED) {//有线模式UDP
                 //配置网络
                 if (SettingHelper.getSystemSetting().isAddRoute() && !TextUtils.isEmpty(NetWorkUtils.getLocalIp())) {
                     String locatIp = NetWorkUtils.getLocalIp();
@@ -586,6 +587,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
 //                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
                     ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
                     ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 1);
+                    startTest = false;
                 }
                 if (state != TESTING) {
                     timerUtil.stop();
@@ -774,6 +776,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         Student student = TestCache.getInstance().getAllStudents().get(position());
         List<RoundResult> roundResults = TestCache.getInstance().getResults().get(student);
         roundNo = (roundResults == null ? 1 : roundResults.size() + 1);
+        Log.i("roundNo", "presetResult" + roundNo);
         for (int i = 0; i < TestConfigs.getMaxTestCount(this); i++) {
             RoundResult roundResult = DBManager.getInstance().queryGroupRoundNoResult(student.getStudentCode(), group.getId() + "", i + 1);
             if (roundResult == null) {
@@ -803,7 +806,12 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             for (int i = 0; i < resultList.size(); i++) {
                 if (resultList.get(i).getResultState() == -999) {
                     resultAdapter.setSelectPosition(i);
-                    roundNo = i + 1;
+                    if (startTest){
+                        roundNo = i + 1;
+                        startTest = false;
+                    }
+
+                    Log.i("roundNo", "isExistTestPlace" + roundNo);
                     resultAdapter.notifyDataSetChanged();
                     return true;
                 } else {
@@ -815,6 +823,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             return false;
         } else {
             roundNo = resultAdapter.getSelectPosition() + 1;
+            Log.i("roundNo", "isExistTestPlace resultAdapter" + roundNo);
             return true;
         }
 
@@ -1034,7 +1043,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                     loopTestNext();
                 }
             }
-        },3000);
+        }, 3000);
 
     }
 

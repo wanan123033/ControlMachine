@@ -178,10 +178,7 @@ public class AdvancedSettingActivity extends BaseTitleActivity
         }
     }
 
-    @OnClick({R.id.btn_face_init})
-    public void onClick(View view){
 
-    }
     private void activeFace() {
         Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override

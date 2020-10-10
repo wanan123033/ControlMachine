@@ -262,8 +262,8 @@ public class Radio868Result {
                     }
 
                 }
-                if (data[0] == 0xab && data[data.length-1] == 0x56){
-                    Log.i("红外=====================",StringUtility.bytesToHexString(data));
+                if (data[0] == 0xab && data[data.length - 1] == 0x56) {
+                    Log.i("红外=====================", StringUtility.bytesToHexString(data));
                 }
                 break;
 
@@ -389,6 +389,10 @@ public class Radio868Result {
                             break;
                     }
                 }
+                break;
+            case ItemDefault.CODE_SL:
+                setType(SerialConfigs.VISION_KEY);
+                setResult(data[5]);//38 上 32 下 34 右 36 右 35 确定 42 返回
                 break;
         }
     }

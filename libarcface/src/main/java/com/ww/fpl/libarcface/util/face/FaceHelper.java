@@ -267,22 +267,26 @@ public class FaceHelper {
         @Override
         public void run() {
             if (faceListener != null && nv21Data != null) {
-                if (frEngine != null) {
-                    FaceFeature faceFeature = new FaceFeature();
-                    int frCode;
-                    synchronized (frEngine) {
-                        frCode = frEngine.extractFaceFeature(nv21Data, width, height, format, faceInfo, faceFeature);
-                    }
-                    if (frCode == ErrorInfo.MOK) {
+                synchronized (this) {
+                    if (faceListener != null && nv21Data != null) {
+                        if (frEngine != null) {
+                            FaceFeature faceFeature = new FaceFeature();
+                            int frCode;
+                            synchronized (frEngine) {
+                                frCode = frEngine.extractFaceFeature(nv21Data, width, height, format, faceInfo, faceFeature);
+                            }
+                            if (frCode == ErrorInfo.MOK) {
 //                        Log.i(TAG, "run: fr costTime = " + (System.currentTimeMillis() - frStartTime) + "ms");
-                        faceListener.onFaceFeatureInfoGet(faceFeature, trackId, frCode);
-                    } else {
-                        faceListener.onFaceFeatureInfoGet(null, trackId, frCode);
-                        faceListener.onFail(new Exception("fr failed errorCode is " + frCode));
+                                faceListener.onFaceFeatureInfoGet(faceFeature, trackId, frCode);
+                            } else {
+                                faceListener.onFaceFeatureInfoGet(null, trackId, frCode);
+                                faceListener.onFail(new Exception("fr failed errorCode is " + frCode));
+                            }
+                        } else {
+                            faceListener.onFaceFeatureInfoGet(null, trackId, ERROR_FR_ENGINE_IS_NULL);
+                            faceListener.onFail(new Exception("fr failed ,frEngine is null"));
+                        }
                     }
-                } else {
-                    faceListener.onFaceFeatureInfoGet(null, trackId, ERROR_FR_ENGINE_IS_NULL);
-                    faceListener.onFail(new Exception("fr failed ,frEngine is null"));
                 }
             }
             nv21Data = null;

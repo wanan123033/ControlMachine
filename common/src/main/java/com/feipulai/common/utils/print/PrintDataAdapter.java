@@ -58,7 +58,7 @@ public class PrintDataAdapter extends RecyclerView.Adapter<PrintDataAdapter.View
             holder.txtTilte3.setTextSize(30f);
         }
 
-        holder.txtTilte3.setText(mPrintDataBeans.get(position).getPrintString1());
+        holder.txtTilte3.setText(mPrintDataBeans.get(position).getPrintString3());
 
         if (mPrintDataBeans.get(position).getPrintString4().length() > 8) {
             holder.txtTilte3.setTextSize(25f);

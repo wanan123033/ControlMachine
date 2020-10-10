@@ -24,7 +24,6 @@ import com.feipulai.host.config.BaseEvent;
 import com.feipulai.host.config.EventConfigs;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
-import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.entity.StudentItem;
 import com.feipulai.host.view.AddStudentDialog;
@@ -32,7 +31,6 @@ import com.orhanobut.logger.Logger;
 import com.zkteco.android.biometric.module.idcard.meta.IDCardInfo;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -53,6 +51,7 @@ public abstract class BaseCheckActivity
     public FrameLayout afrFrameLayout;
     private BaseAFRFragment afrFragment;
     private ScannerGunManager scannerGunManager;
+    private BaseCatupeFragment catureFragment;
 
     public void setOpenDevice(boolean openDevice) {
         isOpenDevice = openDevice;
@@ -69,7 +68,9 @@ public abstract class BaseCheckActivity
             afrFrameLayout = findViewById(setAFRFrameLayoutResID());
             afrFragment = new BaseAFRFragment();
             afrFragment.setCompareListener(this);
-            initAFR();
+            if (SettingHelper.getSystemSetting().isNetCheckTool()){
+                catureFragment = new BaseCatupeFragment();
+            }
         }
         scannerGunManager = new ScannerGunManager(new ScannerGunManager.OnScanListener() {
             @Override
@@ -136,12 +137,19 @@ public abstract class BaseCheckActivity
         transaction.replace(setAFRFrameLayoutResID(), afrFragment);
         transaction.commitAllowingStateLoss();// 提交更改
     }
-
+    private void initCature(Student student) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        catureFragment.setStudent(student);
+        catureFragment.setCompareListener(this);
+        transaction.replace(setAFRFrameLayoutResID(), catureFragment);
+        transaction.commitAllowingStateLoss();// 提交更改
+    }
     public void showAFR() {
         if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
             ToastUtils.showShort("未选择人脸识别检录功能");
             return;
         }
+        initAFR();
         if (afrFrameLayout == null) {
             return;
         }
@@ -156,6 +164,10 @@ public abstract class BaseCheckActivity
         }
     }
 
+    public void gotoCatureFragment(Student student) {
+        initCature(student);
+        afrFrameLayout.setVisibility(View.VISIBLE);
+    }
     @Override
     public void compareStu(final Student student) {
         runOnUiThread(new Runnable() {
@@ -167,6 +179,10 @@ public abstract class BaseCheckActivity
         });
         if (student == null) {
             InteractUtils.toastSpeak(this, "该考生不存在");
+            if (SettingHelper.getSystemSetting().isNetCheckTool()){
+                showAddHint(student);
+                afrFrameLayout.setVisibility(View.GONE);
+            }
             return;
         }
         LogUtil.logDebugMessage("检入考生：" + student.toString());
@@ -298,7 +314,11 @@ public abstract class BaseCheckActivity
     public void onEventMainThread(BaseEvent baseEvent) {
         super.onEventMainThread(baseEvent);
         if (baseEvent.getTagInt() == EventConfigs.TEMPORARY_ADD_STU) {
-            onCheckIn((Student) baseEvent.getData());
+            if (SettingHelper.getSystemSetting().isNetCheckTool() && SettingHelper.getSystemSetting().getCheckTool() == 4) {
+                gotoCatureFragment((Student) baseEvent.getData());
+            }else {
+                onCheckIn((Student) baseEvent.getData());
+            }
         }
     }
 
@@ -347,25 +367,26 @@ public abstract class BaseCheckActivity
                 break;
         }
     }
-
+    private SweetAlertDialog dialog;
     private void showAddHint(final Student student) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                new SweetAlertDialog(BaseCheckActivity.this).setTitleText(getString(R.string.addStu_dialog_title))
-                        .setContentText(getString(R.string.addStu_dialog_content))
-                        .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismissWithAnimation();
-                        new AddStudentDialog(BaseCheckActivity.this).showDialog(student, false);
-                    }
-                }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismissWithAnimation();
-                    }
-                }).show();
+                    new SweetAlertDialog(BaseCheckActivity.this).setTitleText(getString(R.string.addStu_dialog_title))
+                            .setContentText(getString(R.string.addStu_dialog_content))
+                            .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismissWithAnimation();
+                            new AddStudentDialog(BaseCheckActivity.this).showDialog(student, false);
+                        }
+                    }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismissWithAnimation();
+                        }
+                    }).show();
+
 
 //                new AlertDialog.Builder(BaseCheckActivity.this)
 //                        .setCancelable(false)
@@ -395,6 +416,14 @@ public abstract class BaseCheckActivity
             return super.onKeyDown(keyCode, event);
         } else { // 如果不是back键正常响应
             return super.onKeyDown(keyCode, event);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (afrFragment != null && afrFragment.isOpenCamera) {
+            showAFR();
         }
     }
 }
