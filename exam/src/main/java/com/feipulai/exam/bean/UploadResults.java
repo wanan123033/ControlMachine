@@ -158,9 +158,16 @@ public class UploadResults implements Serializable {
                 ", studentCode='" + studentCode + '\'' +
                 ", testNum='" + testNum + '\'' +
                 ", groupNo='" + groupNo + '\'' +
+                ", groupType=" + groupType +
+                ", sortName='" + sortName + '\'' +
                 ", hostNumber='" + hostNumber + '\'' +
                 ", machineCode='" + machineCode + '\'' +
                 ", roundResultList=" + roundResultList +
+                ", groupId=" + groupId +
+                ", result=" + result +
+                ", testTime='" + testTime + '\'' +
+                ", resultStatus=" + resultStatus +
+                ", examState=" + examState +
                 '}';
     }
 

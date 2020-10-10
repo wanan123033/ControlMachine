@@ -292,7 +292,7 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
     private String machine_port;
     private String server_Port;
     private Intent bindIntent;
-    private long lastServiceTime;
+//    private long lastServiceTime;
     private Button btndisConnect;
     private String camera_ip;
     private DialogUtil dialogUtil;
@@ -383,7 +383,7 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
         server_Port = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MACHINE_SERVER_PORT, "4040");
         hk_user = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, HK_USER_PRE, HK_USER);
         hk_psw = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, HK_PSW_PRE, HK_PSW);
-        lastServiceTime = SharedPrefsUtil.getValue(mContext, MyTcpService.SERVICE_CONNECT, MyTcpService.SERVICE_CONNECT, 0L);
+//        lastServiceTime = SharedPrefsUtil.getValue(mContext, MyTcpService.SERVICE_CONNECT, MyTcpService.SERVICE_CONNECT, 0L);
         //所有组信息recycleView
         groupAdapter = new MiddleRaceGroupAdapter(groupItemBeans);
         rvRaceStudentGroup.setLayoutManager(new LinearLayoutManager(this));
@@ -525,7 +525,8 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
             groupItemBeans.clear();
             groupAdapter.notifyDataSetChanged();
         } else {
-            TestConfigs.sCurrentItem.setItemCode(itemCode);
+//            TestConfigs.sCurrentItem.setItemCode(itemCode);
+            TestConfigs.sCurrentItem=DBManager.getInstance().queryItemByCode(itemCode);
             DataBaseExecutor.addTask(new DataBaseTask(mContext, getString(R.string.loading_hint), true) {
                 @Override
                 public DataBaseRespon executeOper() {
@@ -620,6 +621,7 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
     private MyTcpService.CallBack callBack = new MyTcpService.CallBack() {
         @Override
         public void postMessage(final ServiceTcpBean message) {
+            Log.i("postMessage",message.toString());
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -717,7 +719,7 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
         etIP.setSelection(machine_ip.length());
         etPort.setText(machine_port);
         cameraIP.setText(camera_ip);
-        serverIP.setText("服务器：" + NetWorkUtils.getLocalIp());
+        serverIP.setText("服务器：" + NetWorkUtils.getLocalOrWlanIp());
         serverPort.setText(server_Port);
 
         btnStart.setOnClickListener(new View.OnClickListener() {
@@ -740,7 +742,7 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
                 }
                 bindTcpService();
                 //存储当前开启服务的时间，间隔12小时每次进入当前activity自动打开服务，超过之后需要点击按钮开启服务
-                SharedPrefsUtil.putValue(mContext, MyTcpService.SERVICE_CONNECT, MyTcpService.SERVICE_CONNECT, System.currentTimeMillis());
+//                SharedPrefsUtil.putValue(mContext, MyTcpService.SERVICE_CONNECT, MyTcpService.SERVICE_CONNECT, System.currentTimeMillis());
             }
         });
 
@@ -840,7 +842,7 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
         if (isBind && serviceConnection != null) {
             unbindService(serviceConnection);
             myTcpService.unRegisterCallBack(callBack);
-            if (myBinder != null && (System.currentTimeMillis() - lastServiceTime) > 12 * 60 * 60 * 1000) {
+            if (myBinder != null) {
                 myBinder.stopWork();
             }
         }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.LoadingDialog;
@@ -64,7 +65,6 @@ public class ServerMessage {
                         } else {
                             subscriber.getItemStudent(TestConfigs.getCurrentItemCode(), 1, examType);
                         }
-
                         break;
                     case HttpSubscriber.STUDENT_BIZ://学生
                         if (itemList != null) {
