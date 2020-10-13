@@ -562,6 +562,23 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         spRaceSchedule.setSelection(schedulePosition, false);
     }
 
+    /**
+     * 上传之后会更新数据库，在此更新内存中的数据
+     */
+    public void refreshItemList() {
+        String itemName = itemList.get(mItemPosition).getItemName();
+        itemList = DBManager.getInstance().queryItemsByMachineCode(TestConfigs.sCurrentItem.getMachineCode());
+        for (int i = 0; i < itemList.size(); i++) {
+            items[i] = itemList.get(i).getItemName();
+            if(itemName.equals(items[i])){
+                mItemPosition=i;
+            }
+        }
+        itemAdapter = new ArrayAdapter<>(this, android.R.layout.simple_expandable_list_item_1, items);
+        spRaceItem.setAdapter(itemAdapter);
+        spRaceItem.setSelection(mItemPosition);
+    }
+
     public static String itemCode;
 
     /**
@@ -581,7 +598,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         } else {
             //这里设置全局项目代码，中长跑项目最好不要使用全局项目代码，因为中长跑项目一个界面允许出现多个项目代码
 //            TestConfigs.sCurrentItem.setItemCode(itemCode);
-            TestConfigs.sCurrentItem=DBManager.getInstance().queryItemByCode(itemCode);
+//            TestConfigs.sCurrentItem=DBManager.getInstance().queryItemByCode(itemCode);
             DataBaseExecutor.addTask(new DataBaseTask(mContext, getString(R.string.loading_hint), true) {
                 @Override
                 public DataBaseRespon executeOper() {
@@ -2019,7 +2036,8 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         resultShowTable.notifyContent();
 
         for (int i = 0; i < groupItemBeans.size(); i++) {
-            if (timingLists.get(position).getNo() == groupItemBeans.get(i).getGroup().getGroupNo()) {
+//            if (timingLists.get(position).getNo() == groupItemBeans.get(i).getGroup().getGroupNo()) {
+            if (timingLists.get(position).getItemGroupName().equals(groupItemBeans.get(i).getGroupItemName())) {
                 groupItemBeans.get(i).getGroup().setIsTestComplete(GROUP_WAIT);
                 groupAdapter.notifyItemChanged(i);
                 break;
@@ -2047,7 +2065,8 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                     }
                 }
                 for (int i = 0; i < groupItemBeans.size(); i++) {
-                    if (timingLists.get(position).getNo() == groupItemBeans.get(i).getGroup().getGroupNo()) {
+//                    if (timingLists.get(position).getNo() == groupItemBeans.get(i).getGroup().getGroupNo()) {
+                    if (timingLists.get(position).getItemGroupName().equals(groupItemBeans.get(i).getGroupItemName())) {
                         groupItemBeans.get(i).getGroup().setIsTestComplete(GROUP_3);
                         groupAdapter.notifyItemChanged(i);
                         break;

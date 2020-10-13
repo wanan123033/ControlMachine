@@ -9,6 +9,8 @@ import android.util.Log;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.LoadingDialog;
 import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForGroupActivity;
+import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForPersonActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.ScheduleBean;
@@ -213,6 +215,11 @@ public class ServerMessage {
                         if (loadingDialog != null && loadingDialog.isShow()) {
                             loadingDialog.dismissDialog();
                         }
+                        if (context instanceof MiddleDistanceRaceForGroupActivity) {
+                            MiddleDistanceRaceForGroupActivity.instance.refreshItemList();
+                        } else if (context instanceof MiddleDistanceRaceForPersonActivity) {
+                            MiddleDistanceRaceForPersonActivity.instance.refreshItemList();
+                        }
                         break;
                 }
             }
@@ -221,6 +228,11 @@ public class ServerMessage {
             public void onFault(int bizType) {
                 if (loadingDialog != null && loadingDialog.isShow()) {
                     loadingDialog.dismissDialog();
+                }
+                if (context instanceof MiddleDistanceRaceForGroupActivity) {
+                    MiddleDistanceRaceForGroupActivity.instance.refreshItemList();
+                } else if (context instanceof MiddleDistanceRaceForPersonActivity) {
+                    MiddleDistanceRaceForPersonActivity.instance.refreshItemList();
                 }
             }
         });

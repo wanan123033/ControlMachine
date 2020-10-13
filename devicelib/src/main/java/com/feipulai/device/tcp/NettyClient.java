@@ -80,7 +80,7 @@ public class NettyClient {
                 Bootstrap bootstrap = new Bootstrap().group(group)//设置的一系列连接参数操作等
 //                        .option(ChannelOption.SO_KEEPALIVE, true)//保持连接
                         .option(ChannelOption.TCP_NODELAY, true)//屏蔽Nagle算法试图
-                        .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
+                        .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 3000)
                         .channel(NioSocketChannel.class)
                         .handler(new ChannelInitializer<SocketChannel>() { // 5
                             @Override

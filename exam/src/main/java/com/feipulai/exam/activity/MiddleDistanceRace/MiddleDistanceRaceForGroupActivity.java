@@ -294,7 +294,7 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
     private String machine_port;
     private String server_Port;
     private Intent bindIntent;
-//    private long lastServiceTime;
+    //    private long lastServiceTime;
     private Button btndisConnect;
     private String camera_ip;
     private DialogUtil dialogUtil;
@@ -512,10 +512,33 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
     }
 
     /**
+     * 上传之后会更新数据库，在此更新内存中的数据
+     */
+    public void refreshItemList() {
+        String itemName = itemList.get(mItemPosition).getItemName();
+        itemList = DBManager.getInstance().queryItemsByMachineCode(TestConfigs.sCurrentItem.getMachineCode());
+//        for (Item item0 : itemList
+//        ) {
+//            item0.setItemCode(DBManager.getInstance().queryItemByName(item0.getItemName()).getItemCode());
+//        }
+        for (int i = 0; i < itemList.size(); i++) {
+            items[i] = itemList.get(i).getItemName();
+            if(itemName.equals(items[i])){
+                mItemPosition=i;
+            }
+        }
+//        Log.i("spinnerItemSelected", Arrays.toString(items));
+//        itemAdapter.notifyDataSetChanged();
+        itemAdapter = new ArrayAdapter<>(this, android.R.layout.simple_expandable_list_item_1, items);
+        spRaceItem.setAdapter(itemAdapter);
+        spRaceItem.setSelection(mItemPosition);
+    }
+
+    /**
      * 获取日程分组
      */
     private void getGroupList() {
-        Log.i("spinnerItemSelected", "getGroupList------------");
+//        Log.i("spinnerItemSelected", "getGroupList------------");
         groupItemBeans.clear();
         if (scheduleNo == null || scheduleNo.isEmpty()) {
             return;
@@ -527,8 +550,10 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
             groupItemBeans.clear();
             groupAdapter.notifyDataSetChanged();
         } else {
+//            Log.i("spinnerItemSelected", "->" + scheduleNo + "->" + itemCode + "->" + groupStatePosition);
+//            Log.i("spinnerItemSelected", itemList.toString());
 //            TestConfigs.sCurrentItem.setItemCode(itemCode);
-            TestConfigs.sCurrentItem=DBManager.getInstance().queryItemByCode(itemCode);
+//            TestConfigs.sCurrentItem = DBManager.getInstance().queryItemByCode(itemCode);
             DataBaseExecutor.addTask(new DataBaseTask(mContext, getString(R.string.loading_hint), true) {
                 @Override
                 public DataBaseRespon executeOper() {
@@ -623,7 +648,7 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
     private MyTcpService.CallBack callBack = new MyTcpService.CallBack() {
         @Override
         public void postMessage(final ServiceTcpBean message) {
-            Log.i("postMessage",message.toString());
+            Log.i("postMessage", message.toString());
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -1775,7 +1800,8 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
         resultShowTable.notifyContent();
 
         for (int i = 0; i < groupItemBeans.size(); i++) {
-            if (timingLists.get(position).getNo() == groupItemBeans.get(i).getGroup().getGroupNo()) {
+//           &&timingLists.get(position).getNo() == groupItemBeans.get(i).getGroup().getGroupNo()
+            if (timingLists.get(position).getItemGroupName().equals(groupItemBeans.get(i).getGroupItemName())) {
                 groupItemBeans.get(i).getGroup().setIsTestComplete(GROUP_WAIT);
                 groupAdapter.notifyItemChanged(i);
                 break;
@@ -1805,7 +1831,8 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
                 Log.i("clickTimingBackListener", timingLists.toString());
 
                 for (int i = 0; i < groupItemBeans.size(); i++) {
-                    if (timingLists.get(position).getNo() == groupItemBeans.get(i).getGroup().getGroupNo()) {
+//                    if (timingLists.get(position).getNo() == groupItemBeans.get(i).getGroup().getGroupNo()) {
+                    if (timingLists.get(position).getItemGroupName().equals(groupItemBeans.get(i).getGroupItemName())) {
                         groupItemBeans.get(i).getGroup().setIsTestComplete(GROUP_3);
                         groupAdapter.notifyItemChanged(i);
                         break;
@@ -1987,8 +2014,6 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
                 } else {
                     MiddlePrintUtil.print(roundResults, completeBeans, digital, carryMode);
                 }
-
-
             }
 
             @Override
