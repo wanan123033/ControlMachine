@@ -6,6 +6,7 @@ import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
+import com.feipulai.exam.entity.Item;
 import com.feipulai.exam.entity.RoundResult;
 
 import org.greenrobot.greendao.annotation.NotNull;
@@ -75,12 +76,13 @@ public class UploadResults implements Serializable {
 
         this.roundResultList = roundResultList;
         RoundResult lastResult;
-        if (TestConfigs.sCurrentItem.getLastResultMode() == 1) {
+        Item item=DBManager.getInstance().queryItemByCode(itemCode);
+        if (item.getLastResultMode() == 1) {
             //最后
-            lastResult = DBManager.getInstance().queryBestFinallyScore(studentCode, Integer.valueOf(testNum));
+            lastResult = DBManager.getInstance().queryBestFinallyScore(item,studentCode, Integer.valueOf(testNum));
         } else {
             //最好的
-            lastResult = DBManager.getInstance().queryBestScore(studentCode, Integer.valueOf(testNum));
+            lastResult = DBManager.getInstance().queryBestScore(item,studentCode, Integer.valueOf(testNum));
         }
         if (lastResult != null) {
             this.result = lastResult.getResult();

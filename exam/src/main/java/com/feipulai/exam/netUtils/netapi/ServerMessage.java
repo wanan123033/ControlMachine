@@ -177,6 +177,7 @@ public class ServerMessage {
             uploadTCPResult(context, uploadResultsList);
             return;
         }
+//        Logger.d("uploadZCPResult==>"+uploadResultsList.toString());
 
         if (uploadResultsList == null || uploadResultsList.size() == 0) {
             ToastUtils.showShort("没有需要上传的成绩");
