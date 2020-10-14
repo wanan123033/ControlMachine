@@ -82,6 +82,7 @@ public class SitReachMoreActivity extends BaseMoreActivity {
         pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
         updateDevice(pair.getBaseDevice());
         int id = pair.getBaseDevice().getDeviceId();
+        setTxtEnable(id, false);
         sendStart((byte) id);
     }
 

@@ -188,10 +188,10 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
 //                if (item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_END) {
                 if (item.getStuDevicePair().getResult() == -999) {
                     oneViewHolder.setText(R.id.txt_test_result, "");
-                } else if (item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_END
+                } else// if (item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_END
 //                        || item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_ONUSE ||
 //                        item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN
-                )
+//                )
                 {
                     oneViewHolder.setText(R.id.txt_test_result, item.getStuDevicePair().getResultState() == RoundResult.RESULT_STATE_FOUL ?
                             "X" : ResultDisplayUtils.getStrResultForDisplay(item.getStuDevicePair().getResult()));

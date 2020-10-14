@@ -196,7 +196,7 @@
                     android:layout_height="0dp"
                     android:layout_marginBottom="@dimen/sp_12"
                     android:layout_weight="1"
-                    android:background="@drawable/btn_bg_blue"
+                    android:background="@drawable/selector_blue_grey_press"
                     android:gravity="center"
                     android:text="开始"
                     android:textColor="@color/white"

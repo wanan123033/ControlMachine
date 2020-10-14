@@ -218,7 +218,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                             return;
                         }
                         startTime = System.currentTimeMillis();
-                        if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
+                        if (pair.getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
                             LogUtil.logDebugMessage("使用设备点击开始 ：开始测试");
                             sendTestCommand(pair, pos);
 //                            view.setBackgroundColor(ContextCompat.getColor(BaseMoreActivity.this, R.color.gray_btn_bg_color));
@@ -316,6 +316,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         toastSpeak(String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1)
                 , String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1));
         LogUtil.logDebugMessage("添加测试学生：" + student.toString());
+        deviceDetail.getStuDevicePair().setResult(-999);
         setShowLed(deviceDetail.getStuDevicePair(), index);
         deviceListAdapter.notifyItemChanged(index);
     }
@@ -702,6 +703,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             DeviceDetail detail = (DeviceDetail) msg.obj;
             detail.getStuDevicePair().setTimeResult(new String[setTestCount()]);
             detail.getStuDevicePair().setStudent(null);
+            detail.getStuDevicePair().setResult(-999);
             deviceListAdapter.notifyDataSetChanged();
         }
     }
