@@ -186,4 +186,25 @@ public class Item {
     public void setRemark3(String remark3) {
         this.remark3 = remark3;
     }
+
+    @Override
+    public String toString() {
+        return "Item{" +
+                "id=" + id +
+                ", itemCode='" + itemCode + '\'' +
+                ", machineCode=" + machineCode +
+                ", itemName='" + itemName + '\'' +
+                ", minValue=" + minValue +
+                ", maxValue=" + maxValue +
+                ", unit='" + unit + '\'' +
+                ", digital=" + digital +
+                ", testNum=" + testNum +
+                ", carryMode=" + carryMode +
+                ", testType=" + testType +
+                ", lastResultMode=" + lastResultMode +
+                ", remark1='" + remark1 + '\'' +
+                ", remark2='" + remark2 + '\'' +
+                ", remark3='" + remark3 + '\'' +
+                '}';
+    }
 }

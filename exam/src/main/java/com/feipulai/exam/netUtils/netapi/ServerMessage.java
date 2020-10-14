@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.LoadingDialog;
 import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForGroupActivity;
+import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForPersonActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.ScheduleBean;
@@ -64,7 +67,6 @@ public class ServerMessage {
                         } else {
                             subscriber.getItemStudent(TestConfigs.getCurrentItemCode(), 1, examType);
                         }
-
                         break;
                     case HttpSubscriber.STUDENT_BIZ://学生
                         if (itemList != null) {
@@ -175,6 +177,7 @@ public class ServerMessage {
             uploadTCPResult(context, uploadResultsList);
             return;
         }
+//        Logger.d("uploadZCPResult==>"+uploadResultsList.toString());
 
         if (uploadResultsList == null || uploadResultsList.size() == 0) {
             ToastUtils.showShort("没有需要上传的成绩");
@@ -213,6 +216,11 @@ public class ServerMessage {
                         if (loadingDialog != null && loadingDialog.isShow()) {
                             loadingDialog.dismissDialog();
                         }
+                        if (context instanceof MiddleDistanceRaceForGroupActivity) {
+                            MiddleDistanceRaceForGroupActivity.instance.refreshItemList();
+                        } else if (context instanceof MiddleDistanceRaceForPersonActivity) {
+                            MiddleDistanceRaceForPersonActivity.instance.refreshItemList();
+                        }
                         break;
                 }
             }
@@ -221,6 +229,11 @@ public class ServerMessage {
             public void onFault(int bizType) {
                 if (loadingDialog != null && loadingDialog.isShow()) {
                     loadingDialog.dismissDialog();
+                }
+                if (context instanceof MiddleDistanceRaceForGroupActivity) {
+                    MiddleDistanceRaceForGroupActivity.instance.refreshItemList();
+                } else if (context instanceof MiddleDistanceRaceForPersonActivity) {
+                    MiddleDistanceRaceForPersonActivity.instance.refreshItemList();
                 }
             }
         });

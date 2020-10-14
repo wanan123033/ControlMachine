@@ -858,6 +858,12 @@ public class DBManager {
 
     }
 
+    /**
+     * 根据项目代码获取项目信息
+     *
+     * @param itemCode 项目代码
+     * @return
+     */
     public Item queryItemByCode(String itemCode) {
         return itemDao
                 .queryBuilder()
@@ -866,15 +872,7 @@ public class DBManager {
 
     }
 
-    /**
-     * 根据项目代码获取项目信息
-     *
-     * @param itemCode 项目代码
-     * @return
-     */
-    public Item queryItemByItemCode(String itemCode) {
-        return itemDao.queryBuilder().where(ItemDao.Properties.ItemCode.eq(itemCode)).unique();
-    }
+
 
     public Item queryItemByMachineItemCode(int machineCode, String itemCode) {
         return itemDao
@@ -1348,20 +1346,37 @@ public class DBManager {
                 .limit(1)
                 .unique();
     }
-
+    /**
+     * 查询对应考生当前项目最好成绩(个人)
+     *
+     * @param studentCode 考号
+     * @return 对应最好成绩
+     */
+    public RoundResult queryBestScore(Item item,String studentCode, int testNo) {
+        Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
+                + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\ttestNo:" + testNo);
+        return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .where(RoundResultDao.Properties.MachineCode.eq(item.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(item.getItemCode()))
+                .where(RoundResultDao.Properties.TestNo.eq(testNo))
+                .where(RoundResultDao.Properties.IsLastResult.eq(1))
+                .limit(1)
+                .unique();
+    }
     /**
      * 查询对应考生当前项目最后成绩(个人)
      *
      * @param studentCode 考号
      * @return 对应最好成绩
      */
-    public RoundResult queryBestFinallyScore(String studentCode, int testNo) {
+    public RoundResult queryBestFinallyScore(Item item,String studentCode, int testNo) {
         Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
                 + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\ttestNo:" + testNo);
         return roundResultDao.queryBuilder()
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
-                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
-                .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(RoundResultDao.Properties.MachineCode.eq(item.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(item.getItemCode()))
                 .where(RoundResultDao.Properties.TestNo.eq(testNo))
                 .orderDesc(RoundResultDao.Properties.RoundNo)
                 .limit(1)

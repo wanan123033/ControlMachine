@@ -297,13 +297,14 @@ public class MySocketServer {
 
             schedule = DBManager.getInstance().getSchedulesByNo(m_nField + "");
 
-
             if (schedule == null) {
                 schedule = DBManager.getInstance().insertSchedule(new Schedule(m_nField + "", m_strBeginTime, ""));
             }
 
-            Item item = DBManager.getInstance().queryItemByName(m_strEvent);
+            Log.e("JieXiStudent",schedule.toString());
 
+            Item item = DBManager.getInstance().queryItemByName(m_strEvent);
+            Log.e("JieXiStudent",item.toString());
             String itemCode;
             if (item == null) {
                 itemCode = "fpl_" + m_strEvent;//暂时用项目名代替
@@ -317,13 +318,14 @@ public class MySocketServer {
                     itemCode = item.getItemCode();
                 }
             }
-
+            Log.e("JieXiStudent",itemCode);
 
             ItemSchedule itemSchedule = new ItemSchedule();
             itemSchedule.setItemCode(itemCode);
             itemSchedule.setScheduleNo(m_nField + "");
             DBManager.getInstance().insertItemSchedule(itemSchedule);
 
+            Log.e("JieXiStudent",itemCode+"-"+m_nGrp+"-"+schedule.getScheduleNo()+"-"+m_nSex);
             Group group = DBManager.getInstance().queryGroup(itemCode, m_nGrp, schedule.getScheduleNo(), m_nSex);
             if (group != null) {
                 isPass = true;

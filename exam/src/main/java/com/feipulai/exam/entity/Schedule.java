@@ -63,6 +63,14 @@ public class Schedule {
     public void setEndTime(String endTime) {
         this.endTime = endTime;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return "Schedule{" +
+                "id=" + id +
+                ", scheduleNo='" + scheduleNo + '\'' +
+                ", beginTime='" + beginTime + '\'' +
+                ", endTime='" + endTime + '\'' +
+                '}';
+    }
 }

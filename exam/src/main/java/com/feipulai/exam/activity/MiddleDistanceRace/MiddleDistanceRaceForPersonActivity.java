@@ -316,7 +316,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
     private String machine_port;
     private String server_Port;
     private Intent bindIntent;
-    private long lastServiceTime;
+//    private long lastServiceTime;
     private DataSource mDataSource;
     //    private VideoPlayWindow videoPlayer;
     private HkCameraManager hkCamera;
@@ -413,7 +413,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         server_Port = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, MACHINE_SERVER_PORT, "4040");
         hk_user = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, HK_USER_PRE, HK_USER);
         hk_psw = SharedPrefsUtil.getValue(mContext, MIDDLE_RACE, HK_PSW_PRE, HK_PSW);
-        lastServiceTime = SharedPrefsUtil.getValue(mContext, MyTcpService.SERVICE_CONNECT, MyTcpService.SERVICE_CONNECT, 0L);
+//        lastServiceTime = SharedPrefsUtil.getValue(mContext, MyTcpService.SERVICE_CONNECT, MyTcpService.SERVICE_CONNECT, 0L);
         //所有组信息recycleView
         groupAdapter = new MiddleRaceGroupAdapter(groupItemBeans);
         rvRaceStudentGroup.setLayoutManager(new LinearLayoutManager(this));
@@ -562,6 +562,23 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         spRaceSchedule.setSelection(schedulePosition, false);
     }
 
+    /**
+     * 上传之后会更新数据库，在此更新内存中的数据
+     */
+    public void refreshItemList() {
+        String itemName = itemList.get(mItemPosition).getItemName();
+        itemList = DBManager.getInstance().queryItemsByMachineCode(TestConfigs.sCurrentItem.getMachineCode());
+        for (int i = 0; i < itemList.size(); i++) {
+            items[i] = itemList.get(i).getItemName();
+            if(itemName.equals(items[i])){
+                mItemPosition=i;
+            }
+        }
+        itemAdapter = new ArrayAdapter<>(this, android.R.layout.simple_expandable_list_item_1, items);
+        spRaceItem.setAdapter(itemAdapter);
+        spRaceItem.setSelection(mItemPosition);
+    }
+
     public static String itemCode;
 
     /**
@@ -580,7 +597,8 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             groupAdapter.notifyDataSetChanged();
         } else {
             //这里设置全局项目代码，中长跑项目最好不要使用全局项目代码，因为中长跑项目一个界面允许出现多个项目代码
-            TestConfigs.sCurrentItem.setItemCode(itemCode);
+//            TestConfigs.sCurrentItem.setItemCode(itemCode);
+//            TestConfigs.sCurrentItem=DBManager.getInstance().queryItemByCode(itemCode);
             DataBaseExecutor.addTask(new DataBaseTask(mContext, getString(R.string.loading_hint), true) {
                 @Override
                 public DataBaseRespon executeOper() {
@@ -771,7 +789,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         etIP.setSelection(machine_ip.length());
         etPort.setText(machine_port);
         cameraIP.setText(camera_ip);
-        serverIP.setText("服务器：" + NetWorkUtils.getLocalIp());
+        serverIP.setText("服务器：" + NetWorkUtils.getLocalOrWlanIp());
         serverPort.setText(server_Port);
 
         btnStart.setOnClickListener(new View.OnClickListener() {
@@ -794,7 +812,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                 }
                 bindTcpService();
                 //存储当前开启服务的时间，间隔12小时每次进入当前activity自动打开服务，超过之后需要点击按钮开启服务
-                SharedPrefsUtil.putValue(mContext, MyTcpService.SERVICE_CONNECT, MyTcpService.SERVICE_CONNECT, System.currentTimeMillis());
+//                SharedPrefsUtil.putValue(mContext, MyTcpService.SERVICE_CONNECT, MyTcpService.SERVICE_CONNECT, System.currentTimeMillis());
             }
         });
 
@@ -894,7 +912,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         if (isBind && serviceConnection != null) {
             unbindService(serviceConnection);
             myTcpService.unRegisterCallBack(callBack);
-            if (myBinder != null && (System.currentTimeMillis() - lastServiceTime) > 12 * 60 * 60 * 1000) {
+            if (myBinder != null) {
                 myBinder.stopWork();
             }
         }
@@ -2018,7 +2036,8 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         resultShowTable.notifyContent();
 
         for (int i = 0; i < groupItemBeans.size(); i++) {
-            if (timingLists.get(position).getNo() == groupItemBeans.get(i).getGroup().getGroupNo()) {
+//            if (timingLists.get(position).getNo() == groupItemBeans.get(i).getGroup().getGroupNo()) {
+            if (timingLists.get(position).getItemGroupName().equals(groupItemBeans.get(i).getGroupItemName())) {
                 groupItemBeans.get(i).getGroup().setIsTestComplete(GROUP_WAIT);
                 groupAdapter.notifyItemChanged(i);
                 break;
@@ -2046,7 +2065,8 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                     }
                 }
                 for (int i = 0; i < groupItemBeans.size(); i++) {
-                    if (timingLists.get(position).getNo() == groupItemBeans.get(i).getGroup().getGroupNo()) {
+//                    if (timingLists.get(position).getNo() == groupItemBeans.get(i).getGroup().getGroupNo()) {
+                    if (timingLists.get(position).getItemGroupName().equals(groupItemBeans.get(i).getGroupItemName())) {
                         groupItemBeans.get(i).getGroup().setIsTestComplete(GROUP_3);
                         groupAdapter.notifyItemChanged(i);
                         break;
