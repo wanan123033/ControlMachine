@@ -329,7 +329,10 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     }
 
     protected void addStudent(Student student) {
-
+        if (pair.getStudent() != null) {
+            toastSpeak("已存在测试中考生");
+            return;
+        }
         if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
 //            roundNo = 1;
             pair.setResult(0);
