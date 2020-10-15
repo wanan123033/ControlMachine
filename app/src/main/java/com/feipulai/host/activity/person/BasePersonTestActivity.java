@@ -544,7 +544,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
      * @param baseStu
      */
     public synchronized void updateResult(@NonNull BaseStuPair baseStu) {
-        if (null != pair.getBaseDevice()) {
+        if (null != pair.getBaseDevice() && baseStu.getStudent() != null) {
             pair.setResultState(baseStu.getResultState());
             pair.setResult(baseStu.getResult());
             txtStuResult.setText(((baseStu.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult())));
@@ -556,7 +556,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     public void updateVision(BaseStuPair baseStuPair) {
         txtStuResult.setText("左眼力:" + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult()) + "\n右眼力:" + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getBaseHeight()));
         refreshDevice();
-        Log.e("552",mLEDManager+"");
+        Log.e("552", mLEDManager + "");
         mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "左视力：" + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult()),
                 0, 1, false, true);
         mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "右视力：" + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getBaseHeight()),
