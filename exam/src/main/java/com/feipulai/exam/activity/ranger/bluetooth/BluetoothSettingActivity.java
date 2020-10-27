@@ -55,8 +55,11 @@ public class BluetoothSettingActivity extends BaseTitleActivity implements Adapt
         utils.setOnDeviceCallBack(new SppUtils.OnDeviceCallBack() {
             @Override
             public void onDeviceCallBack(BluetoothDevice device) {
-                devices.add(device);
-                adapter.notifyDataSetChanged();
+                if (device.getName().startsWith("TC")){
+                    devices.add(device);
+                    adapter.notifyDataSetChanged();
+                }
+
             }
         });
         utils.startDiscovery();
