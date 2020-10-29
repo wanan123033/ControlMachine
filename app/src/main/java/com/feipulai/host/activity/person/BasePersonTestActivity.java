@@ -547,7 +547,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
      * @param baseStu
      */
     public synchronized void updateResult(@NonNull BaseStuPair baseStu) {
-        if (null != pair.getBaseDevice() && baseStu.getStudent() != null) {
+        if (null != pair.getBaseDevice() && pair.getStudent() != null) {
             pair.setResultState(baseStu.getResultState());
             pair.setResult(baseStu.getResult());
             txtStuResult.setText(((baseStu.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult())));
