@@ -20,8 +20,10 @@ public class TimerIntervalUtil {
 
     private TimerAccepListener listener;
     private Disposable disposable;
+    boolean isStart = false;
 
     public void startTime() {
+        isStart = true;
         disposable = Observable.interval(0, 1, TimeUnit.SECONDS)
                 .observeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -29,13 +31,14 @@ public class TimerIntervalUtil {
                     @Override
                     public void accept(Long aLong) throws Exception {
 //                        Logger.i("accept-------->" + aLong);
-                        if (listener != null)
+                        if (listener != null && isStart)
                             listener.timer(aLong);
                     }
                 });
     }
 
     public void stop() {
+        isStart = false;
         if (disposable != null) {
             disposable.dispose();
         }
