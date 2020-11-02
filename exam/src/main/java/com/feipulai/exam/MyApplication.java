@@ -3,10 +3,12 @@ package com.feipulai.exam;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
+import android.text.TextUtils;
 
 import com.feipulai.common.CrashHandler;
 import com.feipulai.common.utils.FileUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.device.AdaptiveConfig;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.utils.bluetooth.BlueToothHelper;
@@ -72,9 +74,11 @@ public class MyApplication extends MultiDexApplication {
                         //.setRecordKeyProvider()
                         //.setOnRecordCallBack()
                         .build());
+        if (TextUtils.equals(getString(R.string.ic_card_read_type),"linNan")){
+            //        TODO 岭南IC
+            AdaptiveConfig.initIC(AdaptiveConfig.LIN_NAN_SHI_FAN, AdaptiveConfig.DEFAULT, new char[]{0x73, 0x79, 0x6E, 0x70, 0x75, 0x62});
+        }
 
-////        TODO 岭南IC
-//        AdaptiveConfig.initIC(AdaptiveConfig.LIN_NAN_SHI_FAN, AdaptiveConfig.DEFAULT, new char[]{0x73, 0x79, 0x6E, 0x70, 0x75, 0x62});
 
         // 初始化工作已经移至mainactivity中,保证尽快进入界面,减少白屏时间
 //         if (LeakCanary.isInAnalyzerProcess(this)) {

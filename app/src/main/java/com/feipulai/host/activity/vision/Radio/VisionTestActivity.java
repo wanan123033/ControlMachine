@@ -217,8 +217,11 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
         if (index == -1) {
             return;
         }
-        intervalUtil.stop();
-        intervalUtil.startTime();
+        if (visionSetting.getStopTime()!=0){
+            intervalUtil.stop();
+            intervalUtil.startTime();
+        }
+
         txt_time.setText(visionSetting.getStopTime() + "");
         Logger.d("checkKey===>keyDirection:" + keyDirection + "       direction:" + direction);
         if (keyDirection == direction) {

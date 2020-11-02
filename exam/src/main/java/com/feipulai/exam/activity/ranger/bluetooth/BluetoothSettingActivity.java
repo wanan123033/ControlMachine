@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.os.ParcelUuid;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,7 +26,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class BluetoothSettingActivity extends BaseTitleActivity implements AdapterView.OnItemClickListener{
+public class BluetoothSettingActivity extends BaseTitleActivity implements AdapterView.OnItemClickListener {
     @BindView(R.id.rv_bluetooth)
     ListView rv_bluetooth;
     private RangerSetting setting;
@@ -49,17 +50,14 @@ public class BluetoothSettingActivity extends BaseTitleActivity implements Adapt
     protected void initData() {
         devices = new ArrayList<>();
         setting = SharedPrefsUtil.loadFormSource(this, RangerSetting.class);
-        adapter = new BluetoothListAdapter(devices,this);
+        adapter = new BluetoothListAdapter(devices, this);
         rv_bluetooth.setAdapter(adapter);
         utils = BluetoothManager.getSpp(this);
         utils.setOnDeviceCallBack(new SppUtils.OnDeviceCallBack() {
             @Override
             public void onDeviceCallBack(BluetoothDevice device) {
-                if (device.getName().startsWith("TC")){
-                    devices.add(device);
-                    adapter.notifyDataSetChanged();
-                }
-
+                devices.add(device);
+                adapter.notifyDataSetChanged();
             }
         });
         utils.startDiscovery();
@@ -67,10 +65,10 @@ public class BluetoothSettingActivity extends BaseTitleActivity implements Adapt
         utils.setBluetoothConnectionListener(new SppUtils.BluetoothConnectionListener() {
             public void onDeviceConnected(String name, String address) {
                 OperateProgressBar.removeLoadingUiIfExist(BluetoothSettingActivity.this);
-                Toast.showToast(getApplicationContext(), "连接成功 "+name, Toast.LENGTH_SHORT);
+                Toast.showToast(getApplicationContext(), "连接成功 " + name, Toast.LENGTH_SHORT);
                 setting.setBluetoothName(name);
                 setting.setBluetoothMac(address);
-                SharedPrefsUtil.save(getApplicationContext(),setting);
+                SharedPrefsUtil.save(getApplicationContext(), setting);
             }
 
             public void onDeviceDisconnected() {
@@ -87,15 +85,17 @@ public class BluetoothSettingActivity extends BaseTitleActivity implements Adapt
 
         rv_bluetooth.setOnItemClickListener(this);
     }
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         device = adapter.getItem(position);
-        OperateProgressBar.showLoadingUi(this,"正在连接中...");
+        OperateProgressBar.showLoadingUi(this, "正在连接中...");
         utils.connect(device.getAddress());
-        
+
     }
+
     @OnClick({R.id.btn_search})
-    public void onClick(View view){
+    public void onClick(View view) {
         utils.cancelDiscovery();
         devices.clear();
         utils.startDiscovery();
