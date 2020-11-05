@@ -372,7 +372,7 @@ public abstract class BaseCheckActivity
         // 可以直接检录
         //TODO 考虑单机测试的开关是否开启
 
-        checkInUIThread(student,studentItem);
+        checkInUIThread(student, studentItem);
         return false;
     }
 
@@ -404,24 +404,24 @@ public abstract class BaseCheckActivity
         mStudentItem = studentItem;
         mResults = results;
         // 可以直接检录
-        checkInUIThread(student,studentItem);
+        checkInUIThread(student, studentItem);
 
     }
 
-    protected void checkInUIThread(Student student,StudentItem studentItem) {
+    protected void checkInUIThread(Student student, StudentItem studentItem) {
         Logger.e("-------------单机测试");
         SystemSetting setting = SettingHelper.getSystemSetting();
-        if (setting.isAutoScore()){
+        if (setting.isAutoScore()) {
             HttpSubscriber subscriber = new HttpSubscriber();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    OperateProgressBar.showLoadingUi(BaseCheckActivity.this,"正在获取云端成绩...");
+                    OperateProgressBar.showLoadingUi(BaseCheckActivity.this, "正在获取云端成绩...");
                 }
             });
             subscriber.getRoundResult(setting.getSitCode(), studentItem.getScheduleNo(), TestConfigs.getCurrentItemCode(), student.getStudentCode(),
                     null, null, null, String.valueOf(studentItem.getExamType()), this);
-        }else {
+        } else {
             sendCheckHandlerMessage(student);
         }
 
@@ -464,11 +464,11 @@ public abstract class BaseCheckActivity
                     if (thermometer == null) {
                         showThermometerDialog();
                     } else {
-                        checkInUIThread(mStudent,mStudentItem);
+                        checkInUIThread(mStudent, mStudentItem);
                     }
 
                 } else {
-                    checkInUIThread(mStudent,mStudentItem);
+                    checkInUIThread(mStudent, mStudentItem);
                 }
             } else {
                 toastSpeak("无此项目");
@@ -479,18 +479,18 @@ public abstract class BaseCheckActivity
     @Override
     public void onSuccess(RoundScoreBean result) {
         OperateProgressBar.removeLoadingUiIfExist(this);
-        if (result.getExist() == 1){
+        if (result.getExist() == 1) {
             boolean flag = false;
             List<RoundScoreBean.ScoreBean> roundList = result.getRoundList();
-            for (RoundScoreBean.ScoreBean scoreBean : roundList){
-                if (!scoreBean.mtEquipment.equals(CommonUtils.getDeviceInfo())){
+            for (RoundScoreBean.ScoreBean scoreBean : roundList) {
+                if (!scoreBean.mtEquipment.equals(CommonUtils.getDeviceInfo())) {
                     flag = true;
                     break;
-                }else {
+                } else {
                     flag = false;
                 }
             }
-            if (flag){
+            if (flag) {
                 new AlertDialog.Builder(this)
                         .setTitle("温馨提示")
                         .setMessage("该学生已在其他设备上测试,确认测试吗?")
@@ -508,10 +508,10 @@ public abstract class BaseCheckActivity
                             }
                         })
                         .create().show();
-            }else {
+            } else {
                 sendCheckHandlerMessage(mStudent);
             }
-        }else {
+        } else {
             sendCheckHandlerMessage(mStudent);
         }
     }
@@ -541,7 +541,7 @@ public abstract class BaseCheckActivity
 
         @Override
         public void handleMessage(Message msg) {
-            BaseCheckActivity activity = mReference.get();
+            final BaseCheckActivity activity = mReference.get();
             if (activity == null) {
                 return;
             }
@@ -566,7 +566,7 @@ public abstract class BaseCheckActivity
                     LogUtil.logDebugMessage("蓝牙返回数据===》" + activity.isStartThermometer);
                     if (activity.isStartThermometer == true) {
                         LogUtil.logDebugMessage("蓝牙返回数据校验===》" + StringChineseUtil.byteToString(value));
-                        if (value.length < 4) {
+                        if (value.length < 3) {
                             //|| value[1] + value[2] != value[3]
                             activity.toastSpeak("体温枪异常，请再次测量体温");
                             return;
@@ -595,13 +595,16 @@ public abstract class BaseCheckActivity
                                 .setTitleText("测量完成")
                                 .setContentText(contentText).changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
                         activity.toastSpeak(activity.mStudent.getSpeakStuName() + thermometer + "℃");
-                        try {
-                            Thread.sleep(1000);
-                            activity.thermometerDialog.dismissWithAnimation();
-                            activity.onCheckIn(activity.mStudent);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+//
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                activity.thermometerDialog.dismissWithAnimation();
+                            }
+                        }, 2000);
+
+                        activity.onCheckIn(activity.mStudent);
+
 
                     }
 

@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -39,10 +40,13 @@ import com.feipulai.common.exl.ExlListener;
 import com.feipulai.common.utils.ActivityUtils;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.FileUtil;
+import com.feipulai.common.utils.HandlerUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SystemBrightUtils;
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.common.utils.archiver.IArchiverListener;
+import com.feipulai.common.utils.archiver.ZipArchiver;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.common.view.dialog.EditDialog;
 import com.feipulai.device.ic.utils.ItemDefault;
@@ -67,8 +71,11 @@ import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.exl.ResultExlWriter;
 import com.feipulai.exam.exl.StuItemExLReader;
 import com.feipulai.exam.exl.ThermometerExlWriter;
+import com.feipulai.exam.netUtils.CommonUtils;
 import com.feipulai.exam.netUtils.OnResultListener;
 import com.feipulai.exam.netUtils.download.DownLoadProgressDialog;
+import com.feipulai.exam.netUtils.download.DownService;
+import com.feipulai.exam.netUtils.download.DownloadHelper;
 import com.feipulai.exam.netUtils.download.DownloadListener;
 import com.feipulai.exam.netUtils.download.DownloadUtils;
 import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
@@ -103,12 +110,14 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import butterknife.BindView;
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import okhttp3.Headers;
 
 public class DataManageActivity
         extends BaseTitleActivity
@@ -140,7 +149,8 @@ public class DataManageActivity
     public BackupManager backupManager;
     private ProgressDialog progressDialog;
     private AlertDialog.Builder update_zcp_dialog;
-
+    private DownLoadProgressDialog downLoadProgressDialog;
+    private MyHandler myHandler = new MyHandler(this);
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_data_manage;
@@ -272,6 +282,7 @@ public class DataManageActivity
                         LogUtils.operation("用户点击了头像下载...");
                         ToastUtils.showShort("功能未开放，敬请期待");
 //                        uploadPortrait();
+//                        showDownLoadPhotoDialog();
                         break;
                     case 5://删除头像
                         //TODO 测试使用
@@ -372,6 +383,198 @@ public class DataManageActivity
             }
         });
     }
+
+
+    int selectWhich = 0;
+    private Headers saveHeaders;
+    private DownLoadPhotoHeaders photoHeaders;
+    private DownloadUtils downloadUtils = new DownloadUtils();
+    private void showDownLoadPhotoDialog() {
+        downLoadProgressDialog = new DownLoadProgressDialog(this);
+        downLoadProgressDialog.setCancelClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                downloadUtils.stopDown(downLoadProgressDialog.getDownFileName());
+                downLoadProgressDialog.dismissDialog();
+            }
+        });
+        final DownLoadPhotoHeaders photoHeaders = SharedPrefsUtil.loadFormSource(this, DownLoadPhotoHeaders.class);
+        List<String> itemList = new ArrayList<>();
+        if (photoHeaders == null || photoHeaders.getPageNo() == 0) {
+            uploadPhotos(1, "");
+            return;
+        } else {
+            if (photoHeaders.getBatchTotal() != photoHeaders.getPageNo()) {
+                itemList.add(String.format(getString(R.string.download_photo_select), photoHeaders.getPageNo(), photoHeaders.getBatchTotal()));
+            }
+            itemList.add("更新下载");
+            itemList.add("全部下载");
+        }
+        String[] item = itemList.toArray(new String[itemList.size()]);
+
+        new AlertDialog.Builder(this)
+                .setTitle("头像下载")
+                .setSingleChoiceItems(item, 0, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        selectWhich = which;
+                    }
+                })
+                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        switch (selectWhich) {
+                            case 0:
+                                if (photoHeaders.getBatchTotal() != photoHeaders.getPageNo()) {
+                                    uploadPhotos(photoHeaders.getPageNo() + 1, "");
+                                } else {
+                                    uploadPhotos(1, photoHeaders.getUploadTime());
+                                }
+                                break;
+                            case 1:
+                                if (photoHeaders.getBatchTotal() != photoHeaders.getPageNo()) {
+                                    uploadPhotos(1, photoHeaders.getUploadTime());
+                                } else {
+                                    uploadPhotos(1, "");
+                                }
+                                break;
+                            case 2:
+                                uploadPhotos(1, "");
+                                break;
+                        }
+
+
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null).show();
+    }
+
+    private void uploadPhotos(int batch, final String uploadTime) {
+        HashMap<String, String> parameData = new HashMap<>();
+        parameData.put("batch", batch + "");
+        parameData.put("uploadTime", uploadTime);
+        parameData.put("itemcode", TestConfigs.getCurrentItemCode());
+        downloadUtils.downloadFile(DownloadHelper.getInstance().buildRetrofit(CommonUtils.getIp()).createService(DownService.class)
+                        .downloadFile("bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery("10001", uploadTime, parameData)),
+                MyApplication.PATH_IMAGE, DateUtil.getCurrentTime() + ".zip", new DownloadListener() {
+                    @Override
+                    public void onStart(String fileName) {
+
+                    }
+
+                    @Override
+                    public void onResponse(Headers headers) {
+                        saveHeaders = headers;
+                        LogUtils.operation("saveHeaders="+saveHeaders.toString());
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                downLoadProgressDialog.showDialog();
+                                if (!TextUtils.isEmpty(saveHeaders.get("BatchTotal"))) {
+                                    downLoadProgressDialog.setMaxProgress(Integer.valueOf(saveHeaders.get("BatchTotal")));
+                                    downLoadProgressDialog.setProgress(Integer.valueOf(saveHeaders.get("PageNo")) - 1);
+                                }
+
+                            }
+                        });
+
+                    }
+
+                    @Override
+                    public void onProgress(String fileName, int progress) {
+
+                    }
+
+                    @Override
+                    public void onFinish(String fileName) {
+
+                        if (!new File(MyApplication.PATH_IMAGE + fileName).exists()) {
+                            return;
+                        }
+
+                        if (photoHeaders == null) {
+                            photoHeaders = SharedPrefsUtil.loadFormSource(DataManageActivity.this, DownLoadPhotoHeaders.class);
+                        }
+                        if (saveHeaders != null && !TextUtils.isEmpty(saveHeaders.get("BatchTotal"))) {
+                            photoHeaders.setInit(Integer.valueOf(saveHeaders.get("PageNo")), Integer.valueOf(saveHeaders.get("BatchTotal")), saveHeaders.get("UploadTime"));
+                            SharedPrefsUtil.save(DataManageActivity.this, photoHeaders);
+                            if (photoHeaders.getPageNo() != photoHeaders.getBatchTotal()) {
+//                            runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    downLoadProgressDialog.dismissDialog();
+//                                }
+//                            });
+
+//                        } else {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        downLoadProgressDialog.setMaxProgress(Integer.valueOf(saveHeaders.get("BatchTotal")));
+                                        downLoadProgressDialog.setProgress(Integer.valueOf(saveHeaders.get("PageNo")));
+                                    }
+                                });
+                                uploadPhotos(photoHeaders.getPageNo() + 1, uploadTime);
+                            }
+                            int isDismiss = photoHeaders.getPageNo() == photoHeaders.getBatchTotal() ? 1 : 0;
+                            HandlerUtil.sendMessage(myHandler, 0, isDismiss, fileName);
+                        } else {
+                            HandlerUtil.sendMessage(myHandler, 1, 1, "");
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(String fileName, String errorInfo) {
+                        HandlerUtil.sendMessage(myHandler, 1, 1, "");
+                    }
+                });
+    }
+
+    private void fileZipArchiver(final String fileName, final boolean isDismissDialog) {
+
+        new ZipArchiver().doUnArchiver(MyApplication.PATH_IMAGE + fileName, MyApplication.PATH_IMAGE, "", new IArchiverListener() {
+            @Override
+            public void onStartArchiver() {
+
+            }
+
+            @Override
+            public void onProgressArchiver(int current, int total) {
+                if (current == total) {
+                    //解压完成删除文件
+                    new File(MyApplication.PATH_IMAGE + fileName).delete();
+                    if (isDismissDialog) {
+                        downLoadProgressDialog.dismissDialog();
+
+                    }
+
+                }
+            }
+
+            @Override
+            public void onEndArchiver() {
+
+            }
+        });
+
+    }
+    @Override
+    public void handleMessage(Message msg) {
+        super.handleMessage(msg);
+
+        if (TextUtils.isEmpty(msg.obj.toString()) && msg.what == 1) {
+            ToastUtils.showShort("服务访问失败");
+            downLoadProgressDialog.dismissDialog();
+
+        } else {
+            fileZipArchiver((String) msg.obj, msg.arg1 == 1);
+        }
+    }
+
+
+
 
     private void getAPPS() {
 //        OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在获取软件列表...");

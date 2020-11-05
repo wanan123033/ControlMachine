@@ -62,7 +62,7 @@ public class DataRetrieveAdapter extends BaseQuickAdapter<DataRetrieveBean, Data
                 new Handler().post(new Runnable() {
                     @Override
                     public void run() {
-                        if (viewHolder.getLayoutPosition()!=-1){
+                        if (viewHolder.getLayoutPosition() != -1 && getData().size() > 0) {
                             getData().get(viewHolder.getLayoutPosition()).setChecked(isChecked);
                             notifyItemChanged(viewHolder.getLayoutPosition());
                         }

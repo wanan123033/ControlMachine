@@ -179,7 +179,7 @@ public class ItemSubscriber {
 
     // 获取学生信息
     public void getStudentData(final int pageNo, final String lastDownLoadTime) {
-        getStudentData(pageNo, lastDownLoadTime, null);
+        getStudentData(pageNo, lastDownLoadTime, new String[]{});
     }
 
     public void getStudentData(final int pageNo, final String lastDownLoadTime, final String... studentCode) {

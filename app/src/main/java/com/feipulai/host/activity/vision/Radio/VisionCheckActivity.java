@@ -1,5 +1,6 @@
 package com.feipulai.host.activity.vision.Radio;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -20,6 +21,7 @@ import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseCheckActivity;
 import com.feipulai.host.activity.jump_rope.base.InteractUtils;
+import com.feipulai.host.activity.setting.LEDSettingActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.BaseEvent;
 import com.feipulai.host.config.EventConfigs;
@@ -51,7 +53,7 @@ public class VisionCheckActivity extends BaseCheckActivity implements RadioManag
     public final int TARGET_FREQUENCY = SettingHelper.getSystemSetting().getUseChannel();
     private Student mStudent;
     private LEDManager ledManager = new LEDManager();
-
+    private boolean isClear = false;//是否收到成功进行清理
     private static final int CLEAR_INFO = 100;
 
     @Override
@@ -95,6 +97,7 @@ public class VisionCheckActivity extends BaseCheckActivity implements RadioManag
         mStudent = student;
         InteractUtils.showStuInfo(llStuDetail, student, null);
         txtResult.setText("请遮住右眼\n按确定开始");
+        toastSpeak("请遮住右眼按确定开始");
         showLed();
     }
 
@@ -107,7 +110,7 @@ public class VisionCheckActivity extends BaseCheckActivity implements RadioManag
     @Override
     public void onRadioArrived(Message msg) {
         byte key = (byte) msg.obj;
-        if (key == 0x35) {//确定
+        if (key == 0x35 && !isClear) {//确定
             if (mStudent != null) {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("STUDENT", mStudent);
@@ -123,6 +126,7 @@ public class VisionCheckActivity extends BaseCheckActivity implements RadioManag
     public void onEventMainThread(BaseEvent baseEvent) {
         super.onEventMainThread(baseEvent);
         if (baseEvent.getTagInt() == EventConfigs.VISION_TEST_SUCCEED) {
+            isClear = true;
             RoundResult roundResult = (RoundResult) baseEvent.getData();
             StringBuffer sb = new StringBuffer("左视力：" + ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()));
             sb.append("\n");
@@ -132,11 +136,13 @@ public class VisionCheckActivity extends BaseCheckActivity implements RadioManag
 
         }
     }
-    private Handler myHandler = new Handler(Looper.getMainLooper() ){
+
+    private Handler myHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == CLEAR_INFO) {
+                isClear = false;
                 mStudent = null;
                 InteractUtils.showStuInfo(llStuDetail, null, null);
                 txtResult.setText("请检录");
@@ -146,14 +152,14 @@ public class VisionCheckActivity extends BaseCheckActivity implements RadioManag
     };
 
 
-    @OnClick({R.id.btn_scan, R.id.img_AFR, R.id.txt_led_setting, R.id.tv_device_pair})
+    @OnClick({R.id.img_AFR, R.id.txt_led_setting, R.id.tv_device_pair})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.btn_scan:
-                break;
             case R.id.img_AFR:
+                showAFR();
                 break;
             case R.id.txt_led_setting:
+                startActivity(new Intent(this, LEDSettingActivity.class));
                 break;
             case R.id.tv_device_pair:
                 break;

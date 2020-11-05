@@ -11,6 +11,15 @@ public class ResponseParame {
     private String requestTime;
     private String sign;
     private String data;
+    private String lastUpdateTime;
+
+    public String getLastUpdateTime() {
+        return lastUpdateTime;
+    }
+
+    public void setLastUpdateTime(String lastUpdateTime) {
+        this.lastUpdateTime = lastUpdateTime;
+    }
 
     public String getBizType() {
         return bizType;

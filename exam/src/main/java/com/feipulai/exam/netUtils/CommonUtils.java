@@ -113,7 +113,11 @@ public class CommonUtils {
         Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
         return gson.toJson(paramData);
     }
-
+    public static ResponseParame encryptQuery(String bizType, String lastUpdateTime, Object object) {
+        ResponseParame respost = encryptQuery(bizType, object);
+        respost.setLastUpdateTime(lastUpdateTime);
+        return respost;
+    }
     public static ResponseParame encryptQuery(String bizType, Object object) {
         ResponseParame respost = new ResponseParame();
         respost.setBizType(bizType);

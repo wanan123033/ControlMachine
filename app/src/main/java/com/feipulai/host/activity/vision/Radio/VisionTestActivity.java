@@ -1,5 +1,6 @@
 package com.feipulai.host.activity.vision.Radio;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -7,6 +8,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
@@ -18,6 +20,7 @@ import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.GetJsonDataUtil;
 import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.serial.RadioManager;
@@ -31,6 +34,8 @@ import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
+import com.feipulai.host.netUtils.UploadResultUtil;
+import com.feipulai.host.netUtils.netapi.ServerIml;
 import com.feipulai.host.utils.ResultDisplayUtils;
 import com.feipulai.host.utils.TimerIntervalUtil;
 import com.google.gson.Gson;
@@ -64,7 +69,7 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
     @BindView(R.id.txt_hint)
     TextView txtHint;
     private VisionBean visionBean;
-    private int index = 0;
+    private int index = 0; //0 接收方向按钮 -1 只接收确定按钮 -2 不接收
     private ArrayList<VisionBean> visionBeans;
     private int direction;
     private Random random = new Random();
@@ -115,8 +120,19 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
         visionBean = visionBeans.get(visionSetting.getDistance());
 
         visionData = visionBean.getVisions().get(index);
-        setImageWidth();
+        if (student == null) {
+            index = -1;
+            txtHint.setVisibility(View.VISIBLE);
+            txtHint.setText("请遮住右眼\n按确定开始");
+            toastSpeak("请遮住右眼按确定开始");
+            ivE.clearAnimation();
+            ivE.setVisibility(View.GONE);
+        } else {
+            setImageWidth();
+        }
+
         initResult();
+
 
         intervalUtil = new TimerIntervalUtil(new TimerIntervalUtil.TimerAccepListener() {
             @Override
@@ -139,7 +155,12 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
                     intervalUtil.stop();
                     ++errorCount;
                     if (visionData.getErrorCount() == errorCount) {//结束
-                        saveResult();
+                        if (student != null) {
+                            saveResult();
+                        } else {
+                            //自由模式处理
+                        }
+
                     } else {
                         intervalUtil.startTime();
                         setImageWidth();
@@ -159,7 +180,10 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
 
     private void initResult() {
         roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
-        roundResult.setStudentCode(student.getStudentCode());
+        if (student != null) {
+            roundResult.setStudentCode(student.getStudentCode());
+        }
+
         roundResult.setItemCode(TestConfigs.getCurrentItemCode());
         roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
         roundResult.setTestTime(DateUtil.getCurrentTime() + "");
@@ -203,7 +227,12 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
                             txtHint.setVisibility(View.GONE);
                             visionData = visionBean.getVisions().get(index);
                             setImageWidth();
-                            intervalUtil.startTime();
+                            if (visionSetting.getStopTime() != 0) {
+                                txt_time.setText(visionSetting.getStopTime() + "");
+                                intervalUtil.startTime();
+                            } else {
+                                txt_time.setVisibility(View.GONE);
+                            }
 //                            isStartCheck = true;
                         }
                         break;
@@ -214,10 +243,10 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
     }
 
     private void checkKey(int keyDirection) {
-        if (index == -1) {
+        if (index == -1 || index == -2) {
             return;
         }
-        if (visionSetting.getStopTime()!=0){
+        if (visionSetting.getStopTime() != 0) {
             intervalUtil.stop();
             intervalUtil.startTime();
         }
@@ -243,31 +272,74 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private void saveResult() {
+        intervalUtil.stop();
         if (roundResult.getResult() == 0) {//是否在测试左视力
             roundResult.setResult((int) (visionData.getLogMAR_5() * 10));
-
             index = -1;
             txtHint.setVisibility(View.VISIBLE);
+            toastSpeak("请遮住左眼按确定开始");
+            txtHint.setText("请遮住左眼\n按确定开始");
             ivE.clearAnimation();
             ivE.setVisibility(View.GONE);
             showLed(roundResult);
 
         } else {//是否在测试右视力 结束
             roundResult.setWeightResult((int) (visionData.getLogMAR_5() * 10));
-
-            RoundResult lastResult = DBManager.getInstance().queryLastScoreByStuCode(student.getStudentCode());
-            if (lastResult != null) {
-                lastResult.setIsLastResult(0);
-                DBManager.getInstance().updateRoundResult(lastResult);
+            if (student == null) {
+                index = -2;
+                showLed(roundResult);
+                txtHint.setVisibility(View.VISIBLE);
+                txtHint.setText("左视力：" + ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()) + "\n" +
+                        "右视力：" + ResultDisplayUtils.getStrResultForDisplay(roundResult.getWeightResult()));
+                ivE.clearAnimation();
+                ivE.setVisibility(View.GONE);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        index = -1;
+                        roundResult = new RoundResult();
+                        txtHint.setText("请遮住右眼\n按确定开始");
+                        toastSpeak("请遮住右眼按确定开始");
+                    }
+                }, 3000);
+            } else {
+                RoundResult lastResult = DBManager.getInstance().queryLastScoreByStuCode(student.getStudentCode());
+                if (lastResult != null) {
+                    lastResult.setIsLastResult(0);
+                    DBManager.getInstance().updateRoundResult(lastResult);
+                }
+                roundResult.setIsLastResult(1);
+                DBManager.getInstance().insertRoundResult(roundResult);
+                showLed(roundResult);
+                //最后 视力产品定只按最后处理
+                uploadResult(roundResult, roundResult);
+                EventBus.getDefault().post(new BaseEvent(roundResult, EventConfigs.VISION_TEST_SUCCEED));
+                finish();
             }
-            roundResult.setIsLastResult(1);
-            DBManager.getInstance().insertRoundResult(roundResult);
-            showLed(roundResult);
-            EventBus.getDefault().post(new BaseEvent(roundResult, EventConfigs.VISION_TEST_SUCCEED));
-            finish();
+
         }
 
+    }
+
+    /**
+     * 成绩上传
+     *
+     * @param roundResult 当前成绩
+     * @param lastResult  最后成绩
+     */
+    protected void uploadResult(RoundResult roundResult, RoundResult lastResult) {
+        if (!SettingHelper.getSystemSetting().isRtUpload()) {
+            return;
+        }
+        if (TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
+            ToastUtils.showShort(R.string.upload_result_hint);
+            return;
+        }
+
+        ServerIml.uploadResult(UploadResultUtil.getUploadData(roundResult, lastResult));
+//        ServerIml.uploadResult(this, UploadResultUtil.getUploadData(results));
     }
 
     private void setImageWidth() {
@@ -306,63 +378,6 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
         }
     }
 
-//    private Handler mHandler = new Handler(Looper.getMainLooper()) {
-//        @Override
-//        public void handleMessage(Message msg) {
-//            super.handleMessage(msg);
-//            if (msg.what == 1) {
-//                String time = (visionSetting.getStopTime() - timeLimit) + "";
-//                txt_time.setText(time);
-//
-//                byte[] data = new byte[16];
-//                try {
-//                    byte[] resultData = student.getLEDStuName().getBytes("GB2312");
-//                    System.arraycopy(resultData, 0, data, 0, resultData.length);
-//                    resultData = time.getBytes("GB2312");
-//                    System.arraycopy(resultData, 0, data, 14, resultData.length);
-//                } catch (UnsupportedEncodingException e) {
-//                    e.printStackTrace();
-//                }
-//                ledManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 3, false, true);
-//
-//
-//            } else {
-//                if (visionData.getErrorCount() == errorCount) {//结束
-//                    saveResult();
-//                } else {
-//                    setImageWidth();
-//                }
-//            }
-//
-//
-//        }
-//    };
-//    private Thread timeThread = new Thread(new Runnable() {
-//        @Override
-//        public void run() {
-//            while (isStartThrand) {
-//                try {
-//                    Thread.sleep(1000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//                if (isStartCheck) {
-//                    ++timeLimit;
-//                    if (timeLimit == visionSetting.getStopTime()) {
-//                        ++errorCount;
-//                        mHandler.sendEmptyMessage(0);
-//                    } else {
-//                        mHandler.sendEmptyMessage(1);
-//                    }
-//                    if (visionData.getErrorCount() == errorCount) {//结束
-//                        isStartCheck = false;
-//                    }
-//                }
-//
-//            }
-//        }
-//    });
-
 
     private void showLed(RoundResult roundResult) {
 
@@ -371,6 +386,8 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
         if (roundResult.getWeightResult() != 0) {
             ledManager.showString(SettingHelper.getSystemSetting().getHostId(), "右视力：" + ResultDisplayUtils.getStrResultForDisplay(roundResult.getWeightResult()),
                     0, 2, false, true);
+            toastSpeak("左视力" + ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult())
+                    + "右视力" + ResultDisplayUtils.getStrResultForDisplay(roundResult.getWeightResult()));
         }
 
     }

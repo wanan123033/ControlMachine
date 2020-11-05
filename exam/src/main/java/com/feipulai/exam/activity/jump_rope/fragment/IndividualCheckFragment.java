@@ -266,16 +266,16 @@ public class IndividualCheckFragment
     }
 
 
-    private void checkInUIThread(Student student,StudentItem studentItem) {
+    private void checkInUIThread(Student student, StudentItem studentItem) {
 
         Logger.e("-------------单机测试");
         SystemSetting setting = SettingHelper.getSystemSetting();
-        if (setting.isAutoScore()){
-            OperateProgressBar.showLoadingUi(getActivity(),"正在获取云端成绩...");
+        if (setting.isAutoScore()) {
+            OperateProgressBar.showLoadingUi(getActivity(), "正在获取云端成绩...");
             HttpSubscriber subscriber = new HttpSubscriber();
             subscriber.getRoundResult(setting.getSitCode(), studentItem.getScheduleNo(), TestConfigs.getCurrentItemCode(), student.getStudentCode(),
                     null, null, null, String.valueOf(studentItem.getExamType()), this);
-        }else {
+        } else {
             sendCheckHandlerMessage(student);
         }
 
@@ -377,25 +377,25 @@ public class IndividualCheckFragment
         mResults = results;
         // 可以直接检录
         //TODO 考虑单机测试的开关是否开启
-        checkInUIThread(student,studentItem);
+        checkInUIThread(student, studentItem);
         return false;
     }
 
     @Override
     public void onSuccess(RoundScoreBean result) {
         OperateProgressBar.removeLoadingUiIfExist(getActivity());
-        if (result.getExist() == 1){
+        if (result.getExist() == 1) {
             boolean flag = false;
             List<RoundScoreBean.ScoreBean> roundList = result.getRoundList();
-            for (RoundScoreBean.ScoreBean scoreBean : roundList){
-                if (!scoreBean.mtEquipment.equals(CommonUtils.getDeviceInfo())){
+            for (RoundScoreBean.ScoreBean scoreBean : roundList) {
+                if (!scoreBean.mtEquipment.equals(CommonUtils.getDeviceInfo())) {
                     flag = true;
                     break;
-                }else {
+                } else {
                     flag = false;
                 }
             }
-            if (flag){
+            if (flag) {
                 new AlertDialog.Builder(getActivity())
                         .setTitle("温馨提示")
                         .setMessage("该学生已在其他设备上测试,确认测试吗?")
@@ -413,10 +413,10 @@ public class IndividualCheckFragment
                             }
                         })
                         .create().show();
-            }else {
+            } else {
                 sendCheckHandlerMessage(mStudent);
             }
-        }else {
+        } else {
             sendCheckHandlerMessage(mStudent);
         }
     }
@@ -445,7 +445,7 @@ public class IndividualCheckFragment
 
         @Override
         public void handleMessage(Message msg) {
-            IndividualCheckFragment fragment = mReference.get();
+            final IndividualCheckFragment fragment = mReference.get();
             if (fragment == null) {
                 return;
             }
@@ -500,13 +500,16 @@ public class IndividualCheckFragment
                                 .setTitleText("测量完成")
                                 .setContentText(contentText).changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
                         InteractUtils.toastSpeak(fragment.getActivity(), fragment.mStudent.getSpeakStuName() + thermometer + "℃");
-                        try {
-                            Thread.sleep(1000);
-                            fragment.thermometerDialog.dismissWithAnimation();
-                            fragment.check();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                fragment.thermometerDialog.dismissWithAnimation();
+                            }
+                        }, 2000);
+
+                        fragment.check();
+
 
                     }
 
@@ -604,6 +607,7 @@ public class IndividualCheckFragment
             }
         });
     }
+
     public void showAdvancedPwdDialog() {
 
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.view_advanced_pwd, null);
@@ -632,6 +636,7 @@ public class IndividualCheckFragment
             }
         });
     }
+
     public interface OnIndividualCheckInListener {
         /**
          * 这里传入的考生信息均通过了验证

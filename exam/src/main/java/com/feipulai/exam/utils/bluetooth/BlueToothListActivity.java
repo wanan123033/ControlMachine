@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -118,7 +119,7 @@ public class BlueToothListActivity extends BaseTitleActivity {
      */
     private void searchDevice() {
         SearchRequest request = new SearchRequest.Builder()
-                .searchBluetoothLeDevice(5000, 2).build();
+                .searchBluetoothLeDevice(20000, 2).build();
         ClientManager.getClient().search(request, mSearchResponse);
     }
 
@@ -156,17 +157,18 @@ public class BlueToothListActivity extends BaseTitleActivity {
 
         @Override
         public void onDeviceFounded(SearchResult device) {
-            BluetoothLog.w("MainActivity.onDeviceFounded " + device.device.getAddress());
-            if (!mDevices.contains(device)) {
-                mDevices.add(device);
-                Collections.sort(mDevices, new Comparator<SearchResult>() {
-                    @Override
-                    public int compare(SearchResult lhs, SearchResult rhs) {
-                        return rhs.rssi - lhs.rssi;
-                    }
-                });
-                adapter.notifyDataSetChanged();
-
+            BluetoothLog.w("MainActivity.onDeviceFounded " + device.device.toString());
+            if (!TextUtils.isEmpty(device.getName())) {
+                if (!mDevices.contains(device)) {
+                    mDevices.add(device);
+                    Collections.sort(mDevices, new Comparator<SearchResult>() {
+                        @Override
+                        public int compare(SearchResult lhs, SearchResult rhs) {
+                            return rhs.rssi - lhs.rssi;
+                        }
+                    });
+                    adapter.notifyDataSetChanged();
+                }
             }
 
         }

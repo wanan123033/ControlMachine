@@ -80,4 +80,6 @@
     <string name="thermometer_dialog_msg">使用体温枪对准考生额头进行测量</string>
     <string name="dialog_warm_prompt">温馨提示</string>
     <string name="thermometer_open_dialog_msg">请启动体温枪或未进行体温枪连接</string>
+
+    <string name="download_photo_select">继续下载（%1$d / %2$d）</string>
 </resources>

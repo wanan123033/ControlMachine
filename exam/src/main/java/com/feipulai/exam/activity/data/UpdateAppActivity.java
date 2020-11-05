@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import okhttp3.Headers;
 
 public class UpdateAppActivity extends BaseTitleActivity {
     @BindView(R.id.rv_result)
@@ -106,12 +107,17 @@ public class UpdateAppActivity extends BaseTitleActivity {
                 String name = DateUtil.getCurrentTime()+result.getVersion()+".apk";
                 downloadUtils.downloadFile(result.getSoftwareUrl(),name, new DownloadListener() {
                     @Override
-                    public void onStart() {
+                    public void onStart(String fileName) {
                         Log.i("UpdateApp","onStart");
                     }
 
                     @Override
-                    public void onProgress(final int progress) {
+                    public void onResponse(Headers headers) {
+
+                    }
+
+                    @Override
+                    public void onProgress(String fileName,final int progress) {
                         Log.i("UpdateApp","progress"+progress);
                         runOnUiThread(new Runnable() {
                             @Override
@@ -135,7 +141,7 @@ public class UpdateAppActivity extends BaseTitleActivity {
                     }
 
                     @Override
-                    public void onFailure(String errorInfo) {
+                    public void onFailure(String fileName,String errorInfo) {
                         Log.i("UpdateApp",errorInfo);
                         runOnUiThread(new Runnable() {
                             @Override

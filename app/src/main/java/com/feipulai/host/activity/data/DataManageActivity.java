@@ -286,8 +286,8 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                         intent.putExtra(FileSelectActivity.INTENT_ACTION, FileSelectActivity.CHOOSE_DIR);
                         startActivityForResult(intent, REQUEST_CODE_PHOTO);
                         break;
-                    case 10://头像检入  todo 头像不保存在数据库些功能没作用，弃用
-                        LogUtils.operation("用户点击了头像检入...");
+                    case 10://头像下载
+                        LogUtils.operation("用户点击了头像下载...");
 //                        uploadPortrait();
 //                        ToastUtils.showShort("功能未开放，敬请期待");
                         showDownLoadPhotoDialog();
