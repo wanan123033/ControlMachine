@@ -104,7 +104,7 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
         }
 //        facade.startTest();
         state = WAIT_BEGIN;
-        pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
+        pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
         updateDevice(pair.getBaseDevice());
         setTextViewsVisibility(true,true,false,false,false);
     }
@@ -187,6 +187,7 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
     @Override
     public void onNewDeviceConnect() {
         cancelChangeBad();
+        pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
         toastSpeak("设备连接成功");
     }
 
@@ -237,15 +238,17 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
 
             case PullUpManager.STATE_FREE:
                 cbDeviceState.setChecked(true);
-                if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_ERROR){
-                    pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
-                }
+//                if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_ERROR){
+//
+//                }
+                pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
                 break;
 
             case UPDATE_SCORE:
                 if (!isStopped){
                     PullUpStateResult result = (PullUpStateResult) msg.obj;
                     pair.setResult(result.getResult());
+                    pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
                     updateResult(pair);
                 }
 
