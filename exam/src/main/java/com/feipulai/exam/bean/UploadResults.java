@@ -77,19 +77,22 @@ public class UploadResults implements Serializable {
         this.roundResultList = roundResultList;
         RoundResult lastResult;
         Item item=DBManager.getInstance().queryItemByCode(itemCode);
-        if (item.getLastResultMode() == 1) {
-            //最后
-            lastResult = DBManager.getInstance().queryBestFinallyScore(item,studentCode, Integer.valueOf(testNum));
-        } else {
-            //最好的
-            lastResult = DBManager.getInstance().queryBestScore(item,studentCode, Integer.valueOf(testNum));
+        if (item != null){
+            if (item.getLastResultMode() == 1) {
+                //最后
+                lastResult = DBManager.getInstance().queryBestFinallyScore(item,studentCode, Integer.valueOf(testNum));
+            } else {
+                //最好的
+                lastResult = DBManager.getInstance().queryBestScore(item,studentCode, Integer.valueOf(testNum));
+            }
+            if (lastResult != null) {
+                this.result = lastResult.getResult();
+                this.resultStatus = lastResult.getResultState();
+                this.testTime = lastResult.getTestTime();
+                this.examState=lastResult.getExamType();
+            }
         }
-        if (lastResult != null) {
-            this.result = lastResult.getResult();
-            this.resultStatus = lastResult.getResultState();
-            this.testTime = lastResult.getTestTime();
-            this.examState=lastResult.getExamType();
-        }
+
     }
 
     public String getSiteScheduleNo() {

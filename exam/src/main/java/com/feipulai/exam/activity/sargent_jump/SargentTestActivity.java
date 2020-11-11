@@ -261,7 +261,10 @@ public class SargentTestActivity extends BasePersonTestActivity {
                     }
                     break;
                 case CONNECTED:
-                    updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
+                    if (testState == TestState.WAIT_RESULT){
+                        updateDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE, 1));
+                    }
+
                     break;
                 case GET_SCORE_RESPONSE:
                     SargentJumpResult result = (SargentJumpResult) msg.obj;
