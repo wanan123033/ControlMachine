@@ -67,6 +67,8 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
 
     }
 
+
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -84,7 +86,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
         mExecutorService.submit(statesRunnable);
         resultRunnable.setTestState(sitReachResiltListener.getTestState());
         statesRunnable.setTestState(sitReachResiltListener.getTestState());
-        updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
+        updateDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE, 1));
         if (SerialDeviceManager.getInstance() != null && sitReachResiltListener.getTestState() != SitReachResiltListener.TestState.UN_STARTED) {
             //开始测试
             LogUtils.normal(SerialConfigs.CMD_SIT_REACH_START.length + "---" + StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_START) + "---坐位体前屈开始测试指令");
@@ -176,7 +178,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
     public void checkDevice(int deviceId) {
         isDisconnect = false;
         Message msg = mHandler.obtainMessage();
-        msg.obj = new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1);
+        msg.obj = new BaseDeviceState(BaseDeviceState.STATE_FREE, 1);
         msg.what = UPDATE_DEVICE;
         mHandler.sendMessage(msg);
     }
