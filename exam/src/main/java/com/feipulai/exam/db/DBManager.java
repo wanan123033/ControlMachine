@@ -119,7 +119,7 @@ public class DBManager {
                 ItemDefault.CODE_LDTY, ItemDefault.CODE_ZWTQQ,
                 ItemDefault.CODE_HWSXQ, ItemDefault.CODE_FHL, ItemDefault.CODE_ZFP,
                 ItemDefault.CODE_PQ, ItemDefault.CODE_MG, ItemDefault.CODE_FWC, ItemDefault.CODE_LQYQ,
-                ItemDefault.CODE_ZQYQ, ItemDefault.CODE_ZCP, ItemDefault.CODE_JGCJ, ItemDefault.CODE_WLJ, ItemDefault.CODE_SHOOT
+                ItemDefault.CODE_ZQYQ, ItemDefault.CODE_ZCP, ItemDefault.CODE_JGCJ, ItemDefault.CODE_WLJ, ItemDefault.CODE_SHOOT,ItemDefault.CODE_SPORT_TIMER
         };
         for (int machineCode : supportMachineCodes) {
             //查询是否已经存在该机器码的项,如果存在就放弃,避免重复添加
@@ -191,6 +191,9 @@ public class DBManager {
                     break;
                 case ItemDefault.CODE_SHOOT:
                     insertItem(machineCode, "篮球投篮", "个", TEST_TYPE_COUNT);
+                    break;
+                case ItemDefault.CODE_SPORT_TIMER:
+                    insertItem(machineCode, "运动计时", "分'秒", TEST_TYPE_TIME);
                     break;
             }
         }

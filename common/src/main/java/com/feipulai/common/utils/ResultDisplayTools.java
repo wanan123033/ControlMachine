@@ -56,6 +56,7 @@ public class ResultDisplayTools {
             case ItemDefault.CODE_LQYQ:
             case ItemDefault.CODE_ZQYQ:
             case ItemDefault.CODE_ZFP:
+            case ItemDefault.CODE_SPORT_TIMER:
                 if ("分'秒".equals(unit) || "秒".equals(unit)) {
                     result = unit;
                 } else {

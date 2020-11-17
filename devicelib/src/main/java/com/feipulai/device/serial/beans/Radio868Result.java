@@ -394,6 +394,17 @@ public class Radio868Result {
                 setType(SerialConfigs.VISION_KEY);
                 setResult(data[5]);//38 上 32 下 34 右 36 右 35 确定 42 返回
                 break;
+            case ItemDefault.CODE_SPORT_TIMER:
+                if (data[0] == 0xAA && data.length == data[1]){
+                    setResult(new SportResult(data));
+                    switch (data[7]){
+                        case 20://子机配对
+                            setType(SerialConfigs.SPORT_TIMER_MATCH);
+                            break;
+
+                    }
+                }
+                break;
         }
     }
 
