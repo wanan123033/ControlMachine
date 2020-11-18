@@ -228,6 +228,7 @@ public class IC_ResultResolve {
             case ItemDefault.CODE_ZCP://中长跑(1000,800)
             case ItemDefault.CODE_LQYQ://篮球运球
             case ItemDefault.CODE_ZFP://折返跑
+            case ItemDefault.CODE_SPORT_TIMER://运动计时
             case ItemDefault.CODE_1500MJBZ://1500米健步走
             case ItemDefault.CODE_2000MJBZ://2000米健步走
             case ItemDefault.CODE_50M://50米
@@ -444,6 +445,7 @@ public class IC_ResultResolve {
             case ItemDefault.CODE_ZCP://中长跑(1000,800)
             case ItemDefault.CODE_LQYQ://篮球运球
             case ItemDefault.CODE_ZFP://折返跑
+            case ItemDefault.CODE_SPORT_TIMER://折返跑
             case ItemDefault.CODE_1500MJBZ://1500米健步走
             case ItemDefault.CODE_2000MJBZ://2000米健步走
             case ItemDefault.CODE_50M://50米

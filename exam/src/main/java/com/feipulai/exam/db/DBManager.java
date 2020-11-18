@@ -119,6 +119,7 @@ public class DBManager {
                 ItemDefault.CODE_LDTY, ItemDefault.CODE_ZWTQQ,
                 ItemDefault.CODE_HWSXQ, ItemDefault.CODE_FHL, ItemDefault.CODE_ZFP,
                 ItemDefault.CODE_PQ, ItemDefault.CODE_MG, ItemDefault.CODE_FWC, ItemDefault.CODE_LQYQ,
+                ItemDefault.CODE_ZQYQ, ItemDefault.CODE_ZCP, ItemDefault.CODE_JGCJ, ItemDefault.CODE_WLJ, ItemDefault.CODE_SHOOT,ItemDefault.CODE_SPORT_TIMER,
                 ItemDefault.CODE_ZQYQ, ItemDefault.CODE_ZCP, ItemDefault.CODE_JGCJ, ItemDefault.CODE_WLJ, ItemDefault.CODE_SHOOT,
                 ItemDefault.CODE_SGBQS
         };
@@ -192,6 +193,9 @@ public class DBManager {
                     break;
                 case ItemDefault.CODE_SHOOT:
                     insertItem(machineCode, "篮球投篮", "个", TEST_TYPE_COUNT);
+                    break;
+                case ItemDefault.CODE_SPORT_TIMER:
+                    insertItem(machineCode, "运动计时", "分'秒", TEST_TYPE_TIME);
                     break;
                 case ItemDefault.CODE_SGBQS:
                     insertItem(machineCode, "双杠臂屈伸", "次", TEST_TYPE_COUNT);
@@ -1375,14 +1379,13 @@ public class DBManager {
                 .limit(1)
                 .unique();
     }
-
     /**
      * 查询对应考生当前项目最好成绩(个人)
      *
      * @param studentCode 考号
      * @return 对应最好成绩
      */
-    public RoundResult queryBestScore(Item item, String studentCode, int testNo) {
+    public RoundResult queryBestScore(Item item,String studentCode, int testNo) {
         Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
                 + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\ttestNo:" + testNo);
         return roundResultDao.queryBuilder()
@@ -1394,14 +1397,13 @@ public class DBManager {
                 .limit(1)
                 .unique();
     }
-
     /**
      * 查询对应考生当前项目最后成绩(个人)
      *
      * @param studentCode 考号
      * @return 对应最好成绩
      */
-    public RoundResult queryBestFinallyScore(Item item, String studentCode, int testNo) {
+    public RoundResult queryBestFinallyScore(Item item,String studentCode, int testNo) {
         Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
                 + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\ttestNo:" + testNo);
         return roundResultDao.queryBuilder()
@@ -2232,7 +2234,7 @@ public class DBManager {
         sqlBuf.append("  FROM " + StudentDao.TABLENAME + " S");
         sqlBuf.append(" LEFT JOIN " + GroupItemDao.TABLENAME + " I ");
         sqlBuf.append(" ON S." + StudentDao.Properties.StudentCode.columnName + " = I." + GroupItemDao.Properties.StudentCode.columnName);
-        sqlBuf.append(" WHERE I." + GroupItemDao.Properties.ItemCode.columnName + " = '" + group.getItemCode() + "'");
+        sqlBuf.append(" WHERE I." + GroupItemDao.Properties.ItemCode.columnName + " = '" +group.getItemCode() + "'");
         sqlBuf.append(" AND I." + GroupItemDao.Properties.ScheduleNo.columnName + " = " + group.getScheduleNo());
         sqlBuf.append(" AND I." + GroupItemDao.Properties.GroupType.columnName + " =  " + group.getGroupType());
         sqlBuf.append(" AND I." + GroupItemDao.Properties.SortName.columnName + " = '" + group.getSortName() + "'");

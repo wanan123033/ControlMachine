@@ -57,6 +57,8 @@ import com.feipulai.exam.activity.sitreach.SitReachSettingActivity;
 import com.feipulai.exam.activity.situp.check.SitUpCheckActivity;
 import com.feipulai.exam.activity.situp.setting.SitUpSetting;
 import com.feipulai.exam.activity.situp.setting.SitUpSettingActivity;
+import com.feipulai.exam.activity.sport_timer.SportTimerActivity;
+import com.feipulai.exam.activity.sport_timer.SportTimerGroupActivity;
 import com.feipulai.exam.activity.standjump.StandJumpGroupTestActivity;
 import com.feipulai.exam.activity.standjump.StandJumpSelectActivity;
 import com.feipulai.exam.activity.standjump.StandJumpSetting;
@@ -397,6 +399,7 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_JGCJ, RangerTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_WLJ, GripMoreActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_SHOOT, BasketBallShootActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_SPORT_TIMER, SportTimerActivity.class);
 
         // 每个项目对应的分组检录Acitivity
         TestConfigs.groupActivity.put(ItemDefault.CODE_LDTY, StandJumpGroupTestActivity.class);
@@ -418,6 +421,7 @@ public class TestConfigs {
         TestConfigs.groupActivity.put(ItemDefault.CODE_JGCJ, RangerMoreActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_WLJ, GripMoreGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_SHOOT, BasketBallShootGroupActivity.class);
+        TestConfigs.groupActivity.put(ItemDefault.CODE_SPORT_TIMER, SportTimerGroupActivity.class);
 
         // 每个机器码对应的机器名称
         TestConfigs.machineNameMap.put(ItemDefault.CODE_ZWTQQ, "坐位体前屈");
@@ -436,6 +440,7 @@ public class TestConfigs {
         TestConfigs.machineNameMap.put(ItemDefault.CODE_JGCJ, "激光测距");
         TestConfigs.machineNameMap.put(ItemDefault.CODE_WLJ, "握力");
         TestConfigs.machineNameMap.put(ItemDefault.CODE_SHOOT, "篮球投篮");
+        TestConfigs.machineNameMap.put(ItemDefault.CODE_SPORT_TIMER, "运动计时");
 
         TestConfigs.settingActivity.put(ItemDefault.CODE_LDTY, StandJumpSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_ZWTQQ, SitReachSettingActivity.class);

@@ -38,6 +38,8 @@ public class ItemDefault {
     public static final int CODE_JGCJ = 24;//激光测距
     public static final int CODE_SHOOT = 26;//一分钟投篮26
     public static final int CODE_SGBQS = 27;//双杠臂屈伸
+    public static final int CODE_SPORT_TIMER = 0X1C;//运动计时28
+
     public static char[] keyA = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};//默认密码
     public static final byte[] ctrlW = {(byte) 0xff, (byte) 0x07, (byte) 0x80, (byte) 69};//密码控制区
 
@@ -53,6 +55,7 @@ public class ItemDefault {
         HOST_IDS_MAP.put(ItemDefault.CODE_FWC, 15);
         HOST_IDS_MAP.put(ItemDefault.CODE_YWQZ, 15);
         HOST_IDS_MAP.put(ItemDefault.CODE_ZWTQQ, 15);
+        HOST_IDS_MAP.put(ItemDefault.CODE_SGBQS, 15);
         HOST_IDS_MAP.put(ItemDefault.CODE_TS, 9);
         HOST_IDS_MAP.put(ItemDefault.CODE_YTXS, 15);
         HOST_IDS_MAP.put(ItemDefault.CODE_HWSXQ, 15);
@@ -65,5 +68,6 @@ public class ItemDefault {
         HOST_IDS_MAP.put(ItemDefault.CODE_JGCJ, 10);
         HOST_IDS_MAP.put(ItemDefault.CODE_SL, 20);
         HOST_IDS_MAP.put(ItemDefault.CODE_SHOOT, 10);
+        HOST_IDS_MAP.put(ItemDefault.CODE_SPORT_TIMER, 20);
     }
 }

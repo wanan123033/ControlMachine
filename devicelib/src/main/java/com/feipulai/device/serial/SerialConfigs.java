@@ -39,6 +39,7 @@ public class SerialConfigs {
         sProChannels.put(ItemDefault.CODE_WLJ, 101);//握力计
         sProChannels.put(ItemDefault.CODE_JGCJ, 63);//激光测距
         sProChannels.put(ItemDefault.CODE_SHOOT, 120);//篮球投篮
+        sProChannels.put(ItemDefault.CODE_SPORT_TIMER, 0);//运动计时
     }
 
     public static final String[] GROUP_NAME = {"A", "B", "C"};
@@ -291,4 +292,5 @@ public class SerialConfigs {
     public static final int PULL_UP_GET_ANGLE_DATA = 0x81;
 
     public static final int VISION_KEY = 0x82;
+    public static final int SPORT_TIMER_MATCH = 0x83;
 }

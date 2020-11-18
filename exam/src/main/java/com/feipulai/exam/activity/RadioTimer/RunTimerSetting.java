@@ -145,7 +145,7 @@ public class RunTimerSetting {
 
     @Override
     public String toString() {
-        return "RunTimerSetting{" +
+        return "SportTimerSetting{" +
                 "isFullReturn=" + isFullReturn +
                 ", isSecond=" + isSecond +
                 ", interceptPoint=" + interceptPoint +
