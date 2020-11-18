@@ -7,7 +7,11 @@ import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.LoadingDialog;
 import com.feipulai.host.activity.data.DataRetrieveActivity;
 import com.feipulai.host.bean.UploadResults;
+import com.feipulai.host.config.BaseEvent;
+import com.feipulai.host.config.EventConfigs;
 import com.orhanobut.logger.Logger;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +44,7 @@ public class ServerIml {
                     case ItemSubscriber.DWON_STAUENT_DATA:
                         Intent intent = new Intent(DataRetrieveActivity.UPDATE_MESSAGE);
                         context.sendBroadcast(intent);
+                        EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_SUCCEED));
                         if (loadingDialog != null && loadingDialog.isShow()) {
                             loadingDialog.dismissDialog();
                         }

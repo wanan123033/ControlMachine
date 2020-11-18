@@ -109,6 +109,7 @@ public class RequestSub<T> extends DisposableObserver<HttpResult<T>>
         if (result.getState() == 0) {
             //result.getEncrypt() == HttpResult.ENCRYPT_TRUE ? EncryptUtil.decodeHttpData(result) :
             mOnResultListener.onSuccess(result.getBody());
+            mOnResultListener.onResponseTime(result.getResponseTime());
         } else {
             switch (result.getState()) {
 //                case -1:

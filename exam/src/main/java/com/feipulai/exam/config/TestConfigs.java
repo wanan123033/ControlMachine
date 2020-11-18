@@ -386,6 +386,7 @@ public class TestConfigs {
 
         TestConfigs.proActivity.put(ItemDefault.CODE_TS, JumpRopeCheckActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_YWQZ, SitUpCheckActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_SGBQS, SitUpCheckActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_YTXS, PullUpSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_PQ, VolleyballPatternSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_MG, SargentItemSelectActivity.class);
@@ -405,6 +406,7 @@ public class TestConfigs {
         TestConfigs.groupActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_TS, JumpRopeCheckActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_YWQZ, SitUpCheckActivity.class);
+        TestConfigs.groupActivity.put(ItemDefault.CODE_SGBQS, SitUpCheckActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_YTXS, PullUpSelectActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_PQ, VolleyBallGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_MG, SargentGroupActivity.class);

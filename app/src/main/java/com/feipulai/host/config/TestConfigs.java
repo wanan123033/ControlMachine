@@ -69,7 +69,7 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_TS, JumpRopeCheckActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_YWQZ, SitUpCheckActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_HW, HeightWeightCheckActivity.class);
-
+        TestConfigs.proActivity.put(ItemDefault.CODE_SGBQS, SitUpCheckActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_FHL, VitalTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_ZWTQQ, SitReachSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_LDTY, StandJumpSelectActivity.class);

@@ -189,6 +189,14 @@
                     android:background="@drawable/icon_spinner_bg" />
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/txt_host_hint"
+                style="@style/style_setting_tv_title"
+                android:layout_marginTop="@dimen/dp_10"
+                android:visibility="gone"
+                android:text="请区分开'仰卧起坐'与‘双杠臂屈伸’和主机号，不能相同"
+                android:textColor="@color/viewfinder_laser" />
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -20,6 +20,7 @@
     <string name="run_ranger">激光测距</string>
     <string name="grip_meter">握力</string>
     <string name="pull_up">引体向上</string>
+    <string name="parallel_bars">双杠臂屈伸</string>
     <!--标题-->
     <string name="machine_select_title">设备切换</string>
     <string name="led_setting_title">显示屏设置</string>
@@ -57,6 +58,7 @@
     <string name="file_create_failed">文件创建失败,请确保路径目录不存在已有文件</string>
     <string name="download_title">名单下载</string>
     <string name="export_exl_hint">正在导出xel文件...</string>
+    <string name="download_position_hint">正在进行头像下载...</string>
     <string name="no_more_data">没有更多数据了</string>
     <string name="please_no_upload_stu">请选择未上传成绩考生</string>
     <string name="please_edit_search">请输入搜索内容</string>
@@ -192,5 +194,5 @@
     <string name="print_more_hint">选择打印考生数量过多，确定继续打印？</string>
 
     <string name="download_photo_select">继续下载（%1$d / %2$d）</string>
-
+    <string name="afr_count_hint">全部考生：%1$d          考生特征：%2$d </string>
 </resources>

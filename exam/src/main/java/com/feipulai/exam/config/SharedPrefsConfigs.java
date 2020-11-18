@@ -16,6 +16,8 @@ public class SharedPrefsConfigs {
 
     public static final String MACHINE_CODE = "machine_code";
     public static final String BRIGHTNESS = "brightness";
+    public static final String LAST_DOWNLOAD_TIME = "LAST_DOWNLOAD_TIME";
+
 
     public static final String TIME_WAIT_FOR_TEST = "time_wait_for_test";
     public static final String TIME_WAIT_AFTER_TEST = "time_wait_after_test";
@@ -27,6 +29,8 @@ public class SharedPrefsConfigs {
     public static final String PUSH_UP_TEST_TIME = "PUSH_UP_TEST_TIME";
     public static final String PUSH_UP_TEST_NUMBER = "PUSH_UP_TEST_NUMBER";
     public static final String PUSH_UP_AUTO_PAIR = "PUSH_UP_AUTO_PAIR";
+
+
 
     // JUMP ROPE
     //public static final String JUMP_ROPE_AUTO_PAIR = "JUMP_ROPE_AUTO_PAIR";

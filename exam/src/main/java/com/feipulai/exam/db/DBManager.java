@@ -60,7 +60,7 @@ import static com.feipulai.exam.activity.MiddleDistanceRace.TimingBean.GROUP_FIN
 public class DBManager {
 
     public static final String DB_NAME = "control_db";
-    public static final String DB_PASSWORD = "fplwwj";
+    public static final String DB_PASSWORD = "FairPlay_2019";
     public static final int TEST_TYPE_TIME = 1;//项目类型 计时
     public static final int TEST_TYPE_COUNT = 2;//项目类型 计数
     public static final int TEST_TYPE_DISTANCE = 3;//项目类型 远度
@@ -119,7 +119,8 @@ public class DBManager {
                 ItemDefault.CODE_LDTY, ItemDefault.CODE_ZWTQQ,
                 ItemDefault.CODE_HWSXQ, ItemDefault.CODE_FHL, ItemDefault.CODE_ZFP,
                 ItemDefault.CODE_PQ, ItemDefault.CODE_MG, ItemDefault.CODE_FWC, ItemDefault.CODE_LQYQ,
-                ItemDefault.CODE_ZQYQ, ItemDefault.CODE_ZCP, ItemDefault.CODE_JGCJ, ItemDefault.CODE_WLJ, ItemDefault.CODE_SHOOT
+                ItemDefault.CODE_ZQYQ, ItemDefault.CODE_ZCP, ItemDefault.CODE_JGCJ, ItemDefault.CODE_WLJ, ItemDefault.CODE_SHOOT,
+                ItemDefault.CODE_SGBQS
         };
         for (int machineCode : supportMachineCodes) {
             //查询是否已经存在该机器码的项,如果存在就放弃,避免重复添加
@@ -192,6 +193,9 @@ public class DBManager {
                 case ItemDefault.CODE_SHOOT:
                     insertItem(machineCode, "篮球投篮", "个", TEST_TYPE_COUNT);
                     break;
+                case ItemDefault.CODE_SGBQS:
+                    insertItem(machineCode, "双杠臂屈伸", "次", TEST_TYPE_COUNT);
+                    break;
             }
         }
         Logger.i("数据库初始化完成");
@@ -253,7 +257,33 @@ public class DBManager {
     }
 
     public List<Student> queryStudentFeatures() {
-        return studentDao.queryBuilder().where(StudentDao.Properties.FaceFeature.isNotNull()).list();
+        return studentDao.queryBuilder()
+                .where(StudentDao.Properties.FaceFeature.notEq(""))
+                .where(StudentDao.Properties.FaceFeature.isNotNull()).list();
+    }
+    public List<Student> queryByItemStudentFeatures() {
+
+        StringBuffer sqlBuf = new StringBuffer("SELECT S.* FROM " + StudentDao.TABLENAME + " S");
+        sqlBuf.append(" WHERE S." + StudentDao.Properties.StudentCode.columnName + " IN ( ");
+        sqlBuf.append(" SELECT  " + StudentItemDao.Properties.StudentCode.columnName);
+        sqlBuf.append(" FROM " + StudentItemDao.TABLENAME);
+        sqlBuf.append(" WHERE  " + StudentItemDao.Properties.ItemCode.columnName + " = ?  ");
+        sqlBuf.append(" UNION SELECT  " + GroupItemDao.Properties.StudentCode.columnName);
+        sqlBuf.append(" FROM " + GroupItemDao.TABLENAME);
+        sqlBuf.append(" WHERE  " + GroupItemDao.Properties.ItemCode.columnName + " = ?  )");
+        sqlBuf.append(" AND " + StudentDao.Properties.FaceFeature.columnName + " <>'' ");
+
+        Logger.i("=====sql1===>" + sqlBuf.toString());
+        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{TestConfigs.getCurrentItemCode()});
+        List<Student> students = new ArrayList<>();
+        while (c.moveToNext()) {
+            Student student = studentDao.readEntity(c, 0);
+            students.add(student);
+        }
+        c.close();
+
+
+        return students;
     }
 
     public List<StudentItem> queryStudentItemByItemCode(String itemCode) {
@@ -873,7 +903,6 @@ public class DBManager {
     }
 
 
-
     public Item queryItemByMachineItemCode(int machineCode, String itemCode) {
         return itemDao
                 .queryBuilder()
@@ -1346,13 +1375,14 @@ public class DBManager {
                 .limit(1)
                 .unique();
     }
+
     /**
      * 查询对应考生当前项目最好成绩(个人)
      *
      * @param studentCode 考号
      * @return 对应最好成绩
      */
-    public RoundResult queryBestScore(Item item,String studentCode, int testNo) {
+    public RoundResult queryBestScore(Item item, String studentCode, int testNo) {
         Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
                 + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\ttestNo:" + testNo);
         return roundResultDao.queryBuilder()
@@ -1364,13 +1394,14 @@ public class DBManager {
                 .limit(1)
                 .unique();
     }
+
     /**
      * 查询对应考生当前项目最后成绩(个人)
      *
      * @param studentCode 考号
      * @return 对应最好成绩
      */
-    public RoundResult queryBestFinallyScore(Item item,String studentCode, int testNo) {
+    public RoundResult queryBestFinallyScore(Item item, String studentCode, int testNo) {
         Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
                 + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\ttestNo:" + testNo);
         return roundResultDao.queryBuilder()
@@ -2201,7 +2232,7 @@ public class DBManager {
         sqlBuf.append("  FROM " + StudentDao.TABLENAME + " S");
         sqlBuf.append(" LEFT JOIN " + GroupItemDao.TABLENAME + " I ");
         sqlBuf.append(" ON S." + StudentDao.Properties.StudentCode.columnName + " = I." + GroupItemDao.Properties.StudentCode.columnName);
-        sqlBuf.append(" WHERE I." + GroupItemDao.Properties.ItemCode.columnName + " = '" +group.getItemCode() + "'");
+        sqlBuf.append(" WHERE I." + GroupItemDao.Properties.ItemCode.columnName + " = '" + group.getItemCode() + "'");
         sqlBuf.append(" AND I." + GroupItemDao.Properties.ScheduleNo.columnName + " = " + group.getScheduleNo());
         sqlBuf.append(" AND I." + GroupItemDao.Properties.GroupType.columnName + " =  " + group.getGroupType());
         sqlBuf.append(" AND I." + GroupItemDao.Properties.SortName.columnName + " = '" + group.getSortName() + "'");

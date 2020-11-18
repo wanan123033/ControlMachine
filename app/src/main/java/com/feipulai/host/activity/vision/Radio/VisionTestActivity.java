@@ -120,18 +120,7 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
         visionBean = visionBeans.get(visionSetting.getDistance());
 
         visionData = visionBean.getVisions().get(index);
-        if (student == null) {
-            index = -1;
-            txtHint.setVisibility(View.VISIBLE);
-            txtHint.setText("请遮住右眼\n按确定开始");
-            toastSpeak("请遮住右眼按确定开始");
-            ivE.clearAnimation();
-            ivE.setVisibility(View.GONE);
-        } else {
-            setImageWidth();
-        }
 
-        initResult();
 
 
         intervalUtil = new TimerIntervalUtil(new TimerIntervalUtil.TimerAccepListener() {
@@ -142,9 +131,11 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
 
                 byte[] data = new byte[16];
                 try {
-                    byte[] resultData = student.getLEDStuName().getBytes("GB2312");
-                    System.arraycopy(resultData, 0, data, 0, resultData.length);
-                    resultData = showtime.getBytes("GB2312");
+                    if (student != null && !TextUtils.isEmpty(student.getLEDStuName())) {
+                        byte[] resultData = student.getLEDStuName().getBytes("GB2312");
+                        System.arraycopy(resultData, 0, data, 0, resultData.length);
+                    }
+                    byte[] resultData = showtime.getBytes("GB2312");
                     System.arraycopy(resultData, 0, data, 14, resultData.length);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
@@ -155,11 +146,7 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
                     intervalUtil.stop();
                     ++errorCount;
                     if (visionData.getErrorCount() == errorCount) {//结束
-                        if (student != null) {
-                            saveResult();
-                        } else {
-                            //自由模式处理
-                        }
+                        saveResult();
 
                     } else {
                         intervalUtil.startTime();
@@ -169,13 +156,26 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
 
             }
         });
-        if (visionSetting.getStopTime() != 0) {
-//            timeThread.start();
-            txt_time.setText(visionSetting.getStopTime() + "");
-            intervalUtil.startTime();
+        if (student == null) {
+            index = -1;
+            txtHint.setVisibility(View.VISIBLE);
+            txtHint.setText("请遮住右眼\n按确定开始");
+            toastSpeak("请遮住右眼按确定开始");
+            ivE.clearAnimation();
+            ivE.setVisibility(View.GONE);
         } else {
-            txt_time.setVisibility(View.GONE);
+            setImageWidth();
+            if (visionSetting.getStopTime() != 0) {
+//            timeThread.start();
+                txt_time.setText(visionSetting.getStopTime() + "");
+                intervalUtil.startTime();
+            } else {
+                txt_time.setVisibility(View.GONE);
+            }
         }
+
+        initResult();
+
     }
 
     private void initResult() {

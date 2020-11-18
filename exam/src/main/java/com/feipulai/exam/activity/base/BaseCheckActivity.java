@@ -516,6 +516,11 @@ public abstract class BaseCheckActivity
         }
     }
 
+    @Override
+    public void onResponseTime(String responseTime) {
+
+    }
+
     private void sendCheckHandlerMessage(Student mStudent) {
         Message msg = Message.obtain();
         msg.what = CHECK_IN;

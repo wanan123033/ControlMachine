@@ -49,6 +49,8 @@ import com.feipulai.host.activity.base.BaseTitleActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.bean.SoftApp;
 import com.feipulai.host.bean.UploadResults;
+import com.feipulai.host.config.BaseEvent;
+import com.feipulai.host.config.EventConfigs;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
@@ -116,7 +118,8 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
     ProgressBar progressStorage;
     @BindView(R.id.txt_storage_info)
     TextView txtStorageInfo;
-
+    @BindView(R.id.txt_afr_count)
+    TextView txtAfrCount;
     public BackupManager backupManager;
     private AlertDialog nameFileDialog;
     //    private EditText mEditText;
@@ -143,14 +146,45 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
 
         initGridView();
 
-
         progressDialog = new ProgressDialog(this);
+        initAfrCount();
     }
 
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
         return builder.setTitle(R.string.data_message_title);
+    }
+
+    @Override
+    public void onEventMainThread(BaseEvent baseEvent) {
+        super.onEventMainThread(baseEvent);
+        if (baseEvent.getTagInt() == EventConfigs.DATA_DOWNLOAD_SUCCEED) {
+            initAfrCount();
+        }
+    }
+
+    private void initAfrCount() {
+
+        DataBaseExecutor.addTask(new DataBaseTask() {
+            @Override
+            public DataBaseRespon executeOper() {
+                int stuCount = DBManager.getInstance().getItemStudent(-1, 0).size();
+                int afrCount = DBManager.getInstance().queryByItemStudentFeatures().size();
+
+                return new DataBaseRespon(true, stuCount + "", afrCount);
+            }
+
+            @Override
+            public void onExecuteSuccess(DataBaseRespon respon) {
+                txtAfrCount.setText(String.format(getString(R.string.afr_count_hint), Integer.valueOf(respon.getInfo()), (Integer) respon.getObject()));
+            }
+
+            @Override
+            public void onExecuteFail(DataBaseRespon respon) {
+
+            }
+        });
     }
 
     private void initGridView() {
@@ -356,10 +390,11 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                     @Override
                     public void onResponse(Headers headers) {
                         saveHeaders = headers;
-                        LogUtils.operation("saveHeaders="+saveHeaders.toString());
+                        LogUtils.operation("saveHeaders=" + saveHeaders.toString());
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
                                 downLoadProgressDialog.showDialog();
                                 if (!TextUtils.isEmpty(saveHeaders.get("BatchTotal"))) {
                                     downLoadProgressDialog.setMaxProgress(Integer.valueOf(saveHeaders.get("BatchTotal")));
@@ -429,8 +464,9 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
         if (TextUtils.isEmpty(msg.obj.toString()) && msg.what == 1) {
             ToastUtils.showShort("服务访问失败");
             downLoadProgressDialog.dismissDialog();
-
+            OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
         } else {
+
             fileZipArchiver((String) msg.obj, msg.arg1 == 1);
         }
     }
@@ -479,6 +515,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
         final DownLoadPhotoHeaders photoHeaders = SharedPrefsUtil.loadFormSource(this, DownLoadPhotoHeaders.class);
         List<String> itemList = new ArrayList<>();
         if (photoHeaders == null || photoHeaders.getPageNo() == 0) {
+            OperateProgressBar.showLoadingUi(DataManageActivity.this, getString(R.string.download_position_hint));
             uploadPhotos(1, "");
             return;
         } else {
@@ -501,7 +538,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        OperateProgressBar.showLoadingUi(DataManageActivity.this, getString(R.string.download_position_hint));
                         switch (selectWhich) {
                             case 0:
                                 if (photoHeaders.getBatchTotal() != photoHeaders.getPageNo()) {
@@ -570,6 +607,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                 SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
                 DBManager.getInstance().initDB();
                 TestConfigs.init(this, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), null);
+                initAfrCount();
                 break;
             case REQUEST_CODE_EXPORT_TEMPLATE:
 
@@ -676,10 +714,13 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                         continue;
                     }
                     String studentCode = jpgFile.getName().substring(0, jpgFile.getName().lastIndexOf("."));
-                    boolean success = FaceServer.getInstance().registerBgr24(DataManageActivity.this, bgr24, bitmap.getWidth(), bitmap.getHeight(),
+                    byte[] success = FaceServer.getInstance().registerBgr24Byte(DataManageActivity.this, bgr24, bitmap.getWidth(), bitmap.getHeight(),
                             studentCode);
-
-                    if (!success) {
+                    if (student != null) {
+                        student.setFaceFeature(Base64.encodeToString(success, Base64.DEFAULT));
+                        DBManager.getInstance().updateStudent(student);
+                    }
+                    if (success == null) {
                         Log.e("faceRegister", "人脸注册失败" + studentCode);
 
                     } else {
@@ -690,6 +731,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        initAfrCount();
                         progressDialog.dismiss();
                     }
                 });
@@ -790,7 +832,6 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                         List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
                         for (int i = 0; i < studentList.size(); i++) {
 
-
                             Student student = studentList.get(i);
                             registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
                             final int finalI = i;
@@ -844,6 +885,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
         return super.onOptionsItemSelected(item);
     }
 
+
     @Override
     public void onExlResponse(final int responseCode, final String reason) {
         runOnUiThread(new Runnable() {
@@ -858,6 +900,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                         isProcessingData = false;
                         Intent intent = new Intent(DataRetrieveActivity.UPDATE_MESSAGE);
                         sendBroadcast(intent);
+                        initAfrCount();
                         break;
 
                     case ExlListener.EXEL_READ_FAIL:
