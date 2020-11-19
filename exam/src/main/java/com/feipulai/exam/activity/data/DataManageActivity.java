@@ -309,7 +309,7 @@ public class DataManageActivity
                         LogUtils.operation("用户点击了头像下载...");
                         ToastUtils.showShort("功能未开放，敬请期待");
 //                        uploadPortrait();
-                        showDownLoadPhotoDialog();
+//                        showDownLoadPhotoDialog();
                         break;
                     case 5://删除头像
                         //TODO 测试使用

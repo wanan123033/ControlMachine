@@ -98,6 +98,11 @@ public class UpdateAppActivity extends BaseTitleActivity {
         String version = SystemBrightUtils.getCurrentVersion(this);
         subscriber.updateApp( version, updateVersion, auCode, new OnResultListener<UpdateApp>() {
             @Override
+            public void onResponseTime(String responseTime) {
+
+            }
+
+            @Override
             public void onSuccess(UpdateApp result) {
                 Log.i("UpdateApp",result.toString());
                 downLoadProgressDialog.showDialog();
