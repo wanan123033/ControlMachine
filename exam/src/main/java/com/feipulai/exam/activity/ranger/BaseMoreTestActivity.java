@@ -17,11 +17,13 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.tts.TtsManager;
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
+import com.feipulai.device.spputils.beans.RangerResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
@@ -107,6 +109,7 @@ public abstract class BaseMoreTestActivity extends BaseCheckActivity implements 
     public int runUp;
     public int baseHeight;
     private boolean isFault;
+    private RangerSetting setting;
 
     @Override
     protected int setLayoutResID() {
@@ -121,6 +124,7 @@ public abstract class BaseMoreTestActivity extends BaseCheckActivity implements 
         group = (Group) TestConfigs.baseGroupMap.get("group");
         initData();
 
+        setting = SharedPrefsUtil.loadFormSource(getApplicationContext(),RangerSetting.class);
         mLEDManager = new LEDManager();
         mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
@@ -1144,7 +1148,31 @@ public abstract class BaseMoreTestActivity extends BaseCheckActivity implements 
         DBManager.getInstance().updateGroup(group);
     }
 
+    public void setScore(RangerResult result,BaseStuPair stuPair){
+        calculation(result,setting,stuPair);
+    }
 
+    private void calculation(RangerResult result, RangerSetting rangerSetting,BaseStuPair stuPair) {
+        int itemType = rangerSetting.getItemType();
+        if (itemType == 2 || itemType == 3 || itemType == 4){ //跳远类项目
+            double level1 = rangerSetting.getLevel1();
+            double level2 = rangerSetting.getLevel2();
+            Point jidian1 = RangerUtil.getPoint(level1,rangerSetting.getQd1_hor());
+            Point jidian2 = RangerUtil.getPoint(level2,rangerSetting.getQd2_hor());
+            double level = RangerUtil.level(result.getLevel_d(),result.getLevel_g(),result.getLevel_m());
+            Point p = RangerUtil.getPoint(level,result.getResult());
+            double length = RangerUtil.length(jidian1, jidian2, p);
+            stuPair.setResult((int) length);
+        }else if (itemType == 0 || itemType == 1){   //跳高类项目
+            stuPair.setResult(result.getResult());
+        }else if (itemType == 5 || itemType == 6 || itemType == 7 || itemType == 8){  //投掷类项目
+            double dd = RangerUtil.level(result.getLevel_d(),result.getLevel_g(),result.getLevel_m());
+            double inclination = RangerUtil.inclination(rangerSetting.getLevel(), dd);
+            double length = RangerUtil.cosine(inclination, rangerSetting.getQd_hor(), result.getResult());
+            stuPair.setResult((int) (length - rangerSetting.getRadius()));
+
+        }
+    }
 
     private static class LedHandler extends Handler {
 
