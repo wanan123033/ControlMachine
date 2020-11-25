@@ -198,9 +198,8 @@ public class RangerTestActivity extends BaseTestActivity  implements PenalizeDia
     private void onResults(byte[] datas) {
         RangerResult result = new RangerResult(datas);
         LogUtils.operation("测距获取结果:"+result.toString());
-        int result1 = result.getResult();
         if (result.getType() == 1){
-            setScore(result1);
+            setScore(result);
         }
 
     }
@@ -227,6 +226,12 @@ public class RangerTestActivity extends BaseTestActivity  implements PenalizeDia
             dialog.show();
         }
     }
+
+    @Override
+    public RangerSetting getRangerSetting() {
+        return setting;
+    }
+
     @Override
     public void penalize(int value) {
         pair.setResult(pair.getResult()+value*1000);

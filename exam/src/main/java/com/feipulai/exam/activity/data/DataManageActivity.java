@@ -140,7 +140,8 @@ public class DataManageActivity
     ProgressBar progressStorage;
     @BindView(R.id.txt_storage_info)
     TextView txtStorageInfo;
-
+    @BindView(R.id.txt_afr_count)
+    TextView txtAfrCount;
     //是否在加载数据
     private boolean isProcessingData;
     //是否为分组导入
@@ -151,6 +152,7 @@ public class DataManageActivity
     private AlertDialog.Builder update_zcp_dialog;
     private DownLoadProgressDialog downLoadProgressDialog;
     private MyHandler myHandler = new MyHandler(this);
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_data_manage;
@@ -178,6 +180,31 @@ public class DataManageActivity
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
         return builder.setTitle("数据管理");
+    }
+
+    private void initAfrCount() {
+
+        DataBaseExecutor.addTask(new DataBaseTask() {
+            @Override
+            public DataBaseRespon executeOper() {
+                int stuCount = DBManager.getInstance().getItemStudent(TestConfigs.getCurrentItemCode(), -1, 0).size();
+                int afrCount = DBManager.getInstance().queryByItemStudentFeatures().size();
+
+                return new DataBaseRespon(true, stuCount + "", afrCount);
+            }
+
+            @Override
+            public void onExecuteSuccess(DataBaseRespon respon) {
+                txtAfrCount.setText(String.format(getString(R.string.afr_count_hint), Integer.valueOf(respon.getInfo()), (Integer) respon.getObject()));
+            }
+
+            @Override
+            public void onExecuteFail(DataBaseRespon respon) {
+
+            }
+        });
+
+
     }
 
     private void initGridView() {
@@ -389,6 +416,7 @@ public class DataManageActivity
     private Headers saveHeaders;
     private DownLoadPhotoHeaders photoHeaders;
     private DownloadUtils downloadUtils = new DownloadUtils();
+
     private void showDownLoadPhotoDialog() {
         downLoadProgressDialog = new DownLoadProgressDialog(this);
         downLoadProgressDialog.setCancelClickListener(new View.OnClickListener() {
@@ -401,6 +429,7 @@ public class DataManageActivity
         final DownLoadPhotoHeaders photoHeaders = SharedPrefsUtil.loadFormSource(this, DownLoadPhotoHeaders.class);
         List<String> itemList = new ArrayList<>();
         if (photoHeaders == null || photoHeaders.getPageNo() == 0) {
+            OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在进行头像下载...");
             uploadPhotos(1, "");
             return;
         } else {
@@ -423,7 +452,7 @@ public class DataManageActivity
                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在进行头像下载...");
                         switch (selectWhich) {
                             case 0:
                                 if (photoHeaders.getBatchTotal() != photoHeaders.getPageNo()) {
@@ -466,10 +495,11 @@ public class DataManageActivity
                     @Override
                     public void onResponse(Headers headers) {
                         saveHeaders = headers;
-                        LogUtils.operation("saveHeaders="+saveHeaders.toString());
+                        LogUtils.operation("saveHeaders=" + saveHeaders.toString());
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
                                 downLoadProgressDialog.showDialog();
                                 if (!TextUtils.isEmpty(saveHeaders.get("BatchTotal"))) {
                                     downLoadProgressDialog.setMaxProgress(Integer.valueOf(saveHeaders.get("BatchTotal")));
@@ -560,6 +590,7 @@ public class DataManageActivity
         });
 
     }
+
     @Override
     public void handleMessage(Message msg) {
         super.handleMessage(msg);
@@ -567,13 +598,11 @@ public class DataManageActivity
         if (TextUtils.isEmpty(msg.obj.toString()) && msg.what == 1) {
             ToastUtils.showShort("服务访问失败");
             downLoadProgressDialog.dismissDialog();
-
+            OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
         } else {
             fileZipArchiver((String) msg.obj, msg.arg1 == 1);
         }
     }
-
-
 
 
     private void getAPPS() {
@@ -581,11 +610,15 @@ public class DataManageActivity
         final HttpSubscriber subscriber = new HttpSubscriber();
         String version = SystemBrightUtils.getCurrentVersion(this);
         subscriber.getApps(this, version, new OnResultListener<List<SoftApp>>() {
+            @Override
+            public void onResponseTime(String responseTime) {
+
+            }
 
             @Override
             public void onSuccess(List<SoftApp> result) {
 
-                if (result.size()>0){
+                if (result.size() > 0) {
                     showAppDataDialog(result);
                 }
             }
@@ -597,9 +630,11 @@ public class DataManageActivity
         });
     }
 
-    /**app版本选择*/
+    /**
+     * app版本选择
+     */
     private void showAppDataDialog(final List<SoftApp> result) {
-        Intent intent = new Intent(this,UpdateAppActivity.class);
+        Intent intent = new Intent(this, UpdateAppActivity.class);
         intent.putExtra("SoftApp", (Serializable) result);
         startActivity(intent);
 //        String [] exemType = new String[result.size()];
@@ -618,7 +653,6 @@ public class DataManageActivity
 //                    }
 //                }).create().show();
     }
-
 
 
     private int choice;
@@ -713,6 +747,7 @@ public class DataManageActivity
         if (baseEvent.getTagInt() == EventConfigs.DATA_DOWNLOAD_SUCCEED) {
             OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
             ToastUtils.showShort("数据下载完成");
+            initAfrCount();
         } else if (baseEvent.getTagInt() == EventConfigs.DATA_DOWNLOAD_FAULT) {
             OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
         } else if (baseEvent.getTagInt() == EventConfigs.TOKEN_ERROR) {
@@ -734,6 +769,7 @@ public class DataManageActivity
                         isProcessingData = false;
                         Intent intent = new Intent(DataRetrieveActivity.UPDATE_MESSAGE);
                         sendBroadcast(intent);
+                        initAfrCount();
                         break;
 
                     case ExlListener.EXEL_READ_FAIL:
@@ -773,6 +809,7 @@ public class DataManageActivity
                 SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
                 DBManager.getInstance().initDB();
                 TestConfigs.init(this, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), null);
+                initAfrCount();
                 break;
             case REQUEST_CODE_EXPORT_TEMPLATE:
 
@@ -918,15 +955,16 @@ public class DataManageActivity
                         continue;
                     }
 //                    byte[] bgr24 = ImageUtils.bitmapToBgr24(bitmap);
-                    boolean success = FaceServer.getInstance().registerBgr24(DataManageActivity.this, bgr24, bitmap.getWidth(), bitmap.getHeight(),
-                            jpgFile.getName().substring(0, jpgFile.getName().lastIndexOf(".")));
-                    if (!success) {
-                        Log.e("faceRegister", "人脸注册失败" + jpgFile.getName().substring(0, jpgFile.getName().lastIndexOf(".")));
-//                        File failedFile = new File(file + File.separator + jpgFile.getName());
-//                        if (!failedFile.getParentFile().exists()) {
-//                            failedFile.getParentFile().mkdirs();
-//                        }
-//                        jpgFile.renameTo(failedFile);
+                    String studentCode = jpgFile.getName().substring(0, jpgFile.getName().lastIndexOf("."));
+                    byte[] success = FaceServer.getInstance().registerBgr24Byte(DataManageActivity.this, bgr24, bitmap.getWidth(), bitmap.getHeight(),
+                            studentCode);
+                    if (student != null) {
+                        student.setFaceFeature(Base64.encodeToString(success, Base64.DEFAULT));
+                        DBManager.getInstance().updateStudent(student);
+                    }
+                    if (success == null) {
+                        Log.e("faceRegister", "人脸注册失败" + studentCode);
+
                     } else {
                         successCount++;
                     }
@@ -935,6 +973,7 @@ public class DataManageActivity
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        initAfrCount();
                         progressDialog.dismiss();
                     }
                 });

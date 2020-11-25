@@ -85,6 +85,7 @@ public class RangerSettingActivity extends BaseTitleActivity implements Compound
         switch (view.getId()){
             case R.id.tv_throw:
                 ThrowSettingDialog dialog = new ThrowSettingDialog(this);
+                dialog.setItemType(setting.getItemType());
                 dialog.show();
                 break;
             case R.id.tv_staJump:

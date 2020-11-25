@@ -1,6 +1,8 @@
 package com.feipulai.host.activity.ranger;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -8,6 +10,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseTitleActivity;
 import com.feipulai.host.activity.base.TextChangeListener;
@@ -28,6 +31,12 @@ public class RangerSettingActivity extends BaseTitleActivity {
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_ranger_setting;
+    }
+
+    @Nullable
+    @Override
+    protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
+        return builder.setTitle("项目设置");
     }
 
     @Override

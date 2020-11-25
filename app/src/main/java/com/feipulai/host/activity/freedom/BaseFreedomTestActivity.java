@@ -185,6 +185,7 @@ public abstract class BaseFreedomTestActivity extends BaseTitleActivity {
 
     }
     protected void setScore(int score){
+
         txtTestResult.setText(ResultDisplayUtils.getStrResultForDisplay(score));
     }
     /**

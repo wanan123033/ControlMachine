@@ -1,9 +1,13 @@
 package com.feipulai.exam.activity.base;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.TextureView;
 
@@ -17,8 +21,15 @@ import com.arcsoft.face.enums.DetectFaceOrientPriority;
 import com.arcsoft.face.enums.DetectMode;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.bean.UserPhoto;
+import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.entity.StudentItem;
+import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
+import com.feipulai.exam.service.UpdateService;
+import com.feipulai.exam.view.OperateProgressBar;
 import com.lgh.uvccamera.UVCCameraProxy;
 import com.lgh.uvccamera.callback.ConnectCallback;
 import com.lgh.uvccamera.callback.PreviewCallback;
@@ -28,6 +39,7 @@ import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.libarcface.faceserver.ThreadManager;
 import com.ww.fpl.libarcface.model.DrawInfo;
 import com.ww.fpl.libarcface.model.FacePreviewInfo;
+import com.ww.fpl.libarcface.model.FaceRegisterInfo;
 import com.ww.fpl.libarcface.util.ConfigUtil;
 import com.ww.fpl.libarcface.util.DrawHelper;
 import com.ww.fpl.libarcface.util.face.FaceHelper;
@@ -316,7 +328,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             faceHelper.release();
             faceHelper = null;
         }
-
+        mUVCCamera.stopPreview();
         faceRectView2 = null;
         drawHelper = null;
         mUVCCamera = null;
@@ -537,7 +549,12 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         if ((compareResult1 == null && compareResult2 == null && compareResult3 == null) || faceHelper == null) {
             Log.e("TAG", "BaseAFRFragment compareResult if ");
             requestFeatureStatusMap.put(faceId, RequestFeatureStatus.FAILED);
-
+            if (SettingHelper.getSystemSetting().isNetCheckTool() && !isNetface) {
+                isNetWork = true;
+                isStartFace = false;
+                Log.e("TAG", "++++++++++++++++++++++++netFace553");
+                netFace();
+            }
             return;
         }
         if (compareResult1 != null && compareResult2 != null && compareResult3 != null) {
@@ -567,32 +584,57 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                 isOpenCamera = false;
                 hasTry = 0;
                 if (student == null) {
-                    isStartFace = true;
-                    isOpenCamera = true;
-                    retryRecognizeDelayed(faceId);
-                    compareListener.compareStu(null);
+                    hasTry = 0;
+                    faceHelper.setName(faceId, getString(R.string.recognize_failed_notice, ""));
+                    isOpenCamera = false;
+                    isStartFace = false;
+
+                    if (SettingHelper.getSystemSetting().isNetCheckTool() && !isNetface) {
+                        isNetWork = true;
+                        Log.e("TAG", "++++++++++++++++++++++++netFace602");
+                        netFace();
+                        return;
+                    } else {
+                        if (isLodingServer) {
+                            compareListener.compareStu(null);
+                        } else {
+                            showAddHint();
+                            return;
+                        }
+                    }
                 } else {
                     compareListener.compareStu(student);
                     isStartFace = false;
                     isNetWork = false;
                 }
 
-
 //                isOpenCamera=false;
             } else {
                 hasTry++;
                 Logger.e("compareResult==>null----" + hasTry);
                 if (hasTry < 3) {
-                    faceHelper.setName(faceId, getString(R.string.recognize_failed_notice, faceId + ""));
+                    faceHelper.setName(faceId, getString(R.string.recognize_failed_notice, ""));
                     isStartFace = true;
                     retryRecognizeDelayed(faceId);
                 } else {
                     hasTry = 0;
                     faceHelper.setName(faceId, getString(R.string.recognize_failed_notice, ""));
-                    isStartFace = true;
-                    isOpenCamera = true;
-                    retryRecognizeDelayed(faceId);
-                    compareListener.compareStu(null);
+                    isOpenCamera = false;
+                    isStartFace = false;
+
+                    if (SettingHelper.getSystemSetting().isNetCheckTool() && !isNetface) {
+                        isNetWork = true;
+                        Log.e("TAG", "++++++++++++++++++++++++netFace602");
+                        netFace();
+                        return;
+                    } else {
+                        if (isLodingServer) {
+                            compareListener.compareStu(null);
+                        } else {
+                            showAddHint();
+                            return;
+                        }
+                    }
                 }
 
             }
@@ -603,6 +645,188 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
     }
 
+    private boolean isNetface = false; //控制netFace()是否还没有走完  只有走完了才能再次调用哟
+
+    public void netFace() {
+        if (isNetWork) {
+            isNetface = true;
+            isNetWork = false;
+            isStartFace = false;
+            if (getActivity() != null)
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        OperateProgressBar.showLoadingUi(getActivity(), "在线识别中...");
+                    }
+                });
+
+            if (mFaceFeature != null) {
+                HttpSubscriber httpSubscriber = new HttpSubscriber();
+                httpSubscriber.setOnRequestEndListener(new HttpSubscriber.OnRequestEndListener() {
+                    @Override
+                    public void onSuccess(int bizType) {
+                        if (getActivity() != null)
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    OperateProgressBar.removeLoadingUiIfExist(getActivity());
+                                }
+                            });
+
+                    }
+
+                    @Override
+                    public void onFault(int bizType) {
+                        if (getActivity() != null)
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    OperateProgressBar.removeLoadingUiIfExist(getActivity());
+                                }
+                            });
+                        isNetface = false;
+                        if (bizType == -1) {//在线未识别成功
+                            isStartFace = true;
+                            ToastUtils.showShort("在线识别失败");
+                            compareListener.compareStu(null);
+
+                        } else {
+                            isStartFace = true;
+                            retryRecognizeDelayed(faceId);
+                            ToastUtils.showShort("网络异常");
+                        }
+                    }
+
+                    @Override
+                    public void onRequestData(Object data) {
+                        if (getActivity() != null)
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    OperateProgressBar.removeLoadingUiIfExist(getActivity());
+                                }
+                            });
+                        isNetface = false;
+                        isStartFace = false;
+                        isLodingServer = false;
+                        UserPhoto photo = (UserPhoto) data;
+                        if (TextUtils.isEmpty(photo.getStudentcode())) {
+                            //新增学生
+                            ToastUtils.showShort("在线识别失败");
+                            compareListener.compareStu(null);
+
+                        } else {
+                            //识别成功，当前考生是否存在，不存在下载当前考生数据
+                            Student student = DBManager.getInstance().queryStudentByCode(photo.getStudentcode());
+                            Log.e("TAG", "STUDENT=" + student);
+                            if (student != null) {
+                                compareListener.compareStu(student);
+                                Intent intent = new Intent(mContext, UpdateService.class);
+                                mContext.startService(intent);
+                            } else {
+                                getStudent(photo.getStudentcode());
+                            }
+                        }
+                    }
+                });
+                httpSubscriber.sendFaceOnline("", "", Base64.encodeToString(mFaceFeature.getFeatureData(), Base64.DEFAULT));
+            }
+        }
+    }
+
+    private void showAddHint() {
+        isStartFace = false;
+
+        ((Activity) mContext).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (uploadDataDialog == null || !uploadDataDialog.isShowing()) {
+                    uploadDataDialog = new SweetAlertDialog(mContext).setTitleText(getString(R.string.student_nonentity))
+                            .setContentText("是否进行服务器信息识别")
+                            .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    sweetAlertDialog.dismissWithAnimation();
+                                    getStudent(null);
+                                }
+                            }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    sweetAlertDialog.dismissWithAnimation();
+                                    isStartFace = true;
+                                    retryRecognizeDelayed(faceId);
+
+                                }
+                            });
+                    uploadDataDialog.show();
+                }
+            }
+        });
+
+
+    }
+
+    private void getStudent(final String studentCode) {
+        OperateProgressBar.showLoadingUi((Activity) mContext, "正在查询服务器信息...");
+        HttpSubscriber itemSubscriber = new HttpSubscriber();
+        itemSubscriber.setOnRequestEndListener(new HttpSubscriber.OnRequestEndListener() {
+            @Override
+            public void onSuccess(int bizType) {
+                isLodingServer = true;
+                if (getActivity() != null)
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            OperateProgressBar.removeLoadingUiIfExist(getActivity());
+                        }
+                    });
+                isStartFace = true;
+                retryRecognizeDelayed(faceId);
+                //下载学生
+                Intent intent = new Intent(mContext, UpdateService.class);
+                mContext.startService(intent);
+
+            }
+
+            @Override
+            public void onFault(int bizType) {
+                if (getActivity() != null)
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            OperateProgressBar.removeLoadingUiIfExist(getActivity());
+                        }
+                    });
+                isStartFace = true;
+                isLodingServer = true;
+                retryRecognizeDelayed(faceId);
+            }
+
+            @Override
+            public void onRequestData(Object data) {
+                isLodingServer = true;
+                if (getActivity() != null)
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            OperateProgressBar.removeLoadingUiIfExist(getActivity());
+                        }
+                    });
+
+                List<Student> studentList = (List<Student>) data;
+                List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
+                for (Student student : studentList) {
+                    if (!TextUtils.isEmpty(studentCode) && TextUtils.equals(student.getStudentCode(), studentCode)) {
+                        compareListener.compareStu(student);
+                    }
+                    registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+                }
+                FaceServer.getInstance().addFaceList(registerInfoList);
+
+            }
+        });
+        itemSubscriber.getItemStudent(TestConfigs.getCurrentItemCode(), 1, StudentItem.EXAM_NORMAL, studentCode);
+    }
 
     private onAFRCompareListener compareListener;
 

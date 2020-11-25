@@ -13,6 +13,7 @@ import com.feipulai.host.activity.medicine_ball.MedicineBallSelectActivity;
 import com.feipulai.host.activity.pullup.PullUpSelectActivity;
 import com.feipulai.host.activity.radio_timer.RunTimerFreeTestActivity;
 import com.feipulai.host.activity.radio_timer.RunTimerTestActivity;
+import com.feipulai.host.activity.ranger.RangerPersonTestActivity;
 import com.feipulai.host.activity.ranger.RangerTestActivity;
 import com.feipulai.host.activity.sitreach.SitReachSelectActivity;
 import com.feipulai.host.activity.situp.check.SitUpCheckActivity;
@@ -69,7 +70,7 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_TS, JumpRopeCheckActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_YWQZ, SitUpCheckActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_HW, HeightWeightCheckActivity.class);
-
+        TestConfigs.proActivity.put(ItemDefault.CODE_SGBQS, SitUpCheckActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_FHL, VitalTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_ZWTQQ, SitReachSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_LDTY, StandJumpSelectActivity.class);
@@ -78,6 +79,7 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_WLJ, VitalTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_YTXS, PullUpSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_SL, VisionCheckActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_JGCJ, RangerPersonTestActivity.class);
 
         TestConfigs.freedomActivity.put(ItemDefault.CODE_SL, VisionTestActivity.class);
         TestConfigs.freedomActivity.put(ItemDefault.CODE_JGCJ, RangerTestActivity.class);

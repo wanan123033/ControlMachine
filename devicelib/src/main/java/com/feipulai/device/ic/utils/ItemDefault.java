@@ -37,6 +37,7 @@ public class ItemDefault {
     public static final int CODE_WLJ = 22;//握力计
     public static final int CODE_JGCJ = 24;//激光测距
     public static final int CODE_SHOOT = 26;//一分钟投篮26
+    public static final int CODE_SGBQS = 27;//双杠臂屈伸
     public static final int CODE_SPORT_TIMER = 0X1C;//运动计时28
 
     public static char[] keyA = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};//默认密码
@@ -54,6 +55,7 @@ public class ItemDefault {
         HOST_IDS_MAP.put(ItemDefault.CODE_FWC, 15);
         HOST_IDS_MAP.put(ItemDefault.CODE_YWQZ, 15);
         HOST_IDS_MAP.put(ItemDefault.CODE_ZWTQQ, 15);
+        HOST_IDS_MAP.put(ItemDefault.CODE_SGBQS, 15);
         HOST_IDS_MAP.put(ItemDefault.CODE_TS, 9);
         HOST_IDS_MAP.put(ItemDefault.CODE_YTXS, 15);
         HOST_IDS_MAP.put(ItemDefault.CODE_HWSXQ, 15);

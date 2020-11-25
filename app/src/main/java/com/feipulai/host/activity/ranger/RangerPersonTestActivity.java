@@ -119,11 +119,31 @@ public class RangerPersonTestActivity extends BasePersonTestActivity {
 
     private void onResults(byte[] datas) {
         RangerResult result = new RangerResult(datas);
-        int result1 = result.getResult();
+        int result1 = calculation(result,setting);
         pair.setResult(result1);
         updateResult(pair);
     }
-
+    private int calculation(RangerResult result, RangerSetting rangerSetting) {
+        int itemType = rangerSetting.getItemType();
+        if (itemType == 2 || itemType == 3 || itemType == 4){ //跳远类项目
+            double level1 = rangerSetting.getLevel1();
+            double level2 = rangerSetting.getLevel2();
+            Point jidian1 = RangerUtil.getPoint(level1,rangerSetting.getQd1_hor());
+            Point jidian2 = RangerUtil.getPoint(level2,rangerSetting.getQd2_hor());
+            double level = RangerUtil.level(result.getLevel_d(),result.getLevel_g(),result.getLevel_m());
+            Point p = RangerUtil.getPoint(level,result.getResult());
+            double length = RangerUtil.length(jidian1, jidian2, p);
+            return (int) length;
+        }else if (itemType == 0 || itemType == 1){   //跳高类项目
+            return result.getResult();
+        }else if (itemType == 5 || itemType == 6 || itemType == 7 || itemType == 8){  //投掷类项目
+            double dd = RangerUtil.level(result.getLevel_d(),result.getLevel_g(),result.getLevel_m());
+            double inclination = RangerUtil.inclination(rangerSetting.getLevel(), dd);
+            double length = RangerUtil.cosine(inclination, rangerSetting.getQd_hor(), result.getResult());
+            return ((int) (length - rangerSetting.getRadius()));
+        }
+        return 0;
+    }
     @Override
     public void sendTestCommand(BaseStuPair baseStuPair) {
         tv_foul.setVisibility(View.VISIBLE);

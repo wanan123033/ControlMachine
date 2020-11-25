@@ -16,6 +16,7 @@ import com.feipulai.exam.bean.StudentBean;
 import com.feipulai.exam.bean.UpdateApp;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.bean.UserBean;
+import com.feipulai.exam.bean.UserPhoto;
 import com.feipulai.exam.netUtils.HttpResult;
 import com.feipulai.exam.netUtils.ResponseParame;
 import org.json.JSONObject;
@@ -114,5 +115,9 @@ public interface HttpApi {
     @POST(UPDATE_SOFT_APP)
     @Headers("Content-Type:application/json;charset=UTF-8")
     Observable<HttpResult<UpdateApp>> updateSoftApp(@Body RequestBody body);
+
+    @POST("run/compareFaceFeature")
+    @Headers("Content-Type:application/json;charset=UTF-8")
+    Observable<HttpResult<UserPhoto>> compareFaceFeature(@Header("Authorization") String token, @Body ResponseParame data);
 
 }

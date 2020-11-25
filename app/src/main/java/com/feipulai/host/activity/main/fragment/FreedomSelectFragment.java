@@ -47,7 +47,7 @@ public class FreedomSelectFragment extends BaseFragment implements DialogInterfa
         mTupleList.add(new Tuple(ItemDefault.CODE_HWSXQ, getString(R.string.medicine_ball), R.mipmap.icon_medicine_ball, 3));
         mTupleList.add(new Tuple(ItemDefault.CODE_ZFP, getString(R.string.run_time), R.mipmap.icon_runtime, 3));
         mTupleList.add(new Tuple(ItemDefault.CODE_SL, "视力", R.mipmap.icon_sl, 3));
-//        mTupleList.add(new Tuple(ItemDefault.CODE_JGCJ, getString(R.string.run_ranger), R.mipmap.icon_jgcj, 3));
+        mTupleList.add(new Tuple(ItemDefault.CODE_JGCJ, getString(R.string.run_ranger), R.mipmap.icon_jgcj, 3));
 
 
         RecyclerView recyclerView = findView(R.id.rv_item);

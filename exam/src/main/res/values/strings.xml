@@ -46,7 +46,7 @@
     <string name="student_Code">学号:%1$s</string>
     <string name="student_Result">成绩:%1$s</string>
     <string name="student_Portrait">头像:</string>
-
+    <string name="student_nonentity">该考生不存在</string>
     <!--账号提示-->
     <string name="hint_account">请输入用户名</string>
     <!--密码提示-->
@@ -82,4 +82,5 @@
     <string name="thermometer_open_dialog_msg">请启动体温枪或未进行体温枪连接</string>
 
     <string name="download_photo_select">继续下载（%1$d / %2$d）</string>
+    <string name="afr_count_hint">全部考生：%1$d          考生特征：%2$d </string>
 </resources>

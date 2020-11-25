@@ -40,6 +40,7 @@ import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LoginActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.situp.check.SitUpCheckActivity;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.netUtils.HttpManager;
 import com.feipulai.exam.utils.bluetooth.BlueToothListActivity;
@@ -125,6 +126,8 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     Spinner spPrintTool;
     @BindView(R.id.ll_print_tool)
     LinearLayout llPrintTool;
+    @BindView(R.id.txt_host_hint)
+    TextView txtHostHint;
     private String[] partternList = new String[]{"个人测试", "分组测试"};
     private List<Integer> hostIdList;
     private SystemSetting systemSetting;
@@ -241,6 +244,10 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         cbMonitoring.setChecked(systemSetting.isBindMonitoring());
         cbThermometer.setChecked(systemSetting.isStartThermometer());
         cbIsTcp.setChecked(systemSetting.isTCP());
+
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_YWQZ || TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_SGBQS) {
+            txtHostHint.setVisibility(View.VISIBLE);
+        }
     }
 
     @Nullable
