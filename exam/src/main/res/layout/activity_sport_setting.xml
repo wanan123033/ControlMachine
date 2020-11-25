@@ -27,7 +27,7 @@
             android:gravity="center"
             android:text="查看标准"
             android:textColor="@color/white"
-            android:textSize="@dimen/sp_16" />
+            android:textSize="18sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,12 +38,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="18sp"
                 android:text="光柱数量：" />
 
             <Spinner
                 android:id="@+id/sp_device_count"
                 android:layout_width="100dp"
-                android:layout_height="30dp"
+                android:layout_height="40dp"
                 android:layout_marginLeft="50dp"
                 android:background="@drawable/icon_spinner_bg" />
 
@@ -59,12 +61,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="18sp"
                 android:text="测试次数：" />
 
             <Spinner
                 android:id="@+id/sp_test_times"
                 android:layout_width="100dp"
-                android:layout_height="30dp"
+                android:layout_height="40dp"
                 android:layout_marginLeft="50dp"
                 android:background="@drawable/icon_spinner_bg" />
 
@@ -81,12 +85,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="18sp"
                 android:text="成绩精度：" />
 
             <Spinner
                 android:id="@+id/sp_mark_degree"
                 android:layout_width="100dp"
-                android:layout_height="30dp"
+                android:layout_height="40dp"
                 android:layout_marginLeft="50dp"
                 android:background="@drawable/icon_spinner_bg" />
         </LinearLayout>
@@ -101,26 +107,27 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="18sp"
                 android:text="成绩进位：" />
 
             <Spinner
                 android:id="@+id/sp_mark_type"
                 android:layout_width="100dp"
-                android:layout_height="30dp"
+                android:layout_height="40dp"
                 android:layout_marginLeft="50dp"
                 android:background="@drawable/icon_spinner_bg" />
         </LinearLayout>
-
         <TextView
-            android:layout_width="120dp"
-            android:layout_height="45dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginBottom="@dimen/dp_10"
-            android:background="@drawable/blue_button_background"
-            android:layout_gravity="center_horizontal"
+            android:id="@+id/tv_init_way"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/btn_background"
             android:gravity="center"
+            android:layout_gravity="center_horizontal"
             android:text="自定义路线"
             android:textColor="@color/white"
-            android:textSize="@dimen/sp_16" />
+            android:textSize="18dp" />
     </LinearLayout>
 </RelativeLayout>

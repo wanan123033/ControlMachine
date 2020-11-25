@@ -395,13 +395,22 @@ public class Radio868Result {
                 setResult(data[5]);//38 上 32 下 34 右 36 右 35 确定 42 返回
                 break;
             case ItemDefault.CODE_SPORT_TIMER:
-                if (data[0] == 0xAA && data.length == data[1]){
+                if ((data[0]& 0xff) == 0xAA && data.length == data[1]){
                     setResult(new SportResult(data));
                     switch (data[7]){
                         case 20://子机配对
+                        case 23://设置参数
                             setType(SerialConfigs.SPORT_TIMER_MATCH);
                             break;
-
+                        case 0:
+                            setType(SerialConfigs.SPORT_TIMER_CONNECT);
+                            break;
+                        case 2:
+                            setType(SerialConfigs.SPORT_TIMER_GET_TIME);
+                            break;
+                        case 13:
+                            setType(SerialConfigs.SPORT_TIMER_RESULT);
+                            break;
                     }
                 }
                 break;

@@ -31,8 +31,16 @@ public class NewProtocolLinker extends SitPullLinker {
             // 0频段接收到的结果,肯定是设备的开机广播
             if (frequency == TARGET_FREQUENCY && deviceId == currentDeviceId && hostId == deviceHostId) {
                 onNewDeviceConnect();
+                if (machineCode == ItemDefault.CODE_SPORT_TIMER){
+                    listener.setFrequency(currentDeviceId, hostId, TARGET_FREQUENCY);
+                }
             } else {
-                listener.setFrequency(currentDeviceId, frequency, TARGET_FREQUENCY);
+                if (machineCode == ItemDefault.CODE_SPORT_TIMER){
+                    listener.setFrequency(currentDeviceId, hostId, TARGET_FREQUENCY);
+                }else {
+                    listener.setFrequency(currentDeviceId, frequency, TARGET_FREQUENCY);
+                }
+
                 currentFrequency = TARGET_FREQUENCY;
                 // 那个铁盒子就是有可能等这么久才收到回复
                 mHandler.sendEmptyMessageDelayed(NO_PAIR_RESPONSE_ARRIVED, 5000);

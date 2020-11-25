@@ -10,4 +10,10 @@ public class SportPairActivity extends SitPullPairActivity {
     public SitPullUpPairPresenter getPresenter() {
         return new SportTimerPairPresenter(this,this);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setInitWayVisibile();
+    }
 }

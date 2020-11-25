@@ -417,7 +417,10 @@
             android:name=".activity.sport_timer.pair.SportPairActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-
+        <activity
+            android:name=".activity.sport_timer.SportInitWayActivity"
+            android:configChanges="keyboardHidden|keyboard"
+            android:windowSoftInputMode="stateHidden" />
         <receiver android:name="com.feipulai.device.spputils.SppReciver" />
 
         <service android:name="com.inuker.bluetooth.library.BluetoothService" />

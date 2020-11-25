@@ -46,8 +46,8 @@
                     android:paddingRight="8dp"
                     android:text="设备配对"
                     android:textColor="@color/white"
-                    android:textSize="20dp"
-                     />
+                    android:textSize="20dp" />
+
                 <ImageView
                     android:id="@+id/img_AFR"
                     android:layout_width="60dp"
@@ -69,17 +69,15 @@
                 android:background="#313131">
 
                 <CheckBox
-                    android:id="@+id/cb_near"
+                    android:id="@+id/cb_device_state"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_marginRight="20dp"
                     android:layout_marginTop="15dp"
+                    android:layout_marginRight="20dp"
                     android:button="@null"
-                    android:clickable="false"
-                    android:drawablePadding="15dp"
                     android:drawableTop="@drawable/cb_device_state"
-                    android:enabled="false"
+                    android:drawablePadding="15dp"
                     android:text="设备状态"
                     android:textColor="@color/white"
                     android:textSize="20sp" />
@@ -112,29 +110,6 @@
                     android:layout_alignParentBottom="true"
                     android:gravity="center_horizontal"
                     android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/tv_punish_add"
-                        android:layout_width="100dp"
-                        android:layout_height="40dp"
-                        android:layout_margin="10dp"
-                        android:background="@drawable/btn_background"
-                        android:gravity="center"
-                        android:text="判罚 +"
-                        android:textColor="@color/white"
-                        android:textSize="18dp" />
-
-                    <TextView
-                        android:id="@+id/tv_punish_subtract"
-                        android:layout_width="100dp"
-                        android:layout_height="40dp"
-                        android:layout_margin="10dp"
-                        android:background="@drawable/btn_background"
-                        android:gravity="center"
-                        android:text="判罚 -"
-                        android:textColor="@color/white"
-                        android:textSize="18dp" />
-
 
                     <TextView
                         android:id="@+id/tv_foul"
@@ -185,7 +160,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="76dp"
+                android:layout_height="48dp"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -241,67 +216,167 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_end_result"
+                    android:layout_width="150dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/selector_white_grey"
+                    android:gravity="center"
+                    android:text="成绩" />
+
+                <TextView
+                    android:id="@+id/tv_part_result"
+                    android:layout_width="150dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="1dp"
+                    android:background="@drawable/selector_white_grey"
+                    android:gravity="center"
+                    android:text="分段成绩" />
+            </LinearLayout>
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp">
                 <LinearLayout
-                    android:id="@+id/view_list_head"
-                    android:layout_width="620dp"
-                    android:layout_height="35dp"
-                    android:background="@color/grey_A8"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="70dp"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="轮次"
-                        android:textSize="@dimen/sp_16" />
-
-                    <TextView
-                        android:layout_width="200dp"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="机器成绩"
-                        android:textSize="@dimen/sp_16" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="实际成绩"
-                        android:textSize="@dimen/sp_16" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="违例数"
-                        android:textSize="@dimen/sp_16" />
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="状态"
-                        android:textSize="@dimen/sp_16" />
-                </LinearLayout>
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_test_result"
+                    android:id="@+id/rl_group"
                     android:layout_width="620dp"
                     android:layout_height="match_parent"
-                    android:layout_below="@+id/view_list_head"
-                    android:background="@color/white"
-                    android:overScrollMode="never" />
+                    android:orientation="vertical"
+                    >
+
+                    <LinearLayout
+                        android:id="@+id/view_list_head"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="35dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="70dp"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:text="轮次"
+                                android:textSize="@dimen/sp_16" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="100"
+                                android:gravity="center"
+                                android:text="成绩"
+                                android:textSize="@dimen/sp_16" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:text="状态"
+                                android:textSize="@dimen/sp_16" />
+                        </LinearLayout>
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/rv_test_result"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/white"
+                            android:overScrollMode="never" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/view_part_result"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="visible"
+                        android:orientation="horizontal">
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/list_item"
+                            android:layout_width="200dp"
+                            android:layout_height="match_parent"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+                            <View
+                                android:layout_width="match_parent"
+                                android:background="@color/grey"
+                                android:layout_height="0.1dp"/>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:orientation="horizontal"
+                                android:layout_height="30dp">
+                                <View
+                                    android:layout_width="0.1dp"
+                                    android:layout_height="match_parent"
+                                    android:background="@color/grey"/>
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:text="设计路线"/>
+                                <View
+                                    android:layout_width="0.1dp"
+                                    android:layout_height="match_parent"
+                                    android:background="@color/grey"/>
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:text="接收顺序"/>
+                                <View
+                                    android:layout_width="0.1dp"
+                                    android:layout_height="match_parent"
+                                    android:background="@color/grey"/>
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:text="分段成绩"/>
+                                <View
+                                    android:layout_width="0.1dp"
+                                    android:layout_height="match_parent"
+                                    android:background="@color/grey"/>
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:text="备注"/>
+                                <View
+                                    android:layout_width="0.1dp"
+                                    android:layout_height="match_parent"
+                                    android:background="@color/grey"/>
+                            </LinearLayout>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="0.1dp"
+                                android:background="@color/grey"/>
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/rv_region_mark"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"/>
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_toRightOf="@+id/rv_test_result"
+                    android:layout_toRightOf="@+id/rl_group"
                     android:orientation="vertical"
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp">
@@ -335,8 +410,8 @@
                         android:id="@+id/txt_finish_test"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_marginBottom="@dimen/dp_10"
                         android:layout_marginTop="@dimen/dp_10"
+                        android:layout_marginBottom="@dimen/dp_10"
                         android:layout_weight="1"
                         android:background="@drawable/btn_background"
                         android:gravity="center"
@@ -344,8 +419,8 @@
                         android:textColor="@color/white"
                         android:textSize="22sp" />
                 </LinearLayout>
-
             </RelativeLayout>
+
 
         </LinearLayout>
 
@@ -358,18 +433,19 @@
             android:background="@drawable/bg_white_radius_10"
             android:divider="@color/sbc_header_text"
             android:dividerHeight="1dp"
-            android:paddingBottom="@dimen/dp_10"
             android:paddingLeft="20dp"
-            android:paddingRight="20dp"
             android:paddingTop="@dimen/dp_10"
+            android:paddingRight="20dp"
+            android:paddingBottom="@dimen/dp_10"
             android:visibility="gone" />
+
         <FrameLayout
             android:id="@+id/frame_camera"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="40dp"
             android:background="@color/black"
-            android:visibility="gone"/>
+            android:visibility="gone" />
     </RelativeLayout>
 
 </LinearLayout>

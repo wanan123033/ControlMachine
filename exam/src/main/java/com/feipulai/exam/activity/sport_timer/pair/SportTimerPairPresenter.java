@@ -57,8 +57,9 @@ public class SportTimerPairPresenter extends SitPullUpPairPresenter {
         return setting.isAutoPair();
     }
 
-    public void setFrequency(int deviceId, int originFrequency, int deviceFrequency) {
-        manager.setFrequency(deviceId,originFrequency,deviceFrequency,SettingHelper.getSystemSetting().getHostId());
+    public void setFrequency(int deviceId, int hostId, int targetFrequency) {
+
+        manager.setFrequency(deviceId,targetFrequency,hostId,SettingHelper.getSystemSetting().getHostId());
     }
 
     @Override
