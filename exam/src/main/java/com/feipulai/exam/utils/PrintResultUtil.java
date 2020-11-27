@@ -54,7 +54,7 @@ public class PrintResultUtil {
 
                 RoundResultBean result = printResultList.get(i);
                 String printResult = "第" + result.getRoundNo() + "次:" + getPrintResultState(result);
-                Log.e("TAG------","printResult="+ printResult);
+                Log.e("TAG------", "printResult=" + printResult);
                 // 跳绳需要打印绊绳次数
                 switch (TestConfigs.sCurrentItem.getMachineCode()) {
                     case ItemDefault.CODE_TS:
@@ -62,6 +62,7 @@ public class PrintResultUtil {
                         break;
 
                     case ItemDefault.CODE_YWQZ:
+                    case ItemDefault.CODE_SGBQS:
                     case ItemDefault.CODE_YTXS:
                     case ItemDefault.CODE_PQ:
                         PrinterManager.getInstance().print(printResult + "(判罚:" + result.getPenalty() + ")");
@@ -83,7 +84,7 @@ public class PrintResultUtil {
     }
 
     private static String getPrintResultState(RoundResultBean roundResult) {
-        Log.e("TAG","roundResult.getIsFoul() = "+ roundResult.getIsFoul());
+        Log.e("TAG", "roundResult.getIsFoul() = " + roundResult.getIsFoul());
         switch (roundResult.getIsFoul()) {
             case RoundResult.RESULT_STATE_NORMAL:
                 return ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult(), false);

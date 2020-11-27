@@ -134,6 +134,7 @@ public class InteractUtils {
                     break;
                 case ItemDefault.CODE_YTXS:
                 case ItemDefault.CODE_YWQZ:
+                case ItemDefault.CODE_SGBQS:
                     roundResult.setResult(pair.getDeviceResult().getResult());
                     break;
 
@@ -301,6 +302,7 @@ public class InteractUtils {
 
             case ItemDefault.CODE_YTXS:
             case ItemDefault.CODE_YWQZ:
+            case ItemDefault.CODE_SGBQS:
             case ItemDefault.CODE_FWC:
                 if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_STOP_USE) {
                     showContent = String.format(Locale.CHINA, "%-3d暂停使用     ", deviceId);

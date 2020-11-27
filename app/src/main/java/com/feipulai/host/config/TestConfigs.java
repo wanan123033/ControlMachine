@@ -89,6 +89,7 @@ public class TestConfigs {
         // 每个机器码对应的机器名称
         TestConfigs.machineNameMap.put(ItemDefault.CODE_TS, MyApplication.getInstance().getString(R.string.jump_rope));
         TestConfigs.machineNameMap.put(ItemDefault.CODE_YWQZ, MyApplication.getInstance().getString(R.string.sit_up));
+        TestConfigs.machineNameMap.put(ItemDefault.CODE_SGBQS,"双杠臂屈伸");
         TestConfigs.machineNameMap.put(ItemDefault.CODE_HW, MyApplication.getInstance().getString(R.string.height_weight));
 
         TestConfigs.machineNameMap.put(ItemDefault.CODE_ZWTQQ, MyApplication.getInstance().getString(R.string.sit_reach));

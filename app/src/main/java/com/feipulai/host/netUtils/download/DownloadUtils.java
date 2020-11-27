@@ -7,6 +7,8 @@ import android.util.Log;
 
 import com.feipulai.common.utils.LogUtil;
 import com.feipulai.host.netUtils.CommonUtils;
+import com.feipulai.host.netUtils.HttpResult;
+import com.feipulai.host.utils.GsonUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,6 +16,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +24,7 @@ import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.Headers;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -77,6 +81,13 @@ public class DownloadUtils {
                     @Override
                     public void onNext(Response<ResponseBody> response) {
                         LogUtil.logDebugMessage(response.headers().toString());
+                        Headers headers = response.headers();
+                        if (TextUtils.isEmpty(headers.get("Code")) || Integer.valueOf(headers.get("Code")) == 1) {
+                            if (!TextUtils.isEmpty(headers.get("msg"))) {
+                                downloadListener.onFailure(fileName, URLDecoder.decode(headers.get("Msg")));
+                            }
+                            return;
+                        }
                         File file = new File(filePath + fileName);
                         downList.add(fileName);
                         if (!file.exists()) {

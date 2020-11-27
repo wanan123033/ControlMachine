@@ -133,9 +133,9 @@ public class PullUpTestPresenter
 
         int newState;
 
-        if ((machineCode == ItemDefault.CODE_YWQZ && deviceState == SitPushUpManager.STATE_COUNTING)) {
+        if (((machineCode == ItemDefault.CODE_YWQZ||machineCode == ItemDefault.CODE_SGBQS) && deviceState == SitPushUpManager.STATE_COUNTING)) {
             newState = BaseDeviceState.STATE_COUNTING;
-        } else if ((machineCode == ItemDefault.CODE_YWQZ && deviceState == SitPushUpManager.STATE_ENDED)) {
+        } else if (((machineCode == ItemDefault.CODE_YWQZ||machineCode == ItemDefault.CODE_SGBQS) && deviceState == SitPushUpManager.STATE_ENDED)) {
             newState = BaseDeviceState.STATE_FINISHED;
         } else {
             newState = batteryLeft <= 10 ? BaseDeviceState.STATE_LOW_BATTERY : BaseDeviceState.STATE_FREE;

@@ -327,7 +327,7 @@ public class TestConfigs {
 
         if (itemSchedules != null && itemSchedules.size() > 0) {
             for (ItemSchedule itemSchedule : itemSchedules
-                    ) {
+            ) {
                 itemSchedule.setItemCode(updateItemCode);
             }
             DBManager.getInstance().deleteSchedules(itemSchedules);
@@ -442,6 +442,7 @@ public class TestConfigs {
         TestConfigs.machineNameMap.put(ItemDefault.CODE_WLJ, "握力");
         TestConfigs.machineNameMap.put(ItemDefault.CODE_SHOOT, "篮球投篮");
         TestConfigs.machineNameMap.put(ItemDefault.CODE_SPORT_TIMER, "运动计时");
+        TestConfigs.machineNameMap.put(ItemDefault.CODE_SGBQS, "双杠臂屈伸");
 
         TestConfigs.settingActivity.put(ItemDefault.CODE_LDTY, StandJumpSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_ZWTQQ, SitReachSettingActivity.class);
@@ -449,6 +450,7 @@ public class TestConfigs {
         TestConfigs.settingActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_TS, JumpRopeSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_YWQZ, SitUpSettingActivity.class);
+        TestConfigs.settingActivity.put(ItemDefault.CODE_SGBQS, SitUpSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_YTXS, PullUpSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_PQ, VolleyBallSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_MG, SargentSettingActivity.class);
@@ -469,6 +471,8 @@ public class TestConfigs {
         TestConfigs.itemMaxScope.put(ItemDefault.CODE_TS, 999);
         TestConfigs.itemMinScope.put(ItemDefault.CODE_YWQZ, 0);
         TestConfigs.itemMaxScope.put(ItemDefault.CODE_YWQZ, 999);
+        TestConfigs.itemMinScope.put(ItemDefault.CODE_SGBQS, 0);
+        TestConfigs.itemMaxScope.put(ItemDefault.CODE_SGBQS, 999);
         TestConfigs.itemMinScope.put(ItemDefault.CODE_YTXS, 0);
         TestConfigs.itemMaxScope.put(ItemDefault.CODE_YTXS, 999);
         TestConfigs.itemMinScope.put(ItemDefault.CODE_ZFP, 0);
@@ -517,6 +521,7 @@ public class TestConfigs {
                 break;
 
             case ItemDefault.CODE_YWQZ:
+            case ItemDefault.CODE_SGBQS:
                 result = SharedPrefsUtil.loadFormSource(context, SitUpSetting.class).getTestNo();
                 break;
 

@@ -452,7 +452,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
 
                     @Override
                     public void onFailure(String fileName, String errorInfo) {
-                        HandlerUtil.sendMessage(myHandler, 1, 1, "");
+                        HandlerUtil.sendMessage(myHandler, 1, 1, errorInfo);
                     }
                 });
     }
@@ -463,6 +463,10 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
 
         if (TextUtils.isEmpty(msg.obj.toString()) && msg.what == 1) {
             ToastUtils.showShort("服务访问失败");
+            downLoadProgressDialog.dismissDialog();
+            OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
+        } else if (msg.what == 1) {
+            ToastUtils.showShort(msg.obj.toString());
             downLoadProgressDialog.dismissDialog();
             OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
         } else {
@@ -504,6 +508,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
     int selectWhich = 0;
 
     private void showDownLoadPhotoDialog() {
+        selectWhich = 0;
         downLoadProgressDialog = new DownLoadProgressDialog(this);
         downLoadProgressDialog.setCancelClickListener(new View.OnClickListener() {
             @Override
@@ -1021,6 +1026,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                 Logger.i(autoBackup ? "自动备份成功" : "自动备份失败");
                 DBManager.getInstance().clear();
                 SharedPrefsUtil.putValue(DataManageActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
+                SharedPrefsUtil.remove(DataManageActivity.this, DownLoadPhotoHeaders.class);
                 DBManager.getInstance().initDB();
                 TestConfigs.init(DataManageActivity.this, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), null);
                 FileUtil.delete(MyApplication.PATH_IMAGE);
@@ -1038,6 +1044,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
             public void onExecuteSuccess(DataBaseRespon respon) {
                 Logger.i("数据清空完成");
                 ToastUtils.showShort("数据清空完成");
+                initAfrCount();
             }
 
             @Override

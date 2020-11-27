@@ -70,7 +70,7 @@ public class SitPullLinker implements Handler.Callback {
             return false;
         }
         int what = msg.what;
-        if (machineCode == ItemDefault.CODE_YWQZ && what == SerialConfigs.SIT_UP_MACHINE_BOOT_RESPONSE) {
+        if ((machineCode == ItemDefault.CODE_YWQZ||machineCode == ItemDefault.CODE_SGBQS) && what == SerialConfigs.SIT_UP_MACHINE_BOOT_RESPONSE) {
             SitPushUpSetFrequencyResult sitUpSetFrequencyResult = (SitPushUpSetFrequencyResult) msg.obj;
             Log.i("", sitUpSetFrequencyResult.toString());
             checkDevice(sitUpSetFrequencyResult);
