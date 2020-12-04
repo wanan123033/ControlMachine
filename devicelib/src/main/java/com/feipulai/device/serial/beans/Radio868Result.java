@@ -41,6 +41,7 @@ public class Radio868Result {
 
             // 仰卧起坐
             case ItemDefault.CODE_YWQZ:
+            case ItemDefault.CODE_SGBQS:
                 sitUp(data);
                 break;
             case ItemDefault.CODE_YTXS:

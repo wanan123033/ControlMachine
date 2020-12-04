@@ -55,6 +55,7 @@ import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LoginActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.adapter.IndexTypeAdapter;
 import com.feipulai.exam.bean.SoftApp;
 import com.feipulai.exam.bean.TypeListBean;
@@ -174,6 +175,7 @@ public class DataManageActivity
 //        }
 
         initGridView();
+        initAfrCount();
     }
 
     @Nullable
@@ -307,9 +309,9 @@ public class DataManageActivity
                         break;
                     case 4://头像下载
                         LogUtils.operation("用户点击了头像下载...");
-                        ToastUtils.showShort("功能未开放，敬请期待");
+//                        ToastUtils.showShort("功能未开放，敬请期待");
 //                        uploadPortrait();
-//                        showDownLoadPhotoDialog();
+                        showDownLoadPhotoDialog();
                         break;
                     case 5://删除头像
                         //TODO 测试使用
@@ -418,6 +420,7 @@ public class DataManageActivity
     private DownloadUtils downloadUtils = new DownloadUtils();
 
     private void showDownLoadPhotoDialog() {
+        selectWhich = 0;
         downLoadProgressDialog = new DownLoadProgressDialog(this);
         downLoadProgressDialog.setCancelClickListener(new View.OnClickListener() {
             @Override
@@ -527,7 +530,12 @@ public class DataManageActivity
                             photoHeaders = SharedPrefsUtil.loadFormSource(DataManageActivity.this, DownLoadPhotoHeaders.class);
                         }
                         if (saveHeaders != null && !TextUtils.isEmpty(saveHeaders.get("BatchTotal"))) {
-                            photoHeaders.setInit(Integer.valueOf(saveHeaders.get("PageNo")), Integer.valueOf(saveHeaders.get("BatchTotal")), saveHeaders.get("UploadTime"));
+                            int total = Integer.valueOf(saveHeaders.get("BatchTotal"));
+                            if (total == 0) {
+                                HandlerUtil.sendMessage(myHandler, 1, 1, "");
+                                return;
+                            }
+                            photoHeaders.setInit(Integer.valueOf(saveHeaders.get("PageNo")), total, saveHeaders.get("UploadTime"));
                             SharedPrefsUtil.save(DataManageActivity.this, photoHeaders);
                             if (photoHeaders.getPageNo() != photoHeaders.getBatchTotal()) {
 //                            runOnUiThread(new Runnable() {
@@ -557,7 +565,7 @@ public class DataManageActivity
 
                     @Override
                     public void onFailure(String fileName, String errorInfo) {
-                        HandlerUtil.sendMessage(myHandler, 1, 1, "");
+                        HandlerUtil.sendMessage(myHandler, 1, 1, errorInfo);
                     }
                 });
     }
@@ -599,7 +607,12 @@ public class DataManageActivity
             ToastUtils.showShort("服务访问失败");
             downLoadProgressDialog.dismissDialog();
             OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
+        } else if (msg.what == 1) {
+            ToastUtils.showShort(msg.obj.toString());
+            downLoadProgressDialog.dismissDialog();
+            OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
         } else {
+
             fileZipArchiver((String) msg.obj, msg.arg1 == 1);
         }
     }
@@ -958,7 +971,7 @@ public class DataManageActivity
                     String studentCode = jpgFile.getName().substring(0, jpgFile.getName().lastIndexOf("."));
                     byte[] success = FaceServer.getInstance().registerBgr24Byte(DataManageActivity.this, bgr24, bitmap.getWidth(), bitmap.getHeight(),
                             studentCode);
-                    if (student != null) {
+                    if (student != null && success != null) {
                         student.setFaceFeature(Base64.encodeToString(success, Base64.DEFAULT));
                         DBManager.getInstance().updateStudent(student);
                     }
@@ -1169,6 +1182,7 @@ public class DataManageActivity
                 Logger.i(autoBackup ? "自动备份成功" : "自动备份失败");
                 DBManager.getInstance().clear();
                 SharedPrefsUtil.putValue(DataManageActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
+                SharedPrefsUtil.remove(DataManageActivity.this, DownLoadPhotoHeaders.class);
                 DBManager.getInstance().initDB();
                 TestConfigs.init(DataManageActivity.this, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), null);
                 FileUtil.delete(MyApplication.PATH_IMAGE);//清理图片
@@ -1189,6 +1203,7 @@ public class DataManageActivity
             public void onExecuteSuccess(DataBaseRespon respon) {
                 Logger.i("数据清空完成");
                 ToastUtils.showShort("数据清空完成");
+                initAfrCount();
             }
 
             @Override

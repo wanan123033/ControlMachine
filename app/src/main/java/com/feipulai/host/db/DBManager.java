@@ -930,7 +930,10 @@ public class DBManager {
                 .list();
     }
 
-
+    public List<RoundResult> getResultsListAll() {
+        return roundResultDao.queryBuilder() 
+                .list();
+    }
     /**
      * 添加成绩
      *

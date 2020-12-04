@@ -151,6 +151,11 @@ public class MainActivity extends BaseActivity {
                 PrinterManager.getInstance().selfCheck();
                 PrinterManager.getInstance().print("\n\n");
 //                addTestResult();
+//                List<RoundResult> results = DBManager.getInstance().getResultsListAll();
+//                for (RoundResult result : results) {
+//                    result.setResultState(RoundResult.RESULT_STATE_NORMAL);
+//                }
+//                DBManager.getInstance().updateRoundResult(results);
                 break;
             case R.id.card_parameter_setting:
                 IntentUtil.gotoActivity(MainActivity.this, SettingActivity.class);

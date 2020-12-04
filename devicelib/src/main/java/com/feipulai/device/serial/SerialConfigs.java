@@ -26,6 +26,7 @@ public class SerialConfigs {
         sProChannels.put(ItemDefault.CODE_MG, 40);//摸高测试
         sProChannels.put(ItemDefault.CODE_FWC, 25);//俯卧撑
         sProChannels.put(ItemDefault.CODE_YWQZ, 10);//仰卧起坐
+        sProChannels.put(ItemDefault.CODE_SGBQS, 10);//双杠臂屈伸
         sProChannels.put(ItemDefault.CODE_ZWTQQ, 41);//坐位体
         sProChannels.put(ItemDefault.CODE_TS, 1);//跳绳计数
         sProChannels.put(ItemDefault.CODE_SL, 1);//视力
@@ -39,6 +40,8 @@ public class SerialConfigs {
         sProChannels.put(ItemDefault.CODE_WLJ, 101);//握力计
         sProChannels.put(ItemDefault.CODE_JGCJ, 63);//激光测距
         sProChannels.put(ItemDefault.CODE_SHOOT, 120);//篮球投篮
+        sProChannels.put(ItemDefault.CODE_SPORT_TIMER, 0);//运动计时
+
         sProChannels.put(ItemDefault.CODE_SPORT_TIMER, 30);//运动计时
     }
 

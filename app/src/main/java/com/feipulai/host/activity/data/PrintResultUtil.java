@@ -50,6 +50,7 @@ public class PrintResultUtil {
                     break;
 
                 case ItemDefault.CODE_YWQZ:
+                case ItemDefault.CODE_SGBQS:
                 case ItemDefault.CODE_YTXS:
                 case ItemDefault.CODE_PQ:
 //                        PrinterManager.getInstance().print(printResult + "(判罚:" + result.getPenalty() + ")");

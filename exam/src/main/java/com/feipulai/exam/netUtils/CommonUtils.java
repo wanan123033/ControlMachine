@@ -13,6 +13,7 @@ import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.utils.EncryptUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.orhanobut.logger.Logger;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -113,11 +114,13 @@ public class CommonUtils {
         Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
         return gson.toJson(paramData);
     }
+
     public static ResponseParame encryptQuery(String bizType, String lastUpdateTime, Object object) {
         ResponseParame respost = encryptQuery(bizType, object);
         respost.setLastUpdateTime(lastUpdateTime);
         return respost;
     }
+
     public static ResponseParame encryptQuery(String bizType, Object object) {
         ResponseParame respost = new ResponseParame();
         respost.setBizType(bizType);
@@ -130,6 +133,7 @@ public class CommonUtils {
         respost.setSign(EncryptUtil.getSignData(gson.toJson(object)));
         respost.setData(EncryptUtil.setEncryptData(object));
         respost.setRequestTime(String.valueOf(System.currentTimeMillis()));
+        Logger.d(respost.toString());
         return respost;
     }
 
