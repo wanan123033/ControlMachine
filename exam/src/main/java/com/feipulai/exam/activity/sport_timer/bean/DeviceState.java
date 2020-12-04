@@ -1,6 +1,6 @@
-package com.feipulai.exam.activity.sport_timer;
+package com.feipulai.exam.activity.sport_timer.bean;
 
-class DeviceState {
+public class DeviceState {
     private int deviceState;
     private int deviceId;
 

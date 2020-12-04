@@ -60,7 +60,7 @@ public class VolleyBallCheckDialog extends DialogFragment implements RadioManage
     public void setArguments(Bundle args) {
         super.setArguments(args);
         deviceId = args.getInt("deviceId");
-//        checkDeviceView.setDeviceId(deviceId);
+//        checkDeviceView.setDeviceName(deviceId);
     }
 
     @Override

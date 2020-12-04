@@ -80,8 +80,15 @@ public class SportTimerManger {
         }
         data[12] = (byte) 0x0d;
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
+        LogUtils.normal(data.length + "---" + StringUtility.bytesToHexString(data) + "---运动计时联络信号设备号是： "+deviceId);
     }
 
+    /**
+     * 同步时间
+     * @param deviceId
+     * @param hostId
+     * @param time
+     */
     public void syncTime(int deviceId, int hostId, int time) {
         byte data[] = new byte[15];
         data[0] = (byte) 0xAA;
@@ -104,6 +111,7 @@ public class SportTimerManger {
         }
         data[14] = (byte) 0x0d;
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
+        LogUtils.normal(data.length + "---" + StringUtility.bytesToHexString(data) + "---运动计时同步时间");
     }
 
     public void getTime(int deviceId, int hostId){
@@ -124,6 +132,7 @@ public class SportTimerManger {
         }
         data[12] = (byte) 0x0d;
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
+        LogUtils.normal(data.length + "---" + StringUtility.bytesToHexString(data) + "---运动计时获取时间设备号是： "+deviceId);
     }
 
     /**
@@ -145,7 +154,7 @@ public class SportTimerManger {
      *                 【N-2】检验和，1字节，sum={1:N-3}
      *                 【N-1】包尾，1字节,0x0D
      */
-    public void getRecentCache(int deviceId, int hostId) {
+    public void getRecentCache(int deviceId, int hostId,int index) {
         byte data[] = new byte[14];
         data[0] = (byte) 0xAA;
         data[1] = (byte) 14;
@@ -157,13 +166,14 @@ public class SportTimerManger {
         data[7] = (byte) 13;
         data[8] = (byte) 0x00;
         data[9] = (byte) 0x00;
-        data[10] = (byte) 0x00;
+        data[10] = (byte) index;
         data[11] = (byte) 0x00;
         for (int i = 1; i <= data.length - 3; i++) {
             data[12] += data[i];
         }
         data[13] = (byte) 0x0d;
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
+        LogUtils.normal(data.length + "---" + StringUtility.bytesToHexString(data) + "---运动计时读取缓存设备号是： "+deviceId+"包序是："+index);
     }
 
     /**
@@ -192,7 +202,7 @@ public class SportTimerManger {
         data[3] = (byte) 0x03;
         data[4] = (byte) 0X01;
         data[5] = (byte) hostId;
-        data[6] = (byte) deviceId;
+        data[6] = (byte) 0xff;
         data[7] = (byte) 3;
         data[8] = (byte) (state&0xff);
         data[9] = (byte) 0x00;
@@ -201,5 +211,6 @@ public class SportTimerManger {
         }
         data[11] = (byte) 0x0d;
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
+        LogUtils.normal(data.length + "---" + StringUtility.bytesToHexString(data) + "---运动计时设置工作状态");
     }
 }

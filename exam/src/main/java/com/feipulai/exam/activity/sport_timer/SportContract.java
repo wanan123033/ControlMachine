@@ -1,5 +1,7 @@
 package com.feipulai.exam.activity.sport_timer;
 
+import com.feipulai.device.serial.beans.SportResult;
+
 public interface SportContract {
     interface Presenter {
         void rollConnect();//轮询
@@ -11,5 +13,6 @@ public interface SportContract {
     interface SportView{
         void updateDeviceState(int deviceId,int state);
         void getTimeUpdate();
+        void receiveResult(SportResult sportResult);
     }
 }

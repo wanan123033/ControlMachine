@@ -116,7 +116,7 @@
                         android:layout_width="100dp"
                         android:layout_height="40dp"
                         android:layout_margin="10dp"
-                        android:background="@drawable/btn_background"
+                        android:background="@drawable/selector_blue_grey_press"
                         android:gravity="center"
                         android:text="犯规"
                         android:textColor="@color/white"
@@ -127,7 +127,7 @@
                         android:layout_width="100dp"
                         android:layout_height="40dp"
                         android:layout_margin="10dp"
-                        android:background="@drawable/btn_background"
+                        android:background="@drawable/selector_blue_grey_press"
                         android:gravity="center"
                         android:text="中退"
                         android:textColor="@color/white"
@@ -138,7 +138,7 @@
                         android:layout_width="100dp"
                         android:layout_height="40dp"
                         android:layout_margin="10dp"
-                        android:background="@drawable/btn_background"
+                        android:background="@drawable/selector_blue_grey_press"
                         android:gravity="center"
                         android:text="放弃"
                         android:textColor="@color/white"
@@ -149,7 +149,7 @@
                         android:layout_width="100dp"
                         android:layout_height="40dp"
                         android:layout_margin="10dp"
-                        android:background="@drawable/btn_background"
+                        android:background="@drawable/selector_blue_grey_press"
                         android:gravity="center"
                         android:text="正常"
                         android:textColor="@color/white"
@@ -162,6 +162,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:gravity="center"
+                android:layout_marginLeft="100dp"
+                android:layout_marginRight="100dp"
                 android:orientation="horizontal">
 
 
@@ -189,7 +191,7 @@
                     android:textColor="@color/white"
                     android:textSize="18dp" />
 
-                <TextView
+                <!--<TextView
                     android:id="@+id/txt_continue_run"
                     android:layout_width="120dp"
                     android:layout_height="45dp"
@@ -200,7 +202,7 @@
                     android:text="继续运行"
                     android:textColor="@color/white"
                     android:textSize="18dp" />
-
+-->
                 <TextView
                     android:id="@+id/txt_stop_timing"
                     android:layout_width="120dp"
@@ -253,7 +255,6 @@
                         android:id="@+id/view_list_head"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:visibility="gone"
                         android:orientation="vertical">
 
                         <LinearLayout
@@ -291,18 +292,31 @@
                             android:overScrollMode="never" />
                     </LinearLayout>
 
-                    <LinearLayout
+                    <RelativeLayout
                         android:id="@+id/view_part_result"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:visibility="visible"
-                        android:orientation="horizontal">
+                        >
 
                         <android.support.v7.widget.RecyclerView
                             android:id="@+id/list_item"
-                            android:layout_width="200dp"
+                            android:layout_width="100dp"
                             android:layout_height="match_parent"/>
+                        <TextView
+                            android:id="@+id/tv_del"
+                            android:layout_width="80dp"
+                            android:layout_height="40dp"
+                            android:layout_margin="10dp"
+                            android:background="@drawable/selector_blue_grey_press"
+                            android:gravity="center"
+                            android:layout_alignParentBottom="true"
+                            android:layout_alignParentRight="true"
+                            android:text="删除"
+                            android:textColor="@color/white"
+                            android:textSize="18dp" />
                         <LinearLayout
+                            android:layout_toRightOf="@+id/list_item"
+                            android:layout_toLeftOf="@+id/tv_del"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:orientation="vertical">
@@ -369,8 +383,7 @@
                                 android:layout_height="match_parent"/>
                         </LinearLayout>
 
-
-                    </LinearLayout>
+                    </RelativeLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -387,7 +400,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:background="@drawable/btn_background"
+                        android:background="@drawable/selector_blue_grey_press"
                         android:gravity="center"
                         android:text="打印"
                         android:textColor="@color/white"
@@ -400,7 +413,7 @@
                         android:layout_height="0dp"
                         android:layout_marginTop="@dimen/dp_10"
                         android:layout_weight="1"
-                        android:background="@drawable/btn_background"
+                        android:background="@drawable/selector_blue_grey_press"
                         android:gravity="center"
                         android:text="确定成绩"
                         android:textColor="@color/white"
@@ -413,7 +426,7 @@
                         android:layout_marginTop="@dimen/dp_10"
                         android:layout_marginBottom="@dimen/dp_10"
                         android:layout_weight="1"
-                        android:background="@drawable/btn_background"
+                        android:background="@drawable/selector_blue_grey_press"
                         android:gravity="center"
                         android:text="结束测试"
                         android:textColor="@color/white"

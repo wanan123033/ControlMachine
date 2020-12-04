@@ -32,18 +32,18 @@ public class PullSitLinker
 //                    if (paramMessage.what == SerialConfigs.DRIBBLEING_PARAMETER) {//设置成功LED id为0 ，设置配对设备ID为0
 //                        currentDeviceId = 0;
 //                    }
-//                    checkDevice(result.getDeviceId(), result.getFrequency());
+//                    checkDevice(result.getDeviceName(), result.getFrequency());
 //                } else if ((currentDeviceId != 2) && (result.getDeviceCode() != 2)) {
-//                    checkDevice(result.getDeviceId(), result.getFrequency());
+//                    checkDevice(result.getDeviceName(), result.getFrequency());
 //                }
 //            } else {
 //                if ((currentDeviceId == 3) && (result.getDeviceCode() == 2)) {
 //                    if (paramMessage.what == SerialConfigs.DRIBBLEING_PARAMETER) {
 //                        currentDeviceId = 0;
 //                    }
-//                    checkDevice(result.getDeviceId(), result.getFrequency());
+//                    checkDevice(result.getDeviceName(), result.getFrequency());
 //                } else if ((currentDeviceId != 3) && (result.getDeviceCode() != 2)) {
-//                    checkDevice(result.getDeviceId(), result.getFrequency());
+//                    checkDevice(result.getDeviceName(), result.getFrequency());
 //                }
 //            }
 //            return true;

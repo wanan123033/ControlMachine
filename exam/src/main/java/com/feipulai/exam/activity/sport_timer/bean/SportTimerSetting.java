@@ -1,4 +1,4 @@
-package com.feipulai.exam.activity.sport_timer;
+package com.feipulai.exam.activity.sport_timer.bean;
 
 public class SportTimerSetting {
     public boolean isAutoPair() {
@@ -14,6 +14,7 @@ public class SportTimerSetting {
     private int degree;
     private int martType;
     private int testTimes = 1;
+    private String initRoute ;
     public int getDeviceCount() {
         return deviceCount;
     }
@@ -44,5 +45,13 @@ public class SportTimerSetting {
 
     public void setTestTimes(int testTimes) {
         this.testTimes = testTimes;
+    }
+
+    public String getInitRoute() {
+        return initRoute;
+    }
+
+    public void setInitRoute(String initRoute) {
+        this.initRoute = initRoute;
     }
 }

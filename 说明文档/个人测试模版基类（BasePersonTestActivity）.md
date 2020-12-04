@@ -146,7 +146,7 @@ private BaseDeviceState baseDevice;
 //状态   
 private int state;
 //设备ID
-private int deviceId;
+private int deviceName;
 /**
 *空闲
 */

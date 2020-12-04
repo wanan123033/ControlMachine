@@ -1,15 +1,16 @@
-package com.feipulai.exam.activity.sport_timer;
+package com.feipulai.exam.activity.sport_timer.bean;
 
-class SportTimeResult {
+public class SportTimeResult {
     private long id;
     private int deviceId;
     private int round;
-    private int result;
+    private int result = -1;
     private int resultState;
-    private int resultRule;
-    private int receiveIndex;
-    private int partResult;
-    private String remark;
+    private String routeName;
+    private int receiveIndex = -1;
+    private int partResult = -1;
+    private String remark = "";
+
     public long getId() {
         return id;
     }
@@ -50,12 +51,12 @@ class SportTimeResult {
         this.resultState = resultState;
     }
 
-    public int getResultRule() {
-        return resultRule;
+    public String getRouteName() {
+        return routeName;
     }
 
-    public void setResultRule(int resultRule) {
-        this.resultRule = resultRule;
+    public void setRouteName(String routeName) {
+        this.routeName = routeName;
     }
 
     public int getReceiveIndex() {
@@ -70,7 +71,7 @@ class SportTimeResult {
                 ", round=" + round +
                 ", result=" + result +
                 ", resultState=" + resultState +
-                ", resultRule=" + resultRule +
+                ", routeName=" + routeName +
                 ", receiveIndex=" + receiveIndex +
                 ", partResult=" + partResult +
                 ", remark='" + remark + '\'' +
@@ -97,5 +98,11 @@ class SportTimeResult {
         this.remark = remark;
     }
 
+    public SportTimeResult(){}
 
+    public SportTimeResult(int round,int result,int resultState){
+        this.round = round;
+        this.result = result;
+        this.resultState = resultState;
+    }
 }

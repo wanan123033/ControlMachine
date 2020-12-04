@@ -7,7 +7,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.feipulai.exam.R;
-import com.feipulai.exam.activity.jump_rope.adapter.DevicePairAdapter;
+import com.feipulai.exam.activity.sport_timer.adapter.SportDeviceAdapter;
+import com.feipulai.exam.activity.sport_timer.bean.DeviceState;
 import com.feipulai.exam.view.DividerItemDecoration;
 
 import java.util.List;

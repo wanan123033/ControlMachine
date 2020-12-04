@@ -59,7 +59,7 @@ import com.feipulai.exam.activity.situp.setting.SitUpSetting;
 import com.feipulai.exam.activity.situp.setting.SitUpSettingActivity;
 import com.feipulai.exam.activity.sport_timer.SportTimerActivity;
 import com.feipulai.exam.activity.sport_timer.SportTimerGroupActivity;
-import com.feipulai.exam.activity.sport_timer.SportTimerSetting;
+import com.feipulai.exam.activity.sport_timer.bean.SportTimerSetting;
 import com.feipulai.exam.activity.standjump.StandJumpGroupTestActivity;
 import com.feipulai.exam.activity.standjump.StandJumpSelectActivity;
 import com.feipulai.exam.activity.standjump.StandJumpSetting;

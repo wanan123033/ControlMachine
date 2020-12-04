@@ -22,12 +22,11 @@
             android:textSize="@dimen/sp_16" />
 
         <TextView
-            android:id="@+id/item_txt_practical_result"
+            android:id="@+id/item_txt_result"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="实际成绩"
             android:textSize="@dimen/sp_16" />
 
         <TextView
@@ -35,7 +34,6 @@
             android:layout_width="100dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="状态"
             android:textSize="@dimen/sp_16" />
     </LinearLayout>
 

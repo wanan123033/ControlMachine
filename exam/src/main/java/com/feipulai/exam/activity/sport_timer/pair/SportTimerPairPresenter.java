@@ -7,10 +7,10 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.manager.SportTimerManger;
 import com.feipulai.device.newProtocol.NewProtocolLinker;
 import com.feipulai.device.serial.RadioManager;
-import com.feipulai.exam.activity.sport_timer.SportTimerSetting;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairContract;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairPresenter;
+import com.feipulai.exam.activity.sport_timer.bean.SportTimerSetting;
 
 import java.util.Objects;
 

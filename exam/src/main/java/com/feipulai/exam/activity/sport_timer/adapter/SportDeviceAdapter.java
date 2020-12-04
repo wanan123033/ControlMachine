@@ -1,4 +1,4 @@
-package com.feipulai.exam.activity.sport_timer;
+package com.feipulai.exam.activity.sport_timer.adapter;
 
 import android.graphics.Color;
 import android.support.annotation.Nullable;
@@ -6,10 +6,11 @@ import android.support.annotation.Nullable;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.sport_timer.bean.DeviceState;
 
 import java.util.List;
 
-class SportDeviceAdapter extends BaseQuickAdapter <DeviceState ,BaseViewHolder>{
+public class SportDeviceAdapter extends BaseQuickAdapter <DeviceState,BaseViewHolder>{
     public SportDeviceAdapter( @Nullable List data) {
         super(R.layout.item_device_title, data);
     }

@@ -175,7 +175,7 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
                         deviceDetails.get(i).getStuDevicePair().setStudent(null);
                         refreshDevice(i);
 //                        int hostId = SettingHelper.getSystemSetting().getHostId();
-//                        int deviceId = (byte) deviceDetails.get(i).getStuDevicePair().getBaseDevice().getDeviceId();
+//                        int deviceId = (byte) deviceDetails.get(i).getStuDevicePair().getBaseDevice().getDeviceName();
 //                        VolleyBallRadioManager.getInstance().deviceFree(hostId, deviceId);
                         deviceDetails.get(i).setFinsh(true);
                         break;
