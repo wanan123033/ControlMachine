@@ -409,6 +409,9 @@ public class Radio868Result {
                         case 2:
                             setType(SerialConfigs.SPORT_TIMER_GET_TIME);
                             break;
+                        case 4:
+                            setType(SerialConfigs.SPORT_TIMER_GET_TIME);
+                            break;
                         case 13:
                             setType(SerialConfigs.SPORT_TIMER_RESULT);
                             break;

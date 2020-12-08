@@ -30,6 +30,7 @@ import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseAFRFragment;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.basketball.TimeUtil;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.fragment.IndividualCheckFragment;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
@@ -39,9 +40,12 @@ import com.feipulai.exam.activity.sport_timer.adapter.SportTestCountAdapter;
 import com.feipulai.exam.activity.sport_timer.adapter.TimeResultAdapter;
 import com.feipulai.exam.activity.sport_timer.bean.DeviceState;
 import com.feipulai.exam.activity.sport_timer.bean.InitRoute;
+import com.feipulai.exam.activity.sport_timer.bean.SportTestResult;
 import com.feipulai.exam.activity.sport_timer.bean.SportTimeResult;
 import com.feipulai.exam.activity.sport_timer.bean.SportTimerSetting;
 import com.feipulai.exam.activity.sport_timer.pair.SportPairActivity;
+import com.feipulai.exam.config.BaseEvent;
+import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.RoundResult;
@@ -143,18 +147,18 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
     private DeviceDialog deviceDialog;
     private List<DeviceState> deviceStates;
     private TimeResultAdapter timeResultAdapter;
-    private List<SportTimeResult> resultList = new ArrayList<>();
     private SportTestCountAdapter testCountAdapter;
     private PartResultAdapter partResultAdapter;
-    private List<SportTimeResult> partResultList;
     private int partSelect;
     private TestState testState;
     private StuDevicePair pair = new StuDevicePair();
     private StudentItem mStudentItem;
-    private int roundNo;
+    private int roundNo = 1;
     private int receiveTime = 0;
     private int initTime;
-    private Map<Integer,List<SportTimeResult>> resultMap = new HashMap<>();//保存分段成绩
+    private List<SportTestResult> testResults = new ArrayList<>();//保存成绩
+    private int testNum;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_sport_timer;
@@ -189,28 +193,30 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
         partResult.setSelected(false);
         viewPartResult.setVisibility(View.GONE);
 
-        int testNum = TestConfigs.sCurrentItem.getTestNum();
+        testNum = TestConfigs.sCurrentItem.getTestNum();
         if (testNum == 0) {
-            testNum = setting.getTestTimes();
+            testNum = setting.getTestTimes() > TestConfigs.getMaxTestCount(this) ? setting.getTestTimes() : TestConfigs.getMaxTestCount(this);
         }
         List<String> testTimes = new ArrayList<>();
         for (int i = 0; i < testNum; i++) {
             testTimes.add(String.format(Locale.CHINA, "轮次%d", i + 1));
-            SportTimeResult sportTimeResult = new SportTimeResult();
-            sportTimeResult.setRound(i + 1);
-            resultList.add(sportTimeResult);
+
+            SportTestResult sportResult = new SportTestResult();
+            sportResult.setRound(i + 1);
+            sportResult.setSportTimeResults(new ArrayList<SportTimeResult>());
+            testResults.add(sportResult);
         }
         listItem.setLayoutManager(new LinearLayoutManager(this));
         testCountAdapter = new SportTestCountAdapter(testTimes);
         listItem.setAdapter(testCountAdapter);
         testCountAdapter.setSelectPosition(0);
 
-        timeResultAdapter = new TimeResultAdapter(resultList);
+        timeResultAdapter = new TimeResultAdapter(testResults);
         rvTestResult.setLayoutManager(new LinearLayoutManager(this));
         rvTestResult.setAdapter(timeResultAdapter);
 
-        partResultList = new ArrayList<>();
-        partResultAdapter = new PartResultAdapter(partResultList);
+
+        partResultAdapter = new PartResultAdapter(testResults.get(roundNo - 1).getSportTimeResults());
         rvRegionMark.setLayoutManager(new LinearLayoutManager(this));
         rvRegionMark.setAdapter(partResultAdapter);
         txtIllegalReturn.setEnabled(false);
@@ -225,6 +231,15 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 partResultAdapter.setSelectPosition(position);
                 partResultAdapter.notifyDataSetChanged();
                 partSelect = position;
+            }
+        });
+
+        testCountAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                partResultAdapter.replaceData(testResults.get(roundNo - 1).getSportTimeResults());
+                testCountAdapter.setSelectPosition(position);
+                testCountAdapter.notifyDataSetChanged();
             }
         });
 
@@ -252,25 +267,37 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
         RadioManager.getInstance().sendCommand(new ConvertCommand(command));
         sportPresent.setContinueRoll(true);
 
+        setPartResult();
+    }
+
+    /**
+     * 设置自定义路线
+     */
+    private void setPartResult() {
         String route = setting.getInitRoute();
         if (!TextUtils.isEmpty(route)) {
             Gson gson = new Gson();
             List<InitRoute> initRoutes = gson.fromJson(route, new TypeToken<List<InitRoute>>() {
             }.getType());
             if (initRoutes != null && initRoutes.size() > 0) {
-                partResultList.clear();
+                for (int i = 0; i < testNum; i++) {
+                    testResults.get(i).getSportTimeResults().clear();
+                }
                 for (InitRoute initRoute : initRoutes) {
-                    SportTimeResult timeResult = new SportTimeResult();
                     if (!TextUtils.isEmpty(initRoute.getDeviceName())) {
-                        timeResult.setRouteName(initRoute.getIndex() + "");
-                        partResultList.add(timeResult);
+                        for (int i = 0; i < testNum; i++) {
+                            SportTimeResult timeResult = new SportTimeResult();
+                            timeResult.setRouteName(initRoute.getIndex() + "");
+                            testResults.get(i).getSportTimeResults().add(timeResult);
+                        }
                     }
                 }
                 partResultAdapter.notifyDataSetChanged();
             }
         }
-
-
+        testCountAdapter.setSelectPosition(roundNo - 1);
+        testCountAdapter.notifyDataSetChanged();
+        partResultAdapter.replaceData(testResults.get(roundNo - 1).getSportTimeResults());
     }
 
     @Nullable
@@ -366,10 +393,10 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
             }
             roundNo = results.size() + 1;
             LogUtils.operation("运动计时当前轮次 roundNo = " + roundNo);
-
+            sportPresent.showStudent(llStuDetail, student, testNo);
             presetResult(student, testNo);
             timeResultAdapter.notifyDataSetChanged();
-            sportPresent.showStudent(llStuDetail,student,testNo);
+
         }
     }
 
@@ -377,29 +404,32 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
      * 预设置成绩
      */
     private void presetResult(Student student, int testNo) {
-        resultList.clear();
-        for (int i = 0; i < TestConfigs.getMaxTestCount(this); i++) {
+        testResults.clear();
+        for (int i = 0; i < testNum; i++) {
             RoundResult roundResult = DBManager.getInstance().queryRoundByRoundNo(student.getStudentCode(), testNo, i + 1);
             if (roundResult == null) {
-                resultList.add(new SportTimeResult(i + 1,-1,-1));
+                testResults.add(new SportTestResult(i + 1, -1, -1, new ArrayList<SportTimeResult>()));
             } else {
-                resultList.add(new SportTimeResult(i + 1, roundResult.getResult(), roundResult.getResultState()));
+                testResults.add(new SportTestResult(i + 1, roundResult.getResult(), roundResult.getResultState(), new ArrayList<SportTimeResult>()));
 
             }
 
         }
-
+        setPartResult();
     }
 
     @OnClick({R.id.tv_pair, R.id.txt_waiting, R.id.cb_device_state, R.id.tv_end_result, R.id.tv_part_result,
-            R.id.tv_del,R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal, R.id.txt_illegal_return,
-            R.id.txt_stop_timing, R.id.tv_print, R.id.tv_confirm, R.id.txt_finish_test})
+            R.id.tv_del, R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal, R.id.txt_illegal_return,
+            R.id.txt_stop_timing, R.id.tv_print, R.id.tv_confirm, R.id.txt_finish_test, R.id.img_AFR})
     public void btnOnClick(View v) {
         switch (v.getId()) {
             case R.id.tv_pair:
                 startActivity(new Intent(this, SportPairActivity.class));
                 break;
             case R.id.txt_waiting:
+                if (roundNo >= testNum) {
+                    toastSpeak("已超过测试次数");
+                }
                 if (testState == TestState.UN_STARTED && cbDeviceState.isChecked() && pair.getStudent() != null) {
                     sportPresent.waitStart();
                 } else {
@@ -440,36 +470,60 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
 
                 break;
             case R.id.txt_illegal_return:
-                if (testState == TestState.WAIT_RESULT){
+                if (testState == TestState.WAIT_RESULT) {
                     sportPresent.setDeviceStateStop();
+                    receiveTime = 0;
                 }
                 break;
             case R.id.txt_stop_timing:
-                if (testState == TestState.WAIT_RESULT){
+                if (testState == TestState.WAIT_RESULT) {
                     sportPresent.setDeviceStateStop();
                     setTxtEnable(true);
+                    receiveTime = 0;
                 }
                 timeResultAdapter.notifyDataSetChanged();
+                sportPresent.getDeviceState();
                 break;
             case R.id.tv_print:
-                List<Student> students = new ArrayList<>();
-                students.add(pair.getStudent());
-                Map<Student,List<RoundResult>> map = new HashMap<>();
-                RoundResult roundResult = new RoundResult();
-                List<RoundResult> roundResults = new ArrayList<>();
-                roundResults.add(roundResult);
-                map.put(pair.getStudent(),roundResults);
-                Map<Student,Integer> m = new HashMap<>();
-                m.put(pair.getStudent(),roundNo);
-                sportPresent.print(students,this,map,m);
+                if (testState == TestState.UN_STARTED) {
+                    List<Student> students = new ArrayList<>();
+                    students.add(pair.getStudent());
+                    List<RoundResult> roundResults = DBManager.getInstance().queryResultsByStuItem(mStudentItem);
+                    Map<Student, List<RoundResult>> map = new HashMap<>();
+                    map.put(pair.getStudent(), roundResults);
+                    Map<Student, Integer> m = new HashMap<>();
+                    m.put(pair.getStudent(), roundNo);
+                    sportPresent.print(students, this, map, m);
+                } else {
+                    toastSpeak("测试成绩未保存不可打印");
+                }
+
                 break;
             case R.id.tv_confirm:
-                resultMap.put(roundNo,partResultList);
-                tvDelete.setEnabled(false);
-                txtWaiting.setEnabled(true);
+//                resultMap.put(roundNo,partResultList);
+                if (testState == TestState.RESULT_CONFIRM) {
+                    tvDelete.setEnabled(false);
+                    txtWaiting.setEnabled(true);
+                    testState = TestState.UN_STARTED;
+                    sportPresent.saveResult(roundNo, mStudentItem, testResults.get(roundNo - 1));
+                    sportPresent.showStuInfo(llStuDetail, pair.getStudent(), testResults);
+                    if (roundNo < testNum) {
+                        roundNo++;
+                        partResultAdapter.replaceData(testResults.get(roundNo - 1).getSportTimeResults());
+                        testCountAdapter.setSelectPosition(roundNo - 1);
+                        testCountAdapter.notifyDataSetChanged();
+                    }
+                    tvConfirm.setEnabled(false);
+                }
+
                 break;
             case R.id.txt_finish_test:
-
+                if (testState != TestState.UN_STARTED) {
+                    toastSpeak("测试成绩未保存不可结束");
+                }
+                break;
+            case R.id.img_AFR:
+                showAFR();
                 break;
         }
     }
@@ -481,14 +535,14 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
-                Logger.i("删除分段成绩" + partResultList.get(partSelect).toString());
-                if (partResultList.get(partSelect).getPartResult()>0){
-                    partResultList.remove(partSelect);
+                Logger.i("删除分段成绩" + testResults.get(roundNo - 1).getSportTimeResults().get(partSelect).toString());
+                if (testResults.get(roundNo - 1).getSportTimeResults().get(partSelect).getPartResult() > 0) {
+                    testResults.get(roundNo - 1).getSportTimeResults().remove(partSelect);
                     partSelect = -1;
                     partResultAdapter.setSelectPosition(partSelect);
                     partResultAdapter.notifyDataSetChanged();
-                }else {
-                   toastSpeak("此段成绩为空，不能删除");
+                } else {
+                    toastSpeak("此段成绩为空，不能删除");
                 }
             }
         }).setCancelText("取消").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
@@ -542,33 +596,35 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 sportPresent.setRunState(1);
                 testState = TestState.WAIT_RESULT;
                 setTxtEnable(false);
+                testResults.get(roundNo - 1).setTestTime(System.currentTimeMillis() + "");
+                receiveTime = 0;
             }
         });
     }
 
     @Override
     public void receiveResult(SportResult sportResult) {
-        if (receiveTime == 0 && sportResult.getDeviceId()!=1){
+        if (receiveTime == 0 && sportResult.getDeviceId() != 1) {
             toastSpeak("不是第一个启动，请重新检查");
-        }else {
-            if (sportResult.getDeviceId() == 1 && sportResult.getSumTimes() == 1){
+        } else {
+            if (sportResult.getDeviceId() == 1 && sportResult.getSumTimes() == 1) {
                 initTime = sportResult.getLongTime();
             }
-            if (receiveTime>= partResultList.size())
+            if (receiveTime >= testResults.get(roundNo - 1).getSportTimeResults().size())
                 return;
-            SportTimeResult timeResult = partResultList.get(receiveTime);
-            timeResult.setPartResult(sportResult.getLongTime()-initTime);
+            SportTimeResult timeResult = partResultAdapter.getData().get(receiveTime);
+            timeResult.setPartResult(sportResult.getLongTime() - initTime);
             timeResult.setReceiveIndex(sportResult.getDeviceId());
             int routeName;
-            if (!TextUtils.isEmpty(timeResult.getRouteName())){
+            if (!TextUtils.isEmpty(timeResult.getRouteName())) {
                 routeName = Integer.parseInt(timeResult.getRouteName());
-            }else {
+            } else {
                 routeName = -1;
             }
-            timeResult.setResultState(sportResult.getDeviceId() == routeName? RoundResult.RESULT_STATE_NORMAL:RoundResult.RESULT_STATE_FOUL);
-            resultList.get(roundNo-1).setResult(timeResult.getPartResult());
-            resultList.get(roundNo-1).setResultState(resultList.get(roundNo-1).getResultState() ==
-                    RoundResult.RESULT_STATE_FOUL?RoundResult.RESULT_STATE_FOUL:timeResult.getResultState());
+            timeResult.setResultState(sportResult.getDeviceId() == routeName ? RoundResult.RESULT_STATE_NORMAL : RoundResult.RESULT_STATE_FOUL);
+            testResults.get(roundNo - 1).setResult(timeResult.getPartResult());
+            testResults.get(roundNo - 1).setResultState(testResults.get(roundNo - 1).getResultState() ==
+                    RoundResult.RESULT_STATE_FOUL ? RoundResult.RESULT_STATE_FOUL : timeResult.getResultState());
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -580,9 +636,44 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
     }
 
     @Override
+    public void getDeviceState(int deviceState) {
+        if (deviceState == 0 && testState == TestState.WAIT_RESULT) {
+            testState = TestState.RESULT_CONFIRM;
+        }
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         sportPresent.setContinueRoll(false);
     }
 
+    public void showAFR() {
+        if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
+            ToastUtils.showShort("未选择人脸识别检录功能");
+            return;
+        }
+        if (afrFrameLayout == null) {
+            return;
+        }
+
+        boolean isGoto = afrFragment.gotoUVCFaceCamera(!afrFragment.isOpenCamera);
+        if (isGoto) {
+            if (afrFragment.isOpenCamera) {
+                afrFrameLayout.setVisibility(View.VISIBLE);
+            } else {
+                afrFrameLayout.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    @Override
+    public void onEventMainThread(BaseEvent baseEvent) {
+        super.onEventMainThread(baseEvent);
+        if (baseEvent.getTagInt() == EventConfigs.TEMPORARY_ADD_STU) {
+            Student student = (Student) baseEvent.getData();
+            StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+            onIndividualCheckIn(student, studentItem, new ArrayList<RoundResult>());
+        }
+    }
 }

@@ -144,7 +144,7 @@ private BaseDeviceState baseDevice;
 
 ``` java
 //状态   
-private int state;
+private int resultState;
 //设备ID
 private int deviceName;
 /**

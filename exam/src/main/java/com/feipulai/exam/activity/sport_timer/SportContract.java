@@ -14,5 +14,6 @@ public interface SportContract {
         void updateDeviceState(int deviceId,int state);
         void getTimeUpdate();
         void receiveResult(SportResult sportResult);
+        void getDeviceState(int deviceState);
     }
 }

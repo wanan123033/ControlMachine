@@ -263,8 +263,8 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
 //            } else {
 //                mCurrentConnect[result.getDeviceName()] = BaseDeviceState.STATE_CONFLICT;
 //            }
-//            if (deviceStateList.get(result.getDeviceName()).getState() != mCurrentConnect[result.getDeviceName()]) {
-//                deviceStateList.get(result.getDeviceName()).setState(mCurrentConnect[result.getDeviceName()]);
+//            if (deviceStateList.get(result.getDeviceName()).getResultState() != mCurrentConnect[result.getDeviceName()]) {
+//                deviceStateList.get(result.getDeviceName()).setResultState(mCurrentConnect[result.getDeviceName()]);
 //                EventBus.getDefault().post(new BaseEvent(result.getDeviceName(), EventConfigs.BALL_STATE_UPDATE));
 //            }
 

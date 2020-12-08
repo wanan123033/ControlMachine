@@ -7,7 +7,7 @@ import java.util.Arrays;
 public class SportResult {
     private byte [] data;
     private int hostId;
-
+    private int deviceState;
     public byte[] getData() {
         return data;
     }
@@ -99,6 +99,10 @@ public class SportResult {
                     bytes[2] = data[12];
                     bytes[3] = data[13];
                     longTime = byteToInt(bytes);
+                }else if (data.length == 14){
+                    deviceId = data[6];
+                    hostId = data[5];
+                    deviceState = data[10];
                 }
                 break;
             case 0:
@@ -136,6 +140,7 @@ public class SportResult {
                 ", deviceId=" + deviceId +
                 ", frequency=" + frequency +
                 ", longTime=" + longTime +
+                ", deviceState=" + deviceState +
                 '}';
     }
 
@@ -164,5 +169,13 @@ public class SportResult {
         b[1] = (byte) (n >> 16 & 0xff);
         b[0] = (byte) (n >> 24 & 0xff);
         return b;
+    }
+
+    public int getDeviceState() {
+        return deviceState;
+    }
+
+    public void setDeviceState(int deviceState) {
+        this.deviceState = deviceState;
     }
 }

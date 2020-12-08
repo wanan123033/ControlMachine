@@ -86,7 +86,7 @@ public class VolleyBallMoreTestActivity extends BaseVolleyBallMoreActivity {
     private VolleyBallJumpImpl resultJump = new VolleyBallJumpImpl(new VolleyBallJumpImpl.VolleyBallCallBack() {
         @Override
         public void getState(VolleyPair868Result obj) {
-            Log.e("TAG---","getState(VolleyPair868Result obj)");
+            Log.e("TAG---","getResultState(VolleyPair868Result obj)");
             Message msg = Message.obtain();
             msg.what = GET_STATE;
             msg.obj = obj;
