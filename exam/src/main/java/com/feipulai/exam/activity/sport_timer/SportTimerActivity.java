@@ -51,6 +51,7 @@ import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
+import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orhanobut.logger.Logger;
@@ -322,6 +323,9 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
     }
 
     private void startProjectSetting() {
+        if (testState != TestState.UN_STARTED){
+            toastSpeak("测试中不可设置");
+        }
         IntentUtil.gotoActivityForResult(this, SportSettingActivity.class, 1);
     }
 
@@ -396,7 +400,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
             sportPresent.showStudent(llStuDetail, student, testNo);
             presetResult(student, testNo);
             timeResultAdapter.notifyDataSetChanged();
-
+            sportPresent.setShowLed(pair.getStudent(),roundNo);
         }
     }
 
@@ -416,6 +420,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
 
         }
         setPartResult();
+        tvResult.setText("");
     }
 
     @OnClick({R.id.tv_pair, R.id.txt_waiting, R.id.cb_device_state, R.id.tv_end_result, R.id.tv_part_result,
@@ -473,6 +478,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 if (testState == TestState.WAIT_RESULT) {
                     sportPresent.setDeviceStateStop();
                     receiveTime = 0;
+                    testState = TestState.UN_STARTED;
                 }
                 break;
             case R.id.txt_stop_timing:
@@ -612,7 +618,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
             }
             if (receiveTime >= testResults.get(roundNo - 1).getSportTimeResults().size())
                 return;
-            SportTimeResult timeResult = partResultAdapter.getData().get(receiveTime);
+            final SportTimeResult timeResult = partResultAdapter.getData().get(receiveTime);
             timeResult.setPartResult(sportResult.getLongTime() - initTime);
             timeResult.setReceiveIndex(sportResult.getDeviceId());
             int routeName;
@@ -625,10 +631,13 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
             testResults.get(roundNo - 1).setResult(timeResult.getPartResult());
             testResults.get(roundNo - 1).setResultState(testResults.get(roundNo - 1).getResultState() ==
                     RoundResult.RESULT_STATE_FOUL ? RoundResult.RESULT_STATE_FOUL : timeResult.getResultState());
+            final String s =  testResults.get(roundNo - 1).getResultState() == RoundResult.RESULT_STATE_NORMAL?
+                    ResultDisplayUtils.getStrResultForDisplay(testResults.get(roundNo - 1).getResult()):"犯规";
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     partResultAdapter.notifyDataSetChanged();
+                    tvResult.setText(s);
                 }
             });
             receiveTime++;

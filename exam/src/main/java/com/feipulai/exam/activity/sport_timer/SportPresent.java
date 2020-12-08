@@ -10,12 +10,14 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.manager.SportTimerManger;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.SportResult;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
+import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.sport_timer.bean.SportTestResult;
 import com.feipulai.exam.activity.sport_timer.bean.SportTimeResult;
@@ -30,6 +32,7 @@ import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.utils.LogUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -54,7 +57,11 @@ public class SportPresent implements SportContract.Presenter {
     private int[] disConnect;
     private int[] sendIndex;
     private int newTime = -1;
+    private LEDManager mLEDManager;
     SportPresent(SportContract.SportView sportView, int deviceCount) {
+        mLEDManager = new LEDManager();
+        mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+        mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
         sportTimerManger = new SportTimerManger();
         RadioManager.getInstance().setOnRadioArrived(sportResultListener);
         this.sportView = sportView;
@@ -245,6 +252,13 @@ public class SportPresent implements SportContract.Presenter {
         roundResult.setUpdateState(0);
         roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
         RoundResult bestResult = DBManager.getInstance().queryBestScore(mStudentItem.getStudentCode(), testNo);
+        String displayResult;
+        if (testResults.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
+            displayResult = ResultDisplayUtils.getStrResultForDisplay(testResults.getResult());
+        } else {
+            displayResult = "X";
+        }
+        updateResultLed(displayResult);
         if (bestResult != null) {
             // 原有最好成绩犯规 或者原有最好成绩没有犯规但是现在成绩更好
             if (bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && testResults.getResultState() == RoundResult.RESULT_STATE_NORMAL && bestResult.getResult() > testResults.getResult()) {
@@ -252,22 +266,22 @@ public class SportPresent implements SportContract.Presenter {
                 roundResult.setIsLastResult(1);
                 bestResult.setIsLastResult(0);
                 DBManager.getInstance().updateRoundResult(bestResult);
-//                updateLastResultLed(roundResult);
+                updateLastResultLed(roundResult);
             } else {
                 if (bestResult.getResultState() != RoundResult.RESULT_STATE_NORMAL) {
                     roundResult.setIsLastResult(1);
                     bestResult.setIsLastResult(0);
                     DBManager.getInstance().updateRoundResult(bestResult);
-//                    updateLastResultLed(roundResult);
+                    updateLastResultLed(roundResult);
                 } else {
                     roundResult.setIsLastResult(0);
-//                    updateLastResultLed(bestResult);
+                    updateLastResultLed(bestResult);
                 }
             }
         } else {
             // 第一次测试
             roundResult.setIsLastResult(1);
-//            updateLastResultLed(roundResult);
+            updateLastResultLed(roundResult);
         }
 
         DBManager.getInstance().insertRoundResult(roundResult);
@@ -336,5 +350,67 @@ public class SportPresent implements SportContract.Presenter {
             displayResult = "X";
         }
         return displayResult;
+    }
+
+    public void updateLastResultLed(RoundResult roundResult) {
+        if (roundResult != null && roundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
+            byte[] data = new byte[16];
+            String str = "最好：";
+            try {
+                byte[] strData = str.getBytes("GB2312");
+                System.arraycopy(strData, 0, data, 0, strData.length);
+                byte[] resultData = ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()).getBytes("GB2312");
+                System.arraycopy(resultData, 0, data, data.length - resultData.length - 1, resultData.length);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 2, false, true);
+        } else {
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "最好：", 0, 2, false, true);
+
+        }
+    }
+
+    /**
+     * LED屏显示
+     *
+     */
+    public void setShowLed(Student student,int roundNo) {
+        int testNo  = 1;
+        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), student.getLEDStuName() + "   第" + roundNo + "次", 0, 0, true, false);
+        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "当前：", 0, 1, false, true);
+        RoundResult bestResult = DBManager.getInstance().queryBestScore(student.getStudentCode(), testNo);
+        if (bestResult != null && bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
+            byte[] data = new byte[16];
+            String str = "最好：";
+            try {
+                byte[] strData = str.getBytes("GB2312");
+                System.arraycopy(strData, 0, data, 0, strData.length);
+                byte[] resultData = ResultDisplayUtils.getStrResultForDisplay(bestResult.getResult()).getBytes("GB2312");
+                System.arraycopy(resultData, 0, data, data.length - resultData.length - 1, resultData.length);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 2, false, true);
+        } else {
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "最好：", 0, 2, false, true);
+
+        }
+
+    }
+
+    public void updateResultLed(String result) {
+
+        byte[] data = new byte[16];
+        String str = "当前：";
+        try {
+            byte[] strData = str.getBytes("GB2312");
+            System.arraycopy(strData, 0, data, 0, strData.length);
+            byte[] resultData = result.getBytes("GB2312");
+            System.arraycopy(resultData, 0, data, data.length - resultData.length - 1, resultData.length);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 1, false, true);
     }
 }
