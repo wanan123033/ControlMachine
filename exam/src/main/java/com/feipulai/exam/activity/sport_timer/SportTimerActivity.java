@@ -479,6 +479,8 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                     sportPresent.setDeviceStateStop();
                     receiveTime = 0;
                     testState = TestState.UN_STARTED;
+                    setTxtEnable(false);
+                    txtWaiting.setEnabled(true);
                 }
                 break;
             case R.id.txt_stop_timing:

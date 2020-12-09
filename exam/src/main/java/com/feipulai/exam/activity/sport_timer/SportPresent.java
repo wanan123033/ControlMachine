@@ -1,7 +1,6 @@
 package com.feipulai.exam.activity.sport_timer;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
@@ -17,10 +16,8 @@ import com.feipulai.device.serial.beans.SportResult;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
-import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.sport_timer.bean.SportTestResult;
-import com.feipulai.exam.activity.sport_timer.bean.SportTimeResult;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.TestConfigs;
