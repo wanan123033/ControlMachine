@@ -713,8 +713,27 @@ public class HttpSubscriber {
 
         if (tcpClientThread == null) {
             String tcpIp = SettingHelper.getSystemSetting().getTcpIp();
-            String ipStr = tcpIp.split(":")[0];
-            String portStr = tcpIp.split(":")[1];
+            String[] ip_port = tcpIp.split(":");
+            if (ip_port.length < 2) {
+                if (activity == null) {
+                    if (onRequestEndListener != null) {
+                        onRequestEndListener.onFault(UPLOAD_BIZ);
+                    }
+                    return;
+                }
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ToastUtils.showShort("上传失败:ip或端口设置错误");
+                        if (onRequestEndListener != null) {
+                            onRequestEndListener.onFault(UPLOAD_BIZ);
+                        }
+                    }
+                });
+                return;
+            }
+            String ipStr = ip_port[0];
+            String portStr = ip_port[1];
             tcpClientThread = new SendTcpClientThread(ipStr, Integer.parseInt(portStr), new SendTcpClientThread.SendTcpListener() {
                 @Override
                 public void onMsgReceive(String text) {
@@ -928,45 +947,46 @@ public class HttpSubscriber {
         parameData.put("version", version);
         parameData.put("deviceCode", MyApplication.DEVICECODE);
         final RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/json"), new JSONObject(parameData).toString());
-        Observable<HttpResult<List<SoftApp>>>observable = HttpManager.getInstance().getHttpApi().getSoftApp(requestBody);
+        Observable<HttpResult<List<SoftApp>>> observable = HttpManager.getInstance().getHttpApi().getSoftApp(requestBody);
         HttpManager.getInstance().changeBaseUrl("https://api.soft.fplcloud.com");
-        HttpManager.getInstance().toSubscribe(observable,new RequestSub<List<SoftApp>>(new OnResultListener<List<SoftApp>>() {
+        HttpManager.getInstance().toSubscribe(observable, new RequestSub<List<SoftApp>>(new OnResultListener<List<SoftApp>>() {
             @Override
             public void onSuccess(List<SoftApp> result) {
-                Log.i("SoftApp","Observable");
+                Log.i("SoftApp", "Observable");
                 listener.onSuccess(result);
             }
 
             @Override
             public void onFault(int code, String errorMsg) {
-                Log.i("SoftApp",errorMsg);
-                listener.onFault(code,errorMsg);
+                Log.i("SoftApp", errorMsg);
+                listener.onFault(code, errorMsg);
             }
         }));
     }
 
     /**
      * 获取APP更新的url
+     *
      * @param context
      * @param version
      * @param updateSoftwareVersion
      * @param authorizeCode
      * @param listener
      */
-    public void updateApp(String version,String updateSoftwareVersion,String authorizeCode,
-                       final OnResultListener listener) {
+    public void updateApp(String version, String updateSoftwareVersion, String authorizeCode,
+                          final OnResultListener listener) {
         Map<String, String> parameData = new HashMap<>();
         parameData.put("softwareUuid", MyApplication.SOFTWAREUUID);
         parameData.put("hardwareUuid", MyApplication.HARDWAREUUID);
         parameData.put("version", version);
-        parameData.put("updateSoftwareVersion",updateSoftwareVersion);
-        parameData.put("authorizeCode",authorizeCode);
-        parameData.put("enableCompression","0");
+        parameData.put("updateSoftwareVersion", updateSoftwareVersion);
+        parameData.put("authorizeCode", authorizeCode);
+        parameData.put("enableCompression", "0");
         parameData.put("deviceCode", MyApplication.DEVICECODE);
         final RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/json"), new JSONObject(parameData).toString());
-        Observable<HttpResult<UpdateApp>>observable = HttpManager.getInstance().getHttpApi().updateSoftApp(requestBody);
+        Observable<HttpResult<UpdateApp>> observable = HttpManager.getInstance().getHttpApi().updateSoftApp(requestBody);
         HttpManager.getInstance().changeBaseUrl("https://api.soft.fplcloud.com");
-        HttpManager.getInstance().toSubscribe(observable,new RequestSub<UpdateApp>(new OnResultListener<UpdateApp>() {
+        HttpManager.getInstance().toSubscribe(observable, new RequestSub<UpdateApp>(new OnResultListener<UpdateApp>() {
             @Override
             public void onSuccess(UpdateApp result) {
                 listener.onSuccess(result);
@@ -974,11 +994,10 @@ public class HttpSubscriber {
 
             @Override
             public void onFault(int code, String errorMsg) {
-                Log.i("UpdateApp",code +errorMsg);
-                listener.onFault(code,errorMsg);
+                Log.i("UpdateApp", code + errorMsg);
+                listener.onFault(code, errorMsg);
             }
         }));
-
 
 
     }
