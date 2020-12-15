@@ -90,6 +90,7 @@ public class SportResult {
 
                 break;
             case 2://获取时间
+            case 4://获取状态
                 if (data.length == 17){//【10：13】同步北京时间，4字节
                     deviceId = data[6];
                     hostId = data[5];

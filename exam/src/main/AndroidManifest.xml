@@ -45,6 +45,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".activity.RadioTimer.newRadioTimer.NewRadioTestActivity"></activity>
+        <activity android:name=".activity.RadioTimer.newRadioTimer.PreTestActivity" />
         <activity android:name=".activity.data.UpdateAppActivity" />
         <activity android:name=".activity.basketball.DribbleShootGroupActivity" />
         <activity android:name=".activity.basketball.BasketBallShootGroupActivity" />
@@ -421,6 +423,7 @@
             android:name=".activity.sport_timer.SportInitWayActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
+
         <receiver android:name="com.feipulai.device.spputils.SppReciver" />
 
         <service android:name="com.inuker.bluetooth.library.BluetoothService" />
