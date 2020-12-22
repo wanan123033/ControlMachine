@@ -35,6 +35,6 @@ android {
 dependencies {
     compile project(':logger')
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:26.1.0'
+    compile "com.android.support:appcompat-v7:26.0.1"
     compile 'io.netty:netty-all:4.1.9.Final'
 }

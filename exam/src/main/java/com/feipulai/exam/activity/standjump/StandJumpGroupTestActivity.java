@@ -43,6 +43,11 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
     private BaseStuPair baseStuPair;
 
     @Override
+    protected int isShowPenalizeFoul() {
+        return jumpSetting.isPenalizeFoul() ? View.VISIBLE : View.GONE;
+    }
+
+    @Override
     public void initData() {
         jumpSetting = SharedPrefsUtil.loadFormSource(this, StandJumpSetting.class);
         if (jumpSetting == null) {

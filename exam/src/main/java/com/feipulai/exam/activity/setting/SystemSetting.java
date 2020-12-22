@@ -124,6 +124,7 @@ public class SystemSetting {
 
     //在线识别
     private boolean netCheckTool;
+    private boolean autoDiscern;
 
     public boolean isNetCheckTool() {
         return netCheckTool;
@@ -420,5 +421,13 @@ public class SystemSetting {
 
     public String getSitCode() {
         return sitCode;
+    }
+
+    public void setAutoDiscern(boolean autoDiscern) {
+        this.autoDiscern = autoDiscern;
+    }
+
+    public boolean getAutoDiscern() {
+        return autoDiscern;
     }
 }

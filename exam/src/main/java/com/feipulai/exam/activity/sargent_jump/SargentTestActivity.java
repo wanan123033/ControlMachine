@@ -108,6 +108,11 @@ public class SargentTestActivity extends BasePersonTestActivity {
         frequency = SettingHelper.getSystemSetting().getUseChannel();
     }
 
+    @Override
+    protected int isShowPenalizeFoul() {
+        return sargentSetting.isPenalize() ? View.VISIBLE : View.GONE;
+    }
+
     /**
      * 显示是否获取成绩
      */

@@ -37,6 +37,8 @@ public class SitReachSetting {
     public static final int WIRED_TYPE = 0;
     //无线
     public static final int WIRELESS_TYPE = 1;
+    private boolean penalize;
+
     public int getTestPattern() {
         return testPattern;
     }
@@ -111,5 +113,13 @@ public class SitReachSetting {
 
     public void setTestType(int testType) {
         this.testType = testType;
+    }
+
+    public boolean isPenalize() {
+        return penalize;
+    }
+
+    public void setPenalize(boolean penalize) {
+        this.penalize = penalize;
     }
 }

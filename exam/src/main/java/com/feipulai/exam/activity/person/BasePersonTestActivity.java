@@ -31,8 +31,11 @@ import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
+import com.feipulai.exam.activity.data.DataDisplayActivity;
+import com.feipulai.exam.activity.data.DataRetrieveActivity;
 import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.bean.DataRetrieveBean;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.BaseEvent;
@@ -101,6 +104,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     public TextView tvDevicePair;
     @BindView(R.id.rl)
     RelativeLayout rl;
+    @BindView(R.id.tv_penalizeFoul)
+    TextView tv_penalizeFoul;
     //    @BindView(R.id.txt_stu_fault)
 //    TextView txtStuFault;
     //成绩
@@ -144,7 +149,10 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             serverIntent = new Intent(this, UploadService.class);
             startService(serverIntent);
         }
+        tv_penalizeFoul.setVisibility(isShowPenalizeFoul());
     }
+
+    protected abstract int isShowPenalizeFoul();
 
 
     @Nullable
@@ -356,7 +364,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         addStudent(student);
     }
 
-    @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting, R.id.img_AFR})
+    @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting, R.id.img_AFR,R.id.tv_penalizeFoul})
 //R.id.txt_stu_fault
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -386,9 +394,26 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 //                gotoUVCFaceCamera();
                 showAFR();
                 break;
+            case R.id.tv_penalizeFoul:
+                if (pair.getStudent() != null) {
+                    DataRetrieveBean bean = new DataRetrieveBean();
+                    bean.setStudentCode(pair.getStudent().getStudentCode());
+                    bean.setSex(pair.getStudent().getSex());
+                    bean.setTestState(pair.getResultState());
+                    bean.setStudentName(pair.getStudent().getStudentName());
+                    Intent intent = new Intent(this, DataDisplayActivity.class);
+                    intent.putExtra(DataDisplayActivity.ISSHOWPENALIZEFOUL, isShowPenalizeFoul());
+                    intent.putExtra(DataRetrieveActivity.DATA_ITEM_CODE, getItemCode());
+                    intent.putExtra(DataRetrieveActivity.DATA_EXTRA, bean);
+                    startActivity(intent);
+                }
+                break;
         }
     }
 
+    private String getItemCode() {
+        return TestConfigs.sCurrentItem.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : TestConfigs.sCurrentItem.getItemCode();
+    }
 
 //    private void penalize(){
 //        if (pair.getStudent() == null)

@@ -27,6 +27,7 @@ public class MedicineBallSetting {
     private int testPattern = 0;
     private boolean isPenalize;
     private int connectType = 0;
+    private boolean penalizeFoul;
 
     public int getTestPattern() {
         return testPattern;
@@ -97,5 +98,13 @@ public class MedicineBallSetting {
 
     public boolean isAutoPair() {
         return isAutoPair;
+    }
+
+    public void setPenalizeFoul(boolean penalizeFoul) {
+        this.penalizeFoul = penalizeFoul;
+    }
+
+    public boolean isPenalizeFoul() {
+        return penalizeFoul;
     }
 }

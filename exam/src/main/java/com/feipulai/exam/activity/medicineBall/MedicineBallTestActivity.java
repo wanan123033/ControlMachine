@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
+import android.view.View;
 
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
@@ -53,6 +54,11 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
         super.onCreate(savedInstanceState);
         LogUtils.life("MedicineBallTestActivity onCreate");
         init();
+    }
+
+    @Override
+    protected int isShowPenalizeFoul() {
+        return medicineBallSetting.isPenalizeFoul() ? View.VISIBLE:View.GONE;
     }
 
     private void init() {

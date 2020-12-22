@@ -20,6 +20,8 @@ import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSetting;
 import com.feipulai.exam.activity.medicineBall.MedicineBallSetting;
 import com.feipulai.exam.activity.pullup.setting.PullUpSetting;
+import com.feipulai.exam.activity.sargent_jump.SargentSetting;
+import com.feipulai.exam.activity.sitreach.SitReachSetting;
 import com.feipulai.exam.activity.situp.setting.SitUpSetting;
 import com.feipulai.exam.activity.standjump.StandJumpSetting;
 import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
@@ -28,6 +30,7 @@ import com.ww.fpl.libarcface.common.Constants;
 import com.ww.fpl.libarcface.util.ConfigUtil;
 
 import butterknife.BindView;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
 import io.reactivex.Observable;
@@ -42,8 +45,7 @@ import io.reactivex.schedulers.Schedulers;
  * Created by zzs on 2018/11/23
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
-public class AdvancedSettingActivity extends BaseTitleActivity
-        implements CompoundButton.OnCheckedChangeListener {
+public class AdvancedSettingActivity extends BaseTitleActivity{
 
     @BindView(R.id.edit_appkey)
     EditText editAppkey;
@@ -59,6 +61,14 @@ public class AdvancedSettingActivity extends BaseTitleActivity
     CheckBox swMedBall;
     @BindView(R.id.sw_standjump)
     CheckBox swStandjump;
+    @BindView(R.id.sw_sit_reach)
+    CheckBox swSitReach;
+    @BindView(R.id.sw_standjump2)
+    CheckBox swStandjump2;
+    @BindView(R.id.sw_sargent)
+    CheckBox swSargent;
+    @BindView(R.id.sw_medicine_ball)
+    CheckBox swMedicineBall;
     @BindView(R.id.sp_jump_rope_state_count)
     Spinner spJumpRopeStateCount;
     private SystemSetting systemSetting;
@@ -67,6 +77,9 @@ public class AdvancedSettingActivity extends BaseTitleActivity
     private VolleyBallSetting volleyBallSetting;
     private MedicineBallSetting medicineBallSetting;
     private StandJumpSetting standJumpSetting;
+
+    private SitReachSetting sitReachSetting;
+    private SargentSetting sargentSetting;
     private static final Integer[] ANGLES = {55, 65, 75};
     private Integer[] ropeStateCount = new Integer[28];
     private JumpRopeSetting jumpRopeSetting;
@@ -86,23 +99,28 @@ public class AdvancedSettingActivity extends BaseTitleActivity
         medicineBallSetting = SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class);
         standJumpSetting = SharedPrefsUtil.loadFormSource(this, StandJumpSetting.class);
         jumpRopeSetting = SharedPrefsUtil.loadFormSource(this, JumpRopeSetting.class);
+        sitReachSetting = SharedPrefsUtil.loadFormSource(this,SitReachSetting.class);
+        sargentSetting = SharedPrefsUtil.loadFormSource(this,SargentSetting.class);
+
         String serverToken = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.DEFAULT_SERVER_TOKEN, "dGVybWluYWw6dGVybWluYWxfc2VjcmV0");
         editAppkey.setText(serverToken);
-        swSitup.setOnCheckedChangeListener(this);
         swSitup.setChecked(sitUpSetting.isPenalize());
 
-        swPullup.setOnCheckedChangeListener(this);
         swPullup.setChecked(pullUpSetting.isPenalize());
 
-        swVolleyball.setOnCheckedChangeListener(this);
         swVolleyball.setChecked(volleyBallSetting.isPenalize());
 
-        swMedBall.setOnCheckedChangeListener(this);
         swMedBall.setChecked(medicineBallSetting.isPenalize());
 
-        swStandjump.setOnCheckedChangeListener(this);
         swStandjump.setChecked(standJumpSetting.isPenalize());
 
+        swSitReach.setChecked(sitReachSetting.isPenalize());
+
+        swStandjump2.setChecked(standJumpSetting.isPenalizeFoul());
+
+        swSargent.setChecked(sargentSetting.isPenalize());
+
+        swMedicineBall.setChecked(medicineBallSetting.isPenalizeFoul());
         ArrayAdapter angleAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, ANGLES);
         angleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spSitupAngle.setAdapter(angleAdapter);
@@ -152,9 +170,11 @@ public class AdvancedSettingActivity extends BaseTitleActivity
         SharedPrefsUtil.save(this, medicineBallSetting);
         SharedPrefsUtil.save(this, standJumpSetting);
         SharedPrefsUtil.save(this, jumpRopeSetting);
+        SharedPrefsUtil.save(this, sitReachSetting);
+        SharedPrefsUtil.save(this, sargentSetting);
     }
 
-    @Override
+    @OnCheckedChanged({R.id.sw_pullup,R.id.sw_situp,R.id.sw_volleyball,R.id.sw_med_ball,R.id.sw_standjump,R.id.sw_sit_reach,R.id.sw_standjump2,R.id.sw_sargent,R.id.sw_medicine_ball})
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()) {
 
@@ -174,6 +194,18 @@ public class AdvancedSettingActivity extends BaseTitleActivity
                 break;
             case R.id.sw_standjump:
                 standJumpSetting.setPenalize(isChecked);
+                break;
+            case R.id.sw_sit_reach:
+                sitReachSetting.setPenalize(isChecked);
+                break;
+            case R.id.sw_standjump2:
+                standJumpSetting.setPenalizeFoul(isChecked);
+                break;
+            case R.id.sw_sargent:
+                sargentSetting.setPenalize(isChecked);
+                break;
+            case R.id.sw_medicine_ball:
+                medicineBallSetting.setPenalizeFoul(isChecked);
                 break;
         }
     }

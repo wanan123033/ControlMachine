@@ -427,7 +427,7 @@
         <receiver android:name="com.feipulai.device.spputils.SppReciver" />
 
         <service android:name="com.inuker.bluetooth.library.BluetoothService" />
-
+        <service android:name="com.feipulai.exam.service.UpdateService" />
         <receiver android:name=".receiver.WifiReceiver">
             <intent-filter>
                 <action android:name="android.net.wifi.RSSI_CHANGED" />

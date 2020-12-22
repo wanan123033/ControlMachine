@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.View;
 
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
@@ -46,6 +47,11 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
     //保存当前测试考生
     private BaseStuPair baseStuPair;
     private boolean startFlag;
+
+    @Override
+    protected int isShowPenalizeFoul() {
+        return medicineBallSetting.isPenalizeFoul() ? View.VISIBLE : View.GONE;
+    }
 
     @Override
     public void initData() {

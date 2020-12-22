@@ -42,6 +42,7 @@ public class ResultDetailAdapter extends BaseQuickAdapter<RoundResult, ResultDet
     private List<RoundResult> mweightResults;
 
     private boolean isHW;
+    private int selectedPos = -1;
 
     public ResultDetailAdapter(@Nullable List<RoundResult> data) {
         super(R.layout.item_result_detail, data);
@@ -52,6 +53,10 @@ public class ResultDetailAdapter extends BaseQuickAdapter<RoundResult, ResultDet
         this.mheightResults = mheightResults;
         this.mweightResults = mweightResults;
         isHW = true;
+    }
+
+    public void setSelectedPos(int position){
+        this.selectedPos = position;
     }
 
     @Override
@@ -101,6 +106,11 @@ public class ResultDetailAdapter extends BaseQuickAdapter<RoundResult, ResultDet
                 showSchedule(roundResult);
             }
         });
+        if (viewHolder.getLayoutPosition() == selectedPos){
+            viewHolder.setBackgroundRes(R.id.ll_result,R.drawable.blue_radius_10);
+        }else {
+            viewHolder.setBackgroundRes(R.id.ll_result,R.drawable.grey_radius_10);
+        }
     }
 
     private void showSchedule(RoundResult roundResult) {

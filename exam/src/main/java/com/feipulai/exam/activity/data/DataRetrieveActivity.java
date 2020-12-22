@@ -641,6 +641,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Intent intent = new Intent(DataRetrieveActivity.this, DataDisplayActivity.class);
+//                intent.putExtra(DataDisplayActivity.ISSHOWPENALIZEFOUL,View.VISIBLE);
                 intent.putExtra(DATA_EXTRA, mList.get(position));
                 intent.putExtra(DATA_ITEM_CODE, getItemCode());
                 startActivity(intent);

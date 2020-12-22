@@ -7,10 +7,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.MyApplication;
@@ -30,12 +33,15 @@ import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * 查询详情
  */
-public class DataDisplayActivity extends BaseTitleActivity {
+public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickAdapter.OnItemClickListener {
 
+    public static final String ISSHOWPENALIZEFOUL = "ISSHOWPENALIZEFOUL";
     @BindView(R.id.tv_stuName)
     TextView mTvStuName;
     @BindView(R.id.tv_sex)
@@ -46,10 +52,13 @@ public class DataDisplayActivity extends BaseTitleActivity {
     TextView mTvBestResult;
     @BindView(R.id.rv_result)
     RecyclerView rvResult;
+    @BindView(R.id.tv_penalizeFoul)
+    TextView tv_penalizeFoul;
 
     @BindView(R.id.img_portrait)
     ImageView imgPortrait;
     private DataRetrieveBean mDataRetrieveBean;
+    private ResultDetailAdapter resultDetailAdapter;
     //    private Item mCurrentItem;
 
     private Comparator<RoundResult> roundResultComparator = Collections.reverseOrder(new Comparator<RoundResult>() {
@@ -68,7 +77,8 @@ public class DataDisplayActivity extends BaseTitleActivity {
     protected void initData() {
         mDataRetrieveBean = (DataRetrieveBean) getIntent().getSerializableExtra(DataRetrieveActivity.DATA_EXTRA);
         itemCode = getIntent().getStringExtra(DataRetrieveActivity.DATA_ITEM_CODE);
-
+        int vistity = getIntent().getIntExtra(ISSHOWPENALIZEFOUL, View.GONE);
+        tv_penalizeFoul.setVisibility(vistity);
         Log.e("itemCode", "---------" + itemCode);
         mTvStuCode.setText(mDataRetrieveBean.getStudentCode());
         mTvStuName.setText(mDataRetrieveBean.getStudentName());
@@ -136,7 +146,8 @@ public class DataDisplayActivity extends BaseTitleActivity {
                 break;
             }
         }
-        rvResult.setAdapter(new ResultDetailAdapter(heightResults, weightResults));
+        resultDetailAdapter = new ResultDetailAdapter(heightResults, weightResults);
+        rvResult.setAdapter(resultDetailAdapter);
     }
 
     private void normalDisplay() {
@@ -163,12 +174,52 @@ public class DataDisplayActivity extends BaseTitleActivity {
                 break;
             }
         }
-        rvResult.setAdapter(new ResultDetailAdapter(roundResults));
+        resultDetailAdapter = new ResultDetailAdapter(roundResults);
+        resultDetailAdapter.setOnItemClickListener(this);
+        rvResult.setAdapter(resultDetailAdapter);
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LogUtils.life("DataDisplayActivity onCreate");
+    }
+    @OnClick(R.id.tv_penalizeFoul)
+    public void onClick(View view){
+        if (currentResult != null) {
+            new SweetAlertDialog(this)
+                    .setTitleText("提示")
+                    .setContentText("确定是犯规?")
+                    .setConfirmText("是")
+                    .setCancelText("否")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            if (currentResult != null) {
+                                currentResult.setResultState(RoundResult.RESULT_STATE_FOUL);
+                                DBManager.getInstance().updateRoundResult(currentResult);
+                                toastSpeak("成绩状态更新成功!");
+                                sweetAlertDialog.dismissWithAnimation();
+                                displayResults();
+                            }
+
+                        }
+                    })
+                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismissWithAnimation();
+                        }
+                    }).show();
+        }else {
+            toastSpeak("请先选择一条成绩");
+        }
+    }
+    RoundResult currentResult;
+    @Override
+    public void onItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
+        currentResult = resultDetailAdapter.getItem(i);
+        resultDetailAdapter.setSelectedPos(i);
+        resultDetailAdapter.notifyDataSetChanged();
     }
 }

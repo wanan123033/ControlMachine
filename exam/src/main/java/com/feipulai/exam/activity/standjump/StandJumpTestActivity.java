@@ -74,6 +74,11 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
     }
 
     @Override
+    protected int isShowPenalizeFoul() {
+        return jumpSetting.isPenalizeFoul() ? View.VISIBLE : View.GONE;
+    }
+
+    @Override
     public void stuSkip() {
         standResiltListener.setTestState(StandResiltListener.TestState.UN_STARTED);
         //结束测试 发送结束指令

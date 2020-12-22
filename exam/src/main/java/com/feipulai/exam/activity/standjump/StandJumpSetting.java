@@ -54,6 +54,7 @@ public class StandJumpSetting {
     private boolean autoPair = true;
     //测试模式 0 有线 1 无线
     private int testType = 0;
+    private boolean penalizeFoul;
 
     public boolean isPenalize() {
         return isPenalize;
@@ -165,5 +166,13 @@ public class StandJumpSetting {
         } else {
             return testPoints * 100;
         }
+    }
+
+    public boolean isPenalizeFoul() {
+        return penalizeFoul;
+    }
+
+    public void setPenalizeFoul(boolean penalizeFoul) {
+        this.penalizeFoul = penalizeFoul;
     }
 }
