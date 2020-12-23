@@ -352,7 +352,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                     DataRetrieveBean bean = new DataRetrieveBean();
                     bean.setStudentCode(baseStuPair.getStudent().getStudentCode());
                     bean.setSex(baseStuPair.getStudent().getSex());
-                    bean.setTestState(baseStuPair.getResultState());
+                    bean.setTestState(1);
                     bean.setStudentName(baseStuPair.getStudent().getStudentName());
                     Intent intent = new Intent(this, DataDisplayActivity.class);
                     intent.putExtra(DataDisplayActivity.ISSHOWPENALIZEFOUL, isShowPenalizeFoul());

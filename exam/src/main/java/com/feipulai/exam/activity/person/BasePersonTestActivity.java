@@ -399,7 +399,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                     DataRetrieveBean bean = new DataRetrieveBean();
                     bean.setStudentCode(pair.getStudent().getStudentCode());
                     bean.setSex(pair.getStudent().getSex());
-                    bean.setTestState(pair.getResultState());
+                    bean.setTestState(1);
                     bean.setStudentName(pair.getStudent().getStudentName());
                     Intent intent = new Intent(this, DataDisplayActivity.class);
                     intent.putExtra(DataDisplayActivity.ISSHOWPENALIZEFOUL, isShowPenalizeFoul());
