@@ -359,6 +359,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                     intent.putExtra(DataRetrieveActivity.DATA_ITEM_CODE, getItemCode());
                     intent.putExtra(DataRetrieveActivity.DATA_EXTRA, bean);
                     startActivity(intent);
+                }else {
+                    toastSpeak("无考生成绩信息");
                 }
                 break;
         }
@@ -373,30 +375,30 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
      */
     private void showPenalize(final BaseDeviceState deviceState, final BaseStuPair pair) {
         clicked = false;
-        SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
-        alertDialog.setTitleText(getString(R.string.confirm_result));
-        alertDialog.setCancelable(false);
-        alertDialog.setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-            @Override
-            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                sweetAlertDialog.dismissWithAnimation();
-                if (!clicked) {
-                    updatePair(deviceState, pair, false);
-                    clicked = true;
-                }
-            }
-        }).setCancelText(getString(R.string.foul)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-            @Override
-            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                sweetAlertDialog.dismissWithAnimation();
-
-                if (!clicked) {
-                    updatePair(deviceState, pair, true);
-                    clicked = true;
-                }
-            }
-        });
-        alertDialog.show();
+//        SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
+//        alertDialog.setTitleText(getString(R.string.confirm_result));
+//        alertDialog.setCancelable(false);
+//        alertDialog.setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+//            @Override
+//            public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                sweetAlertDialog.dismissWithAnimation();
+//                if (!clicked) {
+//                    updatePair(deviceState, pair, false);
+//                    clicked = true;
+//                }
+//            }
+//        }).setCancelText(getString(R.string.foul)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+//            @Override
+//            public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                sweetAlertDialog.dismissWithAnimation();
+//
+//                if (!clicked) {
+//                    updatePair(deviceState, pair, true);
+//                    clicked = true;
+//                }
+//            }
+//        });
+//        alertDialog.show();
     }
 
     public void updatePair(BaseDeviceState deviceState, BaseStuPair pair, boolean isFault) {

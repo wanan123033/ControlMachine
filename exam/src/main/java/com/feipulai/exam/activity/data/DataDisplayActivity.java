@@ -1,5 +1,6 @@
 package com.feipulai.exam.activity.data;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,14 +21,20 @@ import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.data.adapter.ResultDetailAdapter;
+import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.DataRetrieveBean;
+import com.feipulai.exam.bean.RoundResultBean;
+import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.HWConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.RoundResult;
+import com.feipulai.exam.netUtils.netapi.ServerMessage;
+import com.feipulai.exam.service.UploadService;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.utils.LogUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -201,6 +208,7 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
                                 toastSpeak("成绩状态更新成功!");
                                 sweetAlertDialog.dismissWithAnimation();
                                 displayResults();
+                                uploadResult(currentResult);
                             }
 
                         }
@@ -215,6 +223,30 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
             toastSpeak("请先选择一条成绩");
         }
     }
+
+    /**
+     * 上传成绩
+     * @param currentResult
+     */
+    private void uploadResult(RoundResult currentResult) {
+        if (!SettingHelper.getSystemSetting().isRtUpload()) {
+            return;
+        }
+        if (TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
+            ToastUtils.showShort("自动上传成绩需下载更新项目信息");
+            return;
+        }
+        List<RoundResult> roundResultList = new ArrayList<>();
+        roundResultList.add(currentResult);
+        UploadResults uploadResults = new UploadResults(currentResult.getScheduleNo(), TestConfigs.getCurrentItemCode(),
+                currentResult.getStudentCode(), currentResult.getTestNo() + "", null, RoundResultBean.beanCope(roundResultList));
+        uploadResult(uploadResults);
+
+    }
+    private void uploadResult(UploadResults uploadResults) {
+        ServerMessage.uploadResult(this,uploadResults);
+    }
+
     RoundResult currentResult;
     @Override
     public void onItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
