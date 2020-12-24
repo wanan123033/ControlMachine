@@ -1,6 +1,5 @@
 package com.feipulai.exam.activity.sport_timer;
 
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -15,9 +14,10 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.serial.beans.SportResult;
+import com.feipulai.device.serial.beans.StringUtility;
+import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
-import com.feipulai.exam.activity.basketball.BasketBallGroupActivity;
 import com.feipulai.exam.activity.basketball.result.BasketBallTestResult;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
@@ -43,6 +43,7 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
@@ -50,7 +51,6 @@ import java.util.List;
 import java.util.Locale;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class SportTimerGroupActivity extends BaseTitleActivity implements SportContract.SportView, BaseQuickAdapter.OnItemClickListener {
@@ -107,7 +107,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
     private SportTimerSetting setting;
     private DeviceDialog deviceDialog;
     private List<DeviceState> deviceStates;
-    private TimeResultAdapter timeResultAdapter;
+    private TimeResultAdapter resultAdapter;
     private SportTestCountAdapter testCountAdapter;
     private PartResultAdapter partResultAdapter;
     private int partSelect;
@@ -115,11 +115,12 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
     private int roundNo = 1;
     private int receiveTime = 0;
     private int initTime;
-    private List<SportTestResult> testResults = new ArrayList<>();//保存成绩
+    private List<SportTestResult> resultList = new ArrayList<>();//保存成绩
     private int testNum;
     private Group group;
     private List<StuDevicePair> pairs = new ArrayList<>(1);
     private VolleyBallGroupStuAdapter stuPairAdapter;
+    private boolean startTest = true;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_group_sport_timer;
@@ -153,19 +154,19 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
             SportTestResult sportResult = new SportTestResult();
             sportResult.setRound(i + 1);
             sportResult.setSportTimeResults(new ArrayList<SportTimeResult>());
-            testResults.add(sportResult);
+            resultList.add(sportResult);
         }
         listItem.setLayoutManager(new LinearLayoutManager(this));
         testCountAdapter = new SportTestCountAdapter(testTimes);
         listItem.setAdapter(testCountAdapter);
         testCountAdapter.setSelectPosition(0);
 
-        timeResultAdapter = new TimeResultAdapter(testResults);
+        resultAdapter = new TimeResultAdapter(resultList);
         rvTestResult.setLayoutManager(new LinearLayoutManager(this));
-        rvTestResult.setAdapter(timeResultAdapter);
+        rvTestResult.setAdapter(resultAdapter);
 
 
-        partResultAdapter = new PartResultAdapter(testResults.get(roundNo - 1).getSportTimeResults());
+        partResultAdapter = new PartResultAdapter(resultList.get(roundNo - 1).getSportTimeResults());
         rvRegionMark.setLayoutManager(new LinearLayoutManager(this));
         rvRegionMark.setAdapter(partResultAdapter);
         txtIllegalReturn.setEnabled(false);
@@ -186,7 +187,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
         testCountAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                partResultAdapter.replaceData(testResults.get(roundNo - 1).getSportTimeResults());
+                partResultAdapter.replaceData(resultList.get(roundNo - 1).getSportTimeResults());
                 testCountAdapter.setSelectPosition(position);
                 testCountAdapter.notifyDataSetChanged();
             }
@@ -216,17 +217,37 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
         stuPairAdapter.setOnItemClickListener(this);
 
         firstCheckTest();
+        int frequency = SettingHelper.getSystemSetting().getUseChannel();
+        RadioChannelCommand command = new RadioChannelCommand(frequency);
+        LogUtils.normal(command.getCommand().length + "---" + StringUtility.bytesToHexString(command.getCommand()) + "---切频指令");
+        sportPresent = new SportPresent(this,setting.getDeviceCount());
+        sportPresent.rollConnect();
+        sportPresent.setContinueRoll(true);
+    }
+
+    //左边点击考生
+    @Override
+    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+
     }
 
     private void setTxtEnable(boolean enable) {
-        tvFoul.setEnabled(enable);
-        tvInBack.setEnabled(enable);
-        tvAbandon.setEnabled(enable);
-        tvNormal.setEnabled(enable);
+        penalize(enable);
         tvDelete.setEnabled(enable);
         tvPrint.setEnabled(enable);
         tvConfirm.setEnabled(enable);
         txtFinishTest.setEnabled(enable);
+    }
+
+    /**
+     * 判罚可见与否
+     * @param enable
+     */
+    private void penalize(boolean enable) {
+        tvFoul.setEnabled(enable);
+        tvInBack.setEnabled(enable);
+        tvAbandon.setEnabled(enable);
+        tvNormal.setEnabled(enable);
     }
 
     /**
@@ -240,14 +261,14 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
             }.getType());
             if (initRoutes != null && initRoutes.size() > 0) {
                 for (int i = 0; i < testNum; i++) {
-                    testResults.get(i).getSportTimeResults().clear();
+                    resultList.get(i).getSportTimeResults().clear();
                 }
                 for (InitRoute initRoute : initRoutes) {
                     if (!TextUtils.isEmpty(initRoute.getDeviceName())) {
                         for (int i = 0; i < testNum; i++) {
                             SportTimeResult timeResult = new SportTimeResult();
                             timeResult.setRouteName(initRoute.getIndex() + "");
-                            testResults.get(i).getSportTimeResults().add(timeResult);
+                            resultList.get(i).getSportTimeResults().add(timeResult);
                         }
                     }
                 }
@@ -256,11 +277,11 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
         }
         testCountAdapter.setSelectPosition(roundNo - 1);
         testCountAdapter.notifyDataSetChanged();
-        partResultAdapter.replaceData(testResults.get(roundNo - 1).getSportTimeResults());
+        partResultAdapter.replaceData(resultList.get(roundNo - 1).getSportTimeResults());
     }
 
     @OnClick({R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal, R.id.txt_waiting, R.id.txt_illegal_return,
-            R.id.txt_stop_timing, R.id.tv_end_result, R.id.tv_part_result, R.id.tv_del, R.id.tv_print, R.id.tv_confirm, R.id.txt_finish_test})
+            R.id.txt_stop_timing, R.id.tv_end_result, R.id.tv_part_result, R.id.tv_del, R.id.tv_print, R.id.tv_confirm, R.id.txt_finish_test,R.id.cb_device_state})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_foul:
@@ -273,6 +294,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
             case R.id.tv_normal:
                 break;
             case R.id.txt_waiting:
+                Logger.i("运动计时测试次数>>>>>>>>>等待"+roundNo);
                 if (roundNo >= testNum) {
                     toastSpeak("已超过测试次数");
                 }
@@ -296,7 +318,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                     sportPresent.setDeviceStateStop();
                     setTxtEnable(true);
                 }
-                timeResultAdapter.notifyDataSetChanged();
+                resultAdapter.notifyDataSetChanged();
                 sportPresent.getDeviceState();
                 break;
             case R.id.tv_end_result:
@@ -308,8 +330,14 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
             case R.id.tv_print:
                 break;
             case R.id.tv_confirm:
+                startTest = false;
                 break;
             case R.id.txt_finish_test:
+                break;
+            case R.id.cb_device_state:
+                deviceDialog = new DeviceDialog(this, deviceStates);
+                deviceDialog.show();
+                cbDeviceState.setChecked(!cbDeviceState.isChecked());
                 break;
         }
     }
@@ -343,13 +371,13 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
     private void firstCheckTest() {
         //是否为最后一次测试，开启新的测试
         for (int i = 0; i < pairs.size(); i++) {
-            if (!isStuAllTest(pairs.get(i).getStudent().getStudentCode())) {
+            if (isStuAllTest(pairs.get(i).getStudent().getStudentCode())) {
                 stuPairAdapter.setTestPosition(i);
                 rvTestingPairs.scrollToPosition(i);
                 presetResult();
                 isExistTestPlace();
                 prepareForBegin();
-                LogUtils.operation("篮球考生" + pairs.get(position()).getStudent().getSpeakStuName() + "开始第" + roundNo + "次测试");
+                LogUtils.operation("运动计时考生" + pairs.get(position()).getStudent().getSpeakStuName() + "开始第" + roundNo + "次测试");
                 toastSpeak(String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getSpeakStuName(), roundNo),
                         String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getStudentName(), roundNo));
                 stuPairAdapter.notifyDataSetChanged();
@@ -373,7 +401,28 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
     }
 
     private void presetResult() {
+        resultList.clear();
+        resultAdapter.setSelectPosition(-1);
+        Student student = TestCache.getInstance().getAllStudents().get(position());
+        List<RoundResult> roundResults = TestCache.getInstance().getResults().get(student);
+        roundNo = (roundResults == null ? 1 : roundResults.size() + 1);
+        Log.i("roundNo", "presetResult" + roundNo);
+        for (int i = 0; i < TestConfigs.getMaxTestCount(this); i++) {
+            RoundResult roundResult = DBManager.getInstance().queryGroupRoundNoResult(student.getStudentCode(), group.getId() + "", i + 1);
+            if (roundResult == null) {
+                resultList.add(new SportTestResult(i + 1, -1, -1, new ArrayList<SportTimeResult>()));
+                if (resultAdapter.getSelectPosition() == -1) {
+                    resultAdapter.setSelectPosition(i);
+                }
+            } else {
+//                List<MachineResult> machineResultList = DBManager.getInstance().getItemGroupFRoundMachineResult(student.getStudentCode(),
+//                        group.getId(), i + 1);
+                resultList.add(new SportTestResult(i + 1, -1, -1, new ArrayList<SportTimeResult>()));
 
+            }
+
+        }
+        resultAdapter.notifyDataSetChanged();
 
     }
 
@@ -381,8 +430,28 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
      * 是否存在未测试位置
      */
     private boolean isExistTestPlace() {
+        if (resultAdapter.getSelectPosition() == -1)
+            return false;
+        if (resultList.get(resultAdapter.getSelectPosition()).getResultState() != -1) {
+            for (int i = 0; i < resultList.size(); i++) {
+                if (resultList.get(i).getResultState() == -1) {
+                    resultAdapter.setSelectPosition(i);
+                    if (startTest){
+                        roundNo = i + 1;
+                        startTest = false;
+                    }
 
-        return true;
+                    Log.i("roundNo", "isExistTestPlace" + roundNo);
+                    resultAdapter.notifyDataSetChanged();
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            roundNo = resultAdapter.getSelectPosition() + 1;
+            Log.i("roundNo", "isExistTestPlace resultAdapter" + roundNo);
+            return true;
+        }
     }
 
     /**
@@ -459,7 +528,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                 sportPresent.setRunState(1);
                 testState = TestState.WAIT_RESULT;
                 setTxtEnable(false);
-                testResults.get(roundNo - 1).setTestTime(System.currentTimeMillis() + "");
+                resultList.get(roundNo - 1).setTestTime(System.currentTimeMillis() + "");
                 receiveTime = 0;
             }
         });
@@ -481,10 +550,5 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
             testState = TestState.RESULT_CONFIRM;
             receiveTime = 0;
         }
-    }
-
-    @Override
-    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-
     }
 }

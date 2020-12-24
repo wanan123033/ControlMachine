@@ -14,7 +14,7 @@ public class SportTestResult {
     private List<SportTimeResult> sportTimeResults;
     private int result = -1;
     private int select;
-    private int resultState;
+    private int resultState;//-999 预设置状态，不做成绩处理
     private String testTime;
     public int getRound() {
         return round;
