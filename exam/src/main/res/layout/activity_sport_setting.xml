@@ -118,16 +118,31 @@
                 android:layout_marginLeft="50dp"
                 android:background="@drawable/icon_spinner_bg" />
         </LinearLayout>
-        <TextView
-            android:id="@+id/tv_init_way"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
             android:layout_marginTop="50dp"
-            android:background="@drawable/btn_background"
-            android:gravity="center"
-            android:layout_gravity="center_horizontal"
-            android:text="自定义路线"
-            android:textColor="@color/white"
-            android:textSize="18dp" />
+            android:gravity="center_vertical">
+            <TextView
+                android:id="@+id/tv_init_way"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:background="@drawable/btn_background"
+                android:gravity="center"
+                android:text="自定义路线"
+                android:textColor="@color/white"
+                android:textSize="18dp" />
+            <TextView
+                android:id="@+id/tv_pair"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="@dimen/dp_40"
+                android:background="@drawable/btn_background"
+                android:gravity="center"
+                android:text="设备配对"
+                android:textColor="@color/white"
+                android:textSize="18dp" />
+        </LinearLayout>
+
     </LinearLayout>
 </RelativeLayout>
