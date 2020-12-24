@@ -22,6 +22,7 @@ import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
@@ -460,5 +461,60 @@ public class SportPresent implements SportContract.Presenter {
             e.printStackTrace();
         }
         mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 1, false, true);
+    }
+
+
+    /**
+     * 保存分组成绩
+     *
+     * @param student
+     * @param result
+     * @param currentTestTime
+     * @param group
+     */
+    public void saveGroupResult(Student student, int result, int currentTestTime, Group group, String startTime) {
+        RoundResult roundResult = new RoundResult();
+        roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
+        roundResult.setStudentCode(student.getStudentCode());
+        roundResult.setItemCode(TestConfigs.getCurrentItemCode());
+        roundResult.setResult(result);
+        roundResult.setMachineResult(result);
+        roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
+        roundResult.setTestTime(startTime);
+        roundResult.setEndTime(System.currentTimeMillis()+"");
+        roundResult.setRoundNo(currentTestTime);
+        roundResult.setTestNo(1);
+        roundResult.setGroupId(group.getId());
+        roundResult.setExamType(group.getExamType());
+        roundResult.setScheduleNo(group.getScheduleNo());
+        roundResult.setUpdateState(0);
+        roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
+        RoundResult bestResult = DBManager.getInstance().queryGroupBestScore(student.getStudentCode(), group.getId());
+        if (bestResult != null) {
+            // 原有最好成绩犯规 或者原有最好成绩没有犯规但是现在成绩更好
+            if (bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && bestResult.getResult() >= result) {
+                // 这个时候就要同时修改这两个成绩了
+                roundResult.setIsLastResult(1);
+                bestResult.setIsLastResult(0);
+                DBManager.getInstance().updateRoundResult(bestResult);
+            } else {
+                roundResult.setIsLastResult(0);
+            }
+        } else {
+            // 第一次测试
+            roundResult.setIsLastResult(1);
+        }
+        LogUtils.operation("红外计时保存成绩:"+roundResult.toString());
+        DBManager.getInstance().insertRoundResult(roundResult);
+
+
+        List<RoundResult> roundResultList = new ArrayList<>();
+        roundResultList.add(roundResult);
+        UploadResults uploadResults = new UploadResults(group.getScheduleNo()
+                , TestConfigs.getCurrentItemCode(), student.getStudentCode()
+                , "1", group , RoundResultBean.beanCope(roundResultList,group));
+
+        uploadResult(uploadResults);
+
     }
 }

@@ -670,6 +670,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 @Override
                 public void run() {
                     txtStopTiming.setEnabled(false);
+                    txtIllegalReturn.setEnabled(false);
                 }
             });
 
