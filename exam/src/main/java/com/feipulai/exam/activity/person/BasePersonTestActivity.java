@@ -127,7 +127,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     private LedHandler ledHandler = new LedHandler(this);
     private Intent serverIntent;
     private int testType = 0;//0自动 1手动
-    private boolean isFault;
+//    private boolean isFault;
 
     @Override
     protected int setLayoutResID() {
@@ -263,9 +263,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 //    public void setFaultVisible(boolean visible){
 //        txtStuFault.setVisibility(visible? View.VISIBLE:View.GONE);
 //    }
-    public void setFaultEnable(boolean enable) {
-        isFault = enable;
-    }
+//    public void setFaultEnable(boolean enable) {
+//        isFault = enable;
+//    }
 
     /**
      * 发送测试指令 并且此时应将设备状态改变
@@ -604,11 +604,12 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 if (pair.getStudent() == null) {
                     return;
                 }
-                if (isFault && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
-                    showPenalize();
-                } else {
-                    if (doResult()) return;
-                }
+                if (doResult()) return;
+//                if (isFault && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
+//                    showPenalize();
+//                } else {
+//
+//                }
 
             }
         }

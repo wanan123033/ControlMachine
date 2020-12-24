@@ -49,9 +49,9 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
         if (jumpSetting == null) {
             jumpSetting = new StandJumpSetting();
         }
-        if (jumpSetting.isPenalize()) {
-            setFaultEnable(true);
-        }
+//        if (jumpSetting.isPenalize()) {
+//            setFaultEnable(true);
+//        }
 //        setOpenAFR(true);
         Logger.i(TAG + ":reachSetting ->" + jumpSetting.toString());
         mHandler = new MyHandler(this);
@@ -326,5 +326,4 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
 //            mHandler.sendEmptyMessageDelayed(INIT_AGAIN, 5000);
         }
     });
-
 }

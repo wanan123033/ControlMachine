@@ -77,14 +77,6 @@ public class MedicineBallSetting {
         this.femaleFull = femaleFull;
     }
 
-    public boolean isPenalize() {
-        return isPenalize;
-    }
-
-    public void setPenalize(boolean penalize) {
-        isPenalize = penalize;
-    }
-
     public int getConnectType() {
         return connectType;
     }

@@ -65,9 +65,9 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
         mSerialManager.setRS232ResiltListener(resultImpl);
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
         setTestType(1);
-        if (medicineBallSetting.isPenalize()) {
-            setFaultEnable(true);
-        }
+//        if (medicineBallSetting.isPenalize()) {
+//            setFaultEnable(true);
+//        }
         sendCheck();
         sendFree();
     }

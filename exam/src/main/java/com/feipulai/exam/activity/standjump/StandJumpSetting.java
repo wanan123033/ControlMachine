@@ -56,13 +56,6 @@ public class StandJumpSetting {
     private int testType = 0;
     private boolean penalizeFoul;
 
-    public boolean isPenalize() {
-        return isPenalize;
-    }
-
-    public void setPenalize(boolean penalize) {
-        isPenalize = penalize;
-    }
 
     public int getPointsScope() {
         return pointsScope;

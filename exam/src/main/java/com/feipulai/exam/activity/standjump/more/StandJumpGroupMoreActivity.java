@@ -28,10 +28,10 @@ public class StandJumpGroupMoreActivity extends BaseMoreGroupActivity implements
             jumpSetting = new StandJumpSetting();
         super.initData();
 
-        setFaultEnable(jumpSetting.isPenalize());
-        if (!jumpSetting.isPenalize()) {
-            setNextClickStart(false);
-        }
+//        setFaultEnable(jumpSetting.isPenalize());
+//        if (!jumpSetting.isPenalize()) {
+//            setNextClickStart(false);
+//        }
 //        setDeviceCount(jumpSetting.getTestRound());
         facade = new StandJumpRadioFacade(deviceDetails, jumpSetting, this);
     }

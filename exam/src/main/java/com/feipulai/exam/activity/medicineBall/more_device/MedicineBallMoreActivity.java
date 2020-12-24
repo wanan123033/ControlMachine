@@ -69,10 +69,10 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
             deviceState[i] = 0;//连续5次检测不到认为掉线
         }
         beginPoint = Integer.parseInt(SharedPrefsUtil.getValue(this, "SXQ", "beginPoint", "0"));
-        if (setting.isPenalize()) {
-
-            setFaultEnable(true);
-        }
+//        if (setting.isPenalize()) {
+//
+//            setFaultEnable(true);
+//        }
         RadioManager.getInstance().setOnRadioArrived(medicineBall);
         sendEmpty();
         ledShow();

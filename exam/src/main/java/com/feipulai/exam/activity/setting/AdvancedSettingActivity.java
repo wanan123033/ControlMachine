@@ -57,10 +57,6 @@ public class AdvancedSettingActivity extends BaseTitleActivity{
     CheckBox swPullup;
     @BindView(R.id.sw_volleyball)
     CheckBox swVolleyball;
-    @BindView(R.id.sw_med_ball)
-    CheckBox swMedBall;
-    @BindView(R.id.sw_standjump)
-    CheckBox swStandjump;
     @BindView(R.id.sw_sit_reach)
     CheckBox swSitReach;
     @BindView(R.id.sw_standjump2)
@@ -110,9 +106,6 @@ public class AdvancedSettingActivity extends BaseTitleActivity{
 
         swVolleyball.setChecked(volleyBallSetting.isPenalize());
 
-        swMedBall.setChecked(medicineBallSetting.isPenalize());
-
-        swStandjump.setChecked(standJumpSetting.isPenalize());
 
         swSitReach.setChecked(sitReachSetting.isPenalize());
 
@@ -174,7 +167,7 @@ public class AdvancedSettingActivity extends BaseTitleActivity{
         SharedPrefsUtil.save(this, sargentSetting);
     }
 
-    @OnCheckedChanged({R.id.sw_pullup,R.id.sw_situp,R.id.sw_volleyball,R.id.sw_med_ball,R.id.sw_standjump,R.id.sw_sit_reach,R.id.sw_standjump2,R.id.sw_sargent,R.id.sw_medicine_ball})
+    @OnCheckedChanged({R.id.sw_pullup,R.id.sw_situp,R.id.sw_volleyball,R.id.sw_sit_reach,R.id.sw_standjump2,R.id.sw_sargent,R.id.sw_medicine_ball})
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()) {
 
@@ -188,12 +181,6 @@ public class AdvancedSettingActivity extends BaseTitleActivity{
 
             case R.id.sw_volleyball:
                 volleyBallSetting.setPenalize(isChecked);
-                break;
-            case R.id.sw_med_ball:
-                medicineBallSetting.setPenalize(isChecked);
-                break;
-            case R.id.sw_standjump:
-                standJumpSetting.setPenalize(isChecked);
                 break;
             case R.id.sw_sit_reach:
                 sitReachSetting.setPenalize(isChecked);

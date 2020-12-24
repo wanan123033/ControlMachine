@@ -98,10 +98,10 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
             medicineBallSetting = new MedicineBallSetting();
         }
         Logger.i(TAG + ":medicineBallSetting ->" + medicineBallSetting.toString());
-        if (medicineBallSetting.isPenalize()) {
-
-            setFaultEnable(true);
-        }
+//        if (medicineBallSetting.isPenalize()) {
+//
+//            setFaultEnable(true);
+//        }
 
     }
 

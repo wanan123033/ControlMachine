@@ -54,9 +54,9 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
             jumpSetting = new StandJumpSetting();
         }
 
-        if (jumpSetting.isPenalize()) {
-            setFaultEnable(true);
-        }
+//        if (jumpSetting.isPenalize()) {
+//            setFaultEnable(true);
+//        }
 
         Logger.i(TAG + ":reachSetting ->" + jumpSetting.toString());
         mHandler = new MyHandler(this);
