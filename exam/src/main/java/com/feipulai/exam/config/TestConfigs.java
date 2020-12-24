@@ -57,6 +57,7 @@ import com.feipulai.exam.activity.sitreach.SitReachSettingActivity;
 import com.feipulai.exam.activity.situp.check.SitUpCheckActivity;
 import com.feipulai.exam.activity.situp.setting.SitUpSetting;
 import com.feipulai.exam.activity.situp.setting.SitUpSettingActivity;
+import com.feipulai.exam.activity.sport_timer.SportSettingActivity;
 import com.feipulai.exam.activity.sport_timer.SportTimerActivity;
 import com.feipulai.exam.activity.sport_timer.SportTimerGroupActivity;
 import com.feipulai.exam.activity.sport_timer.bean.SportTimerSetting;
@@ -460,6 +461,7 @@ public class TestConfigs {
         TestConfigs.settingActivity.put(ItemDefault.CODE_ZQYQ, FootBallSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_WLJ, GripSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_SHOOT, ShootSettingActivity.class);
+        TestConfigs.settingActivity.put(ItemDefault.CODE_SPORT_TIMER, SportSettingActivity.class);
         // 每个机器码对应的机器名称
         TestConfigs.itemMinScope.put(ItemDefault.CODE_ZWTQQ, -200);
         TestConfigs.itemMaxScope.put(ItemDefault.CODE_ZWTQQ, 400);

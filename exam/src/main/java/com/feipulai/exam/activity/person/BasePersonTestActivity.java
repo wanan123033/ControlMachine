@@ -339,10 +339,6 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         } else {
             testNo = roundResultList.get(0).getTestNo();
         }
-        if (pair.getBaseDevice().getState() != BaseDeviceState.STATE_NOT_BEGAIN && pair.getBaseDevice().getState() != BaseDeviceState.STATE_FREE) {
-            toastSpeak("当前无设备可添加学生测试");
-            return;
-        }
 
         roundNo = roundResultList.size() + 1;
         LogUtils.operation("当前轮次 roundNo = " + roundNo);

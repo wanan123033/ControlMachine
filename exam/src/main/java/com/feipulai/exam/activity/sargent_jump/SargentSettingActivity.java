@@ -389,6 +389,12 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
                         Logger.i("基础高度：" + sargentSetting.getBaseHeight() + "设备号：" + deviceId);
                         SargentJumpMore.setBaseHeight(sargentSetting.getBaseHeight(),deviceId);
                         break;
+                    case 3:
+                        Logger.i("基础高度：" + sargentSetting.getBaseHeight() + "设备号：" + deviceId);
+//                        SargentJumpMore.setBaseHeight(sargentSetting.getBaseHeight(),deviceId);
+                        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
+                                buf));
+                        break;
                 }
 
                 break;
