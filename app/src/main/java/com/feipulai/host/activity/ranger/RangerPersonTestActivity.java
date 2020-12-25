@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.spputils.OnDataReceivedListener;
 import com.feipulai.device.spputils.SppUtils;
 import com.feipulai.device.spputils.beans.RangerResult;
@@ -18,7 +19,9 @@ import com.feipulai.host.activity.base.BaseDeviceState;
 import com.feipulai.host.activity.base.BaseStuPair;
 import com.feipulai.host.activity.person.BasePersonTestActivity;
 import com.feipulai.host.activity.ranger.bluetooth.BluetoothManager;
+import com.feipulai.host.utils.StringUtility;
 import com.feipulai.host.view.OperateProgressBar;
+import com.orhanobut.logger.utils.LogUtils;
 
 import butterknife.BindView;
 
@@ -115,6 +118,7 @@ public class RangerPersonTestActivity extends BasePersonTestActivity {
         }
         //循环获取蓝牙状态
         handler.sendEmptyMessageDelayed(GET_BLUETOOTH,500);
+        setTestType(1);
     }
 
     private void onResults(byte[] datas) {
@@ -147,6 +151,24 @@ public class RangerPersonTestActivity extends BasePersonTestActivity {
     @Override
     public void sendTestCommand(BaseStuPair baseStuPair) {
         tv_foul.setVisibility(View.VISIBLE);
+        txtStartTest.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void pullStart() {
+        if (utils.isConnected()) {
+            byte[] bytes = new byte[]{0x5A, 0x33, 0x34, 0x30, 0x39, 0x33, 0x03, 0x0d, 0x0a};
+            utils.send(bytes, false);
+            bytes = new byte[]{0x43, 0x30, 0x36, 0x37, 0x03, 0x0d, 0x0a};
+            LogUtils.normal(bytes.length+"---"+ StringUtility.bytesToHexString(bytes)+"---激光测距仪开始指令");
+            utils.send(bytes, false);
+            LogUtils.normal(bytes.length+"---"+ StringUtility.bytesToHexString(bytes)+"---激光测距仪开始指令");
+            if (setting.getAutoTestTime() > 0){
+                handler.sendEmptyMessageDelayed(WHAT,setting.getAutoTestTime() * 1000);
+            }
+        } else {
+            ToastUtils.showLong("请先连接激光测距仪");
+        }
     }
 
     @Override
@@ -157,5 +179,7 @@ public class RangerPersonTestActivity extends BasePersonTestActivity {
     @Override
     public void stuSkip() {
         tv_foul.setVisibility(View.GONE);
+        txtStartTest.setVisibility(View.VISIBLE);
     }
+
 }
