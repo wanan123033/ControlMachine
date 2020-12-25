@@ -123,12 +123,18 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
     }
 
     private void displayHW() {
-
-        List<RoundResult> heightResults = DBManager.getInstance().queryResultsByStudentCode(mDataRetrieveBean.getStudentCode(), HWConfigs
-                .HEIGHT_ITEM);
-        List<RoundResult> weightResults = DBManager.getInstance().queryResultsByStudentCode(mDataRetrieveBean.getStudentCode(), HWConfigs
-                .WEIGHT_ITEM);
-
+        List<RoundResult> heightResults = null,weightResults = null;
+        if (mDataRetrieveBean.getGroupId() == RoundResult.DEAFULT_GROUP_ID) {
+            heightResults = DBManager.getInstance().queryResultsByStudentCode(mDataRetrieveBean.getStudentCode(), HWConfigs
+                    .HEIGHT_ITEM);
+            weightResults = DBManager.getInstance().queryResultsByStudentCode(mDataRetrieveBean.getStudentCode(), HWConfigs
+                    .WEIGHT_ITEM);
+        }else {
+            heightResults = DBManager.getInstance().queryResultsByStudentCode(mDataRetrieveBean.getStudentCode(),mDataRetrieveBean.getGroupId(),mDataRetrieveBean.getExamType(),mDataRetrieveBean.getScheduleNo(), HWConfigs
+                    .HEIGHT_ITEM);
+            weightResults = DBManager.getInstance().queryResultsByStudentCode(mDataRetrieveBean.getStudentCode(),mDataRetrieveBean.getGroupId(),mDataRetrieveBean.getExamType(),mDataRetrieveBean.getScheduleNo(), HWConfigs
+                    .WEIGHT_ITEM);
+        }
         Collections.sort(heightResults, roundResultComparator);
         Collections.sort(weightResults, roundResultComparator);
 
@@ -159,8 +165,13 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
 
     private void normalDisplay() {
         //如果测试过,显示成绩
-        List<RoundResult> roundResults = DBManager.getInstance().queryResultsByStudentCode(itemCode, mDataRetrieveBean.getStudentCode());
 
+        List<RoundResult> roundResults = null;
+        if (mDataRetrieveBean.getGroupId() == RoundResult.DEAFULT_GROUP_ID) {
+            roundResults = DBManager.getInstance().queryResultsByStudentCode(itemCode, mDataRetrieveBean.getStudentCode());
+        }else {
+            roundResults = DBManager.getInstance().queryResultsByStudentCode(itemCode, mDataRetrieveBean.getStudentCode(),mDataRetrieveBean.getGroupId(),mDataRetrieveBean.getExamType(),mDataRetrieveBean.getScheduleNo());
+        }
         Collections.sort(roundResults, roundResultComparator);
 
         for (RoundResult roundResult : roundResults) {

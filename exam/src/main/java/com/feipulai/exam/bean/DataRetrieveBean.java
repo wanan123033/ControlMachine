@@ -5,6 +5,8 @@ import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.util.Base64;
 
+import com.feipulai.exam.entity.RoundResult;
+
 import java.io.Serializable;
 
 /**
@@ -23,6 +25,33 @@ public class DataRetrieveBean implements Serializable {
     private String result;//成绩
     private int uploadState;
     private boolean isChecked;//是否被选中,默认不被选中
+    private Long groupId = RoundResult.DEAFULT_GROUP_ID;
+    private int examType;
+    private String scheduleNo;
+
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
+    }
+
+    public int getExamType() {
+        return examType;
+    }
+
+    public void setExamType(int examType) {
+        this.examType = examType;
+    }
+
+    public String getScheduleNo() {
+        return scheduleNo;
+    }
+
+    public void setScheduleNo(String scheduleNo) {
+        this.scheduleNo = scheduleNo;
+    }
 
     public boolean isChecked() {
         return isChecked;

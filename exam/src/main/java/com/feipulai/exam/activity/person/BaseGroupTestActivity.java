@@ -353,11 +353,15 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                     bean.setStudentCode(baseStuPair.getStudent().getStudentCode());
                     bean.setSex(baseStuPair.getStudent().getSex());
                     bean.setTestState(1);
+                    bean.setGroupId(group.getId());
+                    bean.setScheduleNo(group.getScheduleNo());
+                    bean.setExamType(group.getExamType());
                     bean.setStudentName(baseStuPair.getStudent().getStudentName());
                     Intent intent = new Intent(this, DataDisplayActivity.class);
                     intent.putExtra(DataDisplayActivity.ISSHOWPENALIZEFOUL, isShowPenalizeFoul());
                     intent.putExtra(DataRetrieveActivity.DATA_ITEM_CODE, getItemCode());
                     intent.putExtra(DataRetrieveActivity.DATA_EXTRA, bean);
+
                     startActivity(intent);
                 }else {
                     toastSpeak("无考生成绩信息");
