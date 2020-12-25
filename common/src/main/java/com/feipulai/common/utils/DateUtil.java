@@ -31,6 +31,7 @@ public class DateUtil {
     public static long getCurrentTime() {
         return System.currentTimeMillis();
     }
+
     /**
      * 获取当前时间(按指定格式).
      * <h3>Version</h3> 1.0
@@ -43,6 +44,7 @@ public class DateUtil {
     public static String getCurrentTime(String pattern) {
         return formatTime(getCurrentTime(), pattern);
     }
+
     /**
      * 获取当前时间(按指定格式).
      * <h3>Version</h3> 1.0
@@ -55,8 +57,9 @@ public class DateUtil {
     public static String getCurrentTime2(String pattern) {
         return formatTime2(getCurrentTime(), pattern);
     }
+
     /**
-    /**
+     * /**
      * 获取指定时间格式的时间戳
      *
      * @param time    时间
@@ -75,6 +78,7 @@ public class DateUtil {
         }
         return date.getTime();
     }
+
     /**
      * 格式化时间
      *
@@ -245,16 +249,22 @@ public class DateUtil {
 
     /**
      * 设置时区 Asia/Shangha
+     *
      * @param context
      * @param timeZone
      */
     public static void setTimeZone(Context context, String timeZone) {
-        final Calendar now = Calendar.getInstance();
-        TimeZone tz = TimeZone.getTimeZone(timeZone);
-        LogUtil.logDebugMessage("设置时区名=====》" + tz.getDisplayName());
+        try {
+            final Calendar now = Calendar.getInstance();
+            TimeZone tz = TimeZone.getTimeZone(timeZone);
+            LogUtil.logDebugMessage("设置时区名=====》" + tz.getDisplayName());
 //        now.setTimeZone(tz);
-        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        am.setTimeZone(timeZone);
+            AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            am.setTimeZone(timeZone);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public static String getDefaultTimeZone() {
@@ -262,15 +272,14 @@ public class DateUtil {
     }
 
 
-
     public static void setSysDate(Context mContext, long time) {
 //        String curr_time = "20160606.120403";
 //        UdpLEDUtil.shellExec("/system/bin/date -s " + curr_time+"\n clock -w\n");
 //        String curr_time = "052514412019.52";
-        String curr_time =formatTime(time,"MMddhhmmyyyy.ss");
+        String curr_time = formatTime(time, "MMddhhmmyyyy.ss");
         LogUtil.logDebugMessage(curr_time);
         UdpLEDUtil.shellExec("date " +
-                curr_time  + "\n busybox hwclock -w \n");
+                curr_time + "\n busybox hwclock -w \n");
 
     }
 }

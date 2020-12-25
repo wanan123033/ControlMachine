@@ -23,6 +23,7 @@ import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
+import com.feipulai.device.serial.SerialParams;
 import com.feipulai.testandroid.R;
 import com.feipulai.testandroid.utils.AudioMngHelper;
 import com.zkteco.android.biometric.core.device.ParameterHelper;
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+
     }
 
     private void initView() {
@@ -136,6 +138,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
+        SerialParams.init(this);
         RadioManager.getInstance().init();
         CheckDeviceOpener.getInstance().setOnCheckDeviceArrived(this);
         CheckDeviceOpener.getInstance().open(this, true, true, true);
@@ -187,7 +190,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.btn_link:
                 MachineCode.machineCode = 2;
                 LEDManager ledManager = new LEDManager();
-                ledManager.link(1,2, 1);
+                ledManager.link(1, 2, 1);
                 ledManager.resetLEDScreen(1, "安卓测试");
                 break;
             case R.id.btn_finger:

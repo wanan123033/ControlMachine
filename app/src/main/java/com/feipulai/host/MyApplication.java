@@ -8,6 +8,7 @@ import com.feipulai.common.CrashHandler;
 import com.feipulai.common.utils.FileUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.print.FontsUtil;
+import com.feipulai.device.serial.SerialParams;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.orhanobut.logger.utils.LogUtils;
@@ -46,6 +47,7 @@ public class MyApplication extends MultiDexApplication {
         FileUtil.mkdirs(PATH_SPECIFICATION);
         FileUtil.mkdirs(PATH_IMAGE);
         FileUtil.mkdirs2(FaceServer.ROOT_PATH);
+        SerialParams.init(this);
     }
 
     public static MyApplication getInstance() {

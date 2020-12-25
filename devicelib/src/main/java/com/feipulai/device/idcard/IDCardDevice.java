@@ -2,8 +2,11 @@ package com.feipulai.device.idcard;
 
 import android.app.Activity;
 import android.content.Context;
+import android.hardware.usb.UsbDevice;
 import android.util.Log;
 
+import com.feipulai.device.idcard.ZKUSBManager.ZKUSBManager;
+import com.feipulai.device.idcard.ZKUSBManager.ZKUSBManagerListener;
 import com.feipulai.device.serial.IOPower;
 import com.feipulai.device.serial.SerialParams;
 import com.orhanobut.logger.Logger;
@@ -26,13 +29,36 @@ import java.util.concurrent.Executors;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 public class IDCardDevice {
-
+    private ZKUSBManager zkusbManager = null;
     private static final String TAG = "IDCardDevice";
     private IDCardReader idCardReader;
     private boolean isOpen;
     private volatile boolean isShutDown;
     private volatile OnIDReadListener mOnIDReadListener;
     private ExecutorService mExecutor;
+    private Context context;
+    private ZKUSBManagerListener zkusbManagerListener = new ZKUSBManagerListener() {
+        @Override
+        public void onCheckPermission(int result) {
+            Logger.d("启动权限");
+            try {
+                startIDCardReader(context);
+                startReadRunnable();
+            } catch (IDCardReaderException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onUSBArrived(UsbDevice device) {
+            Logger.d("发现阅读器接入");
+        }
+
+        @Override
+        public void onUSBRemoved(UsbDevice device) {
+            Logger.d("阅读器USB被拔出");
+        }
+    };
 
     public void setOnIDReadListener(OnIDReadListener onReadListener) {
         mOnIDReadListener = onReadListener;
@@ -41,40 +67,68 @@ public class IDCardDevice {
     private void startIDCardReader(Context context) throws IDCardReaderException {
         LogHelper.setLevel(Log.INFO);
         Map<String, Object> params = new HashMap<>();
-        params.put(ParameterHelper.PARAM_SERIAL_SERIALNAME, SerialParams.ID_CARD.getPath());
-        params.put(ParameterHelper.PARAM_SERIAL_BAUDRATE, SerialParams.ID_CARD.getBaudRate());
-        idCardReader = IDCardReaderFactory.createIDCardReader(context, TransportType.SERIALPORT, params);
+        if (SerialParams.ID_CARD.getType() == 0) {//串口
+            params.put(ParameterHelper.PARAM_SERIAL_SERIALNAME, SerialParams.ID_CARD.getPath());
+            params.put(ParameterHelper.PARAM_SERIAL_BAUDRATE, SerialParams.ID_CARD.getBaudRate());
+            idCardReader = IDCardReaderFactory.createIDCardReader(context, TransportType.SERIALPORT, params);
+        } else {//usb
+            params.put(ParameterHelper.PARAM_KEY_PID, SerialParams.ID_CARD.getPid());
+            params.put(ParameterHelper.PARAM_KEY_VID, SerialParams.ID_CARD.getVid());
+            idCardReader = IDCardReaderFactory.createIDCardReader(context, TransportType.USB, params);
+            idCardReader.setLibusbFlag(true);
+        }
         idCardReader.open(0);
+        Logger.d("打开设备成功，SAMID:" + idCardReader.getSAMID(0));
     }
 
     /**
      * 设备启动,开始识别身份证
-     * 在{@link Activity#onResume()}中调用
+     * 在{@link Activity//onResume()}中调用
      */
     public void open(Context context) {
+        this.context = context;
         if (isOpen) {
             return;
         }
-        for (int i = 0; i < 3; i++) {
-            IOPower.getInstance().setIdentityPwr(1);
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        if (SerialParams.ID_CARD.getVersions()==1){
+            for (int i = 0; i < 3; i++) {
+                IOPower.getInstance().setIdentityPwr(1);
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
+
         try {
-            startIDCardReader(context);
-            mExecutor = Executors.newSingleThreadExecutor();
-            isShutDown = false;
-            mExecutor.execute(new IDCardReadRunnable());
-            Log.d(TAG, "连接设备成功");
-            isOpen = true;
+            if (SerialParams.ID_CARD.getType() == 0) {//串口
+                startIDCardReader(context);
+                startReadRunnable();
+            } else {//usb
+                zkusbManager = new ZKUSBManager(context, zkusbManagerListener);
+                zkusbManager.registerUSBPermissionReceiver();
+                zkusbManager.initUSBPermission(SerialParams.ID_CARD.getVid(), SerialParams.ID_CARD.getPid());
+                return;
+            }
+
+
         } catch (IDCardReaderException e) {
             e.printStackTrace();
-            IOPower.getInstance().setIdentityPwr(0);
+            if (SerialParams.ID_CARD.getVersions()==1){
+                IOPower.getInstance().setIdentityPwr(0);
+            }
+
         }
+    }
+
+    private void startReadRunnable() {
+        mExecutor = Executors.newSingleThreadExecutor();
+        isShutDown = false;
+        mExecutor.execute(new IDCardReadRunnable());
+        Logger.d("连接设备成功");
+        isOpen = true;
     }
 
     //try read id card information
@@ -131,9 +185,22 @@ public class IDCardDevice {
         if (isOpen) {
             isOpen = false;
         }
-        // 直接断电,省得麻烦
-        // IDCardReaderFactory.destroy(idCardReader);
-        IOPower.getInstance().setIdentityPwr(0);
+        if (SerialParams.ID_CARD.getType() == 1) {
+            if (idCardReader != null) {
+                zkusbManager.unRegisterUSBPermissionReceiver();
+                try {
+                    idCardReader.close(0);
+                    IDCardReaderFactory.destroy(idCardReader);
+                } catch (IDCardReaderException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        } else {
+            // 直接断电,省得麻烦
+            // IDCardReaderFactory.destroy(idCardReader);
+            IOPower.getInstance().setIdentityPwr(0);
+        }
     }
 
     public interface OnIDReadListener {

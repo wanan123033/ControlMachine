@@ -394,11 +394,12 @@ public class Radio868Result {
             case ItemDefault.CODE_SL:
                 setType(SerialConfigs.VISION_KEY);
                 setResult(data[5]);//38 上 32 下 34 右 36 右 35 确定 42 返回
+                LogUtils.normal("视力返回数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data));
                 break;
             case ItemDefault.CODE_SPORT_TIMER:
-                if ((data[0]& 0xff) == 0xAA && data.length == data[1]){
+                if ((data[0] & 0xff) == 0xAA && data.length == data[1]) {
                     setResult(new SportResult(data));
-                    switch (data[7]){
+                    switch (data[7]) {
                         case 20://子机配对
                         case 23://设置参数
                             setType(SerialConfigs.SPORT_TIMER_MATCH);

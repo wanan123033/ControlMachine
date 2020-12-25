@@ -25,6 +25,7 @@ import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
+import com.feipulai.device.serial.SerialParams;
 import com.feipulai.device.udp.UdpLEDUtil;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForGroupActivity;
@@ -246,6 +247,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                 startActivity(new Intent(MainActivity.this, DataRetrieveActivity.class));
                 break;
             case R.id.card_print:
+                SerialParams.init(this);
                 PrinterManager.getInstance().init();
                 PrinterManager.getInstance().selfCheck();
                 PrinterManager.getInstance().print("\n\n");
