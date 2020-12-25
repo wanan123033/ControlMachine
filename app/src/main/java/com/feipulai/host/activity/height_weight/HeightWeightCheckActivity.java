@@ -247,7 +247,12 @@ public class HeightWeightCheckActivity
                 mHeightResult.setWeightResult(mWeightResult.getResult());
                 ResultUtils.saveResults(this, mHeightResult, mLastHeightResult);
                 ResultUtils.saveResults(this, mWeightResult, mLastWeightResult);
-
+                if (mLastHeightResult == null) {
+//                    mLastHeightResult = mHeightResult;
+                    mLastHeightResult = DBManager.getInstance().queryLastScoreByStuCode(mStudent.getStudentCode(), HWConfigs
+                            .HEIGHT_ITEM);
+                    mLastWeightResult = DBManager.getInstance().queryLastScoreByStuCode(mStudent.getStudentCode(), HWConfigs.WEIGHT_ITEM);
+                }
                 mHandler.sendEmptyMessage(UPDATE_NEW_RESULT);
 
                 if (SettingHelper.getSystemSetting().isAutoPrint()) {
