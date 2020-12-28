@@ -401,6 +401,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                     intent.putExtra(DataDisplayActivity.ISSHOWPENALIZEFOUL, isShowPenalizeFoul());
                     intent.putExtra(DataRetrieveActivity.DATA_ITEM_CODE, getItemCode());
                     intent.putExtra(DataRetrieveActivity.DATA_EXTRA, bean);
+                    intent.putExtra(DataDisplayActivity.TESTNO,testNo);
                     startActivity(intent);
                 }else {
                     toastSpeak("无考生成绩信息");
