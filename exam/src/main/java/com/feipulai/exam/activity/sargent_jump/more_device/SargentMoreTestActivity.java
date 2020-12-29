@@ -53,6 +53,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
             sargentSetting = new SargentSetting();
         }
         super.initData();
+        setFaultEnable(sargentSetting.isPenalize());
     }
 
     @Override
@@ -74,11 +75,6 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
         RadioManager.getInstance().setOnRadioArrived(resultImpl);
         sendEmpty();
         setNextClickStart(false);
-    }
-
-    @Override
-    protected boolean isShowPenalizeFoul() {
-        return sargentSetting.isPenalize();
     }
 
     @Override
@@ -127,15 +123,9 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
         SargentJumpMore.getData(pos+1);
     }
 
-    @Override
-    protected void confirmResult(int pos) {
-
-    }
-
     private void sendStart(byte id) {
         SargentJumpMore.sendStart(id);
     }
-
 
 
     public void sendEmpty() {

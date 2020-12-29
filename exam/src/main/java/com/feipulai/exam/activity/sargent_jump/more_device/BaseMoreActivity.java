@@ -14,7 +14,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.tts.TtsManager;
@@ -231,6 +230,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     public void setFaultEnable(boolean isPenalize) {
         this.isPenalize = isPenalize;
+        deviceListAdapter.setPenalize(isPenalize);
     }
 
     public void setNextClickStart(boolean nextClickStart) {
@@ -344,6 +344,10 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                         }
                         break;
                     case R.id.txt_punish:
+                        if (pair.getStudent() != null) {
+                            penalize(pos);
+                        }
+                        break;
                     case R.id.txt_confirm:
                         if (pair.getStudent() != null) {
                             confirmResult(pos);
@@ -421,6 +425,34 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         }).show();
         deviceDetails.get(index).setConfirmVisible(false);
         deviceListAdapter.notifyItemChanged(index);
+    }
+
+
+    /**
+     * 展示判罚
+     */
+    private void penalize(final int index) {
+        final BaseStuPair pair = deviceDetails.get(index).getStuDevicePair();
+        SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
+        alertDialog.setTitleText("确定判罚?");
+        alertDialog.setCancelable(false);
+        alertDialog.setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                pair.setResultState(RoundResult.RESULT_STATE_FOUL);
+                updateResult(pair);
+                doResult(pair, index);
+                deviceDetails.get(index).setConfirmVisible(false);
+                deviceListAdapter.notifyItemChanged(index);
+            }
+        }).setCancelText("取消").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+            }
+        }).show();
+
     }
 
     protected void stuSkipDialog(final Student student, final int pos) {
@@ -859,7 +891,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         }
     }
 
-    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair, R.id.img_AFR,R.id.tv_penalizeFoul})
+    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair, R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_led_setting:
@@ -882,13 +914,6 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             case R.id.img_AFR:
                 showAFR();
                 break;
-            case R.id.tv_penalizeFoul:
-            if (null !=deviceDetails.get(0).getStuDevicePair().getStudent()) {
-                showPenalize(0);
-            }else {
-                toastSpeak("无考生成绩信息");
-            }
-            break;
         }
     }
 
