@@ -28,7 +28,7 @@ public class RangerSetting {
     private int miao2;   //秒
     private double level2;
     private double distance; //两点之间的距离
-    private int testPattern; //分组测试模式 0连续 1循环
+    private int testPattern = 1; //分组测试模式 0连续 1循环
 
     private String bluetoothName;
     private String bluetoothMac;

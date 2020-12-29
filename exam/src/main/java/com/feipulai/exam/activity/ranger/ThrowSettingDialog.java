@@ -43,9 +43,9 @@ public class ThrowSettingDialog extends AlertDialog.Builder {
 
     String[] items = {"标枪","铅球","铁饼","链球","其他"};
 
-    public ThrowSettingDialog(@NonNull Context context) {
+    public ThrowSettingDialog(@NonNull Context context, final RangerSetting setting) {
         super(context);
-        setting = SharedPrefsUtil.loadFormSource(context,RangerSetting.class);
+        this.setting = setting;
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_throws_setting,null,false);
         ButterKnife.bind(this,view);
         setView(view);
@@ -98,6 +98,8 @@ public class ThrowSettingDialog extends AlertDialog.Builder {
     }
 
     private void initView() {
+        et_stand.setText(setting.getRadius()+"");
+        et_stand.setSelection(et_stand.getText().length());
         et_range.setText(setting.getQd_hor()+"");
         et_range.setSelection(et_range.getText().length());
         et_d.setText(setting.getDu()+"");
@@ -153,28 +155,8 @@ public class ThrowSettingDialog extends AlertDialog.Builder {
     @OnItemSelected({R.id.sp_item})
     public void spinnerItemSelected(Spinner spinner, int position) {
         setting.setItemType(position);
-        switch (position){
-            case 0:
-                et_stand.setText("8000");
-                et_stand.setSelection(4);
-                break;
-            case 1:
-                et_stand.setText("1068");
-                et_stand.setSelection(4);
-                break;
-            case 2:
-                et_stand.setText("1250");
-                et_stand.setSelection(4);
-                break;
-            case 3:
-                et_stand.setText("1068");
-                et_stand.setSelection(4);
-                break;
-            case 4:
-                et_stand.setText("0");
-                et_stand.setSelection(1);
-                break;
-        }
+        et_stand.setText(setting.getRadius()+"");
+        et_stand.setSelection(et_stand.getText().length());
 
     }
 

@@ -41,26 +41,17 @@ public class RangerMoreActivity extends BaseMoreTestActivity {
     public void initData() {
         setting = SharedPrefsUtil.loadFormSource(getApplicationContext(),RangerSetting.class);
         utils = BluetoothManager.getSpp(this);
-        if (utils.isBluetoothEnabled()) {
-            utils.setupService();
-            utils.startService();
-            utils.setOnDataReceivedListener(new OnDataReceivedListener() {
-                @Override
-                protected void onResult(byte[] datas) {
-                    onResults(datas);
-                }
-            });
-        }else {
+        if (!utils.isBluetoothEnabled()) {
             utils.enable();
-            utils.setupService();
-            utils.startService();
-            utils.setOnDataReceivedListener(new OnDataReceivedListener() {
-                @Override
-                protected void onResult(byte[] datas) {
-                    onResults(datas);
-                }
-            });
         }
+        utils.setupService();
+        utils.startService();
+        utils.setOnDataReceivedListener(new OnDataReceivedListener() {
+            @Override
+            protected void onResult(byte[] datas) {
+                onResults(datas);
+            }
+        });
     }
 
     @Override
@@ -127,6 +118,7 @@ public class RangerMoreActivity extends BaseMoreTestActivity {
             return;
         }
         if (utils.isConnected()) {
+            stuPair.setTestTime(System.currentTimeMillis()+"");
             byte[] bytes = new byte[]{0x5A, 0x33, 0x34, 0x30, 0x39, 0x33, 0x03, 0x0d, 0x0a};
             utils.send(bytes, false);
             bytes = new byte[]{0x43, 0x30, 0x36, 0x37, 0x03, 0x0d, 0x0a};

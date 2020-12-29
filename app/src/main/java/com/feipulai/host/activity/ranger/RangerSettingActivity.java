@@ -89,14 +89,10 @@ public class RangerSettingActivity extends BaseTitleActivity {
                 break;
         }
     }
+
     @Override
-    public void finish() {
-        SharedPrefsUtil.save(getApplicationContext(),setting);
-        super.finish();
-    }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        SharedPrefsUtil.save(getApplicationContext(),setting);
+    protected void onPause() {
+        super.onPause();
+        SharedPrefsUtil.save(this,setting);
     }
 }
