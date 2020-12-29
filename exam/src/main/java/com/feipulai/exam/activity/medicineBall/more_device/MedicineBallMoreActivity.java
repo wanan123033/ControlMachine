@@ -78,6 +78,11 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
         ledShow();
     }
 
+    @Override
+    protected boolean isShowPenalizeFoul() {
+        return setting.isPenalizeFoul();
+    }
+
     private void sendEmpty() {
         Log.i(TAG, "james_send_empty");
         for (int i = 0; i < setting.getSpDeviceCount(); i++) {

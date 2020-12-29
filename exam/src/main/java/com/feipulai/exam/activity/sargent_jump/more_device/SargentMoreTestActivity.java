@@ -77,6 +77,11 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
     }
 
     @Override
+    protected boolean isShowPenalizeFoul() {
+        return sargentSetting.isPenalize();
+    }
+
+    @Override
     public int setTestCount() {
         if (TestConfigs.sCurrentItem.getTestNum() != 0) {
             return TestConfigs.sCurrentItem.getTestNum();

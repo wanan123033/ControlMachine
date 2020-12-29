@@ -8,14 +8,13 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.tts.TtsManager;
@@ -26,7 +25,6 @@ import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
-import com.feipulai.exam.activity.base.BaseAFRFragment;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.BaseDeviceState;
@@ -75,7 +73,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     private LedHandler ledHandler = new LedHandler();
     private boolean isPenalize;
     private boolean isNextClickStart = true;
-
+    @BindView(R.id.tv_penalizeFoul)
+    TextView tv_penalizeFoul;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_sargent_jump_more;
@@ -98,6 +97,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         PrinterManager.getInstance().init();
         etInputText.setData(lvResults, this);
         setDeviceCount(setDeviceCount());
+        tv_penalizeFoul.setVisibility(isShowPenalizeFoul()? View.VISIBLE:View.GONE);
     }
 
     @Override
@@ -110,6 +110,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         }
 
     }
+
+    protected abstract boolean isShowPenalizeFoul();
 
     @Override
     public void finish() {
@@ -345,6 +347,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                             stuSkipDialog(pair.getStudent(), pos);
                         }
                         break;
+                    case R.id.txt_punish:
                     case R.id.txt_confirm:
                         if (pair.getStudent() != null) {
                             confirmResult(pos);
@@ -860,7 +863,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         }
     }
 
-    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair, R.id.img_AFR})
+    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair, R.id.img_AFR,R.id.tv_penalizeFoul})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_led_setting:
@@ -883,6 +886,13 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             case R.id.img_AFR:
                 showAFR();
                 break;
+            case R.id.tv_penalizeFoul:
+            if (null !=deviceDetails.get(0).getStuDevicePair().getStudent()) {
+                showPenalize(0);
+            }else {
+                toastSpeak("无考生成绩信息");
+            }
+            break;
         }
     }
 
