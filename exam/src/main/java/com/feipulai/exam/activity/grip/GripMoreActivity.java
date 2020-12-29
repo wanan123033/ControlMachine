@@ -65,11 +65,6 @@ public class GripMoreActivity extends BaseMoreActivity {
         ledShow();
     }
 
-    @Override
-    protected boolean isShowPenalizeFoul() {
-        return false;
-    }
-
     private void getState() {
         if (isResume) {
             Log.i(TAG, "send_empty");

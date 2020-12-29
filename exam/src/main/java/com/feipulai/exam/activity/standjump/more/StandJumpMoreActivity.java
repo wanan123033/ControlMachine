@@ -64,11 +64,6 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
     }
 
     @Override
-    protected boolean isShowPenalizeFoul() {
-        return standJumpSetting.isPenalizeFoul();
-    }
-
-    @Override
     public int setTestCount() {
         if (TestConfigs.sCurrentItem.getTestNum() != 0) {
             return TestConfigs.sCurrentItem.getTestNum();

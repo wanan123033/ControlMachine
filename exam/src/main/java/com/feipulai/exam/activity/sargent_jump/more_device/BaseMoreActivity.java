@@ -73,8 +73,6 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     private LedHandler ledHandler = new LedHandler();
     private boolean isPenalize;
     private boolean isNextClickStart = true;
-    @BindView(R.id.tv_penalizeFoul)
-    TextView tv_penalizeFoul;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_sargent_jump_more;
@@ -97,7 +95,6 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         PrinterManager.getInstance().init();
         etInputText.setData(lvResults, this);
         setDeviceCount(setDeviceCount());
-        tv_penalizeFoul.setVisibility(isShowPenalizeFoul()? View.VISIBLE:View.GONE);
     }
 
     @Override
@@ -111,7 +108,6 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     }
 
-    protected abstract boolean isShowPenalizeFoul();
 
     @Override
     public void finish() {
