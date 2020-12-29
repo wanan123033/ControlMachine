@@ -84,12 +84,12 @@ public class RangerSettingActivity extends BaseTitleActivity implements Compound
     public void onClick(View view){
         switch (view.getId()){
             case R.id.tv_throw:
-                ThrowSettingDialog dialog = new ThrowSettingDialog(this);
+                ThrowSettingDialog dialog = new ThrowSettingDialog(this,setting);
                 dialog.setItemType(setting.getItemType());
                 dialog.show();
                 break;
             case R.id.tv_staJump:
-                JumpSettingDialog dialog1 = new JumpSettingDialog(this);
+                JumpSettingDialog dialog1 = new JumpSettingDialog(this,setting);
                 dialog1.show();
                 break;
             case R.id.tv_bluetooth:
@@ -143,14 +143,8 @@ public class RangerSettingActivity extends BaseTitleActivity implements Compound
     }
 
     @Override
-    public void finish() {
-        SharedPrefsUtil.save(getApplicationContext(),setting);
-        super.finish();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onPause() {
+        super.onPause();
         SharedPrefsUtil.save(getApplicationContext(),setting);
     }
 }

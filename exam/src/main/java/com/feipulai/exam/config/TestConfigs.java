@@ -45,6 +45,7 @@ import com.feipulai.exam.activity.pushUp.PushUpSetting;
 import com.feipulai.exam.activity.pushUp.PushUpSettingActivity;
 import com.feipulai.exam.activity.pushUp.check.PushUpCheckActivity;
 import com.feipulai.exam.activity.ranger.RangerMoreActivity;
+import com.feipulai.exam.activity.ranger.RangerSettingActivity;
 import com.feipulai.exam.activity.ranger.RangerTestActivity;
 import com.feipulai.exam.activity.sargent_jump.SargentGroupActivity;
 import com.feipulai.exam.activity.sargent_jump.SargentItemSelectActivity;
@@ -462,6 +463,7 @@ public class TestConfigs {
         TestConfigs.settingActivity.put(ItemDefault.CODE_WLJ, GripSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_SHOOT, ShootSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_SPORT_TIMER, SportSettingActivity.class);
+        TestConfigs.settingActivity.put(ItemDefault.CODE_JGCJ, RangerSettingActivity.class);
         // 每个机器码对应的机器名称
         TestConfigs.itemMinScope.put(ItemDefault.CODE_ZWTQQ, -200);
         TestConfigs.itemMaxScope.put(ItemDefault.CODE_ZWTQQ, 400);

@@ -98,6 +98,8 @@ public class ThrowSettingDialog extends AlertDialog.Builder {
     }
 
     private void initView() {
+        et_stand.setText(setting.getRadius()+"");
+        et_stand.setSelection(et_stand.getText().length());
         et_range.setText(setting.getQd_hor()+"");
         et_range.setSelection(et_range.getText().length());
         et_d.setText(setting.getDu()+"");
@@ -153,28 +155,8 @@ public class ThrowSettingDialog extends AlertDialog.Builder {
     @OnItemSelected({R.id.sp_item})
     public void spinnerItemSelected(Spinner spinner, int position) {
         setting.setItemType(position);
-        switch (position){
-            case 0:
-                et_stand.setText("8000");
-                et_stand.setSelection(4);
-                break;
-            case 1:
-                et_stand.setText("1068");
-                et_stand.setSelection(4);
-                break;
-            case 2:
-                et_stand.setText("1250");
-                et_stand.setSelection(4);
-                break;
-            case 3:
-                et_stand.setText("1068");
-                et_stand.setSelection(4);
-                break;
-            case 4:
-                et_stand.setText("0");
-                et_stand.setSelection(1);
-                break;
-        }
+        et_stand.setText(setting.getRadius()+"");
+        et_stand.setSelection(et_stand.getText().length());
 
     }
 

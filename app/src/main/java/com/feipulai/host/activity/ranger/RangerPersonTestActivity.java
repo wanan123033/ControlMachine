@@ -38,7 +38,7 @@ public class RangerPersonTestActivity extends BasePersonTestActivity {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == WHAT) {
-                sendTestCommand(pair);
+                pullStart();
             }else {
                 boolean connected = utils.isConnected();
                 if (!connected) {
@@ -126,6 +126,8 @@ public class RangerPersonTestActivity extends BasePersonTestActivity {
         int result1 = calculation(result,setting);
         pair.setResult(result1);
         updateResult(pair);
+
+
     }
     private int calculation(RangerResult result, RangerSetting rangerSetting) {
         int itemType = rangerSetting.getItemType();
@@ -166,10 +168,25 @@ public class RangerPersonTestActivity extends BasePersonTestActivity {
             if (setting.getAutoTestTime() > 0){
                 handler.sendEmptyMessageDelayed(WHAT,setting.getAutoTestTime() * 1000);
             }
+            setTextViewsVisibility(false, false, true, false, true);
         } else {
             ToastUtils.showLong("请先连接激光测距仪");
         }
     }
+
+    @Override
+    public void pullAbandon() {
+        stuSkipDialog(1);
+    }
+
+    @Override
+    public void pullStop() {
+        pair.getBaseDevice().setState(BaseDeviceState.STATE_END);
+        updateDevice(pair.getBaseDevice());
+
+    }
+
+
 
     @Override
     public void gotoItemSetting() {
@@ -179,7 +196,6 @@ public class RangerPersonTestActivity extends BasePersonTestActivity {
     @Override
     public void stuSkip() {
         tv_foul.setVisibility(View.GONE);
-        txtStartTest.setVisibility(View.VISIBLE);
     }
 
 }

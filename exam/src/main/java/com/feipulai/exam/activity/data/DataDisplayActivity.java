@@ -49,6 +49,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickAdapter.OnItemClickListener {
 
     public static final String ISSHOWPENALIZEFOUL = "ISSHOWPENALIZEFOUL";
+    public static final String TESTNO = "testNo";
     @BindView(R.id.tv_stuName)
     TextView mTvStuName;
     @BindView(R.id.tv_sex)
@@ -64,6 +65,8 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
 
     @BindView(R.id.img_portrait)
     ImageView imgPortrait;
+    @BindView(R.id.tv_ins_penalizeFoul)
+    TextView tv_ins_penalizeFoul;
     private DataRetrieveBean mDataRetrieveBean;
     private ResultDetailAdapter resultDetailAdapter;
     //    private Item mCurrentItem;
@@ -75,6 +78,8 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
         }
     });
     private String itemCode;
+    private int vistity;
+    private int testNo;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_data_display;
@@ -84,8 +89,11 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
     protected void initData() {
         mDataRetrieveBean = (DataRetrieveBean) getIntent().getSerializableExtra(DataRetrieveActivity.DATA_EXTRA);
         itemCode = getIntent().getStringExtra(DataRetrieveActivity.DATA_ITEM_CODE);
-        int vistity = getIntent().getIntExtra(ISSHOWPENALIZEFOUL, View.GONE);
+
+        vistity = getIntent().getIntExtra(ISSHOWPENALIZEFOUL, View.GONE);
+        testNo = getIntent().getIntExtra(TESTNO, 1);
         tv_penalizeFoul.setVisibility(vistity);
+        tv_ins_penalizeFoul.setVisibility(vistity);
         Log.e("itemCode", "---------" + itemCode);
         mTvStuCode.setText(mDataRetrieveBean.getStudentCode());
         mTvStuName.setText(mDataRetrieveBean.getStudentName());
@@ -122,6 +130,89 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
         }
     }
 
+    private void insertRound(DataRetrieveBean mDataRetrieveBean,int testNo) {
+        int roundNo = 1;
+        boolean isInsert = false;
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_HW) {
+//            List<RoundResult> heightResults = null,weightResults = null;
+//            if (mDataRetrieveBean.getGroupId() == RoundResult.DEAFULT_GROUP_ID) {
+//                heightResults = DBManager.getInstance().queryResultsByStudentCode(mDataRetrieveBean.getStudentCode(), HWConfigs
+//                        .HEIGHT_ITEM);
+//                weightResults = DBManager.getInstance().queryResultsByStudentCode(mDataRetrieveBean.getStudentCode(), HWConfigs
+//                        .WEIGHT_ITEM);
+//            }else {
+//                heightResults = DBManager.getInstance().queryResultsByStudentCode(mDataRetrieveBean.getStudentCode(),mDataRetrieveBean.getGroupId(),mDataRetrieveBean.getExamType(),mDataRetrieveBean.getScheduleNo(), HWConfigs
+//                        .HEIGHT_ITEM);
+//                weightResults = DBManager.getInstance().queryResultsByStudentCode(mDataRetrieveBean.getStudentCode(),mDataRetrieveBean.getGroupId(),mDataRetrieveBean.getExamType(),mDataRetrieveBean.getScheduleNo(), HWConfigs
+//                        .WEIGHT_ITEM);
+//            }
+//            if (heightResults != null && heightResults.size() < testNo){
+//                roundNo = heightResults.size() + 1;
+//                isInsert = true;
+//            }
+        } else {
+            List<RoundResult> roundResults = null;
+            if (mDataRetrieveBean.getGroupId() == RoundResult.DEAFULT_GROUP_ID) {
+                roundResults = DBManager.getInstance().queryResultsByStudentCode(itemCode, mDataRetrieveBean.getStudentCode());
+            }else {
+                roundResults = DBManager.getInstance().queryResultsByStudentCode(itemCode, mDataRetrieveBean.getStudentCode(),mDataRetrieveBean.getGroupId(),mDataRetrieveBean.getExamType(),mDataRetrieveBean.getScheduleNo());
+            }
+            if (roundResults != null && roundResults.size() < testNo){
+                roundNo = roundResults.size() + 1;
+                isInsert = true;
+            }
+        }
+        if (isInsert && roundNo <= testNo) {
+            RoundResult roundResult = new RoundResult();
+            roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
+            roundResult.setStudentCode(mDataRetrieveBean.getStudentCode());
+            roundResult.setItemCode(TestConfigs.getCurrentItemCode());
+            roundResult.setResult(0);
+            roundResult.setMachineResult(0);
+            roundResult.setResultState(2);
+            roundResult.setTestTime(System.currentTimeMillis() + "");
+            roundResult.setEndTime(System.currentTimeMillis() + "");
+            roundResult.setRoundNo(roundNo);
+            roundResult.setTestNo(testNo);
+            roundResult.setExamType(mDataRetrieveBean.getExamType());
+            roundResult.setScheduleNo(mDataRetrieveBean.getScheduleNo());
+            roundResult.setUpdateState(0);
+            roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
+            RoundResult bestResult = DBManager.getInstance().queryBestScore(mDataRetrieveBean.getStudentCode(), testNo);
+            if (bestResult != null) {
+                // 原有最好成绩犯规 或者原有最好成绩没有犯规但是现在成绩更好
+                if (bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && roundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && bestResult.getResult() <= roundResult.getResult()) {
+                    // 这个时候就要同时修改这两个成绩了
+                    roundResult.setIsLastResult(1);
+                    bestResult.setIsLastResult(0);
+                    DBManager.getInstance().updateRoundResult(bestResult);
+
+                } else {
+                    if (bestResult.getResultState() != RoundResult.RESULT_STATE_NORMAL) {
+                        roundResult.setIsLastResult(1);
+                        bestResult.setIsLastResult(0);
+                        DBManager.getInstance().updateRoundResult(bestResult);
+
+                    } else {
+                        roundResult.setIsLastResult(0);
+
+                    }
+                }
+            } else {
+                // 第一次测试
+                roundResult.setIsLastResult(1);
+
+            }
+            //生成结束时间
+            roundResult.setEndTime(System.currentTimeMillis() + "");
+            DBManager.getInstance().insertRoundResult(roundResult);
+            displayResults();
+            toastSpeak("新增成绩成功");
+        }else {
+            toastSpeak("已新增成绩");
+        }
+    }
+
     private void displayHW() {
         List<RoundResult> heightResults = null,weightResults = null;
         if (mDataRetrieveBean.getGroupId() == RoundResult.DEAFULT_GROUP_ID) {
@@ -135,6 +226,7 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
             weightResults = DBManager.getInstance().queryResultsByStudentCode(mDataRetrieveBean.getStudentCode(),mDataRetrieveBean.getGroupId(),mDataRetrieveBean.getExamType(),mDataRetrieveBean.getScheduleNo(), HWConfigs
                     .WEIGHT_ITEM);
         }
+
         Collections.sort(heightResults, roundResultComparator);
         Collections.sort(weightResults, roundResultComparator);
 
@@ -172,6 +264,7 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
         }else {
             roundResults = DBManager.getInstance().queryResultsByStudentCode(itemCode, mDataRetrieveBean.getStudentCode(),mDataRetrieveBean.getGroupId(),mDataRetrieveBean.getExamType(),mDataRetrieveBean.getScheduleNo());
         }
+
         Collections.sort(roundResults, roundResultComparator);
 
         for (RoundResult roundResult : roundResults) {
@@ -202,8 +295,19 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
         super.onCreate(savedInstanceState);
         LogUtils.life("DataDisplayActivity onCreate");
     }
-    @OnClick(R.id.tv_penalizeFoul)
+    @OnClick({R.id.tv_penalizeFoul,R.id.tv_ins_penalizeFoul})
     public void onClick(View view){
+        switch (view.getId()) {
+            case R.id.tv_penalizeFoul:
+                penalize();
+                break;
+            case R.id.tv_ins_penalizeFoul:
+                insertRound(mDataRetrieveBean,testNo);
+                break;
+        }
+    }
+
+    private void penalize() {
         if (currentResult != null) {
             new SweetAlertDialog(this)
                     .setTitleText("提示")
@@ -230,7 +334,7 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
                             sweetAlertDialog.dismissWithAnimation();
                         }
                     }).show();
-        }else {
+        } else {
             toastSpeak("请先选择一条成绩");
         }
     }

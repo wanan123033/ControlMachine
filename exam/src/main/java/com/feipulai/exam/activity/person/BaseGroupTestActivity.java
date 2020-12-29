@@ -360,6 +360,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                     Intent intent = new Intent(this, DataDisplayActivity.class);
                     intent.putExtra(DataDisplayActivity.ISSHOWPENALIZEFOUL, isShowPenalizeFoul());
                     intent.putExtra(DataRetrieveActivity.DATA_ITEM_CODE, getItemCode());
+                    intent.putExtra(DataDisplayActivity.TESTNO,setTestCount());
                     intent.putExtra(DataRetrieveActivity.DATA_EXTRA, bean);
 
                     startActivity(intent);
