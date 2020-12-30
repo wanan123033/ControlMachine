@@ -83,7 +83,7 @@ public class DownloadUtils {
                         LogUtil.logDebugMessage(response.headers().toString());
                         Headers headers = response.headers();
                         if (TextUtils.isEmpty(headers.get("Code")) || Integer.valueOf(headers.get("Code")) == 1) {
-                            if (!TextUtils.isEmpty(headers.get("msg"))) {
+                            if (!TextUtils.isEmpty(headers.get("Msg"))) {
                                 downloadListener.onFailure(fileName, URLDecoder.decode(headers.get("Msg")));
                             }
                             return;
@@ -135,7 +135,7 @@ public class DownloadUtils {
         try {
             os = new FileOutputStream(file);
             int len;
-            byte[] buff = new byte[1024];
+            byte[] buff = new byte[1024 * 10];
             while ((len = is.read(buff)) != -1) {
                 if (stopList.contains(file.getName())) {
                     file.delete();
@@ -146,8 +146,8 @@ public class DownloadUtils {
                 }
                 os.write(buff, 0, len);
                 currentLength += len;
-                LogUtil.logDebugMessage("当前长度: " + currentLength);
-                LogUtil.logDebugMessage("当前进度: " + (int) (100 * currentLength / totalLength));
+//                LogUtil.logDebugMessage("当前长度: " + currentLength);
+//                LogUtil.logDebugMessage("当前进度: " + (int) (100 * currentLength / totalLength));
                 downloadListener.onProgress(file.getName(), (int) (100 * currentLength / totalLength));
                 if ((int) (100 * currentLength / totalLength) == 100 && mApi != null) {
                     downloadListener.onFinish(mPath);

@@ -37,7 +37,11 @@ public class SitUpCheckPresenter extends SitPullUpCheckPresenter<SitUpSetting> {
 	
 	@Override
 	public void setFrequency(int deviceId, int originFrequency, int deviceFrequency) {
-		deviceManager.setFrequency(ItemDefault.CODE_YWQZ,
+//		deviceManager.setFrequency(ItemDefault.CODE_YWQZ,
+//				originFrequency,
+//				deviceId,
+//				SettingHelper.getSystemSetting().getHostId());
+		deviceManager.setFrequency( deviceFrequency,
 				originFrequency,
 				deviceId,
 				SettingHelper.getSystemSetting().getHostId());
