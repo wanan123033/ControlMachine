@@ -515,7 +515,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
     private void penalize(final int index) {
         final BaseStuPair pair = deviceDetails.get(index).getStuDevicePair();
         SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
-        alertDialog.setTitleText(getString(R.string.confirm_result));
+        alertDialog.setTitleText("确认判罚?");
         alertDialog.setCancelable(false);
         alertDialog.setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
@@ -527,7 +527,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 deviceDetails.get(index).setConfirmVisible(false);
                 deviceListAdapter.notifyItemChanged(index);
             }
-        }).setCancelText(getString(R.string.foul)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+        }).setCancelText("取消").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
