@@ -127,7 +127,6 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
             }
         }, 3000);
         setDeviceCount(setTestDeviceCount());
-
     }
 
     @Override
@@ -314,6 +313,10 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                             LogUtils.operation("点击了确认成绩:" + pair.getStudent().toString());
                             confirmResult(pos);
                         }
+                    case R.id.txt_punish:
+                        if (pair.getStudent() != null) {
+                            penalize(pos);
+                        }
                         break;
                     case R.id.txt_get_data:
                         if (pair.getStudent() != null) {
@@ -354,6 +357,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
 
     public void setFaultEnable(boolean isPenalize) {
         this.isPenalize = isPenalize;
+        deviceListAdapter.setPenalize(isPenalize);
     }
 
     public void setNextClickStart(boolean nextClickStart) {
@@ -503,6 +507,34 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         }).show();
         deviceDetails.get(index).setConfirmVisible(false);
         deviceListAdapter.notifyItemChanged(index);
+    }
+
+    /**
+     * 展示判罚
+     */
+    private void penalize(final int index) {
+        final BaseStuPair pair = deviceDetails.get(index).getStuDevicePair();
+        SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
+        alertDialog.setTitleText(getString(R.string.confirm_result));
+        alertDialog.setCancelable(false);
+        alertDialog.setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                pair.setResultState(RoundResult.RESULT_STATE_FOUL);
+                updateTestResult(pair);
+                doResult(pair, index);
+                deviceDetails.get(index).setConfirmVisible(false);
+                deviceListAdapter.notifyItemChanged(index);
+            }
+        }).setCancelText(getString(R.string.foul)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+
+            }
+        }).show();
+
     }
 
     private void broadResult(BaseStuPair baseStuPair) {

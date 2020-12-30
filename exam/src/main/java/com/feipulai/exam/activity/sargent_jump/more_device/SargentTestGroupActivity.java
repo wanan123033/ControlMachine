@@ -45,6 +45,7 @@ public class SargentTestGroupActivity extends BaseMoreGroupActivity {
         sendEmpty();
         setNextClickStart(false);
         setShowGetData(1,true);
+        setFaultEnable(sargentSetting.isPenalize());
     }
 
     @Override
