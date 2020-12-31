@@ -1,6 +1,8 @@
 package com.feipulai.host.activity.vision.Radio;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -9,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
@@ -88,6 +91,7 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
 //    private boolean isStartCheck = true;
 
     private TimerIntervalUtil intervalUtil;
+    private BleTouchEvent bleTouchEvent = new BleTouchEvent(this);
 
     @Nullable
     @Override
@@ -102,7 +106,51 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
     }
 
     @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        int key = bleTouchEvent.onTouch(event);
+        switch (key) {
+            case BleTouchEvent.EVENT_TOP://上
+                checkKey(VisionBean.DIRECTION_TOP);
+                break;
+            case BleTouchEvent.EVENT_RIGHT://右
+                checkKey(VisionBean.DIRECTION_RIGHT);
+                break;
+            case BleTouchEvent.EVENT_BOTTOM://下
+                checkKey(VisionBean.DIRECTION_BOTTOM);
+                break;
+            case BleTouchEvent.EVENT_LEFT://左
+                checkKey(VisionBean.DIRECTION_LEFT);
+                break;
+            case BleTouchEvent.EVENT_CANCEL://返回
+                checkKey(0);
+                break;
+            case BleTouchEvent.EVENT_CONFIRM://确定
+                if (index == -1) {
+                    index = 0;
+                    errorCount = 0;
+                    ivE.setVisibility(View.VISIBLE);
+                    txtHint.setVisibility(View.GONE);
+                    visionData = visionBean.getVisions().get(index);
+                    setImageWidth();
+                    if (visionSetting.getStopTime() != 0) {
+                        txt_time.setText(visionSetting.getStopTime() + "");
+                        intervalUtil.startTime();
+                    } else {
+                        txt_time.setVisibility(View.GONE);
+                    }
+//                            isStartCheck = true;
+                }
+                break;
+        }
+
+
+        return super.onTouchEvent(event);
+    }
+
+    @Override
     protected void initData() {
+        NavigationBarStatusBar(this, true);
         //获取项目设置
         visionSetting = SharedPrefsUtil.loadFormSource(this, VisionSetting.class);
         if (visionSetting == null)
@@ -120,7 +168,6 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
         visionBean = visionBeans.get(visionSetting.getDistance());
 
         visionData = visionBean.getVisions().get(index);
-
 
 
         intervalUtil = new TimerIntervalUtil(new TimerIntervalUtil.TimerAccepListener() {
@@ -178,6 +225,24 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
 
     }
 
+    /**
+     * 导航栏，状态栏隐藏
+     *
+     * @param activity
+     */
+    public static void NavigationBarStatusBar(Activity activity, boolean hasFocus) {
+        if (hasFocus && Build.VERSION.SDK_INT >= 19) {
+            View decorView = activity.getWindow().getDecorView();
+            decorView.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
+    }
+
     private void initResult() {
         roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
         if (student != null) {
@@ -218,6 +283,7 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
                         checkKey(VisionBean.DIRECTION_LEFT);
                         break;
                     case 0x42://返回
+                        checkKey(0);
                         break;
                     case 0x35://确定
                         if (index == -1) {

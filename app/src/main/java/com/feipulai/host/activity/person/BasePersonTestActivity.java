@@ -79,7 +79,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     public LinearLayout llState;
     @BindView(R.id.txt_test_result)
     TextView txtStuResult;
-//    @BindView(R.id.txt_start_test)
+    //    @BindView(R.id.txt_start_test)
 //    TextView txtStartTest;
     @BindView(R.id.tv_base_height)
     TextView tvBaseHeight;

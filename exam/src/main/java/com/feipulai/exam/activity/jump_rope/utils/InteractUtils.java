@@ -16,6 +16,7 @@ import com.feipulai.common.db.DataBaseRespon;
 import com.feipulai.common.db.DataBaseTask;
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.DateUtil;
+import com.feipulai.common.utils.FileUtil;
 import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
@@ -53,6 +54,7 @@ import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -214,7 +216,7 @@ public class InteractUtils {
                     break;
 
                 case ItemDefault.CODE_YWQZ:
-                    case ItemDefault.CODE_SGBQS:
+                case ItemDefault.CODE_SGBQS:
                 case ItemDefault.CODE_YTXS:
                 case ItemDefault.CODE_PQ:
                 case ItemDefault.CODE_FWC:
@@ -503,7 +505,7 @@ public class InteractUtils {
         }
         printBean.setPrintDataBeans(dataBeanList);
 
-        String fileName = DateUtil.getCurrentTime() + "";
+        String fileName = DateUtil.getCurrentTime("yyyyMMddHHmmss");
 
         String codeData = codeEncrypt + "?" + fileName + "?" + getDeviceId(context);
 
@@ -511,7 +513,11 @@ public class InteractUtils {
         LogUtil.logDebugMessage(EncryptUtil.setDecodeData(printBean.getCodeData(), new SecretKeySpec(PrintBean.ENCRY_KEY.getBytes(), "AES")));
         LogUtil.logDebugMessage("A4打印信息:" + printBean.toString());
         new PrintA4Util(context).createPrintFile(printBean, MyApplication.PATH_PDF_IMAGE, fileName);
-        HpPrintManager.getInstance(context).print(MyApplication.PATH_PDF_IMAGE + fileName + ".pdf");
+        if (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4) {
+            HpPrintManager.getInstance(context).print(MyApplication.PATH_PDF_IMAGE + fileName + ".pdf");
+        } else {
+            FileUtil.openFile((Activity) context, new File(MyApplication.PATH_PDF_IMAGE + fileName + ".pdf"));
+        }
         Logger.i("成绩打印完成");
     }
 

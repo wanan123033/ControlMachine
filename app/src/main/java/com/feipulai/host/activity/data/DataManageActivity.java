@@ -374,7 +374,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
     private DownLoadProgressDialog downLoadProgressDialog;
     private DownloadUtils downloadUtils = new DownloadUtils();
 
-    private void uploadPhotos(int batch, final String uploadTime) {
+    private void uploadPhotos(final int batch, final String uploadTime) {
         HashMap<String, String> parameData = new HashMap<>();
         parameData.put("batch", batch + "");
         parameData.put("uploadTime", uploadTime);
@@ -384,11 +384,12 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                 MyApplication.PATH_IMAGE, DateUtil.getCurrentTime() + ".zip", new DownloadListener() {
                     @Override
                     public void onStart(String fileName) {
-
+                        LogUtils.operation("下载开始===>"+batch);
                     }
 
                     @Override
                     public void onResponse(Headers headers) {
+                        LogUtils.operation("下载请求成功===>"+batch);
                         saveHeaders = headers;
                         LogUtils.operation("saveHeaders=" + saveHeaders.toString());
                         runOnUiThread(new Runnable() {
@@ -413,7 +414,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
 
                     @Override
                     public void onFinish(String fileName) {
-
+                        LogUtils.operation("下载结束===>"+batch);
                         if (!new File(MyApplication.PATH_IMAGE + fileName).exists()) {
                             return;
                         }

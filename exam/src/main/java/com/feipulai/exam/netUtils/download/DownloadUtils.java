@@ -141,7 +141,7 @@ public class DownloadUtils {
         try {
             os = new FileOutputStream(file);
             int len;
-            byte[] buff = new byte[1024];
+            byte[] buff = new byte[1024*10];
             while ((len = is.read(buff)) != -1) {
                 if (stopList.contains(file.getName())) {
                     file.delete();
