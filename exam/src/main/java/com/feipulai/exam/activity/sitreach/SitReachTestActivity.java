@@ -291,7 +291,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
 //                            //更新成绩
 //                            getResult(false, stuPair);
 //                            //设置设备状态
-//                            getDeviceState(stuPair.getBaseDevice());
+//                            getDeviceStop(stuPair.getBaseDevice());
 //                            AgainTest(stuPair.getBaseDevice());
 //                            clicked = true;
 //                        }

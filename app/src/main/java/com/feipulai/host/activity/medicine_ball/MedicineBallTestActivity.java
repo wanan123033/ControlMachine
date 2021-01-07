@@ -216,7 +216,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
             PROMPT_TIMES = 0;
             checkFlag = true;
             if (testState == TestState.UN_STARTED) {
-                deviceState.setState(BaseDeviceState.STATE_NOT_BEGAIN);
+                deviceState.setState(BaseDeviceState.STATE_FREE);
                 setBegin(1);
             } else {
                 deviceState.setState(BaseDeviceState.STATE_ONUSE);

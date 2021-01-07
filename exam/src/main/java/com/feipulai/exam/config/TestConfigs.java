@@ -13,6 +13,7 @@ import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForPerson
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleRaceSettingActivity;
 import com.feipulai.exam.activity.RadioTimer.RunTimerActivityGroupActivity;
 import com.feipulai.exam.activity.RadioTimer.RunTimerActivityTestActivity;
+import com.feipulai.exam.activity.RadioTimer.RunTimerSelectActivity;
 import com.feipulai.exam.activity.RadioTimer.RunTimerSetting;
 import com.feipulai.exam.activity.RadioTimer.RunTimerSettingActivity;
 import com.feipulai.exam.activity.basketball.BasketBallGroupActivity;
@@ -386,7 +387,7 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_LDTY, StandJumpSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_ZWTQQ, SitReachSelectActivity.class);
 
-        TestConfigs.proActivity.put(ItemDefault.CODE_ZFP, RunTimerActivityTestActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_ZFP, RunTimerSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallSelectActivity.class);
 
         TestConfigs.proActivity.put(ItemDefault.CODE_TS, JumpRopeCheckActivity.class);

@@ -222,7 +222,7 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
 
         @Override
         public void getDeviceState(final BaseDeviceState deviceState) {
-            Log.i("james", "getDeviceState");
+            Log.i("james", "getDeviceStop");
             BaseDeviceState state = new BaseDeviceState();
             state.setState(deviceState.getState());
             Message msg = mHandler.obtainMessage();

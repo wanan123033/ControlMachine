@@ -282,7 +282,7 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
 //                            //设置设备状态
 //                            BaseDeviceState deviceState = stuPair.getBaseDevice();
 //                            deviceState.setState(BaseDeviceState.STATE_END);
-//                            getDeviceState(deviceState);
+//                            getDeviceStop(deviceState);
 //                            //结束设备
 //                            EndDevice(stuPair.getResultState() == RoundResult.RESULT_STATE_FOUL, stuPair.getResult());
 //                        }
@@ -300,7 +300,7 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
 //                            //更新成绩
 //                            getResult(false, stuPair);
 //                            //设置设备状态
-//                            getDeviceState(stuPair.getBaseDevice());
+//                            getDeviceStop(stuPair.getBaseDevice());
 //                            AgainTest(stuPair.getBaseDevice());
 //                            clicked = true;
 //                        }

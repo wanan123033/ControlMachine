@@ -57,12 +57,21 @@
                     android:paddingTop="15dp"
                     android:text="进入测试"
                     />
+                <TextView
+                    android:id="@+id/btn_device_pair"
+                    style="@style/style_run_timer_text"
+                    android:layout_marginRight="@dimen/dp_40"
+                    android:layout_toLeftOf="@+id/btn_start"
+                    android:background="@drawable/selector_blue_grey"
+                    android:drawableTop="@mipmap/led_small"
+                    android:paddingTop="15dp"
+                    android:text="设备配对" />
 
                 <TextView
                     android:id="@+id/btn_led"
                     style="@style/style_run_timer_text"
                     android:layout_marginRight="@dimen/dp_40"
-                    android:layout_toLeftOf="@+id/btn_start"
+                    android:layout_toLeftOf="@+id/btn_device_pair"
                     android:background="@drawable/selector_blue_grey"
                     android:drawableTop="@mipmap/led_small"
                     android:paddingTop="15dp"

@@ -27,6 +27,7 @@ import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.RadioTimer.RunTimerSetting;
 import com.feipulai.exam.activity.RadioTimer.RunTimerSettingActivity;
+import com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.NewRadioPairActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -265,7 +266,7 @@ public class PreTestActivity extends BaseCheckActivity {
         startActivity(new Intent(this, RunTimerSettingActivity.class));
     }
 
-    @OnClick({R.id.btn_start, R.id.btn_led, R.id.img_AFR})
+    @OnClick({R.id.btn_start, R.id.btn_led, R.id.btn_device_pair,R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_start:
@@ -281,6 +282,9 @@ public class PreTestActivity extends BaseCheckActivity {
             case R.id.btn_led:
                 LogUtils.operation("运动计时点击了外接屏幕");
                 startActivity(new Intent(this, LEDSettingActivity.class));
+                break;
+            case R.id.btn_device_pair:
+                startActivity(new Intent(this, NewRadioPairActivity.class));
                 break;
             case R.id.img_AFR:
                 showAFR();

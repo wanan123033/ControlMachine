@@ -611,7 +611,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
      * 时间同步完成 等待计时结束，开始触摸出发
      */
     @Override
-    public void getTimeUpdate() {
+    public void getDeviceStart() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -666,11 +666,10 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
     /**
      * 计时状态 0 停止计时 1开始计时
      *
-     * @param deviceState
      */
     @Override
-    public void getDeviceState(int deviceState) {
-        if (deviceState == 0 && testState == TestState.WAIT_RESULT) {
+    public void getDeviceStop() {
+        if (testState == TestState.WAIT_RESULT) {
             testState = TestState.RESULT_CONFIRM;
             sportPresent.setRunState(0);
             runOnUiThread(new Runnable() {

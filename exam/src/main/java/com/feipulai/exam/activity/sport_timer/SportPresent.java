@@ -55,7 +55,7 @@ public class SportPresent implements SportContract.Presenter {
     private int interval;
     private ScheduledExecutorService checkService;
     private boolean syncTime;
-    SportPresent(SportContract.SportView sportView, int deviceCount) {
+    public SportPresent(SportContract.SportView sportView, int deviceCount) {
         mLEDManager = new LEDManager();
         mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
@@ -211,13 +211,13 @@ public class SportPresent implements SportContract.Presenter {
         @Override
         public void onGetDeviceState(int deviceState) {
             if (deviceState == 1){
-                sportView.getTimeUpdate();
+                sportView.getDeviceStart();
                 newTime = -1;
                 for (int i = 0; i < checkState.length; i++) {
                     sendIndex[i] = 0;
                 }
             }else {
-                sportView.getDeviceState(deviceState);
+                sportView.getDeviceStop();
             }
         }
     });

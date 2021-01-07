@@ -20,6 +20,7 @@ import android.widget.Spinner;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.manager.RunTimerManager;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.RunTimerConnectState;
 import com.feipulai.device.serial.beans.RunTimerResult;
@@ -315,20 +316,17 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
                 alertDialog.show();
 
                 int hostId = SettingHelper.getSystemSetting().getHostId();
-                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x02, (byte) hostId)));//主机号
+//                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x02, (byte) hostId)));//主机号
                 int runNum = Integer.parseInt(runTimerSetting.getRunNum());
                 deviceManager.setRS232ResiltListener(new RunTimerImpl(this));
-                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x01, (byte) runNum)));//跑道数
+//                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x01, (byte) runNum)));//跑道数
                 int interceptPoint = runTimerSetting.getInterceptPoint();
-                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x04, (byte) interceptPoint)));//拦截点
+//                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x04, (byte) interceptPoint)));//拦截点
                 int way = runTimerSetting.getInterceptWay();
-                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x05, (byte) (way + 1))));//触发方式
+//                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x05, (byte) (way + 1))));//触发方式
                 int sensor = runTimerSetting.getSensor();
-                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x08, (byte) (sensor))));//传感器信道
-//                mHandler.sendEmptyMessageDelayed(50,50);
-//                mHandler.sendEmptyMessageDelayed(100,100);
-//                mHandler.sendEmptyMessageDelayed(150,150);
-//                mHandler.sendEmptyMessageDelayed(200,200);
+//                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x08, (byte) (sensor))));//传感器信道
+                RunTimerManager.cmdSetting(runNum,hostId,interceptPoint,way,sensor,10);
                 //3秒自检
                 mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 5000);
                 break;
@@ -336,15 +334,15 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         }
     }
 
-    private byte[] cmd(byte cmd, byte mark, byte value) {
-        byte[] setting = {(byte) 0xBB, 0x0C, (byte) 0xA0, 0x00, (byte) 0xA1, 0x00, cmd, mark, value, 0x00, 0x00, 0x0D};
-        int sum = 0;
-        for (int i = 0; i < 9; i++) {
-            sum += setting[i];
-        }
-        setting[10] = (byte) sum;
-        return setting;
-    }
+//    private byte[] cmd(byte cmd, byte mark, byte value) {
+//        byte[] setting = {(byte) 0xBB, 0x0C, (byte) 0xA0, 0x00, (byte) 0xA1, 0x00, cmd, mark, value, 0x00, 0x00, 0x0D};
+//        int sum = 0;
+//        for (int i = 0; i < 9; i++) {
+//            sum += setting[i];
+//        }
+//        setting[10] = (byte) sum;
+//        return setting;
+//    }
 
     @Override
     protected void onDestroy() {

@@ -609,7 +609,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
     }
 
     @Override
-    public void getTimeUpdate() {
+    public void getDeviceStart() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -662,8 +662,8 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
     }
 
     @Override
-    public void getDeviceState(int deviceState) {
-        if (deviceState == 0 && testState == TestState.WAIT_RESULT) {
+    public void getDeviceStop() {
+        if (testState == TestState.WAIT_RESULT) {
             testState = TestState.RESULT_CONFIRM;
             sportPresent.setRunState(0);
             runOnUiThread(new Runnable() {
