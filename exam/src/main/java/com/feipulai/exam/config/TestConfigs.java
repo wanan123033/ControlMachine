@@ -57,6 +57,9 @@ import com.feipulai.exam.activity.sitreach.SitReachSettingActivity;
 import com.feipulai.exam.activity.situp.check.SitUpCheckActivity;
 import com.feipulai.exam.activity.situp.setting.SitUpSetting;
 import com.feipulai.exam.activity.situp.setting.SitUpSettingActivity;
+import com.feipulai.exam.activity.sport_timer.SportTimerActivity;
+import com.feipulai.exam.activity.sport_timer.SportTimerGroupActivity;
+import com.feipulai.exam.activity.sport_timer.bean.SportTimerSetting;
 import com.feipulai.exam.activity.standjump.StandJumpGroupTestActivity;
 import com.feipulai.exam.activity.standjump.StandJumpSelectActivity;
 import com.feipulai.exam.activity.standjump.StandJumpSetting;
@@ -324,7 +327,7 @@ public class TestConfigs {
 
         if (itemSchedules != null && itemSchedules.size() > 0) {
             for (ItemSchedule itemSchedule : itemSchedules
-                    ) {
+            ) {
                 itemSchedule.setItemCode(updateItemCode);
             }
             DBManager.getInstance().deleteSchedules(itemSchedules);
@@ -386,6 +389,7 @@ public class TestConfigs {
 
         TestConfigs.proActivity.put(ItemDefault.CODE_TS, JumpRopeCheckActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_YWQZ, SitUpCheckActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_SGBQS, SitUpCheckActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_YTXS, PullUpSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_PQ, VolleyballPatternSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_MG, SargentItemSelectActivity.class);
@@ -396,6 +400,7 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_JGCJ, RangerTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_WLJ, GripMoreActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_SHOOT, BasketBallShootActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_SPORT_TIMER, SportTimerActivity.class);
 
         // 每个项目对应的分组检录Acitivity
         TestConfigs.groupActivity.put(ItemDefault.CODE_LDTY, StandJumpGroupTestActivity.class);
@@ -405,6 +410,7 @@ public class TestConfigs {
         TestConfigs.groupActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_TS, JumpRopeCheckActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_YWQZ, SitUpCheckActivity.class);
+        TestConfigs.groupActivity.put(ItemDefault.CODE_SGBQS, SitUpCheckActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_YTXS, PullUpSelectActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_PQ, VolleyBallGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_MG, SargentGroupActivity.class);
@@ -416,6 +422,7 @@ public class TestConfigs {
         TestConfigs.groupActivity.put(ItemDefault.CODE_JGCJ, RangerMoreActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_WLJ, GripMoreGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_SHOOT, BasketBallShootGroupActivity.class);
+        TestConfigs.groupActivity.put(ItemDefault.CODE_SPORT_TIMER, SportTimerGroupActivity.class);
 
         // 每个机器码对应的机器名称
         TestConfigs.machineNameMap.put(ItemDefault.CODE_ZWTQQ, "坐位体前屈");
@@ -434,6 +441,8 @@ public class TestConfigs {
         TestConfigs.machineNameMap.put(ItemDefault.CODE_JGCJ, "激光测距");
         TestConfigs.machineNameMap.put(ItemDefault.CODE_WLJ, "握力");
         TestConfigs.machineNameMap.put(ItemDefault.CODE_SHOOT, "篮球投篮");
+        TestConfigs.machineNameMap.put(ItemDefault.CODE_SPORT_TIMER, "运动计时");
+        TestConfigs.machineNameMap.put(ItemDefault.CODE_SGBQS, "双杠臂屈伸");
 
         TestConfigs.settingActivity.put(ItemDefault.CODE_LDTY, StandJumpSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_ZWTQQ, SitReachSettingActivity.class);
@@ -441,6 +450,7 @@ public class TestConfigs {
         TestConfigs.settingActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_TS, JumpRopeSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_YWQZ, SitUpSettingActivity.class);
+        TestConfigs.settingActivity.put(ItemDefault.CODE_SGBQS, SitUpSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_YTXS, PullUpSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_PQ, VolleyBallSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_MG, SargentSettingActivity.class);
@@ -461,6 +471,8 @@ public class TestConfigs {
         TestConfigs.itemMaxScope.put(ItemDefault.CODE_TS, 999);
         TestConfigs.itemMinScope.put(ItemDefault.CODE_YWQZ, 0);
         TestConfigs.itemMaxScope.put(ItemDefault.CODE_YWQZ, 999);
+        TestConfigs.itemMinScope.put(ItemDefault.CODE_SGBQS, 0);
+        TestConfigs.itemMaxScope.put(ItemDefault.CODE_SGBQS, 999);
         TestConfigs.itemMinScope.put(ItemDefault.CODE_YTXS, 0);
         TestConfigs.itemMaxScope.put(ItemDefault.CODE_YTXS, 999);
         TestConfigs.itemMinScope.put(ItemDefault.CODE_ZFP, 0);
@@ -509,6 +521,7 @@ public class TestConfigs {
                 break;
 
             case ItemDefault.CODE_YWQZ:
+            case ItemDefault.CODE_SGBQS:
                 result = SharedPrefsUtil.loadFormSource(context, SitUpSetting.class).getTestNo();
                 break;
 
@@ -536,6 +549,9 @@ public class TestConfigs {
                 break;
             case ItemDefault.CODE_MG:
                 result = SharedPrefsUtil.loadFormSource(context, SargentSetting.class).getTestTimes();
+                break;
+            case ItemDefault.CODE_SPORT_TIMER:
+                result = SharedPrefsUtil.loadFormSource(context, SportTimerSetting.class).getTestTimes();
                 break;
             default:
                 throw new IllegalArgumentException("wrong machine code");

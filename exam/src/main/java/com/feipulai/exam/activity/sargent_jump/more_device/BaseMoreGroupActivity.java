@@ -765,7 +765,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 Logger.i("考生" + pair.getStudent().toString());
             }
 //            pair.setCanTest(true);
-//            pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+//            pair.getBaseDevice().setResultState(BaseDeviceState.STATE_FREE);
             if (isPenalize && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
 
                 if (setTestDeviceCount() == 1) {

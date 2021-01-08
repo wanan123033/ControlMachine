@@ -32,6 +32,7 @@ public class CheckUtils {
                 break;
 
             case ItemDefault.CODE_YWQZ:
+            case ItemDefault.CODE_SGBQS:
             case ItemDefault.CODE_YTXS:
             case ItemDefault.CODE_PQ:
             case ItemDefault.CODE_FWC:
@@ -43,6 +44,7 @@ public class CheckUtils {
             case ItemDefault.CODE_ZWTQQ:
             case ItemDefault.CODE_WLJ:
             case ItemDefault.CODE_SHOOT:
+            case ItemDefault.CODE_SPORT_TIMER:
                 state = new BaseDeviceState();
                 break;
             default:

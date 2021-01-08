@@ -19,7 +19,7 @@ public class SerialDeviceManager {
     private volatile RS232ResiltListener mDeviceListener;
     private static volatile SerialDeviceManager sDeviceManager;
     //private int mCurrentBaudrate;
-    public static final int RADIO_INTERVAL = 80;
+    public static final int RADIO_INTERVAL = 100;
     private long mlastSendTime;
     public void setRS232ResiltListener(RS232ResiltListener listener) {
         // Log.i("james", "listener===>" + listener == null ? "00" : "11");

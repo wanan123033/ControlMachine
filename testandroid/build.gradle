@@ -13,9 +13,9 @@ android {
         versionName "1.0.1"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
+        multiDexEnabled true
         ndk {
-            abiFilters "armeabi-v7a"
+            abiFilters "armeabi-v7a","armeabi"
         }
     }
     signingConfigs {
@@ -50,6 +50,7 @@ dependencies {
     })
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.jakewharton:butterknife:8.1.0'
+    compile 'com.android.support:multidex:1.0.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.1.0'
     //rx
     compile 'io.reactivex.rxjava2:rxjava:2.0.7'

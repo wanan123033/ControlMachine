@@ -45,7 +45,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.data.UpdateAppActivity"></activity>
+        <activity android:name=".activity.data.UpdateAppActivity" />
         <activity android:name=".activity.basketball.DribbleShootGroupActivity" />
         <activity android:name=".activity.basketball.BasketBallShootGroupActivity" />
         <activity android:name=".activity.sitreach.more_device.SitReachMoreGroupActivity" />
@@ -401,7 +401,26 @@
             android:name=".activity.setting.PrintSettingActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-
+        <activity
+            android:name=".activity.sport_timer.SportSettingActivity"
+            android:configChanges="keyboardHidden|keyboard"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.sport_timer.SportTimerActivity"
+            android:configChanges="keyboardHidden|keyboard"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.sport_timer.SportTimerGroupActivity"
+            android:configChanges="keyboardHidden|keyboard"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.sport_timer.pair.SportPairActivity"
+            android:configChanges="keyboardHidden|keyboard"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.sport_timer.SportInitWayActivity"
+            android:configChanges="keyboardHidden|keyboard"
+            android:windowSoftInputMode="stateHidden" />
         <receiver android:name="com.feipulai.device.spputils.SppReciver" />
 
         <service android:name="com.inuker.bluetooth.library.BluetoothService" />

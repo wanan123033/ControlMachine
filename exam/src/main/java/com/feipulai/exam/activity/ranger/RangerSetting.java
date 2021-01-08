@@ -13,22 +13,27 @@ public class RangerSetting {
     private int du;     //度
     private int fen;    //分
     private int miao;   //秒
+    private double level;
 
     //跳远设置
     private int qd1_hor; //起点1水平距离
     private int du1;     //度
     private int fen1;    //分
     private int miao1;   //秒
+    private double level1;   //角度
 
     private int qd2_hor; //起点2水平距离
     private int du2;     //度
     private int fen2;    //分
     private int miao2;   //秒
-    private int distance; //两点之间的距离
+    private double level2;
+    private double distance; //两点之间的距离
     private int testPattern; //分组测试模式 0连续 1循环
 
     private String bluetoothName;
     private String bluetoothMac;
+
+
 
     public int getTestNo() {
         return testNo;
@@ -174,11 +179,11 @@ public class RangerSetting {
         this.miao2 = miao2;
     }
 
-    public int getDistance() {
+    public double getDistance() {
         return distance;
     }
 
-    public void setDistance(int distance) {
+    public void setDistance(double distance) {
         this.distance = distance;
     }
 
@@ -204,5 +209,29 @@ public class RangerSetting {
 
     public void setBluetoothMac(String bluetoothMac) {
         this.bluetoothMac = bluetoothMac;
+    }
+
+    public void setLevel1(double level1) {
+        this.level1 = level1;
+    }
+
+    public double getLevel1() {
+        return level1;
+    }
+
+    public void setLevel2(double level2) {
+        this.level2 = level2;
+    }
+
+    public double getLevel2() {
+        return level2;
+    }
+
+    public void setLevel(double level) {
+        this.level = level;
+    }
+
+    public double getLevel() {
+        return level;
     }
 }

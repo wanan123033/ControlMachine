@@ -49,6 +49,7 @@ public class LEDManager {
         machineCodesForLed.put(ItemDefault.CODE_HW, 5);//身高体重
         machineCodesForLed.put(ItemDefault.CODE_LDTY, 4);//立定跳远
         machineCodesForLed.put(ItemDefault.CODE_YWQZ, 10);//仰卧起坐
+        machineCodesForLed.put(ItemDefault.CODE_SGBQS, 10);//仰卧起坐
         machineCodesForLed.put(ItemDefault.CODE_ZWTQQ, 2);//坐位体
         machineCodesForLed.put(ItemDefault.CODE_HWSXQ, 6);//实心球
 //		machineCodesForLed.put(ItemDefault.CODE_50M,5);//红外计时
@@ -62,6 +63,7 @@ public class LEDManager {
         machineCodesForLed.put(ItemDefault.CODE_PQ, 8);//排球垫球
         machineCodesForLed.put(ItemDefault.CODE_FHL, 8);//肺活量
         machineCodesForLed.put(ItemDefault.CODE_WLJ, 6);//握力
+        machineCodesForLed.put(ItemDefault.CODE_SPORT_TIMER, 12);//运动计时
     }
 
     /**

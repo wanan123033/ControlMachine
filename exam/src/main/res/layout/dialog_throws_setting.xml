@@ -23,6 +23,8 @@
             android:layout_width="100dp"
             android:layout_height="30dp"
             android:layout_marginLeft="50dp"
+            android:clickable="false"
+
             android:background="@drawable/icon_spinner_bg" />
         <TextView
             android:id="@+id/tv_stand"
@@ -55,8 +57,7 @@
             android:gravity="center"
             android:layout_marginLeft="30dp"
             android:inputType="number"
-            android:textSize="@dimen/sp_16"
-            android:maxLength="4" />
+            android:textSize="@dimen/sp_16" />
     </LinearLayout>
     <TextView
         android:layout_width="match_parent"
@@ -79,8 +80,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:inputType="number"
-            android:layout_marginLeft="15dp"
-            android:maxLength="4" />
+            android:layout_marginLeft="15dp" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -109,7 +109,6 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:inputType="number"
-            android:maxLength="4"
             android:textSize="@dimen/sp_16" />
         <TextView
             android:layout_width="wrap_content"
@@ -126,8 +125,7 @@
             android:layout_marginLeft="@dimen/dp_10"
             android:layout_gravity="center_vertical"
             android:inputType="number"
-            android:textSize="@dimen/sp_16"
-            android:maxLength="4" />
+            android:textSize="@dimen/sp_16" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -143,8 +141,7 @@
             android:inputType="number"
             android:textSize="@dimen/sp_16"
             android:layout_marginLeft="@dimen/dp_10"
-            android:layout_gravity="center_vertical"
-            android:maxLength="4" />
+            android:layout_gravity="center_vertical" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

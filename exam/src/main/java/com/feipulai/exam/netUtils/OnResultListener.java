@@ -7,4 +7,6 @@ public interface OnResultListener<T> {
     void onSuccess(T result);
 
     void onFault(int code, String errorMsg);
+
+    void onResponseTime(String responseTime);
 }

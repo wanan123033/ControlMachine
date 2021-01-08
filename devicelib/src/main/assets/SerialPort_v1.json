@@ -1,0 +1,38 @@
+[
+  {
+    "name": "QR_CODE",
+    "serial": "/dev/ttyMT3",
+    "baud": 9600,
+    "type": "serial"
+  },
+  {
+    "name": "RS232",
+    "serial": "/dev/ttysWK3",
+    "baud": 9600,
+    "type": "serial"
+  },
+  {
+    "name": "RADIO",
+    "serial": "/dev/ttysWK0",
+    "baud": 115200,
+    "type": "serial"
+  },
+  {
+    "name": "IC_Card",
+    "serial": "/dev/ttysWK1",
+    "baud": 115200,
+    "type": "serial"
+  },
+  {
+    "name": "ID_CARD",
+    "serial": "/dev/ttysWK2",
+    "baud": 115200,
+    "type": "serial"
+  },
+  {
+    "name": "PRINTER",
+    "serial": "/dev/ttyMT2",
+    "baud": 115200,
+    "type": "serial"
+  }
+]

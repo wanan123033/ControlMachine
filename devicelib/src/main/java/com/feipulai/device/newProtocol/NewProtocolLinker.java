@@ -8,6 +8,7 @@ import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.MedicineBallNewResult;
 import com.feipulai.device.serial.beans.SargentJumpResult;
 import com.feipulai.device.serial.beans.SitReachWirelessResult;
+import com.feipulai.device.serial.beans.SportResult;
 import com.feipulai.device.serial.beans.VitalCapacityNewResult;
 import com.feipulai.device.serial.beans.VitalCapacityResult;
 import com.feipulai.device.serial.beans.VolleyPairResult;
@@ -30,8 +31,16 @@ public class NewProtocolLinker extends SitPullLinker {
             // 0频段接收到的结果,肯定是设备的开机广播
             if (frequency == TARGET_FREQUENCY && deviceId == currentDeviceId && hostId == deviceHostId) {
                 onNewDeviceConnect();
+                if (machineCode == ItemDefault.CODE_SPORT_TIMER){
+                    listener.setFrequency(currentDeviceId, hostId, TARGET_FREQUENCY);
+                }
             } else {
-                listener.setFrequency(currentDeviceId, frequency, TARGET_FREQUENCY);
+                if (machineCode == ItemDefault.CODE_SPORT_TIMER){
+                    listener.setFrequency(currentDeviceId, hostId, TARGET_FREQUENCY);
+                }else {
+                    listener.setFrequency(currentDeviceId, frequency, TARGET_FREQUENCY);
+                }
+
                 currentFrequency = TARGET_FREQUENCY;
                 // 那个铁盒子就是有可能等这么久才收到回复
                 mHandler.sendEmptyMessageDelayed(NO_PAIR_RESPONSE_ARRIVED, 5000);
@@ -72,6 +81,11 @@ public class NewProtocolLinker extends SitPullLinker {
         }
          else if (machineCode == ItemDefault.CODE_ZWTQQ && what == SerialConfigs.SIT_REACH_FREQUENCY) {
             SitReachWirelessResult result = (SitReachWirelessResult) msg.obj;
+            checkDevice(result.getDeviceId(),result.getFrequency(),result.getHostId());
+            return true;
+        }
+         else if (machineCode == ItemDefault.CODE_SPORT_TIMER && what == SerialConfigs.SPORT_TIMER_MATCH) {
+            SportResult result = (SportResult) msg.obj;
             checkDevice(result.getDeviceId(),result.getFrequency(),result.getHostId());
             return true;
         }

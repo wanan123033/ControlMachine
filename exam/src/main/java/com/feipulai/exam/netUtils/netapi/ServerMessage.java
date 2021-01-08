@@ -45,6 +45,11 @@ public class ServerMessage {
         final HttpSubscriber subscriber = new HttpSubscriber();
         subscriber.setOnRequestEndListener(new HttpSubscriber.OnRequestEndListener() {
             @Override
+            public void onRequestData(Object data) {
+
+            }
+
+            @Override
             public void onSuccess(int bizType) {
                 switch (bizType) {
                     case HttpSubscriber.SCHEDULE_BIZ://日程
@@ -136,6 +141,10 @@ public class ServerMessage {
         final HttpSubscriber subscriber = new HttpSubscriber();
         subscriber.setOnRequestEndListener(new HttpSubscriber.OnRequestEndListener() {
             @Override
+            public void onRequestData(Object data) {
+
+            }
+            @Override
             public void onSuccess(int bizType) {
                 switch (bizType) {
                     case HttpSubscriber.SCHEDULE_BIZ://日程
@@ -193,6 +202,10 @@ public class ServerMessage {
         final HttpSubscriber subscriber = new HttpSubscriber();
 
         subscriber.setOnRequestEndListener(new HttpSubscriber.OnRequestEndListener() {
+            @Override
+            public void onRequestData(Object data) {
+
+            }
             @Override
             public void onSuccess(int bizType) {
                 switch (bizType) {
@@ -252,6 +265,10 @@ public class ServerMessage {
         final HttpSubscriber subscriber = new HttpSubscriber();
         subscriber.setOnRequestEndListener(new HttpSubscriber.OnRequestEndListener() {
             @Override
+            public void onRequestData(Object data) {
+
+            }
+            @Override
             public void onSuccess(int bizType) {
                 switch (bizType) {
                     case HttpSubscriber.UPLOAD_BIZ://上传成绩
@@ -297,6 +314,10 @@ public class ServerMessage {
 
         subscriber0 = new HttpSubscriber();
         subscriber0.setOnRequestEndListener(new HttpSubscriber.OnRequestEndListener() {
+            @Override
+            public void onRequestData(Object data) {
+
+            }
             @Override
             public void onSuccess(int bizType) {
                 switch (bizType) {

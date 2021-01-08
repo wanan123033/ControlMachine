@@ -214,6 +214,7 @@ public class InteractUtils {
                     break;
 
                 case ItemDefault.CODE_YWQZ:
+                    case ItemDefault.CODE_SGBQS:
                 case ItemDefault.CODE_YTXS:
                 case ItemDefault.CODE_PQ:
                 case ItemDefault.CODE_FWC:
@@ -383,6 +384,7 @@ public class InteractUtils {
                             break;
 
                         case ItemDefault.CODE_YWQZ:
+                        case ItemDefault.CODE_SGBQS:
                         case ItemDefault.CODE_YTXS:
                         case ItemDefault.CODE_PQ:
                             PrinterManager.getInstance().print(printResult + "(判罚:" + result.getPenaltyNum() + ")");
@@ -697,6 +699,7 @@ public class InteractUtils {
 
             case ItemDefault.CODE_YTXS:
             case ItemDefault.CODE_YWQZ:
+            case ItemDefault.CODE_SGBQS:
             case ItemDefault.CODE_FWC:
                 if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_STOP_USE) {
                     showContent = String.format(Locale.CHINA, "%-3d暂停使用     ", deviceId);

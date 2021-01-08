@@ -28,6 +28,7 @@ import com.feipulai.exam.bean.StudentBean;
 import com.feipulai.exam.bean.UpdateApp;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.bean.UserBean;
+import com.feipulai.exam.bean.UserPhoto;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.SharedPrefsConfigs;
@@ -113,6 +114,11 @@ public class HttpSubscriber {
         Observable<HttpResult<ScheduleBean>> observable = HttpManager.getInstance().getHttpApi().getScheduleAll("bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery(SCHEDULE_BIZ + "", null));
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<ScheduleBean>(new OnResultListener<ScheduleBean>() {
             @Override
+            public void onResponseTime(String responseTime) {
+
+            }
+
+            @Override
             public void onSuccess(ScheduleBean result) {
 //                Logger.e("getScheduleAll====>" + result.toString());
                 if (result == null) {
@@ -172,6 +178,11 @@ public class HttpSubscriber {
         Observable<HttpResult<List<ItemBean>>> observable = HttpManager.getInstance().getHttpApi().getItemAll("bearer " + MyApplication.TOKEN,
                 CommonUtils.encryptQuery(ITEM_BIZ + "", null));
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<List<ItemBean>>(new OnResultListener<List<ItemBean>>() {
+            @Override
+            public void onResponseTime(String responseTime) {
+
+            }
+
             @Override
             public void onSuccess(List<ItemBean> result) {
 //                Logger.e("getItemAll====>" + result.toString());
@@ -333,6 +344,16 @@ public class HttpSubscriber {
 //    }
     private List<String> stuList = new ArrayList<>();
 
+    // 获取学生信息
+    public void getItemStudent(final String itemCode, int batch, final int examType, final String lastDownLoadTime) {
+        getItemStudent(itemCode, batch, examType, lastDownLoadTime, new String[]{});
+    }
+
+    // 获取学生信息
+    public void getItemStudent(final String itemCode, int batch, final int examType) {
+        getItemStudent(itemCode, batch, examType, "0", new String[]{});
+    }
+
     /**
      * 获取当前项目考生
      *
@@ -340,14 +361,24 @@ public class HttpSubscriber {
      * @param batch
      * @param examType
      */
-    public void getItemStudent(final String itemCode, int batch, final int examType) {
+    public void getItemStudent(final String itemCode, int batch, final int examType, final String lastDownLoadTime, final String... studentCode) {
+
         Map<String, Object> parameData = new HashMap<>();
         parameData.put("examItemCode", itemCode);
         parameData.put("batch", batch);
         parameData.put("examType", examType);
+        if (studentCode != null && studentCode.length != 0) {
+            parameData.put("studentCodeList", studentCode);
+        }
         Observable<HttpResult<BatchBean<List<StudentBean>>>> observable = HttpManager.getInstance().getHttpApi().getStudent("bearer " + MyApplication.TOKEN,
-                CommonUtils.encryptQuery(STUDENT_BIZ + "", parameData));
+                CommonUtils.encryptQuery(STUDENT_BIZ + "", lastDownLoadTime, parameData));
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<BatchBean<List<StudentBean>>>(new OnResultListener<BatchBean<List<StudentBean>>>() {
+            @Override
+            public void onResponseTime(String responseTime) {
+                SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS,
+                        SharedPrefsConfigs.LAST_DOWNLOAD_TIME, responseTime);
+            }
+
             @Override
             public void onSuccess(BatchBean<List<StudentBean>> result) {
 //                Logger.e("getStudent===>"+result);
@@ -408,8 +439,9 @@ public class HttpSubscriber {
                 DBManager.getInstance().insertStuItemList(studentItemList);
 
                 if (result.getBatch() < result.getBatchTotal()) {
-                    getItemStudent(itemCode, result.getBatch() + 1, examType);
+                    getItemStudent(itemCode, result.getBatch() + 1, examType, lastDownLoadTime, studentCode);
                 } else {
+
                     if (onRequestEndListener != null)
                         onRequestEndListener.onSuccess(STUDENT_BIZ);
                 }
@@ -441,6 +473,11 @@ public class HttpSubscriber {
         Observable<HttpResult<BatchBean<List<GroupBean>>>> observable = HttpManager.getInstance().getHttpApi().getGroupAll("bearer " + MyApplication.TOKEN,
                 CommonUtils.encryptQuery(GROUP_BIZ + "", parameData));
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<BatchBean<List<GroupBean>>>(new OnResultListener<BatchBean<List<GroupBean>>>() {
+            @Override
+            public void onResponseTime(String responseTime) {
+
+            }
+
             @Override
             public void onSuccess(BatchBean<List<GroupBean>> result) {
 //                Logger.i("getItemGroupAll====>" + result.toString());
@@ -507,6 +544,11 @@ public class HttpSubscriber {
                 CommonUtils.encryptQuery(GROUP_INFO_BIZ + "", parameData));
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<List<GroupBean>>(new OnResultListener<List<GroupBean>>() {
             @Override
+            public void onResponseTime(String responseTime) {
+
+            }
+
+            @Override
             public void onSuccess(List<GroupBean> result) {
 //                Logger.i("getItemGroupInfo====>" + result.toString());
                 if (result == null)
@@ -568,6 +610,11 @@ public class HttpSubscriber {
                 getRoundScore("bearer " + MyApplication.TOKEN,
                         CommonUtils.encryptQuery(ROUNDRESULT_BIZ + "", params));
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<RoundScoreBean>(new OnResultListener<RoundScoreBean>() {
+            @Override
+            public void onResponseTime(String responseTime) {
+
+            }
+
             @Override
             public void onSuccess(RoundScoreBean result) {
                 if (result.getExist() == 1) {
@@ -893,6 +940,11 @@ public class HttpSubscriber {
 
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<List<UploadResults>>(new OnResultListener<List<UploadResults>>() {
             @Override
+            public void onResponseTime(String responseTime) {
+
+            }
+
+            @Override
             public void onSuccess(List<UploadResults> result) {
                 //更新上传状态
                 List<RoundResult> roundResultList = new ArrayList<>();
@@ -951,6 +1003,11 @@ public class HttpSubscriber {
         HttpManager.getInstance().changeBaseUrl("https://api.soft.fplcloud.com");
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<List<SoftApp>>(new OnResultListener<List<SoftApp>>() {
             @Override
+            public void onResponseTime(String responseTime) {
+
+            }
+
+            @Override
             public void onSuccess(List<SoftApp> result) {
                 Log.i("SoftApp", "Observable");
                 listener.onSuccess(result);
@@ -967,7 +1024,6 @@ public class HttpSubscriber {
     /**
      * 获取APP更新的url
      *
-     * @param context
      * @param version
      * @param updateSoftwareVersion
      * @param authorizeCode
@@ -988,6 +1044,11 @@ public class HttpSubscriber {
         HttpManager.getInstance().changeBaseUrl("https://api.soft.fplcloud.com");
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<UpdateApp>(new OnResultListener<UpdateApp>() {
             @Override
+            public void onResponseTime(String responseTime) {
+
+            }
+
+            @Override
             public void onSuccess(UpdateApp result) {
                 listener.onSuccess(result);
             }
@@ -1002,10 +1063,38 @@ public class HttpSubscriber {
 
     }
 
+    public void sendFaceOnline(String studentCode, String base64Face, String base64Feature) {
+        HashMap<String, Object> parameData = new HashMap<>();
+        parameData.put("photoData", base64Face);
+        parameData.put("studentCode", studentCode);
+        parameData.put("faceFeature", base64Feature);
+        Observable<HttpResult<UserPhoto>> observable = HttpManager.getInstance().getHttpApi().compareFaceFeature(
+                "bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery("8001", parameData));
+        HttpManager.getInstance().toSubscribe(observable, new RequestSub<UserPhoto>(new OnResultListener<UserPhoto>() {
+            @Override
+            public void onResponseTime(String responseTime) {
+
+            }
+
+            @Override
+            public void onSuccess(UserPhoto result) {
+                onRequestEndListener.onRequestData(result);
+            }
+
+            @Override
+            public void onFault(int code, String errorMsg) {
+                onRequestEndListener.onFault(code);
+            }
+        }));
+    }
+
     public interface OnRequestEndListener {
         void onSuccess(int bizType);
 
         void onFault(int bizType);
+
+        void onRequestData(Object data);
+
     }
 
 

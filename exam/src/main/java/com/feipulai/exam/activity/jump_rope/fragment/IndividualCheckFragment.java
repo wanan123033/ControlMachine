@@ -122,6 +122,8 @@ public class IndividualCheckFragment
         this.listener = listener;
     }
 
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -380,7 +382,10 @@ public class IndividualCheckFragment
         checkInUIThread(student, studentItem);
         return false;
     }
+    @Override
+    public void onResponseTime(String responseTime) {
 
+    }
     @Override
     public void onSuccess(RoundScoreBean result) {
         OperateProgressBar.removeLoadingUiIfExist(getActivity());

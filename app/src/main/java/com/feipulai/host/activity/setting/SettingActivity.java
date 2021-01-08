@@ -86,7 +86,8 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     View view_itemd;
     @BindView(R.id.sw_net)
     CheckBox sw_net;
-
+    @BindView(R.id.txt_host_hint)
+    TextView txtHostHint;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_system_setting;
@@ -156,6 +157,9 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
 
             }
         });
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_YWQZ || TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_SGBQS) {
+            txtHostHint.setVisibility(View.VISIBLE);
+        }
     }
 
     @Nullable

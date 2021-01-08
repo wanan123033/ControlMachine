@@ -28,6 +28,8 @@ import com.feipulai.exam.entity.Student;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -208,14 +210,22 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
     }
 
     public void search(String dataText) {
-        mStudentList = DBManager.getInstance().fuzzyQueryByStuCode(dataText, 20, 0);
-        if (mStudentList == null || mStudentList.size() == 0) {
-            mLvResults.setVisibility(View.GONE);
+
+        if (patternStuCode(etInputText.getText().toString())) {
+            //模糊搜索考号
+            mStudentList = DBManager.getInstance().fuzzyQueryByStuCode(dataText, 20, 0);
+            if (mStudentList == null || mStudentList.size() == 0) {
+                mLvResults.setVisibility(View.GONE);
+            } else {
+                SearchResultAdapter adapter = new SearchResultAdapter(getContext(), mStudentList);
+                mLvResults.setAdapter(adapter);
+                mLvResults.setVisibility(View.VISIBLE);
+            }
         } else {
-            SearchResultAdapter adapter = new SearchResultAdapter(getContext(), mStudentList);
-            mLvResults.setAdapter(adapter);
-            mLvResults.setVisibility(View.VISIBLE);
+            ToastUtils.showShort("请输入正常学生考号");
         }
+
+
         if (mStudentList != null && mStudentList.size() > 0) {
             for (Student student : mStudentList) {
                 if (dataText.equals(student.getStudentCode()) || dataText.equals(student.getIdCardNo())) {
@@ -229,6 +239,13 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
         Student student = new Student();
         student.setStudentCode(dataText);
         check(student);
+    }
+
+    public static boolean patternStuCode(String stuCode) {
+        Pattern p = Pattern
+                .compile("\\w+");
+        Matcher m = p.matcher(stuCode);
+        return m.matches();
     }
 
     @OnClick({R.id.img_delete, R.id.txt_search})

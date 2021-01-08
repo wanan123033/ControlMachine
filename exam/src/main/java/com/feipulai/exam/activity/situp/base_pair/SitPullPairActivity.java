@@ -1,5 +1,6 @@
 package com.feipulai.exam.activity.situp.base_pair;
 
+import android.content.Intent;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,11 +9,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.jump_rope.adapter.DevicePairAdapter;
+import com.feipulai.exam.activity.sport_timer.SportInitWayActivity;
 import com.feipulai.exam.view.DividerItemDecoration;
 import com.orhanobut.logger.utils.LogUtils;
 
@@ -33,7 +36,8 @@ public abstract class SitPullPairActivity extends BaseTitleActivity
     public RecyclerView mRvPairs;
     @BindView(R.id.ll_device_group_setting)
     LinearLayout llDeviceGroupSetting;
-
+    @BindView(R.id.tv_init_way)
+    TextView txtInitWay;
     public DevicePairAdapter mAdapter;
     private MyHandler mHandler = new MyHandler(this);
     public SitPullUpPairPresenter presenter;
@@ -60,7 +64,7 @@ public abstract class SitPullPairActivity extends BaseTitleActivity
     @Override
     public void initView(boolean isAutoPair, List pairs) {
         llDeviceGroupSetting.setVisibility(View.GONE);
-
+        txtInitWay.setVisibility(View.GONE);
         mSwAutoPair.setChecked(isAutoPair);
 
         mRvPairs.setLayoutManager(new GridLayoutManager(this, 5));
@@ -75,6 +79,9 @@ public abstract class SitPullPairActivity extends BaseTitleActivity
         mAdapter.setOnItemClickListener(this);
     }
 
+    public void setInitWayVisibile(){
+        txtInitWay.setVisibility(View.VISIBLE);
+    }
     @Override
     public void onItemClick(int position) {
         LogUtils.operation("更改了设备ID deviceId 在配对");
@@ -107,12 +114,15 @@ public abstract class SitPullPairActivity extends BaseTitleActivity
         }
     }
 
-    @OnClick({R.id.sw_auto_pair})
+    @OnClick({R.id.sw_auto_pair,R.id.tv_init_way})
     public void btnOnClick(View v) {
         switch (v.getId()) {
             case R.id.sw_auto_pair:
                 LogUtils.operation("勾选了自动匹配");
                 presenter.changeAutoPair(mSwAutoPair.isChecked());
+                break;
+            case R.id.tv_init_way:
+                startActivity(new Intent(this, SportInitWayActivity.class));
                 break;
         }
     }

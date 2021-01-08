@@ -255,17 +255,17 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
                 EventBus.getDefault().post(new BaseEvent(deviceStateList.get(result.getDeviceId()), EventConfigs.BALL_STATE_UPDATE));
             }
 
-//            if (TextUtils.isEmpty(deviceStateList.get(result.getDeviceId()).getDeviceSerial())) {
-//                deviceStateList.get(result.getDeviceId()).setDeviceSerial(result.getSerialNumber());
-//                mCurrentConnect[result.getDeviceId()] = BaseDeviceState.STATE_FREE;
-//            } else if (TextUtils.equals(deviceStateList.get(result.getDeviceId()).getDeviceSerial(), result.getSerialNumber())) {
-//                mCurrentConnect[result.getDeviceId()] = BaseDeviceState.STATE_FREE;
+//            if (TextUtils.isEmpty(deviceStateList.get(result.getDeviceName()).getDeviceSerial())) {
+//                deviceStateList.get(result.getDeviceName()).setDeviceSerial(result.getSerialNumber());
+//                mCurrentConnect[result.getDeviceName()] = BaseDeviceState.STATE_FREE;
+//            } else if (TextUtils.equals(deviceStateList.get(result.getDeviceName()).getDeviceSerial(), result.getSerialNumber())) {
+//                mCurrentConnect[result.getDeviceName()] = BaseDeviceState.STATE_FREE;
 //            } else {
-//                mCurrentConnect[result.getDeviceId()] = BaseDeviceState.STATE_CONFLICT;
+//                mCurrentConnect[result.getDeviceName()] = BaseDeviceState.STATE_CONFLICT;
 //            }
-//            if (deviceStateList.get(result.getDeviceId()).getState() != mCurrentConnect[result.getDeviceId()]) {
-//                deviceStateList.get(result.getDeviceId()).setState(mCurrentConnect[result.getDeviceId()]);
-//                EventBus.getDefault().post(new BaseEvent(result.getDeviceId(), EventConfigs.BALL_STATE_UPDATE));
+//            if (deviceStateList.get(result.getDeviceName()).getResultState() != mCurrentConnect[result.getDeviceName()]) {
+//                deviceStateList.get(result.getDeviceName()).setResultState(mCurrentConnect[result.getDeviceName()]);
+//                EventBus.getDefault().post(new BaseEvent(result.getDeviceName(), EventConfigs.BALL_STATE_UPDATE));
 //            }
 
         }

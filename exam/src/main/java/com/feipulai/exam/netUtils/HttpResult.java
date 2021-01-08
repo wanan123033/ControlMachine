@@ -18,6 +18,7 @@ public class HttpResult<T> implements Serializable {
     @SerializedName("data")
     private T body;
     private String sign;
+    private String responseTime;
     private int encrypt = ENCRYPT_FALSE;
     public static int ENCRYPT_TRUE = 1;
     public static int ENCRYPT_FALSE = 0;
@@ -62,5 +63,11 @@ public class HttpResult<T> implements Serializable {
         this.body = body;
     }
 
+    public String getResponseTime() {
+        return responseTime;
+    }
 
+    public void setResponseTime(String responseTime) {
+        this.responseTime = responseTime;
+    }
 }

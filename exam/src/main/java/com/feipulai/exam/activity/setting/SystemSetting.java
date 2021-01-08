@@ -122,6 +122,17 @@ public class SystemSetting {
     //考点ID
     private String sitCode;
 
+    //在线识别
+    private boolean netCheckTool;
+
+    public boolean isNetCheckTool() {
+        return netCheckTool;
+    }
+
+    public void setNetCheckTool(boolean netCheckTool) {
+        this.netCheckTool = netCheckTool;
+    }
+
     public int getPrintTool() {
         return printTool;
     }

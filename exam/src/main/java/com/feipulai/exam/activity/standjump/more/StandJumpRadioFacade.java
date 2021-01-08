@@ -68,7 +68,7 @@ public class StandJumpRadioFacade implements RadioManager.OnRadioArrivedListener
                     if (mCurrentConnect[deviceState.getDeviceId() - 1] == 0
                             && oldState != BaseDeviceState.STATE_ERROR
                             && oldState != BaseDeviceState.STATE_CONFLICT) {
-//                        Logger.i("zzs----->onStateRefreshed==========>STATE_ERROR" + mCurrentConnect[deviceState.getDeviceId() - 1]);
+//                        Logger.i("zzs----->onStateRefreshed==========>STATE_ERROR" + mCurrentConnect[deviceState.getDeviceName() - 1]);
                         deviceState.setState(BaseDeviceState.STATE_ERROR);
                         listener.refreshDeviceState(i);
                     }
@@ -109,7 +109,7 @@ public class StandJumpRadioFacade implements RadioManager.OnRadioArrivedListener
         if (msg.what == SerialConfigs.STAND_JUMP_START) {
             mCurrentConnect[result.getDeviceId() - 1] = BaseDeviceState.STATE_FREE;
             deviceList.get(result.getDeviceId() - 1).getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
-//            listener.refreshDeviceState(result.getDeviceId() - 1);
+//            listener.refreshDeviceState(result.getDeviceName() - 1);
             listener.StartDevice(result.getDeviceId());
         } else if (msg.what == SerialConfigs.STAND_JUMP_GET_STATE) {
             if (result.getDeviceId() > deviceList.size()) {
@@ -169,7 +169,7 @@ public class StandJumpRadioFacade implements RadioManager.OnRadioArrivedListener
 //                        //更新成绩
 //                        if (stuPair.getStudent() != null)
 //                            listener.getResult(stuPair);
-//                        listener.AgainTest(result.getDeviceId());
+//                        listener.AgainTest(result.getDeviceName());
                         StandJumpManager.setLeisure(SettingHelper.getSystemSetting().getHostId(), result.getDeviceId());
                         try {
                             Thread.sleep(100);
@@ -181,7 +181,7 @@ public class StandJumpRadioFacade implements RadioManager.OnRadioArrivedListener
                         if (stuPair.getStudent() != null)
                             listener.getResult(stuPair);
                         //结束测试 发送结束指令
-//                    StandJumpManager.endTest(SettingHelper.getSystemSetting().getHostId(), result.getDeviceId());
+//                    StandJumpManager.endTest(SettingHelper.getSystemSetting().getHostId(), result.getDeviceName());
                         StandJumpManager.setLeisure(SettingHelper.getSystemSetting().getHostId(), result.getDeviceId());
                         //更新设置状态为已结束
                         stuPair.getBaseDevice().setState(BaseDeviceState.STATE_END);

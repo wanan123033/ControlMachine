@@ -29,7 +29,7 @@ public class DBOpenHelper extends DaoMaster.OpenHelper {
     @Override
     public void onUpgrade(Database db, int oldVersion, int newVersion) {
         super.onUpgrade(db, oldVersion, newVersion);
-        Logger.i("version", oldVersion + "---先前和更新之后的版本---" + newVersion);
+        Logger.i(oldVersion + "---先前和更新之后的版本---" + newVersion);
 
         if (oldVersion < newVersion) {
             switch (newVersion) {
@@ -50,6 +50,8 @@ public class DBOpenHelper extends DaoMaster.OpenHelper {
                     MigrationHelper.migrate(db, RoundResultDao.class);
                 case 10:
                     MigrationHelper.migrate(db, StudentDao.class);
+                case 11://1.2.1
+                    MigrationHelper.migrate(db, RoundResultDao.class);
                     break;
 
             }

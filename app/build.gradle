@@ -18,7 +18,7 @@ android {
         targetSdkVersion 26
         versionCode 1
         // 新版本1.0.1 测试加后面版本
-        versionName "1.1.1.0"
+        versionName "1.1.1"
         multiDexEnabled true
         ndk {
             abiFilters "armeabi-v7a"
@@ -75,7 +75,7 @@ android {
 }
 
 greendao {
-    schemaVersion 5
+    schemaVersion 7
 //    daoPackage 'com.feipulai.host.gen'
 //    targetGenDir 'src/main/java'
 }

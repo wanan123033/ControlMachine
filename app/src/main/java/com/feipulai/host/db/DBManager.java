@@ -34,7 +34,7 @@ import java.util.Map;
 public class DBManager {
 
     public static final String DB_NAME = "control_db";
-    public static final String DB_PASSWORD = "fplwwj";
+    public static final String DB_PASSWORD = "FairPlay_2019";
     private static DBManager mInstance;
     private static ItemDao itemDao;
     private static StudentDao studentDao;
@@ -81,7 +81,7 @@ public class DBManager {
         int[] supportMachineCodes = {ItemDefault.CODE_HW, ItemDefault.CODE_TS, ItemDefault.CODE_YWQZ,
                 ItemDefault.CODE_LDTY, ItemDefault.CODE_ZWTQQ,
                 ItemDefault.CODE_HWSXQ, ItemDefault.CODE_FHL, ItemDefault.CODE_ZFP, ItemDefault.CODE_WLJ, ItemDefault.CODE_YTXS,
-                ItemDefault.CODE_JGCJ, ItemDefault.CODE_SL};
+                ItemDefault.CODE_JGCJ, ItemDefault.CODE_SL, ItemDefault.CODE_SGBQS};
         for (int machineCode : supportMachineCodes) {
             //查询是否已经存在该机器码的项,如果存在就放弃,避免重复添加
             List<Item> items = itemDao.queryBuilder().where(ItemDao.Properties.MachineCode.eq(machineCode)).list();
@@ -130,9 +130,11 @@ public class DBManager {
                     insertItem(machineCode, "激光测距", "米");
                     break;
                 case ItemDefault.CODE_SL:
-                    insertItem(machineCode, machineCode + "", "视力", "");
+                    insertItem(machineCode, "视力", "");
                     break;
-
+                case ItemDefault.CODE_SGBQS:
+                    insertItem(machineCode, "双杠臂屈伸", "次");
+                    break;
             }
         }
         Logger.i("数据库初始化完成");
@@ -333,6 +335,28 @@ public class DBManager {
                 .where(StudentDao.Properties.FaceFeature.isNotNull())
                 .where(StudentDao.Properties.FaceFeature.notEq(""))
                 .list();
+    }
+
+    public List<Student> queryByItemStudentFeatures() {
+
+        StringBuffer sqlBuf = new StringBuffer("SELECT S.* FROM " + StudentDao.TABLENAME + " S");
+        sqlBuf.append(" WHERE S." + StudentDao.Properties.StudentCode.columnName + " IN ( ");
+        sqlBuf.append(" SELECT  " + StudentItemDao.Properties.StudentCode.columnName);
+        sqlBuf.append(" FROM " + StudentItemDao.TABLENAME);
+        sqlBuf.append(" WHERE  " + StudentItemDao.Properties.ItemCode.columnName + " = ?  )");
+        sqlBuf.append(" AND " + StudentDao.Properties.FaceFeature.columnName + " <>'' ");
+
+        Logger.i("=====sql1===>" + sqlBuf.toString());
+        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{TestConfigs.getCurrentItemCode()});
+        List<Student> students = new ArrayList<>();
+        while (c.moveToNext()) {
+            Student student = studentDao.readEntity(c, 0);
+            students.add(student);
+        }
+        c.close();
+
+
+        return students;
     }
 
     /**
@@ -906,7 +930,10 @@ public class DBManager {
                 .list();
     }
 
-
+    public List<RoundResult> getResultsListAll() {
+        return roundResultDao.queryBuilder() 
+                .list();
+    }
     /**
      * 添加成绩
      *
@@ -960,7 +987,7 @@ public class DBManager {
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.IsLastResult.eq("1"))
                 .limit(1)
-                 .unique();
+                .unique();
     }
 
     public List<RoundResult> queryResultsByStuItem(StudentItem stuItem) {

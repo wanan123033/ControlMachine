@@ -59,7 +59,7 @@ public class BaseGroupTestStuAdapter extends BaseQuickAdapter<BaseStuPair, BaseV
 //        helper.addOnClickListener(R.id.view_check);
 //        if (testPosition == helper.getLayoutPosition()) {
 //            cbDeviceState.setVisibility(View.VISIBLE);
-//            if (pair.getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
+//            if (pair.getBaseDevice().getResultState() != BaseDeviceState.STATE_ERROR) {
 //                cbDeviceState.setChecked(true);
 //                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LDTY) {
 //                    cbDeviceState.setVisibility(View.INVISIBLE);

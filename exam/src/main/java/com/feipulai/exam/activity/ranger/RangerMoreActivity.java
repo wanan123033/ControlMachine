@@ -105,9 +105,8 @@ public class RangerMoreActivity extends BaseMoreTestActivity {
 
     private void onResults(byte[] datas) {
         RangerResult result = new RangerResult(datas);
-        int result1 = result.getResult();
         if (result.getType() == 1){
-            pair.setResult(result1);
+            setScore(result,pair);
         }
     }
 

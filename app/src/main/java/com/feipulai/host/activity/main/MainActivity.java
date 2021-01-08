@@ -64,7 +64,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        DateUtil.setTimeZone(this,"Asia/Shanghai");
+        DateUtil.setTimeZone(this, "Asia/Shanghai");
         RadioManager.getInstance().init();
         StatusBarUtil.setImmersiveTransparentStatusBar(this);//设置沉浸式透明状态栏 配合使用
 
@@ -117,6 +117,7 @@ public class MainActivity extends BaseActivity {
         txtMainTitle.setText(sb.toString());
         txtDeviceId.setText(CommonUtils.getDeviceId(this));
     }
+
     @OnClick(R.id.txt_help)
     public void onViewClicked() {
         IntentUtil.gotoActivity(this, ExplainActivity.class);
@@ -150,6 +151,11 @@ public class MainActivity extends BaseActivity {
                 PrinterManager.getInstance().selfCheck();
                 PrinterManager.getInstance().print("\n\n");
 //                addTestResult();
+//                List<RoundResult> results = DBManager.getInstance().getResultsListAll();
+//                for (RoundResult result : results) {
+//                    result.setResultState(RoundResult.RESULT_STATE_NORMAL);
+//                }
+//                DBManager.getInstance().updateRoundResult(results);
                 break;
             case R.id.card_parameter_setting:
                 IntentUtil.gotoActivity(MainActivity.this, SettingActivity.class);

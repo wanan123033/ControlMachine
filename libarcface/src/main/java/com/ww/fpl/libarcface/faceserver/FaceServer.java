@@ -450,6 +450,101 @@ public class FaceServer {
     }
 
     /**
+     * 用于注册照片人脸
+     *
+     * @param context 上下文对象
+     * @param bgr24   bgr24数据
+     * @param width   bgr24宽度
+     * @param height  bgr24高度
+     * @param name    保存的名字，若为空则使用时间戳
+     * @return 是否注册成功
+     */
+    public byte[] registerBgr24Byte(Context context, byte[] bgr24, int width, int height, String name) {
+        synchronized (this) {
+            if (faceEngine == null || context == null || bgr24 == null || width % 4 != 0 || bgr24.length != width * height * 3) {
+                Log.e(TAG, "registerBgr24:  invalid params");
+                return null;
+            }
+
+            if (ROOT_PATH == null) {
+                ROOT_PATH = context.getFilesDir().getAbsolutePath();
+            }
+            //特征存储的文件夹
+            File featureDir = new File(ROOT_PATH);
+            if (!featureDir.exists() && !featureDir.mkdirs()) {
+                Log.e(TAG, "registerBgr24: can not create feature directory");
+                return null;
+            }
+            //图片存储的文件夹
+//            File imgDir = new File(ROOT_PATH + File.separator + SAVE_IMG_DIR);
+//            if (!imgDir.exists() && !imgDir.mkdirs()) {
+//                Log.e(TAG, "registerBgr24: can not create image directory");
+//                return false;
+//            }
+            //人脸检测
+            List<FaceInfo> faceInfoList = new ArrayList<>();
+            int code = faceEngine.detectFaces(bgr24, width, height, FaceEngine.CP_PAF_BGR24, faceInfoList);
+            if (code == ErrorInfo.MOK && faceInfoList.size() > 0) {
+                FaceFeature faceFeature = new FaceFeature();
+
+                //特征提取
+                code = faceEngine.extractFaceFeature(bgr24, width, height, FaceEngine.CP_PAF_BGR24, faceInfoList.get(0), faceFeature);
+                String userName = name == null ? String.valueOf(System.currentTimeMillis()) : name;
+                try {
+                    //保存注册结果（注册图、特征数据）
+                    if (code == ErrorInfo.MOK) {
+                        //为了美观，扩大rect截取注册图
+//                        Rect cropRect = getBestRect(width, height, faceInfoList.get(0).getRect());
+//                        if (cropRect == null) {
+//                            Log.e(TAG, "registerBgr24: cropRect is null");
+//                            return false;
+//                        }
+//
+//                        cropRect.left &= ~3;
+//                        cropRect.top &= ~3;
+//                        cropRect.right &= ~3;
+//                        cropRect.bottom &= ~3;
+                        //todo 不进行头像图片保存,已有图片会出现重复保存冗余
+//                        File file = new File(imgDir + File.separator + userName + IMG_SUFFIX_JPG);
+//                        FileOutputStream fosImage = new FileOutputStream(file);
+//
+//                        // 创建一个头像的Bitmap，存放旋转结果图
+//                        Bitmap headBmp = getHeadImage(bgr24, width, height, faceInfoList.get(0).getOrient(), cropRect, ArcSoftImageFormat.BGR24);
+//                        // 保存到本地
+//                        headBmp.compress(Bitmap.CompressFormat.JPEG, 100, fosImage);
+//                        fosImage.close();
+
+                        // 保存特征数据
+                        FileOutputStream fosFeature = new FileOutputStream(featureDir + File.separator + userName);
+                        fosFeature.write(faceFeature.getFeatureData());
+                        fosFeature.close();
+
+                        // 内存中的数据同步
+                        if (faceRegisterInfoList == null) {
+                            faceRegisterInfoList = new ArrayList<>();
+                        }
+                        faceRegisterInfoList.add(new FaceRegisterInfo(faceFeature.getFeatureData(), userName));
+
+                        faceNumber = faceRegisterInfoList.size();
+                        Log.e(TAG, "faceRegisterInfoList: 3-----------------" + faceRegisterInfoList.size());
+                        return faceFeature.getFeatureData();
+                    } else {
+                        Log.e(TAG, "registerBgr24: extract face feature failed, code is " + code);
+                        return null;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } else {
+                Log.e(TAG, "registerBgr24: no face detected, code is " + code);
+                return null;
+            }
+        }
+
+    }
+
+    /**
      * 截取合适的头像并旋转，保存为注册头像
      *
      * @param originImageData 原始的BGR24数据
@@ -561,7 +656,7 @@ public class FaceServer {
                 maxSimilarIndex = i;
             }
         }
-        Log.i("getTopOfFaceLib2", "---------------------->"+maxSimilarIndex);
+        Log.i("getTopOfFaceLib2", "---------------------->" + maxSimilarIndex);
         isProcessing2 = false;
         if (maxSimilarIndex != -1) {
             return new CompareResult(faceRegisterInfoList.get(maxSimilarIndex).getName(), maxSimilar);
@@ -586,7 +681,7 @@ public class FaceServer {
                 maxSimilarIndex = i;
             }
         }
-        Log.i("getTopOfFaceLib3", "---------------------->"+maxSimilarIndex);
+        Log.i("getTopOfFaceLib3", "---------------------->" + maxSimilarIndex);
         isProcessing3 = false;
         if (maxSimilarIndex != -1) {
             return new CompareResult(faceRegisterInfoList.get(maxSimilarIndex).getName(), maxSimilar);

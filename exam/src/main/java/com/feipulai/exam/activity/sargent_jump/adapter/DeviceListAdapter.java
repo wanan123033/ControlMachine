@@ -187,7 +187,7 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                 } else {
                     oneViewHolder.setText(R.id.txt_stu_sex, "");
                 }
-//                if (item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_END) {
+//                if (item.getStuDevicePair().getBaseDevice().getResultState() == BaseDeviceState.STATE_END) {
                 if (item.getStuDevicePair().getResult() == -999) {
                     oneViewHolder.setText(R.id.txt_test_result, "");
                 } else if (item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_END
@@ -198,8 +198,8 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                 }
 
 //                }
-//                   else if (item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN
-//                        || item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
+//                   else if (item.getStuDevicePair().getBaseDevice().getResultState() == BaseDeviceState.STATE_NOT_BEGAIN
+//                        || item.getStuDevicePair().getBaseDevice().getResultState() == BaseDeviceState.STATE_FREE) {
 //                    oneViewHolder.setText(R.id.txt_test_result, "");
 //                }
 

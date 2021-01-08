@@ -3,6 +3,7 @@ package com.feipulai.host.db;
 import android.content.Context;
 
 import com.feipulai.host.entity.DaoMaster;
+import com.feipulai.host.entity.ItemDao;
 import com.feipulai.host.entity.RoundResultDao;
 import com.feipulai.host.entity.StudentDao;
 import com.orhanobut.logger.Logger;
@@ -24,7 +25,7 @@ public class DBOpenHelper extends DaoMaster.OpenHelper {
     @Override
     public void onUpgrade(Database db, int oldVersion, int newVersion) {
         super.onUpgrade(db, oldVersion, newVersion);
-        Logger.i("version", oldVersion + "---先前和更新之后的版本---" + newVersion);
+        Logger.i(oldVersion + "---先前和更新之后的版本---" + newVersion);
 
         if (oldVersion < newVersion) {
             switch (newVersion) {
@@ -34,6 +35,7 @@ public class DBOpenHelper extends DaoMaster.OpenHelper {
                     MigrationHelper.migrate(db, StudentDao.class);
                 case 5:
                     MigrationHelper.migrate(db, StudentDao.class);
+                    MigrationHelper.migrate(db, ItemDao.class);
                     break;
 
             }

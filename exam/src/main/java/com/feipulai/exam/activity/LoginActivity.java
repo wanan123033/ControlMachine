@@ -74,6 +74,11 @@ public class LoginActivity extends BaseTitleActivity {
     private void login() {
         new HttpSubscriber().login(this, editAccount.getText().toString(), editPass.getText().toString(), new OnResultListener<UserBean>() {
             @Override
+            public void onResponseTime(String responseTime) {
+
+            }
+
+            @Override
             public void onSuccess(UserBean userBean) {
                 MyApplication.TOKEN = userBean.getToken();
                 SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.TOKEN, userBean.getToken());

@@ -191,7 +191,7 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
                 mHandler.sendMessage(msg);
                 sendFree(result.getDeviceId());
             }
-//            else if (result.getState() == 0) {
+//            else if (result.getResultState() == 0) {
 //                disposeDevice(result);
 //            }
             disposeDevice(result);
