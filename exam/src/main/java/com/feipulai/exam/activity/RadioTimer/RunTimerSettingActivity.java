@@ -1,5 +1,6 @@
 package com.feipulai.exam.activity.RadioTimer;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -17,6 +18,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -26,6 +28,7 @@ import com.feipulai.device.serial.beans.RunTimerConnectState;
 import com.feipulai.device.serial.beans.RunTimerResult;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.NewRadioPairActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
@@ -59,6 +62,8 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     EditText etRunNum;
     @BindView(R.id.et_sensitivity_num)
     EditText etSensitivityNum;
+    @BindView(R.id.btn_self_check)
+    TextView selfCheck;
     @BindView(R.id.cb_start)
     CheckBox cbStart;
     @BindView(R.id.cb_end)
@@ -102,6 +107,9 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         etRunNum.addTextChangedListener(this);
         deviceManager = SerialDeviceManager.getInstance();
         etSensitivityNum.setText(String.format("%d", runTimerSetting.getSensitivityNum()));
+        if (runTimerSetting.getConnectType() == 1){
+            selfCheck.setText("设备配对");
+        }
     }
 
     @Nullable
@@ -304,33 +312,36 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_self_check:
-                if (runTimerSetting.getStartPoint() + runTimerSetting.getEndPoint() == 0) {
-                    toastSpeak("必须设置拦截点");
-                    return;
-                }
-                promote = 0;
+                if (runTimerSetting.getConnectType() == 1){
+                    startActivity(new Intent(this, NewRadioPairActivity.class));
+                }else {
+                    if (runTimerSetting.getStartPoint() + runTimerSetting.getEndPoint() == 0) {
+                        toastSpeak("必须设置拦截点");
+                        return;
+                    }
+                    promote = 0;
 //                mProgressDialog = ProgressDialog.show(this, "", "终端自检中...", true);
-                alertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
-                alertDialog.setTitleText("终端自检中...");
-                alertDialog.setCancelable(false);
-                alertDialog.show();
+                    alertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+                    alertDialog.setTitleText("终端自检中...");
+                    alertDialog.setCancelable(false);
+                    alertDialog.show();
 
-                int hostId = SettingHelper.getSystemSetting().getHostId();
+                    int hostId = SettingHelper.getSystemSetting().getHostId();
 //                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x02, (byte) hostId)));//主机号
-                int runNum = Integer.parseInt(runTimerSetting.getRunNum());
-                deviceManager.setRS232ResiltListener(new RunTimerImpl(this));
+                    int runNum = Integer.parseInt(runTimerSetting.getRunNum());
+                    deviceManager.setRS232ResiltListener(new RunTimerImpl(this));
 //                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x01, (byte) runNum)));//跑道数
-                int interceptPoint = runTimerSetting.getInterceptPoint();
+                    int interceptPoint = runTimerSetting.getInterceptPoint();
 //                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x04, (byte) interceptPoint)));//拦截点
-                int way = runTimerSetting.getInterceptWay();
+                    int way = runTimerSetting.getInterceptWay();
 //                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x05, (byte) (way + 1))));//触发方式
-                int sensor = runTimerSetting.getSensor();
+                    int sensor = runTimerSetting.getSensor();
 //                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x08, (byte) (sensor))));//传感器信道
-                RunTimerManager.cmdSetting(runNum,hostId,interceptPoint,way,sensor,10);
-                //3秒自检
-                mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 5000);
-                break;
-
+                    RunTimerManager.cmdSetting(runNum, hostId, interceptPoint, way, sensor, 10);
+                    //3秒自检
+                    mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 5000);
+                    break;
+                }
         }
     }
 

@@ -370,7 +370,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
     public void keepTime() {
         disposable = Observable.interval(0, 100, TimeUnit.MILLISECONDS)
                 .observeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+//                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(Long aLong) throws Exception {

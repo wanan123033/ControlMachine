@@ -3,44 +3,55 @@ package com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair;
 import android.content.Context;
 import android.os.Message;
 
+import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.device.manager.SportTimerManger;
 import com.feipulai.device.serial.RadioManager;
-import com.feipulai.device.sitpullup.SitPullLinker;
+import com.feipulai.exam.activity.RadioTimer.RunTimerSetting;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.check.CheckUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
-import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairContract;
 import com.feipulai.exam.config.TestConfigs;
 
 import java.util.List;
 
-public class RadioTimerPairPresenter implements SitPullUpPairContract.Presenter,
+public class RadioTimerPairPresenter implements RadioContract.Presenter,
             RadioManager.OnRadioArrivedListener,
-            SitPullLinker.SitPullPairListener {
+        RadioLinker.RadioPairListener {
         private boolean isAutoPair;
         private Context context;
-        private SitPullUpPairContract.View view;
+        private RadioContract.View view;
         public volatile int focusPosition;
         private List<StuDevicePair> pairs;
         public int machineCode = TestConfigs.sCurrentItem.getMachineCode();
         public final int TARGET_FREQUENCY = SettingHelper.getSystemSetting().getUseChannel();
-        public SitPullLinker linker;
+        public RadioLinker linker;
+        private int deviceSum;
+        private SportTimerManger manager;
+        private RunTimerSetting setting;
 
-        public RadioTimerPairPresenter(Context context, SitPullUpPairContract.View view) {
-            this.context = context;
-            this.view = view;
+        public RadioTimerPairPresenter(Context context, RadioContract.View view,int deviceSum) {
+                this.context = context;
+                this.view = view;
+                this.deviceSum = deviceSum;
+                manager = new SportTimerManger();
+                setting = SharedPrefsUtil.loadFormSource(context, RunTimerSetting.class);
+                isAutoPair = setting.isAutoPair();
         }
 
         @Override
-        public void start() {
-            pairs = CheckUtils.newPairs(getDeviceSum());
-            view.initView(isAutoPair, pairs);
+        public void start(int deviceId) {
+            pairs = CheckUtils.newPairs(deviceSum);
             RadioManager.getInstance().setOnRadioArrived(this);
             if (linker==null){
-                linker = new SitPullLinker(machineCode, TARGET_FREQUENCY, this);
-                linker.startPair(1);
+                linker = new RadioLinker(machineCode, TARGET_FREQUENCY, this);
+                linker.startPair(deviceId);
             }
 
+        }
+
+        public List<StuDevicePair> getPairs(){
+            return pairs;
         }
 
         @Override
@@ -59,13 +70,13 @@ public class RadioTimerPairPresenter implements SitPullUpPairContract.Presenter,
             this.isAutoPair = isAutoPair;
         }
 
-        public void setFrequency(int deviceId, int originFrequency, int deviceFrequency){
-
+        public void setFrequency(int deviceId,  int hostId, int targetFrequency){
+            manager.setFrequency(deviceId,targetFrequency,hostId,SettingHelper.getSystemSetting().getHostId());
         }
 
         @Override
         public  void saveSettings(){
-
+            setting.setAutoPair(isAutoPair);
         }
 
         @Override
@@ -94,9 +105,4 @@ public class RadioTimerPairPresenter implements SitPullUpPairContract.Presenter,
             view.showToast("未收到子机回复,设置失败,请重试");
         }
 
-
-
-    private int getDeviceSum() {
-        return 4;
-    }
 }
