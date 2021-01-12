@@ -6,12 +6,14 @@ import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
 
 import com.feipulai.common.CrashHandler;
+import com.feipulai.common.utils.ActivityLifeCycle;
 import com.feipulai.common.utils.FileUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.AdaptiveConfig;
 import com.feipulai.device.serial.SerialParams;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.SharedPrefsConfigs;
+import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
 import com.feipulai.exam.utils.bluetooth.BlueToothHelper;
 import com.kk.taurus.playerbase.config.PlayerConfig;
 import com.kk.taurus.playerbase.config.PlayerLibrary;
@@ -26,8 +28,9 @@ public class MyApplication extends MultiDexApplication {
     public static final String PATH_APK = FileUtil.PATH_BASE + "KS_APK/";//图片存在路径
     public static final String PATH_PDF_IMAGE = FileUtil.PATH_BASE + "KS_PDF_IMAGE/";//成绩图片与PDF文件存放路径
     public static final String PATH_LOG_NAME = "KS_LOGGER";//日志文件夹名称
-    public static final String SOFTWAREUUID = "FPL_KS_2020_09_01_000000";//软件识别码
-    public static final String HARDWAREUUID = "FPL_ANDROID_KS_2020_09_01_000000";//硬件识别码
+    public static String SOFTWAREUUID = "FP-KTA2108_KS";//软件识别码
+    public static String HARDWAREUUID = "FP-KTA2108_KS_ANDROID";//硬件识别码
+
     public static final String DEVICECODE = "111";//硬件识别码
 
     @Override
@@ -50,6 +53,12 @@ public class MyApplication extends MultiDexApplication {
         instance = this;
 //        LogUtils.initLogger(true, true, PATH_LOG_NAME);
 //        CrashHandler.getInstance().init(this);
+//        CrashHandler.getInstance().setUploadOpersion(new CrashHandler.UploadOpersion() {
+//            @Override
+//            public void upload(String erroMsg) {
+//                new HttpSubscriber().uploadLog(erroMsg);
+//            }
+//        });
         SettingHelper.init(this);
         BlueToothHelper.init(this);
         TOKEN = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.TOKEN, "");
@@ -81,6 +90,10 @@ public class MyApplication extends MultiDexApplication {
         }
 
         SerialParams.init(this);
+
+        registerActivityLifecycleCallbacks(new ActivityLifeCycle(SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME));
+        SOFTWAREUUID = MyApplication.getInstance().getString(R.string.software_uuid);//软件识别码
+        HARDWAREUUID = MyApplication.getInstance().getString(R.string.hardware_uuid);//硬件识别码
     }
 
     public static MyApplication getInstance() {

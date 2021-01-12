@@ -43,6 +43,8 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.releaseConfig
+            resValue "string", "software_uuid","FP-KTA2108_TC"
+            resValue "string", "hardware_uuid","FP-KTA2108_TC_ANDROID"
         }
         release {
             minifyEnabled false
@@ -52,6 +54,8 @@ android {
         ruiLiHeng {
             initWith(buildTypes.debug)
             applicationIdSuffix ".ruiliheng"
+            resValue "string", "software_uuid","FP-KTA2108_TC-RLH"
+            resValue "string", "hardware_uuid","FP-KTA2108_TC-RLH_ANDROID"
             // 修改马甲包的applicationId，即在原来的applicationId后加上配置内容
 //            manifestPlaceholders = [APP_NAME: '睿力恒体测'] // 配置马甲包的应用名称
         }

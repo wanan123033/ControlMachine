@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="tts_app_id">17752926</string>
     <string name="tts_app_key">zEGRL48oU0WqTOBdqPG3n81o</string>
     <string name="tts_secret_key">aHyQYps7YCRgk6sOMgWlX8VmsTBC6gAc</string>
