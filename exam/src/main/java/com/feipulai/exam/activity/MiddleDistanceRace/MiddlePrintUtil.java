@@ -141,7 +141,7 @@ public class MiddlePrintUtil {
      * @param carryMode
      */
     public static void print2(Context context, GroupItemBean groupItemBean, int digital, int carryMode) {
-        if (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4) {
+        if (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 ||SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP) {
             InteractUtils.printA4Result(context, groupItemBean.getGroup());
             return;
         }

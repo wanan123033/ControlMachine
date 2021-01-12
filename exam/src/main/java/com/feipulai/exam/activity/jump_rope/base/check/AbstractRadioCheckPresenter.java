@@ -178,22 +178,30 @@ public abstract class AbstractRadioCheckPresenter<Setting>
             student = pair.getStudent();
             baseDevice = pair.getBaseDevice();
             if (student != null) {
-                if (baseDevice.getState() == BaseDeviceState.STATE_FREE
-                        || baseDevice.getState() == BaseDeviceState.STATE_LOW_BATTERY) {
+                if (SettingHelper.getSystemSetting().isInputTest()){
                     if (addToCache) {
                         students.add(student);
                     }
                     forTestPairs.add(pair);
-                    if (baseDevice.getState() == BaseDeviceState.STATE_LOW_BATTERY) {
-                        contaisLowBattery = true;
-                    }
-                } else {
-                    if (!isConstraintStart) {
-                        view.showToast("存在考生设备为非空闲状态");
-                        isConstraintStart = true;
-                    }
+                }else{
+                    if (baseDevice.getState() == BaseDeviceState.STATE_FREE
+                            || baseDevice.getState() == BaseDeviceState.STATE_LOW_BATTERY) {
+                        if (addToCache) {
+                            students.add(student);
+                        }
+                        forTestPairs.add(pair);
+                        if (baseDevice.getState() == BaseDeviceState.STATE_LOW_BATTERY) {
+                            contaisLowBattery = true;
+                        }
+                    } else {
+                        if (!isConstraintStart) {
+                            view.showToast("存在考生设备为非空闲状态");
+                            isConstraintStart = true;
+                        }
 
+                    }
                 }
+
             }
         }
         TestCache.getInstance().setTestingPairs(forTestPairs);

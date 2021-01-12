@@ -177,7 +177,7 @@ public class RadioResultActivity
         btnPrint.setEnabled(false);
         TestCache testCache = TestCache.getInstance();
         if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN &&
-                SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4) {
+                (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 ||SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP)) {
             InteractUtils.printA4Result(this, testCache.getGroup());
         } else {
             InteractUtils.printResults(testCache.getGroup(),

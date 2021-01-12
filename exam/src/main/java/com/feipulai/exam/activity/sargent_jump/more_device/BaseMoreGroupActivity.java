@@ -569,7 +569,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         //全部次数测试完，
         if (stuAdapter.getTestPosition() != -1 &&
                 SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN &&
-                SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 &&
+                (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 ||SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP) &&
                 SettingHelper.getSystemSetting().isAutoPrint()) {
             InteractUtils.printA4Result(this, group);
         }

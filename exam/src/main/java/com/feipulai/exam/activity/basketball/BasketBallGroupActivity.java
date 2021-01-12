@@ -53,6 +53,7 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.PrintResultUtil;
 import com.feipulai.exam.utils.ResultDisplayUtils;
+import com.feipulai.exam.view.EditResultDialog;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
@@ -120,6 +121,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
     private long timerDate;
     private String startTime;  //开始时间
     private boolean startTest = true;
+    private EditResultDialog editResultDialog;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_group_basketball;
@@ -197,7 +199,24 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         }
         fristCheckTest();
 
+        editResultDialog = new EditResultDialog(this);
+        editResultDialog.setListener(new EditResultDialog.OnInputResultListener() {
 
+            @Override
+            public void inputResult(String result, int state) {
+                BasketballResult deviceResult = (BasketballResult) pairs.get(position()).getDeviceResult();
+                deviceResult.setSecond(Integer.valueOf(result));
+                String displayResult = ResultDisplayUtils.getStrResultForDisplay(pairs.get(position()).getDeviceResult().getResult());
+                tvResult.setText(displayResult);
+                addRoundResult(deviceResult);
+                resultList.get(resultAdapter.getSelectPosition()).setSelectMachineResult(deviceResult.getResult());
+                resultList.get(resultAdapter.getSelectPosition()).setResult(deviceResult.getResult());
+                resultList.get(resultAdapter.getSelectPosition()).setPenalizeNum(0);
+                resultList.get(resultAdapter.getSelectPosition()).setResultState(RoundResult.RESULT_STATE_NORMAL);
+                resultAdapter.notifyDataSetChanged();
+                editResultDialog.dismissDialog();
+            }
+        });
     }
 
     private void sleep() {
@@ -494,7 +513,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
     }
 
     @OnClick({R.id.tv_punish_add, R.id.tv_punish_subtract, R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal, R.id.tv_print, R.id.tv_confirm
-            , R.id.txt_waiting, R.id.txt_illegal_return, R.id.txt_continue_run, R.id.txt_stop_timing, R.id.txt_finish_test})
+            , R.id.txt_waiting, R.id.txt_illegal_return, R.id.txt_continue_run, R.id.txt_stop_timing, R.id.txt_finish_test, R.id.tv_result})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_waiting://等待发令
@@ -582,15 +601,18 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                 break;
             case R.id.tv_confirm://确定
                 LogUtils.operation("篮球点击了确定");
+                if (SettingHelper.getSystemSetting().isInputTest()) {
+                    onResultConfirmed();
+                    return;
+                }
+                timerUtil.stop();
                 if (state == WAIT_CONFIRM || state == WAIT_BEGIN) {
-                    timerUtil.stop();
 //                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
                     ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
                     ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 1);
                     startTest = false;
                 }
                 if (state != TESTING) {
-                    timerUtil.stop();
                     tvResult.setText("");
                     if (group.getIsTestComplete() == Group.FINISHED) {
                         toastSpeak("分组考生全部测试完成，请选择下一组");
@@ -624,6 +646,12 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                     }
                 }
 
+                break;
+            case R.id.tv_result:
+
+                if (SettingHelper.getSystemSetting().isInputTest()) {
+                    editResultDialog.showDialog(pairs.get(0).getStudent());
+                }
                 break;
         }
     }
@@ -1175,7 +1203,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         toastSpeak("分组考生全部测试完成，请选择下一组");
         if (group.getIsTestComplete() != 1 &&
                 SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN &&
-                SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 &&
+                (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 ||SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP)&&
                 SettingHelper.getSystemSetting().isAutoPrint()) {
             InteractUtils.printA4Result(this, group);
         }

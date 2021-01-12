@@ -57,6 +57,7 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
+import com.feipulai.exam.view.EditResultDialog;
 import com.feipulai.exam.view.WaitDialog;
 import com.orhanobut.logger.utils.LogUtils;
 
@@ -123,6 +124,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
     protected final int TARGET_FREQUENCY = SettingHelper.getSystemSetting().getUseChannel();
     private FrameLayout afrFrameLayout;
     private BaseAFRFragment afrFragment;
+    private EditResultDialog editResultDialog;
 
     @Override
     protected int setLayoutResID() {
@@ -160,7 +162,19 @@ public class PushUpIndividualActivity extends BaseTitleActivity
             afrFragment.setCompareListener(this);
             initAFR();
         }
+        editResultDialog = new EditResultDialog(this);
+        editResultDialog.setListener(new EditResultDialog.OnInputResultListener() {
+
+            @Override
+            public void inputResult(String result, int state) {
+                pairs.get(0).getDeviceResult().setResult(ResultDisplayUtils.getDbResultForUnit(Double.valueOf(result)));
+                String displayResult = ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult());
+                tvResult.setText(displayResult + (intervalCount == 0 ? "" : "\n超时：" + intervalCount + "个"));
+                editResultDialog.dismissDialog();
+            }
+        });
     }
+
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (individualCheckFragment.dispatchKeyEvent(event)) {
@@ -230,11 +244,11 @@ public class PushUpIndividualActivity extends BaseTitleActivity
     @Override
     public void onIndividualCheckIn(Student student, StudentItem studentItem, List<RoundResult> results) {
         if (student != null)
-            LogUtils.operation("俯卧撑检入到学生:"+student.toString());
+            LogUtils.operation("俯卧撑检入到学生:" + student.toString());
         if (studentItem != null)
-            LogUtils.operation("俯卧撑检入到学生StudentItem:"+studentItem.toString());
+            LogUtils.operation("俯卧撑检入到学生StudentItem:" + studentItem.toString());
         if (results != null)
-            LogUtils.operation("俯卧撑检入到学生成绩:"+results.size()+"----"+results.toString());
+            LogUtils.operation("俯卧撑检入到学生成绩:" + results.size() + "----" + results.toString());
         if (state != WAIT_CHECK_IN) {
             toastSpeak("当前考生还未完成测试,拒绝检录");
             return;
@@ -279,8 +293,8 @@ public class PushUpIndividualActivity extends BaseTitleActivity
         }
     }
 
-    @OnClick({R.id.tv_start_test, R.id.tv_stop_test, R.id.tv_print, R.id.tv_led_setting, R.id.tv_confirm,
-            R.id.tv_punish, R.id.tv_abandon_test, R.id.tv_finish_test, R.id.tv_exit_test, R.id.tv_device_pair,R.id.img_AFR})
+    @OnClick({R.id.tv_start_test, R.id.tv_stop_test, R.id.tv_print, R.id.tv_led_setting, R.id.tv_confirm, R.id.tv_result,
+            R.id.tv_punish, R.id.tv_abandon_test, R.id.tv_finish_test, R.id.tv_exit_test, R.id.tv_device_pair, R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
@@ -351,8 +365,15 @@ public class PushUpIndividualActivity extends BaseTitleActivity
             case R.id.img_AFR:
                 showAFR();
                 break;
+            case R.id.tv_result:
+
+                if (SettingHelper.getSystemSetting().isInputTest() && pairs.size() > 0 && pairs.get(0).getStudent() != null) {
+                    editResultDialog.showDialog(pairs.get(0).getStudent());
+                }
+                break;
         }
     }
+
     public void showAFR() {
         if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
             ToastUtils.showShort("未选择人脸识别检录功能");
@@ -398,7 +419,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
     private void onResultConfirmed() {
         StuDevicePair pair = pairs.get(0);
         int result = pair.getDeviceResult().getResult() + pair.getPenalty();
-        LogUtils.operation("俯卧撑成绩确认："+result);
+        LogUtils.operation("俯卧撑成绩确认：" + result);
         if (systemSetting.isAutoBroadcast()) {
             TtsManager.getInstance().speak(String.format(getString(R.string.speak_result), pair.getStudent().getSpeakStuName(), ResultDisplayUtils.getStrResultForDisplay(result)));
         }
@@ -425,8 +446,8 @@ public class PushUpIndividualActivity extends BaseTitleActivity
             }
         }
 
-        if (hasRemain && !fullSkip){
-            LogUtils.operation("俯卧撑当前考生进入下一轮测试:stuCode = "+student.getStudentCode());
+        if (hasRemain && !fullSkip) {
+            LogUtils.operation("俯卧撑当前考生进入下一轮测试:stuCode = " + student.getStudentCode());
         }
         return hasRemain && !fullSkip;
     }
@@ -468,7 +489,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
     private void prepareForBegin() {
         TestCache testCache = TestCache.getInstance();
         Student student = pairs.get(0).getStudent();
-        LogUtils.operation("俯卧撑等待开始测试:"+student.toString());
+        LogUtils.operation("俯卧撑等待开始测试:" + student.toString());
         InteractUtils.showStuInfo(llStuDetail, student, testCache.getResults().get(student));
 
         tvResult.setText(student.getStudentName());
@@ -482,7 +503,8 @@ public class PushUpIndividualActivity extends BaseTitleActivity
 
     private void prepareForTesting() {
         LogUtils.operation("俯卧撑开始测试");
-        if (pairs.get(0).getBaseDevice().getState() == BaseDeviceState.STATE_DISCONNECT) {
+        if (pairs.get(0).getBaseDevice().getState() == BaseDeviceState.STATE_DISCONNECT
+                && !SettingHelper.getSystemSetting().isInputTest()) {
             toastSpeak("设备未连接,不能开始测试");
             return;
         }
@@ -492,7 +514,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
                 false, false);
 
         tvResult.setText("准备");
-        testDate = System.currentTimeMillis()+"";
+        testDate = System.currentTimeMillis() + "";
         facade.startTest(0);
         state = TESTING;
     }
@@ -732,6 +754,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
         transaction.replace(setAFRFrameLayoutResID(), afrFragment);
         transaction.commitAllowingStateLoss();// 提交更改
     }
+
     public int setAFRFrameLayoutResID() {
         return R.id.frame_camera;
     }
@@ -745,7 +768,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
                 if (student == null) {
                     InteractUtils.toastSpeak(PushUpIndividualActivity.this, "该考生不存在");
                     return;
-                }else{
+                } else {
                     afrFrameLayout.setVisibility(View.GONE);
                 }
                 StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
@@ -759,7 +782,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
                     return;
                 }
                 // 可以直接检录
-                onIndividualCheckIn(student,studentItem,results);
+                onIndividualCheckIn(student, studentItem, results);
             }
         });
 

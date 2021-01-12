@@ -6,6 +6,7 @@ package com.feipulai.host.netUtils.netapi;
  */
 
 
+import com.feipulai.host.bean.ActivateBean;
 import com.feipulai.host.bean.BatchBean;
 import com.feipulai.host.bean.ItemBean;
 import com.feipulai.host.bean.SoftApp;
@@ -78,5 +79,9 @@ public interface HttpApi {
     @POST("run/compareFaceFeature")
     @Headers("Content-Type:application/json;charset=UTF-8")
     Observable<HttpResult<UserPhoto>> netSh(@Header("Authorization") String token, @Body ResponseParame data);
+    @POST("https://api.soft.fplcloud.com/terminal/softwareactivate/active")
+    Observable<HttpResult<ActivateBean>> activate(@Body ResponseParame parame);
 
+    @POST("https://api.soft.fplcloud.com/terminal/softwarerunlog/add")
+    Observable<HttpResult<String>> uploadLog(@Body ResponseParame parame);
 }

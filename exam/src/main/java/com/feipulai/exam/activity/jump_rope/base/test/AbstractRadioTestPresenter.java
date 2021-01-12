@@ -12,6 +12,7 @@ import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.serial.RadioManager;
+import com.feipulai.device.serial.beans.IDeviceResult;
 import com.feipulai.exam.activity.jump_rope.DeviceDispatcher;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
@@ -21,6 +22,7 @@ import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.Arrays;
@@ -49,7 +51,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
     protected volatile int[] currentConnect;
     protected volatile int[] endGetResultPairs;//结束后缓存收到数据设备
     private String testDate;
-    protected List<StuDevicePair> pairs;
+    public List<StuDevicePair> pairs;
     protected Setting setting;
     protected SystemSetting systemSetting;
     private Context context;
@@ -106,9 +108,32 @@ public abstract class AbstractRadioTestPresenter<Setting>
     }
 
     @Override
+    public void setInputResult(final int result, int state) {
+
+        IDeviceResult deviceResult = new IDeviceResult() {
+            @Override
+            public int getResult() {
+                return result;
+            }
+
+            @Override
+            public void setResult(int result) {
+
+            }
+        };
+        pairs.get(focusPosition).setDeviceResult(deviceResult);
+        deviceResult.setResult(result);
+        view.updateStates();
+    }
+
+    public Student getFocusStudent() {
+        return pairs.get(focusPosition).getStudent();
+    }
+
+    @Override
     public void startTest() {
         LogUtils.operation("开始测试,测试考生设备信息:" + pairs.toString());
-        testDate = System.currentTimeMillis()+"";
+        testDate = System.currentTimeMillis() + "";
         resetDevices();
         view.setViewForStart();
         facade.start();

@@ -209,10 +209,16 @@ public class InteractUtils {
             switch (machineCode) {
 
                 case ItemDefault.CODE_TS:
-                    JumpRopeResult jumpRopeResult = (JumpRopeResult) deviceResult;
-                    roundResult.setMachineResult(jumpRopeResult.getResult());
-                    roundResult.setResult(jumpRopeResult.getResult());
-                    roundResult.setStumbleCount(jumpRopeResult.getStumbleTimes());
+                    try{
+                        JumpRopeResult jumpRopeResult = (JumpRopeResult) deviceResult;
+                        roundResult.setMachineResult(jumpRopeResult.getResult());
+                        roundResult.setResult(jumpRopeResult.getResult());
+                        roundResult.setStumbleCount(jumpRopeResult.getStumbleTimes());
+                    }catch (ClassCastException e){
+                        roundResult.setMachineResult(deviceResult.getResult());
+                        roundResult.setResult(deviceResult.getResult());
+                    }
+
                     break;
 
                 case ItemDefault.CODE_YWQZ:

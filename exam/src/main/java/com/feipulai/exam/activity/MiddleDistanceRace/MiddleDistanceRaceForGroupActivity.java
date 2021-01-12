@@ -2008,7 +2008,7 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
                 //自动打印
 
                 if (SettingHelper.getSystemSetting().isAutoPrint() &&
-                        SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4) {
+                        (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 ||SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP)) {
                     InteractUtils.printA4Result(mContext, dbGroupList);
 
                 } else {

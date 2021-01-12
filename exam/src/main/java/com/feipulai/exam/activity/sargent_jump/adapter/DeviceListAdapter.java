@@ -199,6 +199,7 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                     oneViewHolder.setText(R.id.txt_stu_sex, "");
                 }
 //                if (item.getStuDevicePair().getBaseDevice().getResultState() == BaseDeviceState.STATE_END) {
+                oneViewHolder.addOnClickListener(R.id.txt_test_result);
                 if (item.getStuDevicePair().getResult() == -999) {
                     oneViewHolder.setText(R.id.txt_test_result, "");
                 } else if (item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_END

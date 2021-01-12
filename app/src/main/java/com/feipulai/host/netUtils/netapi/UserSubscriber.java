@@ -7,6 +7,7 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.activity.setting.SettingHelper;
+import com.feipulai.host.bean.ActivateBean;
 import com.feipulai.host.bean.UserBean;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.config.TestConfigs;
@@ -17,6 +18,7 @@ import com.feipulai.host.netUtils.OnResultListener;
 import com.feipulai.host.netUtils.RequestSub;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import io.reactivex.Observable;
 
@@ -56,4 +58,49 @@ public class UserSubscriber {
 
     }
 
+    /**
+     * 激活
+     *
+     * @param currentRunTime
+     * @param listener
+     */
+    public void activate(long currentRunTime, OnResultListener listener) {
+        Map<String, String> parameData = new HashMap<>();
+        parameData.put("deviceIdentify", CommonUtils.getDeviceId(MyApplication.getInstance()));
+        parameData.put("currentRunTime", currentRunTime + "");
+        parameData.put("softwareCode", MyApplication.SOFTWAREUUID);
+        parameData.put("softwareName", CommonUtils.getAppName(MyApplication.getInstance()));
+
+        Observable<HttpResult<ActivateBean>> observable = HttpManager.getInstance().getHttpApi().activate(CommonUtils.encryptQuery("300021100", parameData));
+        HttpManager.getInstance().toSubscribe(observable, new RequestSub<ActivateBean>(listener));
+    }
+
+    /**
+     * 日志上传
+     *
+     * @param crashMsg
+     */
+    public void uploadLog(String crashMsg) {
+        Map<String, String> parameData = new HashMap<>();
+        parameData.put("logLevel", "ERROR");
+        parameData.put("errorText", crashMsg);
+        parameData.put("deviceIdentify", CommonUtils.getDeviceId(MyApplication.getInstance()));
+        parameData.put("operateName", "错误日志");
+        parameData.put("softwareCode", MyApplication.SOFTWAREUUID);
+        parameData.put("softwareName", CommonUtils.getAppName(MyApplication.getInstance()));
+        Observable<HttpResult<String>> observable = HttpManager.getInstance().getHttpApi().uploadLog(CommonUtils.encryptQuery("300021300", parameData));
+        HttpManager.getInstance().toSubscribe(observable, new RequestSub<String>(new OnResultListener() {
+            @Override
+            public void onSuccess(Object result) {
+                System.out.println("zzs==============>日志上传成功");
+            }
+
+            @Override
+            public void onFault(int code, String errorMsg) {
+                System.out.println("zzs==============>日志上传失败");
+            }
+
+
+        }));
+    }
 }

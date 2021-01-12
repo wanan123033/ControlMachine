@@ -104,7 +104,7 @@ public class PullUpStateResult implements IDeviceResult{
 
 	@Override
 	public void setResult(int result){
-		totalCountNum = result;
+		validCountNum = result;
 	}
 
 	@Override

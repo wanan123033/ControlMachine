@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
@@ -16,10 +17,18 @@ import com.arcsoft.face.FaceEngine;
 import com.feipulai.common.db.DataBaseExecutor;
 import com.feipulai.common.db.DataBaseRespon;
 import com.feipulai.common.db.DataBaseTask;
+import com.feipulai.common.utils.ActivityCollector;
 import com.feipulai.common.utils.DateUtil;
+import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.device.serial.RadioManager;
 import com.feipulai.host.activity.setting.SettingHelper;
+import com.feipulai.host.bean.ActivateBean;
+import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.Student;
+import com.feipulai.host.netUtils.HttpSubscriber;
+import com.feipulai.host.netUtils.OnResultListener;
+import com.feipulai.host.netUtils.netapi.UserSubscriber;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 import com.feipulai.common.tts.TtsManager;
@@ -40,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -54,14 +64,52 @@ import io.reactivex.schedulers.Schedulers;
 public class SplashScreenActivity extends BaseActivity {
 
     public static final String MACHINE_CODE = "machine_code";
-
+    private SweetAlertDialog dialog;
+    private ActivateBean activateBean;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
+// 这里是否还需要延时需要再测试后再修改
+        RadioManager.getInstance().init();
+        DateUtil.setTimeZone(this, "Asia/Shanghai");
+        init();
 
+        activateBean = SharedPrefsUtil.loadFormSource(this, ActivateBean.class);
+        long runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0l);
+        if (activateBean != null) {
+
+//            if (activateBean.getUseDeviceTime() - DateUtil.getDayTime() > activateBean.getValidRunTime()) {
+//                //超出使用时长
+//                //弹窗确定重新激活
+//                showActivateConfirm(2);
+//                return;
+//            } else {
+//                //更新使用时长 每一天有使用到都算使用一天
+//                if (!TextUtils.equals(DateUtil.getCurrentTime("yyyy-MM-dd")
+//                        , DateUtil.formatTime(activateBean.getUpdateTime(), "yyyy-MM-dd"))) {
+//                    activateBean.setUseDeviceTime(activateBean.getUseDeviceTime() + DateUtil.getDayTime());
+//                    activateBean.setUpdateTime(DateUtil.getCurrentTime());
+//                    SharedPrefsUtil.save(this, activateBean);
+//                }
+//            }
+            if (runTime > activateBean.getValidRunTime()) {
+                //超出使用时长
+                //弹窗确定重新激活
+                showActivateConfirm(2);
+                return;
+            }
+            activate();
+            if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
+                gotoMain();
+            }
+
+
+        } else {
+            activate();
+        }
     }
 
     @Override
@@ -69,23 +117,103 @@ public class SplashScreenActivity extends BaseActivity {
         super.onResume();
         // 这里是否还需要延时需要再测试后再修改
 //        DateUtil.setTimeZone(this,"Asia/Shangha");
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                init();
+//                if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
+//                    Intent intent = new Intent();
+//                    intent.setClass(SplashScreenActivity.this, MainActivity.class);
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    startActivity(intent);
+//                    finish();
+//                }
+//
+//            }
+//        }, 1000);
+
+
+    }
+
+    private void gotoMain() {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                init();
-                if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
-                    Intent intent = new Intent();
-                    intent.setClass(SplashScreenActivity.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    finish();
+                if (activateBean != null && activateBean.getCurrentTime() < activateBean.getValidEndTime()) {
+                    if (!ActivityCollector.getInstance().isExistActivity(MainActivity.class)) {
+                        Intent intent = new Intent();
+                        intent.setClass(SplashScreenActivity.this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish();
+                    }
+                } else {
+                    showActivateConfirm(2);
                 }
 
             }
-        }, 1000);
+        }, 3000);
+    }
+
+    private void activate() {
+        long currentRunTime = 0;
+        if (activateBean != null) {
+            //超出使用时间 重新激活
+            currentRunTime = activateBean.getUseDeviceTime();
+        }
+        new UserSubscriber().activate(currentRunTime, new OnResultListener<ActivateBean>() {
+            @Override
+            public void onSuccess(ActivateBean result) {
+                activateBean = result;
+                SharedPrefsUtil.save(SplashScreenActivity.this, result);
+                if ((int) result.getActivateTime() == 0) {
+                    //需要确认激活
+                    showActivateConfirm(1);
+                } else if (result.getCurrentTime() > result.getValidEndTime()) {
+                    //超出使用时间 重新激活
+                    showActivateConfirm(2);
+                } else {
+                    //激活成功
+                    gotoMain();
+
+                }
+            }
+
+            @Override
+            public void onFault(int code, String errorMsg) {
+
+            }
 
 
+        });
+    }
+
+    private void showActivateConfirm(int type) {
+        if (dialog != null && dialog.isShowing()) {
+            return;
+        }
+        dialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText("激活设备")
+
+                .setContentText(type == 1 ? "请联系管理员激活设备" : "已超出可使用时长，请联系管理员重新激活设备")
+                .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                        dialog = null;
+                        activate();
+                    }
+                }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                        dialog = null;
+                        finish();
+                    }
+                });
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
     }
 
     private void init() {
@@ -125,12 +253,15 @@ public class SplashScreenActivity extends BaseActivity {
 
                 @Override
                 public void onExecuteSuccess(DataBaseRespon respon) {
-                    Intent intent = new Intent();
-                    intent.setClass(SplashScreenActivity.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    finish();
+                    if (dialog != null && !dialog.isShowing() && activateBean != null) {
+//                        Intent intent = new Intent();
+//                        intent.setClass(SplashScreenActivity.this, MainActivity.class);
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        startActivity(intent);
+//                        finish();
+                        gotoMain();
+                    }
                 }
 
                 @Override
@@ -187,17 +318,9 @@ public class SplashScreenActivity extends BaseActivity {
                         } else {
                             ToastUtils.showShort(getString(R.string.active_failed));
                         }
-                        Intent intent = new Intent();
-                        intent.setClass(SplashScreenActivity.this, MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        finish();
-//                        ActiveFileInfo activeFileInfo = new ActiveFileInfo();
-//                        int res = FaceEngine.getActiveFileInfo(SplashScreenActivity.this, activeFileInfo);
-//                        if (res == ErrorInfo.MOK) {
-//                            Log.i("SplashScreenActivity", activeFileInfo.toString());
-//                        }
+                        if (dialog != null && !dialog.isShowing() && activateBean != null) {
+                            gotoMain();
+                        }
                     }
 
                     @Override

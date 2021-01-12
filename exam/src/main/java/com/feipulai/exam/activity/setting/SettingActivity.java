@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -34,14 +35,20 @@ import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
+import com.feipulai.device.tcp.SendTcpClientThread;
 import com.feipulai.device.udp.UdpLEDUtil;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LoginActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.bean.RoundResultBean;
+import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.netUtils.HttpManager;
 import com.feipulai.exam.utils.bluetooth.BlueToothListActivity;
+import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.common.Constants;
 import com.ww.fpl.libarcface.util.ConfigUtil;
@@ -130,7 +137,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     private String[] partternList = new String[]{"个人测试", "分组测试"};
     private List<Integer> hostIdList;
     private SystemSetting systemSetting;
-
+    private SendTcpClientThread tcpClientThread;
 
     @Override
     protected int setLayoutResID() {
@@ -341,11 +348,14 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         activeFace();
     }
 
-    @OnClick({R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting
+    @OnClick({R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting, R.id.btn_tcp_test
             , R.id.txt_advanced, R.id.sw_identity_mark, R.id.sw_add_student, R.id.cb_route, R.id.cb_custom_channel, R.id.cb_monitoring,
-            R.id.btn_monitoring_setting, R.id.btn_thermometer, R.id.cb_thermometer, R.id.cb_is_tcp, R.id.sw_auto_score, R.id.btn_print_setting,R.id.sw_auto_discern})
+            R.id.btn_monitoring_setting, R.id.btn_thermometer, R.id.cb_thermometer, R.id.cb_is_tcp, R.id.sw_auto_score, R.id.btn_print_setting, R.id.sw_auto_discern})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            case R.id.btn_tcp_test:
+                testTcpConnect();
+                break;
             case R.id.cb_is_tcp://是否使用TCP
                 systemSetting.setTCP(cbIsTcp.isChecked());
                 break;
@@ -454,9 +464,71 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         startActivity(new Intent(this, LoginActivity.class));
     }
 
+
+    private void testTcpConnect() {
+        if (tcpClientThread == null) {
+            String ipStr = null;
+            String portStr = null;
+            try {
+                String tcpIp = systemSetting.getTcpIp();
+                ipStr = tcpIp.split(":")[0];
+                portStr = tcpIp.split(":")[1];
+            } catch (Exception e) {
+                ToastUtils.showShort("请输入正确的TCP地址");
+                return;
+            }
+
+            tcpClientThread = new SendTcpClientThread(ipStr, Integer.parseInt(portStr), new SendTcpClientThread.SendTcpListener() {
+                @Override
+                public void onMsgReceive(String text) {
+
+                }
+
+                @Override
+                public void onSendFail(final String msg) {
+
+                }
+
+                @Override
+                public void onConnectFlag(boolean isConnect) {
+                    Log.e("onConnectFlag", "---------" + isConnect);
+                    if (isConnect) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ToastUtils.showShort("服务器连接成功");
+                            }
+                        });
+
+                    } else {
+                        tcpClientThread.exit = true;
+                        tcpClientThread = null;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ToastUtils.showShort("服务器连接失败");
+                            }
+                        });
+
+                    }
+                }
+            });
+            tcpClientThread.start();
+        } else {
+            if (tcpClientThread.isInterrupted()) {
+                tcpClientThread.start();
+            }
+        }
+    }
+
+
     @Override
     protected void onPause() {
         super.onPause();
+        if (tcpClientThread != null) {
+            tcpClientThread.exit = true;
+            tcpClientThread = null;
+        }
         if (!TextUtils.isEmpty(editCustomChannel.getText().toString().trim())) {
             systemSetting.setChannel(Integer.valueOf(editCustomChannel.getText().toString().trim()));
         }
