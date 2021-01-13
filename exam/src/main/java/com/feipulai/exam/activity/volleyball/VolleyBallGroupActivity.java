@@ -338,7 +338,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
                 DBManager.getInstance().updateGroup(group);
                 if (systemSetting.isAutoPrint()) {
                     TestCache testCache = TestCache.getInstance();
-                    if (systemSetting.getPrintTool() == SystemSetting.PRINT_A4) {
+                    if (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 ||SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP){
                         InteractUtils.printA4Result(this, group);
                     } else {
                         InteractUtils.printResults(group, testCache.getAllStudents(), testCache.getResults(),

@@ -5,6 +5,9 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.Item;
 import com.feipulai.exam.entity.RoundResult;
 
+import java.util.Arrays;
+import java.util.List;
+
 
 /**
  * Created by James on 2018/4/25 0025.
@@ -17,7 +20,26 @@ public class ResultDisplayUtils {
     //private static final int SSWR = 0x01;
     //private static final int FLSQ = 0x02;
     //private static final int FLJW = 0x03;
+    public final static String[] mm = new String[]{"毫米", "厘米", "分米", "米", "千米"};
+    public final static String[] g = {"克", "千克"};
+    public final static String[] time = {"秒", "分/秒", "分.秒", "分:秒", "分'秒"};
 
+    public static int getDbResultForUnit(double result) {
+        Item item = TestConfigs.sCurrentItem;
+        List<String> mmList = Arrays.asList(mm);
+        List<String> gList = Arrays.asList(g);
+        List<String> timeList = Arrays.asList(time);
+        if (mmList.contains(item.getUnit())) {
+            int index = mmList.indexOf(item.getUnit());
+            return index == 0 ? (int) result : (int) (result * (Math.pow(10, index)));
+        } else if (gList.contains(item.getUnit())) {
+            int index = mmList.indexOf(item.getUnit());
+            return index == 0 ? (int) result : (int) (result * 1000);
+        } else if (timeList.contains(item.getUnit())) {//时间按秒计
+            return (int) (result * 1000);
+        }
+        return (int) result;
+    }
 
     /**
      * 当前测试项目成绩转换为显示格式

@@ -54,6 +54,7 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
+import com.feipulai.exam.view.EditResultDialog;
 import com.feipulai.exam.view.WaitDialog;
 import com.orhanobut.logger.Logger;
 
@@ -115,6 +116,8 @@ public class PullUpIndividualActivity extends BaseTitleActivity
     private WaitDialog changBadDialog;
     private FrameLayout afrFrameLayout;
     private BaseAFRFragment afrFragment;
+    private EditResultDialog editResultDialog;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_individual_pullup;
@@ -148,15 +151,29 @@ public class PullUpIndividualActivity extends BaseTitleActivity
             afrFragment.setCompareListener(this);
             initAFR();
         }
+        editResultDialog = new EditResultDialog(this);
+        editResultDialog.setListener(new EditResultDialog.OnInputResultListener() {
+
+            @Override
+            public void inputResult(String result, int state) {
+                pairs.get(0).getDeviceResult().setResult(ResultDisplayUtils.getDbResultForUnit(Double.valueOf(result)));
+                String displayResult = ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult());
+                tvResult.setText(displayResult);
+                editResultDialog.dismissDialog();
+            }
+        });
     }
+
     public int setAFRFrameLayoutResID() {
         return R.id.frame_camera;
     }
+
     private void initAFR() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(setAFRFrameLayoutResID(), afrFragment);
         transaction.commitAllowingStateLoss();// 提交更改
     }
+
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (individualCheckFragment.dispatchKeyEvent(event)) {
@@ -164,6 +181,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
         }
         return super.dispatchKeyEvent(event);
     }
+
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
@@ -249,8 +267,8 @@ public class PullUpIndividualActivity extends BaseTitleActivity
         }
     }
 
-    @OnClick({R.id.tv_start_test, R.id.tv_stop_test, R.id.tv_print, R.id.tv_led_setting, R.id.tv_confirm,
-            R.id.tv_punish, R.id.tv_abandon_test, R.id.tv_finish_test, R.id.tv_exit_test, R.id.tv_pair,R.id.img_AFR})
+    @OnClick({R.id.tv_start_test, R.id.tv_stop_test, R.id.tv_print, R.id.tv_led_setting, R.id.tv_confirm, R.id.tv_result,
+            R.id.tv_punish, R.id.tv_abandon_test, R.id.tv_finish_test, R.id.tv_exit_test, R.id.tv_pair, R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
@@ -308,6 +326,12 @@ public class PullUpIndividualActivity extends BaseTitleActivity
             case R.id.img_AFR:
                 showAFR();
                 break;
+            case R.id.tv_result:
+
+                if (SettingHelper.getSystemSetting().isInputTest() && pairs.size() > 0 && pairs.get(0).getStudent() != null) {
+                    editResultDialog.showDialog(pairs.get(0).getStudent());
+                }
+                break;
 
         }
     }
@@ -315,7 +339,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
     private void onResultConfirmed() {
         StuDevicePair pair = pairs.get(0);
         int result = pair.getDeviceResult().getResult() + pair.getPenalty();
-        Logger.i("引体向上成绩："+ResultDisplayUtils.getStrResultForDisplay(result));
+        Logger.i("引体向上成绩：" + ResultDisplayUtils.getStrResultForDisplay(result));
         if (systemSetting.isAutoBroadcast()) {
 
             TtsManager.getInstance().speak(String.format(getString(R.string.speak_result), pair.getStudent().getSpeakStuName(),
@@ -388,7 +412,8 @@ public class PullUpIndividualActivity extends BaseTitleActivity
     }
 
     private void prepareForTesting() {
-        if (pairs.get(0).getBaseDevice().getState() == BaseDeviceState.STATE_DISCONNECT) {
+        if (pairs.get(0).getBaseDevice().getState() == BaseDeviceState.STATE_DISCONNECT
+                && !SettingHelper.getSystemSetting().isInputTest()) {
             toastSpeak("设备未连接,不能开始测试");
             return;
         }
@@ -561,7 +586,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
                                     1, 3, false, true);
                         }
                         pairs.get(0).setPenalty(value);
-                        Logger.i("判罚："+value);
+                        Logger.i("判罚：" + value);
                         toastSpeak("判罚成功");
                     }
                 })
@@ -619,7 +644,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
                 if (student == null) {
                     InteractUtils.toastSpeak(PullUpIndividualActivity.this, "该考生不存在");
                     return;
-                }else{
+                } else {
                     afrFrameLayout.setVisibility(View.GONE);
                 }
                 final StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
@@ -632,13 +657,13 @@ public class PullUpIndividualActivity extends BaseTitleActivity
                     InteractUtils.toastSpeak(PullUpIndividualActivity.this, "该考生已测试");
                     return;
                 }
-                onIndividualCheckIn(student,studentItem,results);
+                onIndividualCheckIn(student, studentItem, results);
             }
         });
 
 
-
     }
+
     public void showAFR() {
         if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
             ToastUtils.showShort("未选择人脸识别检录功能");

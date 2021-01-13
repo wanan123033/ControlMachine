@@ -23,7 +23,7 @@ public interface RadioTestContract {
         void restartTest();
 
         boolean checkFinalResults();
-    
+
         void saveResults();
 
         void changeBadDevice();
@@ -41,8 +41,10 @@ public interface RadioTestContract {
         void cancelChangeBad();
 
         void stopNow();
-    
+
         void dispatchDevices();
+
+        void setInputResult(int result, int state);
     }
 
     interface View<Setting> {
@@ -78,12 +80,12 @@ public interface RadioTestContract {
         void showChangeBadDialog();
 
         void enableStopUse(boolean enable);
-	
-		void showDisconnectForConfirmResults();
-    
+
+        void showDisconnectForConfirmResults();
+
         void enableFinishTest(boolean enable);
-	
-		void enableChangeBad(boolean enable);
-	}
+
+        void enableChangeBad(boolean enable);
+    }
 
 }

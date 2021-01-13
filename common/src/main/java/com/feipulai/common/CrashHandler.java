@@ -53,7 +53,9 @@ public class CrashHandler implements UncaughtExceptionHandler {
                 "fatal exception:\t    application crashed!!!\n"
                 // + deviceInfo
                 + erroMsg);
-
+        if (uploadOpersion != null) {
+            uploadOpersion.upload(erroMsg);
+        }
         // if(mDefaultHandler != null){
         // 	mDefaultHandler.uncaughtException(thread,ex);
         // }
@@ -73,7 +75,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
                 sb.append("version code:").append(versionCode).append("\nversion name:").append(versionName).append("\n");
             }
         } catch (NameNotFoundException e) {
-            LogUtils.crash("CrashHandleran.NameNotFoundException---> error occured when collect package info"+getErrMessage(e));
+            LogUtils.crash("CrashHandleran.NameNotFoundException---> error occured when collect package info" + getErrMessage(e));
         }
         Field[] fields = Build.class.getDeclaredFields();
         for (Field field : fields) {
@@ -81,7 +83,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
                 field.setAccessible(true);
                 sb.append(field.getName()).append(":").append(field.get(null).toString()).append("\n");
             } catch (Exception e) {
-                LogUtils.crash("CrashHandler.NameNotFoundException---> an error occured when collect crash info"+getErrMessage(e));
+                LogUtils.crash("CrashHandler.NameNotFoundException---> an error occured when collect crash info" + getErrMessage(e));
             }
         }
         return sb.toString();
@@ -105,4 +107,17 @@ public class CrashHandler implements UncaughtExceptionHandler {
         return sb.toString();
     }
 
+    private UploadOpersion uploadOpersion;
+
+    public UploadOpersion getUploadOpersion() {
+        return uploadOpersion;
+    }
+
+    public void setUploadOpersion(UploadOpersion uploadOpersion) {
+        this.uploadOpersion = uploadOpersion;
+    }
+
+    public interface UploadOpersion {
+        void upload(String erroMsg);
+    }
 }

@@ -47,6 +47,8 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.service.UploadService;
 import com.feipulai.exam.utils.ResultDisplayUtils;
+import com.feipulai.exam.view.AddStudentDialog;
+import com.feipulai.exam.view.EditResultDialog;
 import com.feipulai.exam.view.StuSearchEditText;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
@@ -127,7 +129,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     private LedHandler ledHandler = new LedHandler(this);
     private Intent serverIntent;
     private int testType = 0;//0自动 1手动
-//    private boolean isFault;
+    //    private boolean isFault;
+    private EditResultDialog editResultDialog;
 
     @Override
     protected int setLayoutResID() {
@@ -217,8 +220,19 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 
         pair.setBaseDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE));
         refreshDevice();
+        editResultDialog = new EditResultDialog(this);
+        editResultDialog.setListener(new EditResultDialog.OnInputResultListener() {
 
+            @Override
+            public void inputResult(String result, int state) {
+                pair.setTestTime(System.currentTimeMillis() + "");
+                pair.setResultState(state);
+                pair.setResult(ResultDisplayUtils.getDbResultForUnit(Double.valueOf(result)));
+                doResult();
+            }
+        });
     }
+
 
     public void setTestType(int testType) {
         this.testType = testType;
@@ -302,7 +316,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             ToastUtils.showShort("查无此人");
             return;
         }
-        if (pair.getStudent() != null || pair.getBaseDevice().getState() != BaseDeviceState.STATE_FREE) {
+        if ((pair.getStudent() != null || pair.getBaseDevice().getState() != BaseDeviceState.STATE_FREE)
+                && !SettingHelper.getSystemSetting().isInputTest()) {
             toastSpeak("当前无设备可添加学生测试");
             return;
         }
@@ -360,7 +375,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         addStudent(student);
     }
 
-    @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting, R.id.img_AFR,R.id.tv_penalizeFoul})
+    @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting, R.id.img_AFR, R.id.tv_penalizeFoul, R.id.txt_test_result})
 //R.id.txt_stu_fault
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -401,10 +416,16 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                     intent.putExtra(DataDisplayActivity.ISSHOWPENALIZEFOUL, isShowPenalizeFoul());
                     intent.putExtra(DataRetrieveActivity.DATA_ITEM_CODE, getItemCode());
                     intent.putExtra(DataRetrieveActivity.DATA_EXTRA, bean);
-                    intent.putExtra(DataDisplayActivity.TESTNO,testNo);
+                    intent.putExtra(DataDisplayActivity.TESTNO, testNo);
                     startActivity(intent);
-                }else {
+                } else {
                     toastSpeak("无考生成绩信息");
+                }
+                break;
+            case R.id.txt_test_result:
+
+                if (SettingHelper.getSystemSetting().isInputTest() && pair.getStudent() != null) {
+                    editResultDialog.showDialog(pair.getStudent());
                 }
                 break;
         }
@@ -590,8 +611,10 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     public void updateDevice(@NonNull BaseDeviceState deviceState) {
         Logger.i("updateDevice==>" + deviceState.toString());
         if (pair.getBaseDevice() != null) {
-            pair.getBaseDevice().setState(deviceState.getState());
-            refreshDevice();
+            if (!SettingHelper.getSystemSetting().isInputTest()) {
+                pair.getBaseDevice().setState(deviceState.getState());
+                refreshDevice();
+            }
             //状态为测试已结束
             if (deviceState.getState() == BaseDeviceState.STATE_END) {
                 if (pair.getStudent() != null) {

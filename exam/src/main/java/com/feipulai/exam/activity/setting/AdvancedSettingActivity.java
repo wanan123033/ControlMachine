@@ -45,7 +45,7 @@ import io.reactivex.schedulers.Schedulers;
  * Created by zzs on 2018/11/23
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
-public class AdvancedSettingActivity extends BaseTitleActivity{
+public class AdvancedSettingActivity extends BaseTitleActivity {
 
     @BindView(R.id.edit_appkey)
     EditText editAppkey;
@@ -65,6 +65,8 @@ public class AdvancedSettingActivity extends BaseTitleActivity{
     CheckBox swSargent;
     @BindView(R.id.sw_medicine_ball)
     CheckBox swMedicineBall;
+    @BindView(R.id.cb_input_test)
+    CheckBox cbInputTest;
     @BindView(R.id.sp_jump_rope_state_count)
     Spinner spJumpRopeStateCount;
     private SystemSetting systemSetting;
@@ -95,12 +97,14 @@ public class AdvancedSettingActivity extends BaseTitleActivity{
         medicineBallSetting = SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class);
         standJumpSetting = SharedPrefsUtil.loadFormSource(this, StandJumpSetting.class);
         jumpRopeSetting = SharedPrefsUtil.loadFormSource(this, JumpRopeSetting.class);
-        sitReachSetting = SharedPrefsUtil.loadFormSource(this,SitReachSetting.class);
-        sargentSetting = SharedPrefsUtil.loadFormSource(this,SargentSetting.class);
+        sitReachSetting = SharedPrefsUtil.loadFormSource(this, SitReachSetting.class);
+        sargentSetting = SharedPrefsUtil.loadFormSource(this, SargentSetting.class);
 
         String serverToken = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.DEFAULT_SERVER_TOKEN, "dGVybWluYWw6dGVybWluYWxfc2VjcmV0");
         editAppkey.setText(serverToken);
         swSitup.setChecked(sitUpSetting.isPenalize());
+
+        cbInputTest.setChecked(systemSetting.isInputTest());
 
         swPullup.setChecked(pullUpSetting.isPenalize());
 
@@ -167,7 +171,7 @@ public class AdvancedSettingActivity extends BaseTitleActivity{
         SharedPrefsUtil.save(this, sargentSetting);
     }
 
-    @OnCheckedChanged({R.id.sw_pullup,R.id.sw_situp,R.id.sw_volleyball,R.id.sw_sit_reach,R.id.sw_standjump2,R.id.sw_sargent,R.id.sw_medicine_ball})
+    @OnCheckedChanged({R.id.sw_pullup, R.id.sw_situp, R.id.sw_volleyball, R.id.sw_sit_reach, R.id.sw_standjump2, R.id.sw_sargent, R.id.sw_medicine_ball, R.id.cb_input_test})
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()) {
 
@@ -193,6 +197,9 @@ public class AdvancedSettingActivity extends BaseTitleActivity{
                 break;
             case R.id.sw_medicine_ball:
                 medicineBallSetting.setPenalizeFoul(isChecked);
+                break;
+            case R.id.cb_input_test:
+                systemSetting.setInputTest(isChecked);
                 break;
         }
     }

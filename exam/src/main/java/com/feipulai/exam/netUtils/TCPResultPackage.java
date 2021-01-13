@@ -246,7 +246,7 @@ public class TCPResultPackage {
                 sb.append(target);
 
                 //测试时间
-                sb.append(DateUtil.formatTime3(uploadResults.get(i).getTestTime()));
+                sb.append(DateUtil.formatTime1(Long.parseLong(uploadResults.get(i).getTestTime()), "yyyy-MM-dd HH:mm:ss.SSS"));
                 sb.append(target);
 
                 //备注1
@@ -275,11 +275,12 @@ public class TCPResultPackage {
                     sb.append(target);
 
                     //状态
+                    //成绩状态 TCP
                     sb.append(examRoundResult.get(j).getResultStatus());
                     sb.append(target);
 
                     //测试时间
-                    sb.append(DateUtil.formatTime3(examRoundResult.get(j).getTestTime()));
+                    sb.append(DateUtil.formatTime1(Long.parseLong(examRoundResult.get(j).getTestTime()), "yyyy-MM-dd HH:mm:ss.SSS"));
                     sb.append(target);
 
                     //是否为最终成绩

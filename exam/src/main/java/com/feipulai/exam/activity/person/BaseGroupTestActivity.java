@@ -47,6 +47,7 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.service.UploadService;
 import com.feipulai.exam.utils.ResultDisplayUtils;
+import com.feipulai.exam.view.EditResultDialog;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
@@ -115,7 +116,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     public int runUp;
     public int baseHeight;
     private boolean isFault;
-
+    private EditResultDialog editResultDialog;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_base_group_test;
@@ -175,6 +176,17 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         setStuShowLed(stuAdapter.getTestPosition() != -1 ? stuPairsList.get(stuAdapter.getTestPosition()) : null);
 
         tv_penalizeFoul.setVisibility(isShowPenalizeFoul());
+        editResultDialog = new EditResultDialog(this);
+        editResultDialog.setListener(new EditResultDialog.OnInputResultListener() {
+
+            @Override
+            public void inputResult(String result, int state) {
+                getTestPair().setTestTime(System.currentTimeMillis() + "");
+                getTestPair().setResultState(state);
+                getTestPair().setResult(ResultDisplayUtils.getDbResultForUnit(Double.valueOf(result)));
+                doTestEnd(getTestPair().getBaseDevice(), getTestPair());
+            }
+        });
     }
 
     protected abstract int isShowPenalizeFoul();
@@ -285,7 +297,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         this.testType = testType;
     }
 
-    @OnClick({R.id.txt_start_test, R.id.txt_led_setting, R.id.txt_stu_skip,R.id.tv_penalizeFoul})
+    @OnClick({R.id.txt_start_test, R.id.txt_led_setting, R.id.txt_stu_skip,R.id.tv_penalizeFoul,R.id.txt_test_result})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 //            case R.id.txt_setting:
@@ -366,6 +378,12 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                     startActivity(intent);
                 }else {
                     toastSpeak("无考生成绩信息");
+                }
+                break;
+            case R.id.txt_test_result:
+
+                if (SettingHelper.getSystemSetting().isInputTest() && getTestPair().getStudent() != null) {
+                    editResultDialog.showDialog(getTestPair().getStudent());
                 }
                 break;
         }
@@ -657,20 +675,24 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         }
         if (stuAdapter == null || stuAdapter.getTestPosition() == -1)
             return;
-
-        BaseStuPair pair = stuPairsList.get(stuAdapter.getTestPosition());
-        pair.getBaseDevice().setState(deviceState.getState());
-        if (isStop && !SettingHelper.getSystemSetting().isIdentityMark()) {
-            return;
-        }
-        //状态为测试已结束
-        if (deviceState.getState() == BaseDeviceState.STATE_END) {
-            if (isFault && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
-                showPenalize(deviceState, pair);
-            } else {
-                doTestEnd(deviceState, pair);
+        if (!SettingHelper.getSystemSetting().isInputTest()) {
+            BaseStuPair pair = stuPairsList.get(stuAdapter.getTestPosition());
+            pair.getBaseDevice().setState(deviceState.getState());
+            if (isStop && !SettingHelper.getSystemSetting().isIdentityMark()) {
+                return;
             }
+            //状态为测试已结束
+            if (deviceState.getState() == BaseDeviceState.STATE_END) {
+                if (isFault && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
+                    showPenalize(deviceState, pair);
+                } else {
+                    doTestEnd(deviceState, pair);
+                }
+            }
+
         }
+
+
         //更新界面成绩
 //        stuAdapter.notifyDataSetChanged();
 
@@ -1208,7 +1230,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     private void allTestComplete() {
         if (group.getIsTestComplete() != 1 &&
                 SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN &&
-                SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 &&
+                (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 ||SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP) &&
                 SettingHelper.getSystemSetting().isAutoPrint()) {
             InteractUtils.printA4Result(this, group);
         }

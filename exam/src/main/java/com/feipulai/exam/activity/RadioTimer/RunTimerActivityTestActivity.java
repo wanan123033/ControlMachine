@@ -493,8 +493,14 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
 //    }
 
     @Override
-    public void updateText(String time) {
-        tvTimer.setText(time);
+    public void updateText(final String time) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tvTimer.setText(time);
+            }
+        });
+
     }
 
     @Override

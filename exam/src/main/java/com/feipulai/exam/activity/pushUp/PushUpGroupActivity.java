@@ -51,6 +51,7 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
+import com.feipulai.exam.view.EditResultDialog;
 import com.feipulai.exam.view.WaitDialog;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
@@ -117,6 +118,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
     private WaitDialog changBadDialog;
     private SitPullLinker linker;
     protected final int TARGET_FREQUENCY = SettingHelper.getSystemSetting().getUseChannel();
+    private EditResultDialog editResultDialog;
 
     @Override
     protected int setLayoutResID() {
@@ -154,6 +156,17 @@ public class PushUpGroupActivity extends BaseTitleActivity
             tvDevicePair.setVisibility(View.GONE);
         }
         locationTestStu();
+        editResultDialog = new EditResultDialog(this);
+        editResultDialog.setListener(new EditResultDialog.OnInputResultListener() {
+
+            @Override
+            public void inputResult(String result, int state) {
+                pairs.get(position()).getDeviceResult().setResult(ResultDisplayUtils.getDbResultForUnit(Double.valueOf(result)));
+                String displayResult = ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult());
+                tvResult.setText(displayResult);
+                editResultDialog.dismissDialog();
+            }
+        });
     }
 
 
@@ -203,7 +216,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
     }
 
     @OnClick({R.id.tv_start_test, R.id.tv_stop_test, R.id.tv_print, R.id.tv_led_setting, R.id.tv_device_pair, R.id.tv_confirm,
-            R.id.tv_abandon_test})
+            R.id.tv_abandon_test,R.id.tv_result})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
@@ -254,6 +267,12 @@ public class PushUpGroupActivity extends BaseTitleActivity
             case R.id.tv_device_pair:
                 LogUtils.operation("俯卧撑点击了设备配对");
                 changeBadDevice();
+                break;
+            case R.id.tv_result:
+
+                if (SettingHelper.getSystemSetting().isInputTest()  ) {
+                    editResultDialog.showDialog(pairs.get(0).getStudent());
+                }
                 break;
         }
     }
@@ -325,7 +344,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
                 if (systemSetting.isAutoPrint()) {
                     TestCache testCache = TestCache.getInstance();
 
-                    if (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4) {
+                    if (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 || SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP) {
                         InteractUtils.printA4Result(this, group);
                     } else {
                         InteractUtils.printResults(group, testCache.getAllStudents(), testCache.getResults(),
@@ -458,7 +477,8 @@ public class PushUpGroupActivity extends BaseTitleActivity
     }
 
     private void prepareForTesting() {
-        if (pairs.get(position()).getBaseDevice().getState() == BaseDeviceState.STATE_DISCONNECT) {
+        if (pairs.get(position()).getBaseDevice().getState() == BaseDeviceState.STATE_DISCONNECT
+                && !SettingHelper.getSystemSetting().isInputTest()) {
             ToastUtils.showShort("设备未连接,不能开始测试");
             return;
         }

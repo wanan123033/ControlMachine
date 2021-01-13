@@ -41,6 +41,7 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.service.UploadService;
 import com.feipulai.exam.utils.ResultDisplayUtils;
+import com.feipulai.exam.view.EditResultDialog;
 import com.feipulai.exam.view.StuSearchEditText;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
@@ -72,6 +73,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     private LedHandler ledHandler = new LedHandler();
     private boolean isPenalize;
     private boolean isNextClickStart = true;
+    private EditResultDialog editResultDialog;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_sargent_jump_more;
@@ -85,6 +88,19 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             serverIntent = new Intent(this, UploadService.class);
             startService(serverIntent);
         }
+        editResultDialog = new EditResultDialog(this);
+        editResultDialog.setListener(new EditResultDialog.OnInputResultListener() {
+
+            @Override
+            public void inputResult(String result, int state) {
+                BaseStuPair pair = deviceDetails.get(0).getStuDevicePair();
+                pair.setTestTime(System.currentTimeMillis() + "");
+                pair.setResultState(state);
+                pair.setResult(ResultDisplayUtils.getDbResultForUnit(Double.valueOf(result)));
+                deviceListAdapter.notifyDataSetChanged();
+                doResult(pair, 0);
+            }
+        });
     }
 
     private void init() {
@@ -188,7 +204,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             }
         }
 
-        if (!canUseDevice) {
+        if (!canUseDevice && !SettingHelper.getSystemSetting().isInputTest()) {
             toastSpeak("当前无设备可添加学生测试");
             return;
         }
@@ -356,6 +372,11 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                     case R.id.txt_get_data:
                         if (pair.getStudent() != null) {
                             showGetData(pos);
+                        }
+                        break;
+                    case R.id.txt_test_result:
+                        if (SettingHelper.getSystemSetting().isInputTest() && pair.getStudent() != null) {
+                            editResultDialog.showDialog(pair.getStudent());
                         }
                         break;
                     default:
@@ -1025,7 +1046,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 if (student == null) {
                     InteractUtils.toastSpeak(BaseMoreActivity.this, "该考生不存在");
                     return;
-                }else{
+                } else {
                     afrFrameLayout.setVisibility(View.GONE);
                 }
                 StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
@@ -1042,7 +1063,6 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 checkInUIThread(student, studentItem);
             }
         });
-
 
 
     }

@@ -2,6 +2,7 @@ package com.feipulai.exam.activity.jump_rope.base.test;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.feipulai.common.utils.SystemBrightUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.exam.R;
@@ -22,7 +24,10 @@ import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.DividerItemDecoration;
+import com.feipulai.exam.view.EditResultDialog;
+import com.feipulai.exam.view.StuSearchEditText;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.List;
@@ -65,6 +70,8 @@ public abstract class AbstractRadioTestActivity<Setting>
     Button btnConfirmResults;
     @BindView(R.id.btn_finish_test)
     Button btnFinishTest;
+    @BindView(R.id.btn_input_result)
+    Button btnInputResult;
 
     @BindView(R.id.ll_device_group)
     protected LinearLayout llDeviceGroup;
@@ -77,6 +84,7 @@ public abstract class AbstractRadioTestActivity<Setting>
     private MyHandler mHandler = new MyHandler(this);
     private SweetAlertDialog sweetAlertDialog;
     private RTResultAdapter mAdapter;
+    private EditResultDialog editResultDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +120,28 @@ public abstract class AbstractRadioTestActivity<Setting>
     @Override
     protected void initData() {
         ButterKnife.bind(this);
-        getToolbar().getLeftView(0).setVisibility(View.GONE);
+        getToolbar().getLeftLayout().setVisibility(View.INVISIBLE);
+
+        if (SettingHelper.getSystemSetting().isInputTest()) {
+            btnInputResult.setVisibility(View.VISIBLE);
+            editResultDialog = new EditResultDialog(this);
+            editResultDialog.setListener(new EditResultDialog.OnInputResultListener() {
+
+                @Override
+                public void inputResult(String result, int state) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            SystemBrightUtils.showInput(AbstractRadioTestActivity.this, false);
+                        }
+                    }, 500);
+
+                    presenter.setInputResult(ResultDisplayUtils.getDbResultForUnit(Double.valueOf(result)), state);
+                    editResultDialog.dismissDialog();
+                }
+            });
+        }
+
     }
 
     protected abstract AbstractRadioTestPresenter<Setting> getPresenter();
@@ -132,7 +161,7 @@ public abstract class AbstractRadioTestActivity<Setting>
     }
 
     @OnClick({R.id.btn_change_bad, R.id.btn_stop_using, R.id.btn_restart, R.id.btn_quit_test,
-            R.id.btn_start_test, R.id.btn_confirm_results, R.id.btn_finish_test})
+            R.id.btn_start_test, R.id.btn_confirm_results, R.id.btn_finish_test, R.id.btn_input_result})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
@@ -189,6 +218,12 @@ public abstract class AbstractRadioTestActivity<Setting>
             case R.id.btn_finish_test:
                 LogUtils.operation("点击了测试完成");
                 presenter.finishTest();
+                break;
+            case R.id.btn_input_result:
+
+                if (SettingHelper.getSystemSetting().isInputTest()) {
+                    editResultDialog.showDialog(presenter.getFocusStudent());
+                }
                 break;
         }
     }

@@ -60,6 +60,7 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
+import com.feipulai.exam.view.EditResultDialog;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
@@ -127,7 +128,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
     private String startTime;
     private FrameLayout afrFrameLayout;
     private BaseAFRFragment afrFragment;
-
+    private EditResultDialog editResultDialog;
 
     @Override
     protected int setLayoutResID() {
@@ -202,6 +203,24 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
             afrFragment.setCompareListener(this);
             initAFR();
         }
+        editResultDialog = new EditResultDialog(this);
+        editResultDialog.setListener(new EditResultDialog.OnInputResultListener() {
+
+            @Override
+            public void inputResult(String result, int state) {
+                BasketballResult deviceResult = (BasketballResult) pairs.get(0).getDeviceResult();
+                deviceResult.setSecond(Integer.valueOf(result));
+                String displayResult = ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult());
+                tvResult.setText(displayResult);
+                addRoundResult(deviceResult);
+                resultList.get(resultAdapter.getSelectPosition()).setSelectMachineResult(deviceResult.getResult());
+                resultList.get(resultAdapter.getSelectPosition()).setResult(deviceResult.getResult());
+                resultList.get(resultAdapter.getSelectPosition()).setPenalizeNum(0);
+                resultList.get(resultAdapter.getSelectPosition()).setResultState(RoundResult.RESULT_STATE_NORMAL);
+                resultAdapter.notifyDataSetChanged();
+                editResultDialog.dismissDialog();
+            }
+        });
     }
 
     @Override
@@ -741,7 +760,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
     }
 
     @OnClick({R.id.tv_punish_add, R.id.tv_punish_subtract, R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal, R.id.tv_print, R.id.tv_confirm
-            , R.id.txt_waiting, R.id.txt_illegal_return, R.id.txt_continue_run, R.id.txt_stop_timing, R.id.txt_finish_test, R.id.img_AFR})
+            ,R.id.tv_result, R.id.txt_waiting, R.id.txt_illegal_return, R.id.txt_continue_run, R.id.txt_stop_timing, R.id.txt_finish_test, R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_waiting://等待发令
@@ -820,6 +839,10 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                 break;
             case R.id.tv_confirm://确定
                 LogUtils.operation("足球点击了确定按钮");
+                if (SettingHelper.getSystemSetting().isInputTest()) {
+                    onResultConfirmed();
+                    return;
+                }
                 timerUtil.stop();
                 if (state == WAIT_CONFIRM) {
 //                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
@@ -862,6 +885,12 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                 break;
             case R.id.img_AFR:
                 showAFR();
+                break;
+            case R.id.tv_result:
+
+                if (SettingHelper.getSystemSetting().isInputTest() && pairs.size() > 0 && pairs.get(0).getStudent() != null) {
+                    editResultDialog.showDialog(pairs.get(0).getStudent());
+                }
                 break;
         }
     }

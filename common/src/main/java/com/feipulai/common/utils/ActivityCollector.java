@@ -77,6 +77,17 @@ public class ActivityCollector{
 		}
 	}
 
+	public boolean isExistActivity(Class<?> cls) {
+		Iterator<Activity> it = mStackActivity.iterator();
+
+		while (it.hasNext()) {
+			Activity act = it.next();
+			if (act.getClass() == cls) {
+				return true;
+			}
+		}
+		return false;
+	}
 	public Activity getLastActivity()
 	{
 		Activity activity = null;

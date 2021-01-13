@@ -17,6 +17,7 @@ import com.feipulai.device.tcp.TCPConst;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.bean.ActivateBean;
 import com.feipulai.exam.bean.BatchBean;
 import com.feipulai.exam.bean.GroupBean;
 import com.feipulai.exam.bean.ItemBean;
@@ -64,6 +65,7 @@ import java.util.Map;
 import java.util.Set;
 
 import io.reactivex.Observable;
+import io.reactivex.observers.DefaultObserver;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
@@ -87,6 +89,55 @@ public class HttpSubscriber {
 
     public void setOnRequestEndListener(OnRequestEndListener onRequestEndListener) {
         this.onRequestEndListener = onRequestEndListener;
+    }
+
+    /**
+     * 激活
+     *
+     * @param currentRunTime
+     * @param listener
+     */
+    public void activate(long currentRunTime, OnResultListener listener) {
+        Map<String, String> parameData = new HashMap<>();
+        parameData.put("deviceIdentify", CommonUtils.getDeviceId(MyApplication.getInstance()));
+        parameData.put("currentRunTime", currentRunTime + "");
+        parameData.put("softwareCode", MyApplication.SOFTWAREUUID);
+        parameData.put("softwareName", CommonUtils.getAppName(MyApplication.getInstance()));
+
+        Observable<HttpResult<ActivateBean>> observable = HttpManager.getInstance().getHttpApi().activate(CommonUtils.encryptQuery("300021100", parameData));
+        HttpManager.getInstance().toSubscribe(observable, new RequestSub<ActivateBean>(listener));
+    }
+
+    /**
+     * 日志上传
+     *
+     * @param crashMsg
+     */
+    public void uploadLog(String crashMsg) {
+        Map<String, String> parameData = new HashMap<>();
+        parameData.put("logLevel", "ERROR");
+        parameData.put("errorText", crashMsg);
+        parameData.put("deviceIdentify", CommonUtils.getDeviceId(MyApplication.getInstance()));
+        parameData.put("operateName", "错误日志");
+        parameData.put("softwareCode", MyApplication.SOFTWAREUUID);
+        parameData.put("softwareName", CommonUtils.getAppName(MyApplication.getInstance()));
+        Observable<HttpResult<String>> observable = HttpManager.getInstance().getHttpApi().uploadLog(CommonUtils.encryptQuery("300021300", parameData));
+        HttpManager.getInstance().toSubscribe(observable, new RequestSub<String>(new OnResultListener() {
+            @Override
+            public void onSuccess(Object result) {
+                System.out.println("zzs==============>日志上传成功");
+            }
+
+            @Override
+            public void onFault(int code, String errorMsg) {
+                System.out.println("zzs==============>日志上传失败");
+            }
+
+            @Override
+            public void onResponseTime(String responseTime) {
+
+            }
+        }));
     }
 
     /**

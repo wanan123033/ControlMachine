@@ -47,6 +47,7 @@ public class RunTimerSetting {
     private String runNum = "4";
     private int sensitivityNum = 5;
     private int connectType;
+    private boolean autoPair;
     /**
      * 男子满分
      */
@@ -191,5 +192,13 @@ public class RunTimerSetting {
 
     public void setConnectType(int connectType) {
         this.connectType = connectType;
+    }
+
+    public boolean isAutoPair() {
+        return autoPair;
+    }
+
+    public void setAutoPair(boolean autoPair) {
+        this.autoPair = autoPair;
     }
 }

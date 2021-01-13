@@ -53,6 +53,7 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
+import com.feipulai.exam.view.EditResultDialog;
 import com.feipulai.exam.view.WaitDialog;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
@@ -114,6 +115,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
     private VolleyBallGroupStuAdapter stuPairAdapter;
     private Group group;
     private WaitDialog changBadDialog;
+    private EditResultDialog editResultDialog;
 
     @Override
     protected int setLayoutResID() {
@@ -126,7 +128,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
         setting = SharedPrefsUtil.loadFormSource(this, PullUpSetting.class);
 
         group = (Group) TestConfigs.baseGroupMap.get("group");
-        LogUtils.operation("引体向上获取分组信息:"+group.toString());
+        LogUtils.operation("引体向上获取分组信息:" + group.toString());
         String type = "男女混合";
         if (group.getGroupType() == Group.MALE) {
             type = "男子";
@@ -138,7 +140,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
         TestCache.getInstance().init();
         pairs = CheckUtils.newPairs(((List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu")).size());
         CheckUtils.groupCheck(pairs);
-        LogUtils.operation("引体向上获取分组信息:"+pairs.size()+"---"+pairs.toString());
+        LogUtils.operation("引体向上获取分组信息:" + pairs.size() + "---" + pairs.toString());
 
         rvTestingPairs.setLayoutManager(new LinearLayoutManager(this));
         stuPairAdapter = new VolleyBallGroupStuAdapter(pairs);
@@ -149,6 +151,17 @@ public class PullUpGroupActivity extends BaseTitleActivity
 
 //        prepareForBegin();
         locationTestStu();
+        editResultDialog = new EditResultDialog(this);
+        editResultDialog.setListener(new EditResultDialog.OnInputResultListener() {
+
+            @Override
+            public void inputResult(String result, int state) {
+                pairs.get(position()).getDeviceResult().setResult(ResultDisplayUtils.getDbResultForUnit(Double.valueOf(result)));
+                String displayResult = ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult());
+                tvResult.setText(displayResult);
+                editResultDialog.dismissDialog();
+            }
+        });
     }
 
 
@@ -179,7 +192,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
     }
 
     @OnClick({R.id.tv_start_test, R.id.tv_stop_test, R.id.tv_print, R.id.tv_led_setting, R.id.tv_confirm,
-            R.id.tv_punish, R.id.tv_abandon_test, R.id.tv_pair})
+            R.id.tv_punish, R.id.tv_abandon_test, R.id.tv_pair, R.id.tv_result})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
@@ -230,6 +243,12 @@ public class PullUpGroupActivity extends BaseTitleActivity
             case R.id.tv_pair:
                 LogUtils.operation("引体向上点击了配对");
                 changeBadDevice();
+                break;
+            case R.id.tv_result:
+
+                if (SettingHelper.getSystemSetting().isInputTest()) {
+                    editResultDialog.showDialog(pairs.get(0).getStudent());
+                }
                 break;
 
         }
@@ -330,7 +349,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
             testNo = "1";
             UploadResults uploadResult = new UploadResults(scheduleNo,
                     TestConfigs.getCurrentItemCode(), student.getStudentCode()
-                    , testNo, group, RoundResultBean.beanCope(roundResultList,group));
+                    , testNo, group, RoundResultBean.beanCope(roundResultList, group));
             uploadResults.add(uploadResult);
             Logger.i("自动上传成绩:" + uploadResults.toString());
             ServerMessage.uploadResult(uploadResults);
@@ -389,7 +408,8 @@ public class PullUpGroupActivity extends BaseTitleActivity
     }
 
     private void prepareForTesting() {
-        if (pairs.get(position()).getBaseDevice().getState() == BaseDeviceState.STATE_DISCONNECT) {
+        if (pairs.get(position()).getBaseDevice().getState() == BaseDeviceState.STATE_DISCONNECT
+                && !SettingHelper.getSystemSetting().isInputTest()) {
             ToastUtils.showShort("设备未连接,不能开始测试");
             return;
         }
@@ -529,9 +549,9 @@ public class PullUpGroupActivity extends BaseTitleActivity
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         int value = -1 * numberPicker.getValue();
-                        LogUtils.operation("引体向上判罚:pair="+pairs.get(position())+"---value="+value);
+                        LogUtils.operation("引体向上判罚:pair=" + pairs.get(position()) + "---value=" + value);
                         if (value != pairs.get(position()).getPenalty()) {
-                            Logger.i("初始成绩："+ResultDisplayUtils.getStrResultForDisplay(pairs.get(position()).getDeviceResult().getResult())+"判罚"+value);
+                            Logger.i("初始成绩：" + ResultDisplayUtils.getStrResultForDisplay(pairs.get(position()).getDeviceResult().getResult()) + "判罚" + value);
                             ledManager.showString(systemSetting.getHostId(), "判罚:" + ResultDisplayUtils.getStrResultForDisplay(value), 1, 2, false, false);
                             ledManager.showString(systemSetting.getHostId(),
                                     "最终:" + ResultDisplayUtils.getStrResultForDisplay(pairs.get(position()).getDeviceResult().getResult() + value),
@@ -563,7 +583,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
         title = TestConfigs.machineNameMap.get(machineCode)
                 + SettingHelper.getSystemSetting().getHostId() + "号机"
                 + (isTestNameEmpty ? "" : ("-" + SettingHelper.getSystemSetting().getTestName()));
-        return builder.setTitle(title) ;
+        return builder.setTitle(title);
     }
 
     private int position() {

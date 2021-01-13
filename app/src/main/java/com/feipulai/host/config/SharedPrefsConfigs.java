@@ -45,4 +45,6 @@ public class SharedPrefsConfigs {
     public static final String MEDICINE_BALL_TEST_NUMBER = "MEDICINE_BALL_TEST_NUMBER";
     
     public static final int DEFAULT_MACHINE_CODE = 0;
+
+    public static final String APP_USE_TIME="APP_USE_TIME";
 }

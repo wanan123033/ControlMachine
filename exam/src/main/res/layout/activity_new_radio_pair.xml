@@ -29,12 +29,46 @@
             android:visibility="invisible"
             />
     </LinearLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_pairs"
+    <LinearLayout
+        android:id="@+id/beginning_point"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/view_bottom"
-        android:layout_below="@+id/rl_check_in"
-        android:layout_margin="10dp"/>
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_margin="10dp"
+            android:layout_height="@dimen/dp_40"
+            android:textSize="16sp"
+            android:gravity="center_vertical"
+            android:text="起点拦截器"/>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_pairs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/view_bottom"
+            android:layout_below="@+id/rl_check_in"
+            android:layout_margin="10dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ending_point"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_40"
+            android:layout_margin="10dp"
+            android:textSize="16sp"
+            android:gravity="center_vertical"
+            android:text="终点/折返点拦截器"/>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_end_pairs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/view_bottom"
+            android:layout_below="@+id/rl_check_in"
+            android:layout_margin="10dp"/>
+    </LinearLayout>
+
 </LinearLayout>

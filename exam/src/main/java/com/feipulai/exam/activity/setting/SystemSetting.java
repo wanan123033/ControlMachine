@@ -127,6 +127,17 @@ public class SystemSetting {
     private boolean netCheckTool;
     private boolean autoDiscern;
 
+    //手动输入成绩测试
+    private boolean isInputTest;
+
+    public boolean isInputTest() {
+        return isInputTest;
+    }
+
+    public void setInputTest(boolean inputTest) {
+        isInputTest = inputTest;
+    }
+
     public boolean isNetCheckTool() {
         return netCheckTool;
     }

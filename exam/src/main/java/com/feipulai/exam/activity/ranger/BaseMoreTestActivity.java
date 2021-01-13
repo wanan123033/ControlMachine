@@ -1135,7 +1135,7 @@ public abstract class BaseMoreTestActivity extends BaseCheckActivity implements 
         toastSpeak("分组考生全部测试完成，请选择下一组");
         if (group.getIsTestComplete() != 1 &&
                 SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN &&
-                SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 &&
+                (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 ||SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP) &&
                 SettingHelper.getSystemSetting().isAutoPrint()) {
             InteractUtils.printA4Result(this, group);
         }

@@ -15,14 +15,14 @@
             android:layout_width="500dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="34dp"
             android:layout_marginTop="26dp"
+            android:layout_marginBottom="34dp"
             android:background="@drawable/btn_bg_white"
             android:gravity="center_vertical"
             android:orientation="vertical"
             android:paddingLeft="31dp"
-            android:paddingRight="25dp"
-            android:paddingTop="42dp">
+            android:paddingTop="42dp"
+            android:paddingRight="25dp">
 
 
             <LinearLayout
@@ -54,8 +54,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
                 android:layout_marginTop="7dp"
+                android:layout_marginBottom="20dp"
                 android:text="请勿随意修改KEY值,有问题请咨询服务管理人员"
                 android:textColor="@color/grey_A8" />
 
@@ -93,8 +93,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
                 android:layout_marginTop="@dimen/dp_10"
+                android:layout_marginBottom="10dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -115,6 +115,30 @@
                 <!--android:entries="@array/situp_angles"-->
 
             </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="手动输入测试："
+                    android:textColor="@color/black_10"
+                    android:textSize="20sp" />
+
+                <CheckBox
+                    android:id="@+id/cb_input_test"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:button="@drawable/checkbox_switch_selected" />
+
+            </RelativeLayout>
+
 
             <View
                 android:layout_width="match_parent"
@@ -195,6 +219,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="判罚犯规：（不支持修改成绩）" />
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -213,6 +238,7 @@
                     android:layout_alignParentRight="true"
                     android:button="@drawable/checkbox_switch_selected" />
             </RelativeLayout>
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -231,6 +257,7 @@
                     android:layout_alignParentRight="true"
                     android:button="@drawable/checkbox_switch_selected" />
             </RelativeLayout>
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -249,11 +276,12 @@
                     android:layout_alignParentRight="true"
                     android:button="@drawable/checkbox_switch_selected" />
             </RelativeLayout>
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/dp_10"
                 android:layout_marginTop="10dp"
+                android:layout_marginBottom="@dimen/dp_10"
                 android:gravity="center_vertical"
                 android:padding="1dp">
 

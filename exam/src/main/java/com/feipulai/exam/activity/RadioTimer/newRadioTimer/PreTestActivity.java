@@ -87,6 +87,8 @@ public class PreTestActivity extends BaseCheckActivity {
     TextView btnStart;
     @BindView(R.id.btn_led)
     TextView btnLed;
+    @BindView(R.id.btn_device_pair)
+    TextView btnPair;
     @BindView(R.id.rl_bottom)
     RelativeLayout rlBottom;
     @BindView(R.id.lv_results)
@@ -121,6 +123,7 @@ public class PreTestActivity extends BaseCheckActivity {
         rvTimer.setAdapter(mAdapter);
         btnStart.setSelected(true);
         btnLed.setSelected(true);
+        btnPair.setSelected(true);
         mAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
