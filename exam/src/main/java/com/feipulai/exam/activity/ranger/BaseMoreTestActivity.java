@@ -102,7 +102,7 @@ public abstract class BaseMoreTestActivity extends BaseCheckActivity implements 
     private Group group;
 
     private LedHandler ledHandler = new LedHandler(this);
-    private int testType = 0;//0自动 1手动
+    private int testType = 1;//0自动 1手动
     /**
      * 开启助跑  0不助跑 1助跑
      */
@@ -261,7 +261,7 @@ public abstract class BaseMoreTestActivity extends BaseCheckActivity implements 
     public abstract void gotoItemSetting();
 
     /**
-     * 设置项目测试次数
+     * 开始测试
      */
     public abstract void startTest(BaseStuPair stuPair);
 
@@ -618,12 +618,12 @@ public abstract class BaseMoreTestActivity extends BaseCheckActivity implements 
         resultList.addAll(Arrays.asList(stuPairsList.get(stuAdapter.getTestPosition()).getTimeResult()));
         testResultAdapter.notifyDataSetChanged();
 
-        Logger.i("考生" + pair.getStudent().toString());
+        Logger.i("考生" + stuPairsList.get(stuAdapter.getTestPosition()).getStudent().toString());
         Logger.i("设备成绩信息STATE_END==>" + deviceState.toString());
         //保存成绩
-        saveResult(pair);
-        printResult(pair);
-        broadResult(pair);
+        saveResult(stuPairsList.get(stuAdapter.getTestPosition()));
+        printResult(stuPairsList.get(stuAdapter.getTestPosition()));
+        broadResult(stuPairsList.get(stuAdapter.getTestPosition()));
 //            setShowLed(pair);
 
         //非身份验证模式
@@ -1150,6 +1150,7 @@ public abstract class BaseMoreTestActivity extends BaseCheckActivity implements 
 
     public void setScore(RangerResult result,BaseStuPair stuPair){
         calculation(result,setting,stuPair);
+        updateTestResult(stuPair);
     }
 
     private void calculation(RangerResult result, RangerSetting rangerSetting,BaseStuPair stuPair) {

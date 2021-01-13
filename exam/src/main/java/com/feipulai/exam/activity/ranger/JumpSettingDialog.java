@@ -47,15 +47,15 @@ public class JumpSettingDialog extends AlertDialog.Builder implements TextWatche
 
     RangerSetting rangerSetting;
 
-    public JumpSettingDialog(Context context) {
+    public JumpSettingDialog(Context context, RangerSetting setting) {
         super(context);
+        this.rangerSetting = setting;
         setTitle("跳远设置");
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_jump_setting,null,false);
         ButterKnife.bind(this,view);
         setIcon(android.R.drawable.ic_dialog_info);
         setCancelable(false);
         setView(view);
-        rangerSetting = SharedPrefsUtil.loadFormSource(getContext(),RangerSetting.class);
         setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

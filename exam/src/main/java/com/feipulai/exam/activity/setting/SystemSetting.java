@@ -92,7 +92,8 @@ public class SystemSetting {
     /**
      * 打印工具 分组模式可以选择
      * 0 热敏打印
-     * 1 A4打印
+     * 1 A4打印(HP)
+     * 2 打开pdf文件选择打印机APP打印
      */
     private int printTool = 0;
     /**
@@ -124,6 +125,7 @@ public class SystemSetting {
 
     //在线识别
     private boolean netCheckTool;
+    private boolean autoDiscern;
 
     public boolean isNetCheckTool() {
         return netCheckTool;
@@ -362,6 +364,7 @@ public class SystemSetting {
     public static final int GROUP_PATTERN = 1;
 
     public static final int PRINT_A4 = 1;
+    public static final int PRINT_CUSTOM_APP = 2;
     /**
      * 检录工具
      */
@@ -420,5 +423,13 @@ public class SystemSetting {
 
     public String getSitCode() {
         return sitCode;
+    }
+
+    public void setAutoDiscern(boolean autoDiscern) {
+        this.autoDiscern = autoDiscern;
+    }
+
+    public boolean getAutoDiscern() {
+        return autoDiscern;
     }
 }

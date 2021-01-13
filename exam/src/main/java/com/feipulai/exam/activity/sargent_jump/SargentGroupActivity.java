@@ -55,6 +55,11 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
     private boolean isAddTool;
 
     @Override
+    protected int isShowPenalizeFoul() {
+        return sargentSetting.isPenalize() ? View.VISIBLE : View.GONE;
+    }
+
+    @Override
     public void initData() {
         sargentSetting = SharedPrefsUtil.loadFormSource(this, SargentSetting.class);
         if (null == sargentSetting) {

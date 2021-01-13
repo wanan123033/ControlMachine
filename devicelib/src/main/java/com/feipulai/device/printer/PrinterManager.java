@@ -24,7 +24,10 @@ public class PrinterManager{
 	private OnPrinterListener mOnPrinterListener;
 	
 	private PrinterManager(){
-		IOPower.getInstance().setPrinterPwr(1);
+		if (SerialParams.PRINTER.getVersions()==1){
+			IOPower.getInstance().setPrinterPwr(1);
+		}
+
 		mSerialPorter = new SerialPorter(SerialParams.PRINTER,new SerialPorter.OnDataArrivedListener(){
 			@Override
 			public void onDataArrived(Message msg){
@@ -180,7 +183,9 @@ public class PrinterManager{
 	
 	public void close(){
 		mSerialPorter.close();
-		IOPower.getInstance().setPrinterPwr(0);
+		if (SerialParams.PRINTER.getVersions()==1){
+			IOPower.getInstance().setPrinterPwr(0);
+		}
 		sPrinterManager = null;
 	}
 	

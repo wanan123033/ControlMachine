@@ -69,7 +69,7 @@ public class StandResiltListener implements SerialDeviceManager.RS232ResiltListe
 //                        testState = TestState.UN_STARTED;
 //                    }
 //                    //设置当前设置为不可用断开状态
-//                    handlerInterface.getDeviceState(new BaseDeviceState(BaseDeviceState.STATE_ERROR, 1));
+//                    handlerInterface.getDeviceStop(new BaseDeviceState(BaseDeviceState.STATE_ERROR, 1));
 //                    //测量垫检测失败
 //                    handlerInterface.CheckDevice(false, result.getBrokenLEDs());
 

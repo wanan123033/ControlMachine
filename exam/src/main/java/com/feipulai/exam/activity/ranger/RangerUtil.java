@@ -14,10 +14,9 @@ public class RangerUtil {
      * @return
      */
     public static Point getPoint(double level,double length){
-
         Point point = new Point();
-        point.y = Math.sin(Math.toRadians(level)) * length;
-        point.x = Math.cos(Math.toRadians(level)) * length;
+        point.y = Math.round(Math.sin(Math.toRadians(level)) * 1000.0) / 1000.0 * length;
+        point.x = Math.round(Math.cos(Math.toRadians(level)) * 1000.0) / 1000.0 * length;
         return point;
     }
 
@@ -47,11 +46,11 @@ public class RangerUtil {
      * @return
      */
     public static double cosine(double level,double alength,double blength){
-        return Math.sqrt(Math.pow(alength,2) + Math.pow(blength,2) - 2 * alength * blength * Math.cos(Math.toRadians(level)));
+        return Math.sqrt(alength * alength + blength * blength - 2 * alength * blength * Math.round(Math.cos(Math.toRadians(level)) * 1000.0) / 1000.0);
     }
 
     public static double length(Point point1,Point point2){
-        return Math.sqrt(Math.pow(point1.x - point2.x,2) + Math.pow(point1.y - point2.y,2));
+        return Math.sqrt((point1.x - point2.x) * (point1.x - point2.x) + (point1.y - point2.y) * (point1.y - point2.y));
     }
 
     /**

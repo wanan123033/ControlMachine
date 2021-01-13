@@ -118,12 +118,15 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
     }
 
 
-    @OnClick({ R.id.tv_init_way})
+    @OnClick({ R.id.tv_init_way,R.id.tv_pair})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
             case R.id.tv_init_way:
                 startActivity(new Intent(this, SportInitWayActivity.class));
+                break;
+            case R.id.tv_pair:
+                startActivity(new Intent(this, SportPairActivity.class));
                 break;
         }
     }

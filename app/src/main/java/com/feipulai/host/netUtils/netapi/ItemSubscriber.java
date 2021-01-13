@@ -102,7 +102,7 @@ public class ItemSubscriber {
                         return;
                     }
 
-                    if (itemBean.getMachineCode() == 0) {
+                    if (TextUtils.isEmpty(itemBean.getMachineCode())) {
                         ToastUtils.showShort("项目机器码不能为空，请联系管理员进行数据更新");
                         return;
                     }
@@ -112,7 +112,7 @@ public class ItemSubscriber {
                     item.setItemCode(itemBean.getExamItemCode());
                     item.setItemName(itemBean.getItemName());
                     item.setfResultType(itemBean.getLastResultMode());
-                    item.setMachineCode(itemBean.getMachineCode());
+                    item.setMachineCode(Integer.valueOf(itemBean.getMachineCode()));
                     item.setMaxValue(itemBean.getMaxResult());
                     item.setMinValue(itemBean.getMinResult());
                     item.setTestNum(itemBean.getResultTestNum());

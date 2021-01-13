@@ -200,7 +200,7 @@ public class HttpSubscriber {
                         return;
                     }
 
-                    if (itemBean.getMachineCode() == 0) {
+                    if (TextUtils.isEmpty(itemBean.getMachineCode())) {
                         EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_FAULT));
                         ToastUtils.showShort("项目机器码不能为空，请联系管理员进行数据更新");
                         if (onRequestEndListener != null) {
@@ -215,7 +215,7 @@ public class HttpSubscriber {
                     item.setItemCode(itemBean.getExamItemCode());
                     item.setItemName(itemBean.getItemName());
                     item.setLastResultMode(itemBean.getLastResultMode());
-                    item.setMachineCode(itemBean.getMachineCode());
+                    item.setMachineCode(Integer.valueOf(itemBean.getMachineCode()));
                     item.setMaxValue(itemBean.getMaxResult());
                     item.setMinValue(itemBean.getMinResult());
                     item.setTestNum(itemBean.getResultTestNum());

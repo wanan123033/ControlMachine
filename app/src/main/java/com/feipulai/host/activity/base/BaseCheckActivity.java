@@ -111,6 +111,9 @@ public abstract class BaseCheckActivity
             CheckDeviceOpener.getInstance().open(this, checkTool == SystemSetting.CHECK_TOOL_IDCARD,
                     checkTool == SystemSetting.CHECK_TOOL_ICCARD,
                     checkTool == SystemSetting.CHECK_TOOL_QR);
+//            CheckDeviceOpener.getInstance().open(this, true,
+//                    true,
+//                    true);
 
         }
         super.onResume();

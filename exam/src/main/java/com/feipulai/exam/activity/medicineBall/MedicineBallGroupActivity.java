@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.View;
 
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
@@ -48,6 +49,11 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
     private boolean startFlag;
 
     @Override
+    protected int isShowPenalizeFoul() {
+        return medicineBallSetting.isPenalizeFoul() ? View.VISIBLE : View.GONE;
+    }
+
+    @Override
     public void initData() {
         checkService = Executors.newSingleThreadScheduledExecutor();
         medicineBallSetting = SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class);
@@ -59,9 +65,9 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
         mSerialManager.setRS232ResiltListener(resultImpl);
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
         setTestType(1);
-        if (medicineBallSetting.isPenalize()) {
-            setFaultEnable(true);
-        }
+//        if (medicineBallSetting.isPenalize()) {
+//            setFaultEnable(true);
+//        }
         sendCheck();
         sendFree();
     }

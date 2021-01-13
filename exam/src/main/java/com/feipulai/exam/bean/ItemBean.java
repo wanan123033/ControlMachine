@@ -10,7 +10,7 @@ import java.io.Serializable;
  */
 public class ItemBean implements Serializable {
     private String examItemCode;
-    private int machineCode;//机器代码   一个机器码可能对应多个项目代码,所以机器码不能为唯一字段
+    private String machineCode;//机器代码   一个机器码可能对应多个项目代码,所以机器码不能为唯一字段
     private String itemName;//项目名称
     private int minResult;//最小值
     private int maxResult;//最大值
@@ -39,11 +39,11 @@ public class ItemBean implements Serializable {
         this.carryMode = carryMode;
     }
 
-    public int getMachineCode() {
+    public String getMachineCode() {
         return this.machineCode;
     }
 
-    public void setMachineCode(int machineCode) {
+    public void setMachineCode(String machineCode) {
         this.machineCode = machineCode;
     }
 

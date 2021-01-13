@@ -46,6 +46,7 @@ public class RunTimerSetting {
      */
     private String runNum = "4";
     private int sensitivityNum = 5;
+    private int connectType;
     /**
      * 男子满分
      */
@@ -182,5 +183,13 @@ public class RunTimerSetting {
 
     public void setSensitivityNum(int sensitivityNum) {
         this.sensitivityNum = sensitivityNum;
+    }
+
+    public int getConnectType() {
+        return connectType;
+    }
+
+    public void setConnectType(int connectType) {
+        this.connectType = connectType;
     }
 }

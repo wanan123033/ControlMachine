@@ -238,7 +238,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
         testCountAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                partResultAdapter.replaceData(testResults.get(roundNo - 1).getSportTimeResults());
+                partResultAdapter.replaceData(testResults.get(position).getSportTimeResults());
                 testCountAdapter.setSelectPosition(position);
                 testCountAdapter.notifyDataSetChanged();
             }
@@ -249,14 +249,22 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
     }
 
     private void setTxtEnable(boolean enable) {
-        tvFoul.setEnabled(enable);
-        tvInBack.setEnabled(enable);
-        tvAbandon.setEnabled(enable);
-        tvNormal.setEnabled(enable);
+        penalize(enable);
         tvDelete.setEnabled(enable);
         tvPrint.setEnabled(enable);
         tvConfirm.setEnabled(enable);
         txtFinishTest.setEnabled(enable);
+    }
+
+    /**
+     * 判罚可见与否
+     * @param enable
+     */
+    private void penalize(boolean enable) {
+        tvFoul.setEnabled(enable);
+        tvInBack.setEnabled(enable);
+        tvAbandon.setEnabled(enable);
+        tvNormal.setEnabled(enable);
     }
 
     @Override
@@ -432,8 +440,10 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 startActivity(new Intent(this, SportPairActivity.class));
                 break;
             case R.id.txt_waiting:
-                if (roundNo >= testNum) {
+                Logger.i("运动计时测试次数"+roundNo);
+                if (roundNo > testNum) {
                     toastSpeak("已超过测试次数");
+                    return;
                 }
                 if (testState == TestState.UN_STARTED && cbDeviceState.isChecked() && pair.getStudent() != null) {
                     sportPresent.waitStart();
@@ -463,16 +473,20 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 deleteDialog();
                 break;
             case R.id.tv_foul:
-
+                testResults.get(roundNo-1).setResultState(RoundResult.RESULT_STATE_FOUL);
+                tvResult.setText("犯规");
                 break;
             case R.id.tv_inBack:
-
+                testResults.get(roundNo-1).setResultState(RoundResult.RESULT_STATE_BACK);
+                tvResult.setText("中退");
                 break;
             case R.id.tv_abandon:
-
+                testResults.get(roundNo-1).setResultState(RoundResult.RESULT_STATE_WAIVE);
+                tvResult.setText("放弃");
                 break;
             case R.id.tv_normal:
-
+                testResults.get(roundNo-1).setResultState(RoundResult.RESULT_STATE_NORMAL);
+                tvResult.setText(ResultDisplayUtils.getStrResultForDisplay(testResults.get(roundNo - 1).getResult()));
                 break;
             case R.id.txt_illegal_return:
                 if (testState == TestState.WAIT_RESULT) {
@@ -515,13 +529,14 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                     testState = TestState.UN_STARTED;
                     sportPresent.saveResult(roundNo, mStudentItem, testResults.get(roundNo - 1));
                     sportPresent.showStuInfo(llStuDetail, pair.getStudent(), testResults);
-                    if (roundNo < testNum) {
+                    if (roundNo <= testNum) {
                         roundNo++;
                         partResultAdapter.replaceData(testResults.get(roundNo - 1).getSportTimeResults());
                         testCountAdapter.setSelectPosition(roundNo - 1);
                         testCountAdapter.notifyDataSetChanged();
                     }
                     tvConfirm.setEnabled(false);
+                    penalize(false);
                 }
 
                 break;
@@ -594,7 +609,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
     }
 
     @Override
-    public void getTimeUpdate() {
+    public void getDeviceStart() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -647,9 +662,18 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
     }
 
     @Override
-    public void getDeviceState(int deviceState) {
-        if (deviceState == 0 && testState == TestState.WAIT_RESULT) {
+    public void getDeviceStop() {
+        if (testState == TestState.WAIT_RESULT) {
             testState = TestState.RESULT_CONFIRM;
+            sportPresent.setRunState(0);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    txtStopTiming.setEnabled(false);
+                    txtIllegalReturn.setEnabled(false);
+                }
+            });
+
         }
     }
 
@@ -657,6 +681,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
     protected void onStop() {
         super.onStop();
         sportPresent.setContinueRoll(false);
+        sportPresent.presentStop();
     }
 
     public void showAFR() {

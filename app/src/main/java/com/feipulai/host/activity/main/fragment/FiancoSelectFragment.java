@@ -55,7 +55,7 @@ public class FiancoSelectFragment extends BaseFragment implements DialogInterfac
         mTupleList.add(new Tuple(ItemDefault.CODE_YTXS, getString(R.string.pull_up), R.mipmap.icon_pullup, 3));
         mTupleList.add(new Tuple(ItemDefault.CODE_SL, "视力", R.mipmap.icon_sl, 3));
         mTupleList.add(new Tuple(ItemDefault.CODE_SGBQS, getString(R.string.parallel_bars), R.mipmap.icon_parallel_bars, 3));
-//        mTupleList.add(new Tuple(ItemDefault.CODE_JGCJ, "激光测距", R.mipmap.icon_jgcj, 3));
+        mTupleList.add(new Tuple(ItemDefault.CODE_JGCJ, "激光测距", R.mipmap.icon_jgcj, 3));
 
         RecyclerView recyclerView = findView(R.id.rv_item);
         GridLayoutManager layoutManager = new GridLayoutManager(mContext, 12);

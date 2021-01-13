@@ -25,4 +25,11 @@ public class TimeResultAdapter extends BaseQuickAdapter <SportTestResult,BaseVie
         helper.setText(R.id.item_txt_result_status,item.getResultState() == RoundResult.RESULT_STATE_NORMAL?"正常":
                 item.getResultState() ==RoundResult.RESULT_STATE_FOUL?"犯规":"");
     }
+
+    public void setSelectPosition(int i) {
+    }
+
+    public int getSelectPosition() {
+        return -1;
+    }
 }

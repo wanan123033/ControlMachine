@@ -22,6 +22,7 @@ import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
@@ -34,17 +35,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 public class SportPresent implements SportContract.Presenter {
 
-    private Disposable disposable;
+//    private Disposable disposable;
     SportTimerManger sportTimerManger;
     private boolean connect;
     private SportContract.SportView sportView;
@@ -53,9 +50,12 @@ public class SportPresent implements SportContract.Presenter {
     private int[] checkState;
     private int[] disConnect;
     private int[] sendIndex;
-    private int newTime = -1;
+    private int newTime;
     private LEDManager mLEDManager;
-    SportPresent(SportContract.SportView sportView, int deviceCount) {
+    private int interval;
+    private ScheduledExecutorService checkService;
+    private boolean syncTime;
+    public SportPresent(SportContract.SportView sportView, int deviceCount) {
         mLEDManager = new LEDManager();
         mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
@@ -71,51 +71,99 @@ public class SportPresent implements SportContract.Presenter {
             disConnect[i] = 0;
             sendIndex[i] = 0;
         }
+        checkService = Executors.newSingleThreadScheduledExecutor();
     }
 
     @Override
     public void rollConnect() {
-        disposable = Observable.interval(0, 1, TimeUnit.SECONDS)
-                .observeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Long>() {
-                    @Override
-                    public void accept(Long aLong) throws Exception {
-                        if (connect) {
-                            if (getRunState() == 0) {
-                                for (int i = 0; i < deviceCount; i++) {
-                                    sportTimerManger.connect(i + 1, SettingHelper.getSystemSetting().getHostId());
-                                }
+//        disposable = Observable.interval(0, 400, TimeUnit.MILLISECONDS)
+//                .observeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Consumer<Long>() {
+//                    @Override
+//                    public void accept(Long aLong) throws Exception {
+//                        if (connect) {
+//                            if (getRunState() == 0) {
+//                                if (interval % 6 == 0){
+//                                    for (int i = 0; i < deviceCount; i++) {
+//                                        sportTimerManger.connect(i + 1, SettingHelper.getSystemSetting().getHostId());
+//                                    }
+//                                }
+//                                interval++;
+//                            }
+//                            if (getRunState() == 1) {
+//                                interval = 0;
+//                                for (int i = 0; i < deviceCount; i++) {
+//                                    sportTimerManger.getRecentCache(i + 1, SettingHelper.getSystemSetting().getHostId(),sendIndex[i]);
+//                                }
+//
+//                            }
+//
+//                            for (int i = 0; i < checkState.length; i++) {
+//                                if (checkState[i] == 0) {
+//                                    disConnect[i]++;
+//                                    if (disConnect[i] > 10) {
+//                                        sportView.updateDeviceState(i + 1, 0);
+//                                    }
+//                                } else {
+//                                    sportView.updateDeviceState(i + 1, 1);
+//                                    checkState[i] = 0;
+//                                    disConnect[i] = 0;
+//                                }
+//                            }
+//                        }
+//                    }
+//                });
 
+        checkService.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                if (connect) {
+                    if (getRunState() == 0) {
+                        if (interval % 6 == 0){
+                            for (int i = 0; i < deviceCount; i++) {
+                                sportTimerManger.connect(i + 1, SettingHelper.getSystemSetting().getHostId());
                             }
-                            if (getRunState() == 1) {
-                                for (int i = 0; i < deviceCount; i++) {
-                                    sportTimerManger.getRecentCache(i + 1, SettingHelper.getSystemSetting().getHostId(),sendIndex[i]);
-                                }
-
-                            }
-
-                            for (int i = 0; i < checkState.length; i++) {
-                                if (checkState[i] == 0) {
-                                    disConnect[i]++;
-                                    if (disConnect[i] > 3) {
-                                        sportView.updateDeviceState(i + 1, 0);
-                                    }
-                                } else {
-                                    sportView.updateDeviceState(i + 1, 1);
-                                    checkState[i] = 0;
-                                    disConnect[i] = 0;
-                                }
+                            if (!syncTime){
+                                sportTimerManger.syncTime(1, SettingHelper.getSystemSetting().getHostId(), getTime());
+                                sportTimerManger.getTime(1, SettingHelper.getSystemSetting().getHostId());
                             }
                         }
+                        interval++;
                     }
-                });
+                    if (getRunState() == 1) {
+                        interval = 0;
+                        for (int i = 0; i < deviceCount; i++) {
+                            sportTimerManger.getRecentCache(i + 1, SettingHelper.getSystemSetting().getHostId(),sendIndex[i]);
+                        }
+
+                    }
+
+                    for (int i = 0; i < checkState.length; i++) {
+                        if (checkState[i] == 0) {
+                            disConnect[i]++;
+                            if (disConnect[i] > 10) {
+                                sportView.updateDeviceState(i + 1, 0);
+                            }
+                        } else {
+                            sportView.updateDeviceState(i + 1, 1);
+                            checkState[i] = 0;
+                            disConnect[i] = 0;
+                        }
+                    }
+                }
+            }
+        },100,400,TimeUnit.MILLISECONDS);
     }
 
-    public void stop() {
-        if (disposable != null) {
-            disposable.dispose();
-        }
+
+
+    public void presentStop() {
+//        if (disposable != null) {
+//            disposable.dispose();
+//        }
+        if (checkService != null && !checkService.isShutdown())
+            checkService.shutdown();
         RadioManager.getInstance().setOnRadioArrived(null);
     }
 
@@ -127,8 +175,8 @@ public class SportPresent implements SportContract.Presenter {
 
     @Override
     public void waitStart() {
-        sportTimerManger.syncTime(1, SettingHelper.getSystemSetting().getHostId(), getTime());
-        sportTimerManger.getTime(1, SettingHelper.getSystemSetting().getHostId());
+        sportTimerManger.setDeviceState(1, SettingHelper.getSystemSetting().getHostId(), 1);
+        getDeviceState();
     }
 
     private SportResultListener sportResultListener = new SportResultListener(new SportResultListener.SportMsgListener() {
@@ -143,8 +191,7 @@ public class SportPresent implements SportContract.Presenter {
 
         @Override
         public void onGetTime() {
-            sportView.getTimeUpdate();
-            sportTimerManger.setDeviceState(1, SettingHelper.getSystemSetting().getHostId(), 1);
+            syncTime = true;
         }
 
         @Override
@@ -163,7 +210,15 @@ public class SportPresent implements SportContract.Presenter {
 
         @Override
         public void onGetDeviceState(int deviceState) {
-            sportView.getDeviceState(deviceState);
+            if (deviceState == 1){
+                sportView.getDeviceStart();
+                newTime = -1;
+                for (int i = 0; i < checkState.length; i++) {
+                    sendIndex[i] = 0;
+                }
+            }else {
+                sportView.getDeviceStop();
+            }
         }
     });
 
@@ -203,9 +258,6 @@ public class SportPresent implements SportContract.Presenter {
 
     public void setDeviceStateStop(){
         sportTimerManger.setDeviceState(1, SettingHelper.getSystemSetting().getHostId(), 0);
-        for (int i = 0; i < checkState.length; i++) {
-            sendIndex[i] = 0;
-        }
     }
 
     public void showStudent(LinearLayout llStuDetail, Student student, int testNo){
@@ -409,5 +461,60 @@ public class SportPresent implements SportContract.Presenter {
             e.printStackTrace();
         }
         mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 1, false, true);
+    }
+
+
+    /**
+     * 保存分组成绩
+     *
+     * @param student
+     * @param result
+     * @param currentTestTime
+     * @param group
+     */
+    public void saveGroupResult(Student student, int result, int currentTestTime, Group group, String startTime) {
+        RoundResult roundResult = new RoundResult();
+        roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
+        roundResult.setStudentCode(student.getStudentCode());
+        roundResult.setItemCode(TestConfigs.getCurrentItemCode());
+        roundResult.setResult(result);
+        roundResult.setMachineResult(result);
+        roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
+        roundResult.setTestTime(startTime);
+        roundResult.setEndTime(System.currentTimeMillis()+"");
+        roundResult.setRoundNo(currentTestTime);
+        roundResult.setTestNo(1);
+        roundResult.setGroupId(group.getId());
+        roundResult.setExamType(group.getExamType());
+        roundResult.setScheduleNo(group.getScheduleNo());
+        roundResult.setUpdateState(0);
+        roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
+        RoundResult bestResult = DBManager.getInstance().queryGroupBestScore(student.getStudentCode(), group.getId());
+        if (bestResult != null) {
+            // 原有最好成绩犯规 或者原有最好成绩没有犯规但是现在成绩更好
+            if (bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && bestResult.getResult() >= result) {
+                // 这个时候就要同时修改这两个成绩了
+                roundResult.setIsLastResult(1);
+                bestResult.setIsLastResult(0);
+                DBManager.getInstance().updateRoundResult(bestResult);
+            } else {
+                roundResult.setIsLastResult(0);
+            }
+        } else {
+            // 第一次测试
+            roundResult.setIsLastResult(1);
+        }
+        LogUtils.operation("红外计时保存成绩:"+roundResult.toString());
+        DBManager.getInstance().insertRoundResult(roundResult);
+
+
+        List<RoundResult> roundResultList = new ArrayList<>();
+        roundResultList.add(roundResult);
+        UploadResults uploadResults = new UploadResults(group.getScheduleNo()
+                , TestConfigs.getCurrentItemCode(), student.getStudentCode()
+                , "1", group , RoundResultBean.beanCope(roundResultList,group));
+
+        uploadResult(uploadResults);
+
     }
 }

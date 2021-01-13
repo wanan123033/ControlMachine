@@ -39,6 +39,7 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
     private boolean isGroup;
     private int deviceId;
     private boolean enable = true;
+    private boolean isPenalize;
     private boolean showGetData;
     public void setNextClickStart(boolean nextClickStart) {
         isNextClickStart = nextClickStart;
@@ -70,6 +71,11 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
         this.deviceId = deviceId;
         this.enable = enable;
         notifyItemChanged(deviceId-1);
+    }
+
+    public void setPenalize(boolean enable){
+        this.isPenalize = enable;
+        notifyDataSetChanged();
     }
 
     public void setShowGetData(int deviceId,boolean showGetData){
@@ -135,7 +141,12 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                         item.setDeviceOpen(isChecked);
                     }
                 });
-                if (item.isPunish() && item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_END) {
+//                if (item.isPunish() && item.getStuDevicePair().getBaseDevice().getState() == BaseDeviceState.STATE_END) {
+//                    moreHelper.txtPunish.setVisibility(View.VISIBLE);
+//                } else {
+//                    moreHelper.txtPunish.setVisibility(View.GONE);
+//                }
+                if (item.isPunish() || isPenalize) {
                     moreHelper.txtPunish.setVisibility(View.VISIBLE);
                 } else {
                     moreHelper.txtPunish.setVisibility(View.GONE);
@@ -228,7 +239,7 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                 if (!isNextClickStart) {
                     oneViewHolder.txtStart.setVisibility(View.GONE);
                 }
-                if (item.isPunish()) {
+                if (item.isPunish()|| isPenalize) {
                     oneViewHolder.txtPunish.setVisibility(View.VISIBLE);
                 } else {
                     oneViewHolder.txtPunish.setVisibility(View.GONE);

@@ -8,13 +8,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ListView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -26,7 +24,6 @@ import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
-import com.feipulai.exam.activity.base.BaseAFRFragment;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.BaseDeviceState;
@@ -75,7 +72,6 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     private LedHandler ledHandler = new LedHandler();
     private boolean isPenalize;
     private boolean isNextClickStart = true;
-
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_sargent_jump_more;
@@ -110,6 +106,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         }
 
     }
+
 
     @Override
     public void finish() {
@@ -233,6 +230,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     public void setFaultEnable(boolean isPenalize) {
         this.isPenalize = isPenalize;
+        deviceListAdapter.setPenalize(isPenalize);
     }
 
     public void setNextClickStart(boolean nextClickStart) {
@@ -345,6 +343,11 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                             stuSkipDialog(pair.getStudent(), pos);
                         }
                         break;
+                    case R.id.txt_punish:
+                        if (pair.getStudent() != null) {
+                            penalize(pos);
+                        }
+                        break;
                     case R.id.txt_confirm:
                         if (pair.getStudent() != null) {
                             confirmResult(pos);
@@ -422,6 +425,34 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         }).show();
         deviceDetails.get(index).setConfirmVisible(false);
         deviceListAdapter.notifyItemChanged(index);
+    }
+
+
+    /**
+     * 展示判罚
+     */
+    private void penalize(final int index) {
+        final BaseStuPair pair = deviceDetails.get(index).getStuDevicePair();
+        SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
+        alertDialog.setTitleText("确定判罚?");
+        alertDialog.setCancelable(false);
+        alertDialog.setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                pair.setResultState(RoundResult.RESULT_STATE_FOUL);
+                updateResult(pair);
+                doResult(pair, index);
+                deviceDetails.get(index).setConfirmVisible(false);
+                deviceListAdapter.notifyItemChanged(index);
+            }
+        }).setCancelText("取消").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+            }
+        }).show();
+
     }
 
     protected void stuSkipDialog(final Student student, final int pos) {

@@ -71,6 +71,7 @@ public class SitReachMoreActivity extends BaseMoreActivity {
         ledShow();
     }
 
+
     private void getState() {
         Log.i(TAG, "james_send_getState");
         for (int i = 0; i < setting.getTestDeviceCount(); i++) {

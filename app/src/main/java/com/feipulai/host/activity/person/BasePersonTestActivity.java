@@ -79,8 +79,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     public LinearLayout llState;
     @BindView(R.id.txt_test_result)
     TextView txtStuResult;
-    @BindView(R.id.txt_start_test)
-    TextView txtStartTest;
+    //    @BindView(R.id.txt_start_test)
+//    TextView txtStartTest;
     @BindView(R.id.tv_base_height)
     TextView tvBaseHeight;
     @BindView(R.id.txt_stu_skip)
@@ -92,7 +92,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     @BindView(R.id.tv_device_pair)
     public TextView tvDevicePair;
     @BindView(R.id.tv_start_test)
-    TextView tvStartTest;
+    public TextView txtStartTest;
     @BindView(R.id.tv_exit_test)
     TextView tvExitTest;
     @BindView(R.id.tv_stop_test)
@@ -116,7 +116,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     private int roundNo = 1;
     protected LEDManager mLEDManager;
     //清理学生信息
-    private ClearHandler clearHandler = new ClearHandler(this);
+    public ClearHandler clearHandler = new ClearHandler(this);
     //    private LedHandler ledHandler = new LedHandler(this);
     private int testType = 0;//0自动 1手动
 
@@ -235,7 +235,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         addStudent(student);
     }
 
-    @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting,
+    @OnClick({R.id.txt_stu_skip,  R.id.txt_led_setting,
             R.id.tv_start_test, R.id.tv_exit_test, R.id.tv_stop_test, R.id.tv_abandon_test, R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -256,13 +256,13 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                     stuSkipDialog(0);
                 }
                 break;
-            case R.id.txt_start_test:
-
-                if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
-                    sendTestCommand(pair);
-                }
-
-                break;
+//            case R.id.txt_start_test:
+//
+//                if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
+//                    sendTestCommand(pair);
+//                }
+//
+//                break;
             case R.id.tv_start_test:
                 setTextViewsVisibility(false, false, false, true, true);
                 pullStart();
@@ -285,7 +285,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 
     }
 
-    private void pullExit() {
+    public void pullExit() {
 
     }
 
@@ -298,6 +298,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             @Override
             public void run() {
                 tvTimeCount.setText(msg);
+                tvTimeCount.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -376,7 +377,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     /**
      * @param clickType 0 跳过 1 退出
      */
-    private void stuSkipDialog(final int clickType) {
+    public void stuSkipDialog(final int clickType) {
         new SweetAlertDialog(this)
                 .setTitleText(String.format(getString(R.string.dialog_skip_stu_title), pair.getStudent().getStudentName()))
                 .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
@@ -680,11 +681,11 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 activity.pair.setStudent(null);
                 activity.refreshTxtStu(null);
                 activity.txtStuResult.setText("请检入");
-                activity.result = null;
                 activity.result = new String[1];
                 activity.resultList.clear();
                 activity.resultList.addAll(Arrays.asList(activity.result));
                 activity.adapter.notifyDataSetChanged();
+                activity.setTextViewsVisibility(false,false,false,false,false);
             }
 
         }
@@ -700,10 +701,12 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 //    @BindView(R.id.tv_abandon_test)
 //    TextView tvAbandonTest;
     public void setTextViewsVisibility(boolean start, boolean exit, boolean stop, boolean count, boolean abandon) {
-        tvStartTest.setVisibility(start ? View.VISIBLE : View.GONE);
+        txtStartTest.setVisibility(start ? View.VISIBLE : View.GONE);
         tvExitTest.setVisibility(exit ? View.VISIBLE : View.GONE);
         tvStopTest.setVisibility(stop ? View.VISIBLE : View.GONE);
-        tvTimeCount.setVisibility(count ? View.VISIBLE : View.GONE);
+        if (!TextUtils.isEmpty(tvTimeCount.getText().toString())) {
+            tvTimeCount.setVisibility(count ? View.VISIBLE : View.GONE);
+        }
         tvAbandonTest.setVisibility(abandon ? View.VISIBLE : View.GONE);
         txtStuSkip.setVisibility(View.GONE);
         if (stop) {

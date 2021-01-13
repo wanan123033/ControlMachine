@@ -32,6 +32,7 @@ public class SargentSetting {
      */
     private int testPattern = 0;
     private String femaleFull;
+    private boolean penalize;
 
     public int getBaseHeight() {
         return baseHeight;
@@ -129,5 +130,13 @@ public class SargentSetting {
                 ", femaleFull='" + femaleFull + '\'' +
                 ", baseHeight=" + baseHeight +
                 '}';
+    }
+
+    public boolean isPenalize() {
+        return penalize;
+    }
+
+    public void setPenalize(boolean penalize) {
+        this.penalize = penalize;
     }
 }

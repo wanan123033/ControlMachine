@@ -13,6 +13,7 @@ import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForPerson
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleRaceSettingActivity;
 import com.feipulai.exam.activity.RadioTimer.RunTimerActivityGroupActivity;
 import com.feipulai.exam.activity.RadioTimer.RunTimerActivityTestActivity;
+import com.feipulai.exam.activity.RadioTimer.RunTimerSelectActivity;
 import com.feipulai.exam.activity.RadioTimer.RunTimerSetting;
 import com.feipulai.exam.activity.RadioTimer.RunTimerSettingActivity;
 import com.feipulai.exam.activity.basketball.BasketBallGroupActivity;
@@ -45,6 +46,7 @@ import com.feipulai.exam.activity.pushUp.PushUpSetting;
 import com.feipulai.exam.activity.pushUp.PushUpSettingActivity;
 import com.feipulai.exam.activity.pushUp.check.PushUpCheckActivity;
 import com.feipulai.exam.activity.ranger.RangerMoreActivity;
+import com.feipulai.exam.activity.ranger.RangerSettingActivity;
 import com.feipulai.exam.activity.ranger.RangerTestActivity;
 import com.feipulai.exam.activity.sargent_jump.SargentGroupActivity;
 import com.feipulai.exam.activity.sargent_jump.SargentItemSelectActivity;
@@ -57,6 +59,7 @@ import com.feipulai.exam.activity.sitreach.SitReachSettingActivity;
 import com.feipulai.exam.activity.situp.check.SitUpCheckActivity;
 import com.feipulai.exam.activity.situp.setting.SitUpSetting;
 import com.feipulai.exam.activity.situp.setting.SitUpSettingActivity;
+import com.feipulai.exam.activity.sport_timer.SportSettingActivity;
 import com.feipulai.exam.activity.sport_timer.SportTimerActivity;
 import com.feipulai.exam.activity.sport_timer.SportTimerGroupActivity;
 import com.feipulai.exam.activity.sport_timer.bean.SportTimerSetting;
@@ -384,7 +387,7 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_LDTY, StandJumpSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_ZWTQQ, SitReachSelectActivity.class);
 
-        TestConfigs.proActivity.put(ItemDefault.CODE_ZFP, RunTimerActivityTestActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_ZFP, RunTimerSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallSelectActivity.class);
 
         TestConfigs.proActivity.put(ItemDefault.CODE_TS, JumpRopeCheckActivity.class);
@@ -460,6 +463,8 @@ public class TestConfigs {
         TestConfigs.settingActivity.put(ItemDefault.CODE_ZQYQ, FootBallSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_WLJ, GripSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_SHOOT, ShootSettingActivity.class);
+        TestConfigs.settingActivity.put(ItemDefault.CODE_SPORT_TIMER, SportSettingActivity.class);
+        TestConfigs.settingActivity.put(ItemDefault.CODE_JGCJ, RangerSettingActivity.class);
         // 每个机器码对应的机器名称
         TestConfigs.itemMinScope.put(ItemDefault.CODE_ZWTQQ, -200);
         TestConfigs.itemMaxScope.put(ItemDefault.CODE_ZWTQQ, 400);

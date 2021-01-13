@@ -40,10 +40,10 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
             standJumpSetting = new StandJumpSetting();
         super.initData();
 
-        setFaultEnable(standJumpSetting.isPenalize());
-        if (!standJumpSetting.isPenalize()) {
-            setNextClickStart(false);
-        }
+//        setFaultEnable(standJumpSetting.isPenalize());
+//        if (!standJumpSetting.isPenalize()) {
+//            setNextClickStart(false);
+//        }
 
         facade = new StandJumpRadioFacade(deviceDetails, standJumpSetting, this);
     }

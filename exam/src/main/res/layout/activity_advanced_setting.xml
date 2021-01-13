@@ -185,6 +185,16 @@
                     android:button="@drawable/checkbox_switch_selected" />
             </RelativeLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#DDDDDD" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="判罚犯规：（不支持修改成绩）" />
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -194,16 +204,51 @@
 
                 <TextView
                     style="@style/style_setting_tv_title"
-                    android:text="实心球红外测量仪：" />
+                    android:text="坐位体前屈：" />
 
                 <CheckBox
-                    android:id="@+id/sw_med_ball"
+                    android:id="@+id/sw_sit_reach"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:button="@drawable/checkbox_switch_selected" />
             </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:padding="1dp">
 
+                <TextView
+                    style="@style/style_setting_tv_title"
+                    android:text="立定跳远：" />
+
+                <CheckBox
+                    android:id="@+id/sw_standjump2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:button="@drawable/checkbox_switch_selected" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:padding="1dp">
+
+                <TextView
+                    style="@style/style_setting_tv_title"
+                    android:text="摸高：" />
+
+                <CheckBox
+                    android:id="@+id/sw_sargent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:button="@drawable/checkbox_switch_selected" />
+            </RelativeLayout>
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -214,10 +259,10 @@
 
                 <TextView
                     style="@style/style_setting_tv_title"
-                    android:text="立地跳远：" />
+                    android:text="红外实心球：" />
 
                 <CheckBox
-                    android:id="@+id/sw_standjump"
+                    android:id="@+id/sw_medicine_ball"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"

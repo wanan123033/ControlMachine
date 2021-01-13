@@ -7,6 +7,8 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -30,6 +32,7 @@ import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.utils.ResultDisplayUtils;
 import com.feipulai.host.view.StuSearchEditText;
+import com.orhanobut.logger.Logger;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,6 +51,9 @@ public class VisionCheckActivity extends BaseCheckActivity implements RadioManag
     StuSearchEditText etInputText;
     @BindView(R.id.txt_result)
     TextView txtResult;
+    @BindView(R.id.txt_exit)
+    TextView txtExit;
+
     @BindView(R.id.lv_results)
     ListView lvResults;
     public final int TARGET_FREQUENCY = SettingHelper.getSystemSetting().getUseChannel();
@@ -84,6 +90,27 @@ public class VisionCheckActivity extends BaseCheckActivity implements RadioManag
         });
     }
 
+    private BleTouchEvent bleTouchEvent = new BleTouchEvent(this);
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        int key = bleTouchEvent.onTouch(event);
+        if (key == BleTouchEvent.EVENT_CONFIRM && !isClear) {//确定
+            if (mStudent != null) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("STUDENT", mStudent);
+                IntentUtil.gotoActivity(this, VisionTestActivity.class, bundle);
+            }
+        } else if (key == BleTouchEvent.EVENT_CANCEL) {//返回
+
+            myHandler.sendEmptyMessageDelayed(CLEAR_INFO, 100);
+        }
+
+
+        return super.onTouchEvent(event);
+    }
+
     @Override
     protected void initData() {
         super.initData();
@@ -98,6 +125,7 @@ public class VisionCheckActivity extends BaseCheckActivity implements RadioManag
         InteractUtils.showStuInfo(llStuDetail, student, null);
         txtResult.setText("请遮住右眼\n按确定开始");
         toastSpeak("请遮住右眼按确定开始");
+        txtExit.setVisibility(View.VISIBLE);
         showLed();
     }
 
@@ -146,13 +174,14 @@ public class VisionCheckActivity extends BaseCheckActivity implements RadioManag
                 mStudent = null;
                 InteractUtils.showStuInfo(llStuDetail, null, null);
                 txtResult.setText("请检录");
+                txtExit.setVisibility(View.GONE);
                 myHandler.removeMessages(CLEAR_INFO);
             }
         }
     };
 
 
-    @OnClick({R.id.img_AFR, R.id.txt_led_setting, R.id.tv_device_pair})
+    @OnClick({R.id.img_AFR, R.id.txt_led_setting, R.id.tv_device_pair, R.id.txt_exit})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.img_AFR:
@@ -162,6 +191,9 @@ public class VisionCheckActivity extends BaseCheckActivity implements RadioManag
                 startActivity(new Intent(this, LEDSettingActivity.class));
                 break;
             case R.id.tv_device_pair:
+                break;
+            case R.id.txt_exit:
+                myHandler.sendEmptyMessageDelayed(CLEAR_INFO, 100);
                 break;
         }
     }
@@ -179,5 +211,11 @@ public class VisionCheckActivity extends BaseCheckActivity implements RadioManag
                     0, 2, false, true);
         }
 
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Logger.d("onKeyDown===>"+keyCode);
+        return super.onKeyDown(keyCode, event);
     }
 }

@@ -1190,6 +1190,18 @@ public class DBManager {
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .list();
     }
+    public List<RoundResult> queryResultsByStudentCode(String itemCode, String studentCode,Long groupId,int examType,String scheduleNo) {
+        Log.e("tat", "itemCode=" + itemCode + ",studentCode=" + studentCode);
+        return roundResultDao
+                .queryBuilder()
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
+                .where(RoundResultDao.Properties.GroupId.eq(groupId))
+                .where(RoundResultDao.Properties.ExamType.eq(examType))
+                .where(RoundResultDao.Properties.ScheduleNo.eq(scheduleNo))
+                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .list();
+    }
 
     public List<Student> getStudentsByGroup(Group group) {
         List<GroupItem> groupItems = groupItemDao
@@ -1245,7 +1257,17 @@ public class DBManager {
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .list();
     }
-
+    public List<RoundResult> queryResultsByStudentCode(String studentCode,Long groupId,int examType,String scheduleNo, Item item) {
+        return roundResultDao
+                .queryBuilder()
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getItemCode(item)))
+                .where(RoundResultDao.Properties.GroupId.eq(groupId))
+                .where(RoundResultDao.Properties.ExamType.eq(examType))
+                .where(RoundResultDao.Properties.ScheduleNo.eq(scheduleNo))
+                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .list();
+    }
     /**
      * 查询已有的最后一次成绩
      */

@@ -575,7 +575,8 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     results.put(student, getResults(student.getStudentCode()));
                     trackNoMap.put(student, stuPair.getTrackNo());
                 }
-                if (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4) {
+                if (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4
+                ||SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP) {
                     InteractUtils.printA4Result(this, groupList.get(groupAdapter.getTestPosition()));
                 } else {
                     InteractUtils.printResults(groupList.get(groupAdapter.getTestPosition()),

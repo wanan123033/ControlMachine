@@ -1,5 +1,6 @@
 package com.feipulai.exam.entity;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -7,7 +8,7 @@ import java.util.List;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 
-public class RunStudent {
+public class RunStudent implements Serializable {
     private Student student ;
     private int runId ;
     private String mark ;

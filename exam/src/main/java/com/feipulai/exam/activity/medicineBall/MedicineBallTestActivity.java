@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
+import android.view.View;
 
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
@@ -55,6 +56,11 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
         init();
     }
 
+    @Override
+    protected int isShowPenalizeFoul() {
+        return medicineBallSetting.isPenalizeFoul() ? View.VISIBLE:View.GONE;
+    }
+
     private void init() {
         checkService = Executors.newSingleThreadScheduledExecutor();
         mSerialManager = SerialDeviceManager.getInstance();
@@ -92,10 +98,10 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
             medicineBallSetting = new MedicineBallSetting();
         }
         Logger.i(TAG + ":medicineBallSetting ->" + medicineBallSetting.toString());
-        if (medicineBallSetting.isPenalize()) {
-
-            setFaultEnable(true);
-        }
+//        if (medicineBallSetting.isPenalize()) {
+//
+//            setFaultEnable(true);
+//        }
 
     }
 
@@ -251,7 +257,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
             PROMPT_TIMES = 0;
             checkFlag = true;
             if (testState == TestState.UN_STARTED) {
-                deviceState.setState(BaseDeviceState.STATE_NOT_BEGAIN);
+                deviceState.setState(BaseDeviceState.STATE_FREE);
                 setBegin(1);
             } else {
                 deviceState.setState(BaseDeviceState.STATE_ONUSE);

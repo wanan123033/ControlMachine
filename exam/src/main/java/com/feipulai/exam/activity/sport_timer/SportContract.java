@@ -12,8 +12,8 @@ public interface SportContract {
 
     interface SportView{
         void updateDeviceState(int deviceId,int state);
-        void getTimeUpdate();
+        void getDeviceStart();
         void receiveResult(SportResult sportResult);
-        void getDeviceState(int deviceState);
+        void getDeviceStop();
     }
 }

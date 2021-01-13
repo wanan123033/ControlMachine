@@ -43,15 +43,20 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
     private BaseStuPair baseStuPair;
 
     @Override
+    protected int isShowPenalizeFoul() {
+        return jumpSetting.isPenalizeFoul() ? View.VISIBLE : View.GONE;
+    }
+
+    @Override
     public void initData() {
         jumpSetting = SharedPrefsUtil.loadFormSource(this, StandJumpSetting.class);
         if (jumpSetting == null) {
             jumpSetting = new StandJumpSetting();
         }
 
-        if (jumpSetting.isPenalize()) {
-            setFaultEnable(true);
-        }
+//        if (jumpSetting.isPenalize()) {
+//            setFaultEnable(true);
+//        }
 
         Logger.i(TAG + ":reachSetting ->" + jumpSetting.toString());
         mHandler = new MyHandler(this);
@@ -217,7 +222,7 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
 
         @Override
         public void getDeviceState(final BaseDeviceState deviceState) {
-            Log.i("james", "getDeviceState");
+            Log.i("james", "getDeviceStop");
             BaseDeviceState state = new BaseDeviceState();
             state.setState(deviceState.getState());
             Message msg = mHandler.obtainMessage();

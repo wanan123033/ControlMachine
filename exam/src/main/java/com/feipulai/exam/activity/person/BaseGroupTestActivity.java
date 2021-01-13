@@ -26,11 +26,14 @@ import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
+import com.feipulai.exam.activity.data.DataDisplayActivity;
+import com.feipulai.exam.activity.data.DataRetrieveActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.adapter.BaseGroupTestStuAdapter;
 import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.bean.DataRetrieveBean;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.BaseEvent;
@@ -85,6 +88,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     TextView tvBaseHeight;
     @BindView(R.id.txt_stu_skip)
     TextView txtStuSkip;
+    @BindView(R.id.tv_penalizeFoul)
+    TextView tv_penalizeFoul;
     //    @BindView(R.id.txt_stu_fault)
 //    TextView txtStuFault;
     private List<BaseStuPair> stuPairsList;
@@ -168,7 +173,11 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 
         getTestStudent(group);
         setStuShowLed(stuAdapter.getTestPosition() != -1 ? stuPairsList.get(stuAdapter.getTestPosition()) : null);
+
+        tv_penalizeFoul.setVisibility(isShowPenalizeFoul());
     }
+
+    protected abstract int isShowPenalizeFoul();
 
     public BaseStuPair getTestPair() {
         if (stuAdapter == null || stuAdapter.getTestPosition() == -1) {
@@ -276,7 +285,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         this.testType = testType;
     }
 
-    @OnClick({R.id.txt_start_test, R.id.txt_led_setting, R.id.txt_stu_skip})
+    @OnClick({R.id.txt_start_test, R.id.txt_led_setting, R.id.txt_stu_skip,R.id.tv_penalizeFoul})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 //            case R.id.txt_setting:
@@ -337,9 +346,33 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 //            case R.id.txt_stu_fault:
 //                showPenalize();
 //                break;
+            case R.id.tv_penalizeFoul:
+                BaseStuPair baseStuPair = stuPairsList.get(stuAdapter.getTestPosition());
+                if (baseStuPair.getStudent() != null) {
+                    DataRetrieveBean bean = new DataRetrieveBean();
+                    bean.setStudentCode(baseStuPair.getStudent().getStudentCode());
+                    bean.setSex(baseStuPair.getStudent().getSex());
+                    bean.setTestState(1);
+                    bean.setGroupId(group.getId());
+                    bean.setScheduleNo(group.getScheduleNo());
+                    bean.setExamType(group.getExamType());
+                    bean.setStudentName(baseStuPair.getStudent().getStudentName());
+                    Intent intent = new Intent(this, DataDisplayActivity.class);
+                    intent.putExtra(DataDisplayActivity.ISSHOWPENALIZEFOUL, isShowPenalizeFoul());
+                    intent.putExtra(DataRetrieveActivity.DATA_ITEM_CODE, getItemCode());
+                    intent.putExtra(DataDisplayActivity.TESTNO,setTestCount());
+                    intent.putExtra(DataRetrieveActivity.DATA_EXTRA, bean);
+
+                    startActivity(intent);
+                }else {
+                    toastSpeak("无考生成绩信息");
+                }
+                break;
         }
     }
-
+    private String getItemCode() {
+        return TestConfigs.sCurrentItem.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : TestConfigs.sCurrentItem.getItemCode();
+    }
     boolean clicked = false;
 
     /**
@@ -347,30 +380,30 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
      */
     private void showPenalize(final BaseDeviceState deviceState, final BaseStuPair pair) {
         clicked = false;
-        SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
-        alertDialog.setTitleText(getString(R.string.confirm_result));
-        alertDialog.setCancelable(false);
-        alertDialog.setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-            @Override
-            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                sweetAlertDialog.dismissWithAnimation();
-                if (!clicked) {
-                    updatePair(deviceState, pair, false);
-                    clicked = true;
-                }
-            }
-        }).setCancelText(getString(R.string.foul)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-            @Override
-            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                sweetAlertDialog.dismissWithAnimation();
-
-                if (!clicked) {
-                    updatePair(deviceState, pair, true);
-                    clicked = true;
-                }
-            }
-        });
-        alertDialog.show();
+//        SweetAlertDialog alertDialog = new SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
+//        alertDialog.setTitleText(getString(R.string.confirm_result));
+//        alertDialog.setCancelable(false);
+//        alertDialog.setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+//            @Override
+//            public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                sweetAlertDialog.dismissWithAnimation();
+//                if (!clicked) {
+//                    updatePair(deviceState, pair, false);
+//                    clicked = true;
+//                }
+//            }
+//        }).setCancelText(getString(R.string.foul)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+//            @Override
+//            public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                sweetAlertDialog.dismissWithAnimation();
+//
+//                if (!clicked) {
+//                    updatePair(deviceState, pair, true);
+//                    clicked = true;
+//                }
+//            }
+//        });
+//        alertDialog.show();
     }
 
     public void updatePair(BaseDeviceState deviceState, BaseStuPair pair, boolean isFault) {

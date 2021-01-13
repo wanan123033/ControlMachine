@@ -54,6 +54,7 @@ public class BaseStuPair implements Serializable {
     }
 
     public BaseStuPair() {
+        this.baseDevice = new BaseDeviceState();
     }
 
     public int getResultState() {

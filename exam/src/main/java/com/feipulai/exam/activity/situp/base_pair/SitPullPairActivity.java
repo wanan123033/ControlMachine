@@ -79,7 +79,7 @@ public abstract class SitPullPairActivity extends BaseTitleActivity
         mAdapter.setOnItemClickListener(this);
     }
 
-    public void setInitWayVisibile(){
+    public void setInitWayVisible(){
         txtInitWay.setVisibility(View.VISIBLE);
     }
     @Override

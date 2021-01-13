@@ -14,6 +14,6 @@ public class SportPairActivity extends SitPullPairActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        setInitWayVisibile();
+        setInitWayVisible();
     }
 }
