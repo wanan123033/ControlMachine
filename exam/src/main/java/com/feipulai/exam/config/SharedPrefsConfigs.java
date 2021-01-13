@@ -8,7 +8,7 @@ package com.feipulai.exam.config;
 public class SharedPrefsConfigs {
 
     public static final String DEFAULT_PREFS = "host_prefs";
-
+    public static final String APP_USE_TIME="APP_USE_TIME";
 //    public static final String HOST_ID = "host_id";
 //    public static final String REAL_TIME_UPLOAD = "real_time_upload";
 //    public static final String GRADE_BROADCAST = "grade_broadcast";
@@ -109,4 +109,5 @@ public class SharedPrefsConfigs {
     public static final String MACHINE_PORT = "machine_port";//连接设备端口
     public static final String MACHINE_SERVER_PORT = "machine_server_port";//本机作为服务器的端口
     public static final String CAMERA_IP = "camera_ip";//摄像头ip
+    public static final String LAST_DOWNLOAD_TIME = "LAST_DOWNLOAD_TIME_EXAM";
 }
