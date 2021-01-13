@@ -109,5 +109,5 @@ public class SharedPrefsConfigs {
     public static final String MACHINE_PORT = "machine_port";//连接设备端口
     public static final String MACHINE_SERVER_PORT = "machine_server_port";//本机作为服务器的端口
     public static final String CAMERA_IP = "camera_ip";//摄像头ip
-    public static final String LAST_DOWNLOAD_TIME = "LAST_DOWNLOAD_TIME_EXAM";
+//    public static final String LAST_DOWNLOAD_TIME = "LAST_DOWNLOAD_TIME_EXAM";
 }
