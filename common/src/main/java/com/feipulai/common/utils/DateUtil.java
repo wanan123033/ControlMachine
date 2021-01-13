@@ -44,7 +44,9 @@ public class DateUtil {
     public static String getCurrentTime(String pattern) {
         return formatTime(getCurrentTime(), pattern);
     }
-
+    public static long getDayTime() {
+        return 24 * 60 * 60 * 1000;
+    }
     /**
      * 获取当前时间(按指定格式).
      * <h3>Version</h3> 1.0
@@ -91,7 +93,10 @@ public class DateUtil {
         sdf.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));//计时时间换算不需要加8
         return sdf.format(new Date(timeMillis));
     }
-
+    public static String formatTime1(long timeMillis, String pattern) {
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        return sdf.format(new Date(timeMillis));
+    }
     public static String formatTime2(long timeMillis, String pattern) {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         sdf.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));//时钟时间换算需要加8
