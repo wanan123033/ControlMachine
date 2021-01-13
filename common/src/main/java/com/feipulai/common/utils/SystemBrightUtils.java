@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 
 public class SystemBrightUtils {
 
@@ -96,5 +97,25 @@ public class SystemBrightUtils {
             e.printStackTrace();
         }
         return version;
+    }
+
+    /**
+     * 是否关闭键盘
+     *
+     * @param show true 显示， false 关闭键盘
+     */
+    public static void showInput(Activity mActivity,boolean show) {
+        try {
+            if (show) {
+                InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInputFromInputMethod(mActivity.getCurrentFocus().getApplicationWindowToken(), 0);
+            } else {
+                InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(mActivity.getCurrentFocus().getApplicationWindowToken(), 0);
+            }
+        } catch (NullPointerException e1) {
+
+        } catch (Exception e) {
+        }
     }
 }
