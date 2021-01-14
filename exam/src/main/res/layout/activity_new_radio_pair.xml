@@ -30,10 +30,11 @@
             />
     </LinearLayout>
     <LinearLayout
-        android:id="@+id/beginning_point"
+        android:id="@+id/ll_beginning_point"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
         <TextView
             android:layout_width="match_parent"
             android:layout_margin="10dp"
@@ -51,10 +52,11 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/ending_point"
+        android:id="@+id/ll_ending_point"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_40"
@@ -70,5 +72,9 @@
             android:layout_below="@+id/rl_check_in"
             android:layout_margin="10dp"/>
     </LinearLayout>
-
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:textSize="@dimen/sp_16"
+        android:text=""/>
 </LinearLayout>
