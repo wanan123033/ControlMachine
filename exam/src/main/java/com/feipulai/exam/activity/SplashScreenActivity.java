@@ -97,20 +97,6 @@ public class SplashScreenActivity extends BaseActivity {
         long runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0L);
         if (activateBean != null) {
 
-//            if (activateBean.getUseDeviceTime() - DateUtil.getDayTime() > activateBean.getValidRunTime()) {
-//                //超出使用时长
-//                //弹窗确定重新激活
-//                showActivateConfirm(2);
-//                return;
-//            } else {
-//                //更新使用时长 每一天有使用到都算使用一天
-//                if (!TextUtils.equals(DateUtil.getCurrentTime("yyyy-MM-dd")
-//                        , DateUtil.formatTime(activateBean.getUpdateTime(), "yyyy-MM-dd"))) {
-//                    activateBean.setUseDeviceTime(activateBean.getUseDeviceTime() + DateUtil.getDayTime());
-//                    activateBean.setUpdateTime(DateUtil.getCurrentTime());
-//                    SharedPrefsUtil.save(this, activateBean);
-//                }
-//            }
             if (runTime > activateBean.getValidRunTime()) {
                 //超出使用时长
                 //弹窗确定重新激活
@@ -182,7 +168,11 @@ public class SplashScreenActivity extends BaseActivity {
 
             @Override
             public void onFault(int code, String errorMsg) {
-
+                toastSpeak(errorMsg);
+                if (activateBean==null){
+                    //需要确认激活
+                    showActivateConfirm(1);
+                }
             }
 
             @Override

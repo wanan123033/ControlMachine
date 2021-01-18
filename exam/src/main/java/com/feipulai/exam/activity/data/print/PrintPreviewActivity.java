@@ -62,7 +62,7 @@ public class PrintPreviewActivity extends BaseTitleActivity {
 
         List<PrintBean.PrintDataBean> printDataBeans = new ArrayList<>();
         for (int i = 0; i < 40; i++) {
-            printDataBeans.add(new PrintBean.PrintDataBean((i + 1) + "", "20001001010" + i, "学生姓名" + i, "学校" + i, "成绩" + i));
+//            printDataBeans.add(new PrintBean.PrintDataBean((i + 1) + "", "20001001010" + i, "学生姓名" + i, "学校" + i, "成绩" + i));
 
         }
         printBean.setPrintDataBeans(printDataBeans);

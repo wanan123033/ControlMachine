@@ -183,6 +183,11 @@ public class SplashScreenActivity extends BaseActivity {
 
             @Override
             public void onFault(int code, String errorMsg) {
+                toastSpeak(errorMsg);
+                if (activateBean==null){
+                    //需要确认激活
+                    showActivateConfirm(1);
+                }
 
             }
 

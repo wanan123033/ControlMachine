@@ -55,7 +55,7 @@ public class PrintSetting implements Serializable {
         List<PrintItem> list;
         if (TextUtils.isEmpty(tableHeadleJson)) {
             list = new ArrayList<>();
-            String[] signature = new String[]{"序号", "考号", "姓名", "学校", "成绩", "得分", "名次", "签名"};
+            String[] signature = new String[]{"序号", "考号", "姓名", "性别", "学校", "成绩", "名次", "签名"};
             for (String s : signature) {
                 list.add(new PrintItem(true, s));
             }
