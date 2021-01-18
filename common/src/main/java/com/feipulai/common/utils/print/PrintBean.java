@@ -84,12 +84,13 @@ public class PrintBean implements Serializable {
         private String printString7;
         private String printString8;
 
-        public PrintDataBean(String printString1, String printString2, String printString3, String printString4, String printString5) {
+        public PrintDataBean(String printString1, String printString2, String printString3, String printString4, String printString5,String printString6) {
             this.printString1 = printString1;
             this.printString2 = printString2;
             this.printString3 = printString3;
             this.printString4 = printString4;
             this.printString5 = printString5;
+            this.printString6 = printString6;
         }
 
         public String getPrintString1() {
