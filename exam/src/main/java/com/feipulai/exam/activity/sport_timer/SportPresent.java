@@ -207,7 +207,7 @@ public class SportPresent implements SportContract.Presenter {
      *
      * @return
      */
-    private int getTime() {
+    public int getTime() {
         Calendar Cld = Calendar.getInstance();
         int HH = Cld.get(Calendar.HOUR_OF_DAY);
         int mm = Cld.get(Calendar.MINUTE);
@@ -216,6 +216,10 @@ public class SportPresent implements SportContract.Presenter {
         return HH * 60 * 60 * 1000 + mm * 60 * 1000 + SS * 1000 + MI;
     }
 
+    /**
+     * 轮询状态 0 设备连接 1轮询成绩
+     * @param runState
+     */
     public void setRunState(int runState) {
         this.runState = runState;
     }
@@ -497,5 +501,48 @@ public class SportPresent implements SportContract.Presenter {
 
         uploadResult(uploadResults);
 
+    }
+
+    public void saveResultRadio(Student student, int result, int currentTestTime, int testNo,String startTime) {
+
+        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+        RoundResult roundResult = new RoundResult();
+        roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
+        roundResult.setStudentCode(student.getStudentCode());
+        roundResult.setItemCode(TestConfigs.getCurrentItemCode());
+        roundResult.setResult(result);
+        roundResult.setMachineResult(result);
+        roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
+        roundResult.setTestTime(startTime);
+        roundResult.setRoundNo(currentTestTime);
+        roundResult.setTestNo(testNo);
+        roundResult.setExamType(studentItem.getExamType());
+        roundResult.setScheduleNo(studentItem.getScheduleNo());
+        roundResult.setUpdateState(0);
+        roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
+        RoundResult bestResult = DBManager.getInstance().queryBestScore(student.getStudentCode(), testNo);
+        if (bestResult != null) {
+            // 原有最好成绩犯规 或者原有最好成绩没有犯规但是现在成绩更好 //跑步时间越短越好
+            if (bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && bestResult.getResult() >= result) {
+                // 这个时候就要同时修改这两个成绩了
+                roundResult.setIsLastResult(1);
+                bestResult.setIsLastResult(0);
+                DBManager.getInstance().updateRoundResult(bestResult);
+            } else {
+                roundResult.setIsLastResult(0);
+            }
+        } else {
+            // 第一次测试
+            roundResult.setIsLastResult(1);
+        }
+        roundResult.setEndTime(System.currentTimeMillis()+"");
+        DBManager.getInstance().insertRoundResult(roundResult);
+
+        List<RoundResult> roundResultList = new ArrayList<>();
+        roundResultList.add(roundResult);
+        UploadResults uploadResults = new UploadResults(studentItem.getScheduleNo(), TestConfigs.getCurrentItemCode(),
+                student.getStudentCode(), testNo + "", null, RoundResultBean.beanCope(roundResultList));
+
+        uploadResult(uploadResults);
     }
 }

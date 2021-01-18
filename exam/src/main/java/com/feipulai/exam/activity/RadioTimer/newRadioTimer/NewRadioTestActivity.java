@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -22,13 +23,19 @@ import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.sport_timer.SportContract;
 import com.feipulai.exam.activity.sport_timer.SportPresent;
 import com.feipulai.exam.activity.sport_timer.TestState;
+import com.feipulai.exam.adapter.PopAdapter;
 import com.feipulai.exam.adapter.RunNumberAdapter2;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.RunStudent;
 import com.feipulai.exam.utils.ResultDisplayUtils;
+import com.feipulai.exam.view.CommonPopupWindow;
+import com.feipulai.exam.view.ResultPopWindow;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -77,7 +84,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     private List<RunStudent> mList;
     private RunTimerSetting runTimerSetting;
     private RunNumberAdapter2 mAdapter2;
-    private int initTime;//初始化时间 用于记录计时器开始计数的时间
+    private int baseTimer;//初始化时间 用于记录计时器开始计数的时间
     private int startMode;
     private TimerKeeper timerKeeper;
     private int maxTestTimes;
@@ -87,6 +94,12 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     private TestState testState;
     private final int RUN_START = 0X01;
     private final int RUN_STOP = 0X02;
+    private final int RUN_RESULT = 0X03;
+    private ResultPopWindow resultPopWindow;
+    private List<String> marks = new ArrayList<>();
+    private String startTime;
+    //更换成绩的序号
+    private int select;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_new_radio_test;
@@ -108,13 +121,56 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         timerKeeper.keepTime();
         maxTestTimes = runTimerSetting.getTestTimes();
         playUtils = SoundPlayUtils.init(this);
-        sportPresent = new SportPresent(this,(Integer.parseInt(runTimerSetting.getRunNum())+1)*2);//机器个数 = (跑到数量+1)*2
+
+        //机器个数 = (跑到数量+1)*2 或者 (跑到数量+1)
+        if (runTimerSetting.getInterceptPoint() == 3){
+            sportPresent = new SportPresent(this,(Integer.parseInt(runTimerSetting.getRunNum())+1)*2);
+        }else {
+            sportPresent = new SportPresent(this,Integer.parseInt(runTimerSetting.getRunNum())+1);
+        }
         sportPresent.rollConnect();
         sportPresent.setContinueRoll(true);
         startMode = runTimerSetting.getInterceptPoint();
         testState = TestState.UN_STARTED;
         tvGetTime.setVisibility(View.GONE);
         setView(false);
+
+        PopAdapter popAdapter = new PopAdapter(marks);
+        resultPopWindow = new ResultPopWindow(this, popAdapter);
+        resultPopWindow.setOnPopItemClickListener(new CommonPopupWindow.OnPopItemClickListener() {
+            @Override
+            public void itemClick(int position) {
+                String result = marks.get(position);
+                mList.get(select).setMark(result);
+                mList.get(select).setOriginalMark(mList.get(select).getResultList().get(position).getOriResult());
+                mAdapter2.notifyDataSetChanged();
+            }
+        });
+
+        mAdapter2.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                showPop(position, view);
+            }
+        });
+        currentTestTime = 0;
+
+    }
+
+    private void showPop(int pos, View view) {
+        marks.clear();
+        RunStudent runStudent = mList.get(pos);
+        if (runStudent.getStudent() != null) {
+            List<RunStudent.WaitResult> hashMap = runStudent.getResultList();
+            for (RunStudent.WaitResult entry : hashMap) {
+//                Log.i("key= "+entry.getKey()," and value= "+entry.getValue());
+                marks.add(entry.getWaitResult());
+            }
+
+        }
+        resultPopWindow.notifyPop();
+        select = pos;
+        resultPopWindow.showPopOrDismiss(view);
     }
 
     private void setView(boolean enable) {
@@ -141,17 +197,36 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
      */
     @Override
     public void getDeviceStart() {
-        initTime = 0;
+        sportPresent.setRunState(1);
+        baseTimer = sportPresent.getTime();
         testState = TestState.WAIT_RESULT;
         mHandler.sendEmptyMessage(RUN_START);
         timerKeeper.setStartInit();
+        currentTestTime++;
+        startTime = System.currentTimeMillis()+"";
     }
 
     @Override
-    public void receiveResult(SportResult sportResult) {
+    public void receiveResult(SportResult result) {
         if (testState == TestState.WAIT_RESULT){
-
+            if (runTimerSetting.getInterceptPoint() == 2){//终点
+                if (result.getDeviceId()> Integer.parseInt(runTimerSetting.getRunNum()))
+                    return;
+                int realTime =  (result.getLongTime() - baseTimer);
+                mList.get(result.getDeviceId() - 1).setMark(getFormatTime(realTime));
+                mList.get(result.getDeviceId() - 1).setOriginalMark(realTime);
+                List<RunStudent.WaitResult> list = mList.get(result.getDeviceId() - 1).getResultList();
+                RunStudent.WaitResult waitResult = new RunStudent.WaitResult();
+                waitResult.setOriResult(realTime);
+                waitResult.setWaitResult(getFormatTime(realTime));
+                list.add(waitResult);
+                mHandler.sendEmptyMessage(RUN_RESULT);
+            }
         }
+    }
+
+    private String getFormatTime(int time) {
+        return ResultDisplayUtils.getStrResultForDisplay(time, false);
     }
 
     /**
@@ -162,6 +237,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     public void getDeviceStop() {
         timerKeeper.stopKeepTime();
         mHandler.sendEmptyMessage(RUN_STOP);
+        sportPresent.setRunState(0);
     }
 
     @Override
@@ -212,12 +288,37 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                     runStudent.getResultList().clear();
                 }
                 mAdapter2.notifyDataSetChanged();
+                testState = TestState.UN_STARTED;
+                currentTestTime--;
                 break;
             case R.id.tv_force_start:
-                sportPresent.waitStart();
+                if (testState == TestState.UN_STARTED){
+                    LogUtils.operation("红外计时点击了开始");
+                    sportPresent.waitStart();
+                }
+
                 break;
             case R.id.tv_mark_confirm:
-                sportPresent.setDeviceStateStop();
+                if (testState == TestState.WAIT_RESULT){
+                    LogUtils.operation("红外计时点击了成绩确认");
+                    sportPresent.setDeviceStateStop();
+                    testState = TestState.RESULT_CONFIRM;
+                    for (RunStudent runStudent : mList) {
+                        if (runStudent.getStudent() != null) {
+                            sportPresent.saveResultRadio(runStudent.getStudent(), runStudent.getOriginalMark(), currentTestTime, 1,startTime);
+                            List<RoundResult> resultList = DBManager.getInstance().queryResultsByStudentCode(runStudent.getStudent().getStudentCode());
+                            List<String> list = new ArrayList<>();
+                            for (RoundResult result : resultList) {
+                                list.add(getFormatTime(result.getResult()));
+                            }
+
+//                            sportPresent.printResult(runStudent.getStudent(), list, currentTestTime, maxTestTimes, -1);
+                            list.clear();
+                        }
+                    }
+
+                }
+
                 break;
         }
     }
@@ -234,6 +335,9 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                     break;
                 case RUN_STOP:
                     setView(false);
+                    break;
+                case RUN_RESULT:
+                    mAdapter2.notifyDataSetChanged();
                     break;
             }
             return false;

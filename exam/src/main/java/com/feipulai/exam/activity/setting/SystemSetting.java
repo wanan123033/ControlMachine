@@ -108,7 +108,7 @@ public class SystemSetting {
     private int ledVersion = 0;//0:1.0版本 1：V4.1 以上版本
     public static final int LED_VERSION_V1 = 0;
     public static final int LED_VERSION_V4 = 1;
-
+    private int radioLed;//用于区分红外计时版本0带盒子版，1不带盒子
     //信道
     private int channel = 1;
     //是否使用自定义信道
@@ -442,5 +442,13 @@ public class SystemSetting {
 
     public boolean getAutoDiscern() {
         return autoDiscern;
+    }
+
+    public int getRadioLed() {
+        return radioLed;
+    }
+
+    public void setRadioLed(int radioLed) {
+        this.radioLed = radioLed;
     }
 }

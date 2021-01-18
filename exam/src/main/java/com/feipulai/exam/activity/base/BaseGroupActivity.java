@@ -23,6 +23,8 @@ import com.feipulai.device.led.RunLEDManager;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.RadioTimer.RunTimerSetting;
+import com.feipulai.exam.activity.RadioTimer.newRadioTimer.NewRadioGroupActivity;
 import com.feipulai.exam.activity.basketball.BasketBallSelectActivity;
 import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.basketball.DribbleShootGroupActivity;
@@ -555,6 +557,11 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ
                         && SharedPrefsUtil.loadFormSource(this, ShootSetting.class).getTestType() == 2) {
                     startActivity(new Intent(this, DribbleShootGroupActivity.class));
+                    return;
+                }
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZFP
+                        && SharedPrefsUtil.loadFormSource(this, RunTimerSetting.class).getConnectType() == 1) {
+                    startActivity(new Intent(this, NewRadioGroupActivity.class));
                     return;
                 }
                 startActivity(new Intent(this, TestConfigs.groupActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
