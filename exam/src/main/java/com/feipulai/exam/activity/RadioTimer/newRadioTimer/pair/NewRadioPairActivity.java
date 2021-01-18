@@ -1,10 +1,12 @@
 package com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair;
 
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
@@ -12,14 +14,13 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.RadioTimer.RunTimerSetting;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
-import com.feipulai.exam.activity.jump_rope.adapter.DevicePairAdapter;
 import com.feipulai.exam.view.DividerItemDecoration;
 import com.orhanobut.logger.utils.LogUtils;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class NewRadioPairActivity extends BaseTitleActivity implements RadioContract.View, DevicePairAdapter.OnItemClickListener {
+public class NewRadioPairActivity extends BaseTitleActivity implements RadioContract.View, RadioPairAdapter.OnItemClickListener {
 
     @BindView(R.id.sw_auto_pair)
     Switch mSwAutoPair;
@@ -27,11 +28,19 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
     public RecyclerView mRvPairs;
     @BindView(R.id.rv_end_pairs)
     public RecyclerView mEndRvPairs;
-    public DevicePairAdapter mAdapter;
-    public DevicePairAdapter mEndAdapter;
+    @BindView(R.id.ll_beginning_point)
+    public LinearLayout beginningPoint;
+    @BindView(R.id.ll_ending_point)
+    public LinearLayout endingPoint;
+
+    public RadioPairAdapter mAdapter;
+    public RadioPairAdapter mEndAdapter;
     RadioTimerPairPresenter presenter;
     private  RunTimerSetting setting;
-
+    private static final int UPDATE_SPECIFIC_ITEM = 0x1;
+    private MyHandler mHandler = new MyHandler(this);
+    private  final int START_POINT  = 0;
+    private  final int END_POINT  = 1;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_new_radio_pair;
@@ -43,24 +52,39 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this);
         dividerItemDecoration.setDrawBorderTopAndBottom(true);
         dividerItemDecoration.setDrawBorderLeftAndRight(true);
-        mRvPairs.addItemDecoration(dividerItemDecoration);
 
+        mRvPairs.addItemDecoration(dividerItemDecoration);
         setting = SharedPrefsUtil.loadFormSource(this, RunTimerSetting.class);
         presenter = new RadioTimerPairPresenter(this,this,Integer.parseInt(setting.getRunNum())+1);
-        presenter.start(1);
-        mAdapter = new DevicePairAdapter(this,presenter.getPairs());
-        mRvPairs.setAdapter(mAdapter);
-        mRvPairs.setClickable(true);
-        mAdapter.setOnItemClickListener(this);
 
-        mEndRvPairs.setLayoutManager(new GridLayoutManager(this, 5));
-        mEndRvPairs.addItemDecoration(dividerItemDecoration);
-        mEndAdapter = new DevicePairAdapter(this,presenter.getPairs());
-        mEndAdapter.setSelected(-1);
-        mEndRvPairs.setAdapter(mEndAdapter);
-        mEndRvPairs.setClickable(true);
-        mEndAdapter.setOnItemClickListener(this);
-
+        if (setting.getInterceptPoint() !=2){
+            presenter.setPoint(0);
+            presenter.start(1,0);
+            beginningPoint.setVisibility(View.VISIBLE);
+            mAdapter = new RadioPairAdapter(this,presenter.getPairs(),START_POINT);
+            mRvPairs.setAdapter(mAdapter);
+            mRvPairs.setClickable(true);
+            mAdapter.setOnItemClickListener(this);
+        }
+        if (setting.getInterceptPoint()!=1){
+            endingPoint.setVisibility(View.VISIBLE);
+            if (setting.getInterceptPoint() != 3){
+                presenter.setPoint(1);
+                presenter.start(1,1);
+            }
+            mEndAdapter = new RadioPairAdapter(this,presenter.getPairs(),END_POINT);
+            mEndRvPairs.setLayoutManager(new GridLayoutManager(this, 5));
+            mEndRvPairs.addItemDecoration(dividerItemDecoration);
+            mEndRvPairs.setAdapter(mEndAdapter);
+            if (setting.getInterceptPoint() != 3){
+                mEndAdapter.setSelected(0);
+            }else {
+                mEndAdapter.setSelected(-1);
+                mEndAdapter.setAddNum(Integer.parseInt(setting.getRunNum()));
+            }
+            mEndRvPairs.setClickable(true);
+            mEndAdapter.setOnItemClickListener(this);
+        }
     }
 
     @Nullable
@@ -70,17 +94,38 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
     }
 
     @Override
-    public void updateSpecificItem(int focusPosition) {
-        LogUtils.operation("更改了设备ID deviceId 在配对");
-        presenter.changeFocusPosition(focusPosition);
+    public void updateSpecificItem(int position,int point) {
+        Message msg = Message.obtain();
+        msg.what = UPDATE_SPECIFIC_ITEM;
+        msg.arg1 = position;
+        msg.arg2 = point;
+        mHandler.sendMessage(msg);
     }
 
     @Override
-    public void select(int position) {
-        int oldSelectPosition = mAdapter.getSelected();
-        mAdapter.setSelected(position);
-        updateSpecificItem(oldSelectPosition);
-        updateSpecificItem(position);
+    public void select(int position,int point) {
+        int oldSelectPosition;
+        if (point  == START_POINT){
+            oldSelectPosition  = mAdapter.getSelected();
+            mAdapter.setSelected(position);
+            if (mEndAdapter != null){
+                mEndAdapter.setSelected(-1);
+            }
+        }else {
+            oldSelectPosition  = mEndAdapter.getSelected();
+            mEndAdapter.setSelected(position);
+            if (mAdapter!=null){
+                mAdapter.setSelected(-1);
+            }
+        }
+        if (mAdapter!=null){
+            mAdapter.notifyDataSetChanged();
+        }
+        if (mEndAdapter != null){
+            mEndAdapter.notifyDataSetChanged();
+        }
+        updateSpecificItem(oldSelectPosition,point);
+        updateSpecificItem(position,point);
     }
 
     @Override
@@ -89,9 +134,10 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
     }
 
     @Override
-    public void onItemClick(int position) {
-        LogUtils.operation("更改了设备ID deviceId 在配对");
-        presenter.changeFocusPosition(position);
+    public void onItemClick(int position,int point) {
+        LogUtils.operation("更改了设备ID deviceId 在配对"+"position:"+position+"point:"+point);
+        presenter.setPoint(point);
+        presenter.changeFocusPosition(position,point);
     }
 
     @OnClick({R.id.sw_auto_pair})
@@ -100,6 +146,22 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
             case R.id.sw_auto_pair:
                 LogUtils.operation("勾选了自动匹配");
                 presenter.changeAutoPair(mSwAutoPair.isChecked());
+                break;
+        }
+    }
+
+
+    @Override
+    public void handleMessage(Message msg) {
+
+        switch (msg.what) {
+            case UPDATE_SPECIFIC_ITEM:
+                if (msg.arg2 == 0){
+                    mAdapter.notifyItemChanged(msg.arg1);
+                }else {
+                    mEndAdapter.notifyItemChanged(msg.arg1);
+                }
+
                 break;
         }
     }

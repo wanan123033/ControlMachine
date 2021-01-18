@@ -1,6 +1,8 @@
 package com.feipulai.exam.activity.RadioTimer.newRadioTimer;
 
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +26,7 @@ import com.feipulai.exam.adapter.RunNumberAdapter2;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.RunStudent;
 import com.feipulai.exam.utils.ResultDisplayUtils;
+import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.List;
@@ -82,7 +85,8 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     private SoundPlayUtils playUtils;
     private SportPresent sportPresent;
     private TestState testState;
-
+    private final int RUN_START = 0X01;
+    private final int RUN_STOP = 0X02;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_new_radio_test;
@@ -106,19 +110,29 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         playUtils = SoundPlayUtils.init(this);
         sportPresent = new SportPresent(this,(Integer.parseInt(runTimerSetting.getRunNum())+1)*2);//机器个数 = (跑到数量+1)*2
         sportPresent.rollConnect();
+        sportPresent.setContinueRoll(true);
         startMode = runTimerSetting.getInterceptPoint();
         testState = TestState.UN_STARTED;
+        tvGetTime.setVisibility(View.GONE);
+        setView(false);
     }
 
+    private void setView(boolean enable) {
+        tvWaitStart.setSelected(!enable);
+        tvWaitReady.setSelected(enable);
+        tvFaultBack.setSelected(enable);
+        tvForceStart.setSelected(enable);
+        tvMarkConfirm.setSelected(enable);
+    }
 
     @Override
     public void updateDeviceState(int deviceId, int state) {
-        if (deviceId - 1 >= mList.size())
-            return;
-        if (state != mList.get(deviceId - 1).getConnectState()) {//更新设备连接状态
-            mList.get(deviceId - 1).setConnectState(state);
-            mAdapter2.notifyDataSetChanged();
-        }
+//        if (deviceId - 1 >= mList.size())
+//            return;
+//        if (state != mList.get(deviceId - 1).getConnectState()) {//更新设备连接状态
+//            mList.get(deviceId - 1).setConnectState(state);
+//            mAdapter2.notifyDataSetChanged();
+//        }
 
     }
 
@@ -129,11 +143,15 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     public void getDeviceStart() {
         initTime = 0;
         testState = TestState.WAIT_RESULT;
+        mHandler.sendEmptyMessage(RUN_START);
+        timerKeeper.setStartInit();
     }
 
     @Override
     public void receiveResult(SportResult sportResult) {
+        if (testState == TestState.WAIT_RESULT){
 
+        }
     }
 
     /**
@@ -142,7 +160,8 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
      */
     @Override
     public void getDeviceStop() {
-
+        timerKeeper.stopKeepTime();
+        mHandler.sendEmptyMessage(RUN_STOP);
     }
 
     @Override
@@ -176,22 +195,55 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 }
                 mAdapter2.notifyDataSetChanged();
                 playUtils.play(13);
+                setView(true);
+                tvMarkConfirm.setSelected(false);
 
                 break;
             case R.id.tv_wait_ready:
                 LogUtils.operation("红外计时点击了预备");
                 playUtils.play(14);
+                tvWaitReady.setSelected(false);
                 break;
             case R.id.tv_fault_back:
-                sportPresent.presentStop();
-
+                sportPresent.setDeviceStateStop();
+                setView(false);
+                for (RunStudent runStudent : mList) {
+                    runStudent.setMark("");
+                    runStudent.getResultList().clear();
+                }
+                mAdapter2.notifyDataSetChanged();
                 break;
             case R.id.tv_force_start:
                 sportPresent.waitStart();
                 break;
             case R.id.tv_mark_confirm:
-
+                sportPresent.setDeviceStateStop();
                 break;
         }
+    }
+
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what){
+                case RUN_START:
+                    tvWaitStart.setSelected(false);
+                    tvWaitReady.setSelected(false);
+                    tvForceStart.setSelected(false);
+                    tvMarkConfirm.setSelected(true);
+                    break;
+                case RUN_STOP:
+                    setView(false);
+                    break;
+            }
+            return false;
+        }
+    });
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sportPresent.presentStop();
+        timerKeeper.stop();
     }
 }

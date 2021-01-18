@@ -397,6 +397,7 @@ public class Radio868Result {
                 LogUtils.normal("视力返回数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data));
                 break;
             case ItemDefault.CODE_SPORT_TIMER:
+            case ItemDefault.CODE_ZFP:
                 if ((data[0] & 0xff) == 0xAA && data.length == data[1]) {
                     setResult(new SportResult(data));
                     switch (data[7]) {
