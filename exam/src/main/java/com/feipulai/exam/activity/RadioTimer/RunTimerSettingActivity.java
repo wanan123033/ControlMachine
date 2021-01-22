@@ -110,6 +110,10 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         if (runTimerSetting.getConnectType() == 1){
             selfCheck.setText("设备配对");
         }
+
+        if (runTimerSetting.getConnectType() == 1){
+            rgModel.setVisibility(View.GONE);
+        }
     }
 
     @Nullable

@@ -298,7 +298,7 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
                     updateDevice(new BaseDeviceState(BaseDeviceState.STATE_ERROR, 1));
                     break;
                 case CONNECTED:
-                    updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
+                    updateDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE , 1));
                     break;
                 case GET_SCORE_RESPONSE:
                     SargentJumpResult result = (SargentJumpResult) msg.obj;

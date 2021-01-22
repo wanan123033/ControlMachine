@@ -53,7 +53,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
     private boolean isAddTool;
     private BaseStuPair baseStuPair;
     private void init() {
-        updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
+        updateDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE, 1));
     }
 
     @Override
@@ -266,10 +266,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
                     }
                     break;
                 case CONNECTED:
-                    if (testState == TestState.WAIT_RESULT){
-                        updateDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE, 1));
-                    }
-
+                    updateDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE, 1));
                     break;
                 case GET_SCORE_RESPONSE:
                     SargentJumpResult result = (SargentJumpResult) msg.obj;

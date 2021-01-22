@@ -140,7 +140,7 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
             case TIMING_STATE_BACK:
 //                holder.timer.setBase(SystemClock.elapsedRealtime());//计时器清零
 //                holder.timer.setTextColor(Color.WHITE);
-//                holder.timer.stop();
+//                holder.timer.release();
                 holder.tvTimingState.setText("空闲");
                 holder.tvTimingState.setTextColor(Color.BLACK);
                 holder.tvTimingState.setBackgroundResource(R.color.result_points);
@@ -148,7 +148,7 @@ public class RaceTimingAdapter extends RecyclerView.Adapter<RaceTimingAdapter.VH
             case TIMING_STATE_COMPLETE:
 //                holder.timer.setBase(SystemClock.elapsedRealtime());//计时器清零
 //                holder.timer.setTextColor(Color.WHITE);
-//                holder.timer.stop();
+//                holder.timer.release();
                 holder.tvTimingState.setText("空闲");
                 holder.tvTimingState.setTextColor(Color.BLACK);
                 holder.tvTimingState.setBackgroundResource(R.color.result_points);

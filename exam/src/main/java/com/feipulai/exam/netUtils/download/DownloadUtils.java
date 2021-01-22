@@ -146,7 +146,7 @@ public class DownloadUtils {
                 if (stopList.contains(file.getName())) {
                     file.delete();
                     stopList.remove(file.getName());
-                    LogUtil.logDebugMessage("stop: " + file.getName());
+                    LogUtil.logDebugMessage("release: " + file.getName());
                     throw new ServerResponseException(1, "");
 
                 }

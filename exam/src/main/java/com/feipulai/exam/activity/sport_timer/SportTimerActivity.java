@@ -30,7 +30,6 @@ import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseAFRFragment;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
-import com.feipulai.exam.activity.basketball.TimeUtil;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.fragment.IndividualCheckFragment;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
@@ -681,7 +680,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
     protected void onStop() {
         super.onStop();
         sportPresent.setContinueRoll(false);
-        sportPresent.presentStop();
+        sportPresent.presentRelease();
     }
 
     public void showAFR() {

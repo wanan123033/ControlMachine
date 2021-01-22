@@ -138,7 +138,7 @@ public class SportPresent implements SportContract.Presenter {
     }
 
 
-    public void presentStop() {
+    public void presentRelease() {
         if (disposable != null) {
             disposable.dispose();
         }

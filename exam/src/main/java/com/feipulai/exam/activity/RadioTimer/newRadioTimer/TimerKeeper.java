@@ -48,7 +48,7 @@ public class TimerKeeper {
         temp = 0;
     }
 
-    public void stop() {
+    public void release() {
         if (disposable != null) {
             disposable.dispose();
         }

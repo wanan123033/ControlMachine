@@ -61,7 +61,7 @@ public class RunTimerImpl implements SerialDeviceManager.RS232ResiltListener {
                 listener.onTestState(5);
                 break;
             case RUN_TIMER_STOP:
-                log("红外计时===>stop" );
+                log("红外计时===>release" );
                 listener.onTestState(6);
                 break;
 

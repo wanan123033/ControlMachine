@@ -380,8 +380,8 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
 //                  * @param status STATUS_FREE		1		//FREE
 //                *               STATUS_WAIT  		2		//WAIT To Start
 //                *               STATUS_RUNING 	    3		//Start Run
-//                *               STATUS_PREP  		4		//Prepare to stop
-//                *               STATUS_PAUSE 		5		//Display stop time,But Timer is Running
+//                *               STATUS_PREP  		4		//Prepare to release
+//                *               STATUS_PAUSE 		5		//Display release time,But Timer is Running
         LogUtils.operation("足球设备状态值:" + udpStatus);
         pairs.get(0).getBaseDevice().setState(BaseDeviceState.STATE_FREE);
         switch (udpStatus) {

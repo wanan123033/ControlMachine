@@ -32,7 +32,6 @@ import com.feipulai.exam.entity.RunStudent;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.CommonPopupWindow;
 import com.feipulai.exam.view.ResultPopWindow;
-import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
@@ -40,6 +39,10 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+
+import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_RESULT;
+import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_START;
+import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_STOP;
 
 public class NewRadioTestActivity extends BaseTitleActivity implements SportContract.SportView, TimerKeeper.TimeUpdateListener {
 
@@ -73,8 +76,6 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     TextView tvFaultBack;
     @BindView(R.id.tv_force_start)
     TextView tvForceStart;
-    @BindView(R.id.tv_get_time)
-    TextView tvGetTime;
     @BindView(R.id.tv_mark_confirm)
     TextView tvMarkConfirm;
     @BindView(R.id.rl_control)
@@ -92,9 +93,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     private SoundPlayUtils playUtils;
     private SportPresent sportPresent;
     private TestState testState;
-    private final int RUN_START = 0X01;
-    private final int RUN_STOP = 0X02;
-    private final int RUN_RESULT = 0X03;
+
     private ResultPopWindow resultPopWindow;
     private List<String> marks = new ArrayList<>();
     private String startTime;
@@ -132,7 +131,6 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         sportPresent.setContinueRoll(true);
         startMode = runTimerSetting.getInterceptPoint();
         testState = TestState.UN_STARTED;
-        tvGetTime.setVisibility(View.GONE);
         setView(false);
 
         PopAdapter popAdapter = new PopAdapter(marks);
@@ -295,6 +293,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 if (testState == TestState.UN_STARTED){
                     LogUtils.operation("红外计时点击了开始");
                     sportPresent.waitStart();
+                    playUtils.play(15);
                 }
 
                 break;
@@ -347,7 +346,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        sportPresent.presentStop();
-        timerKeeper.stop();
+        sportPresent.presentRelease();
+        timerKeeper.release();
     }
 }

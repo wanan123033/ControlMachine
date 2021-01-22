@@ -381,6 +381,7 @@ public class TestConfigs {
         selectActivity.add(ItemDefault.CODE_HWSXQ);
         selectActivity.add(ItemDefault.CODE_ZQYQ);
         selectActivity.add(ItemDefault.CODE_ZWTQQ);
+        selectActivity.add(ItemDefault.CODE_ZFP);
 
 
         // 每个项目对应的个人检录Activity

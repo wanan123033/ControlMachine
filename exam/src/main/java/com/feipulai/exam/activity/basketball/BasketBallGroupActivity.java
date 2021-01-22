@@ -359,7 +359,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
     @Override
     public void getResult(BasketballResult result) {
         LogUtils.operation("篮球获取到结果数据:state=" + state + ",result=" + result);
-//        timerUtil.stop();
+//        timerUtil.release();
         //非测试不做处理
         if (state == WAIT_FREE || state == WAIT_CHECK_IN || TextUtils.isEmpty(testDate)) {
             return;
@@ -534,7 +534,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                             toastSpeak("存在未连接设备，请配对");
                         }
 
-//                        timerUtil.stop();
+//                        timerUtil.release();
 ////                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
 //                        ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
                     } else {
