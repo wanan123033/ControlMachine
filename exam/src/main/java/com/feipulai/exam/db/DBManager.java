@@ -1729,6 +1729,11 @@ public class DBManager {
                 .unique();
     }
 
+    public List<RoundResult> queryResultBySchedule(String scheduleNo) {
+        return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.ScheduleNo.eq(scheduleNo))
+                .list();
+    }
 
     /**
      * 查询对应考生当前项目轮次成绩
