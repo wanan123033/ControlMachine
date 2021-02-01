@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.manager.SportTimerManger;
+import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.SportResult;
 import com.feipulai.exam.MyApplication;
@@ -24,6 +25,7 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.RoundResult;
+import com.feipulai.exam.entity.RunStudent;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
@@ -261,6 +263,24 @@ public class SportPresent implements SportContract.Presenter {
         sportTimerManger.getDeviceState(1, SettingHelper.getSystemSetting().getHostId());
     }
 
+    public void printResult(Student student, List<String> results, int current, int max, int groupNo) {
+        if (!SettingHelper.getSystemSetting().isAutoPrint() || current != max)
+            return;
+        PrinterManager.getInstance().print(" \n");
+        if (groupNo != -1) {
+            PrinterManager.getInstance().print(TestConfigs.sCurrentItem.getItemName() + SettingHelper.getSystemSetting().getHostId() + "号机" + groupNo + "组");
+        } else {
+            PrinterManager.getInstance().print(TestConfigs.sCurrentItem.getItemName() + SettingHelper.getSystemSetting().getHostId() + "号机");
+        }
+        PrinterManager.getInstance().print("考  号:" + student.getStudentCode());
+        PrinterManager.getInstance().print("姓  名:" + student.getStudentName());
+        for (int i = 0; i < results.size(); i++) {
+            PrinterManager.getInstance().print(String.format("第%1$d次：", i + 1) + results.get(i));
+        }
+        PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()));
+        PrinterManager.getInstance().print(" \n");
+    }
+
     /**
      * 成绩保存
      * @param roundNo
@@ -433,6 +453,49 @@ public class SportPresent implements SportContract.Presenter {
 
     }
 
+    /**
+     * 展示方式为 名字+时间
+     *
+     * @param runs
+     */
+    public void setShowLed(List<RunStudent> runs) {
+        mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(),SettingHelper.getSystemSetting().getHostId());
+        int y;
+        int realSize = runs.size();
+        for (int i = 0; i < runs.size(); i++) {
+            Student student = runs.get(i).getStudent();
+            if (student == null) {
+                realSize--;
+            }
+        }
+        for (int i = 0; i < realSize; i++) {
+            Student student = runs.get(i).getStudent();
+            y = i;
+            if (student != null) {
+                String name = getFormatName(student.getStudentName());
+                if (runs.get(i).getMark() != null) {
+                    name = name + runs.get(i).getMark();
+                }
+                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), name,
+                        0, y, false, true);
+            }
+
+            if (i == (realSize - 1)) {
+                return;
+            }
+            if (realSize > 3 && y == 3) {
+                try {
+                    Thread.sleep(2000);
+                    mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(),SettingHelper.getSystemSetting().getHostId());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
+    }
+
     public void updateResultLed(String result) {
 
         byte[] data = new byte[16];
@@ -544,5 +607,23 @@ public class SportPresent implements SportContract.Presenter {
                 student.getStudentCode(), testNo + "", null, RoundResultBean.beanCope(roundResultList));
 
         uploadResult(uploadResults);
+    }
+
+    private String getFormatName(String name) {
+        String studentName = name;
+        if (studentName.length() >= 4) {
+            studentName = studentName.substring(0, 4);
+        } else {
+            StringBuilder sb = new StringBuilder();
+            sb.append(studentName);
+            int spaces = 8 - studentName.length() * 2;
+            //Log.i("james","spaces:" + spaces);
+            for (int j = 0; j < spaces; j++) {
+                sb.append(' ');
+            }
+            studentName = sb.toString();
+        }
+
+        return studentName;
     }
 }

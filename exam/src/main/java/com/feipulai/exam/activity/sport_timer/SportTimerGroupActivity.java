@@ -354,6 +354,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
             case R.id.tv_confirm:
                 startTest = false;
                 if (testState == TestState.RESULT_CONFIRM) {
+                    txtDeviceStatus.setText("空闲");
                     tvDelete.setEnabled(false);
                     txtWaiting.setEnabled(true);
                     testState = TestState.UN_STARTED;
@@ -366,7 +367,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                         TestCache.getInstance().getResults().put(stu, results);
                     }
 //                    sportPresent.showStuInfo(llStuDetail, pair.getStudent(), testResults);
-                    if (roundNo <= testNum) {
+                    if (roundNo < testNum) {
                         partResultAdapter.replaceData(resultList.get(roundNo - 1).getSportTimeResults());
                         testCountAdapter.setSelectPosition(roundNo - 1);
                         testCountAdapter.notifyDataSetChanged();
@@ -623,6 +624,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                 setTxtEnable(false);
                 resultList.get(roundNo - 1).setTestTime(System.currentTimeMillis() + "");
                 receiveTime = 0;
+                txtDeviceStatus.setText("计时");
             }
         });
     }
@@ -677,6 +679,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                 public void run() {
                     txtStopTiming.setEnabled(false);
                     txtIllegalReturn.setEnabled(false);
+                    txtDeviceStatus.setText("停止计时");
                 }
             });
         }

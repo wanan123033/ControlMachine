@@ -523,12 +523,13 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
             case R.id.tv_confirm:
 //                resultMap.put(roundNo,partResultList);
                 if (testState == TestState.RESULT_CONFIRM) {
+                    txtDeviceStatus.setText("空闲");
                     tvDelete.setEnabled(false);
                     txtWaiting.setEnabled(true);
                     testState = TestState.UN_STARTED;
                     sportPresent.saveResult(roundNo, mStudentItem, testResults.get(roundNo - 1));
                     sportPresent.showStuInfo(llStuDetail, pair.getStudent(), testResults);
-                    if (roundNo <= testNum) {
+                    if (roundNo < testNum) {
                         roundNo++;
                         partResultAdapter.replaceData(testResults.get(roundNo - 1).getSportTimeResults());
                         testCountAdapter.setSelectPosition(roundNo - 1);
@@ -620,6 +621,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 setTxtEnable(false);
                 testResults.get(roundNo - 1).setTestTime(System.currentTimeMillis() + "");
                 receiveTime = 0;
+                txtDeviceStatus.setText("计时");
             }
         });
     }
@@ -670,6 +672,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 public void run() {
                     txtStopTiming.setEnabled(false);
                     txtIllegalReturn.setEnabled(false);
+                    txtDeviceStatus.setText("停止计时");
                 }
             });
 
@@ -680,7 +683,6 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
     protected void onStop() {
         super.onStop();
         sportPresent.setContinueRoll(false);
-        sportPresent.presentRelease();
     }
 
     public void showAFR() {
@@ -710,5 +712,11 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
             StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
             onIndividualCheckIn(student, studentItem, new ArrayList<RoundResult>());
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sportPresent.presentRelease();
     }
 }

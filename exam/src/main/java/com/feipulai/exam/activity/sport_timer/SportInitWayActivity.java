@@ -21,6 +21,7 @@ import com.feipulai.exam.activity.sport_timer.bean.InitRoute;
 import com.feipulai.exam.activity.sport_timer.bean.SportTimerSetting;
 import com.feipulai.exam.config.TestConfigs;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,12 +84,19 @@ public class SportInitWayActivity extends BaseTitleActivity {
             }
         });
 
-        if (initRoutes.size() > 1) {
-            selectRoute = 1;
-        } else {
-            InitRoute initRoute = new InitRoute();
-            initRoute.setIndex(2);
-            initRoutes.add(initRoute);
+        String route = setting.getInitRoute();
+        if (!TextUtils.isEmpty(route)) {
+            Gson gson = new Gson();
+            initRoutes = gson.fromJson(route, new TypeToken<List<InitRoute>>() {
+            }.getType());
+        }else {
+            if (initRoutes.size() > 1) {
+                selectRoute = 1;
+            } else {
+                InitRoute initRoute = new InitRoute();
+                initRoute.setIndex(2);
+                initRoutes.add(initRoute);
+            }
         }
         routeAdapter = new InitRouteAdapter(initRoutes);
         rvInitRoute.setAdapter(routeAdapter);
@@ -122,9 +130,10 @@ public class SportInitWayActivity extends BaseTitleActivity {
             case R.id.tv_confirm:
                 if (TextUtils.isEmpty(initRoutes.get(selectRoute).getDeviceName())){
                     initRoutes.remove(selectRoute);
-                    if (selectRoute == (initRoutes.size()-1)){
-                        selectRoute--;
-                    }
+                    selectRoute--;
+//                    if (selectRoute == (initRoutes.size()-1)){
+//                        selectRoute--;
+//                    }
                     routeAdapter.notifyDataSetChanged();
                 }
                 break;
