@@ -99,6 +99,7 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
                 break;
             case R.id.sp_mark_degree:
                 setting.setDegree(position);
+                TestConfigs.sCurrentItem.setDigital(position + 1);
                 break;
             case R.id.sp_mark_type:
                 setting.setMartType(position);

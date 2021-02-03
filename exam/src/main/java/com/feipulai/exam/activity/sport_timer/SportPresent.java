@@ -37,12 +37,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
@@ -62,7 +59,7 @@ public class SportPresent implements SportContract.Presenter {
     private LEDManager mLEDManager;
     private int interval;
 //    private ScheduledExecutorService checkService;
-    private boolean syncTime;
+    private boolean syncTime;//与子机同步时间是否结束
     public SportPresent(SportContract.SportView sportView, int deviceCount) {
         mLEDManager = new LEDManager();
         mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
@@ -104,19 +101,19 @@ public class SportPresent implements SportContract.Presenter {
 
     private void intervalRun() {
         if (connect) {
-            if (getRunState() == 0) {
+            if (getRunState() == 0) {//处于空闲时
                 if (interval % 6 == 0){
                     for (int i = 0; i < deviceCount; i++) {
                         sportTimerManger.connect(i + 1, SettingHelper.getSystemSetting().getHostId());
                     }
-                    if (!syncTime){
+                    if (!syncTime){//与子机同步时间是否结束
                         sportTimerManger.syncTime(1, SettingHelper.getSystemSetting().getHostId(), getTime());
                         sportTimerManger.getTime(1, SettingHelper.getSystemSetting().getHostId());
                     }
                 }
                 interval++;
             }
-            if (getRunState() == 1) {
+            if (getRunState() == 1) {//处于计时状态
                 interval = 0;
                 for (int i = 0; i < deviceCount; i++) {
                     sportTimerManger.getRecentCache(i + 1, SettingHelper.getSystemSetting().getHostId(),sendIndex[i]);
@@ -128,10 +125,10 @@ public class SportPresent implements SportContract.Presenter {
                 if (checkState[i] == 0) {
                     disConnect[i]++;
                     if (disConnect[i] > 10) {
-                        sportView.updateDeviceState(i + 1, 0);
+                        sportView.updateDeviceState(i + 1, 0);//连接状态失去
                     }
                 } else {
-                    sportView.updateDeviceState(i + 1, 1);
+                    sportView.updateDeviceState(i + 1, 1);//正常连接
                     checkState[i] = 0;
                     disConnect[i] = 0;
                 }
@@ -139,7 +136,7 @@ public class SportPresent implements SportContract.Presenter {
         }
     }
 
-
+    //释放资源
     public void presentRelease() {
         if (disposable != null) {
             disposable.dispose();
@@ -153,6 +150,9 @@ public class SportPresent implements SportContract.Presenter {
     @Override
     public void setContinueRoll(boolean connect) {
         this.connect = connect;
+        if (connect){
+            RadioManager.getInstance().setOnRadioArrived(sportResultListener);
+        }
     }
 
     @Override
@@ -163,7 +163,7 @@ public class SportPresent implements SportContract.Presenter {
 
     private SportResultListener sportResultListener = new SportResultListener(new SportResultListener.SportMsgListener() {
         @Override
-        public void onConnect(SportResult result) {
+        public void onConnect(SportResult result) {//连接情况
 //            sportView.updateDeviceState(result.getDeviceId(),1);
             if (result.getDeviceId() == 0){
                 return;
@@ -173,11 +173,11 @@ public class SportPresent implements SportContract.Presenter {
 
         @Override
         public void onGetTime() {
-            syncTime = true;
+            syncTime = true;//同步时间
         }
 
         @Override
-        public void onGetResult(SportResult result) {
+        public void onGetResult(SportResult result) {//收到结果
             Log.i("SportResultListener", result.toString());
             checkState[result.getDeviceId() - 1] = 1;
             sendIndex[result.getDeviceId()-1] = result.getSumTimes() == 0? 0:(result.getSumTimes()-1);
@@ -566,6 +566,14 @@ public class SportPresent implements SportContract.Presenter {
 
     }
 
+    /**
+     * 新红外计时保存结果
+     * @param student
+     * @param result
+     * @param currentTestTime
+     * @param testNo
+     * @param startTime
+     */
     public void saveResultRadio(Student student, int result, int currentTestTime, int testNo,String startTime) {
 
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());

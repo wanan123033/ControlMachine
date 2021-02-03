@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.serial.beans.SportResult;
 import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.RadioChannelCommand;
@@ -124,6 +125,8 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
     private List<StuDevicePair> pairs = new ArrayList<>(1);
     private VolleyBallGroupStuAdapter stuPairAdapter;
     private boolean startTest = true;
+    private SystemSetting systemSetting;
+    private LEDManager ledManager = new LEDManager();
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_group_sport_timer;
@@ -131,9 +134,11 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
 
     @Override
     protected void initData() {
+        systemSetting = SettingHelper.getSystemSetting();
         setting = SharedPrefsUtil.loadFormSource(this, SportTimerSetting.class);
         if (setting == null)
             setting = new SportTimerSetting();
+        TestConfigs.sCurrentItem.setDigital(setting.getDegree() + 1);
         deviceStates = new ArrayList<>();
         for (int i = 0; i < setting.getDeviceCount(); i++) {
             DeviceState deviceState = new DeviceState();
@@ -226,7 +231,22 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
         sportPresent = new SportPresent(this,setting.getDeviceCount());
         sportPresent.rollConnect();
         sportPresent.setContinueRoll(true);
+    }
 
+    protected void displayCheckedInLED() {
+        Student student = TestCache.getInstance().getAllStudents().get(position());
+        List<RoundResult> results = TestCache.getInstance().getResults().get(student);
+
+        RoundResult lastResult = null;
+        if (results != null && results.size() > 0) {
+            lastResult = results.get(results.size() - 1);
+        }
+        int hostId = systemSetting.getHostId();
+        ledManager.showString(hostId, pairs.get(position()).getStudent().getLEDStuName(), 5, 0, true, lastResult == null);
+        if (lastResult != null) {
+            String displayResult = ResultDisplayUtils.getStrResultForDisplay(lastResult.getResult());
+            ledManager.showString(hostId, "已有成绩:" + displayResult, 2, 3, false, true);
+        }
     }
 
     //左边点击考生
@@ -282,6 +302,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
         testCountAdapter.setSelectPosition(roundNo - 1);
         testCountAdapter.notifyDataSetChanged();
         partResultAdapter.replaceData(resultList.get(roundNo - 1).getSportTimeResults());
+        displayCheckedInLED();
     }
 
     @OnClick({R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal, R.id.txt_waiting, R.id.txt_illegal_return,
@@ -366,6 +387,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                     if (results != null) {
                         TestCache.getInstance().getResults().put(stu, results);
                     }
+
 //                    sportPresent.showStuInfo(llStuDetail, pair.getStudent(), testResults);
                     if (roundNo < testNum) {
                         partResultAdapter.replaceData(resultList.get(roundNo - 1).getSportTimeResults());
