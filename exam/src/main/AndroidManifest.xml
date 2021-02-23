@@ -45,7 +45,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.RadioTimer.newRadioTimer.NewRadioGroupActivity"></activity>
+        <activity android:name=".activity.situp.check.DeviceChangeActivity"></activity>
+        <activity android:name=".activity.situp.check.SitUpArmCheckActivity" />
+        <activity android:name=".activity.RadioTimer.newRadioTimer.NewRadioGroupActivity" />
         <activity android:name=".activity.RadioTimer.newRadioTimer.pair.NewRadioPairActivity" />
         <activity android:name=".activity.RadioTimer.newRadioTimer.NewRadioTestActivity" />
         <activity android:name=".activity.RadioTimer.newRadioTimer.PreTestActivity" />
@@ -199,6 +201,9 @@
             android:configChanges="keyboardHidden|keyboard" />
         <activity
             android:name=".activity.situp.check.SitUpCheckActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.situp.check.SitUpPatternSelectActivity"
             android:configChanges="keyboardHidden|keyboard" />
         <activity
             android:name=".activity.situp.setting.SitUpSettingActivity"

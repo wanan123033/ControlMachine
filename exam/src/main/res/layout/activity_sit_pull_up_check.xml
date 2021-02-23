@@ -102,6 +102,12 @@
                     style="@style/style_rectangle_btn"
                     android:drawableTop="@drawable/change_bad"
                     android:text="故障更换" />
+                <Button
+                    android:id="@+id/btn_device_details"
+                    style="@style/style_rectangle_btn"
+                    android:drawableTop="@drawable/change_bad"
+                    android:visibility="gone"
+                    android:text="设备详情" />
 
                 <Button
                     android:id="@+id/btn_device_pair"

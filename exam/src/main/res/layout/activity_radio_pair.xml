@@ -53,6 +53,7 @@
             android:layout_margin="10dp"
             android:background="@drawable/btn_background"
             android:gravity="center"
+            android:visibility="gone"
             android:text="自定义路线"
             android:textColor="@color/white"
             android:textSize="18dp" />

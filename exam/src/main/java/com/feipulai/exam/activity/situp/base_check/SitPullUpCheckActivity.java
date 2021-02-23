@@ -47,6 +47,8 @@ public abstract class SitPullUpCheckActivity<Setting>
 	Button btnLedSetting;
 	@BindView(R.id.btn_change_bad)
 	Button btnChangeBad;
+	@BindView(R.id.btn_device_details)
+	Button btnDeviceDetails;
 	@BindView(R.id.btn_device_pair)
 	Button btnDevicePair;
 	@BindView(R.id.view_bottom)
@@ -80,12 +82,22 @@ public abstract class SitPullUpCheckActivity<Setting>
 	protected ListView getResultView() {
 		return mLvResults;
 	}
-	
+
+	public void setDeviceVisible(){
+		btnDeviceDetails.setVisibility(View.VISIBLE);
+		btnChangeBad.setVisibility(View.GONE);
+	}
+
 	@Override
 	protected View getChangeBadView() {
 		return btnChangeBad;
 	}
-	
+
+	@Override
+	protected View getDetailsView() {
+		return btnDeviceDetails;
+	}
+
 	@Override
 	protected View getLedSettingView() {
 		return btnLedSetting;

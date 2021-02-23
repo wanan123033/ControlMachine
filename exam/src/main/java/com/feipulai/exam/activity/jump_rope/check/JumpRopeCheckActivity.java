@@ -104,6 +104,11 @@ public class JumpRopeCheckActivity
     }
 
     @Override
+    protected View getDetailsView() {
+        return null;
+    }
+
+    @Override
     protected View getLedSettingView() {
         return mBtnLedSetting;
     }

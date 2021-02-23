@@ -57,6 +57,7 @@ import com.feipulai.exam.activity.sitreach.SitReachSelectActivity;
 import com.feipulai.exam.activity.sitreach.SitReachSetting;
 import com.feipulai.exam.activity.sitreach.SitReachSettingActivity;
 import com.feipulai.exam.activity.situp.check.SitUpCheckActivity;
+import com.feipulai.exam.activity.situp.check.SitUpPatternSelectActivity;
 import com.feipulai.exam.activity.situp.setting.SitUpSetting;
 import com.feipulai.exam.activity.situp.setting.SitUpSettingActivity;
 import com.feipulai.exam.activity.sport_timer.SportSettingActivity;
@@ -392,7 +393,7 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallSelectActivity.class);
 
         TestConfigs.proActivity.put(ItemDefault.CODE_TS, JumpRopeCheckActivity.class);
-        TestConfigs.proActivity.put(ItemDefault.CODE_YWQZ, SitUpCheckActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_YWQZ, SitUpPatternSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_SGBQS, SitUpCheckActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_YTXS, PullUpSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_PQ, VolleyballPatternSelectActivity.class);
@@ -413,7 +414,7 @@ public class TestConfigs {
         TestConfigs.groupActivity.put(ItemDefault.CODE_ZFP, RunTimerActivityGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_TS, JumpRopeCheckActivity.class);
-        TestConfigs.groupActivity.put(ItemDefault.CODE_YWQZ, SitUpCheckActivity.class);
+        TestConfigs.groupActivity.put(ItemDefault.CODE_YWQZ, SitUpPatternSelectActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_SGBQS, SitUpCheckActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_YTXS, PullUpSelectActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_PQ, VolleyBallGroupActivity.class);

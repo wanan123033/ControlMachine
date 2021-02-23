@@ -13,7 +13,7 @@ public class SportTimerManger {
      *
      * @param deviceId
      * @param targetFrequency 【0】包头，1字节，0XAA
-     *                        【1】包长，1字节，N=16
+     *                        【1】包长，1字节，N=17
      *                        【2】项目编号，1字节，0x0E （运动计时仪）
      *                        【3】目标设备编号，1字节，0x03计时子机
      *                        【4】本设备编号，1字节，0x01 安卓机
@@ -24,6 +24,7 @@ public class SportTimerManger {
      *                        【10】设置无线信道号，1字节
      *                        【11】设置无线传输速率，1字节
      *                        【12】设置主机号，1字节
+     *                        【13】设置子机号，1字节
      *                        【N-3】预留，1字节，0x00
      *                        【N-2】检验和，1字节，sum={1:N-3}
      *                        【N-1】包尾，1字节,0x0D
@@ -31,7 +32,7 @@ public class SportTimerManger {
     public void setFrequency(int deviceId, int targetFrequency, int hostId, int targetHostId) {
         byte data[] = new byte[16];
         data[0] = (byte) 0xAA;
-        data[1] = (byte) 16;
+        data[1] = (byte) 17;
         data[2] = (byte) 0x0E;
         data[3] = (byte) 0x03;
         data[4] = (byte) 0X01;
@@ -43,11 +44,12 @@ public class SportTimerManger {
         data[10] = (byte) (targetFrequency & 0xff);
         data[11] = (byte) 0x04;
         data[12] = (byte) targetHostId;
-        data[13] = (byte) 0x00;
+        data[13] = (byte) deviceId;
+        data[14] = (byte) 0x00;
         for (int i = 1; i <= data.length - 3; i++) {
-            data[14] += data[i];
+            data[15] += data[i];
         }
-        data[15] = (byte) 0x0d;
+        data[16] = (byte) 0x0d;
 
         RadioChannelCommand command = new RadioChannelCommand(targetFrequency);
         LogUtils.normal(data.length + "---" + StringUtility.bytesToHexString(data) + "---运动计时设置参数指令");
