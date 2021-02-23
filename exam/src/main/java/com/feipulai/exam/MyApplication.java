@@ -30,6 +30,7 @@ public class MyApplication extends MultiDexApplication {
     public static final String PATH_LOG_NAME = "KS_LOGGER";//日志文件夹名称
     public static String SOFTWAREUUID = "FP-KTA2108_KS";//软件识别码
     public static String HARDWAREUUID = "FP-KTA2108_KS_ANDROID";//硬件识别码
+    public static final String PATH_FACE = FileUtil.PATH_BASE + "KS_FACE_IMG/"; //人脸识别图片信息文件路径
 
     public static final String DEVICECODE = "111";//硬件识别码
 
@@ -69,6 +70,7 @@ public class MyApplication extends MultiDexApplication {
         FileUtil.mkdirs(PATH_SPECIFICATION);
         FileUtil.mkdirs(PATH_IMAGE);
         FileUtil.mkdirs(PATH_PDF_IMAGE);
+        FileUtil.mkdirs(PATH_FACE);
         FileUtil.mkdirs(FaceServer.ROOT_PATH);
         //视频播放初始化库
         PlayerLibrary.init(this);
