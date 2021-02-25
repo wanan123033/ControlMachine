@@ -131,6 +131,10 @@ public class ServerMessage {
             ToastUtils.showShort("没有需要上传的成绩");
             return;
         }
+        if (SettingHelper.getSystemSetting().isTCP()) {
+            uploadTCPResult(context, uploadResultsList);
+            return;
+        }
         final LoadingDialog loadingDialog;
         if (context != null) {
             loadingDialog = new LoadingDialog(context);
@@ -172,6 +176,7 @@ public class ServerMessage {
                 }
             }
         });
+
         subscriber.getScheduleAll();
     }
 

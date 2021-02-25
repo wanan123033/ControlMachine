@@ -146,7 +146,8 @@ public abstract class AbstractRadioCheckActivity<Setting>
         getStartTestView().setOnClickListener(this);
         getLedSettingView().setOnClickListener(this);
         getPairView().setOnClickListener(this);
-        getDetailsView().setOnClickListener(this);
+        if (getDetailsView() != null)
+            getDetailsView().setOnClickListener(this);
         if (SettingHelper.getSystemSetting().getCheckTool() == 4 && setAFRFrameLayoutResID() != 0) {
             afrFrameLayout = findViewById(setAFRFrameLayoutResID());
             afrFragment = new BaseAFRFragment();
@@ -182,7 +183,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
             showDeleteAllWarning();
         } else if (v == getDeleteStuView()) {// 删除考生
             presenter.deleteStudent();
-        }else if (v == getDetailsView()){
+        } else if (v == getDetailsView()) {
             startActivity(new Intent(this, getPairActivity()));
         }
     }
@@ -407,7 +408,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
                 if (student == null) {
                     InteractUtils.toastSpeak(AbstractRadioCheckActivity.this, "该考生不存在");
                     return;
-                }else{
+                } else {
                     afrFrameLayout.setVisibility(View.GONE);
                 }
                 StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
@@ -421,7 +422,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
                     return;
                 }
                 // 可以直接检录
-                presenter.onIndividualCheckIn(student,studentItem,results);
+                presenter.onIndividualCheckIn(student, studentItem, results);
             }
         });
 
