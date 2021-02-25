@@ -22,6 +22,10 @@ import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
+import com.feipulai.device.serial.RadioManager;
+import com.feipulai.device.serial.beans.StringUtility;
+import com.feipulai.device.serial.command.ConvertCommand;
+import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
@@ -83,6 +87,9 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     @Override
     protected void initData() {
         super.initData();
+        RadioChannelCommand command = new RadioChannelCommand(SettingHelper.getSystemSetting().getUseChannel());
+        LogUtils.normal(command.getCommand().length + "---" + StringUtility.bytesToHexString(command.getCommand()) + "---切频指令");
+        RadioManager.getInstance().sendCommand(new ConvertCommand(command));
         init();
         if (SettingHelper.getSystemSetting().isRtUpload()) {
             serverIntent = new Intent(this, UploadService.class);

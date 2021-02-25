@@ -2,6 +2,8 @@ package com.feipulai.device.serial.parser;
 
 
 import com.feipulai.device.serial.beans.RS232Result;
+import com.feipulai.device.serial.beans.StringUtility;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +23,8 @@ public class VolleyBallParser extends RS232Parser {
             Thread.sleep(10);
         }
         is.read(head, 0, 1);
-
+//        is.read(head, 0, 4);
+//        LogUtils.all(StringUtility.bytesToHexString(head));
         if ((head[0] & 0xff) == 0x54) {
             while (is.available() < 1) {
                 Thread.sleep(10);
