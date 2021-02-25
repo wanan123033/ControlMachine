@@ -1,5 +1,7 @@
 package com.feipulai.device.serial.command;
 
+import com.feipulai.device.serial.SerialParams;
+
 /**
  * Created by pengjf on 2018/11/7.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
@@ -56,7 +58,19 @@ public class ConvertCommand{
 		switch(target){
 			case CONVERTER:
 			case RS232:
-				result = cmd;
+				if (  SerialParams.RS232.getVersions()==2){
+					// 发到232配置版本2的命令需要转换
+					result = new byte[cmd.length + 7];
+					System.arraycopy(PACKET_HEAD,0,result,0,PACKET_HEAD.length);
+					result[2] = (byte)0xc1;
+					result[3] = (byte)(cmd.length & 0xff);
+					System.arraycopy(cmd,0,result,4,cmd.length);
+					result[cmd.length + 4] = checksum;
+					System.arraycopy(PACKET_END,0,result,cmd.length + 5,PACKET_END.length);
+				}else{
+					result = cmd;
+				}
+
 				break;
 			
 			case RADIO_868:
