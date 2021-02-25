@@ -25,6 +25,7 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
+import com.feipulai.exam.utils.EncryptUtil;
 import com.github.mjdev.libaums.fs.UsbFile;
 import com.orhanobut.logger.Logger;
 
@@ -202,7 +203,9 @@ public class StuItemExLReader extends ExlReader {
 
 
                 if (!TextUtils.isEmpty(idCardNo)) {
-                    bean.setIdCardNo(idCardNo);
+
+
+                    bean.setIdCardNo(EncryptUtil.setEncryptString(Student.ENCRYPT_KEY,idCardNo));
                 }
             }
 

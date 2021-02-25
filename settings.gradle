@@ -1,1 +1,1 @@
-include ':app', ':logger', ':uvccamerasdk', ':libarcface', ':devicelib', ':common', ':exam', ':magicindicator', ':videolibrary', ':mobileprintsdk'/*, ':ic_finger'*//*, ":BaiduTTSdemo"*/
+include ':app', ':logger', ':uvccamerasdk', ':libarcface', ':devicelib', ':common', ':exam', ':magicindicator', ':videolibrary', ':mobileprintsdk', ':testandroid'/*, ':ic_finger'*//*, ":BaiduTTSdemo"*/

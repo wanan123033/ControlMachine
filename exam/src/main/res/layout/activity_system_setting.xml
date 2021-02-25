@@ -193,9 +193,9 @@
                 android:id="@+id/txt_host_hint"
                 style="@style/style_setting_tv_title"
                 android:layout_marginTop="@dimen/dp_10"
-                android:visibility="gone"
                 android:text="请区分开'仰卧起坐'与‘双杠臂屈伸’和主机号，不能相同"
-                android:textColor="@color/viewfinder_laser" />
+                android:textColor="@color/viewfinder_laser"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -561,6 +561,7 @@
             <View
                 style="@style/divider_gray_horizontal_style"
                 android:layout_marginTop="8dp" />
+
             <RelativeLayout
                 android:id="@+id/rl_discern"
                 android:layout_width="520dp"
@@ -673,30 +674,50 @@
                     android:button="@drawable/checkbox_switch_selected" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/txt_advanced"
-                style="@style/style_setting_tv_title"
-                android:layout_width="250dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="51dp"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/btn_click_bg_selected"
-                android:gravity="center"
-                android:text="@string/advanced_setting"
-                android:textColor="@color/white" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="35dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btn_face_init"
-                android:layout_width="250dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="30dp"
-                android:background="@drawable/btn_click_bg_selected"
-                android:text="人脸识别激活"
-                android:textColor="@color/white"
-                android:textSize="@dimen/sp_16" />
+                <TextView
+                    android:id="@+id/txt_advanced"
+                    style="@style/style_setting_tv_title"
+                    android:layout_width="150dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/btn_click_bg_selected"
+                    android:gravity="center"
+                    android:text="@string/advanced_setting"
+                    android:textColor="@color/white" />
+
+                <Button
+                    android:id="@+id/btn_account_setting"
+                    android:layout_width="150dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/btn_click_bg_selected"
+                    android:text="帐号管理"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+                <Button
+                    android:id="@+id/btn_face_init"
+                    android:layout_width="150dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/btn_click_bg_selected"
+                    android:text="人脸识别激活"
+                    android:layout_marginLeft="20dp"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+
+            </LinearLayout>
+
         </LinearLayout>
 
     </LinearLayout>

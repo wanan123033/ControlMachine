@@ -26,6 +26,7 @@ import com.feipulai.host.bean.ActivateBean;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.Student;
+import com.feipulai.host.netUtils.CommonUtils;
 import com.feipulai.host.netUtils.HttpSubscriber;
 import com.feipulai.host.netUtils.OnResultListener;
 import com.feipulai.host.netUtils.netapi.UserSubscriber;
@@ -79,7 +80,7 @@ public class SplashScreenActivity extends BaseActivity {
 
         activateBean = SharedPrefsUtil.loadFormSource(this, ActivateBean.class);
         long runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0l);
-        if (activateBean != null) {
+        if (activateBean != null && activateBean.getValidRunTime() > 0) {
 
 //            if (activateBean.getUseDeviceTime() - DateUtil.getDayTime() > activateBean.getValidRunTime()) {
 //                //超出使用时长
@@ -184,7 +185,7 @@ public class SplashScreenActivity extends BaseActivity {
             @Override
             public void onFault(int code, String errorMsg) {
                 toastSpeak(errorMsg);
-                if (activateBean==null){
+                if (activateBean == null || !ActivityCollector.getInstance().isExistActivity(MainActivity.class)) {
                     //需要确认激活
                     showActivateConfirm(1);
                 }
@@ -201,7 +202,8 @@ public class SplashScreenActivity extends BaseActivity {
         }
         dialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText("激活设备")
 
-                .setContentText(type == 1 ? "请联系管理员激活设备" : "已超出可使用时长，请联系管理员重新激活设备")
+                .setContentText((type == 1 ? "请联系管理员激活设备" : "已超出可使用时长\n请联系管理员重新激活设备") + "\n" + CommonUtils.getDeviceId(this))
+
                 .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {

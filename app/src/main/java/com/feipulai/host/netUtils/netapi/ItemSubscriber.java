@@ -33,6 +33,7 @@ import com.feipulai.host.netUtils.HttpManager;
 import com.feipulai.host.netUtils.HttpResult;
 import com.feipulai.host.netUtils.OnResultListener;
 import com.feipulai.host.netUtils.RequestSub;
+import com.feipulai.host.utils.EncryptUtil;
 import com.orhanobut.logger.Logger;
 import com.ww.fpl.libarcface.common.Constants;
 import com.ww.fpl.libarcface.util.ConfigUtil;
@@ -239,7 +240,8 @@ public class ItemSubscriber {
 //                        ImageUtil.saveBitmapToFile(MyApplication.PATH_IMAGE, studentBean.getStudentCode() + ".jpg", ImageUtil.base64ToBitmap(studentBean.getPhotoData()));
 //                    }
                     student.setFaceFeature(studentBean.getFaceFeature());
-                    student.setIdCardNo(TextUtils.isEmpty(studentBean.getIdCard()) ? null : studentBean.getIdCard());
+                    student.setIdCardNo(TextUtils.isEmpty(studentBean.getIdCard()) ? null : EncryptUtil.setEncryptString(Student.ENCRYPT_KEY, studentBean.getIdCard()));
+
                     studentList.add(student);
                     StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
                             studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),

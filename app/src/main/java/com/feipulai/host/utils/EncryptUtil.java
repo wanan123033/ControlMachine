@@ -3,6 +3,8 @@ package com.feipulai.host.utils;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 
+import com.feipulai.common.utils.LogUtil;
+import com.feipulai.common.utils.StringChineseUtil;
 import com.feipulai.host.netUtils.HttpResult;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -100,7 +102,29 @@ public class EncryptUtil {
         return null;
 
     }
+    /**
+     * 加密数据
+     *
+     * @param paramsData
+     * @return
+     */
+    public static String setEncryptString(String key, String paramsData) {
+        // 加密
+        SecretKey secretKey = new SecretKeySpec(key.getBytes(), "AES");
+        try {
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            byte[] encoderStr = cipher.doFinal(paramsData.getBytes("UTF-8"));
+            String hexE = new String(Hex.encodeHex(encoderStr));
+            LogUtil.logDebugMessage("加密16：" + StringChineseUtil.parseByte2HexStr(encoderStr));
+            LogUtil.logDebugMessage("加密：" + StringChineseUtil.encode(encoderStr));
+            return hexE;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
 
+    }
     /**
      * 解密数据
      *

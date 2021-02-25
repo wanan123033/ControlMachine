@@ -50,9 +50,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.releaseConfig
+            resValue "string", "software_uuid","FP-KTA2108_TC"
+            resValue "string", "hardware_uuid","FP-KTA2108_TC_ANDROID"
         }
         ruiLiHeng {
-            initWith(buildTypes.debug)
+            initWith(buildTypes.release)
             applicationIdSuffix ".ruiliheng"
             resValue "string", "software_uuid","FP-KTA2108_TC-RLH"
             resValue "string", "hardware_uuid","FP-KTA2108_TC-RLH_ANDROID"

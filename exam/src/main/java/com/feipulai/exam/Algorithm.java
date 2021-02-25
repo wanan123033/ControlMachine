@@ -1,8 +1,14 @@
 package com.feipulai.exam;
 
+import com.feipulai.common.utils.print.PrintBean;
+import com.feipulai.exam.utils.EncryptUtil;
+import com.orhanobut.logger.Logger;
+
 public class Algorithm {
 
     public static void main(String[] args) {
+        Logger.d("test" + EncryptUtil.setEncryptString(PrintBean.ENCRY_KEY, "440513122145221554"));
+        Logger.d("test" + EncryptUtil.setEncryptString(PrintBean.ENCRY_KEY, "440513122145221554"));
 //        int a[] = new int[100000];
 //        int b[] = new int[901];
 //
@@ -26,8 +32,8 @@ public class Algorithm {
 //        }
 //        System.out.println("\n" + a.length);
 
-        byte d = (byte) 0xfd;
-        System.out.println("======>" + d);
+//        byte d = (byte) 0xfd;
+//        System.out.println("======>" + d);
     }
 
 }
