@@ -205,7 +205,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             if (deviceDetails.get(i).isDeviceOpen() && deviceDetails.get(i).getStuDevicePair().isCanTest() &&
                     deviceDetails.get(i).getStuDevicePair().getStudent() == null
                     && deviceDetails.get(i).getStuDevicePair().getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
-                index = i;
+                    index = i;
                 canUseDevice = true;
                 break;
             }

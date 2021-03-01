@@ -4,6 +4,8 @@ package com.feipulai.device.serial.parser;
 import android.os.Environment;
 
 import com.feipulai.device.serial.beans.RS232Result;
+import com.feipulai.device.serial.beans.StringUtility;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -27,7 +29,7 @@ public class DistanceParser extends RS232Parser {
             Thread.sleep(10);
         }
         is.read(head, 0, 1);
-
+//        LogUtils.all("parse====>"+StringUtility.bytesToHexString(head));
         if ((head[0] & 0xff) == 0x54) {
             while (is.available() < 1) {
                 Thread.sleep(10);
