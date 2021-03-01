@@ -10,6 +10,7 @@ import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.ImageUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.common.utils.print.PrintBean;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.tcp.PackageHeadInfo;
 import com.feipulai.device.tcp.SendTcpClientThread;
@@ -52,6 +53,7 @@ import com.feipulai.exam.netUtils.TCPResultPackage;
 import com.feipulai.exam.netUtils.download.DownLoadProgressDialog;
 import com.feipulai.exam.netUtils.download.DownloadListener;
 import com.feipulai.exam.netUtils.download.DownloadUtils;
+import com.feipulai.exam.utils.EncryptUtil;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
@@ -473,7 +475,7 @@ public class HttpSubscriber {
                         ImageUtil.saveBitmapToFile(MyApplication.PATH_IMAGE, studentBean.getStudentCode() + ".jpg", ImageUtil.base64ToBitmap(studentBean.getPhotoData()));
                     }
                     student.setFaceFeature(studentBean.getFaceFeature());
-                    student.setIdCardNo(TextUtils.isEmpty(studentBean.getIdCard()) ? null : studentBean.getIdCard());
+                    student.setIdCardNo(TextUtils.isEmpty(studentBean.getIdCard()) ? null : EncryptUtil.setEncryptString(Student.ENCRYPT_KEY, studentBean.getIdCard()));
                     studentList.add(student);
                     if (ScheduleBean.SITE_EXAMTYPE == 0) {
                         SettingHelper.getSystemSetting().setTestPattern(SystemSetting.PERSON_PATTERN);

@@ -13,6 +13,7 @@ import com.feipulai.device.AdaptiveConfig;
 import com.feipulai.device.serial.SerialParams;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.SharedPrefsConfigs;
+import com.feipulai.exam.entity.Account;
 import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
 import com.feipulai.exam.utils.bluetooth.BlueToothHelper;
 import com.kk.taurus.playerbase.config.PlayerConfig;
@@ -33,7 +34,7 @@ public class MyApplication extends MultiDexApplication {
     public static final String PATH_FACE = FileUtil.PATH_BASE + "KS_FACE_IMG/"; //人脸识别图片信息文件路径
 
     public static final String DEVICECODE = "111";//硬件识别码
-
+    public static Account account;
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);

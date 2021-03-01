@@ -103,6 +103,14 @@
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
+            android:name=".activity.account.AccountActivit"
+            android:configChanges="keyboardHidden|keyboard"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.account.AccountSettingActivity"
+            android:configChanges="keyboardHidden|keyboard"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
             android:name=".activity.MachineSelectActivity"
             android:configChanges="keyboardHidden|keyboard" /> <!-- <activity android:name=".activity.ItemSelectActivity" /> -->
         <activity

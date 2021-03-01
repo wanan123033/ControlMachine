@@ -424,7 +424,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
                     return;
                 }
                 // 可以直接检录
-                presenter.onIndividualCheckIn(student,studentItem,results);
+                presenter.onIndividualCheckIn(student, studentItem, results);
             }
         });
 

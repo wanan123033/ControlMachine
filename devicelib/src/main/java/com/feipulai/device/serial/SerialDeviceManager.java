@@ -21,6 +21,7 @@ public class SerialDeviceManager {
     //private int mCurrentBaudrate;
     public static final int RADIO_INTERVAL = 100;
     private long mlastSendTime;
+
     public void setRS232ResiltListener(RS232ResiltListener listener) {
         // Log.i("james", "listener===>" + listener == null ? "00" : "11");
         mDeviceListener = listener;
@@ -36,15 +37,17 @@ public class SerialDeviceManager {
         machinBaudrate.put(ItemDefault.CODE_LDTY, 9600);
         machinBaudrate.put(ItemDefault.CODE_ZFP, 9600);
         machinBaudrate.put(ItemDefault.CODE_PQ, 9600);
-        machinBaudrate.put(ItemDefault.CODE_MG,9600);
-        machinBaudrate.put(ItemDefault.CODE_FWC,9600);
+        machinBaudrate.put(ItemDefault.CODE_MG, 9600);
+        machinBaudrate.put(ItemDefault.CODE_FWC, 9600);
         machinBaudrate.put(ItemDefault.CODE_GPS, 9600);
         machinBaudrate.put(ItemDefault.CODE_LQYQ, 9600);
         machinBaudrate.put(ItemDefault.CODE_SHOOT, 9600);
     }
 
     private SerialDeviceManager() {
-        SerialParams.RS232.setBaudRate(machinBaudrate.get(MachineCode.machineCode));
+        if (SerialParams.RS232.getVersions() == 1) {
+            SerialParams.RS232.setBaudRate(machinBaudrate.get(MachineCode.machineCode));
+        }
         mSerialPorter = new SerialPorter(SerialParams.RS232, new SerialPorter.OnDataArrivedListener() {
             @Override
             public void onDataArrived(Message msg) {
@@ -61,9 +64,9 @@ public class SerialDeviceManager {
         }
         return sDeviceManager;
     }
-    
+
     public synchronized void sendCommand(ConvertCommand convertCommand) {
-	    ensureInterval();
+        ensureInterval();
         mSerialPorter.sendCommand(convertCommand);
 
     }
@@ -73,18 +76,18 @@ public class SerialDeviceManager {
         mSerialPorter.sendCommand(convertCommand);
     }
 
-    private void ensureInterval(){
-        try{
+    private void ensureInterval() {
+        try {
             //Thread.sleep(RADIO_INTERVAL);
             long curTime = System.currentTimeMillis();
             long expectTime = mlastSendTime + RADIO_INTERVAL;
             // Log.i("for_led",expectTime - curTime + "expectTime");
-            if(curTime < expectTime){
+            if (curTime < expectTime) {
                 // Log.i("for_led",expectTime - curTime + "");
                 Thread.sleep(expectTime - curTime);
             }
             mlastSendTime = System.currentTimeMillis();
-        }catch(InterruptedException e){
+        } catch (InterruptedException e) {
             // 保留打断标志
             Thread.currentThread().interrupt();
             e.printStackTrace();

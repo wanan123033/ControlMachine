@@ -40,6 +40,7 @@ import com.feipulai.device.udp.UdpLEDUtil;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LoginActivity;
+import com.feipulai.exam.activity.account.AccountSettingActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
@@ -349,7 +350,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     }
 
     @OnClick({R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting, R.id.btn_tcp_test
-            , R.id.txt_advanced, R.id.sw_identity_mark, R.id.sw_add_student, R.id.cb_route, R.id.cb_custom_channel, R.id.cb_monitoring,
+            , R.id.txt_advanced, R.id.sw_identity_mark, R.id.sw_add_student, R.id.cb_route, R.id.cb_custom_channel, R.id.cb_monitoring, R.id.btn_account_setting,
             R.id.btn_monitoring_setting, R.id.btn_thermometer, R.id.cb_thermometer, R.id.cb_is_tcp, R.id.sw_auto_score, R.id.btn_print_setting, R.id.sw_auto_discern})
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -442,6 +443,9 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                 break;
             case R.id.sw_auto_discern:
                 systemSetting.setNetCheckTool(sw_auto_discern.isChecked());
+                break;
+            case R.id.btn_account_setting:
+                IntentUtil.gotoActivity(this, AccountSettingActivity.class);
                 break;
         }
 

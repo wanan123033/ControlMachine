@@ -17,7 +17,7 @@ import java.util.Arrays;
  */
 @Entity
 public class RoundResult implements Serializable {
-
+    public static final String ENCRYPT_KEY = "CHECKOUT_ENCRYPT";
     public static final int NOT_LAST_RESULT = 0;
     public static final int LAST_RESULT = 1;
     public static final long DEAFULT_GROUP_ID = -1;
@@ -53,7 +53,7 @@ public class RoundResult implements Serializable {
     private int examType;//考试类型 0.正常 1.补考，(2.缓考,现没有这功能)
     @NotNull
     private String testTime;//测试时间  时间戳
-    private String printTime="";//w打印时间 时间戳
+    private String printTime = "";//w打印时间 时间戳
     private String endTime;//结束时间 时间戳
     private int stumbleCount;// 绊绳次数
     @NotNull
@@ -64,10 +64,9 @@ public class RoundResult implements Serializable {
     private String mtEquipment;//监控设备
     private String remark1;
     private String remark2;
-    private String remark3;
+    private String remark3;//保存校验信息  studentCode+ 项目+ 考试类型+ 成绩 + 测试时间
 
     public final static String BEAN_KEY = "ROUNDRESULT_KEY";
-
 
 
     @Generated(hash = 1393632943)
@@ -75,13 +74,12 @@ public class RoundResult implements Serializable {
     }
 
 
-
     @Generated(hash = 1001432630)
     public RoundResult(Long id, @NotNull String studentCode, @NotNull String itemCode, int machineCode,
-            int roundNo, int testNo, int machineResult, int penaltyNum, int result, int resultState,
-            int isLastResult, int examType, @NotNull String testTime, String printTime, String endTime,
-            int stumbleCount, int updateState, byte[] cycleResult, Long groupId, String scheduleNo,
-            String mtEquipment, String remark1, String remark2, String remark3) {
+                       int roundNo, int testNo, int machineResult, int penaltyNum, int result, int resultState,
+                       int isLastResult, int examType, @NotNull String testTime, String printTime, String endTime,
+                       int stumbleCount, int updateState, byte[] cycleResult, Long groupId, String scheduleNo,
+                       String mtEquipment, String remark1, String remark2, String remark3) {
         this.id = id;
         this.studentCode = studentCode;
         this.itemCode = itemCode;
@@ -107,7 +105,6 @@ public class RoundResult implements Serializable {
         this.remark2 = remark2;
         this.remark3 = remark3;
     }
-
 
 
     public Long getId() {
@@ -325,11 +322,9 @@ public class RoundResult implements Serializable {
     }
 
 
-
     public String getPrintTime() {
         return this.printTime;
     }
-
 
 
     public void setPrintTime(String printTime) {

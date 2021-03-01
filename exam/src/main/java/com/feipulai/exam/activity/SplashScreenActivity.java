@@ -22,6 +22,7 @@ import com.feipulai.common.db.DataBaseTask;
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.ActivityCollector;
 import com.feipulai.common.utils.DateUtil;
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.utils.ToastUtils;
@@ -29,6 +30,7 @@ import com.feipulai.device.serial.RadioManager;
 import com.feipulai.exam.BuildConfig;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.account.AccountActivit;
 import com.feipulai.exam.activity.base.BaseActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.ActivateBean;
@@ -37,6 +39,7 @@ import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.netUtils.CommonUtils;
 import com.feipulai.exam.netUtils.OnResultListener;
 import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
 import com.orhanobut.logger.Logger;
@@ -95,7 +98,7 @@ public class SplashScreenActivity extends BaseActivity {
 
         activateBean = SharedPrefsUtil.loadFormSource(this, ActivateBean.class);
         long runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0L);
-        if (activateBean != null) {
+        if (activateBean != null && activateBean.getValidRunTime() > 0) {
 
             if (runTime > activateBean.getValidRunTime()) {
                 //超出使用时长
@@ -128,6 +131,7 @@ public class SplashScreenActivity extends BaseActivity {
                 if (activateBean != null && activateBean.getCurrentTime() < activateBean.getValidEndTime()) {
                     if (!ActivityCollector.getInstance().isExistActivity(MainActivity.class)) {
                         Intent intent = new Intent();
+//                        intent.setClass(SplashScreenActivity.this, AccountActivit.class);
                         intent.setClass(SplashScreenActivity.this, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -157,6 +161,7 @@ public class SplashScreenActivity extends BaseActivity {
                     //需要确认激活
                     showActivateConfirm(1);
                 } else if (result.getCurrentTime() > result.getValidEndTime()) {
+                    LogUtil.logDebugMessage(result.getCurrentTime()+"-----"+result.getValidEndTime());
                     //超出使用时间 重新激活
                     showActivateConfirm(2);
                 } else {
@@ -169,7 +174,8 @@ public class SplashScreenActivity extends BaseActivity {
             @Override
             public void onFault(int code, String errorMsg) {
                 toastSpeak(errorMsg);
-                if (activateBean==null){
+//                if (activateBean == null || !ActivityCollector.getInstance().isExistActivity(MainActivity.class)) {
+                if (activateBean == null || ActivityCollector.getInstance().isLastActivity(SplashScreenActivity.class)) {
                     //需要确认激活
                     showActivateConfirm(1);
                 }
@@ -188,7 +194,7 @@ public class SplashScreenActivity extends BaseActivity {
         }
         dialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText("激活设备")
 
-                .setContentText(type == 1 ? "请联系管理员激活设备" : "已超出可使用时长，请联系管理员重新激活设备")
+                .setContentText((type == 1 ? "请联系管理员激活设备" : "已超出可使用时长\n请联系管理员重新激活设备") + "\n" + CommonUtils.getDeviceId(this))
                 .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
