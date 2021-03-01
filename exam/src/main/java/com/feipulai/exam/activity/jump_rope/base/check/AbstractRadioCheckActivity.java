@@ -32,6 +32,7 @@ import com.feipulai.exam.activity.jump_rope.fragment.IndividualCheckFragment;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.activity.situp.newSitUp.DeviceChangeActivity;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
@@ -146,7 +147,9 @@ public abstract class AbstractRadioCheckActivity<Setting>
         getStartTestView().setOnClickListener(this);
         getLedSettingView().setOnClickListener(this);
         getPairView().setOnClickListener(this);
-        getDetailsView().setOnClickListener(this);
+        if (getDetailsView()!= null){
+            getDetailsView().setOnClickListener(this);
+        }
         if (SettingHelper.getSystemSetting().getCheckTool() == 4 && setAFRFrameLayoutResID() != 0) {
             afrFrameLayout = findViewById(setAFRFrameLayoutResID());
             afrFragment = new BaseAFRFragment();
@@ -183,7 +186,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
         } else if (v == getDeleteStuView()) {// 删除考生
             presenter.deleteStudent();
         }else if (v == getDetailsView()){
-            startActivity(new Intent(this, getPairActivity()));
+            startActivity(new Intent(this, DeviceChangeActivity.class));
         }
     }
 
@@ -463,5 +466,4 @@ public abstract class AbstractRadioCheckActivity<Setting>
     protected abstract Class<? extends Activity> getTestActivity();
 
     protected abstract Class<? extends Activity> getPairActivity();
-
 }

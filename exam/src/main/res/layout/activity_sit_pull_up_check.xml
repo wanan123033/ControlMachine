@@ -73,7 +73,7 @@
                 android:layout_height="1dp"
                 android:background="@color/black" />
 
-            <include layout="@layout/ll_device_state_illustrate"/>
+            <include layout="@layout/ll_device_state_illustrate" />
 
             <View
                 android:layout_width="match_parent"

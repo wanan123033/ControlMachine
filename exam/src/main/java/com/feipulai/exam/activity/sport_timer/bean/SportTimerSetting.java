@@ -12,9 +12,10 @@ public class SportTimerSetting {
     private boolean isAutoPair;
     private int deviceCount = 1;
     private int degree;
-    private int martType;
+    private int markType;//成绩进位
     private int testTimes = 1;
     private String initRoute ;
+    private int groupType;//0循环测试1连续测试
     public int getDeviceCount() {
         return deviceCount;
     }
@@ -31,12 +32,12 @@ public class SportTimerSetting {
         this.degree = degree;
     }
 
-    public int getMartType() {
-        return martType;
+    public int getMarkType() {
+        return markType;
     }
 
-    public void setMartType(int martType) {
-        this.martType = martType;
+    public void setMarkType(int markType) {
+        this.markType = markType;
     }
 
     public int getTestTimes() {
@@ -53,5 +54,13 @@ public class SportTimerSetting {
 
     public void setInitRoute(String initRoute) {
         this.initRoute = initRoute;
+    }
+
+    public int getGroupType() {
+        return groupType;
+    }
+
+    public void setGroupType(int groupType) {
+        this.groupType = groupType;
     }
 }

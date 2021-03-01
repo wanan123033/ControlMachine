@@ -10,6 +10,7 @@ import com.feipulai.exam.activity.SubItemsSelectActivity;
 import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.activity.situp.newSitUp.SitUpArmCheckActivity;
 import com.feipulai.exam.activity.situp.setting.SitUpSetting;
 import com.feipulai.exam.entity.Item;
 

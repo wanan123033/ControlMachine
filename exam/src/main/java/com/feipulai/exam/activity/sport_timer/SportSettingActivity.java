@@ -1,25 +1,29 @@
 package com.feipulai.exam.activity.sport_timer;
 
 import android.content.Intent;
-import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.activity.sport_timer.bean.SportTimerSetting;
 import com.feipulai.exam.activity.sport_timer.pair.SportPairActivity;
 import com.feipulai.exam.config.TestConfigs;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class SportSettingActivity extends BaseTitleActivity implements AdapterView.OnItemSelectedListener {
+public class SportSettingActivity extends BaseTitleActivity implements AdapterView.OnItemSelectedListener, RadioGroup.OnCheckedChangeListener {
 
     @BindView(R.id.sp_device_count)
     Spinner spDeviceCount;
@@ -31,6 +35,8 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
     Spinner spMarkType;
     @BindView(R.id.tv_init_way)
     TextView tvInitWay;
+    @BindView(R.id.rg_model)
+    RadioGroup rg_model;
     private SportTimerSetting setting;
     private String[] degree = new String[]{"四舍五入", "不进位", "非零进位"};
     private String[] martType = new String[]{"十分位", "百分位", "千分位"};
@@ -60,7 +66,7 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
         adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spMarkType.setAdapter(adapter1);
         spMarkType.setOnItemSelectedListener(this);
-        spMarkType.setSelection(setting.getMartType());
+        spMarkType.setSelection(setting.getMarkType());
         //设备数量
         ArrayAdapter<String> adapter2 = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, deviceCount);
@@ -81,11 +87,20 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
         adapter3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTestTimes.setAdapter(adapter3);
         spTestTimes.setOnItemSelectedListener(this);
-        spTestTimes.setSelection(setting.getTestTimes()-1);
+        spTestTimes.setSelection(setting.getTestTimes() - 1);
         if (TestConfigs.sCurrentItem.getTestNum() > 1) {
             spTestTimes.setSelection(TestConfigs.sCurrentItem.getTestNum() - 1);
             spTestTimes.setEnabled(false);
         }
+
+        if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN) {//分组
+            rg_model.setVisibility(View.VISIBLE);
+            //测试模式
+            int testModel = setting.getGroupType();
+            rg_model.check(testModel == 1 ? R.id.rb_continue : R.id.rb_recycle);//1连续  0循环
+            rg_model.setOnCheckedChangeListener(this);
+        }
+
     }
 
     @Override
@@ -95,14 +110,14 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
                 setting.setDeviceCount(position + 1);
                 break;
             case R.id.sp_test_times:
-                setting.setTestTimes(position+1);
+                setting.setTestTimes(position + 1);
                 break;
             case R.id.sp_mark_degree:
                 setting.setDegree(position);
                 TestConfigs.sCurrentItem.setDigital(position + 1);
                 break;
             case R.id.sp_mark_type:
-                setting.setMartType(position);
+                setting.setMarkType(position);
                 break;
         }
     }
@@ -118,8 +133,13 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
 
     }
 
+    @Nullable
+    @Override
+    protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
+        return builder.setTitle("项目设置");
+    }
 
-    @OnClick({ R.id.tv_init_way,R.id.tv_pair})
+    @OnClick({R.id.tv_init_way, R.id.tv_pair})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
@@ -128,6 +148,18 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
                 break;
             case R.id.tv_pair:
                 startActivity(new Intent(this, SportPairActivity.class));
+                break;
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        switch (checkedId) {
+            case R.id.rb_continue:
+                setting.setGroupType(1);
+                break;
+            case R.id.rb_recycle:
+                setting.setGroupType(0);
                 break;
         }
     }

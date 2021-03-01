@@ -31,7 +31,7 @@ public class ArmStateResult implements Serializable,IDeviceResult {
 	private int result;
 	private int time;//时间相对于开始命令下达的时刻
     private int angle;
-
+    private int state;
 
 
     private byte angleState;
@@ -120,4 +120,11 @@ public class ArmStateResult implements Serializable,IDeviceResult {
     }
 
 
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
+    }
 }

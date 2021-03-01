@@ -35,13 +35,30 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:visibility="gone">
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_margin="10dp"
-            android:layout_height="@dimen/dp_40"
-            android:textSize="16sp"
-            android:gravity="center_vertical"
-            android:text="起点拦截器"/>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_margin="10dp"
+                android:layout_height="@dimen/dp_40"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:text="起点拦截器"/>
+            <Button
+                android:id="@+id/btn_helper"
+                android:layout_marginLeft="@dimen/dp_20"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_16"
+                android:background="@drawable/btn_rectangle_selector"
+                android:text="辅助拦截器X"
+                />
+        </LinearLayout>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_pairs"
             android:layout_width="match_parent"
@@ -57,13 +74,30 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:visibility="gone">
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_40"
-            android:layout_margin="10dp"
-            android:textSize="16sp"
-            android:gravity="center_vertical"
-            android:text="终点/折返点拦截器"/>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp_40"
+                android:layout_margin="10dp"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:text="终点/折返点拦截器"/>
+            <Button
+                android:id="@+id/btn_end_helper"
+                android:layout_marginLeft="@dimen/dp_20"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_16"
+                android:background="@drawable/btn_rectangle_selector"
+                android:text="辅助拦截器X"
+                />
+        </LinearLayout>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_end_pairs"
             android:layout_width="match_parent"
@@ -72,9 +106,4 @@
             android:layout_below="@+id/rl_check_in"
             android:layout_margin="10dp"/>
     </LinearLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_40"
-        android:textSize="@dimen/sp_16"
-        android:text=""/>
 </LinearLayout>

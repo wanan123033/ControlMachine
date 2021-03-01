@@ -1,4 +1,4 @@
-package com.feipulai.exam.activity.situp.check;
+package com.feipulai.exam.activity.situp.newSitUp;
 
 import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.situp.base_check.SitPullUpCheckActivity;
 import com.feipulai.exam.activity.situp.base_check.SitPullUpCheckPresenter;
+import com.feipulai.exam.activity.situp.check.SitUpCheckPresenter;
 import com.feipulai.exam.activity.situp.pair.SitUpPairActivity;
 import com.feipulai.exam.activity.situp.setting.SitUpSettingActivity;
 import com.feipulai.exam.activity.situp.test.SitUpTestActivity;
@@ -37,7 +38,6 @@ public class SitUpArmCheckActivity extends SitPullUpCheckActivity {
     protected Class<? extends Activity> getPairActivity() {
         return SitUpPairActivity.class;
     }
-
     @Override
     protected void onResume() {
         super.onResume();

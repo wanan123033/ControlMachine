@@ -66,6 +66,9 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
+/**
+ * 根据实测知道频段换成25最好
+ */
 public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFragment.onAFRCompareListener,
         IndividualCheckFragment.OnIndividualCheckInListener, SportContract.SportView {
 
