@@ -525,6 +525,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
             case R.id.tv_confirm:
 //                resultMap.put(roundNo,partResultList);
                 if (testState == TestState.RESULT_CONFIRM) {
+                    tvResult.setText("");
                     txtDeviceStatus.setText("空闲");
                     tvDelete.setEnabled(false);
                     txtWaiting.setEnabled(true);

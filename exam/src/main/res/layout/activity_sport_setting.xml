@@ -122,7 +122,7 @@
             android:id="@+id/rg_model"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_20"
+            android:layout_marginTop="@dimen/dp_10"
             android:visibility="gone"
             android:orientation="horizontal">
             <RadioButton
@@ -146,7 +146,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
             android:gravity="center_vertical"
             >
             <TextView

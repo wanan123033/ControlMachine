@@ -376,6 +376,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                 startTest = false;
                 if (testState == TestState.RESULT_CONFIRM) {
                     txtDeviceStatus.setText("空闲");
+                    tvResult.setText("");
                     tvDelete.setEnabled(false);
                     txtWaiting.setEnabled(true);
                     testState = TestState.UN_STARTED;
@@ -393,7 +394,18 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                         partResultAdapter.replaceData(resultList.get(roundNo - 1).getSportTimeResults());
                         testCountAdapter.setSelectPosition(roundNo - 1);
                         testCountAdapter.notifyDataSetChanged();
-                        loopTestNext();
+                        if (setting.getGroupType() == 0){
+                            loopTestNext();
+                        }else {
+                            continuousTest();
+                        }
+                    }else {
+                        if (setting.getGroupType() == 0){
+                            loopTestNext();
+                        }else {
+                            roundNo++;
+                            continuousTest();
+                        }
                     }
                     tvConfirm.setEnabled(false);
                     penalize(false);
@@ -460,6 +472,58 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                         }
                     }
                 }).create().show();
+    }
+
+    /**
+     * 连续测试
+     */
+    private void continuousTest() {
+        if (roundNo < TestConfigs.getMaxTestCount(this)) {
+            //是否存在可以测试位置
+            if (isExistTestPlace()) {
+                toastSpeak(String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getSpeakStuName(), roundNo+1),
+                        String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getStudentName(), roundNo+1));
+                LogUtils.operation("运动计时考生:" + pairs.get(position()).getStudent().getSpeakStuName() + "进行第" + roundNo+1 + "轮测试");
+                presetResult();
+            } else {
+                continuousTestNext();
+            }
+        } else {
+            //是否测试到最后一位
+            if (position() == pairs.size() - 1) {
+                firstCheckTest();
+            } else {
+                continuousTestNext();
+            }
+        }
+    }
+
+
+    /**
+     * 连续测试下一位
+     */
+    private void continuousTestNext() {
+        for (int i = (position() + 1); i < pairs.size(); i++) {
+
+            if (!isStuAllTest(pairs.get(i).getStudent().getStudentCode())) {
+                continue;
+            }
+            stuPairAdapter.setTestPosition(i);
+            rvTestingPairs.scrollToPosition(i);
+            presetResult();
+            //最后一次测试的成绩
+            toastSpeak(String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getSpeakStuName(), roundNo),
+                    String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getStudentName(), roundNo));
+            LogUtils.operation("运动计时考生:" + pairs.get(position()).getStudent().getSpeakStuName() + "进行第" + roundNo + "轮测试");
+
+            group.setIsTestComplete(2);
+            DBManager.getInstance().updateGroup(group);
+            stuPairAdapter.notifyDataSetChanged();
+            return;
+        }
+        //全部次数测试完，
+        firstCheckTest();
+
     }
 
 

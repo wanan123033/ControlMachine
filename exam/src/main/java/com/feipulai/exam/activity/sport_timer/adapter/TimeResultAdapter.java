@@ -15,7 +15,7 @@ public class TimeResultAdapter extends BaseQuickAdapter <SportTestResult,BaseVie
     public TimeResultAdapter(@Nullable List data) {
         super(R.layout.item_time_result, data);
     }
-
+    private int pos;
 
     @Override
     protected void convert(BaseViewHolder helper, SportTestResult item) {
@@ -27,9 +27,10 @@ public class TimeResultAdapter extends BaseQuickAdapter <SportTestResult,BaseVie
     }
 
     public void setSelectPosition(int i) {
+        pos = i;
     }
 
     public int getSelectPosition() {
-        return -1;
+        return pos;
     }
 }
