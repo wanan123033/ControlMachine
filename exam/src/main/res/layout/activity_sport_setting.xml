@@ -87,10 +87,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:textSize="18sp"
-                android:text="成绩精度：" />
+                android:text="成绩进位：" />
 
             <Spinner
-                android:id="@+id/sp_mark_degree"
+                android:id="@+id/sp_carry_mode"
                 android:layout_width="100dp"
                 android:layout_height="40dp"
                 android:layout_marginLeft="50dp"
@@ -109,10 +109,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:textSize="18sp"
-                android:text="成绩进位：" />
+                android:text="成绩精度：" />
 
             <Spinner
-                android:id="@+id/sp_mark_type"
+                android:id="@+id/sp_digital"
                 android:layout_width="100dp"
                 android:layout_height="40dp"
                 android:layout_marginLeft="50dp"

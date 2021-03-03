@@ -26,7 +26,6 @@ import com.feipulai.device.manager.RunTimerManager;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.RunTimerConnectState;
 import com.feipulai.device.serial.beans.RunTimerResult;
-import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.NewRadioPairActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
@@ -42,7 +41,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
 
     @BindView(R.id.sp_test_times)
     Spinner spTestTimes;
-    @BindView(R.id.sp_mark_degree)
+    @BindView(R.id.sp_carry_mode)
     Spinner spMarkDegree;
     @BindView(R.id.sp_intercept_way)
     Spinner spInterceptWay;
@@ -234,7 +233,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
                 runTimerSetting.setTestTimes(i + 1);
                 Log.i("post", "post ITEM_SETTING_UPDATE");
                 break;
-            case R.id.sp_mark_degree:
+            case R.id.sp_carry_mode:
                 runTimerSetting.setMarkDegree(i + 1);
                 break;
             case R.id.sp_intercept_way:

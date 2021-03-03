@@ -138,7 +138,8 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
         setting = SharedPrefsUtil.loadFormSource(this, SportTimerSetting.class);
         if (setting == null)
             setting = new SportTimerSetting();
-        TestConfigs.sCurrentItem.setDigital(setting.getDegree() + 1);
+        TestConfigs.sCurrentItem.setDigital(setting.getDigital() + 1);
+        TestConfigs.sCurrentItem.setCarryMode(setting.getCarryMode() + 1);
         deviceStates = new ArrayList<>();
         for (int i = 0; i < setting.getDeviceCount(); i++) {
             DeviceState deviceState = new DeviceState();
@@ -301,6 +302,8 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
         }
         testCountAdapter.setSelectPosition(roundNo - 1);
         testCountAdapter.notifyDataSetChanged();
+        if (roundNo>testNum)
+            return;
         partResultAdapter.replaceData(resultList.get(roundNo - 1).getSportTimeResults());
         displayCheckedInLED();
     }
@@ -344,6 +347,8 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                     testState = TestState.UN_STARTED;
                     setTxtEnable(false);
                     txtWaiting.setEnabled(true);
+                    presetResult();
+                    tvResult.setText("");
                 }
                 break;
             case R.id.txt_stop_timing:
@@ -390,23 +395,25 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                     }
 
 //                    sportPresent.showStuInfo(llStuDetail, pair.getStudent(), testResults);
-                    if (roundNo < testNum) {
+                    if (roundNo <= testNum) {
                         partResultAdapter.replaceData(resultList.get(roundNo - 1).getSportTimeResults());
                         testCountAdapter.setSelectPosition(roundNo - 1);
                         testCountAdapter.notifyDataSetChanged();
                         if (setting.getGroupType() == 0){
                             loopTestNext();
                         }else {
-                            continuousTest();
-                        }
-                    }else {
-                        if (setting.getGroupType() == 0){
-                            loopTestNext();
-                        }else {
-                            roundNo++;
+                            if (roundNo == testNum){
+                                roundNo++;
+                            }
                             continuousTest();
                         }
                     }
+//                    else {
+//                        if (setting.getGroupType() == 1){
+//                            roundNo++;
+//                            continuousTest();
+//                        }
+//                    }
                     tvConfirm.setEnabled(false);
                     penalize(false);
                 }
@@ -428,8 +435,8 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
-                Logger.i("删除分段成绩" + resultList.get(roundNo - 1).getSportTimeResults().get(partSelect).toString());
-                if (resultList.get(roundNo - 1).getSportTimeResults().get(partSelect).getPartResult() > 0) {
+                if (resultList.size() <roundNo && resultList.get(roundNo - 1).getSportTimeResults().get(partSelect).getPartResult() > 0) {
+                    Logger.i("删除分段成绩" + resultList.get(roundNo - 1).getSportTimeResults().get(partSelect).toString());
                     resultList.get(roundNo - 1).getSportTimeResults().remove(partSelect);
                     partSelect = -1;
                     partResultAdapter.setSelectPosition(partSelect);
@@ -645,7 +652,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
         List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound
                 (studentCode, group.getId() + "");
         //成绩数量是否小于测试次数
-        return roundResultList.size() <= TestConfigs.getMaxTestCount(this);
+        return roundResultList.size() < TestConfigs.getMaxTestCount(this);
     }
 
     /**
@@ -769,5 +776,22 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                 }
             });
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        sportPresent.setDeviceStateStop();
+        sportPresent.presentRelease();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (testState != TestState.UN_STARTED){
+            toastSpeak("测试中,不允许退出当前界面");
+            return;
+        }
+        super.onBackPressed();
+
     }
 }

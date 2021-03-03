@@ -185,7 +185,8 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
         if (setting == null)
             setting = new SportTimerSetting();
         deviceStates = new ArrayList<>();
-        TestConfigs.sCurrentItem.setDigital(setting.getDegree() + 1);
+        TestConfigs.sCurrentItem.setDigital(setting.getDigital() + 1);
+        TestConfigs.sCurrentItem.setCarryMode(setting.getCarryMode() + 1);
         for (int i = 0; i < setting.getDeviceCount(); i++) {
             DeviceState deviceState = new DeviceState();
             deviceState.setDeviceId(i + 1);
@@ -503,6 +504,8 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                     testState = TestState.UN_STARTED;
                     setTxtEnable(false);
                     txtWaiting.setEnabled(true);
+                    presetResult(pair.getStudent(),roundNo);
+                    tvResult.setText("");
                 }
                 break;
             case R.id.txt_stop_timing:
@@ -591,8 +594,8 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
-                Logger.i("删除分段成绩" + testResults.get(roundNo - 1).getSportTimeResults().get(partSelect).toString());
-                if (testResults.get(roundNo - 1).getSportTimeResults().get(partSelect).getPartResult() > 0) {
+                if (testResults.size() <roundNo && testResults.get(roundNo - 1).getSportTimeResults().get(partSelect).getPartResult() > 0) {
+                    Logger.i("删除分段成绩" + testResults.get(roundNo - 1).getSportTimeResults().get(partSelect).toString());
                     testResults.get(roundNo - 1).getSportTimeResults().remove(partSelect);
                     partSelect = -1;
                     partResultAdapter.setSelectPosition(partSelect);

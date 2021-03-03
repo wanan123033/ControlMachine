@@ -175,7 +175,7 @@
                         android:text="成绩进位：" />
 
                     <Spinner
-                        android:id="@+id/sp_mark_degree"
+                        android:id="@+id/sp_carry_mode"
                         android:layout_width="100dp"
                         android:layout_height="30dp"
                         android:layout_marginLeft="50dp"

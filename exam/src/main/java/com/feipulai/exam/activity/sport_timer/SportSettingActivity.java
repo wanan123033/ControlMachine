@@ -29,17 +29,17 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
     Spinner spDeviceCount;
     @BindView(R.id.sp_test_times)
     Spinner spTestTimes;
-    @BindView(R.id.sp_mark_degree)
-    Spinner spMarkDegree;
-    @BindView(R.id.sp_mark_type)
-    Spinner spMarkType;
+    @BindView(R.id.sp_carry_mode)
+    Spinner spCarryMode;
+    @BindView(R.id.sp_digital)
+    Spinner spDigital;
     @BindView(R.id.tv_init_way)
     TextView tvInitWay;
     @BindView(R.id.rg_model)
     RadioGroup rg_model;
     private SportTimerSetting setting;
-    private String[] degree = new String[]{"四舍五入", "不进位", "非零进位"};
-    private String[] martType = new String[]{"十分位", "百分位", "千分位"};
+    private String[] carryMode = new String[]{"四舍五入", "不进位", "非零进位"};
+    private String[] digital = new String[]{"十分位", "百分位", "千分位"};
     private String[] deviceCount = new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
     private String[] testCount = new String[]{"1", "2", "3"};
 
@@ -55,18 +55,18 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
             setting = new SportTimerSetting();
         //精度
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, degree);
+                android.R.layout.simple_spinner_item, carryMode);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spMarkDegree.setAdapter(adapter);
-        spMarkDegree.setSelection(setting.getDegree());
-        spMarkDegree.setOnItemSelectedListener(this);
+        spCarryMode.setAdapter(adapter);
+        spCarryMode.setSelection(setting.getCarryMode());
+        spCarryMode.setOnItemSelectedListener(this);
         //进位
         ArrayAdapter<String> adapter1 = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, martType);
+                android.R.layout.simple_spinner_item, digital);
         adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spMarkType.setAdapter(adapter1);
-        spMarkType.setOnItemSelectedListener(this);
-        spMarkType.setSelection(setting.getMarkType());
+        spDigital.setAdapter(adapter1);
+        spDigital.setOnItemSelectedListener(this);
+        spDigital.setSelection(setting.getDigital());
         //设备数量
         ArrayAdapter<String> adapter2 = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, deviceCount);
@@ -112,12 +112,13 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
             case R.id.sp_test_times:
                 setting.setTestTimes(position + 1);
                 break;
-            case R.id.sp_mark_degree:
-                setting.setDegree(position);
-                TestConfigs.sCurrentItem.setDigital(position + 1);
+            case R.id.sp_carry_mode:
+                setting.setCarryMode(position);
+                TestConfigs.sCurrentItem.setCarryMode(position + 1);
                 break;
-            case R.id.sp_mark_type:
-                setting.setMarkType(position);
+            case R.id.sp_digital:
+                setting.setDigital(position);
+                TestConfigs.sCurrentItem.setDigital(position + 1);
                 break;
         }
     }
