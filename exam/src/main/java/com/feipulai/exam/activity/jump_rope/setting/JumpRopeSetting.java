@@ -22,6 +22,8 @@ public class JumpRopeSetting {
 
     private int getStateLoopCount = 5;
 
+    private boolean isShowStumbleCount=false;
+
     public int getGroupMode() {
         return groupMode;
     }
@@ -77,6 +79,14 @@ public class JumpRopeSetting {
 
     public void setGetStateLoopCount(int getStateLoopCount) {
         this.getStateLoopCount = getStateLoopCount;
+    }
+
+    public boolean isShowStumbleCount() {
+        return isShowStumbleCount;
+    }
+
+    public void setShowStumbleCount(boolean showStumbleCount) {
+        isShowStumbleCount = showStumbleCount;
     }
 
     @Override

@@ -11,6 +11,6 @@
         android:supportsRtl="true"
         tools:replace="android:icon,android:theme"
         android:theme="@style/AppTheme">
-
+        <activity android:name=".voice.VoiceSettingActivity"/>
     </application>
 </manifest>

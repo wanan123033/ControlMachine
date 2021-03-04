@@ -29,6 +29,7 @@ import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.common.view.dialog.DialogUtils;
+import com.feipulai.common.voice.VoiceSettingActivity;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
@@ -351,7 +352,8 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
 
     @OnClick({R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting, R.id.btn_tcp_test
             , R.id.txt_advanced, R.id.sw_identity_mark, R.id.sw_add_student, R.id.cb_route, R.id.cb_custom_channel, R.id.cb_monitoring, R.id.btn_account_setting,
-            R.id.btn_monitoring_setting, R.id.btn_thermometer, R.id.cb_thermometer, R.id.cb_is_tcp, R.id.sw_auto_score, R.id.btn_print_setting, R.id.sw_auto_discern})
+            R.id.btn_monitoring_setting, R.id.btn_thermometer, R.id.cb_thermometer, R.id.cb_is_tcp, R.id.sw_auto_score, R.id.btn_print_setting, R.id.sw_auto_discern
+            , R.id.btn_voice_setting})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_tcp_test:
@@ -444,8 +446,11 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
             case R.id.sw_auto_discern:
                 systemSetting.setNetCheckTool(sw_auto_discern.isChecked());
                 break;
-            case R.id.btn_account_setting:
+            case R.id.btn_account_setting://帐号管理
                 IntentUtil.gotoActivity(this, AccountSettingActivity.class);
+                break;
+            case R.id.btn_voice_setting://发令语音
+                IntentUtil.gotoActivity(this, VoiceSettingActivity.class);
                 break;
         }
 

@@ -4,16 +4,20 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.dialog.DialogUtils;
+import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.data.MachineResultView;
 import com.feipulai.exam.activity.data.SchduleView;
+import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSetting;
 import com.feipulai.exam.config.HWConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
@@ -55,7 +59,8 @@ public class ResultDetailAdapter extends BaseQuickAdapter<RoundResult, ResultDet
         isHW = true;
     }
 
-    public void setSelectedPos(int position){
+
+    public void setSelectedPos(int position) {
         this.selectedPos = position;
     }
 
@@ -64,12 +69,17 @@ public class ResultDetailAdapter extends BaseQuickAdapter<RoundResult, ResultDet
         String displayStr;
         if (!isHW) {
             viewHolder.mTvTimes.setText(roundResult.getRoundNo() + "");
-            if (!TextUtils.isEmpty(roundResult.getTestTime())){
+            if (!TextUtils.isEmpty(roundResult.getTestTime())) {
                 viewHolder.mTvTestTime.setText(TestConfigs.df.format(Long.parseLong(roundResult.getTestTime())));
             }
 
             displayStr = ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult());
-            viewHolder.mTvResult.setText(setResult(roundResult.getResultState(), displayStr));
+            if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_TS) {
+                viewHolder.mTvResult.setText(setResult(roundResult.getResultState(), displayStr) + "(" + roundResult.getStumbleCount() + ")");
+            } else {
+                viewHolder.mTvResult.setText(setResult(roundResult.getResultState(), displayStr));
+            }
+
         } else {
             RoundResult heightResult = roundResult;
             RoundResult weightResult = mweightResults.get(viewHolder.getLayoutPosition());
@@ -78,7 +88,7 @@ public class ResultDetailAdapter extends BaseQuickAdapter<RoundResult, ResultDet
                     + ""
                     + ResultDisplayUtils.getStrResultForDisplay(weightResult.getResult(), HWConfigs.WEIGHT_ITEM);
             viewHolder.mTvTimes.setText(roundResult.getRoundNo() + "");
-            if (!TextUtils.isEmpty(roundResult.getTestTime())){
+            if (!TextUtils.isEmpty(roundResult.getTestTime())) {
                 viewHolder.mTvTestTime.setText(TestConfigs.df.format(Long.parseLong(roundResult.getTestTime())));
             }
             viewHolder.mTvResult.setText(setResult(heightResult.getResultState(), displayStr));
@@ -89,7 +99,7 @@ public class ResultDetailAdapter extends BaseQuickAdapter<RoundResult, ResultDet
         } else {
             viewHolder.mViewHead.setVisibility(View.GONE);
         }
-        if (!TextUtils.isEmpty(roundResult.getEndTime())){
+        if (!TextUtils.isEmpty(roundResult.getEndTime())) {
             viewHolder.mTvEndTime.setText(TestConfigs.df.format(Long.parseLong(roundResult.getEndTime())));
         }
 
@@ -106,18 +116,18 @@ public class ResultDetailAdapter extends BaseQuickAdapter<RoundResult, ResultDet
                 showSchedule(roundResult);
             }
         });
-        if (viewHolder.getLayoutPosition() == selectedPos){
-            viewHolder.setBackgroundRes(R.id.ll_result,R.drawable.blue_radius_10);
-        }else {
-            viewHolder.setBackgroundRes(R.id.ll_result,R.drawable.grey_radius_10);
+        if (viewHolder.getLayoutPosition() == selectedPos) {
+            viewHolder.setBackgroundRes(R.id.ll_result, R.drawable.blue_radius_10);
+        } else {
+            viewHolder.setBackgroundRes(R.id.ll_result, R.drawable.grey_radius_10);
         }
     }
 
     private void showSchedule(RoundResult roundResult) {
         Schedule schedule = DBManager.getInstance().getSchedulesByNo(roundResult.getScheduleNo());
         SchduleView view = new SchduleView(mContext);
-        view.setData(schedule,roundResult);
-        DialogUtils.create(mContext,view,true).show();
+        view.setData(schedule, roundResult);
+        DialogUtils.create(mContext, view, true).show();
         view.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop,

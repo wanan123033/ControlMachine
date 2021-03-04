@@ -72,7 +72,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         }
         RadioManager.getInstance().setOnRadioArrived(this);
         RadioChannelCommand command = new RadioChannelCommand(TARGET_FREQUENCY);
-        LogUtils.normal(command.getCommand().length+"---"+ StringUtility.bytesToHexString(command.getCommand())+"---切频指令");
+        LogUtils.normal(command.getCommand().length + "---" + StringUtility.bytesToHexString(command.getCommand()) + "---切频指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(command));
         facade = new GetStateLedFacade(this);
         facade.setmGetDeviceStatesLoopCount(getDeviceStatesLoopCount());
@@ -178,12 +178,12 @@ public abstract class AbstractRadioCheckPresenter<Setting>
             student = pair.getStudent();
             baseDevice = pair.getBaseDevice();
             if (student != null) {
-                if (SettingHelper.getSystemSetting().isInputTest()){
+                if (SettingHelper.getSystemSetting().isInputTest()) {
                     if (addToCache) {
                         students.add(student);
                     }
                     forTestPairs.add(pair);
-                }else{
+                } else {
                     if (baseDevice.getState() == BaseDeviceState.STATE_FREE
                             || baseDevice.getState() == BaseDeviceState.STATE_LOW_BATTERY) {
                         if (addToCache) {
@@ -305,18 +305,33 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         }
 
         RoundResult lastResult = null;
+
+
+//        if (results == null || results.size() == 0) {
+//            TestCache.getInstance().getResults().put(student,
+//                    results != null ? results
+//                            : new ArrayList<RoundResult>(TestConfigs.getMaxTestCount(context)));
+//            TestCache.getInstance().getTestNoMap().put(student, 1);
+//        } else {
+//            lastResult = results.get(results.size() - 1);
+//            TestCache.getInstance().getResults().put(student, results);
+//            RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
+//            int testNo = testRoundResult == null ? 1 : testRoundResult.getTestNo() + 1;
+//            TestCache.getInstance().getTestNoMap().put(student, testNo);
+//        }
         if (results == null || results.size() == 0) {
+            RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
             TestCache.getInstance().getResults().put(student,
                     results != null ? results
                             : new ArrayList<RoundResult>(TestConfigs.getMaxTestCount(context)));
-            TestCache.getInstance().getTestNoMap().put(student, 1);
+            TestCache.getInstance().getTestNoMap().put(student, testRoundResult == null ? 1 : testRoundResult.getTestNo() + 1);
         } else {
             lastResult = results.get(results.size() - 1);
             TestCache.getInstance().getResults().put(student, results);
-            RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
-            int testNo = testRoundResult == null ? 1 : testRoundResult.getTestNo() + 1;
-            TestCache.getInstance().getTestNoMap().put(student, testNo);
+            TestCache.getInstance().getTestNoMap().put(student, results.get(0).getTestNo());
         }
+
+
         TestCache.getInstance().getStudentItemMap().put(student, studentItem);
         displayCheckedInLED(student, deviceId, lastResult);
 

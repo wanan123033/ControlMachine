@@ -131,6 +131,54 @@ public class UploadResults implements Serializable {
         return groupNo;
     }
 
+    public int getGroupType() {
+        return groupType;
+    }
+
+    public void setGroupType(int groupType) {
+        this.groupType = groupType;
+    }
+
+    public String getSortName() {
+        return sortName;
+    }
+
+    public void setSortName(String sortName) {
+        this.sortName = sortName;
+    }
+
+    public String getHostNumber() {
+        return hostNumber;
+    }
+
+    public void setHostNumber(String hostNumber) {
+        this.hostNumber = hostNumber;
+    }
+
+    public String getMachineCode() {
+        return machineCode;
+    }
+
+    public void setMachineCode(String machineCode) {
+        this.machineCode = machineCode;
+    }
+
+    public void setResult(int result) {
+        this.result = result;
+    }
+
+    public void setTestTime(String testTime) {
+        this.testTime = testTime;
+    }
+
+    public void setResultStatus(int resultStatus) {
+        this.resultStatus = resultStatus;
+    }
+
+    public void setExamState(int examState) {
+        this.examState = examState;
+    }
+
     public void setGroupNo(String groupNo) {
         this.groupNo = groupNo;
     }

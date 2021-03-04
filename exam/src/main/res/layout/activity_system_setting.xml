@@ -678,7 +678,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="35dp"
+                android:layout_marginBottom="10dp"
                 android:gravity="center_horizontal"
                 android:orientation="horizontal">
 
@@ -693,16 +693,7 @@
                     android:text="@string/advanced_setting"
                     android:textColor="@color/white" />
 
-                <Button
-                    android:id="@+id/btn_account_setting"
-                    android:layout_width="150dp"
-                    android:layout_height="40dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_gravity="center_horizontal"
-                    android:background="@drawable/btn_click_bg_selected"
-                    android:text="帐号管理"
-                    android:textColor="@color/white"
-                    android:textSize="20sp" />
+
 
                 <Button
                     android:id="@+id/btn_face_init"
@@ -716,6 +707,35 @@
                     android:textSize="20sp" />
 
 
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="35dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_account_setting"
+                    android:layout_width="150dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/btn_click_bg_selected"
+                    android:text="帐号管理"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+                <Button
+                    android:id="@+id/btn_voice_setting"
+                    android:layout_width="150dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/btn_click_bg_selected"
+                    android:text="发令语音设置"
+                    android:layout_marginLeft="20dp"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
             </LinearLayout>
 
         </LinearLayout>
