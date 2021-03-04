@@ -45,15 +45,14 @@ public class StandJumpSetting {
     private int[] testPointsArray = new int[]{3, 3, 3, 3};
     private int[] pointsScopeArray = new int[4];
 
-    /**
-     * 是否开启判罚
-     */
-    private boolean isPenalize;
 
     //就否自动配对
     private boolean autoPair = true;
     //测试模式 0 有线 1 无线
     private int testType = 0;
+    /**
+     * 是否开启判罚
+     */
     private boolean penalizeFoul;
 
 

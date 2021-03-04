@@ -9,8 +9,8 @@ import android.util.Log;
  * 精确的倒计时线程(使用纳秒)
  */
 public abstract class PreciseCountDownTimer implements Runnable{
-	
-	private final long millisInFuture;
+
+	public final long millisInFuture;
 	private long interval;
 	private long delay;
 	private volatile boolean mCancelled;

@@ -307,6 +307,10 @@ public class InteractUtils {
         LogUtils.operation("成绩打印开始...");
         String title;
         SystemSetting systemSetting = SettingHelper.getSystemSetting();
+        JumpRopeSetting jumpRopeSetting = null;
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_TS) {
+            jumpRopeSetting = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), JumpRopeSetting.class);
+        }
         boolean isGroupMode = systemSetting.getTestPattern() == SystemSetting.GROUP_PATTERN;
         String machineName = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode());
         machineName = InteractUtils.getStrWithLength(machineName, 8);
@@ -388,7 +392,12 @@ public class InteractUtils {
                     // 跳绳需要打印绊绳次数
                     switch (TestConfigs.sCurrentItem.getMachineCode()) {
                         case ItemDefault.CODE_TS:
-                            PrinterManager.getInstance().print(printResult + "(中断:" + result.getStumbleCount() + ")");
+                            if (jumpRopeSetting.isShowStumbleCount()) {
+                                PrinterManager.getInstance().print(printResult + "(中断:" + result.getStumbleCount() + ")");
+                            } else {
+                                PrinterManager.getInstance().print(printResult);
+                            }
+
                             break;
 
                         case ItemDefault.CODE_YWQZ:

@@ -1,5 +1,6 @@
 package com.feipulai.exam.netUtils;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.feipulai.common.utils.DateUtil;
@@ -7,7 +8,10 @@ import com.feipulai.device.tcp.PackageHeadInfo;
 import com.feipulai.device.tcp.TCPConst;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
+import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Item;
+import com.feipulai.exam.entity.Schedule;
+import com.feipulai.exam.entity.Student;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -85,6 +89,7 @@ public class TCPResultPackage {
         if (uploadResults == null) {
             strBody = "test";
         } else {
+            Item resultItem = DBManager.getInstance().queryItemByCode(uploadResults.get(0).getExamItemCode());
             //客户端
             sb.append(m_strClientName);
             sb.append(target);
@@ -102,39 +107,53 @@ public class TCPResultPackage {
             sb.append(target);
 
             //项目全称
-            sb.append(item.getItemName());
+            sb.append(resultItem.getItemName());
             sb.append(target);
+            if (!TextUtils.isEmpty(uploadResults.get(0).getGroupNo())) {
+                //性别
+                sb.append(uploadResults.get(0).getGroupType());
+                sb.append(target);
+                //组别
+                sb.append(uploadResults.get(0).getSortName());
+                sb.append(target);
+            } else {
+                //性别
+                sb.append(m_nSex);
+                sb.append(target);
+                //组别
+                sb.append(m_strSort);
+                sb.append(target);
+            }
 
-            //性别
-            sb.append(m_nSex);
-            sb.append(target);
-
-            //组别
-            sb.append(m_strSort);
-            sb.append(target);
 
             //项目名称
-            sb.append(item.getItemName());
+            sb.append(resultItem.getItemName());
             sb.append(target);
 
             //项目代码
-            sb.append(item.getItemCode());
+            sb.append(resultItem.getItemCode());
             sb.append(target);
 
             //赛次
             sb.append(m_nLayer);
             sb.append(target);
+            if (TextUtils.isEmpty(uploadResults.get(0).getGroupNo())) {
+                //组号
+                sb.append(m_nGrp);
+                sb.append(target);
+            } else {
+                //组号
+                sb.append(uploadResults.get(0).getGroupNo());
+                sb.append(target);
+            }
 
-            //组号
-            sb.append(m_nGrp);
-            sb.append(target);
-
+            Schedule schedule = DBManager.getInstance().getSchedulesByNo(uploadResults.get(0).getSiteScheduleNo());
             //场次
-            sb.append(m_nField);
+            sb.append(schedule.getScheduleNo());
             sb.append(target);
 
             //开始时间
-            sb.append(m_strBeginTime);
+            sb.append(schedule.getBeginTime());
             sb.append(target);
 
             //考生人数
@@ -207,13 +226,13 @@ public class TCPResultPackage {
                 //考生考号
                 sb.append(uploadResults.get(i).getStudentCode());
                 sb.append(target);
-
+                Student student = DBManager.getInstance().queryStudentByStuCode(uploadResults.get(i).getStudentCode());
                 //考生姓名
-                sb.append("");
+                sb.append(student.getStudentName());
                 sb.append(target);
 
                 //性别
-                sb.append(-1);
+                sb.append(student.getSex());
                 sb.append(target);
 
                 //单位

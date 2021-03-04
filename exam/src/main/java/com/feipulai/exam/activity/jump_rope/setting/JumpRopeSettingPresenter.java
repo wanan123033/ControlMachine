@@ -14,7 +14,7 @@ import com.orhanobut.logger.Logger;
 
 public class JumpRopeSettingPresenter extends AbstractRadioSettingPresenter {
 
-    private JumpRopeSetting setting;
+    public JumpRopeSetting setting;
     private Context context;
 
     public JumpRopeSettingPresenter(Context context, RadioSettingContract.View view) {
@@ -44,6 +44,10 @@ public class JumpRopeSettingPresenter extends AbstractRadioSettingPresenter {
         setting.setTestTime(testTime);
     }
 
+    public void setShowStumbleCount(boolean isShow) {
+        setting.setShowStumbleCount(isShow);
+    }
+
     @Override
     protected int getTestTime() {
         return setting.getTestTime();
@@ -63,6 +67,7 @@ public class JumpRopeSettingPresenter extends AbstractRadioSettingPresenter {
     protected int getMaxDeviceSum() {
         return 60;
     }
+
 
     @Override
     protected void saveSettings() {
