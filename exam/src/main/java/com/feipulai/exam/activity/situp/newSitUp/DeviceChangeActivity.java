@@ -66,7 +66,7 @@ public class DeviceChangeActivity extends BaseTitleActivity {
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("设备匹配");
+        return builder.setTitle("设备详情");
     }
 
 

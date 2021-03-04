@@ -20,8 +20,8 @@ public class SitUpArmCheckActivity extends SitPullUpCheckActivity {
     }
 
     @Override
-    protected SitPullUpCheckPresenter getPresenter() {
-        return new SitUpCheckPresenter(this, this);
+    protected NewSitUpCheckPresenter getPresenter() {
+        return new NewSitUpCheckPresenter(this, this);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class SitUpArmCheckActivity extends SitPullUpCheckActivity {
 
     @Override
     protected Class<? extends Activity> getPairActivity() {
-        return SitUpPairActivity.class;
+        return NewSitUpPairActivity.class;
     }
     @Override
     protected void onResume() {

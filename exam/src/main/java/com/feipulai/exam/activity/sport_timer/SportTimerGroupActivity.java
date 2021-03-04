@@ -733,7 +733,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
             }
             if (receiveTime >= resultList.get(roundNo - 1).getSportTimeResults().size())
                 return;
-            if ((sportResult.getLongTime()-initTime) <lastTime+100){
+            if ((sportResult.getLongTime()-initTime) <lastTime){
                 return;
             }
             final SportTimeResult timeResult = partResultAdapter.getData().get(receiveTime);
