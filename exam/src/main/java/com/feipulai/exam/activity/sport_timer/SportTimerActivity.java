@@ -660,18 +660,24 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
         });
     }
 
+    private int lastTime;//上一次接收时间
     @Override
     public void receiveResult(SportResult sportResult) {
         if (receiveTime == 0 && sportResult.getDeviceId() != 1) {
             toastSpeak("不是第一个启动，请重新检查");
         } else {
             if (sportResult.getDeviceId() == 1 && sportResult.getSumTimes() == 1) {
+                lastTime = 0;
                 initTime = sportResult.getLongTime();
             }
             if (receiveTime >= testResults.get(roundNo - 1).getSportTimeResults().size())
                 return;
+            if ((sportResult.getLongTime()-initTime) <lastTime){
+                return;
+            }
             final SportTimeResult timeResult = partResultAdapter.getData().get(receiveTime);
             timeResult.setPartResult(sportResult.getLongTime() - initTime);
+            lastTime = sportResult.getLongTime() - initTime;
             timeResult.setReceiveIndex(sportResult.getDeviceId());
             int routeName;
             if (!TextUtils.isEmpty(timeResult.getRouteName())) {

@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.manager.SportTimerManger;
@@ -30,6 +31,7 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
+import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -181,7 +183,7 @@ public class SportPresent implements SportContract.Presenter {
             Log.i("SportResultListener", result.toString());
             checkState[result.getDeviceId() - 1] = 1;
             sendIndex[result.getDeviceId()-1] = result.getSumTimes() == 0? 0:(result.getSumTimes()-1);
-            Log.i("SportResultListener", result.getLongTime()+"----"+newTime);
+            LogUtils.operation("SportResultListener"+result.getLongTime()+"----"+newTime);
             if (result.getSumTimes()!= 0){
                 if (result.getLongTime()>newTime) {
                     newTime = result.getLongTime();
