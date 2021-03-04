@@ -182,10 +182,10 @@ public class SportPresent implements SportContract.Presenter {
         public void onGetResult(SportResult result) {//收到结果
             Log.i("SportResultListener", result.toString());
             checkState[result.getDeviceId() - 1] = 1;
+            sendIndex[result.getDeviceId()-1] = result.getSumTimes() == 0? 0:(result.getSumTimes()-1);
             LogUtils.operation("SportResultListener"+result.getLongTime()+"----"+newTime);
             if (result.getSumTimes()!= 0){
                 if (result.getLongTime()>newTime) {
-                    sendIndex[result.getDeviceId()-1] = result.getSumTimes() == 0? 0:(result.getSumTimes()-1);
                     newTime = result.getLongTime();
                     sportView.receiveResult(result);
                 }
