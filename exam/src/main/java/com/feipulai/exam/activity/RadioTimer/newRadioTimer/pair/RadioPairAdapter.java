@@ -60,7 +60,7 @@ public class RadioPairAdapter extends RecyclerView.Adapter<RadioPairAdapter.View
         BaseDeviceState deviceState = pair.getBaseDevice();
         holder.mTvDeviceId.setText(String.format(Locale.CHINA,"%d", deviceState.getDeviceId()));
         if (point == 1 && addNum>0){
-            String num = "子机编号"+(deviceState.getDeviceId()+addNum+1);
+            String num = "子机编号"+(deviceState.getDeviceId()+addNum);
             holder.mTvStuInfo.setText(deviceState.getState() == BaseDeviceState.STATE_FREE ? String.format("√%s", num) : num);
         }else {
             holder.mTvStuInfo.setText(deviceState.getState() == BaseDeviceState.STATE_FREE ? "√" : "");

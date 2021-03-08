@@ -4,7 +4,24 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingTop="@dimen/dp_10">
+    <LinearLayout
+        android:layout_marginTop="@dimen/dp_20"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:text="自动:"/>
+
+        <Switch
+            android:id="@+id/sw_auto_pair"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"/>
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/ll_top"
         android:layout_width="wrap_content"

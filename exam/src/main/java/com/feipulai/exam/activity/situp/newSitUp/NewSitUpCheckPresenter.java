@@ -84,11 +84,11 @@ public class NewSitUpCheckPresenter extends AbstractRadioCheckPresenter<SitUpSet
 
     @Override
     public void changeBadDevice() {
-
+        facade.pause();
     }
 
     @Override
     public void cancelChangeBad() {
-
+        facade.resume();
     }
 }

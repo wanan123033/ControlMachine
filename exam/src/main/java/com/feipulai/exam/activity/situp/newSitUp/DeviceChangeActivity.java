@@ -58,7 +58,16 @@ public class DeviceChangeActivity extends BaseTitleActivity {
         mAdapter.setOnItemClickListener(new DeviceChangeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int viewId, int position) {
+                mAdapter.setSelected(position);
 
+                switch (viewId){
+                    case R.id.tv_arm:
+                        mAdapter.setSelectDevice(2);
+                        break;
+                    case R.id.tv_sit_up:
+                        mAdapter.setSelectDevice(1);
+                        break;
+                }
             }
         });
     }

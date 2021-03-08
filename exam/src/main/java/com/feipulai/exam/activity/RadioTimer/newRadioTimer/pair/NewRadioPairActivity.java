@@ -61,9 +61,9 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
 
         mRvPairs.addItemDecoration(dividerItemDecoration);
         setting = SharedPrefsUtil.loadFormSource(this, RunTimerSetting.class);
-        presenter = new RadioTimerPairPresenter(this, this, Integer.parseInt(setting.getRunNum()) + 1);
+        presenter = new RadioTimerPairPresenter(this, this, Integer.parseInt(setting.getRunNum()));
         mSwAutoPair.setChecked(setting.isAutoPair());
-        if (setting.getInterceptPoint() != 2) {
+        if (setting.getInterceptPoint() != 2) {//起点拦截
             presenter.setPoint(0);
             presenter.start(1, 0);
             beginningPoint.setVisibility(View.VISIBLE);
@@ -72,7 +72,7 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
             mRvPairs.setClickable(true);
             mAdapter.setOnItemClickListener(this);
         }
-        if (setting.getInterceptPoint() != 1) {
+        if (setting.getInterceptPoint() != 1) {//终点拦截
             endingPoint.setVisibility(View.VISIBLE);
             if (setting.getInterceptPoint() != 3) {
                 presenter.setPoint(1);

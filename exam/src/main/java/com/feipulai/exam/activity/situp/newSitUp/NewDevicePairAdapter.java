@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.feipulai.exam.R;
-import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 
 import java.util.List;
 import java.util.Locale;
@@ -18,14 +17,19 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DeviceChangeAdapter extends RecyclerView.Adapter<DeviceChangeAdapter.ViewHolder> {
+public class NewDevicePairAdapter extends RecyclerView.Adapter<DeviceChangeAdapter.ViewHolder>{
     protected List<DeviceCollect> stuPairs;
     private int selectedPosition;
-    private int device;//1 腰带 2肩胛
-    //private Context mContext;
-    private OnItemClickListener mOnItemClickListener;
 
-    public DeviceChangeAdapter(Context context, List<DeviceCollect> stuPairs) {
+    public int getDevice() {
+        return device;
+    }
+
+    private int device =1;//1 腰带 2肩胛
+    //private Context mContext;
+    private DeviceChangeAdapter.OnItemClickListener mOnItemClickListener;
+
+    public NewDevicePairAdapter(Context context, List<DeviceCollect> stuPairs) {
         //mContext = context;
         this.stuPairs = stuPairs;
     }
@@ -40,20 +44,20 @@ public class DeviceChangeAdapter extends RecyclerView.Adapter<DeviceChangeAdapte
     public void setSelectDevice(int device){
         this.device = device;
     }
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+    public void setOnItemClickListener(DeviceChangeAdapter.OnItemClickListener onItemClickListener) {
         mOnItemClickListener = onItemClickListener;
     }
 
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int i) {
+    public DeviceChangeAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int i) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View v = inflater.inflate(R.layout.rv_stu_dev_item, parent, false);
-        return new ViewHolder(v);
+        return new DeviceChangeAdapter.ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final DeviceChangeAdapter.ViewHolder holder, int position) {
         DeviceCollect pair = stuPairs.get(position);
         holder.mTvSitUp.setVisibility(View.VISIBLE);
         holder.mTvArm.setVisibility(View.VISIBLE);
@@ -72,34 +76,6 @@ public class DeviceChangeAdapter extends RecyclerView.Adapter<DeviceChangeAdapte
             holder.mTvSitUp.setBackgroundColor(Color.WHITE);
         }
 
-        switch (pair.getSitPushUpStateResult().getState()){
-            case BaseDeviceState.STATE_DISCONNECT:
-                holder.mTvSitUp.setBackgroundColor(Color.RED);
-                break;
-            case BaseDeviceState.STATE_COUNTING:
-                holder.mTvSitUp.setBackgroundColor(Color.WHITE);
-                break;
-            case BaseDeviceState.STATE_LOW_BATTERY:
-                holder.mTvSitUp.setBackgroundColor(Color.YELLOW);
-                break;
-            case BaseDeviceState.STATE_STOP_USE:
-                holder.mTvSitUp.setBackgroundColor(Color.GRAY);
-                break;
-        }
-        switch (pair.getArmStateResult().getState()){
-            case BaseDeviceState.STATE_DISCONNECT:
-                holder.mTvArm.setBackgroundColor(Color.RED);
-                break;
-            case BaseDeviceState.STATE_COUNTING:
-                holder.mTvArm.setBackgroundColor(Color.WHITE);
-                break;
-            case BaseDeviceState.STATE_LOW_BATTERY:
-                holder.mTvArm.setBackgroundColor(Color.YELLOW);
-                break;
-            case BaseDeviceState.STATE_STOP_USE:
-                holder.mTvArm.setBackgroundColor(Color.GRAY);
-                break;
-        }
         //选中处理
 //        holder.mLlPair.setBackgroundColor(position == selectedPosition ? Color.rgb(30, 144, 255) : Color.WHITE);
         if (mOnItemClickListener != null) {

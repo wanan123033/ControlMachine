@@ -46,7 +46,7 @@ public class RadioTimerPairPresenter implements RadioContract.Presenter,
             if (linker==null){
                 linker = new RadioLinker(machineCode, TARGET_FREQUENCY, this);
                 if (setting.getInterceptPoint() == 3 && point == 1){
-                    linker.startPair(deviceId+Integer.parseInt(setting.getRunNum()+1));//有起终点的编号=deviceId+道次数+1
+                    linker.startPair(deviceId+Integer.parseInt(setting.getRunNum()));//有起终点的编号=deviceId+道次数
                 }else {
                     linker.startPair(deviceId);
                 }
