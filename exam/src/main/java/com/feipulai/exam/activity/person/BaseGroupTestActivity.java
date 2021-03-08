@@ -115,8 +115,9 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
      */
     public int runUp;
     public int baseHeight;
-    private boolean isFault;
+    //    private boolean isFault;
     private EditResultDialog editResultDialog;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_base_group_test;
@@ -266,9 +267,9 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     }
 
 
-    public void setFaultEnable(boolean enable) {
-        isFault = enable;
-    }
+//    public void setFaultEnable(boolean enable) {
+//        isFault = enable;
+//    }
 
     public abstract void initData();
 
@@ -297,7 +298,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         this.testType = testType;
     }
 
-    @OnClick({R.id.txt_start_test, R.id.txt_led_setting, R.id.txt_stu_skip,R.id.tv_penalizeFoul,R.id.txt_test_result})
+    @OnClick({R.id.txt_start_test, R.id.txt_led_setting, R.id.txt_stu_skip, R.id.tv_penalizeFoul, R.id.txt_test_result})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 //            case R.id.txt_setting:
@@ -372,11 +373,11 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                     Intent intent = new Intent(this, DataDisplayActivity.class);
                     intent.putExtra(DataDisplayActivity.ISSHOWPENALIZEFOUL, isShowPenalizeFoul());
                     intent.putExtra(DataRetrieveActivity.DATA_ITEM_CODE, getItemCode());
-                    intent.putExtra(DataDisplayActivity.TESTNO,setTestCount());
+                    intent.putExtra(DataDisplayActivity.TESTNO, setTestCount());
                     intent.putExtra(DataRetrieveActivity.DATA_EXTRA, bean);
 
                     startActivity(intent);
-                }else {
+                } else {
                     toastSpeak("无考生成绩信息");
                 }
                 break;
@@ -388,9 +389,11 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 break;
         }
     }
+
     private String getItemCode() {
         return TestConfigs.sCurrentItem.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : TestConfigs.sCurrentItem.getItemCode();
     }
+
     boolean clicked = false;
 
     /**
@@ -683,11 +686,12 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             }
             //状态为测试已结束
             if (deviceState.getState() == BaseDeviceState.STATE_END) {
-                if (isFault && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
-                    showPenalize(deviceState, pair);
-                } else {
-                    doTestEnd(deviceState, pair);
-                }
+//                if (isFault && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
+//                    showPenalize(deviceState, pair);
+//                } else {
+//                    doTestEnd(deviceState, pair);
+//                }
+                doTestEnd(deviceState, pair);
             }
 
         }
@@ -719,6 +723,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 
         //非身份验证模式
         if (!SettingHelper.getSystemSetting().isIdentityMark()) {
+
             //连续测试
             if (setTestPattern() == 0) {
                 continuousTest();
@@ -1005,7 +1010,10 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 //                    allTestComplete();
 //                    return;
 //                }
-                continuousTestNext();
+                if (isShowPenalizeFoul() == View.GONE) {
+                    continuousTestNext();
+                }
+
                 return;
 
             }
@@ -1031,7 +1039,9 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 //                allTestComplete();
 //                return;
 //            }
-            continuousTestNext();
+            if (isShowPenalizeFoul() == View.GONE) {
+                continuousTestNext();
+            }
         }
     }
 
@@ -1083,6 +1093,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         if (!isAllTest()) {
             roundNo = 1;
             stuAdapter.setTestPosition(0);
+
             continuousTest();
             return;
         }
@@ -1101,18 +1112,25 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 roundNo++;
                 //设置测试学生，当学生有满分跳过则寻找需要测试学生
                 stuAdapter.setTestPosition(0);
-                loopTestNext();
+                if (isShowPenalizeFoul() == View.GONE) {
+                    loopTestNext();
+                }
                 return;
             } else {
                 //全部次数测试完，
 //                allTestComplete();
-                loopTestNext();
+                if (isShowPenalizeFoul() == View.GONE) {
+                    loopTestNext();
+                }
                 return;
             }
         }
         //设置测试学生，当学生有满分跳过则寻找需要测试学生
         stuAdapter.setTestPosition(stuAdapter.getTestPosition() + 1);
-        loopTestNext();
+        if (isShowPenalizeFoul() == View.GONE) {
+            loopTestNext();
+        }
+
     }
 
     /**
@@ -1230,7 +1248,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     private void allTestComplete() {
         if (group.getIsTestComplete() != 1 &&
                 SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN &&
-                (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 ||SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP) &&
+                (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 || SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP) &&
                 SettingHelper.getSystemSetting().isAutoPrint()) {
             InteractUtils.printA4Result(this, group);
         }

@@ -95,8 +95,9 @@ public class MainActivity extends AppCompatActivity
         mediaPlayer = new MediaPlayer();
         try {
             String uri = "android.resource://" + getPackageName() + "/" + R.raw.welcome;
-            mediaPlayer.setDataSource(this, Uri.parse(uri));
-        } catch (IOException e) {
+                mediaPlayer.setDataSource(this, Uri.parse(uri));
+            mediaPlayer.prepare();
+        } catch (Exception  e) {
             e.printStackTrace();
         }
         audioMngHelper = new AudioMngHelper(this);
@@ -142,7 +143,7 @@ public class MainActivity extends AppCompatActivity
         RadioManager.getInstance().init();
         CheckDeviceOpener.getInstance().setOnCheckDeviceArrived(this);
         CheckDeviceOpener.getInstance().open(this, true, true, true);
-//        requestDevicePermission();
+        requestDevicePermission();
 //        IOPower.getInstance().setFingerPwr(1);
         try {
             mediaPlayer.prepare();
@@ -157,7 +158,7 @@ public class MainActivity extends AppCompatActivity
         PrinterManager.getInstance().close();
         CheckDeviceOpener.getInstance().close();
 //        IOPower.getInstance().setFingerPwr(0);
-//        unregisterReceiver(mUsbReceiver);
+        unregisterReceiver(mUsbReceiver);
         if (mediaPlayer != null) {
             mediaPlayer.stop();
         }
@@ -197,11 +198,12 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(this, FingerprintActivity.class));
                 break;
             case R.id.btn_voice:
-                if (!mediaPlayer.isPlaying()) {
-                    mediaPlayer.start();
-                } else {
-                    mediaPlayer.pause();
-                }
+                mediaPlayer.start();
+//                if (!mediaPlayer.isPlaying()) {
+//
+//                } else {
+//                    mediaPlayer.pause();
+//                }
                 break;
             case R.id.btn_volAdd:
                 audioMngHelper.addVoiceSystem();
@@ -318,9 +320,10 @@ public class MainActivity extends AppCompatActivity
             fingerprintSensor = FingerprintFactory.createFingerprintSensor(this, TransportType.USB, fingerprintParams);
             try {
                 fingerprintSensor.open(0);
-                tvICFinger.setText("IC卡指纹模块测试通过");
+                tvICFinger.setText("20M指纹模块测试通过");
             } catch (FingerprintSensorException e1) {
                 e1.printStackTrace();
+                tvICFinger.setText("20M指纹模块测试失败");
             }
         } else if (pid == ID_PID) {
             Map fingerprintParams = new HashMap();
@@ -330,9 +333,10 @@ public class MainActivity extends AppCompatActivity
             try {
                 //连接设备
                 mNIDFPSensor.open(0);
-                tvIDFinger.setText("身份证指纹模块测通过");
+                tvIDFinger.setText("身份证指纹模块测试通过");
             } catch (NIDFPException e) {
                 e.printStackTrace();
+                tvIDFinger.setText("身份证指纹模块测试失败");
             }
         }
     }

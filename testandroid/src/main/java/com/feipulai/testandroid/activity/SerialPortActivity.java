@@ -66,7 +66,7 @@ public class SerialPortActivity extends BaseActivity implements AdapterView.OnIt
 
         // 设备
 //        mDevices = serialPortFinder.getAllDevicesPath();
-        mDevices = new String[]{"/dev/ttysWK3","/dev/ttysWK0"};
+        mDevices = new String[]{"/dev/ttysWK3","/dev/ttysWK0","/dev/ttyS1","/dev/ttyS2","/dev/ttyS3","/dev/ttyS4"};
         if (mDevices.length == 0) {
             mDevices = new String[]{
                     getString(R.string.no_serial_device)
@@ -74,7 +74,7 @@ public class SerialPortActivity extends BaseActivity implements AdapterView.OnIt
         }
         // 波特率
 //        mBaudrates = getResources().getStringArray(R.array.baudrates);
-        mBaudrates = new String[]{"9600"};
+        mBaudrates = new String[]{"9600","115200"};
 
 //        mDeviceIndex = PrefHelper.getDefault().getInt(PreferenceKeys.SERIAL_PORT_DEVICES, 0);
 //        mDeviceIndex = mDeviceIndex >= mDevices.length ? mDevices.length - 1 : mDeviceIndex;

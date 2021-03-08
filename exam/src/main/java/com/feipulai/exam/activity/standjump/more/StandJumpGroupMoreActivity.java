@@ -27,7 +27,7 @@ public class StandJumpGroupMoreActivity extends BaseMoreGroupActivity implements
         if (jumpSetting == null)
             jumpSetting = new StandJumpSetting();
         super.initData();
-
+        setFaultEnable(jumpSetting.isPenalizeFoul());
 //        setFaultEnable(jumpSetting.isPenalize());
 //        if (!jumpSetting.isPenalize()) {
 //            setNextClickStart(false);
