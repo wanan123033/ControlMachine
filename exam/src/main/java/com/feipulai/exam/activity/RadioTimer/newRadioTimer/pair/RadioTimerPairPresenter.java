@@ -77,7 +77,7 @@ public class RadioTimerPairPresenter implements RadioContract.Presenter,
             pairs.get(position).getBaseDevice().setState(BaseDeviceState.STATE_DISCONNECT);
             view.select(position,point);
             if (setting.getInterceptPoint() == 3){
-                linker.startPair(focusPosition + 2+Integer.parseInt(setting.getRunNum()));
+                linker.startPair(focusPosition + 1+Integer.parseInt(setting.getRunNum()));
             }else {
                 linker.startPair(focusPosition + 1);
             }

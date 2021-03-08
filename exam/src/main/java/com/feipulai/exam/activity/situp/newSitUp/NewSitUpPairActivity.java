@@ -1,9 +1,11 @@
 package com.feipulai.exam.activity.situp.newSitUp;
 
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Switch;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -15,6 +17,7 @@ import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairContract;
 import com.feipulai.exam.activity.situp.setting.SitUpSetting;
 import com.feipulai.exam.view.DividerItemDecoration;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +31,11 @@ public class NewSitUpPairActivity extends BaseTitleActivity implements SitPullUp
     private NewDevicePairAdapter mAdapter;
     private List<DeviceCollect> deviceCollects = new ArrayList<>();
     private NewSitUpPairPresenter presenter;
+    @BindView(R.id.sw_auto_pair)
+    Switch mSwAutoPair;
+
+    private static final int UPDATE_SPECIFIC_ITEM = 0x1;
+    private MyHandler mHandler = new MyHandler(this);
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_new_sit_up_pair;
@@ -59,14 +67,17 @@ public class NewSitUpPairActivity extends BaseTitleActivity implements SitPullUp
                 switch (viewId){
                     case R.id.tv_arm:
                         mAdapter.setSelectDevice(2);
+                        presenter.setDevice(2);
                         break;
                     case R.id.tv_sit_up:
                         mAdapter.setSelectDevice(1);
+                        presenter.setDevice(1);
                         break;
                 }
             }
         });
         presenter = new NewSitUpPairPresenter(this,this);
+        presenter.setDevice(1);
         presenter.start();
     }
 
@@ -78,21 +89,46 @@ public class NewSitUpPairActivity extends BaseTitleActivity implements SitPullUp
 
     @Override
     public void initView(boolean isAutoPair, List<StuDevicePair> stuDevicePairs) {
+        mSwAutoPair.setChecked(isAutoPair);
 
     }
 
     @Override
-    public void updateSpecificItem(int focusPosition) {
-
+    public void updateSpecificItem(int position) {
+        Message msg = Message.obtain();
+        msg.what = UPDATE_SPECIFIC_ITEM;
+        msg.arg1 = position;
+        mHandler.sendMessage(msg);
     }
 
     @Override
     public void select(int position) {
-
+        int oldSelectPosition = mAdapter.getSelected();
+        mAdapter.setSelected(position);
+        updateSpecificItem(oldSelectPosition);
+        updateSpecificItem(position);
     }
 
     @Override
     public void showToast(String msg) {
+        toastSpeak(msg);
+    }
 
+    @Override
+    public void handleMessage(Message msg) {
+
+        switch (msg.what) {
+            case UPDATE_SPECIFIC_ITEM:
+                mAdapter.notifyItemChanged(msg.arg1);
+                break;
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LogUtils.life("SitPullPairActivity onPause");
+        presenter.saveSettings();
+        presenter.stopPair();
     }
 }

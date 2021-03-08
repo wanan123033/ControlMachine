@@ -198,9 +198,16 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         }else {
             if (deviceId/2  > runNum)
                 return;
-            if (mList.get(deviceId/2-1).getConnectState() != state){
-                mList.get(deviceId/2-1).setConnectState(state);
-                mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
+            if (deviceId <= runNum){
+                if (mList.get(deviceId-1).getConnectState() != state){
+                    mList.get(deviceId-1).setConnectState(state);
+                    mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
+                }
+            }else {
+                if (mList.get(deviceId/2-1).getConnectState() != state){
+                    mList.get(deviceId/2-1).setConnectState(state);
+                    mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
+                }
             }
         }
 
@@ -232,14 +239,18 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
             }else {
                 if (result.getDeviceId()/2 > runNum)
                     return;
-                temp = result.getDeviceId()/2-1;
+                if (result.getDeviceId()%2 == 1){
+                    temp = result.getDeviceId()-1;
+                }else {
+                    temp = result.getDeviceId()/2-1;
+                }
             }
             if (null == mList.get(temp).getStudent())
                 return;
             int realTime =  (result.getLongTime() - baseTimer);
             mList.get(temp).setMark(getFormatTime(realTime));
             mList.get(temp).setOriginalMark(realTime);
-            List<RunStudent.WaitResult> list = mList.get(result.getDeviceId() - 1).getResultList();
+            List<RunStudent.WaitResult> list = mList.get(temp).getResultList();
             RunStudent.WaitResult waitResult = new RunStudent.WaitResult();
             waitResult.setOriResult(realTime);
             waitResult.setWaitResult(getFormatTime(realTime));

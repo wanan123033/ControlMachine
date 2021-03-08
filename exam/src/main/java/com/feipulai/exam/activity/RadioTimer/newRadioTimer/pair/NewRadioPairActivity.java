@@ -128,6 +128,8 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
         if (mEndAdapter != null) {
             mEndAdapter.notifyDataSetChanged();
         }
+        btnEndHelper.setEnabled(true);
+        btnHelper.setEnabled(true);
         updateSpecificItem(position, point);
     }
 
