@@ -55,6 +55,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -837,7 +838,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
                 PrinterManager.getInstance().print(String.format("第%1$d次：", i + 1));
             }
         }
-//        PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()));
+        PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()));
         PrinterManager.getInstance().print("\n");
 
     }

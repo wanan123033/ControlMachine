@@ -65,6 +65,7 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshLoadmoreListener;
 import com.zkteco.android.biometric.module.idcard.meta.IDCardInfo;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -466,7 +467,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
                     PrinterManager.getInstance().print(String.format("第 %1$d 次：", i + 1));
                 }
             }
-//            PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()) + "\n");
+            PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()) + "\n");
             PrinterManager.getInstance().print("\n");
 
 
