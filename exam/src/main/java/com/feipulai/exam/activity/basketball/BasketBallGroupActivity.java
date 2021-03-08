@@ -429,7 +429,8 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         LogUtils.operation("篮球保存MachineResult:" + machineResult.toString());
         DBManager.getInstance().insterMachineResult(machineResult);
         setOperationUI();
-        String time = DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital());
+//        String time = DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital());
+        String time = ResultDisplayUtils.getStrResultForDisplay(result.getResult());
         if (time.charAt(0) == '0' && time.charAt(1) == '0') {
             time = time.substring(3, time.toCharArray().length);
         } else if (time.charAt(0) == '0') {

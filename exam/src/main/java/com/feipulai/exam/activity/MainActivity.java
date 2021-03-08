@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Message;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
@@ -50,6 +51,7 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.netUtils.CommonUtils;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.service.UploadService;
+import com.feipulai.exam.view.BatteryView;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.videolibrary.StorageUtils;
 import com.ww.fpl.videolibrary.play.util.PUtil;
@@ -68,6 +70,8 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
     TextView txtMainTitle;
     @BindView(R.id.txt_deviceid)
     TextView txtDeviceId;
+    @BindView(R.id.view_battery)
+    BatteryView batteryView;
     private boolean mIsExiting;
     private Intent serverIntent;
     private Intent bindIntent;
@@ -86,6 +90,28 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
             String routeIp = locatIp.substring(0, locatIp.lastIndexOf("."));
             UdpLEDUtil.shellExec("ip route add " + routeIp + ".0/24 dev eth0 proto static scope link table wlan0 \n");
         }
+
+        RadioManager.getInstance().setOnKwhListener(new RadioManager.OnKwhListener() {
+            @Override
+            public void onKwhArrived(final Message msg) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        int state = msg.arg1;
+                        int level = msg.arg2;
+                        batteryView.setVisibility(View.VISIBLE);
+                        batteryView.updateState(level);
+                        if (state==0){//放电
+                            batteryView.updateView(level);
+                        }else{//充电
+                            batteryView.updateChargingView(level);
+                        }
+                    }
+                });
+
+            }
+        });
+
         //测试数据
 //        List<GroupItem> items = DBManager.getInstance().queryGroupItemByCode("11");
 //        List<RoundResult> roundResults = new ArrayList<>();

@@ -12,6 +12,7 @@ public class RadioManager {
 
     private SerialPorter mSerialPorter;
     private volatile OnRadioArrivedListener mOnRadioArrived;
+    private volatile OnKwhListener mOnKwhListener;
     private static volatile RadioManager instance;
     public static final int RADIO_INTERVAL = 100;
     private long mlastSendTime;
@@ -36,6 +37,9 @@ public class RadioManager {
                 if (mOnRadioArrived != null) {
                     mOnRadioArrived.onRadioArrived(msg);
                 }
+                if (mOnKwhListener != null && msg.what == SerialConfigs.CONVERTER_KWH_RESPONSE) {
+                    mOnKwhListener.onKwhArrived(msg);
+                }
             }
         });
     }
@@ -55,7 +59,9 @@ public class RadioManager {
     public void setOnRadioArrived(OnRadioArrivedListener onRadioArrived) {
         mOnRadioArrived = onRadioArrived;
     }
-
+    public void setOnKwhListener(OnKwhListener onKwhListener) {
+        mOnKwhListener = onKwhListener;
+    }
     // 这个地方必须锁住,万恶之源
     public synchronized void sendCommand(ConvertCommand convertCommand) {
         ensureInterval();
@@ -85,4 +91,7 @@ public class RadioManager {
         void onRadioArrived(Message msg);
     }
 
+    public interface OnKwhListener {
+        void onKwhArrived(Message msg);
+    }
 }

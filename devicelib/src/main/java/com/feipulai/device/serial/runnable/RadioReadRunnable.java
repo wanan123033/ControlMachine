@@ -112,6 +112,11 @@ public class RadioReadRunnable extends SerialReadRunnable {
                     msg.what = rs232Result.getType();
                     msg.obj = rs232Result.getResult();
                     break;
+                case 0xE0://电量
+                    msg.arg1=data[0]& 0xff;//充电状态
+                    msg.arg2=data[1]& 0xff;//电量百分比
+                    msg.what =SerialConfigs.CONVERTER_KWH_RESPONSE;
+                    break;
             }
         } catch (IOException e) {
             e.printStackTrace();

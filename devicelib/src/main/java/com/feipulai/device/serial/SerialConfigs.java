@@ -299,4 +299,6 @@ public class SerialConfigs {
     public static final int SPORT_TIMER_CONNECT = 0x84;
     public static final int SPORT_TIMER_RESULT = 0x85;
     public static final int SPORT_TIMER_GET_TIME = 0x86;
+
+    public static final int CONVERTER_KWH_RESPONSE = 0x87;
 }
