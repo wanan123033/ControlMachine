@@ -73,6 +73,7 @@ public class SplashScreenActivity extends BaseActivity {
     public static final String SECRET_KEY = MyApplication.getInstance().getString(R.string.tts_secret_key);
     private ActivateBean activateBean;
     private SweetAlertDialog dialog;
+    boolean isInit = false;
 
     // TtsMode.MIX; 离在线融合，在线优先； TtsMode.ONLINE 纯在线； 没有纯离线
     @Override
@@ -82,19 +83,6 @@ public class SplashScreenActivity extends BaseActivity {
         // 这里是否还需要延时需要再测试后再修改
         RadioManager.getInstance().init();
         DateUtil.setTimeZone(this, "Asia/Shanghai");
-        init();
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-        //   init();
-//                Intent intent = new Intent();
-//                intent.setClass(SplashScreenActivity.this, MainActivity.class);
-//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                startActivity(intent);
-//                finish();
-//            }
-//        }, 1000);
 
         activateBean = SharedPrefsUtil.loadFormSource(this, ActivateBean.class);
         long runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0L);
@@ -107,9 +95,7 @@ public class SplashScreenActivity extends BaseActivity {
                 return;
             }
             activate();
-            if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
-                gotoMain();
-            }
+            gotoMain();
 
 
         } else {
@@ -130,6 +116,10 @@ public class SplashScreenActivity extends BaseActivity {
             public void run() {
                 if (activateBean != null && activateBean.getCurrentTime() < activateBean.getValidEndTime()) {
                     if (!ActivityCollector.getInstance().isExistActivity(MainActivity.class)) {
+                        if (!isInit) {
+                            init();
+                        }
+
                         Intent intent = new Intent();
 //                        intent.setClass(SplashScreenActivity.this, AccountActivit.class);
                         intent.setClass(SplashScreenActivity.this, MainActivity.class);
@@ -161,7 +151,7 @@ public class SplashScreenActivity extends BaseActivity {
                     //需要确认激活
                     showActivateConfirm(1);
                 } else if (result.getCurrentTime() > result.getValidEndTime()) {
-                    LogUtil.logDebugMessage(result.getCurrentTime()+"-----"+result.getValidEndTime());
+                    LogUtil.logDebugMessage(result.getCurrentTime() + "-----" + result.getValidEndTime());
                     //超出使用时间 重新激活
                     showActivateConfirm(2);
                 } else {
@@ -173,9 +163,10 @@ public class SplashScreenActivity extends BaseActivity {
 
             @Override
             public void onFault(int code, String errorMsg) {
-                toastSpeak(errorMsg);
+
 //                if (activateBean == null || !ActivityCollector.getInstance().isExistActivity(MainActivity.class)) {
-                if (activateBean == null || ActivityCollector.getInstance().isLastActivity(SplashScreenActivity.class)) {
+                if (activateBean == null && ActivityCollector.getInstance().isLastActivity(SplashScreenActivity.class)) {
+                    toastSpeak(errorMsg);
                     //需要确认激活
                     showActivateConfirm(1);
                 }
@@ -216,6 +207,7 @@ public class SplashScreenActivity extends BaseActivity {
 
 
     private void init() {
+        isInit = true;
         boolean isEngine = ConfigUtil.getISEngine(this);
         if (isEngine) {
             initLocalFace();

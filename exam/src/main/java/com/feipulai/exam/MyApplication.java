@@ -19,6 +19,7 @@ import com.feipulai.exam.utils.bluetooth.BlueToothHelper;
 import com.kk.taurus.playerbase.config.PlayerConfig;
 import com.kk.taurus.playerbase.config.PlayerLibrary;
 import com.kk.taurus.playerbase.record.PlayRecordManager;
+import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 
 
@@ -53,14 +54,14 @@ public class MyApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
-//        LogUtils.initLogger(true, true, PATH_LOG_NAME);
-//        CrashHandler.getInstance().init(this);
-//        CrashHandler.getInstance().setUploadOpersion(new CrashHandler.UploadOpersion() {
-//            @Override
-//            public void upload(String erroMsg) {
-//                new HttpSubscriber().uploadLog(erroMsg);
-//            }
-//        });
+        LogUtils.initLogger(true, true, PATH_LOG_NAME);
+        CrashHandler.getInstance().init(this);
+        CrashHandler.getInstance().setUploadOpersion(new CrashHandler.UploadOpersion() {
+            @Override
+            public void upload(String erroMsg) {
+                new HttpSubscriber().uploadLog(erroMsg);
+            }
+        });
         SettingHelper.init(this);
         BlueToothHelper.init(this);
         TOKEN = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.TOKEN, "");

@@ -437,11 +437,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             time = time.substring(1, time.toCharArray().length);
         }
         tvResult.setText(time);
-        if (machineResultList.size() == 1) {
-            ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
-        }
         ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
-//        tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital()));
     }
 
     @Override
