@@ -7,6 +7,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Switch;
 
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.beans.ArmStateResult;
@@ -14,17 +15,17 @@ import com.feipulai.device.serial.beans.SitPushUpStateResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
-import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairContract;
 import com.feipulai.exam.activity.situp.setting.SitUpSetting;
 import com.feipulai.exam.view.DividerItemDecoration;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import butterknife.BindView;
 
-public class NewSitUpPairActivity extends BaseTitleActivity implements SitPullUpPairContract.View{
+public class NewSitUpPairActivity extends BaseTitleActivity implements NewSitUpPairContract.View{
 
     @BindView(R.id.rv_pairs)
     RecyclerView mRvPairs;
@@ -68,10 +69,12 @@ public class NewSitUpPairActivity extends BaseTitleActivity implements SitPullUp
                     case R.id.tv_arm:
                         mAdapter.setSelectDevice(2);
                         presenter.setDevice(2);
+                        LogUtils.operation("选择设备device："+ 2+"position:"+position);
                         break;
                     case R.id.tv_sit_up:
                         mAdapter.setSelectDevice(1);
                         presenter.setDevice(1);
+                        LogUtils.operation("选择设备device："+ 1+"position:"+position);
                         break;
                 }
             }
@@ -94,19 +97,22 @@ public class NewSitUpPairActivity extends BaseTitleActivity implements SitPullUp
     }
 
     @Override
-    public void updateSpecificItem(int position) {
+    public void updateSpecificItem(int position,int device) {
+        LogUtils.operation("更新设备device："+ device+"position:"+position);
         Message msg = Message.obtain();
         msg.what = UPDATE_SPECIFIC_ITEM;
         msg.arg1 = position;
+        msg.arg2 = device;
         mHandler.sendMessage(msg);
     }
 
     @Override
-    public void select(int position) {
+    public void select(int position,int device) {
+        LogUtils.operation("处理设备device："+ device+"position:"+position);
         int oldSelectPosition = mAdapter.getSelected();
         mAdapter.setSelected(position);
-        updateSpecificItem(oldSelectPosition);
-        updateSpecificItem(position);
+        updateSpecificItem(oldSelectPosition,device);
+        updateSpecificItem(position,device);
     }
 
     @Override
@@ -119,6 +125,7 @@ public class NewSitUpPairActivity extends BaseTitleActivity implements SitPullUp
 
         switch (msg.what) {
             case UPDATE_SPECIFIC_ITEM:
+                mAdapter.setSelectDevice(msg.arg2);
                 mAdapter.notifyItemChanged(msg.arg1);
                 break;
         }

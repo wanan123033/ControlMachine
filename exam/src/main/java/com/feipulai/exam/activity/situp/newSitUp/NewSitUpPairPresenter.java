@@ -12,18 +12,17 @@ import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.check.CheckUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
-import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairContract;
 import com.feipulai.exam.activity.situp.setting.SitUpSetting;
 import com.feipulai.exam.config.TestConfigs;
 
 import java.util.List;
 import java.util.Objects;
 
-public class NewSitUpPairPresenter implements SitPullUpPairContract.Presenter,
+public class NewSitUpPairPresenter implements NewSitUpPairContract.Presenter,
         RadioManager.OnRadioArrivedListener,
         SitPullLinker.SitPullPairListener {
 
-    private SitPullUpPairContract.View view;
+    private NewSitUpPairContract.View view;
     public volatile int focusPosition;
     private List<StuDevicePair> pairs;
     public int machineCode = TestConfigs.sCurrentItem.getMachineCode();
@@ -34,7 +33,7 @@ public class NewSitUpPairPresenter implements SitPullUpPairContract.Presenter,
     private int device;//1腰带 2肩胛
     private SitPushUpManager sitPushUpManager;
 
-    public NewSitUpPairPresenter(Context context, SitPullUpPairContract.View view) {
+    public NewSitUpPairPresenter(Context context, NewSitUpPairContract.View view) {
         this.context = context;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Objects.requireNonNull(view);
@@ -76,9 +75,9 @@ public class NewSitUpPairPresenter implements SitPullUpPairContract.Presenter,
     @Override
     public void onNewDeviceConnect() {
         pairs.get(focusPosition).getBaseDevice().setState(BaseDeviceState.STATE_FREE);
-        view.updateSpecificItem(focusPosition);
+        view.updateSpecificItem(focusPosition,device);
         if (isAutoPair() && focusPosition != pairs.size() - 1) {
-            changeFocusPosition(focusPosition + 1);
+            changeFocusPosition(focusPosition + 1,device);
             //这里先清除下一个的连接状态,避免没有连接但是现实已连接
             BaseDeviceState originState = pairs.get(focusPosition).getBaseDevice();
             originState.setState(BaseDeviceState.STATE_DISCONNECT);
@@ -95,13 +94,14 @@ public class NewSitUpPairPresenter implements SitPullUpPairContract.Presenter,
 
 
     @Override
-    public void changeFocusPosition(int position) {
+    public void changeFocusPosition(int position,int device) {
         if (focusPosition == position) {
             return;
         }
+        this.device = device;
         focusPosition = position;
         pairs.get(position).getBaseDevice().setState(BaseDeviceState.STATE_DISCONNECT);
-        view.select(position);
+        view.select(position,device);
         linker.startPair(focusPosition + 1);
     }
 

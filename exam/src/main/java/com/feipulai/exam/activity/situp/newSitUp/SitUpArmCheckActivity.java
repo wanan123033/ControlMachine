@@ -43,4 +43,8 @@ public class SitUpArmCheckActivity extends SitPullUpCheckActivity {
         super.onResume();
         setDeviceVisible();
     }
+
+    public void getView(){
+
+    }
 }

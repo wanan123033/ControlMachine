@@ -29,12 +29,15 @@ import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
+import com.feipulai.exam.activity.data.DataDisplayActivity;
+import com.feipulai.exam.activity.data.DataRetrieveActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.sargent_jump.adapter.DeviceListAdapter;
 import com.feipulai.exam.activity.sargent_jump.pair.SargentPairActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.bean.DataRetrieveBean;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
@@ -359,6 +362,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                                 pair.getBaseDevice().getState() == BaseDeviceState.STATE_END) {
                             pair.setTestTime(DateUtil.getCurrentTime() + "");
                             sendTestCommand(pair, pos);
+                            deviceListAdapter.setPenalize(false);
                         }
                         break;
                     case R.id.txt_skip:
@@ -368,12 +372,27 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                         break;
                     case R.id.txt_punish:
                         if (pair.getStudent() != null) {
-                            penalize(pos);
+//                            penalize(pos);
+                            DataRetrieveBean bean = new DataRetrieveBean();
+                            bean.setStudentCode(pair.getStudent().getStudentCode());
+                            bean.setSex(pair.getStudent().getSex());
+                            bean.setTestState(1);
+                            bean.setStudentName(pair.getStudent().getStudentName());
+                            Intent intent = new Intent(BaseMoreActivity.this, DataDisplayActivity.class);
+                            intent.putExtra(DataDisplayActivity.ISSHOWPENALIZEFOUL, isPenalize);
+                            intent.putExtra(DataRetrieveActivity.DATA_ITEM_CODE, getItemCode());
+                            intent.putExtra(DataRetrieveActivity.DATA_EXTRA, bean);
+                            intent.putExtra(DataDisplayActivity.TESTNO, testNo);
+                            startActivity(intent);
                         }
                         break;
                     case R.id.txt_confirm:
                         if (pair.getStudent() != null) {
-                            confirmResult(pos);
+//                            confirmResult(pos);
+                            updateResult(pair);
+                            doResult(pair, pos);
+                            deviceDetails.get(pos).setConfirmVisible(false);
+                            deviceListAdapter.notifyItemChanged(pos);
                         }
                         break;
                     case R.id.txt_get_data:
@@ -393,6 +412,10 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
             }
         });
+    }
+
+    private String getItemCode() {
+        return TestConfigs.sCurrentItem.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : TestConfigs.sCurrentItem.getItemCode();
     }
 
     /**
@@ -571,17 +594,19 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             pair.getBaseDevice().setState(deviceState.getState());
             //状态为测试已结束
             if (deviceState.getState() == BaseDeviceState.STATE_END) {
-                if (isPenalize && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
-
-                    if (setDeviceCount() == 1) {
-                        showPenalize(index);
-                    } else {
-                        deviceDetails.get(index).setConfirmVisible(true);
-                        deviceListAdapter.notifyItemChanged(index);
-                    }
-                } else {
-                    doResult(pair, index);
-                }
+//                if (isPenalize && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
+//                    if (setDeviceCount() == 1) {
+//                        showPenalize(index);
+//                    } else {
+//                        deviceDetails.get(index).setConfirmVisible(true);
+//                        deviceListAdapter.notifyItemChanged(index);
+//                    }
+//                } else {
+//                    doResult(pair, index);
+//                }
+                deviceListAdapter.setPenalize(isPenalize);
+                deviceDetails.get(index).setConfirmVisible(true);
+                deviceListAdapter.notifyDataSetChanged();
 
             }
         }

@@ -181,6 +181,8 @@ public class SportPresent implements SportContract.Presenter {
         @Override
         public void onGetResult(SportResult result) {//收到结果
             Log.i("SportResultListener", result.toString());
+            if (result.getDeviceId() == 0 || (result.getDeviceId()-1) > checkState.length)
+                return;
             checkState[result.getDeviceId() - 1] = 1;
             sendIndex[result.getDeviceId()-1] = result.getSumTimes() == 0? 0:(result.getSumTimes()-1);
             LogUtils.operation("SportResultListener"+result.getLongTime()+"----"+newTime);

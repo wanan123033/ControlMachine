@@ -76,7 +76,7 @@ public class RadioTimerPairPresenter implements RadioContract.Presenter,
             }
             pairs.get(position).getBaseDevice().setState(BaseDeviceState.STATE_DISCONNECT);
             view.select(position,point);
-            if (setting.getInterceptPoint() == 3){
+            if (setting.getInterceptPoint() == 3 && point == 1){
                 linker.startPair(focusPosition + 1+Integer.parseInt(setting.getRunNum()));
             }else {
                 linker.startPair(focusPosition + 1);
@@ -121,6 +121,8 @@ public class RadioTimerPairPresenter implements RadioContract.Presenter,
 
         @Override
         public void onRadioArrived(Message msg) {
+            if (linker== null)
+                return;
             linker.onRadioArrived(msg);
         }
 

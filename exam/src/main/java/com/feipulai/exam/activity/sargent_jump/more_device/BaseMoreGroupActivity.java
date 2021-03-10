@@ -26,6 +26,8 @@ import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
+import com.feipulai.exam.activity.data.DataDisplayActivity;
+import com.feipulai.exam.activity.data.DataRetrieveActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
@@ -33,6 +35,7 @@ import com.feipulai.exam.activity.sargent_jump.adapter.DeviceListAdapter;
 import com.feipulai.exam.activity.sargent_jump.adapter.StuAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.bean.DataRetrieveBean;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
@@ -302,6 +305,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                                 deviceDetails.get(pos).getStuDevicePair().setTestTime(DateUtil.getCurrentTime() + "");
                                 toStart(pos);
                                 updateLastResultLed("", pos);
+                                deviceListAdapter.setPenalize(false);
                             }
                         } else {
                             toastSpeak("当前设备异常");
@@ -311,11 +315,30 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                     case R.id.txt_confirm:
                         if (pair.getStudent() != null) {
                             LogUtils.operation("点击了确认成绩:" + pair.getStudent().toString());
-                            confirmResult(pos);
+//                            confirmResult(pos);
+                            updateTestResult(pair);
+                            doResult(pair, pos);
+                            deviceDetails.get(pos).setConfirmVisible(false);
+                            deviceListAdapter.notifyItemChanged(pos);
                         }
                     case R.id.txt_punish:
                         if (pair.getStudent() != null) {
-                            penalize(pos);
+//                            penalize(pos);
+                            DataRetrieveBean bean = new DataRetrieveBean();
+                            bean.setStudentCode(pair.getStudent().getStudentCode());
+                            bean.setSex(pair.getStudent().getSex());
+                            bean.setTestState(1);
+                            bean.setGroupId(group.getId());
+                            bean.setScheduleNo(group.getScheduleNo());
+                            bean.setExamType(group.getExamType());
+                            bean.setStudentName(pair.getStudent().getStudentName());
+                            Intent intent = new Intent(BaseMoreGroupActivity.this, DataDisplayActivity.class);
+                            intent.putExtra(DataDisplayActivity.ISSHOWPENALIZEFOUL, isPenalize);
+                            intent.putExtra(DataRetrieveActivity.DATA_ITEM_CODE, getItemCode());
+                            intent.putExtra(DataDisplayActivity.TESTNO, setTestCount());
+                            intent.putExtra(DataRetrieveActivity.DATA_EXTRA, bean);
+
+                            startActivity(intent);
                         }
                         break;
                     case R.id.txt_get_data:
@@ -326,6 +349,10 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 }
             }
         });
+    }
+
+    private String getItemCode() {
+        return TestConfigs.sCurrentItem.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : TestConfigs.sCurrentItem.getItemCode();
     }
 
     public void getData(int pos) {
@@ -798,18 +825,21 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
             }
 //            pair.setCanTest(true);
 //            pair.getBaseDevice().setResultState(BaseDeviceState.STATE_FREE);
-            if (isPenalize && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
+//            if (isPenalize && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
+//
+//                if (setTestDeviceCount() == 1) {
+//                    showPenalize(deviceIndex);
+//                } else {
+//                    deviceDetails.get(deviceIndex).setConfirmVisible(true);
+//                    deviceListAdapter.notifyItemChanged(deviceIndex);
+//                }
+//            } else {
+//                doResult(pair, deviceIndex);
+//            }
 
-                if (setTestDeviceCount() == 1) {
-                    showPenalize(deviceIndex);
-                } else {
-                    deviceDetails.get(deviceIndex).setConfirmVisible(true);
-                    deviceListAdapter.notifyItemChanged(deviceIndex);
-                }
-            } else {
-                doResult(pair, deviceIndex);
-            }
-
+            deviceListAdapter.setPenalize(isPenalize);
+            deviceDetails.get(deviceIndex).setConfirmVisible(true);
+            deviceListAdapter.notifyDataSetChanged();
         }
 
         if (deviceDetails.get(deviceIndex).getStuDevicePair().getBaseDevice() != null) {
