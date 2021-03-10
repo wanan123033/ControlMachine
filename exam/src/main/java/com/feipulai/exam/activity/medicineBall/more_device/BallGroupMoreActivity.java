@@ -23,6 +23,7 @@ import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.text.MessageFormat;
+import java.util.Random;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -156,7 +157,12 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
         }
 
     }
+    private Random random = new Random();//指定种子数字
 
+    private boolean isInt(float number) {
+        int b = (int) number;
+        return number == b;
+    }
     private void onResultArrived(int result, BaseStuPair stuPair) {
         stuPair.setEndTime(DateUtil.getCurrentTime()+"");
         if (result < beginPoint * 10 || result > 5000 * 10) {
@@ -166,6 +172,12 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
 
         if (stuPair == null || stuPair.getStudent() == null)
             return;
+        //TODO 新增加特殊需求
+        if (result != 0 && result != setting.getSpDeviceCount() * 100
+                && !isInt(result / 100f) && random.nextInt(2) == 1) {
+            result = result + 5;
+        }
+
         if (setting.isFullReturn()) {
             if (stuPair.getStudent().getSex() == Student.MALE) {
                 stuPair.setFullMark(result >= Integer.parseInt(setting.getMaleFull()) * 10);
