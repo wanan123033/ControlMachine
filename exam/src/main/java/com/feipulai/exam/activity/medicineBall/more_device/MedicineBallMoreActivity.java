@@ -218,12 +218,7 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
             return false;
         }
     });
-    private Random random = new Random();//指定种子数字
 
-    private boolean isInt(float number) {
-        int b = (int) number;
-        return number == b;
-    }
     private void onResultArrived(int result, BaseStuPair stuPair) {
         using = false;
         if (result < beginPoint * 10 || result > 5000 * 10) {
@@ -233,11 +228,7 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
 
         if (stuPair == null || stuPair.getStudent() == null)
             return;
-        //TODO 新增加特殊需求
-        if (result != 0 && result != setting.getSpDeviceCount() * 100
-                && !isInt(result / 100f) && random.nextInt(2) == 1) {
-            result = result + 5;
-        }
+
         if (setting.isFullReturn()) {
 
             if (stuPair.getStudent().getSex() == Student.MALE) {

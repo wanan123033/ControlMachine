@@ -28,7 +28,6 @@ public class MedicineBallResultImpl implements SerialDeviceManager.RS232ResiltLi
     private static final String TAG = "MedicineBallResultImpl";
     private MainThreadDisposeListener disposeListener;
     private MedicineBallSetting medicineBallSetting;
-    private Random random = new Random();//指定种子数字
 
     public MedicineBallResultImpl(MainThreadDisposeListener disposeListener) {
         this.disposeListener = disposeListener;
@@ -78,15 +77,8 @@ public class MedicineBallResultImpl implements SerialDeviceManager.RS232ResiltLi
                         disposeListener.onResultArrived(result);
                     }
                 } else {
-                    //TODO 新增加特殊需求
-                    if (result.getResult() == 0 || result.getResult() == medicineBallSetting.getSpDeviceCount() * 100
-                            || isInt(result.getResult() / 100f) || random.nextInt(2) == 0) {
-                        disposeListener.onResultArrived(result);
-                    } else {
-                        result.setResult(result.getResult() + 5);
-                        disposeListener.onResultArrived(result);
-                    }
 
+                    disposeListener.onResultArrived(result);
                 }
 
                 break;
@@ -99,10 +91,7 @@ public class MedicineBallResultImpl implements SerialDeviceManager.RS232ResiltLi
         }
     }
 
-    private boolean isInt(float number) {
-        int b = (int) number;
-        return number == b;
-    }
+
 
     private void log(String msg) {
         Log.i(TAG, msg);

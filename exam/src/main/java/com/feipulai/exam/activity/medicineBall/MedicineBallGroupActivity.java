@@ -247,19 +247,9 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
 
     }
 
-    private Random random = new Random();//指定种子数字
 
-    private boolean isInt(float number) {
-        int b = (int) number;
-        return number == b;
-    }
 
     private void onResultArrived(int result, boolean fault, BaseStuPair stuPair) {
-        //TODO 新增加特殊需求
-        if (result != 0 && result != medicineBallSetting.getSpDeviceCount() * 100
-                && !isInt(result / 100f) && random.nextInt(2) == 1) {
-            result = result + 5;
-        }
 
         stuPair.setEndTime(DateUtil.getCurrentTime() + "");
         stuPair.setResult(result);
