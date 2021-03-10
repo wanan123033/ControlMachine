@@ -89,7 +89,6 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     private RunTimerSetting runTimerSetting;
     private RunNumberAdapter2 mAdapter2;
     private int baseTimer;//初始化时间 用于记录计时器开始计数的时间
-    private int startMode;
     private TimerKeeper timerKeeper;
     private int maxTestTimes;
     private int currentTestTime;
@@ -121,7 +120,6 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         rvTimer2.setAdapter(mAdapter2);
         runTimerSetting = SharedPrefsUtil.loadFormSource(this, RunTimerSetting.class);
         runNum = Integer.parseInt(runTimerSetting.getRunNum());
-        startMode = runTimerSetting.getStartPoint();
         timerKeeper = new TimerKeeper(this);
         timerKeeper.keepTime();
         maxTestTimes = runTimerSetting.getTestTimes();
@@ -129,13 +127,12 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
 
         //机器个数 = (跑到数量+1)*2 或者 (跑到数量+1)
         if (runTimerSetting.getInterceptPoint() == 3){
-            sportPresent = new SportPresent(this,(runNum +1)*2);
+            sportPresent = new SportPresent(this,runNum *2);
         }else {
-            sportPresent = new SportPresent(this, runNum +1);
+            sportPresent = new SportPresent(this, runNum);
         }
         sportPresent.rollConnect();
         sportPresent.setContinueRoll(true);
-        startMode = runTimerSetting.getInterceptPoint();
         testState = TestState.UN_STARTED;
         setView(false);
 
@@ -218,6 +215,15 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
      */
     @Override
     public void getDeviceStart() {
+        if (testState!= TestState.DATA_DEALING){
+            setBeginTime();
+        }else {
+            sportPresent.setRunState(1);
+        }
+
+    }
+
+    private void setBeginTime() {
         sportPresent.setRunState(1);
         baseTimer = sportPresent.getTime();
         testState = TestState.WAIT_RESULT;
@@ -327,6 +333,10 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 tvMarkConfirm.setSelected(false);
                 testState = TestState.UN_STARTED;
                 tvTimer.setText(ResultDisplayUtils.getStrResultForDisplay(0, false));
+                if (runTimerSetting.getInterceptWay() == 0 && runTimerSetting.getInterceptPoint() == 3){
+                    testState = TestState.DATA_DEALING;
+                    sportPresent.waitStart();
+                }
                 break;
             case R.id.tv_wait_ready:
                 LogUtils.operation("红外计时点击了预备");

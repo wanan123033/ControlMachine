@@ -64,7 +64,6 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
         presenter = new RadioTimerPairPresenter(this, this, Integer.parseInt(setting.getRunNum()));
         mSwAutoPair.setChecked(setting.isAutoPair());
         if (setting.getInterceptPoint() != 2) {//起点拦截
-            presenter.setPoint(0);
             presenter.start(1, 0);
             beginningPoint.setVisibility(View.VISIBLE);
             mAdapter = new RadioPairAdapter(this, presenter.getPairs(), START_POINT);
@@ -74,8 +73,7 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
         }
         if (setting.getInterceptPoint() != 1) {//终点拦截
             endingPoint.setVisibility(View.VISIBLE);
-            if (setting.getInterceptPoint() != 3) {
-                presenter.setPoint(1);
+            if (setting.getInterceptPoint() == 2) {
                 presenter.start(1, 1);
             }
             mEndAdapter = new RadioPairAdapter(this, presenter.getPairs(), END_POINT);
@@ -116,7 +114,7 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
             if (mEndAdapter != null) {
                 mEndAdapter.setSelected(-1);
             }
-        } else {
+        } else if (point == END_POINT){
             mEndAdapter.setSelected(position);
             if (mAdapter != null) {
                 mAdapter.setSelected(-1);
@@ -128,8 +126,6 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
         if (mEndAdapter != null) {
             mEndAdapter.notifyDataSetChanged();
         }
-        btnEndHelper.setEnabled(true);
-        btnHelper.setEnabled(true);
         updateSpecificItem(position, point);
     }
 
@@ -141,7 +137,6 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
     @Override
     public void onItemClick(int position, int point) {
         LogUtils.operation("更改了设备position:" + position + "point:" + point);
-        presenter.setPoint(point);
         presenter.changeFocusPosition(position, point);
     }
 

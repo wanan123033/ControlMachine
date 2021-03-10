@@ -146,9 +146,9 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
         });
         setView(false);
         if (runTimerSetting.getInterceptPoint() == 3){
-            sportPresent = new SportPresent(this,(runNum*2)+1);
+            sportPresent = new SportPresent(this,(runNum*2));
         }else {
-            sportPresent = new SportPresent(this,runNum+1);
+            sportPresent = new SportPresent(this,runNum);
         }
         sportPresent.setContinueRoll(true);
         sportPresent.rollConnect();
@@ -287,6 +287,10 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                 playUtils.play(13);//播放各就各位
                 testState = TestState.UN_STARTED;
                 tvTimer.setText(ResultDisplayUtils.getStrResultForDisplay(0, false));
+                if (runTimerSetting.getInterceptWay() == 0 && runTimerSetting.getInterceptPoint() == 3){
+                    testState = TestState.DATA_DEALING;
+                    sportPresent.waitStart();
+                }
                 break;
             case R.id.tv_force_start://强制启动
                 if (testState == TestState.UN_STARTED){
@@ -426,6 +430,14 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
 
     @Override
     public void getDeviceStart() {
+        if (testState!= TestState.DATA_DEALING){
+            setBeginTime();
+        }else {
+            sportPresent.setRunState(1);
+        }
+    }
+
+    private void setBeginTime() {
         sportPresent.setRunState(1);
         baseTimer = sportPresent.getTime();
         testState = TestState.WAIT_RESULT;
@@ -436,6 +448,11 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
 
     @Override
     public void receiveResult(SportResult result) {
+        //红外拦截并且有起终点
+        if (testState == TestState.DATA_DEALING){
+            setBeginTime();
+            return;
+        }
         //假使都是认为发射指令，起点终点不相关
         if (testState == TestState.WAIT_RESULT){
             int temp ;
