@@ -215,7 +215,7 @@ public class ResultDisplayTools {
             return null;
         }
         result = dealResultWithCarryMode(digital, carryMode, tmpResult);
-        StringBuffer pattern = new StringBuffer("#.");
+        StringBuffer pattern = new StringBuffer("0.");
         for (int i = 0; i < digital; i++) {
             pattern.append("0");
         }
