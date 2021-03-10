@@ -1,6 +1,5 @@
 package com.feipulai.exam.activity.account;
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -13,7 +12,6 @@ import com.feipulai.common.db.DataBaseTask;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.ToastUtils;
-import com.feipulai.common.utils.print.PrintBean;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
@@ -21,14 +19,11 @@ import com.feipulai.exam.activity.MainActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Account;
-import com.feipulai.exam.utils.EncryptUtil;
-import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -40,7 +35,7 @@ import io.reactivex.schedulers.Schedulers;
  * Created by zzs on  2021/1/27
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
-public class AccountActivit extends BaseTitleActivity {
+public class AccountActivity extends BaseTitleActivity {
 
 
     @BindView(R.id.edit_account)
@@ -55,7 +50,7 @@ public class AccountActivit extends BaseTitleActivity {
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("设备登录");
+        return builder.setTitle("设备管理");
     }
 
     @Override
@@ -110,7 +105,7 @@ public class AccountActivit extends BaseTitleActivity {
             public void onExecuteSuccess(DataBaseRespon respon) {
                 MyApplication.account = (Account) respon.getObject();
                 LogUtils.operation("当前设备登录账号：" + MyApplication.account.toString());
-                IntentUtil.gotoActivity(AccountActivit.this, MainActivity.class);
+                IntentUtil.gotoActivity(AccountActivity.this, MainActivity.class);
                 finish();
             }
 
