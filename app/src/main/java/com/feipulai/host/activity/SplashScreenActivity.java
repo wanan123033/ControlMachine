@@ -67,6 +67,7 @@ public class SplashScreenActivity extends BaseActivity {
     public static final String MACHINE_CODE = "machine_code";
     private SweetAlertDialog dialog;
     private ActivateBean activateBean;
+    boolean isInit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +77,7 @@ public class SplashScreenActivity extends BaseActivity {
 // 这里是否还需要延时需要再测试后再修改
         RadioManager.getInstance().init();
         DateUtil.setTimeZone(this, "Asia/Shanghai");
-        init();
+
 
         activateBean = SharedPrefsUtil.loadFormSource(this, ActivateBean.class);
         long runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0l);
@@ -143,6 +144,10 @@ public class SplashScreenActivity extends BaseActivity {
             public void run() {
                 if (activateBean != null && activateBean.getCurrentTime() < activateBean.getValidEndTime()) {
                     if (!ActivityCollector.getInstance().isExistActivity(MainActivity.class)) {
+                        if (!isInit) {
+                            init();
+                        }
+
                         Intent intent = new Intent();
                         intent.setClass(SplashScreenActivity.this, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -184,8 +189,8 @@ public class SplashScreenActivity extends BaseActivity {
 
             @Override
             public void onFault(int code, String errorMsg) {
-                toastSpeak(errorMsg);
-                if (activateBean == null || !ActivityCollector.getInstance().isExistActivity(MainActivity.class)) {
+                if (activateBean == null && ActivityCollector.getInstance().isLastActivity(SplashScreenActivity.class)) {
+                    toastSpeak(errorMsg);
                     //需要确认激活
                     showActivateConfirm(1);
                 }
@@ -224,6 +229,7 @@ public class SplashScreenActivity extends BaseActivity {
     }
 
     private void init() {
+        isInit = true;
         boolean isEngine = ConfigUtil.getISEngine(this);
         if (isEngine) {
             initLocalFace();
