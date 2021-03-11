@@ -10,6 +10,7 @@ import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.PullUpSetFrequencyResult;
+import com.feipulai.device.serial.beans.ShoulderResult;
 import com.feipulai.device.serial.beans.SitPushUpSetFrequencyResult;
 import com.feipulai.device.serial.beans.SitReachWirelessResult;
 import com.feipulai.device.serial.beans.StringUtility;
@@ -75,7 +76,14 @@ public class SitPullLinker implements Handler.Callback {
             Log.i("", sitUpSetFrequencyResult.toString());
             checkDevice(sitUpSetFrequencyResult);
             return true;
-        } else if (machineCode == ItemDefault.CODE_YTXS && what == SerialConfigs.PULL_UP_MACHINE_BOOT_RESPONSE) {
+        }
+        if (machineCode == ItemDefault.CODE_YWQZ && what == SerialConfigs.NEW_SIT_UP_SHOULDER) {
+            ShoulderResult shoulderResult = (ShoulderResult) msg.obj;
+            Log.i("", shoulderResult.toString());
+            checkDevice(shoulderResult.getDeviceId(),shoulderResult.getFrequency());
+            return true;
+        }
+        else if (machineCode == ItemDefault.CODE_YTXS && what == SerialConfigs.PULL_UP_MACHINE_BOOT_RESPONSE) {
             PullUpSetFrequencyResult pullUpSetFrequencyResult = (PullUpSetFrequencyResult) msg.obj;
             Log.i("james----", pullUpSetFrequencyResult.toString());
             checkDevice(pullUpSetFrequencyResult);

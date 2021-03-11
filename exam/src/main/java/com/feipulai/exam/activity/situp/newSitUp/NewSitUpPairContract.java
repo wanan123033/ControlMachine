@@ -17,7 +17,7 @@ public interface NewSitUpPairContract{
     }
 
     interface View {
-        void initView(boolean isAutoPair, List<StuDevicePair> stuDevicePairs);
+        void initView(boolean isAutoPair, List<DeviceCollect> stuDevicePairs);
 
         void updateSpecificItem(int focusPosition,int device);
 

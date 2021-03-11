@@ -10,6 +10,7 @@ import android.widget.Button;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.beans.ArmStateResult;
+import com.feipulai.device.serial.beans.ShoulderResult;
 import com.feipulai.device.serial.beans.SitPushUpStateResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
@@ -41,11 +42,11 @@ public class DeviceChangeActivity extends BaseTitleActivity {
         SitUpSetting setting = SharedPrefsUtil.loadFormSource(this, SitUpSetting.class);
         int deviceSum = setting.getDeviceSum();
         for (int i = 0; i < deviceSum; i++) {
-            ArmStateResult armStateResult = new ArmStateResult();
-            armStateResult.setDeviceId(i+1);
+            ShoulderResult shoulderResult = new ShoulderResult();
+            shoulderResult.setDeviceId(i+1);
             SitPushUpStateResult stateResult = new SitPushUpStateResult();
             stateResult.setDeviceId(i+1);
-            DeviceCollect deviceCollect = new DeviceCollect(stateResult,armStateResult);
+            DeviceCollect deviceCollect = new DeviceCollect(stateResult,shoulderResult);
             deviceCollects.add(deviceCollect);
         }
         mRvPairs.setLayoutManager(new GridLayoutManager(this, 5));

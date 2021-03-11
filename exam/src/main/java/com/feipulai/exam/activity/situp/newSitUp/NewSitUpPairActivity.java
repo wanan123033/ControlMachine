@@ -5,15 +5,18 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.Switch;
 
 import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.beans.ArmStateResult;
+import com.feipulai.device.serial.beans.ShoulderResult;
 import com.feipulai.device.serial.beans.SitPushUpStateResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.situp.setting.SitUpSetting;
 import com.feipulai.exam.view.DividerItemDecoration;
@@ -24,19 +27,21 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 public class NewSitUpPairActivity extends BaseTitleActivity implements NewSitUpPairContract.View{
 
     @BindView(R.id.rv_pairs)
     RecyclerView mRvPairs;
     private NewDevicePairAdapter mAdapter;
-    private List<DeviceCollect> deviceCollects = new ArrayList<>();
+//    private List<DeviceCollect> deviceCollects = new ArrayList<>();
     private NewSitUpPairPresenter presenter;
     @BindView(R.id.sw_auto_pair)
     Switch mSwAutoPair;
 
     private static final int UPDATE_SPECIFIC_ITEM = 0x1;
     private MyHandler mHandler = new MyHandler(this);
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_new_sit_up_pair;
@@ -44,16 +49,20 @@ public class NewSitUpPairActivity extends BaseTitleActivity implements NewSitUpP
 
     @Override
     protected void initData() {
-        SitUpSetting setting = SharedPrefsUtil.loadFormSource(this, SitUpSetting.class);
-        int deviceSum = setting.getDeviceSum();
-        for (int i = 0; i < deviceSum; i++) {
-            ArmStateResult armStateResult = new ArmStateResult();
-            armStateResult.setDeviceId(i+1);
-            SitPushUpStateResult stateResult = new SitPushUpStateResult();
-            stateResult.setDeviceId(i+1);
-            DeviceCollect deviceCollect = new DeviceCollect(stateResult,armStateResult);
-            deviceCollects.add(deviceCollect);
-        }
+        presenter = new NewSitUpPairPresenter(this,this);
+        presenter.setDevice(1);
+        presenter.start();
+    }
+
+    @Nullable
+    @Override
+    protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
+        return builder.setTitle("设备连接");
+    }
+
+    @Override
+    public void initView(boolean isAutoPair, List<DeviceCollect> deviceCollects) {
+        mSwAutoPair.setChecked(isAutoPair);
         mRvPairs.setLayoutManager(new GridLayoutManager(this, 5));
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this);
         dividerItemDecoration.setDrawBorderTopAndBottom(true);
@@ -70,29 +79,17 @@ public class NewSitUpPairActivity extends BaseTitleActivity implements NewSitUpP
                         mAdapter.setSelectDevice(2);
                         presenter.setDevice(2);
                         LogUtils.operation("选择设备device："+ 2+"position:"+position);
+                        presenter.changeFocusPosition(position, 2);
                         break;
                     case R.id.tv_sit_up:
                         mAdapter.setSelectDevice(1);
                         presenter.setDevice(1);
                         LogUtils.operation("选择设备device："+ 1+"position:"+position);
+                        presenter.changeFocusPosition(position, 1);
                         break;
                 }
             }
         });
-        presenter = new NewSitUpPairPresenter(this,this);
-        presenter.setDevice(1);
-        presenter.start();
-    }
-
-    @Nullable
-    @Override
-    protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
-        return builder.setTitle("设备连接");
-    }
-
-    @Override
-    public void initView(boolean isAutoPair, List<StuDevicePair> stuDevicePairs) {
-        mSwAutoPair.setChecked(isAutoPair);
 
     }
 
@@ -127,6 +124,16 @@ public class NewSitUpPairActivity extends BaseTitleActivity implements NewSitUpP
             case UPDATE_SPECIFIC_ITEM:
                 mAdapter.setSelectDevice(msg.arg2);
                 mAdapter.notifyItemChanged(msg.arg1);
+                break;
+        }
+    }
+
+    @OnClick({R.id.sw_auto_pair})
+    public void btnOnClick(View v) {
+        switch (v.getId()) {
+            case R.id.sw_auto_pair:
+                LogUtils.operation("勾选了自动匹配");
+                presenter.changeAutoPair(mSwAutoPair.isChecked());
                 break;
         }
     }

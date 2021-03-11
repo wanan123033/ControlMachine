@@ -235,6 +235,11 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
 
     @Override
     public void receiveResult(SportResult result) {
+        //红外拦截并且有起终点
+        if (testState == TestState.DATA_DEALING){
+            setBeginTime();
+            return;
+        }
         //假使都是认为发射指令，起点终点不相关
         if (testState == TestState.WAIT_RESULT){
             int temp ;

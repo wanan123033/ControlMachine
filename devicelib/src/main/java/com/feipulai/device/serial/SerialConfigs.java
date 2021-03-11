@@ -301,4 +301,5 @@ public class SerialConfigs {
     public static final int SPORT_TIMER_GET_TIME = 0x86;
 
     public static final int CONVERTER_KWH_RESPONSE = 0x87;
+    public static final int NEW_SIT_UP_SHOULDER = 0x88;
 }

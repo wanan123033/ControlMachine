@@ -56,14 +56,14 @@ public class DeviceChangeAdapter extends RecyclerView.Adapter<DeviceChangeAdapte
     public void onBindViewHolder(final ViewHolder holder, int position) {
         DeviceCollect pair = stuPairs.get(position);
         holder.mTvSitUp.setVisibility(View.VISIBLE);
-        holder.mTvArm.setVisibility(View.VISIBLE);
+        holder.mTvShoulder.setVisibility(View.VISIBLE);
         holder.v.setVisibility(View.VISIBLE);
         holder.mTvDeviceId.setText(String.format(Locale.CHINA, "%d", pair.getSitPushUpStateResult().getDeviceId()));
         holder.mTvStuInfo.setVisibility(View.GONE);
         if (position == selectedPosition && device == 2){
-            holder.mTvArm.setBackgroundColor(Color.BLUE);
+            holder.mTvShoulder.setBackgroundColor(Color.BLUE);
         }else {
-            holder.mTvArm.setBackgroundColor(Color.WHITE);
+            holder.mTvShoulder.setBackgroundColor(Color.WHITE);
         }
 
         if (position == selectedPosition && device == 1){
@@ -86,18 +86,18 @@ public class DeviceChangeAdapter extends RecyclerView.Adapter<DeviceChangeAdapte
                 holder.mTvSitUp.setBackgroundColor(Color.GRAY);
                 break;
         }
-        switch (pair.getArmStateResult().getState()){
+        switch (pair.getShoulderResult().getState()){
             case BaseDeviceState.STATE_DISCONNECT:
-                holder.mTvArm.setBackgroundColor(Color.RED);
+                holder.mTvShoulder.setBackgroundColor(Color.RED);
                 break;
             case BaseDeviceState.STATE_COUNTING:
-                holder.mTvArm.setBackgroundColor(Color.WHITE);
+                holder.mTvShoulder.setBackgroundColor(Color.WHITE);
                 break;
             case BaseDeviceState.STATE_LOW_BATTERY:
-                holder.mTvArm.setBackgroundColor(Color.YELLOW);
+                holder.mTvShoulder.setBackgroundColor(Color.YELLOW);
                 break;
             case BaseDeviceState.STATE_STOP_USE:
-                holder.mTvArm.setBackgroundColor(Color.GRAY);
+                holder.mTvShoulder.setBackgroundColor(Color.GRAY);
                 break;
         }
         //选中处理
@@ -112,11 +112,11 @@ public class DeviceChangeAdapter extends RecyclerView.Adapter<DeviceChangeAdapte
                 }
             });
 
-            holder.mTvArm.setOnClickListener(new View.OnClickListener() {
+            holder.mTvShoulder.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mOnItemClickListener.onItemClick(v.getId(),holder.getAdapterPosition());
-                    holder.mTvArm.setBackgroundColor(Color.BLUE);
+                    holder.mTvShoulder.setBackgroundColor(Color.BLUE);
                     notifyDataSetChanged();
                 }
             });
@@ -137,7 +137,7 @@ public class DeviceChangeAdapter extends RecyclerView.Adapter<DeviceChangeAdapte
         @BindView(R.id.tv_sit_up)
         TextView mTvSitUp;
         @BindView(R.id.tv_arm)
-        TextView mTvArm;
+        TextView mTvShoulder;
         @BindView(R.id.ll_pair)
         LinearLayout mLlPair;
         @BindView(R.id.view1)

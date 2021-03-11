@@ -1,23 +1,23 @@
 package com.feipulai.exam.activity.situp.newSitUp;
 
-import com.feipulai.device.serial.beans.ArmStateResult;
+import com.feipulai.device.serial.beans.ShoulderResult;
 import com.feipulai.device.serial.beans.SitPushUpStateResult;
 
 public class DeviceCollect {
-    private ArmStateResult armStateResult;
+    private ShoulderResult shoulderResult;
     private SitPushUpStateResult sitPushUpStateResult;
 
-    public DeviceCollect(SitPushUpStateResult sitPushUpStateResult, ArmStateResult armStateResult) {
-        this.armStateResult = armStateResult;
+    public DeviceCollect(SitPushUpStateResult sitPushUpStateResult, ShoulderResult armStateResult) {
+        this.shoulderResult = armStateResult;
         this.sitPushUpStateResult = sitPushUpStateResult;
     }
 
-    public ArmStateResult getArmStateResult() {
-        return armStateResult;
+    public ShoulderResult getShoulderResult() {
+        return shoulderResult;
     }
 
-    public void setArmStateResult(ArmStateResult armStateResult) {
-        this.armStateResult = armStateResult;
+    public void setShoulderResult(ShoulderResult shoulderResult) {
+        this.shoulderResult = shoulderResult;
     }
 
     public SitPushUpStateResult getSitPushUpStateResult() {

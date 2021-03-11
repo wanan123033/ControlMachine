@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 
 import java.util.List;
 import java.util.Locale;
@@ -60,21 +61,24 @@ public class NewDevicePairAdapter extends RecyclerView.Adapter<DeviceChangeAdapt
     public void onBindViewHolder(final DeviceChangeAdapter.ViewHolder holder, int position) {
         DeviceCollect pair = stuPairs.get(position);
         holder.mTvSitUp.setVisibility(View.VISIBLE);
-        holder.mTvArm.setVisibility(View.VISIBLE);
+        holder.mTvShoulder.setVisibility(View.VISIBLE);
         holder.v.setVisibility(View.VISIBLE);
         holder.mTvDeviceId.setText(String.format(Locale.CHINA, "%d", pair.getSitPushUpStateResult().getDeviceId()));
         holder.mTvStuInfo.setVisibility(View.GONE);
-        if (position == selectedPosition && device == 2){
-            holder.mTvArm.setBackgroundColor(Color.BLUE);
-        }else {
-            holder.mTvArm.setBackgroundColor(Color.WHITE);
-        }
-
         if (position == selectedPosition && device == 1){
             holder.mTvSitUp.setBackgroundColor(Color.BLUE);
+            holder.mTvSitUp.setText(stuPairs.get(position).getSitPushUpStateResult().getState() == BaseDeviceState.STATE_FREE ? "√" : "");
         }else {
             holder.mTvSitUp.setBackgroundColor(Color.WHITE);
         }
+
+        if (position == selectedPosition && device == 2){
+            holder.mTvShoulder.setBackgroundColor(Color.BLUE);
+            holder.mTvShoulder.setText(stuPairs.get(position).getShoulderResult().getState() == BaseDeviceState.STATE_FREE ? "√" : "");
+        }else {
+            holder.mTvShoulder.setBackgroundColor(Color.WHITE);
+        }
+
 
         //选中处理
 //        holder.mLlPair.setBackgroundColor(position == selectedPosition ? Color.rgb(30, 144, 255) : Color.WHITE);
@@ -88,11 +92,11 @@ public class NewDevicePairAdapter extends RecyclerView.Adapter<DeviceChangeAdapt
                 }
             });
 
-            holder.mTvArm.setOnClickListener(new View.OnClickListener() {
+            holder.mTvShoulder.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mOnItemClickListener.onItemClick(v.getId(),holder.getAdapterPosition());
-                    holder.mTvArm.setBackgroundColor(Color.BLUE);
+                    holder.mTvShoulder.setBackgroundColor(Color.BLUE);
                     notifyDataSetChanged();
                 }
             });
@@ -110,10 +114,10 @@ public class NewDevicePairAdapter extends RecyclerView.Adapter<DeviceChangeAdapt
         public TextView mTvDeviceId;
         @BindView(R.id.tv_stu_info)
         TextView mTvStuInfo;
-        @BindView(R.id.tv_sit_up)
+        @BindView(R.id.tv_sit_up)//腰带
         TextView mTvSitUp;
         @BindView(R.id.tv_arm)
-        TextView mTvArm;
+        TextView mTvShoulder;//肩胛
         @BindView(R.id.ll_pair)
         LinearLayout mLlPair;
         @BindView(R.id.view1)
