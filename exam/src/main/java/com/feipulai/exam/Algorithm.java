@@ -4,11 +4,18 @@ import com.feipulai.common.utils.print.PrintBean;
 import com.feipulai.exam.utils.EncryptUtil;
 import com.orhanobut.logger.Logger;
 
+import java.util.Random;
+
 public class Algorithm {
 
     public static void main(String[] args) {
-        Logger.d("test" + EncryptUtil.setEncryptString(PrintBean.ENCRY_KEY, "440513122145221554"));
-        Logger.d("test" + EncryptUtil.setEncryptString(PrintBean.ENCRY_KEY, "440513122145221554"));
+
+        Random random = new Random();//指定种子数字
+
+        System.out.println(random.nextInt(2));
+        System.out.println(random.nextInt(1));
+        System.out.println(random.nextInt(1));
+
 //        int a[] = new int[100000];
 //        int b[] = new int[901];
 //

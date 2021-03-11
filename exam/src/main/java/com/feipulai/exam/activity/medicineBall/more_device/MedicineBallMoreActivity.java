@@ -27,6 +27,7 @@ import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
 
 import java.text.MessageFormat;
+import java.util.Random;
 
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -227,6 +228,7 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
 
         if (stuPair == null || stuPair.getStudent() == null)
             return;
+
         if (setting.isFullReturn()) {
 
             if (stuPair.getStudent().getSex() == Student.MALE) {
