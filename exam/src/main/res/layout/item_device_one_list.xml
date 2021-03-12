@@ -254,6 +254,23 @@
                     android:textColor="@color/white"
                     android:textSize="22sp"
                     android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/txt_confirm"
+                    style="@style/style_setting_tv_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginTop="@dimen/sp_12"
+                    android:layout_marginBottom="@dimen/dp_10"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_background"
+                    android:gravity="center"
+                    android:text="确定"
+                    android:textColor="@color/white"
+                    android:visibility="gone" />
+
                 <!--<TextView
                     android:id="@+id/txt_stu_fault"
                     android:layout_width="match_parent"

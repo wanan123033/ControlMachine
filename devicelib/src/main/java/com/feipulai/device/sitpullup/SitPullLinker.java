@@ -66,7 +66,6 @@ public class SitPullLinker implements Handler.Callback {
     }
 
     public boolean onRadioArrived(Message msg) {
-        Log.i("james+++++--------", msg.obj.toString());
         if (!linking) {
             return false;
         }

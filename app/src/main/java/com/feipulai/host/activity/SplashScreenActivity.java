@@ -68,6 +68,7 @@ public class SplashScreenActivity extends BaseActivity {
     private SweetAlertDialog dialog;
     private ActivateBean activateBean;
     boolean isInit = false;
+    private long runTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +81,7 @@ public class SplashScreenActivity extends BaseActivity {
 
 
         activateBean = SharedPrefsUtil.loadFormSource(this, ActivateBean.class);
-        long runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0l);
+        runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0l);
         if (activateBean != null && activateBean.getValidRunTime() > 0) {
 
 //            if (activateBean.getUseDeviceTime() - DateUtil.getDayTime() > activateBean.getValidRunTime()) {
@@ -164,12 +165,8 @@ public class SplashScreenActivity extends BaseActivity {
     }
 
     private void activate() {
-        long currentRunTime = 0;
-        if (activateBean != null) {
-            //超出使用时间 重新激活
-            currentRunTime = activateBean.getUseDeviceTime();
-        }
-        new UserSubscriber().activate(currentRunTime, new OnResultListener<ActivateBean>() {
+
+        new UserSubscriber().activate(runTime, new OnResultListener<ActivateBean>() {
             @Override
             public void onSuccess(ActivateBean result) {
                 activateBean = result;
@@ -180,6 +177,11 @@ public class SplashScreenActivity extends BaseActivity {
                 } else if (result.getCurrentTime() > result.getValidEndTime()) {
                     //超出使用时间 重新激活
                     showActivateConfirm(2);
+                } else if (runTime > activateBean.getValidRunTime()) {
+                    //超出使用时长
+                    //弹窗确定重新激活
+                    showActivateConfirm(2);
+
                 } else {
                     //激活成功
                     gotoMain();

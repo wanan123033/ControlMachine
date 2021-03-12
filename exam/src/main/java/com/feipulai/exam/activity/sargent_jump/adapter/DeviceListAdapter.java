@@ -153,7 +153,6 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                 }
                 moreHelper.txtConfirm.setVisibility(item.isConfirmVisible() ? View.VISIBLE : View.GONE);
                 moreHelper.txtStart.setVisibility(item.isConfirmVisible() ? View.GONE : View.VISIBLE);
-                moreHelper.txtStart.setVisibility(item.isConfirmVisible() ? View.GONE : View.VISIBLE);
 
                 moreHelper.addOnClickListener(R.id.txt_skip).addOnClickListener(R.id.txt_start);
                 moreHelper.addOnClickListener(R.id.txt_punish);

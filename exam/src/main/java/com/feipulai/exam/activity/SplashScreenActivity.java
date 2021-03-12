@@ -67,6 +67,7 @@ public class SplashScreenActivity extends BaseActivity {
     private ActivateBean activateBean;
     private SweetAlertDialog dialog;
     boolean isInit = false;
+    private long runTime;
 
     // TtsMode.MIX; 离在线融合，在线优先； TtsMode.ONLINE 纯在线； 没有纯离线
     @Override
@@ -78,7 +79,7 @@ public class SplashScreenActivity extends BaseActivity {
         DateUtil.setTimeZone(this, "Asia/Shanghai");
 
         activateBean = SharedPrefsUtil.loadFormSource(this, ActivateBean.class);
-        long runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0L);
+        runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0L);
         if (activateBean != null && activateBean.getValidRunTime() > 0) {
 
             if (runTime > activateBean.getValidRunTime()) {
@@ -130,12 +131,7 @@ public class SplashScreenActivity extends BaseActivity {
     }
 
     private void activate() {
-        long currentRunTime = 0;
-        if (activateBean != null) {
-            //超出使用时间 重新激活
-            currentRunTime = activateBean.getUseDeviceTime();
-        }
-        new HttpSubscriber().activate(currentRunTime, new OnResultListener<ActivateBean>() {
+        new HttpSubscriber().activate(runTime, new OnResultListener<ActivateBean>() {
             @Override
             public void onSuccess(ActivateBean result) {
                 activateBean = result;
@@ -147,6 +143,11 @@ public class SplashScreenActivity extends BaseActivity {
                     LogUtil.logDebugMessage(result.getCurrentTime() + "-----" + result.getValidEndTime());
                     //超出使用时间 重新激活
                     showActivateConfirm(2);
+                } else if (runTime > result.getValidRunTime()) {
+                    //超出使用时长
+                    //弹窗确定重新激活
+                    showActivateConfirm(2);
+                    return;
                 } else {
                     //激活成功
                     gotoMain();
