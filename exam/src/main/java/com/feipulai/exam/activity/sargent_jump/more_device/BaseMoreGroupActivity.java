@@ -230,6 +230,11 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
 
     }
 
+    public void setConfirmVisible(int index, boolean visible) {
+        deviceDetails.get(index).setConfirmVisible(visible);
+        deviceListAdapter.notifyItemChanged(index);
+    }
+
     /**
      * 初始化LED
      */
@@ -351,6 +356,9 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                                 toStart(pos);
                                 updateLastResultLed("", pos);
                                 deviceListAdapter.setPenalize(false);
+                                if (isPenalize){
+                                    setConfirmVisible(pos,true);
+                                }
                             }
                         } else {
                             toastSpeak("当前设备异常");
@@ -365,6 +373,9 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                             doResult(pair, pos);
                             deviceDetails.get(pos).setConfirmVisible(false);
                             deviceListAdapter.notifyItemChanged(pos);
+                            if (isPenalize){
+                                setConfirmVisible(pos,false);
+                            }
                         }
                         break;
                     case R.id.txt_punish:

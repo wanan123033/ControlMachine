@@ -67,19 +67,17 @@ public class NewDevicePairAdapter extends RecyclerView.Adapter<DeviceChangeAdapt
         holder.mTvStuInfo.setVisibility(View.GONE);
         if (position == selectedPosition && device == 1){
             holder.mTvSitUp.setBackgroundColor(Color.BLUE);
-            holder.mTvSitUp.setText(stuPairs.get(position).getSitPushUpStateResult().getState() == BaseDeviceState.STATE_FREE ? "√" : "");
         }else {
             holder.mTvSitUp.setBackgroundColor(Color.WHITE);
         }
-
         if (position == selectedPosition && device == 2){
             holder.mTvShoulder.setBackgroundColor(Color.BLUE);
-            holder.mTvShoulder.setText(stuPairs.get(position).getShoulderResult().getState() == BaseDeviceState.STATE_FREE ? "√" : "");
         }else {
             holder.mTvShoulder.setBackgroundColor(Color.WHITE);
         }
 
-
+        holder.mTvSitUp.setText(stuPairs.get(position).getSitPushUpStateResult().getState() == BaseDeviceState.STATE_FREE ? "√" : "");
+        holder.mTvShoulder.setText(stuPairs.get(position).getShoulderResult().getState() == BaseDeviceState.STATE_FREE ? "√" : "");
         //选中处理
 //        holder.mLlPair.setBackgroundColor(position == selectedPosition ? Color.rgb(30, 144, 255) : Color.WHITE);
         if (mOnItemClickListener != null) {
