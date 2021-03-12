@@ -153,7 +153,6 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                 }
                 moreHelper.txtConfirm.setVisibility(item.isConfirmVisible() ? View.VISIBLE : View.GONE);
                 moreHelper.txtStart.setVisibility(item.isConfirmVisible() ? View.GONE : View.VISIBLE);
-                moreHelper.txtStart.setVisibility(item.isConfirmVisible() ? View.GONE : View.VISIBLE);
 
                 moreHelper.addOnClickListener(R.id.txt_skip).addOnClickListener(R.id.txt_start);
                 moreHelper.addOnClickListener(R.id.txt_punish);
@@ -236,7 +235,7 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                 }
 
                 oneViewHolder.txtStart.setVisibility(item.isConfirmVisible() ? View.GONE : View.VISIBLE);
-
+                oneViewHolder.txtConfirm.setVisibility(item.isConfirmVisible() ? View.VISIBLE : View.GONE);
                 if (!isNextClickStart) {
                     oneViewHolder.txtStart.setVisibility(View.GONE);
                 }
@@ -338,6 +337,8 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
         TextView txtSkip;
         @BindView(R.id.txt_start)
         TextView txtStart;
+        @BindView(R.id.txt_confirm)
+        TextView txtConfirm;
         @BindView(R.id.txt_punish)
         TextView txtPunish;
         @BindView(R.id.item_txt_test_result)

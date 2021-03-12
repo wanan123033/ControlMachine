@@ -245,6 +245,7 @@ public class StuSearchEditText extends RelativeLayout {
 
         if (addDialog == null) {
             addDialog = new SweetAlertDialog(mContext).setTitleText(mContext.getString(R.string.addStu_dialog_title))
+
                     .setContentText(mContext.getString(R.string.addStu_dialog_content))
                     .setConfirmText(mContext.getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override
@@ -261,6 +262,7 @@ public class StuSearchEditText extends RelativeLayout {
                         }
                     });
         }
+        addDialog.setCanceledOnTouchOutside(false);
         if (!addDialog.isShowing()) {
             addDialog.show();
         }
