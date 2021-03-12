@@ -1,5 +1,7 @@
 package com.feipulai.exam.config;
 
+import com.feipulai.common.utils.print.PdfUtil;
+
 /**
  * Created by zzs on  2018/12/29
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
@@ -23,5 +25,8 @@ public class EventConfigs {
     public static final int BACKBALL_FREQUENCY_DATA = 11;
     //wifi状态
     public static final int WIFI_STATE = 12;
+
+    public static final int UPDATE_RESULT = 13;
+    public static final int INSTALL_RESULT = 14;
 
 }

@@ -25,6 +25,8 @@ import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.DataRetrieveBean;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
+import com.feipulai.exam.config.BaseEvent;
+import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.HWConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
@@ -33,6 +35,8 @@ import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.service.UploadService;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.utils.LogUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -158,12 +162,12 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
             }else {
                 roundResults = DBManager.getInstance().queryResultsByStudentCode(itemCode, mDataRetrieveBean.getStudentCode(),mDataRetrieveBean.getGroupId(),mDataRetrieveBean.getExamType(),mDataRetrieveBean.getScheduleNo());
             }
-            if (roundResults != null && roundResults.size() < testNo){
+            if (roundResults != null && roundResults.size() < TestConfigs.getMaxTestCount(this)){
                 roundNo = roundResults.size() + 1;
                 isInsert = true;
             }
         }
-        if (isInsert && roundNo <= testNo) {
+        if (isInsert ) {
             RoundResult roundResult = new RoundResult();
             roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
             roundResult.setStudentCode(mDataRetrieveBean.getStudentCode());
@@ -208,10 +212,11 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
             //生成结束时间
             roundResult.setEndTime(System.currentTimeMillis() + "");
             DBManager.getInstance().insertRoundResult(roundResult);
+            EventBus.getDefault().post(new BaseEvent(roundResult, EventConfigs.INSTALL_RESULT));
             displayResults();
             toastSpeak("新增成绩成功");
         }else {
-            toastSpeak("已新增成绩");
+            toastSpeak("无法新增轮次成绩");
         }
     }
 
@@ -322,6 +327,7 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
                             if (currentResult != null) {
                                 currentResult.setResultState(RoundResult.RESULT_STATE_FOUL);
                                 DBManager.getInstance().updateRoundResult(currentResult);
+                                EventBus.getDefault().post(new BaseEvent(currentResult, EventConfigs.UPDATE_RESULT));
                                 toastSpeak("成绩状态更新成功!");
                                 sweetAlertDialog.dismissWithAnimation();
                                 displayResults();
