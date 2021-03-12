@@ -76,14 +76,14 @@ public class NewSitUpPairActivity extends BaseTitleActivity implements NewSitUpP
                 mAdapter.setSelected(position);
                 switch (viewId){
                     case R.id.tv_arm:
-                        mAdapter.setSelectDevice(2);
-                        presenter.setDevice(2);
+//                        mAdapter.setSelectDevice(2);
+//                        presenter.setDevice(2);
                         LogUtils.operation("选择设备device："+ 2+"position:"+position);
                         presenter.changeFocusPosition(position, 2);
                         break;
                     case R.id.tv_sit_up:
-                        mAdapter.setSelectDevice(1);
-                        presenter.setDevice(1);
+//                        mAdapter.setSelectDevice(1);
+//                        presenter.setDevice(1);
                         LogUtils.operation("选择设备device："+ 1+"position:"+position);
                         presenter.changeFocusPosition(position, 1);
                         break;
@@ -106,9 +106,9 @@ public class NewSitUpPairActivity extends BaseTitleActivity implements NewSitUpP
     @Override
     public void select(int position,int device) {
         LogUtils.operation("处理设备device："+ device+"position:"+position);
-        int oldSelectPosition = mAdapter.getSelected();
-        mAdapter.setSelected(position);
-        updateSpecificItem(oldSelectPosition,device);
+//        int oldSelectPosition = mAdapter.getSelected();
+//        mAdapter.setSelected(position);
+//        updateSpecificItem(oldSelectPosition,device);
         updateSpecificItem(position,device);
     }
 

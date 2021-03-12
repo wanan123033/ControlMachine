@@ -363,6 +363,9 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                             pair.setTestTime(DateUtil.getCurrentTime() + "");
                             sendTestCommand(pair, pos);
                             deviceListAdapter.setPenalize(false);
+                            if (isPenalize){
+                                setConfirmVisible(pos,true);
+                            }
                         }
                         break;
                     case R.id.txt_skip:
@@ -393,6 +396,9 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                             doResult(pair, pos);
                             deviceDetails.get(pos).setConfirmVisible(false);
                             deviceListAdapter.notifyItemChanged(pos);
+                            if (isPenalize){
+                                setConfirmVisible(pos,false);
+                            }
                         }
                         break;
                     case R.id.txt_get_data:

@@ -51,6 +51,8 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     RadioGroup radioGroupDegree;
     @BindView(R.id.rg_model)
     RadioGroup rgModel;
+    @BindView(R.id.rg_timer_select)
+    RadioGroup rg_timerSelect;
     //    @BindView(R.id.cb_full_return)
 //    CheckBox cbFullReturn;
 //    @BindView(R.id.et_full_male)
@@ -224,6 +226,8 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         spSensor.setOnItemSelectedListener(this);
         int sensor = runTimerSetting.getSensor();
         spSensor.setSelection(sensor);
+
+        setTimerSelect();
     }
 
     @Override
@@ -267,6 +271,12 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
             case R.id.rb_recycle:
                 runTimerSetting.setTestModel(false);
                 break;
+            case R.id.rb_unified:
+                runTimerSetting.setTimer_select(false);
+                break;
+            case R.id.rb_independent:
+                runTimerSetting.setTimer_select(true);
+                break;
         }
     }
 
@@ -275,13 +285,33 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         switch (compoundButton.getId()) {
             case R.id.cb_start:
                 runTimerSetting.setStartPoint(b ? 1 : 0);
-
+                getInterceptPoint();
+                setTimerSelect();
                 break;
             case R.id.cb_end:
                 runTimerSetting.setEndPoint(b ? 2 : 0);
+                getInterceptPoint();
+                setTimerSelect();
                 break;
         }
 
+    }
+
+    private void getInterceptPoint() {
+        runTimerSetting.setInterceptPoint(runTimerSetting.getStartPoint() + runTimerSetting.getEndPoint());
+    }
+
+    /**
+     * 判断去盒子版统一计时独立计时显示
+     */
+    private void setTimerSelect() {
+        if (runTimerSetting.getInterceptPoint() == 3 && runTimerSetting.getConnectType() == 1){//有起终点 并且是无盒子版
+            rg_timerSelect.setVisibility(View.VISIBLE);
+            rg_timerSelect.setOnCheckedChangeListener(this);
+            rg_timerSelect.check(runTimerSetting.isTimer_select() ? R.id.rb_independent:R.id.rb_unified);
+        }else {
+            rg_timerSelect.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -306,7 +336,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         super.onPause();
         String senNum = etSensitivityNum.getText().toString();
         runTimerSetting.setSensitivityNum(TextUtils.isEmpty(senNum)?5:Integer.parseInt(senNum));
-        runTimerSetting.setInterceptPoint(runTimerSetting.getStartPoint() + runTimerSetting.getEndPoint());
+        getInterceptPoint();
         SharedPrefsUtil.save(this, runTimerSetting);
     }
 
@@ -386,8 +416,6 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
                     mHandler.sendEmptyMessage(MSG_CONNECT);
                 }
                 break;
-
-
         }
 
 

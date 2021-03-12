@@ -37,6 +37,10 @@ public class RunTimerSetting {
      */
     private int interceptWay = 0;
     /**
+     * 计时方式 统一计时 false 独立计时 true 默认统一
+     */
+    private boolean timer_select;
+    /**
      *传感器信道
 
      */
@@ -46,6 +50,9 @@ public class RunTimerSetting {
      */
     private String runNum = "4";
     private int sensitivityNum = 5;
+    /**
+     * 连接方式 0 有盒子 1无盒子
+     */
     private int connectType;
     private boolean autoPair;
     /**
@@ -200,5 +207,13 @@ public class RunTimerSetting {
 
     public void setAutoPair(boolean autoPair) {
         this.autoPair = autoPair;
+    }
+
+    public boolean isTimer_select() {
+        return timer_select;
+    }
+
+    public void setTimer_select(boolean timer_select) {
+        this.timer_select = timer_select;
     }
 }
