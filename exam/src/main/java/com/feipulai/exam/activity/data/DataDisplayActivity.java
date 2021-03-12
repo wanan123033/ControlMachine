@@ -50,6 +50,7 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
 
     public static final String ISSHOWPENALIZEFOUL = "ISSHOWPENALIZEFOUL";
     public static final String TESTNO = "testNo";
+    public static final String GROUP_ID = "GROUP_ID";
     @BindView(R.id.tv_stuName)
     TextView mTvStuName;
     @BindView(R.id.tv_sex)
@@ -174,6 +175,7 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
             roundResult.setEndTime(System.currentTimeMillis() + "");
             roundResult.setRoundNo(roundNo);
             roundResult.setTestNo(testNo);
+            roundResult.setGroupId(mDataRetrieveBean.getGroupId());
             roundResult.setExamType(mDataRetrieveBean.getExamType());
             roundResult.setScheduleNo(mDataRetrieveBean.getScheduleNo());
             roundResult.setUpdateState(0);

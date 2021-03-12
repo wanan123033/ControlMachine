@@ -321,6 +321,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                             deviceDetails.get(pos).setConfirmVisible(false);
                             deviceListAdapter.notifyItemChanged(pos);
                         }
+                        break;
                     case R.id.txt_punish:
                         if (pair.getStudent() != null) {
 //                            penalize(pos);
@@ -333,7 +334,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                             bean.setExamType(group.getExamType());
                             bean.setStudentName(pair.getStudent().getStudentName());
                             Intent intent = new Intent(BaseMoreGroupActivity.this, DataDisplayActivity.class);
-                            intent.putExtra(DataDisplayActivity.ISSHOWPENALIZEFOUL, isPenalize);
+                            intent.putExtra(DataDisplayActivity.ISSHOWPENALIZEFOUL, isPenalize?View.VISIBLE:View.GONE);
                             intent.putExtra(DataRetrieveActivity.DATA_ITEM_CODE, getItemCode());
                             intent.putExtra(DataDisplayActivity.TESTNO, setTestCount());
                             intent.putExtra(DataRetrieveActivity.DATA_EXTRA, bean);
@@ -848,6 +849,29 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
     }
 
 
+    private void updateResultLed(BaseStuPair baseStu, int index) {
+        //todo led模式
+        int ledMode = SettingHelper.getSystemSetting().getLedMode();
+        String result = baseStu.getResultState() != RoundResult.RESULT_STATE_NORMAL ? "X" : ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
+        if (deviceDetails.size() > 1) {
+            int x = ResultDisplayUtils.getStringLength(result);
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 16 - x, index, false, true);
+        } else {
+            byte[] data = new byte[16];
+            String str = "当前：";
+            try {
+                byte[] strData = str.getBytes("GB2312");
+                System.arraycopy(strData, 0, data, 0, strData.length);
+                byte[] resultData = result.getBytes("GB2312");
+                System.arraycopy(resultData, 0, data, data.length - resultData.length - 1, resultData.length);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 1, false, true);
+            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), 1, data, 0, 1, false, true);
+        }
+    }
+
     public synchronized void updateTestResult(@NonNull BaseStuPair baseStu) {
         int deviceId = baseStu.getBaseDevice().getDeviceId();
         int index = 0;
@@ -877,29 +901,6 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
 
 
         updateResultLed(baseStu, index);
-    }
-
-    private void updateResultLed(BaseStuPair baseStu, int index) {
-        //todo led模式
-        int ledMode = SettingHelper.getSystemSetting().getLedMode();
-        String result = baseStu.getResultState() != RoundResult.RESULT_STATE_NORMAL ? "X" : ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
-        if (deviceDetails.size() > 1) {
-            int x = ResultDisplayUtils.getStringLength(result);
-            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 16 - x, index, false, true);
-        } else {
-            byte[] data = new byte[16];
-            String str = "当前：";
-            try {
-                byte[] strData = str.getBytes("GB2312");
-                System.arraycopy(strData, 0, data, 0, strData.length);
-                byte[] resultData = result.getBytes("GB2312");
-                System.arraycopy(resultData, 0, data, data.length - resultData.length - 1, resultData.length);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 1, false, true);
-            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), 1, data, 0, 1, false, true);
-        }
     }
 
     //处理结果

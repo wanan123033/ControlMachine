@@ -379,7 +379,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                             bean.setTestState(1);
                             bean.setStudentName(pair.getStudent().getStudentName());
                             Intent intent = new Intent(BaseMoreActivity.this, DataDisplayActivity.class);
-                            intent.putExtra(DataDisplayActivity.ISSHOWPENALIZEFOUL, isPenalize);
+                            intent.putExtra(DataDisplayActivity.ISSHOWPENALIZEFOUL, isPenalize?View.VISIBLE:View.GONE);
                             intent.putExtra(DataRetrieveActivity.DATA_ITEM_CODE, getItemCode());
                             intent.putExtra(DataRetrieveActivity.DATA_EXTRA, bean);
                             intent.putExtra(DataDisplayActivity.TESTNO, testNo);
