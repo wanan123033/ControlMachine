@@ -414,7 +414,7 @@ public class TestConfigs {
         TestConfigs.groupActivity.put(ItemDefault.CODE_ZFP, RunTimerActivityGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_TS, JumpRopeCheckActivity.class);
-        TestConfigs.groupActivity.put(ItemDefault.CODE_YWQZ, SitUpPatternSelectActivity.class);
+        TestConfigs.groupActivity.put(ItemDefault.CODE_YWQZ, SitUpCheckActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_SGBQS, SitUpCheckActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_YTXS, PullUpSelectActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_PQ, VolleyBallGroupActivity.class);
