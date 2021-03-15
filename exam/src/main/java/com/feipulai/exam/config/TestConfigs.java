@@ -383,6 +383,7 @@ public class TestConfigs {
         selectActivity.add(ItemDefault.CODE_ZQYQ);
         selectActivity.add(ItemDefault.CODE_ZWTQQ);
         selectActivity.add(ItemDefault.CODE_ZFP);
+        selectActivity.add(ItemDefault.CODE_YWQZ);
 
 
         // 每个项目对应的个人检录Activity
@@ -410,7 +411,6 @@ public class TestConfigs {
         // 每个项目对应的分组检录Acitivity
         TestConfigs.groupActivity.put(ItemDefault.CODE_LDTY, StandJumpGroupTestActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_ZWTQQ, SitReachGroupTestActivity.class);
-
         TestConfigs.groupActivity.put(ItemDefault.CODE_ZFP, RunTimerActivityGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallGroupActivity.class);
         TestConfigs.groupActivity.put(ItemDefault.CODE_TS, JumpRopeCheckActivity.class);

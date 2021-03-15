@@ -68,7 +68,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
     TextView tvRunState;
     @BindView(R.id.tv_wait_ready)
     TextView tvWaitReady;
-
+    private int [] independent;
     /**
      * 从分组信息中选择的学生信息
      */
@@ -155,6 +155,17 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
         testState = TestState.UN_STARTED;
         timerKeeper = new TimerKeeper(this);
         timerKeeper.keepTime();
+        independent = new int[runNum];
+        setIndependent();
+    }
+
+    /**
+     * 设置分组时间为0
+     */
+    private void setIndependent(){
+        for (int i = 0; i < runNum; i++) {
+            independent[i] = 0;
+        }
     }
 
     private void setView(boolean enable) {
@@ -314,6 +325,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                 }
                 mAdapter.notifyDataSetChanged();
                 testState = TestState.UN_STARTED;
+                setIndependent();
                 break;
             case R.id.tv_mark_confirm://成绩确认
                 if (testState == TestState.WAIT_RESULT){
@@ -330,6 +342,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                     }
                     cycleRun();
                     mAdapter.notifyDataSetChanged();
+                    setIndependent();
                 }
                 break;
         }
@@ -448,19 +461,21 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
 
     @Override
     public void receiveResult(SportResult result) {
-        //红外拦截并且有起终点
-        if (testState == TestState.DATA_DEALING){
-            setBeginTime();
-            return;
-        }
-        //假使都是认为发射指令，起点终点不相关
-        if (testState == TestState.WAIT_RESULT){
-            int temp ;
-            if (runTimerSetting.getInterceptPoint() != 3){
-                if (result.getDeviceId()> runNum)
-                    return;
-                temp = result.getDeviceId()-1;
+        //起终点拦截 独立计时
+        if (runTimerSetting.getInterceptPoint() == 3 && runTimerSetting.isTimer_select()){
+            if (testState == TestState.DATA_DEALING){
+                testState = TestState.WAIT_RESULT;
+                mHandler.sendEmptyMessage(RUN_START);
+                startTime = System.currentTimeMillis()+"";
+                currentTestTime++;
+                independent[result.getDeviceId()-1] = sportPresent.getTime();
+                return;
+            }
+
+            if (result.getDeviceId()< runNum && independent[result.getDeviceId()-1] == 0){//判断是不是第一次启动
+                independent[result.getDeviceId()-1] = sportPresent.getTime();
             }else {
+                int temp ;
                 if (result.getDeviceId()/2 > runNum)
                     return;
                 if (result.getDeviceId()%2 == 1){
@@ -468,17 +483,55 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                 }else {
                     temp = result.getDeviceId()/2-1;
                 }
+
+                if (null == mList.get(temp).getStudent())
+                    return;
+                int realTime =  (result.getLongTime() - independent[temp]);
+                setRunWayTime(temp, realTime);
             }
-            int realTime =  (result.getLongTime() - baseTimer);
-            mList.get(temp).setMark(getFormatTime(realTime));
-            mList.get(temp).setOriginalMark(realTime);
-            List<RunStudent.WaitResult> list = mList.get(temp).getResultList();
-            RunStudent.WaitResult waitResult = new RunStudent.WaitResult();
-            waitResult.setOriResult(realTime);
-            waitResult.setWaitResult(getFormatTime(realTime));
-            list.add(waitResult);
-            mHandler.sendEmptyMessage(RUN_RESULT);
         }
+        //红外拦截并且有起终点
+       else {
+            if (testState == TestState.DATA_DEALING){
+                setBeginTime();
+                return;
+            }
+            //假使都是认为发射指令，起点终点不相关
+            if (testState == TestState.WAIT_RESULT){
+                int temp ;
+                if (runTimerSetting.getInterceptPoint() != 3){
+                    if (result.getDeviceId()> runNum)
+                        return;
+                    temp = result.getDeviceId()-1;
+                }else {
+                    if (result.getDeviceId()/2 > runNum)
+                        return;
+                    if (result.getDeviceId()%2 == 1){
+                        temp = result.getDeviceId()-1;
+                    }else {
+                        temp = result.getDeviceId()/2-1;
+                    }
+                }
+                int realTime =  (result.getLongTime() - baseTimer);
+                setRunWayTime(temp, realTime);
+            }
+        }
+    }
+
+    /**
+     * 设定跑道上的时间
+     * @param temp 道次
+     * @param realTime 时间
+     */
+    private void setRunWayTime(int temp, int realTime) {
+        mList.get(temp).setMark(getFormatTime(realTime));
+        mList.get(temp).setOriginalMark(realTime);
+        List<RunStudent.WaitResult> list = mList.get(temp).getResultList();
+        RunStudent.WaitResult waitResult = new RunStudent.WaitResult();
+        waitResult.setOriResult(realTime);
+        waitResult.setWaitResult(getFormatTime(realTime));
+        list.add(waitResult);
+        mHandler.sendEmptyMessage(RUN_RESULT);
     }
 
     @Override

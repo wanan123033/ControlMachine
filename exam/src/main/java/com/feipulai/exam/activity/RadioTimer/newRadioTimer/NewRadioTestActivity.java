@@ -102,7 +102,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     //更换成绩的序号
     private int select;
     private int runNum;
-
+    private int [] independent;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_new_radio_test;
@@ -155,7 +155,17 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
             }
         });
         currentTestTime = 0;
+        independent = new int[runNum];
+        setIndependent();
+    }
 
+    /**
+     * 设置分组时间为0
+     */
+    private void setIndependent(){
+        for (int i = 0; i < runNum; i++) {
+           independent[i] = 0;
+        }
     }
 
     private void showPop(int pos, View view) {
@@ -235,19 +245,21 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
 
     @Override
     public void receiveResult(SportResult result) {
-        //红外拦截并且有起终点
-        if (testState == TestState.DATA_DEALING){
-            setBeginTime();
-            return;
-        }
-        //假使都是认为发射指令，起点终点不相关
-        if (testState == TestState.WAIT_RESULT){
-            int temp ;
-            if (runTimerSetting.getInterceptPoint() != 3){
-                if (result.getDeviceId()> runNum)
-                    return;
-                temp = result.getDeviceId()-1;
+        //起终点拦截 独立计时
+        if (runTimerSetting.getInterceptPoint() == 3 && runTimerSetting.isTimer_select()){
+            if (testState == TestState.DATA_DEALING){
+                testState = TestState.WAIT_RESULT;
+                mHandler.sendEmptyMessage(RUN_START);
+                startTime = System.currentTimeMillis()+"";
+                currentTestTime++;
+                independent[result.getDeviceId()-1] = sportPresent.getTime();
+                return;
+            }
+
+            if (result.getDeviceId()< runNum && independent[result.getDeviceId()-1] == 0){//判断是不是第一次启动
+                independent[result.getDeviceId()-1] = sportPresent.getTime();
             }else {
+                int temp ;
                 if (result.getDeviceId()/2 > runNum)
                     return;
                 if (result.getDeviceId()%2 == 1){
@@ -255,20 +267,58 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 }else {
                     temp = result.getDeviceId()/2-1;
                 }
+
+                if (null == mList.get(temp).getStudent())
+                    return;
+                int realTime =  (result.getLongTime() - independent[temp]);
+                setRunWayTime(temp, realTime);
             }
-            if (null == mList.get(temp).getStudent())
+        }else {
+            //红外拦截并且有起终点
+            if (testState == TestState.DATA_DEALING){
+                setBeginTime();
                 return;
-            int realTime =  (result.getLongTime() - baseTimer);
-            mList.get(temp).setMark(getFormatTime(realTime));
-            mList.get(temp).setOriginalMark(realTime);
-            List<RunStudent.WaitResult> list = mList.get(temp).getResultList();
-            RunStudent.WaitResult waitResult = new RunStudent.WaitResult();
-            waitResult.setOriResult(realTime);
-            waitResult.setWaitResult(getFormatTime(realTime));
-            list.add(waitResult);
-            mHandler.sendEmptyMessage(RUN_RESULT);
+            }
+            //假使都是认为发射指令，起点终点不相关
+            if (testState == TestState.WAIT_RESULT){
+                int temp ;
+                if (runTimerSetting.getInterceptPoint() != 3){
+                    if (result.getDeviceId()> runNum)
+                        return;
+                    temp = result.getDeviceId()-1;
+                }else {
+                    if (result.getDeviceId()/2 > runNum)
+                        return;
+                    if (result.getDeviceId()%2 == 1){
+                        temp = result.getDeviceId()-1;
+                    }else {
+                        temp = result.getDeviceId()/2-1;
+                    }
+                }
+                if (null == mList.get(temp).getStudent())
+                    return;
+                int realTime =  (result.getLongTime() - baseTimer);
+                setRunWayTime(temp, realTime);
+            }
         }
 
+
+    }
+
+    /**
+     * 设定跑道上的时间
+     * @param temp 道次
+     * @param realTime 时间
+     */
+    private void setRunWayTime(int temp, int realTime) {
+        mList.get(temp).setMark(getFormatTime(realTime));
+        mList.get(temp).setOriginalMark(realTime);
+        List<RunStudent.WaitResult> list = mList.get(temp).getResultList();
+        RunStudent.WaitResult waitResult = new RunStudent.WaitResult();
+        waitResult.setOriResult(realTime);
+        waitResult.setWaitResult(getFormatTime(realTime));
+        list.add(waitResult);
+        mHandler.sendEmptyMessage(RUN_RESULT);
     }
 
     private String getFormatTime(int time) {
@@ -358,6 +408,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 mAdapter2.notifyDataSetChanged();
                 testState = TestState.UN_STARTED;
                 currentTestTime--;
+                setIndependent();
                 break;
             case R.id.tv_force_start:
                 if (testState == TestState.UN_STARTED){
@@ -365,7 +416,9 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                     sportPresent.waitStart();
                     playUtils.play(15);
                 }
-
+                if (testState == TestState.DATA_DEALING){
+                    playUtils.play(15);
+                }
                 break;
             case R.id.tv_mark_confirm:
                 if (testState == TestState.WAIT_RESULT){
@@ -387,7 +440,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                             list.clear();
                         }
                     }
-
+                    setIndependent();
                 }
 
                 break;
