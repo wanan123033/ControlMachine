@@ -381,7 +381,11 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         pairs.get(0).getBaseDevice().setState(BaseDeviceState.STATE_FREE);
         switch (udpStatus) {
             case 1:
-                state = WAIT_FREE;
+                if (isExistTestPlace()) {
+                    state = WAIT_CHECK_IN;
+                } else {
+                    state = WAIT_FREE;
+                }
                 txtDeviceStatus.setText("空闲");
                 break;
             case 2:

@@ -41,6 +41,8 @@ import com.feipulai.exam.bean.DataRetrieveBean;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
+import com.feipulai.exam.config.BaseEvent;
+import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.RoundResult;
@@ -143,6 +145,69 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         super.finish();
     }
 
+    @Override
+    public void onEventMainThread(BaseEvent baseEvent) {
+        super.onEventMainThread(baseEvent);
+        switch (baseEvent.getTagInt()) {
+            case EventConfigs.INSTALL_RESULT:
+                RoundResult iRoundResult = (RoundResult) baseEvent.getData();
+                for (int i = 0; i < deviceDetails.size(); i++) {
+                    DeviceDetail deviceDetail = deviceDetails.get(i);
+
+                    if (TextUtils.equals(deviceDetail.getStuDevicePair().getStudent().getStudentCode(), iRoundResult.getStudentCode())) {
+                        String[] timeResult = deviceDetail.getStuDevicePair().getTimeResult();
+                        final BaseStuPair pair = deviceDetail.getStuDevicePair();
+                        timeResult[iRoundResult.getRoundNo() - 1] = ((iRoundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
+                                ResultDisplayUtils.getStrResultForDisplay(iRoundResult.getResult()));
+                        deviceDetail.getStuDevicePair().setTimeResult(timeResult);
+                        deviceListAdapter.notifyDataSetChanged();
+                        if (iRoundResult.getRoundNo() < setTestCount()) {
+                            deviceDetail.setRound(iRoundResult.getRoundNo() + 1);
+                        }
+                        deviceListAdapter.notifyDataSetChanged();
+                        toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), deviceDetail.getRound())
+                                , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), deviceDetail.getRound()));
+
+                        if (!isNextClickStart) {
+                            if (deviceDetails.size() == 1) {
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
+                                        pair.setResult(-999);
+                                        deviceListAdapter.notifyDataSetChanged();
+                                    }
+                                }, 3000);
+                                pair.setTestTime(DateUtil.getCurrentTime() + "");
+                                sendTestCommand(pair, i);
+                            } else {
+                                pair.setTestTime(DateUtil.getCurrentTime() + "");
+                                sendTestCommand(pair, i);
+                            }
+
+                        }
+                    }
+                }
+
+                break;
+            case EventConfigs.UPDATE_RESULT:
+                RoundResult roundResult = (RoundResult) baseEvent.getData();
+                for (DeviceDetail deviceDetail : deviceDetails) {
+                    if (TextUtils.equals(deviceDetail.getStuDevicePair().getStudent().getStudentCode(), roundResult.getStudentCode())) {
+                        String[] timeResult = deviceDetail.getStuDevicePair().getTimeResult();
+
+                        timeResult[roundResult.getRoundNo() - 1] = ((roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
+                                ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()));
+                        deviceDetail.getStuDevicePair().setTimeResult(timeResult);
+                    }
+                }
+                deviceListAdapter.notifyDataSetChanged();
+
+                break;
+
+        }
+    }
+
     public void ledShow() {
         int ledMode = SettingHelper.getSystemSetting().getLedMode();
         if (ledMode == 0) {
@@ -208,7 +273,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             if (deviceDetails.get(i).isDeviceOpen() && deviceDetails.get(i).getStuDevicePair().isCanTest() &&
                     deviceDetails.get(i).getStuDevicePair().getStudent() == null
                     && deviceDetails.get(i).getStuDevicePair().getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
-                    index = i;
+                index = i;
                 canUseDevice = true;
                 break;
             }
@@ -382,7 +447,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                             bean.setTestState(1);
                             bean.setStudentName(pair.getStudent().getStudentName());
                             Intent intent = new Intent(BaseMoreActivity.this, DataDisplayActivity.class);
-                            intent.putExtra(DataDisplayActivity.ISSHOWPENALIZEFOUL, isPenalize);
+                            intent.putExtra(DataDisplayActivity.ISSHOWPENALIZEFOUL, isPenalize ? View.VISIBLE : View.GONE);
                             intent.putExtra(DataRetrieveActivity.DATA_ITEM_CODE, getItemCode());
                             intent.putExtra(DataRetrieveActivity.DATA_EXTRA, bean);
                             intent.putExtra(DataDisplayActivity.TESTNO, testNo);
@@ -610,10 +675,10 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 //                } else {
 //                    doResult(pair, index);
 //                }
-                deviceListAdapter.setPenalize(isPenalize);
-                deviceDetails.get(index).setConfirmVisible(true);
-                deviceListAdapter.notifyDataSetChanged();
-
+//                deviceListAdapter.setPenalize(isPenalize);
+//                deviceDetails.get(index).setConfirmVisible(true);
+//                deviceListAdapter.notifyDataSetChanged();
+                doResult(pair, index);
             }
         }
         refreshDevice(index);
@@ -651,11 +716,14 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             if (pair.getResultState() == RoundResult.RESULT_STATE_NORMAL && pair.isFullMark()) {
                 //测试结束学生清除 ，设备设置空闲状态
                 detail.setRound(0);
-                //4秒后清理学生信息
-                Message msg = new Message();
-                msg.what = pair.getBaseDevice().getDeviceId();
-                msg.obj = detail;
-                clearHandler.sendMessageDelayed(msg, 4000);
+                if (!isPenalize) {
+                    //4秒后清理学生信息
+                    Message msg = new Message();
+                    msg.what = pair.getBaseDevice().getDeviceId();
+                    msg.obj = detail;
+                    clearHandler.sendMessageDelayed(msg, 4000);
+                }
+
                 pair.setCanTest(true);
                 pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
                 return;
@@ -692,10 +760,14 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
         } else {
             detail.setRound(0);
-            //4秒后清理学生信息
-            Message msg = new Message();
-            msg.obj = detail;
-            clearHandler.sendMessageDelayed(msg, 4000);
+            if (!isPenalize) {
+                //4秒后清理学生信息
+                Message msg = new Message();
+                msg.obj = detail;
+                clearHandler.sendMessageDelayed(msg, 4000);
+            }
+
+
         }
 
         deviceListAdapter.notifyItemChanged(index);

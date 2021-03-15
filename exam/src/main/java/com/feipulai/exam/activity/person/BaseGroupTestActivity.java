@@ -252,6 +252,24 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         if (baseEvent.getTagInt() == EventConfigs.TOKEN_ERROR) {
             ToastUtils.showShort("自动上传失败，请先进行登录");
         }
+        switch (baseEvent.getTagInt()) {
+            case EventConfigs.INSTALL_RESULT:
+            case EventConfigs.UPDATE_RESULT:
+                for (BaseStuPair baseStuPair : stuPairsList) {
+                    RoundResult roundResult = (RoundResult) baseEvent.getData();
+                    if (TextUtils.equals(baseStuPair.getStudent().getStudentCode(), roundResult.getStudentCode())) {
+                        String[] timeResult = baseStuPair.getTimeResult();
+
+                        timeResult[roundResult.getRoundNo() - 1] = ((roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
+                                ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()));
+                        baseStuPair.setTimeResult(timeResult);
+                    }
+                }
+
+
+                break;
+
+        }
     }
 
     public void setBaseHeightVisible(int visible) {

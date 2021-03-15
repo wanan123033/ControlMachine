@@ -156,6 +156,7 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
 
                 moreHelper.addOnClickListener(R.id.txt_skip).addOnClickListener(R.id.txt_start);
                 moreHelper.addOnClickListener(R.id.txt_punish);
+                moreHelper.addOnClickListener(R.id.txt_confirm);
                 if (item.getStuDevicePair() != null) {
                     if (item.getStuDevicePair().getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
                         moreHelper.cbDeviceState.setChecked(true);
@@ -253,6 +254,7 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
 
                 oneViewHolder.addOnClickListener(R.id.txt_skip).addOnClickListener(R.id.txt_start);
                 oneViewHolder.addOnClickListener(R.id.txt_punish).addOnClickListener(R.id.txt_get_data);
+                oneViewHolder.addOnClickListener(R.id.txt_confirm);
                 if (item.getStuDevicePair() != null) {
                     if (item.getStuDevicePair().getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
                         oneViewHolder.cbDeviceState.setChecked(true);
