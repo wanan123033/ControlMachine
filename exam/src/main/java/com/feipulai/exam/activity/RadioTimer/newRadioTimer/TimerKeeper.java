@@ -18,6 +18,7 @@ public class TimerKeeper {
     private Disposable disposable;
     private volatile long disposeTime;
     private boolean keepTime;
+    private int temp;
     public void keepTime() {
         disposable = Observable.interval(0, 100, TimeUnit.MILLISECONDS)
                 .observeOn(Schedulers.io())
@@ -26,7 +27,8 @@ public class TimerKeeper {
                     @Override
                     public void accept(Long aLong) throws Exception {
                         if (keepTime){
-                            disposeTime+= aLong*100;
+                            temp++;
+                            disposeTime = temp*100;
                             timeUpdateListener.onTimeUpdate((int) disposeTime);
                         }
 
@@ -36,12 +38,14 @@ public class TimerKeeper {
 
     public void setStartInit(){
         disposeTime = 0;
+        temp = 0;
         keepTime = true;
     }
 
     public void stopKeepTime(){
         keepTime = false;
         disposeTime = 0;
+        temp = 0;
     }
 
     public void stop() {

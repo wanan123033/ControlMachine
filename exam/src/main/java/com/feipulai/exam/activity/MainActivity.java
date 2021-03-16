@@ -46,7 +46,11 @@ import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.Group;
+import com.feipulai.exam.entity.GroupItem;
+import com.feipulai.exam.entity.ItemSchedule;
 import com.feipulai.exam.entity.RoundResult;
+import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.CommonUtils;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.service.UploadService;
@@ -87,10 +91,28 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
             UdpLEDUtil.shellExec("ip route add " + routeIp + ".0/24 dev eth0 proto static scope link table wlan0 \n");
         }
 
+        List<Group> groups = DBManager.getInstance().queryGroupBySchedule("-1");
+        for (Group group:groups
+             ) {
+            group.setScheduleNo("1");
+        }
+        DBManager.getInstance().updateGroups(groups);
+
+        List<GroupItem> groupItems = DBManager.getInstance().queryGroupItemBySchedule("-1");
+        for (GroupItem groupItem:groupItems
+             ) {
+            groupItem.setScheduleNo("1");
+        }
+        DBManager.getInstance().updateGroupItems(groupItems);
+
         List<RoundResult> results = DBManager.getInstance().queryResultBySchedule("-1");
         for (RoundResult roundResult : results
         ) {
-            roundResult.setScheduleNo("1");
+            StudentItem stu = DBManager.getInstance().queryStudentItemByCode(roundResult.getItemCode(), roundResult.getStudentCode());
+            if (stu == null) {
+                continue;
+            }
+            roundResult.setScheduleNo(stu.getScheduleNo());
             Log.i("roundResult", "修改数据完成");
             DBManager.getInstance().updateRoundResult(roundResult);
         }

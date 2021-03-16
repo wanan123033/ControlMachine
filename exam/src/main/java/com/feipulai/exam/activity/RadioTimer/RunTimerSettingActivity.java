@@ -299,14 +299,13 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         String senNum = etSensitivityNum.getText().toString();
         runTimerSetting.setSensitivityNum(TextUtils.isEmpty(senNum)?5:Integer.parseInt(senNum));
         runTimerSetting.setInterceptPoint(runTimerSetting.getStartPoint() + runTimerSetting.getEndPoint());
         SharedPrefsUtil.save(this, runTimerSetting);
     }
-
 
     @OnClick({R.id.btn_self_check})
     public void onViewClicked(View view) {

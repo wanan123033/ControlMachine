@@ -10,6 +10,7 @@ import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.SitPushUpSetFrequencyResult;
+import com.feipulai.device.serial.beans.SportResult;
 import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
@@ -66,32 +67,29 @@ public class RadioLinker implements Handler.Callback{
             return false;
         }
         int what = msg.what;
-        if ((machineCode == ItemDefault.CODE_YWQZ||machineCode == ItemDefault.CODE_SGBQS) && what == SerialConfigs.SIT_UP_MACHINE_BOOT_RESPONSE) {
-            SitPushUpSetFrequencyResult sitUpSetFrequencyResult = (SitPushUpSetFrequencyResult) msg.obj;
-            Log.i("", sitUpSetFrequencyResult.toString());
-            checkDevice(sitUpSetFrequencyResult);
+        if (machineCode == ItemDefault.CODE_ZFP && what == SerialConfigs.SPORT_TIMER_MATCH) {
+            SportResult result = (SportResult) msg.obj;
+            checkDevice(result);
             return true;
         }
 
         return false;
     }
 
-    private void checkDevice(SitPushUpSetFrequencyResult result) {
-        if (result.getProjectCode() == SitPushUpManager.PROJECT_CODE_SIT_UP
-                ||result.getProjectCode() == SitPushUpManager.PROJECT_CODE_PUSH_UP) {
-            checkDevice(result.getDeviceId(), result.getFrequency());
-        }
+    private void checkDevice(SportResult result) {
+        checkDevice(result.getDeviceId(), result.getHostId(),result.getFrequency());
     }
 
 
-    public synchronized void checkDevice(int deviceId, int frequency) {
+    public synchronized void checkDevice(int deviceId, int hostId,int frequency) {
         Log.e("TAG115----","currentFrequency = "+currentFrequency+",frequency="+frequency+",deviceId="+deviceId+",currentDeviceId="+currentDeviceId);
         if (currentFrequency == 0) {
             // 0频段接收到的结果,肯定是设备的开机广播
             if (frequency == TARGET_FREQUENCY && deviceId == currentDeviceId) {
                 onNewDeviceConnect();
+                listener.setFrequency(currentDeviceId, hostId, TARGET_FREQUENCY);
             } else {
-                listener.setFrequency(currentDeviceId, frequency, TARGET_FREQUENCY);
+                listener.setFrequency(currentDeviceId, hostId, TARGET_FREQUENCY);
                 currentFrequency = TARGET_FREQUENCY;
                 // 那个铁盒子就是有可能等这么久才收到回复
                 mHandler.sendEmptyMessageDelayed(NO_PAIR_RESPONSE_ARRIVED, 5000);

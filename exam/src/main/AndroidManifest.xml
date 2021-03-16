@@ -45,7 +45,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.RadioTimer.newRadioTimer.pair.NewRadioPairActivity"></activity>
+        <activity android:name=".activity.RadioTimer.newRadioTimer.NewRadioGroupActivity"></activity>
+        <activity android:name=".activity.RadioTimer.newRadioTimer.pair.NewRadioPairActivity" />
         <activity android:name=".activity.RadioTimer.newRadioTimer.NewRadioTestActivity" />
         <activity android:name=".activity.RadioTimer.newRadioTimer.PreTestActivity" />
         <activity android:name=".activity.data.UpdateAppActivity" />

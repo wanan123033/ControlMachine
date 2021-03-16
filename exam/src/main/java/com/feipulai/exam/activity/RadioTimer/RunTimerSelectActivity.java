@@ -34,6 +34,7 @@ public class RunTimerSelectActivity extends SubItemsSelectActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 RunTimerSetting setting = SharedPrefsUtil.loadFormSource(mContext, RunTimerSetting.class);
                 setting.setConnectType(position);
+                SettingHelper.getSystemSetting().setRadioLed(position);
                 if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
                     startActivity(new Intent(mContext, position == 1? PreTestActivity.class : RunTimerActivityTestActivity.class));
                 } else {

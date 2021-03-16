@@ -209,12 +209,12 @@ public class InteractUtils {
             switch (machineCode) {
 
                 case ItemDefault.CODE_TS:
-                    try{
+                    try {
                         JumpRopeResult jumpRopeResult = (JumpRopeResult) deviceResult;
                         roundResult.setMachineResult(jumpRopeResult.getResult());
                         roundResult.setResult(jumpRopeResult.getResult());
                         roundResult.setStumbleCount(jumpRopeResult.getStumbleTimes());
-                    }catch (ClassCastException e){
+                    } catch (ClassCastException e) {
                         roundResult.setMachineResult(deviceResult.getResult());
                         roundResult.setResult(deviceResult.getResult());
                     }
@@ -507,7 +507,7 @@ public class InteractUtils {
                 }
             }
             dataBeanList.add(new PrintBean.PrintDataBean((i + 1) + "", student.getStudentCode(),
-                    student.getStudentName(), student.getSchoolName(), printResult));
+                    student.getStudentName(), student.getSex() == 0 ? "男" : "女", student.getSchoolName(), printResult));
         }
         printBean.setPrintDataBeans(dataBeanList);
 

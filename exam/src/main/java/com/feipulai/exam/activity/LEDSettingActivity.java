@@ -59,7 +59,7 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
 
     @Override
     protected void initData() {
-        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZFP) {
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZFP && SettingHelper.getSystemSetting().getRadioLed() == 0) {
             runLEDManager = new RunLEDManager();
             flag = 0;
         } else {
