@@ -140,6 +140,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
         testState = TEST_COUNTING;
         ToastUtils.showShort("测试开始,请勿退出当前界面");
         onTestStarted();
+
     }
 
     @Override
@@ -277,6 +278,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
         }
         int length = currentConnect.length;// 必须是这个长度
         currentConnect = new int[length];
+        endGetResultPairs = new int[length];
     }
 
     @Override

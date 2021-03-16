@@ -66,7 +66,7 @@ public class SerialPortActivity extends BaseActivity implements AdapterView.OnIt
 
         // 设备
 //        mDevices = serialPortFinder.getAllDevicesPath();
-        mDevices = new String[]{"/dev/ttysWK3","/dev/ttysWK0","/dev/ttyS1","/dev/ttyS2","/dev/ttyS3","/dev/ttyS4"};
+        mDevices = new String[]{"/dev/ttysWK3", "/dev/ttysWK0", "/dev/ttyS2"};
         if (mDevices.length == 0) {
             mDevices = new String[]{
                     getString(R.string.no_serial_device)
@@ -74,21 +74,22 @@ public class SerialPortActivity extends BaseActivity implements AdapterView.OnIt
         }
         // 波特率
 //        mBaudrates = getResources().getStringArray(R.array.baudrates);
-        mBaudrates = new String[]{"9600","115200"};
+        mBaudrates = new String[]{"9600", "115200"};
 
 //        mDeviceIndex = PrefHelper.getDefault().getInt(PreferenceKeys.SERIAL_PORT_DEVICES, 0);
 //        mDeviceIndex = mDeviceIndex >= mDevices.length ? mDevices.length - 1 : mDeviceIndex;
 //        mBaudrateIndex = PrefHelper.getDefault().getInt(PreferenceKeys.BAUD_RATE, 0);
-        mDeviceIndex = 0 ; mBaudrateIndex = 0 ;
+        mDeviceIndex = 0;
+        mBaudrateIndex = 0;
         mDevice = new Device(mDevices[mDeviceIndex], mBaudrates[mBaudrateIndex]);
     }
 
-    private void initView(){
-        mSpinnerDevices =  findViewById(R.id.spinner_devices);
-        mSpinnerBaudrate =  findViewById(R.id.spinner_baudrate);
-        mBtnOpenDevice =  findViewById(R.id.btn_open_device);
-        mEtData =  findViewById(R.id.et_data);
-        mBtnSendData =  findViewById(R.id.btn_send_data);
+    private void initView() {
+        mSpinnerDevices = findViewById(R.id.spinner_devices);
+        mSpinnerBaudrate = findViewById(R.id.spinner_baudrate);
+        mBtnOpenDevice = findViewById(R.id.btn_open_device);
+        mEtData = findViewById(R.id.et_data);
+        mBtnSendData = findViewById(R.id.btn_send_data);
 
         mBtnSendData.setOnClickListener(this);
         mBtnOpenDevice.setOnClickListener(this);
@@ -103,13 +104,13 @@ public class SerialPortActivity extends BaseActivity implements AdapterView.OnIt
                 new ArrayAdapter<String>(this, R.layout.spinner_default_item, mDevices);
         deviceAdapter.setDropDownViewResource(R.layout.spinner_item);
         mSpinnerDevices.setAdapter(deviceAdapter);
-//        mSpinnerDevices.setOnItemSelectedListener(this);
+        mSpinnerDevices.setOnItemSelectedListener(this);
 
         ArrayAdapter<String> baudrateAdapter =
                 new ArrayAdapter<String>(this, R.layout.spinner_default_item, mBaudrates);
         baudrateAdapter.setDropDownViewResource(R.layout.spinner_item);
         mSpinnerBaudrate.setAdapter(baudrateAdapter);
-//        mSpinnerBaudrate.setOnItemSelectedListener(this);
+        mSpinnerBaudrate.setOnItemSelectedListener(this);
 
         mSpinnerDevices.setSelection(mDeviceIndex);
         mSpinnerBaudrate.setSelection(mBaudrateIndex);
