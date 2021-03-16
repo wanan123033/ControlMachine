@@ -29,7 +29,7 @@ import java.util.List;
  */
 @Entity
 public class Student implements Serializable {
-
+    public static final String ENCRYPT_KEY = "ID_CARD_ENCRYPT1";
     public static final int MALE = 0;
     public static final int FEMALE = 1;
 
@@ -74,8 +74,8 @@ public class Student implements Serializable {
 
     @Generated(hash = 76774790)
     public Student(Long id, @NotNull String studentCode, String studentName, int sex, String idCardNo,
-            String icCardNo, String className, String schoolName, String downloadTime, String portrait,
-            String faceFeature, String remark1, String remark2, String remark3) {
+                   String icCardNo, String className, String schoolName, String downloadTime, String portrait,
+                   String faceFeature, String remark1, String remark2, String remark3) {
         this.id = id;
         this.studentCode = studentCode;
         this.studentName = studentName;

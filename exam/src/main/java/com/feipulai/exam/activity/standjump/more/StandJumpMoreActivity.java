@@ -39,7 +39,7 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
         if (standJumpSetting == null)
             standJumpSetting = new StandJumpSetting();
         super.initData();
-
+        setFaultEnable(standJumpSetting.isPenalizeFoul());
 //        setFaultEnable(standJumpSetting.isPenalize());
 //        if (!standJumpSetting.isPenalize()) {
 //            setNextClickStart(false);

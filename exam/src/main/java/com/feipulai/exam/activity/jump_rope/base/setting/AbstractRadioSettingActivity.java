@@ -46,7 +46,7 @@ public abstract class AbstractRadioSettingActivity
     protected LinearLayout llTestTime;
     @BindView(R.id.ll_test_angle)
     protected LinearLayout llTestAngle;
-    private AbstractRadioSettingPresenter presenter;
+    public AbstractRadioSettingPresenter presenter;
     @BindView(R.id.et_test_angle)
     EditText mTestAngle;
     @BindView(R.id.tv_angle_use)

@@ -374,14 +374,18 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
 //                  * @param status STATUS_FREE		1		//FREE
 //                *               STATUS_WAIT  		2		//WAIT To Start
 //                *               STATUS_RUNING 	    3		//Start Run
-//                *               STATUS_PREP  		4		//Prepare to stop
-//                *               STATUS_PAUSE 		5		//Display stop time,But Timer is Running
+//                *               STATUS_PREP  		4		//Prepare to release
+//                *               STATUS_PAUSE 		5		//Display release time,But Timer is Running
         //6检入
         LogUtils.operation("篮球设备状态值:" + udpStatus);
         pairs.get(0).getBaseDevice().setState(BaseDeviceState.STATE_FREE);
         switch (udpStatus) {
             case 1:
-                state = WAIT_FREE;
+                if (isExistTestPlace()) {
+                    state = WAIT_CHECK_IN;
+                } else {
+                    state = WAIT_FREE;
+                }
                 txtDeviceStatus.setText("空闲");
                 break;
             case 2:
@@ -505,17 +509,17 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         resultAdapter.notifyDataSetChanged();
         DBManager.getInstance().insterMachineResult(machineResult);
         setOperationUI();
-        String time = DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital());
+//        String time = DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital());
+        String time = ResultDisplayUtils.getStrResultForDisplay(result.getResult());
         if (time.charAt(0) == '0' && time.charAt(1) == '0') {
             time = time.substring(3, time.toCharArray().length);
         } else if (time.charAt(0) == '0') {
             time = time.substring(1, time.toCharArray().length);
         }
         tvResult.setText(time);
-        if (machineResultList.size() == 1) {
-            ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
-        }
+
         ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
+
     }
 
     @Override
@@ -543,7 +547,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital()));
 //            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
 //                    UdpLEDUtil.getLedByte(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()), Paint.Align.RIGHT)));
-
+//            String time = ResultDisplayUtils.getStrResultForDisplay(result.getResult());
             String time = DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital());
             if (time.charAt(0) == '0' && time.charAt(1) == '0') {
                 time = time.substring(3, time.toCharArray().length);

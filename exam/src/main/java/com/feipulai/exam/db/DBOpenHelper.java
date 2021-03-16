@@ -2,6 +2,7 @@ package com.feipulai.exam.db;
 
 import android.content.Context;
 
+import com.feipulai.exam.entity.AccountDao;
 import com.feipulai.exam.entity.ChipGroupDao;
 import com.feipulai.exam.entity.ChipInfoDao;
 import com.feipulai.exam.entity.DaoMaster;
@@ -51,6 +52,10 @@ public class DBOpenHelper extends DaoMaster.OpenHelper {
                 case 10:
                     MigrationHelper.migrate(db, StudentDao.class);
                 case 11://1.2.1
+                case 12://1;.2.1
+                case 13:
+                    MigrationHelper.migrate(db, AccountDao.class);
+                    MigrationHelper.migrate(db, ItemDao.class);
                     MigrationHelper.migrate(db, RoundResultDao.class);
                     break;
 

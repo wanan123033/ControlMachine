@@ -34,5 +34,5 @@ public class PullUpCheckActivity extends SitPullUpCheckActivity {
     protected Class<? extends Activity> getPairActivity() {
         return PullUpPairActivity.class;
     }
-    
+
 }

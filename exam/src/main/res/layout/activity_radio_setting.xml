@@ -12,10 +12,10 @@
         android:background="@drawable/btn_bg_white"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        android:paddingBottom="20dp"
         android:paddingLeft="30dp"
+        android:paddingTop="20dp"
         android:paddingRight="20dp"
-        android:paddingTop="20dp">
+        android:paddingBottom="20dp">
 
         <Button
             android:id="@+id/btn_show_judgements"
@@ -110,8 +110,8 @@
                     android:layout_marginLeft="10dp"
                     android:button="@null"
                     android:checked="true"
-                    android:drawablePadding="@dimen/dp_10"
                     android:drawableRight="@drawable/checkbox_switch_selected"
+                    android:drawablePadding="@dimen/dp_10"
                     android:text="连续测试:" />
 
                 <RadioButton
@@ -120,8 +120,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="60dp"
                     android:button="@null"
-                    android:drawablePadding="@dimen/dp_10"
                     android:drawableRight="@drawable/checkbox_switch_selected"
+                    android:drawablePadding="@dimen/dp_10"
                     android:text="循环测试:" />
             </RadioGroup>
 
@@ -167,8 +167,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusableInTouchMode="true"
-            android:visibility="gone"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -184,8 +184,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:inputType="number"
                 android:hint="65"
+                android:inputType="number"
                 android:maxLength="2" />
 
             <TextView
@@ -200,5 +200,33 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/ll_jump_rope"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="拌绳显示:"
+                android:textSize="18sp" />
+
+
+            <CheckBox
+                android:id="@+id/cb_show_stumble"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:button="@null"
+                android:drawableRight="@drawable/checkbox_switch_selected"
+                android:drawablePadding="@dimen/dp_10" />
+
+
+        </LinearLayout>
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

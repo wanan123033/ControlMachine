@@ -57,7 +57,7 @@ public class MachineSelectActivity extends BaseTitleActivity
         mTupleList.add(new Tuple(ItemDefault.CODE_LQYQ, "篮球运球", R.mipmap.icon_basketball, 3));
         mTupleList.add(new Tuple(ItemDefault.CODE_ZQYQ, "足球运球", R.mipmap.icon_football, 3));
         mTupleList.add(new Tuple(ItemDefault.CODE_WLJ, "握力", R.mipmap.grip, 3));
-        mTupleList.add(new Tuple(ItemDefault.CODE_SHOOT, "篮球投篮", R.mipmap.basket_shoot, 3));
+//        mTupleList.add(new Tuple(ItemDefault.CODE_SHOOT, "篮球投篮", R.mipmap.basket_shoot, 3));
         mTupleList.add(new Tuple(ItemDefault.CODE_JGCJ, "激光测距", R.mipmap.icon_jgcj, 3));
         mTupleList.add(new Tuple(ItemDefault.CODE_SGBQS, "双杠臂屈伸", R.mipmap.icon_parallel_bars, 3));
         mTupleList.add(new Tuple(ItemDefault.CODE_SPORT_TIMER, "运动计时", R.mipmap.icon_runtime, 3));

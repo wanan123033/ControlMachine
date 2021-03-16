@@ -4,12 +4,15 @@ import android.database.Cursor;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.BuildConfig;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.entity.Account;
+import com.feipulai.exam.entity.AccountDao;
 import com.feipulai.exam.entity.ChipGroup;
 import com.feipulai.exam.entity.ChipGroupDao;
 import com.feipulai.exam.entity.ChipInfo;
@@ -36,7 +39,9 @@ import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.entity.StudentItemDao;
 import com.feipulai.exam.entity.StudentThermometer;
 import com.feipulai.exam.entity.StudentThermometerDao;
+import com.feipulai.exam.utils.EncryptUtil;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 
 import org.greenrobot.greendao.database.Database;
 
@@ -60,7 +65,7 @@ import static com.feipulai.exam.activity.MiddleDistanceRace.TimingBean.GROUP_FIN
 public class DBManager {
 
     public static final String DB_NAME = "control_db";
-    public static final String DB_PASSWORD = "FairPlay_2019";
+    public static final String DB_PASSWORD = "FairPlay2019";
     public static final int TEST_TYPE_TIME = 1;//项目类型 计时
     public static final int TEST_TYPE_COUNT = 2;//项目类型 计数
     public static final int TEST_TYPE_DISTANCE = 3;//项目类型 远度
@@ -78,6 +83,7 @@ public class DBManager {
     private static ChipGroupDao chipGroupDao;
     private static ChipInfoDao chipInfoDao;
     private static StudentThermometerDao thermometerDao;
+    private static AccountDao accountDao;
     private static Database db;
     private static DaoSession daoSession;
     public static DBOpenHelper helper;
@@ -114,12 +120,17 @@ public class DBManager {
         machineResultDao = daoSession.getMachineResultDao();
         chipGroupDao = daoSession.getChipGroupDao();
         chipInfoDao = daoSession.getChipInfoDao();
+        accountDao = daoSession.getAccountDao();
         thermometerDao = daoSession.getStudentThermometerDao();
+        Account account = accountDao.queryBuilder().where(AccountDao.Properties.Account.eq("fairplay")).unique();
+        if (account == null) {
+            insterAccount("fairplay", "fpl.2021", 0);
+        }
         int[] supportMachineCodes = {/*ItemDefault.CODE_HW, */ItemDefault.CODE_TS, ItemDefault.CODE_YWQZ, ItemDefault.CODE_YTXS,
                 ItemDefault.CODE_LDTY, ItemDefault.CODE_ZWTQQ,
                 ItemDefault.CODE_HWSXQ, ItemDefault.CODE_FHL, ItemDefault.CODE_ZFP,
                 ItemDefault.CODE_PQ, ItemDefault.CODE_MG, ItemDefault.CODE_FWC, ItemDefault.CODE_LQYQ,
-                ItemDefault.CODE_ZQYQ, ItemDefault.CODE_ZCP, ItemDefault.CODE_JGCJ, ItemDefault.CODE_WLJ, ItemDefault.CODE_SHOOT,ItemDefault.CODE_SPORT_TIMER,
+                ItemDefault.CODE_ZQYQ, ItemDefault.CODE_ZCP, ItemDefault.CODE_JGCJ, ItemDefault.CODE_WLJ, ItemDefault.CODE_SHOOT, ItemDefault.CODE_SPORT_TIMER,
                 ItemDefault.CODE_ZQYQ, ItemDefault.CODE_ZCP, ItemDefault.CODE_JGCJ, ItemDefault.CODE_WLJ, ItemDefault.CODE_SHOOT,
                 ItemDefault.CODE_SGBQS
         };
@@ -254,7 +265,7 @@ public class DBManager {
                 .unique();
         if (student == null) {
             student = studentDao.queryBuilder()
-                    .where(StudentDao.Properties.IdCardNo.eq(code))
+                    .where(StudentDao.Properties.IdCardNo.eq(EncryptUtil.setEncryptString(Student.ENCRYPT_KEY, code)))
                     .unique();
         }
         return student;
@@ -265,6 +276,7 @@ public class DBManager {
                 .where(StudentDao.Properties.FaceFeature.notEq(""))
                 .where(StudentDao.Properties.FaceFeature.isNotNull()).list();
     }
+
     public List<Student> queryByItemStudentFeatures() {
 
         StringBuffer sqlBuf = new StringBuffer("SELECT S.* FROM " + StudentDao.TABLENAME + " S");
@@ -460,7 +472,7 @@ public class DBManager {
     public Student queryStudentByIDCode(String idcardNo) {
         return studentDao
                 .queryBuilder()
-                .where(StudentDao.Properties.IdCardNo.eq(idcardNo))
+                .where(StudentDao.Properties.IdCardNo.eq(EncryptUtil.setEncryptString(Student.ENCRYPT_KEY, idcardNo)))
                 .unique();
     }
 
@@ -1190,7 +1202,8 @@ public class DBManager {
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .list();
     }
-    public List<RoundResult> queryResultsByStudentCode(String itemCode, String studentCode,Long groupId,int examType,String scheduleNo) {
+
+    public List<RoundResult> queryResultsByStudentCode(String itemCode, String studentCode, Long groupId, int examType, String scheduleNo) {
         Log.e("tat", "itemCode=" + itemCode + ",studentCode=" + studentCode);
         return roundResultDao
                 .queryBuilder()
@@ -1257,7 +1270,8 @@ public class DBManager {
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .list();
     }
-    public List<RoundResult> queryResultsByStudentCode(String studentCode,Long groupId,int examType,String scheduleNo, Item item) {
+
+    public List<RoundResult> queryResultsByStudentCode(String studentCode, Long groupId, int examType, String scheduleNo, Item item) {
         return roundResultDao
                 .queryBuilder()
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
@@ -1268,6 +1282,7 @@ public class DBManager {
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .list();
     }
+
     /**
      * 查询已有的最后一次成绩
      */
@@ -1331,6 +1346,13 @@ public class DBManager {
      * @param allScores
      */
     public void updateRoundResult(List<RoundResult> allScores) {
+        LogUtils.operation("批量修改成绩信息==前====》" + allScores.toString());
+        for (RoundResult allScore : allScores) {
+            String encryptData = allScore.getStudentCode() + "," + allScore.getItemCode() + "," + allScore.getExamType()
+                    + "," + allScore.getResult() + "," + allScore.getResultState() + "," + allScore.getTestTime();
+            allScore.setRemark3(EncryptUtil.setEncryptString(RoundResult.ENCRYPT_KEY, encryptData));
+        }
+        LogUtils.operation("批量修改成绩信息==后====》" + allScores.toString());
         roundResultDao.updateInTx(allScores);
         roundResultDao.detachAll();
     }
@@ -1341,7 +1363,10 @@ public class DBManager {
      * @param score
      */
     public void updateRoundResult(RoundResult score) {
-
+        String encryptData = score.getStudentCode() + "," + score.getItemCode() + "," + score.getExamType()
+                + "," + score.getResult() + "," + score.getResultState() + "," + score.getTestTime();
+        score.setRemark3(EncryptUtil.setEncryptString(RoundResult.ENCRYPT_KEY, encryptData));
+        LogUtils.operation("修改成绩：" + score.toString());
         roundResultDao.update(score);
     }
 
@@ -1367,15 +1392,30 @@ public class DBManager {
      * @param roundResult
      */
     public void insertRoundResult(RoundResult roundResult) {
+        String encryptData = roundResult.getStudentCode() + "," + roundResult.getItemCode() + "," + roundResult.getExamType()
+                + "," + roundResult.getResult() + "," + roundResult.getResultState() + "," + roundResult.getTestTime();
+        roundResult.setRemark3(EncryptUtil.setEncryptString(RoundResult.ENCRYPT_KEY, encryptData));
+        LogUtils.operation("添加成绩：" + roundResult.toString());
         roundResultDao.insert(roundResult);
     }
 
     public RoundResult insertRoundResult2(RoundResult roundResult) {
+        String encryptData = roundResult.getStudentCode() + "," + roundResult.getItemCode() + "," + roundResult.getExamType()
+                + "," + roundResult.getResult() + "," + roundResult.getResultState() + "," + roundResult.getTestTime();
+        roundResult.setRemark3(EncryptUtil.setEncryptString(RoundResult.ENCRYPT_KEY, encryptData));
+        LogUtils.operation("添加成绩：" + roundResult.toString());
         long id = roundResultDao.insert(roundResult);
         return roundResultDao.queryBuilder().where(RoundResultDao.Properties.Id.eq(id)).unique();
     }
 
     public void updateRoundResults(List<RoundResult> roundResults) {
+        LogUtils.operation("批量修改成绩信息==前====》" + roundResults.toString());
+        for (RoundResult allScore : roundResults) {
+            String encryptData = allScore.getStudentCode() + "," + allScore.getItemCode() + "," + allScore.getExamType()
+                    + "," + allScore.getResult() + "," + allScore.getResultState() + "," + allScore.getTestTime();
+            allScore.setRemark3(EncryptUtil.setEncryptString(RoundResult.ENCRYPT_KEY, encryptData));
+        }
+        LogUtils.operation("批量修改成绩信息==后====》" + roundResults.toString());
         roundResultDao.updateInTx(roundResults);
     }
 
@@ -1401,13 +1441,14 @@ public class DBManager {
                 .limit(1)
                 .unique();
     }
+
     /**
      * 查询对应考生当前项目最好成绩(个人)
      *
      * @param studentCode 考号
      * @return 对应最好成绩
      */
-    public RoundResult queryBestScore(Item item,String studentCode, int testNo) {
+    public RoundResult queryBestScore(Item item, String studentCode, int testNo) {
         Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
                 + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\ttestNo:" + testNo);
         return roundResultDao.queryBuilder()
@@ -1419,13 +1460,14 @@ public class DBManager {
                 .limit(1)
                 .unique();
     }
+
     /**
      * 查询对应考生当前项目最后成绩(个人)
      *
      * @param studentCode 考号
      * @return 对应最好成绩
      */
-    public RoundResult queryBestFinallyScore(Item item,String studentCode, int testNo) {
+    public RoundResult queryBestFinallyScore(Item item, String studentCode, int testNo) {
         Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
                 + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\ttestNo:" + testNo);
         return roundResultDao.queryBuilder()
@@ -2269,7 +2311,7 @@ public class DBManager {
         sqlBuf.append("  FROM " + StudentDao.TABLENAME + " S");
         sqlBuf.append(" LEFT JOIN " + GroupItemDao.TABLENAME + " I ");
         sqlBuf.append(" ON S." + StudentDao.Properties.StudentCode.columnName + " = I." + GroupItemDao.Properties.StudentCode.columnName);
-        sqlBuf.append(" WHERE I." + GroupItemDao.Properties.ItemCode.columnName + " = '" +group.getItemCode() + "'");
+        sqlBuf.append(" WHERE I." + GroupItemDao.Properties.ItemCode.columnName + " = '" + group.getItemCode() + "'");
         sqlBuf.append(" AND I." + GroupItemDao.Properties.ScheduleNo.columnName + " = " + group.getScheduleNo());
         sqlBuf.append(" AND I." + GroupItemDao.Properties.GroupType.columnName + " =  " + group.getGroupType());
         sqlBuf.append(" AND I." + GroupItemDao.Properties.SortName.columnName + " = '" + group.getSortName() + "'");
@@ -2612,8 +2654,40 @@ public class DBManager {
                 .where(StudentThermometerDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(StudentThermometerDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode())).list();
     }
-    /********************************************多表操作**********************************************************************/
 
+    /********************************************多表操作**********************************************************************/
+    public void insterAccount(String accountName, String pwd, int type) {
+        Account account = new Account();
+        account.setAccount(accountName);
+        account.setPassword(pwd);
+        account.setType(type);
+        account.setCreateTime(DateUtil.getCurrentTime());
+        accountDao.insertOrReplace(account);
+    }
+
+    public void updateAccount(Account account) {
+
+        account.setUpdateTime(DateUtil.getCurrentTime());
+        accountDao.updateInTx(account);
+    }
+
+    public Account queryAccount(String accountName, String pwd) {
+        return accountDao.queryBuilder().where(AccountDao.Properties.Account.eq(accountName))
+                .where(AccountDao.Properties.Password.eq(pwd)).unique();
+    }
+
+    public List<Account> getAccountAll() {
+        return accountDao.loadAll();
+    }
+
+    public void deleteAccountAll() {
+        accountDao.deleteAll();
+    }
+
+    public void deleteAccount(Account account) {
+        accountDao.delete(account);
+    }
+    /***********************************************帐号***********************************************************/
     /**
      * 关闭数据库
      */

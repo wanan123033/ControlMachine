@@ -27,7 +27,7 @@ public class RS232Result {
             return;
         }
         //Logger.i(StringUtility.bytesToHexString(data));
-         Log.i("RS232Result", StringUtility.bytesToHexString(data));
+        Log.i("RS232Result", StringUtility.bytesToHexString(data));
         //Log.i("james","I got sth");
         if (MachineCode.machineCode == -1) {
             LogUtils.all(data.length + "---" + StringUtility.bytesToHexString(data) + "---当前测试项目代码为-1");
@@ -49,7 +49,7 @@ public class RS232Result {
             case ItemDefault.CODE_ZFP:
             case ItemDefault.CODE_LQYQ:
             case ItemDefault.CODE_SHOOT:
-                if (data[data.length - 1] == 0x0d) {//包尾 ==0xd
+                if ((data[0] & 0xff) == 0xbb && data[data.length - 1] == 0x0d) {//包尾 ==0xd
                     switch (data[6]) {
                         case (byte) 0xc1://参数设置
                             setType(SerialConfigs.RUN_TIMER_SETTING);
@@ -255,10 +255,10 @@ public class RS232Result {
                             break;
 
                         case 4:
-                            if (data.length == 24){
+                            if (data.length == 24) {
                                 setType(SerialConfigs.SARGENT_JUMP_CHECK);
                                 setResult(new SargentJumpResult(data));
-                            }else {
+                            } else {
                                 setType(SerialConfigs.MEDICINE_BALL_GET_SCORE_RESPONSE);
                                 setResult(new MedicineBallResult(data));
                             }

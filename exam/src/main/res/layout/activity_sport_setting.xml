@@ -87,10 +87,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:textSize="18sp"
-                android:text="成绩精度：" />
+                android:text="成绩进位：" />
 
             <Spinner
-                android:id="@+id/sp_mark_degree"
+                android:id="@+id/sp_carry_mode"
                 android:layout_width="100dp"
                 android:layout_height="40dp"
                 android:layout_marginLeft="50dp"
@@ -109,20 +109,46 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:textSize="18sp"
-                android:text="成绩进位：" />
+                android:text="成绩精度：" />
 
             <Spinner
-                android:id="@+id/sp_mark_type"
+                android:id="@+id/sp_digital"
                 android:layout_width="100dp"
                 android:layout_height="40dp"
                 android:layout_marginLeft="50dp"
                 android:background="@drawable/icon_spinner_bg" />
         </LinearLayout>
+        <RadioGroup
+            android:id="@+id/rg_model"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:visibility="gone"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/rb_continue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@null"
+                android:checked="true"
+                android:drawableRight="@drawable/checkbox_switch_selected"
+                android:text="连续测试：" />
+
+            <RadioButton
+                android:id="@+id/rb_recycle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="60dp"
+                android:button="@null"
+                android:drawableRight="@drawable/checkbox_switch_selected"
+                android:text="循环测试：" />
+        </RadioGroup>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:layout_marginTop="50dp"
-            android:gravity="center_vertical">
+            android:layout_marginTop="30dp"
+            android:gravity="center_vertical"
+            >
             <TextView
                 android:id="@+id/tv_init_way"
                 android:layout_width="100dp"

@@ -11,10 +11,11 @@ public class SportTimerSetting {
 
     private boolean isAutoPair;
     private int deviceCount = 1;
-    private int degree;
-    private int martType;
+    private int carryMode;//成绩进位
+    private int digital;//成绩精度
     private int testTimes = 1;
     private String initRoute ;
+    private int groupType;//0循环测试1连续测试
     public int getDeviceCount() {
         return deviceCount;
     }
@@ -23,20 +24,20 @@ public class SportTimerSetting {
         this.deviceCount = deviceCount;
     }
 
-    public int getDegree() {
-        return degree;
+    public int getCarryMode() {
+        return carryMode;
     }
 
-    public void setDegree(int degree) {
-        this.degree = degree;
+    public void setCarryMode(int carryMode) {
+        this.carryMode = carryMode;
     }
 
-    public int getMartType() {
-        return martType;
+    public int getDigital() {
+        return digital;
     }
 
-    public void setMartType(int martType) {
-        this.martType = martType;
+    public void setDigital(int digital) {
+        this.digital = digital;
     }
 
     public int getTestTimes() {
@@ -53,5 +54,13 @@ public class SportTimerSetting {
 
     public void setInitRoute(String initRoute) {
         this.initRoute = initRoute;
+    }
+
+    public int getGroupType() {
+        return groupType;
+    }
+
+    public void setGroupType(int groupType) {
+        this.groupType = groupType;
     }
 }

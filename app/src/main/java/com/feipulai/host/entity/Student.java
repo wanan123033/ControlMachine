@@ -29,7 +29,7 @@ import java.util.List;
  */
 @Entity
 public class Student implements Serializable {
-
+    public static final String ENCRYPT_KEY = "ID_CARD_ENCRYPT1";
     public static final int MALE = 0;
     public static final int FEMALE = 1;
 

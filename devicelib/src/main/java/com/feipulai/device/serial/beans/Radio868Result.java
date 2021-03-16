@@ -6,6 +6,7 @@ import android.util.Log;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.SerialConfigs;
+import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
 import static com.feipulai.device.serial.SerialConfigs.JUMPROPE_RESPONSE;
@@ -457,6 +458,21 @@ public class Radio868Result {
                     setType(SerialConfigs.SIT_UP_GET_VERSION);
                     setResult(new SitPushUpVersionResult(data));
                     break;
+
+            }
+        }
+
+        //肩胛模块
+        if ((data[0] &0xff)== 0xAA  && data[2] == 0x05){
+            setResult(new ShoulderResult(data));
+            switch (data[7]){
+                case 14://请求配对
+                    setType(SerialConfigs.NEW_SIT_UP_SHOULDER);
+                    break;
+                case 0 ://联络信号
+
+                    break;
+
 
             }
         }

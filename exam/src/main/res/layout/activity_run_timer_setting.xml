@@ -175,7 +175,7 @@
                         android:text="成绩进位：" />
 
                     <Spinner
-                        android:id="@+id/sp_mark_degree"
+                        android:id="@+id/sp_carry_mode"
                         android:layout_width="100dp"
                         android:layout_height="30dp"
                         android:layout_marginLeft="50dp"
@@ -305,6 +305,30 @@
                 </LinearLayout>
 
             </LinearLayout>
+            <RadioGroup
+                android:id="@+id/rg_timer_select"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone">
+                <RadioButton
+                    android:id="@+id/rb_unified"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@null"
+                    android:checked="true"
+                    android:drawableRight="@drawable/checkbox_switch_selected"
+                    android:text="统一计时：" />
+
+                <RadioButton
+                    android:id="@+id/rb_independent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="60dp"
+                    android:button="@null"
+                    android:drawableRight="@drawable/checkbox_switch_selected"
+                    android:text="独立计时：" />
+            </RadioGroup>
 
             <LinearLayout
                 android:layout_width="match_parent"

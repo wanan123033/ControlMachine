@@ -1,8 +1,21 @@
 package com.feipulai.exam;
 
+import com.feipulai.common.utils.print.PrintBean;
+import com.feipulai.exam.utils.EncryptUtil;
+import com.orhanobut.logger.Logger;
+
+import java.util.Random;
+
 public class Algorithm {
 
     public static void main(String[] args) {
+
+        Random random = new Random();//指定种子数字
+
+        System.out.println(random.nextInt(2));
+        System.out.println(random.nextInt(1));
+        System.out.println(random.nextInt(1));
+
 //        int a[] = new int[100000];
 //        int b[] = new int[901];
 //
@@ -26,8 +39,8 @@ public class Algorithm {
 //        }
 //        System.out.println("\n" + a.length);
 
-        byte d = (byte) 0xfd;
-        System.out.println("======>" + d);
+//        byte d = (byte) 0xfd;
+//        System.out.println("======>" + d);
     }
 
 }

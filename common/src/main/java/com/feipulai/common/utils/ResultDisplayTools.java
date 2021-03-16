@@ -4,6 +4,7 @@ import com.feipulai.device.ic.utils.ItemDefault;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -214,7 +215,18 @@ public class ResultDisplayTools {
             return null;
         }
         result = dealResultWithCarryMode(digital, carryMode, tmpResult);
-        strResult = result + (isReturnUnit ? unit : "");
+        StringBuffer pattern = new StringBuffer("0.");
+        for (int i = 0; i < digital; i++) {
+            pattern.append("0");
+        }
+        DecimalFormat df = new DecimalFormat(pattern.toString());
+        if (digital != 0) {
+
+            strResult = df.format(result) + (isReturnUnit ? unit : "");
+        } else {
+            strResult = result + (isReturnUnit ? unit : "");
+        }
+
         return strResult;
     }
 
@@ -269,6 +281,7 @@ public class ResultDisplayTools {
                 result = tmpResult;
                 break;
         }
+
         return result;
     }
 

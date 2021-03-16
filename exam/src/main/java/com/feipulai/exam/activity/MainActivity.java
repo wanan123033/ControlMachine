@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Message;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
@@ -46,14 +47,11 @@ import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
-import com.feipulai.exam.entity.Group;
-import com.feipulai.exam.entity.GroupItem;
-import com.feipulai.exam.entity.ItemSchedule;
 import com.feipulai.exam.entity.RoundResult;
-import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.CommonUtils;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.service.UploadService;
+import com.feipulai.exam.view.BatteryView;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.videolibrary.StorageUtils;
 import com.ww.fpl.videolibrary.play.util.PUtil;
@@ -72,6 +70,8 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
     TextView txtMainTitle;
     @BindView(R.id.txt_deviceid)
     TextView txtDeviceId;
+    @BindView(R.id.view_battery)
+    BatteryView batteryView;
     private boolean mIsExiting;
     private Intent serverIntent;
     private Intent bindIntent;
@@ -91,31 +91,53 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
             UdpLEDUtil.shellExec("ip route add " + routeIp + ".0/24 dev eth0 proto static scope link table wlan0 \n");
         }
 
-        List<Group> groups = DBManager.getInstance().queryGroupBySchedule("-1");
-        for (Group group:groups
-             ) {
-            group.setScheduleNo("1");
-        }
-        DBManager.getInstance().updateGroups(groups);
+        RadioManager.getInstance().setOnKwhListener(new RadioManager.OnKwhListener() {
+            @Override
+            public void onKwhArrived(final Message msg) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        int state = msg.arg1;
+                        int level = msg.arg2;
+                        batteryView.setVisibility(View.VISIBLE);
+                        batteryView.updateState(level);
+                        if (state==0){//放电
+                            batteryView.updateView(level);
+                        }else{//充电
+                            batteryView.updateChargingView(level);
+                        }
+                    }
+                });
 
-        List<GroupItem> groupItems = DBManager.getInstance().queryGroupItemBySchedule("-1");
-        for (GroupItem groupItem:groupItems
-             ) {
-            groupItem.setScheduleNo("1");
-        }
-        DBManager.getInstance().updateGroupItems(groupItems);
-
-        List<RoundResult> results = DBManager.getInstance().queryResultBySchedule("-1");
-        for (RoundResult roundResult : results
-        ) {
-            StudentItem stu = DBManager.getInstance().queryStudentItemByCode(roundResult.getItemCode(), roundResult.getStudentCode());
-            if (stu == null) {
-                continue;
             }
-            roundResult.setScheduleNo(stu.getScheduleNo());
-            Log.i("roundResult", "修改数据完成");
-            DBManager.getInstance().updateRoundResult(roundResult);
-        }
+        });
+
+        //测试数据
+//        List<GroupItem> items = DBManager.getInstance().queryGroupItemByCode("11");
+//        List<RoundResult> roundResults = new ArrayList<>();
+//        RoundResult roundResult;
+//        int countI = 0;
+//        for (GroupItem groupItem : items
+//                ) {
+//            Group group = DBManager.getInstance().queryGroup("11", 1);
+//            roundResult = new RoundResult();
+//            roundResult.setGroupId(group.getId());
+//            roundResult.setIsLastResult(1);
+//            roundResult.setItemCode("11");
+//            roundResult.setMachineCode(3);
+//            roundResult.setMachineResult(1130 + countI * 100);
+//            roundResult.setResult(1130 + countI * 100);
+//            roundResult.setResultState(1);
+//            roundResult.setRoundNo(1);
+//            roundResult.setScheduleNo("1");
+//            roundResult.setStudentCode(groupItem.getStudentCode());
+//            roundResult.setTestNo(1);
+//            roundResult.setTestTime(System.currentTimeMillis() + "");
+//            roundResults.add(roundResult);
+//            countI++;
+//        }
+//        roundResults.get(2).setResultState(2);
+//        DBManager.getInstance().insertRoundResults(roundResults);
     }
 
     @Override

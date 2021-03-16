@@ -23,6 +23,7 @@ import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.text.MessageFormat;
+import java.util.Random;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -166,6 +167,8 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
 
         if (stuPair == null || stuPair.getStudent() == null)
             return;
+
+
         if (setting.isFullReturn()) {
             if (stuPair.getStudent().getSex() == Student.MALE) {
                 stuPair.setFullMark(result >= Integer.parseInt(setting.getMaleFull()) * 10);

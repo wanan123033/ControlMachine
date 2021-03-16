@@ -8,7 +8,7 @@ import com.feipulai.exam.config.TestConfigs;
  */
 
 public class SitUpSetting {
-
+	private int testType = 0;
 	private int deviceSum = 5;
 	private int testTime = 30;// 一轮测试的时间,单位为秒
 	private int testNo = 1;// 允许测试的次数
@@ -86,4 +86,11 @@ public class SitUpSetting {
 				'}';
 	}
 
+	public int getTestType() {
+		return testType;
+	}
+
+	public void setTestType(int testType) {
+		this.testType = testType;
+	}
 }

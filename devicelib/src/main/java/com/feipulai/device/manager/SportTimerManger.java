@@ -29,25 +29,25 @@ public class SportTimerManger {
      *                        【N-1】包尾，1字节,0x0D
      */
     public void setFrequency(int deviceId, int targetFrequency, int hostId, int targetHostId) {
-        byte data[] = new byte[16];
+        byte data[] = new byte[15];
         data[0] = (byte) 0xAA;
-        data[1] = (byte) 16;
+        data[1] = (byte) 15;
         data[2] = (byte) 0x0E;
         data[3] = (byte) 0x03;
         data[4] = (byte) 0X01;
-        data[5] = (byte) hostId;
+        data[5] = (byte) targetHostId;//hostId
         data[6] = (byte) deviceId;
         data[7] = (byte) 20;
         data[8] = (byte) 0x00;
         data[9] = (byte) 0x00;
         data[10] = (byte) (targetFrequency & 0xff);
         data[11] = (byte) 0x04;
-        data[12] = (byte) targetHostId;
-        data[13] = (byte) 0x00;
+//        data[12] = (byte) targetHostId;
+        data[12] = (byte) 0x00;
         for (int i = 1; i <= data.length - 3; i++) {
-            data[14] += data[i];
+            data[13] += data[i];
         }
-        data[15] = (byte) 0x0d;
+        data[14] = (byte) 0x0d;
 
         RadioChannelCommand command = new RadioChannelCommand(targetFrequency);
         LogUtils.normal(data.length + "---" + StringUtility.bytesToHexString(data) + "---运动计时设置参数指令");

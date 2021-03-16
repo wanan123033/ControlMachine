@@ -62,6 +62,8 @@ public class RadioLinker implements Handler.Callback{
     }
 
     public boolean onRadioArrived(Message msg) {
+        if (null == msg || null == msg.obj)
+            return false;
         Log.i("james+++++--------", msg.obj.toString());
         if (!linking) {
             return false;

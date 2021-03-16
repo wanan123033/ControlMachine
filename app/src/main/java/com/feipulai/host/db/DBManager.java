@@ -16,6 +16,7 @@ import com.feipulai.host.entity.Student;
 import com.feipulai.host.entity.StudentDao;
 import com.feipulai.host.entity.StudentItem;
 import com.feipulai.host.entity.StudentItemDao;
+import com.feipulai.host.utils.EncryptUtil;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.greendao.database.Database;
@@ -191,7 +192,7 @@ public class DBManager {
                 .unique();
         if (student == null) {
             student = studentDao.queryBuilder()
-                    .where(StudentDao.Properties.IdCardNo.eq(code))
+                    .where(StudentDao.Properties.IdCardNo.eq(EncryptUtil.setEncryptString(Student.ENCRYPT_KEY, code)))
                     .unique();
         }
         return student;
@@ -249,7 +250,7 @@ public class DBManager {
     public Student queryStudentByIDCode(String idcardNo) {
         return studentDao
                 .queryBuilder()
-                .where(StudentDao.Properties.IdCardNo.eq(idcardNo))
+                .where(StudentDao.Properties.IdCardNo.eq(EncryptUtil.setEncryptString(Student.ENCRYPT_KEY, idcardNo)))
                 .limit(1)
                 .unique();
     }
@@ -874,6 +875,11 @@ public class DBManager {
 
     // 批量修改成绩信息
     public void updateRoundResult(List<RoundResult> allScores) {
+        for (RoundResult allScore : allScores) {
+            String encryptData = allScore.getStudentCode() + "," + allScore.getItemCode()
+                    + "," + allScore.getResult() + "," + allScore.getResultState() + "," + allScore.getTestTime();
+            allScore.setRemark3(EncryptUtil.setEncryptString(RoundResult.ENCRYPT_KEY, encryptData));
+        }
         roundResultDao.updateInTx(allScores);
     }
 
@@ -883,6 +889,9 @@ public class DBManager {
      * @param score
      */
     public void updateRoundResult(RoundResult score) {
+        String encryptData = score.getStudentCode() + "," + score.getItemCode()
+                + "," + score.getResult() + "," + score.getResultState() + "," + score.getTestTime();
+        score.setRemark3(EncryptUtil.setEncryptString(RoundResult.ENCRYPT_KEY, encryptData));
         roundResultDao.update(score);
     }
 
@@ -940,6 +949,9 @@ public class DBManager {
      * @param roundResult
      */
     public void insertRoundResult(RoundResult roundResult) {
+        String encryptData = roundResult.getStudentCode() + "," + roundResult.getItemCode()
+                + "," + roundResult.getResult() + "," + roundResult.getResultState() + "," + roundResult.getTestTime();
+        roundResult.setRemark3(EncryptUtil.setEncryptString(RoundResult.ENCRYPT_KEY, encryptData));
         roundResultDao.insert(roundResult);
     }
 

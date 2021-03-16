@@ -9,8 +9,12 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
+import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSetting;
+import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.utils.ResultDisplayUtils;
@@ -25,69 +29,77 @@ import butterknife.ButterKnife;
  * 公司 深圳菲普莱体育
  * 密级 绝密
  */
-public class ResultDisplayAdapter extends RecyclerView.Adapter<ResultDisplayAdapter.ViewHolder>{
-	
-	private int maxResultSum;
-	private Map<Student,List<RoundResult>> result;
-	
-	public ResultDisplayAdapter(@Nullable Map<Student,List<RoundResult>> data,int maxResultSum){
-		result = data;
-		this.maxResultSum = maxResultSum;
-	}
-	
-	@Override
-	public ViewHolder onCreateViewHolder(ViewGroup parent,int viewType){
-		LinearLayout layout = (LinearLayout)LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_resdisplay_item,parent,false);
-		for(int i = 0;i < maxResultSum;i++){
-			TextView textView = new TextView(parent.getContext());
-			textView.setId(i);
-			textView.setGravity(Gravity.CENTER);
-			textView.setLayoutParams(new LinearLayout.LayoutParams(0,ViewGroup.LayoutParams.MATCH_PARENT,1));
-			layout.addView(textView);
-		}
-		return new ViewHolder(layout,maxResultSum);
-	}
-	
-	@Override
-	public void onBindViewHolder(ViewHolder holder,int position){
-		Student student = TestCache.getInstance().getAllStudents().get(position);
-		holder.mTvStuCode.setText(student.getStudentCode());
-		holder.mTvStuName.setText(student.getStudentName());
-		
-		List<RoundResult> results = result.get(student);
-		for(int i = 0;i < maxResultSum;i++){
-			if(results == null || i >= results.size()){
-				holder.tvResults[i].setText("未测试");
-			}else{
-				holder.tvResults[i].setText(ResultDisplayUtils.getStrResultForDisplay(results.get(i).getResult()));
-			}
-		}
-	}
-	
-	@Override
-	public int getItemCount(){
-		return TestCache.getInstance().getAllStudents().size();
-	}
-	
-	static class ViewHolder extends RecyclerView.ViewHolder{
-		
-		@BindView(R.id.tv_stuCode)
-		TextView mTvStuCode;
-		@BindView(R.id.tv_stuName)
-		TextView mTvStuName;
-		@BindView(R.id.ll_timing_result)
-		LinearLayout mLlTimingResult;
-		TextView[] tvResults;
-		
-		ViewHolder(View view,int maxResultSum){
-			super(view);
-			ButterKnife.bind(this,view);
-			tvResults = new TextView[maxResultSum];
-			for(int i = 0;i < tvResults.length;i++){
-				tvResults[i] = mLlTimingResult.findViewById(i);
-			}
-		}
-		
-	}
-	
+public class ResultDisplayAdapter extends RecyclerView.Adapter<ResultDisplayAdapter.ViewHolder> {
+
+    private int maxResultSum;
+    private Map<Student, List<RoundResult>> result;
+    private JumpRopeSetting setting;
+
+    public ResultDisplayAdapter(@Nullable Map<Student, List<RoundResult>> data, int maxResultSum) {
+        result = data;
+        this.maxResultSum = maxResultSum;
+
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        setting = SharedPrefsUtil.loadFormSource(parent.getContext(), JumpRopeSetting.class);
+        LinearLayout layout = (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_resdisplay_item, parent, false);
+        for (int i = 0; i < maxResultSum; i++) {
+            TextView textView = new TextView(parent.getContext());
+            textView.setId(i);
+            textView.setGravity(Gravity.CENTER);
+            textView.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1));
+            layout.addView(textView);
+        }
+        return new ViewHolder(layout, maxResultSum);
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        Student student = TestCache.getInstance().getAllStudents().get(position);
+        holder.mTvStuCode.setText(student.getStudentCode());
+        holder.mTvStuName.setText(student.getStudentName());
+
+        List<RoundResult> results = result.get(student);
+        for (int i = 0; i < maxResultSum; i++) {
+            if (results == null || i >= results.size()) {
+                holder.tvResults[i].setText("未测试");
+            } else {
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_TS && setting.isShowStumbleCount()) {
+                    holder.tvResults[i].setText(ResultDisplayUtils.getStrResultForDisplay(results.get(i).getResult()) + "(" + results.get(i).getStumbleCount() + ")");
+                } else {
+                    holder.tvResults[i].setText(ResultDisplayUtils.getStrResultForDisplay(results.get(i).getResult()));
+                }
+
+            }
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return TestCache.getInstance().getAllStudents().size();
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.tv_stuCode)
+        TextView mTvStuCode;
+        @BindView(R.id.tv_stuName)
+        TextView mTvStuName;
+        @BindView(R.id.ll_timing_result)
+        LinearLayout mLlTimingResult;
+        TextView[] tvResults;
+
+        ViewHolder(View view, int maxResultSum) {
+            super(view);
+            ButterKnife.bind(this, view);
+            tvResults = new TextView[maxResultSum];
+            for (int i = 0; i < tvResults.length; i++) {
+                tvResults[i] = mLlTimingResult.findViewById(i);
+            }
+        }
+
+    }
+
 }

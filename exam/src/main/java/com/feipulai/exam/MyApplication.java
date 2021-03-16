@@ -5,6 +5,7 @@ import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
 
+import com.feipulai.common.CrashHandler;
 import com.feipulai.common.utils.ActivityLifeCycle;
 import com.feipulai.common.utils.FileUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
@@ -12,10 +13,13 @@ import com.feipulai.device.AdaptiveConfig;
 import com.feipulai.device.serial.SerialParams;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.SharedPrefsConfigs;
+import com.feipulai.exam.entity.Account;
+import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
 import com.feipulai.exam.utils.bluetooth.BlueToothHelper;
 import com.kk.taurus.playerbase.config.PlayerConfig;
 import com.kk.taurus.playerbase.config.PlayerLibrary;
 import com.kk.taurus.playerbase.record.PlayRecordManager;
+import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 
 
@@ -28,9 +32,10 @@ public class MyApplication extends MultiDexApplication {
     public static final String PATH_LOG_NAME = "KS_LOGGER";//日志文件夹名称
     public static String SOFTWAREUUID = "FP-KTA2108_KS";//软件识别码
     public static String HARDWAREUUID = "FP-KTA2108_KS_ANDROID";//硬件识别码
+    public static final String PATH_FACE = FileUtil.PATH_BASE + "KS_FACE_IMG/"; //人脸识别图片信息文件路径
 
     public static final String DEVICECODE = "111";//硬件识别码
-
+    public static Account account;
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -49,14 +54,14 @@ public class MyApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
-//        LogUtils.initLogger(true, true, PATH_LOG_NAME);
-//        CrashHandler.getInstance().init(this);
-//        CrashHandler.getInstance().setUploadOpersion(new CrashHandler.UploadOpersion() {
-//            @Override
-//            public void upload(String erroMsg) {
-//                new HttpSubscriber().uploadLog(erroMsg);
-//            }
-//        });
+        LogUtils.initLogger(true, true, PATH_LOG_NAME);
+        CrashHandler.getInstance().init(this);
+        CrashHandler.getInstance().setUploadOpersion(new CrashHandler.UploadOpersion() {
+            @Override
+            public void upload(String erroMsg) {
+                new HttpSubscriber().uploadLog(erroMsg);
+            }
+        });
         SettingHelper.init(this);
         BlueToothHelper.init(this);
         TOKEN = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.TOKEN, "");
@@ -67,6 +72,7 @@ public class MyApplication extends MultiDexApplication {
         FileUtil.mkdirs(PATH_SPECIFICATION);
         FileUtil.mkdirs(PATH_IMAGE);
         FileUtil.mkdirs(PATH_PDF_IMAGE);
+//        FileUtil.mkdirs(PATH_FACE);
         FileUtil.mkdirs(FaceServer.ROOT_PATH);
         //视频播放初始化库
         PlayerLibrary.init(this);

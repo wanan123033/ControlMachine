@@ -26,7 +26,6 @@ import com.feipulai.device.manager.RunTimerManager;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.RunTimerConnectState;
 import com.feipulai.device.serial.beans.RunTimerResult;
-import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.NewRadioPairActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
@@ -42,7 +41,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
 
     @BindView(R.id.sp_test_times)
     Spinner spTestTimes;
-    @BindView(R.id.sp_mark_degree)
+    @BindView(R.id.sp_carry_mode)
     Spinner spMarkDegree;
     @BindView(R.id.sp_intercept_way)
     Spinner spInterceptWay;
@@ -52,6 +51,8 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     RadioGroup radioGroupDegree;
     @BindView(R.id.rg_model)
     RadioGroup rgModel;
+    @BindView(R.id.rg_timer_select)
+    RadioGroup rg_timerSelect;
     //    @BindView(R.id.cb_full_return)
 //    CheckBox cbFullReturn;
 //    @BindView(R.id.et_full_male)
@@ -109,6 +110,10 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         etSensitivityNum.setText(String.format("%d", runTimerSetting.getSensitivityNum()));
         if (runTimerSetting.getConnectType() == 1){
             selfCheck.setText("设备配对");
+        }
+
+        if (runTimerSetting.getConnectType() == 1){
+            rgModel.setVisibility(View.GONE);
         }
     }
 
@@ -221,6 +226,8 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         spSensor.setOnItemSelectedListener(this);
         int sensor = runTimerSetting.getSensor();
         spSensor.setSelection(sensor);
+
+        setTimerSelect();
     }
 
     @Override
@@ -230,7 +237,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
                 runTimerSetting.setTestTimes(i + 1);
                 Log.i("post", "post ITEM_SETTING_UPDATE");
                 break;
-            case R.id.sp_mark_degree:
+            case R.id.sp_carry_mode:
                 runTimerSetting.setMarkDegree(i + 1);
                 break;
             case R.id.sp_intercept_way:
@@ -264,6 +271,12 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
             case R.id.rb_recycle:
                 runTimerSetting.setTestModel(false);
                 break;
+            case R.id.rb_unified:
+                runTimerSetting.setTimer_select(false);
+                break;
+            case R.id.rb_independent:
+                runTimerSetting.setTimer_select(true);
+                break;
         }
     }
 
@@ -272,13 +285,33 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         switch (compoundButton.getId()) {
             case R.id.cb_start:
                 runTimerSetting.setStartPoint(b ? 1 : 0);
-
+                getInterceptPoint();
+                setTimerSelect();
                 break;
             case R.id.cb_end:
                 runTimerSetting.setEndPoint(b ? 2 : 0);
+                getInterceptPoint();
+                setTimerSelect();
                 break;
         }
 
+    }
+
+    private void getInterceptPoint() {
+        runTimerSetting.setInterceptPoint(runTimerSetting.getStartPoint() + runTimerSetting.getEndPoint());
+    }
+
+    /**
+     * 判断去盒子版统一计时独立计时显示
+     */
+    private void setTimerSelect() {
+        if (runTimerSetting.getInterceptPoint() == 3 && runTimerSetting.getConnectType() == 1){//有起终点 并且是无盒子版
+            rg_timerSelect.setVisibility(View.VISIBLE);
+            rg_timerSelect.setOnCheckedChangeListener(this);
+            rg_timerSelect.check(runTimerSetting.isTimer_select() ? R.id.rb_independent:R.id.rb_unified);
+        }else {
+            rg_timerSelect.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -303,7 +336,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         super.onPause();
         String senNum = etSensitivityNum.getText().toString();
         runTimerSetting.setSensitivityNum(TextUtils.isEmpty(senNum)?5:Integer.parseInt(senNum));
-        runTimerSetting.setInterceptPoint(runTimerSetting.getStartPoint() + runTimerSetting.getEndPoint());
+        getInterceptPoint();
         SharedPrefsUtil.save(this, runTimerSetting);
     }
 
@@ -383,8 +416,6 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
                     mHandler.sendEmptyMessage(MSG_CONNECT);
                 }
                 break;
-
-
         }
 
 

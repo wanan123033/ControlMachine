@@ -153,10 +153,10 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                 }
                 moreHelper.txtConfirm.setVisibility(item.isConfirmVisible() ? View.VISIBLE : View.GONE);
                 moreHelper.txtStart.setVisibility(item.isConfirmVisible() ? View.GONE : View.VISIBLE);
-                moreHelper.txtStart.setVisibility(item.isConfirmVisible() ? View.GONE : View.VISIBLE);
 
                 moreHelper.addOnClickListener(R.id.txt_skip).addOnClickListener(R.id.txt_start);
                 moreHelper.addOnClickListener(R.id.txt_punish);
+                moreHelper.addOnClickListener(R.id.txt_confirm);
                 if (item.getStuDevicePair() != null) {
                     if (item.getStuDevicePair().getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
                         moreHelper.cbDeviceState.setChecked(true);
@@ -236,7 +236,7 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                 }
 
                 oneViewHolder.txtStart.setVisibility(item.isConfirmVisible() ? View.GONE : View.VISIBLE);
-
+                oneViewHolder.txtConfirm.setVisibility(item.isConfirmVisible() ? View.GONE : View.VISIBLE);
                 if (!isNextClickStart) {
                     oneViewHolder.txtStart.setVisibility(View.GONE);
                 }
@@ -254,6 +254,7 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
 
                 oneViewHolder.addOnClickListener(R.id.txt_skip).addOnClickListener(R.id.txt_start);
                 oneViewHolder.addOnClickListener(R.id.txt_punish).addOnClickListener(R.id.txt_get_data);
+                oneViewHolder.addOnClickListener(R.id.txt_confirm);
                 if (item.getStuDevicePair() != null) {
                     if (item.getStuDevicePair().getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
                         oneViewHolder.cbDeviceState.setChecked(true);
@@ -348,6 +349,8 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
         TextView itemTxtTestResult2;
         @BindView(R.id.txt_get_data)
         TextView txtGetData;
+        @BindView(R.id.txt_confirm)
+        TextView txtConfirm;
 
         public OneViewHolder(View view) {
             super(view);

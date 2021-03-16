@@ -3,8 +3,11 @@ package com.feipulai.exam.utils;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.printer.PrinterManager;
+import com.feipulai.exam.MyApplication;
+import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSetting;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
@@ -34,6 +37,10 @@ public class PrintResultUtil {
     }
 
     public static void printResult(List<String> stuCodeList) {
+        JumpRopeSetting jumpRopeSetting = null;
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_TS) {
+            jumpRopeSetting = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), JumpRopeSetting.class);
+        }
         //获取分类的成绩
         List<UploadResults> stuResultsList = DBManager.getInstance().getUploadResultsByStuCode(TestConfigs.getCurrentItemCode(), stuCodeList);
         for (UploadResults uploadResults : stuResultsList) {
@@ -58,7 +65,11 @@ public class PrintResultUtil {
                 // 跳绳需要打印绊绳次数
                 switch (TestConfigs.sCurrentItem.getMachineCode()) {
                     case ItemDefault.CODE_TS:
-                        PrinterManager.getInstance().print(printResult + "(中断:" + result.getStumbleCount() + ")");
+                        if (jumpRopeSetting.isShowStumbleCount()) {
+                            PrinterManager.getInstance().print(printResult + "(中断:" + result.getStumbleCount() + ")");
+                        } else {
+                            PrinterManager.getInstance().print(printResult);
+                        }
                         break;
 
                     case ItemDefault.CODE_YWQZ:
@@ -76,7 +87,7 @@ public class PrintResultUtil {
 
                 }
             }
-//            PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()) + "\n");
+            PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()) + "\n");
             PrinterManager.getInstance().print("\n");
 
 

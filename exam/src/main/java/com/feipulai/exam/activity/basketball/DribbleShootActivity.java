@@ -46,6 +46,7 @@ import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -458,7 +459,7 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
                 PrinterManager.getInstance().print(String.format("第%1$d次：", i + 1));
             }
         }
-//        PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()));
+        PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()));
         PrinterManager.getInstance().print("\n");
     }
 

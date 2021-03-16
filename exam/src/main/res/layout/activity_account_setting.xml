@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/icon_white_bg"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="26dp"
+        android:layout_marginBottom="34dp"
+        android:background="@drawable/btn_bg_white"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingLeft="25dp"
+        android:paddingRight="25dp">
+
+
+        <LinearLayout
+            android:id="@+id/view_data_head"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_below="@+id/view_seach"
+            android:layout_marginTop="@dimen/dp_20"
+            android:background="#E6E6E6"
+            android:orientation="horizontal"
+            android:padding="1dp">
+
+            <TextView
+                style="@style/style_txt_white_title"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5"
+                android:background="#AAD3FF"
+                android:gravity="center"
+                android:text="用户名" />
+
+            <TextView
+                style="@style/style_txt_white_title"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="1dp"
+                android:layout_weight="1.2"
+                android:background="#AAD3FF"
+                android:gravity="center"
+                android:text="创建时间" />
+
+            <TextView
+                style="@style/style_txt_white_title"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="1dp"
+                android:layout_weight="1.2"
+                android:background="#AAD3FF"
+                android:gravity="center"
+                android:text="更新时间" />
+
+
+        </LinearLayout>
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_account"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginBottom="@dimen/dp_20" />
+
+
+        <View
+            style="@style/divider_gray_horizontal_style"
+            android:layout_height="5dp" />
+
+        <LinearLayout
+            android:layout_width="450dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:id="@+id/btn_add"
+                android:layout_width="80dp"
+                android:layout_height="35dp"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/tv_start_test"
+                android:background="@drawable/btn_click_bg_selected"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="新增"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_16" />
+
+            <TextView
+                android:id="@+id/btn_update"
+                android:layout_width="80dp"
+                android:layout_height="35dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toLeftOf="@+id/tv_start_test"
+                android:background="@drawable/btn_click_bg_selected"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="编辑"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_16" />
+
+            <TextView
+                android:id="@+id/btn_delete"
+                android:layout_width="80dp"
+                android:layout_height="35dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toLeftOf="@+id/tv_start_test"
+                android:background="@drawable/btn_click_bg_selected"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="删除"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_16" />
+
+            <TextView
+                android:id="@+id/btn_all_delete"
+                android:layout_width="100dp"
+                android:layout_height="35dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toLeftOf="@+id/tv_start_test"
+                android:background="@drawable/btn_click_bg_selected"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="全部删除"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_16" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -380,8 +380,8 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
 //                  * @param status STATUS_FREE		1		//FREE
 //                *               STATUS_WAIT  		2		//WAIT To Start
 //                *               STATUS_RUNING 	    3		//Start Run
-//                *               STATUS_PREP  		4		//Prepare to stop
-//                *               STATUS_PAUSE 		5		//Display stop time,But Timer is Running
+//                *               STATUS_PREP  		4		//Prepare to release
+//                *               STATUS_PAUSE 		5		//Display release time,But Timer is Running
         LogUtils.operation("足球设备状态值:" + udpStatus);
         pairs.get(0).getBaseDevice().setState(BaseDeviceState.STATE_FREE);
         switch (udpStatus) {
@@ -509,14 +509,14 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         }
 //        tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital()));
         doGetResult(result);
-        String time = DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital());
+//        String time = DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital());
+        String time = ResultDisplayUtils.getStrResultForDisplay(result.getResult());
         if (time.charAt(0) == '0' && time.charAt(1) == '0') {
             time = time.substring(3, time.toCharArray().length);
         } else if (time.charAt(0) == '0') {
             time = time.substring(1, time.toCharArray().length);
         }
         tvResult.setText(time);
-        ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
         ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
     }
 

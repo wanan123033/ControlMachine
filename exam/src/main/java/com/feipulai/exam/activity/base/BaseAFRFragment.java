@@ -2,14 +2,21 @@ package com.feipulai.exam.activity.base;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.hardware.usb.UsbDevice;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.TextureView;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.arcsoft.face.AgeInfo;
 import com.arcsoft.face.ErrorInfo;
@@ -19,7 +26,10 @@ import com.arcsoft.face.GenderInfo;
 import com.arcsoft.face.LivenessInfo;
 import com.arcsoft.face.enums.DetectFaceOrientPriority;
 import com.arcsoft.face.enums.DetectMode;
+import com.feipulai.common.utils.ImageUtil;
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.common.utils.print.ViewImageUtils;
+import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.UserPhoto;
@@ -48,7 +58,12 @@ import com.ww.fpl.libarcface.util.face.RecognizeColor;
 import com.ww.fpl.libarcface.util.face.RequestFeatureStatus;
 import com.ww.fpl.libarcface.widget.FaceRectView;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +77,8 @@ import io.reactivex.Observer;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
+import static com.scwang.smartrefresh.layout.util.DensityUtil.dp2px;
+
 /**
  * 人脸识别
  * Created by zzs on  2019/10/18
@@ -73,6 +90,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
     TextureView textureView2;
     @BindView(R.id.face_rect_view2)
     FaceRectView faceRectView2;
+
     private UVCCameraProxy mUVCCamera;
     private int mWidth = 640;
     private int mHeight = 480;
@@ -581,6 +599,14 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 //                faceHelper.setName(faceId, mContext.getString(R.string.recognize_success_notice, lastCompareResult.getUserName()));
                 Student student = DBManager.getInstance().queryStudentByCode(lastCompareResult.getUserName());
                 Logger.e("compareResult==》特征识别成功" + student);
+                View view = getView();
+                view.setDrawingCacheEnabled(true);
+                view.buildDrawingCache(true);
+                Bitmap b = view.getDrawingCache();
+                saveStuImage(student,b);
+                b.recycle();
+                b = null;
+
                 isOpenCamera = false;
                 hasTry = 0;
                 if (student == null) {
@@ -643,6 +669,56 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             retryRecognizeDelayed(faceId);
         }
 
+    }
+
+    /**
+     * 保存个人识别信息
+     * @param student
+     * @param b
+     */
+    private void saveStuImage(Student student, Bitmap b) {
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_stu_saveinfo,null);
+        ImageView iv_real = view.findViewById(R.id.iv_real);
+        ImageView iv_portrait = view.findViewById(R.id.iv_portrait);
+        TextView tv_name = view.findViewById(R.id.tv_name);
+        TextView tv_sex = view.findViewById(R.id.tv_sex);
+        TextView tv_item = view.findViewById(R.id.tv_item);
+        TextView tv_school = view.findViewById(R.id.tv_school);
+        TextView tv_stu_code = view.findViewById(R.id.tv_stu_code);
+        TextView tv_id_card = view.findViewById(R.id.tv_id_card);
+        iv_real.setImageBitmap(textureView2.getBitmap());
+        iv_portrait.setImageBitmap(student.getBitmapPortrait());
+        tv_name.setText("姓名:"+student.getStudentName());
+        tv_item.setText("项目:"+TestConfigs.sCurrentItem.getItemName());
+        tv_sex.setText("性别:"+(student.getSex() == 0 ? "男":"女"));
+        tv_school.setText("学校:"+student.getSchoolName());
+        tv_stu_code.setText("考号:"+student.getStudentCode());
+        tv_id_card.setText("身份证号:"+student.getIdCardNo());
+
+        String path = MyApplication.PATH_FACE;
+
+        DisplayMetrics metric = new DisplayMetrics();
+        ((Activity) mContext).getWindowManager().getDefaultDisplay().getMetrics(metric);
+        int width = metric.widthPixels;     // 屏幕宽度（像素）
+        int height = metric.heightPixels;   // 屏幕高度（像素）
+        ViewImageUtils.layoutView(view,  width, height);
+        ViewImageUtils.viewSaveToImage(view, path, student.getStudentCode()+"_"+TestConfigs.sCurrentItem.getItemName());
+
+//        view.setDrawingCacheEnabled(true);
+//        view.buildDrawingCache(true);
+//        Bitmap bs = view.getDrawingCache();
+//
+//        File dir = new File(path,student.getStudentCode()+".jpg");
+//        if (dir.exists()){
+//            try {
+//                dir.createNewFile();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        ImageUtil.saveBitmapToFile(path,student.getStudentCode()+".jpg",bs);
+//        bs.recycle();
+//        bs = null;
     }
 
     private boolean isNetface = false; //控制netFace()是否还没有走完  只有走完了才能再次调用哟

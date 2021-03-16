@@ -5,6 +5,7 @@ import android.os.Message;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialPorter;
 import com.feipulai.device.serial.beans.ConverterVersion;
+import com.feipulai.device.serial.beans.RS232Result;
 import com.feipulai.device.serial.beans.Radio868Result;
 import com.feipulai.device.serial.beans.StringUtility;
 import com.orhanobut.logger.utils.LogUtils;
@@ -105,6 +106,16 @@ public class RadioReadRunnable extends SerialReadRunnable {
                     msg.what = result.getType();
                     msg.obj = result.getResult();
 //					Log.i("radio 868 receive", StringUtility.bytesToHexString(data));
+                    break;
+                case 0XD2://232->安卓
+                    RS232Result rs232Result = new RS232Result(data);
+                    msg.what = rs232Result.getType();
+                    msg.obj = rs232Result.getResult();
+                    break;
+                case 0xE0://电量
+                    msg.arg1=data[0]& 0xff;//充电状态
+                    msg.arg2=data[1]& 0xff;//电量百分比
+                    msg.what =SerialConfigs.CONVERTER_KWH_RESPONSE;
                     break;
             }
         } catch (IOException e) {

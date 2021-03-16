@@ -9,7 +9,7 @@
   {
     "name": "RS232",
     "serial": "/dev/ttyS2",
-    "baud": 9600,
+    "baud": 115200,
     "type": "serial",
     "versions": 2
   },

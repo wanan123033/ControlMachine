@@ -8,9 +8,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.manager.SportTimerManger;
+import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.SportResult;
 import com.feipulai.exam.MyApplication;
@@ -24,10 +26,12 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.RoundResult;
+import com.feipulai.exam.entity.RunStudent;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
+import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -35,12 +39,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
@@ -60,7 +61,7 @@ public class SportPresent implements SportContract.Presenter {
     private LEDManager mLEDManager;
     private int interval;
 //    private ScheduledExecutorService checkService;
-    private boolean syncTime;
+    private boolean syncTime;//与子机同步时间是否结束
     public SportPresent(SportContract.SportView sportView, int deviceCount) {
         mLEDManager = new LEDManager();
         mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
@@ -102,19 +103,19 @@ public class SportPresent implements SportContract.Presenter {
 
     private void intervalRun() {
         if (connect) {
-            if (getRunState() == 0) {
+            if (getRunState() == 0) {//处于空闲时
                 if (interval % 6 == 0){
                     for (int i = 0; i < deviceCount; i++) {
                         sportTimerManger.connect(i + 1, SettingHelper.getSystemSetting().getHostId());
                     }
-                    if (!syncTime){
+                    if (!syncTime){//与子机同步时间是否结束
                         sportTimerManger.syncTime(1, SettingHelper.getSystemSetting().getHostId(), getTime());
                         sportTimerManger.getTime(1, SettingHelper.getSystemSetting().getHostId());
                     }
                 }
                 interval++;
             }
-            if (getRunState() == 1) {
+            if (getRunState() == 1) {//处于计时状态
                 interval = 0;
                 for (int i = 0; i < deviceCount; i++) {
                     sportTimerManger.getRecentCache(i + 1, SettingHelper.getSystemSetting().getHostId(),sendIndex[i]);
@@ -126,10 +127,10 @@ public class SportPresent implements SportContract.Presenter {
                 if (checkState[i] == 0) {
                     disConnect[i]++;
                     if (disConnect[i] > 10) {
-                        sportView.updateDeviceState(i + 1, 0);
+                        sportView.updateDeviceState(i + 1, 0);//连接状态失去
                     }
                 } else {
-                    sportView.updateDeviceState(i + 1, 1);
+                    sportView.updateDeviceState(i + 1, 1);//正常连接
                     checkState[i] = 0;
                     disConnect[i] = 0;
                 }
@@ -137,8 +138,8 @@ public class SportPresent implements SportContract.Presenter {
         }
     }
 
-
-    public void presentStop() {
+    //释放资源
+    public void presentRelease() {
         if (disposable != null) {
             disposable.dispose();
         }
@@ -151,6 +152,9 @@ public class SportPresent implements SportContract.Presenter {
     @Override
     public void setContinueRoll(boolean connect) {
         this.connect = connect;
+        if (connect){
+            RadioManager.getInstance().setOnRadioArrived(sportResultListener);
+        }
     }
 
     @Override
@@ -161,7 +165,7 @@ public class SportPresent implements SportContract.Presenter {
 
     private SportResultListener sportResultListener = new SportResultListener(new SportResultListener.SportMsgListener() {
         @Override
-        public void onConnect(SportResult result) {
+        public void onConnect(SportResult result) {//连接情况
 //            sportView.updateDeviceState(result.getDeviceId(),1);
             if (result.getDeviceId() == 0){
                 return;
@@ -171,15 +175,17 @@ public class SportPresent implements SportContract.Presenter {
 
         @Override
         public void onGetTime() {
-            syncTime = true;
+            syncTime = true;//同步时间
         }
 
         @Override
-        public void onGetResult(SportResult result) {
+        public void onGetResult(SportResult result) {//收到结果
             Log.i("SportResultListener", result.toString());
+            if (result.getDeviceId() == 0 || (result.getDeviceId()-1) > checkState.length)
+                return;
             checkState[result.getDeviceId() - 1] = 1;
             sendIndex[result.getDeviceId()-1] = result.getSumTimes() == 0? 0:(result.getSumTimes()-1);
-            Log.i("SportResultListener", result.getLongTime()+"----"+newTime);
+            LogUtils.operation("SportResultListener"+result.getLongTime()+"----"+newTime);
             if (result.getSumTimes()!= 0){
                 if (result.getLongTime()>newTime) {
                     newTime = result.getLongTime();
@@ -259,6 +265,24 @@ public class SportPresent implements SportContract.Presenter {
      */
     public void getDeviceState() {
         sportTimerManger.getDeviceState(1, SettingHelper.getSystemSetting().getHostId());
+    }
+
+    public void printResult(Student student, List<String> results, int current, int max, int groupNo) {
+        if (!SettingHelper.getSystemSetting().isAutoPrint() || current != max)
+            return;
+        PrinterManager.getInstance().print(" \n");
+        if (groupNo != -1) {
+            PrinterManager.getInstance().print(TestConfigs.sCurrentItem.getItemName() + SettingHelper.getSystemSetting().getHostId() + "号机" + groupNo + "组");
+        } else {
+            PrinterManager.getInstance().print(TestConfigs.sCurrentItem.getItemName() + SettingHelper.getSystemSetting().getHostId() + "号机");
+        }
+        PrinterManager.getInstance().print("考  号:" + student.getStudentCode());
+        PrinterManager.getInstance().print("姓  名:" + student.getStudentName());
+        for (int i = 0; i < results.size(); i++) {
+            PrinterManager.getInstance().print(String.format("第%1$d次：", i + 1) + results.get(i));
+        }
+        PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()));
+        PrinterManager.getInstance().print(" \n");
     }
 
     /**
@@ -433,6 +457,49 @@ public class SportPresent implements SportContract.Presenter {
 
     }
 
+    /**
+     * 展示方式为 名字+时间
+     *
+     * @param runs
+     */
+    public void setShowLed(List<RunStudent> runs) {
+        mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(),SettingHelper.getSystemSetting().getHostId());
+        int y;
+        int realSize = runs.size();
+        for (int i = 0; i < runs.size(); i++) {
+            Student student = runs.get(i).getStudent();
+            if (student == null) {
+                realSize--;
+            }
+        }
+        for (int i = 0; i < realSize; i++) {
+            Student student = runs.get(i).getStudent();
+            y = i;
+            if (student != null) {
+                String name = getFormatName(student.getStudentName());
+                if (runs.get(i).getMark() != null) {
+                    name = name + runs.get(i).getMark();
+                }
+                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), name,
+                        0, y, false, true);
+            }
+
+            if (i == (realSize - 1)) {
+                return;
+            }
+            if (realSize > 3 && y == 3) {
+                try {
+                    Thread.sleep(2000);
+                    mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(),SettingHelper.getSystemSetting().getHostId());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
+    }
+
     public void updateResultLed(String result) {
 
         byte[] data = new byte[16];
@@ -503,6 +570,14 @@ public class SportPresent implements SportContract.Presenter {
 
     }
 
+    /**
+     * 新红外计时保存结果
+     * @param student
+     * @param result
+     * @param currentTestTime
+     * @param testNo
+     * @param startTime
+     */
     public void saveResultRadio(Student student, int result, int currentTestTime, int testNo,String startTime) {
 
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
@@ -544,5 +619,23 @@ public class SportPresent implements SportContract.Presenter {
                 student.getStudentCode(), testNo + "", null, RoundResultBean.beanCope(roundResultList));
 
         uploadResult(uploadResults);
+    }
+
+    private String getFormatName(String name) {
+        String studentName = name;
+        if (studentName.length() >= 4) {
+            studentName = studentName.substring(0, 4);
+        } else {
+            StringBuilder sb = new StringBuilder();
+            sb.append(studentName);
+            int spaces = 8 - studentName.length() * 2;
+            //Log.i("james","spaces:" + spaces);
+            for (int j = 0; j < spaces; j++) {
+                sb.append(' ');
+            }
+            studentName = sb.toString();
+        }
+
+        return studentName;
     }
 }

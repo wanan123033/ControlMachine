@@ -30,7 +30,6 @@ import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseAFRFragment;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
-import com.feipulai.exam.activity.basketball.TimeUtil;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.fragment.IndividualCheckFragment;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
@@ -67,6 +66,9 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
+/**
+ * 根据实测知道频段换成25最好
+ */
 public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFragment.onAFRCompareListener,
         IndividualCheckFragment.OnIndividualCheckInListener, SportContract.SportView {
 
@@ -183,6 +185,8 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
         if (setting == null)
             setting = new SportTimerSetting();
         deviceStates = new ArrayList<>();
+        TestConfigs.sCurrentItem.setDigital(setting.getDigital() + 1);
+        TestConfigs.sCurrentItem.setCarryMode(setting.getCarryMode() + 1);
         for (int i = 0; i < setting.getDeviceCount(); i++) {
             DeviceState deviceState = new DeviceState();
             deviceState.setDeviceId(i + 1);
@@ -333,6 +337,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
     private void startProjectSetting() {
         if (testState != TestState.UN_STARTED){
             toastSpeak("测试中不可设置");
+            return;
         }
         IntentUtil.gotoActivityForResult(this, SportSettingActivity.class, 1);
     }
@@ -437,6 +442,10 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
     public void btnOnClick(View v) {
         switch (v.getId()) {
             case R.id.tv_pair:
+                if (testState != TestState.UN_STARTED){
+                    toastSpeak("测试中,不允许配对");
+                    return;
+                }
                 startActivity(new Intent(this, SportPairActivity.class));
                 break;
             case R.id.txt_waiting:
@@ -495,6 +504,8 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                     testState = TestState.UN_STARTED;
                     setTxtEnable(false);
                     txtWaiting.setEnabled(true);
+                    presetResult(pair.getStudent(),roundNo);
+                    tvResult.setText("");
                 }
                 break;
             case R.id.txt_stop_timing:
@@ -508,14 +519,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 break;
             case R.id.tv_print:
                 if (testState == TestState.UN_STARTED) {
-                    List<Student> students = new ArrayList<>();
-                    students.add(pair.getStudent());
-                    List<RoundResult> roundResults = DBManager.getInstance().queryResultsByStuItem(mStudentItem);
-                    Map<Student, List<RoundResult>> map = new HashMap<>();
-                    map.put(pair.getStudent(), roundResults);
-                    Map<Student, Integer> m = new HashMap<>();
-                    m.put(pair.getStudent(), roundNo);
-                    sportPresent.print(students, this, map, m);
+                    printResult();
                 } else {
                     toastSpeak("测试成绩未保存不可打印");
                 }
@@ -524,17 +528,23 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
             case R.id.tv_confirm:
 //                resultMap.put(roundNo,partResultList);
                 if (testState == TestState.RESULT_CONFIRM) {
+                    tvResult.setText("");
+                    txtDeviceStatus.setText("空闲");
                     tvDelete.setEnabled(false);
                     txtWaiting.setEnabled(true);
                     testState = TestState.UN_STARTED;
                     sportPresent.saveResult(roundNo, mStudentItem, testResults.get(roundNo - 1));
                     sportPresent.showStuInfo(llStuDetail, pair.getStudent(), testResults);
-                    if (roundNo <= testNum) {
-                        roundNo++;
-                        partResultAdapter.replaceData(testResults.get(roundNo - 1).getSportTimeResults());
-                        testCountAdapter.setSelectPosition(roundNo - 1);
+                    if (roundNo < testNum) {
+                        partResultAdapter.replaceData(testResults.get(roundNo).getSportTimeResults());
+                        testCountAdapter.setSelectPosition(roundNo);
                         testCountAdapter.notifyDataSetChanged();
+                    }else {
+                        if (SettingHelper.getSystemSetting().isAutoPrint()){
+                            printResult();
+                        }
                     }
+                    roundNo++;
                     tvConfirm.setEnabled(false);
                     penalize(false);
                 }
@@ -543,12 +553,38 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
             case R.id.txt_finish_test:
                 if (testState != TestState.UN_STARTED) {
                     toastSpeak("测试成绩未保存不可结束");
+                }else {
+                    txtFinishTest.setEnabled(false);
+                    InteractUtils.showStuInfo(llStuDetail, null, null);
+                    tvResult.setText("请检录");
+                    for (SportTestResult testResult : testResults) {
+                        testResult.setResult(-1);
+                        List<SportTimeResult> sportTimeResults = testResult.getSportTimeResults();
+                        for (SportTimeResult result : sportTimeResults) {
+                            result.setResult(-1);
+                            result.setPartResult(-1);
+                            result.setReceiveIndex(-1);
+                        }
+                    }
+                    testCountAdapter.notifyDataSetChanged();
+                    partResultAdapter.notifyDataSetChanged();
                 }
                 break;
             case R.id.img_AFR:
                 showAFR();
                 break;
         }
+    }
+
+    private void printResult() {
+        List<Student> students = new ArrayList<>();
+        students.add(pair.getStudent());
+        List<RoundResult> roundResults = DBManager.getInstance().queryResultsByStuItem(mStudentItem);
+        Map<Student, List<RoundResult>> map = new HashMap<>();
+        map.put(pair.getStudent(), roundResults);
+        Map<Student, Integer> m = new HashMap<>();
+        m.put(pair.getStudent(), roundNo);
+        sportPresent.print(students, this, map, m);
     }
 
     private void deleteDialog() {
@@ -558,8 +594,8 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
-                Logger.i("删除分段成绩" + testResults.get(roundNo - 1).getSportTimeResults().get(partSelect).toString());
-                if (testResults.get(roundNo - 1).getSportTimeResults().get(partSelect).getPartResult() > 0) {
+                if (testResults.size() <roundNo && testResults.get(roundNo - 1).getSportTimeResults().get(partSelect).getPartResult() > 0) {
+                    Logger.i("删除分段成绩" + testResults.get(roundNo - 1).getSportTimeResults().get(partSelect).toString());
                     testResults.get(roundNo - 1).getSportTimeResults().remove(partSelect);
                     partSelect = -1;
                     partResultAdapter.setSelectPosition(partSelect);
@@ -604,8 +640,6 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
             });
 
         }
-
-
     }
 
     @Override
@@ -621,22 +655,29 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 setTxtEnable(false);
                 testResults.get(roundNo - 1).setTestTime(System.currentTimeMillis() + "");
                 receiveTime = 0;
+                txtDeviceStatus.setText("计时");
             }
         });
     }
 
+    private int lastTime;//上一次接收时间
     @Override
     public void receiveResult(SportResult sportResult) {
         if (receiveTime == 0 && sportResult.getDeviceId() != 1) {
             toastSpeak("不是第一个启动，请重新检查");
         } else {
             if (sportResult.getDeviceId() == 1 && sportResult.getSumTimes() == 1) {
+                lastTime = 0;
                 initTime = sportResult.getLongTime();
             }
             if (receiveTime >= testResults.get(roundNo - 1).getSportTimeResults().size())
                 return;
+            if ((sportResult.getLongTime()-initTime) <lastTime){
+                return;
+            }
             final SportTimeResult timeResult = partResultAdapter.getData().get(receiveTime);
             timeResult.setPartResult(sportResult.getLongTime() - initTime);
+            lastTime = sportResult.getLongTime() - initTime;
             timeResult.setReceiveIndex(sportResult.getDeviceId());
             int routeName;
             if (!TextUtils.isEmpty(timeResult.getRouteName())) {
@@ -671,6 +712,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 public void run() {
                     txtStopTiming.setEnabled(false);
                     txtIllegalReturn.setEnabled(false);
+                    txtDeviceStatus.setText("停止计时");
                 }
             });
 
@@ -681,7 +723,6 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
     protected void onStop() {
         super.onStop();
         sportPresent.setContinueRoll(false);
-        sportPresent.presentStop();
     }
 
     public void showAFR() {
@@ -711,5 +752,20 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
             StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
             onIndividualCheckIn(student, studentItem, new ArrayList<RoundResult>());
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sportPresent.presentRelease();
+    }
+
+    @Override
+    public void finish() {
+        if (testState != TestState.UN_STARTED){
+            toastSpeak("测试中,不允许退出当前界面");
+            return;
+        }
+        super.finish();
     }
 }

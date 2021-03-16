@@ -29,7 +29,7 @@ public class RadioTimerPairPresenter implements RadioContract.Presenter,
         private int deviceSum;
         private SportTimerManger manager;
         private RunTimerSetting setting;
-        private int point;
+        private int point;//指的是位置只有起点 或只有终点时 0 ，起终点都有1
         public RadioTimerPairPresenter(Context context, RadioContract.View view,int deviceSum) {
                 this.context = context;
                 this.view = view;
@@ -46,7 +46,7 @@ public class RadioTimerPairPresenter implements RadioContract.Presenter,
             if (linker==null){
                 linker = new RadioLinker(machineCode, TARGET_FREQUENCY, this);
                 if (setting.getInterceptPoint() == 3 && point == 1){
-                    linker.startPair(deviceId+Integer.parseInt(setting.getRunNum()+1));//有起终点的编号=deviceId+道次数+1
+                    linker.startPair(deviceId+Integer.parseInt(setting.getRunNum()));//有起终点的编号=deviceId+道次数
                 }else {
                     linker.startPair(deviceId);
                 }
@@ -68,11 +68,16 @@ public class RadioTimerPairPresenter implements RadioContract.Presenter,
             if (focusPosition == position && this.point == point) {
                 return;
             }
+            this.point = point;
             focusPosition = position;
+            if (point == 4 || point == 5){
+                linker.startPair(0);//标记为辅助拦截器
+                return;
+            }
             pairs.get(position).getBaseDevice().setState(BaseDeviceState.STATE_DISCONNECT);
             view.select(position,point);
-            if (setting.getInterceptPoint() == 3){
-                linker.startPair(focusPosition + 2+Integer.parseInt(setting.getRunNum()));
+            if (setting.getInterceptPoint() == 3 && point == 1){
+                linker.startPair(focusPosition + 1+Integer.parseInt(setting.getRunNum()));
             }else {
                 linker.startPair(focusPosition + 1);
             }
@@ -82,6 +87,7 @@ public class RadioTimerPairPresenter implements RadioContract.Presenter,
         @Override
         public  void changeAutoPair(boolean isAutoPair){
             this.isAutoPair = isAutoPair;
+            setting.setAutoPair(isAutoPair);
         }
 
         public void setFrequency(int deviceId,  int deviceHostId, int targetFrequency){
@@ -90,7 +96,7 @@ public class RadioTimerPairPresenter implements RadioContract.Presenter,
 
         @Override
         public  void saveSettings(){
-            setting.setAutoPair(isAutoPair);
+            SharedPrefsUtil.save(context,setting);
         }
 
         @Override
@@ -100,18 +106,23 @@ public class RadioTimerPairPresenter implements RadioContract.Presenter,
         }
 
         public void onNewDeviceConnect() {
-            pairs.get(focusPosition).getBaseDevice().setState(BaseDeviceState.STATE_FREE);
             view.updateSpecificItem(focusPosition,point);
-            if (isAutoPair && focusPosition != pairs.size() - 1) {
-                changeFocusPosition(focusPosition + 1,point);
-                //这里先清除下一个的连接状态,避免没有连接但是现实已连接
-                BaseDeviceState originState = pairs.get(focusPosition).getBaseDevice();
-                originState.setState(BaseDeviceState.STATE_DISCONNECT);
+            if (point<3){
+                pairs.get(focusPosition).getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+                if (isAutoPair && focusPosition != pairs.size() - 1) {
+                    changeFocusPosition(focusPosition + 1,point);
+                    //这里先清除下一个的连接状态,避免没有连接但是现实已连接
+                    BaseDeviceState originState = pairs.get(focusPosition).getBaseDevice();
+                    originState.setState(BaseDeviceState.STATE_DISCONNECT);
+                }
             }
+
         }
 
         @Override
         public void onRadioArrived(Message msg) {
+            if (linker== null)
+                return;
             linker.onRadioArrived(msg);
         }
 

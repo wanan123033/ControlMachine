@@ -36,6 +36,7 @@ import com.feipulai.exam.activity.data.DataRetrieveActivity;
 import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.DataRetrieveBean;
+import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.BaseEvent;
@@ -57,6 +58,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -199,6 +201,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         }
     }
 
+
     private void init() {
         mLEDManager = new LEDManager();
         mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
@@ -260,6 +263,47 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         super.onEventMainThread(baseEvent);
         if (baseEvent.getTagInt() == EventConfigs.TOKEN_ERROR) {
             ToastUtils.showShort("自动上传失败，请先进行登录");
+        }
+        switch (baseEvent.getTagInt()) {
+            case EventConfigs.INSTALL_RESULT:
+                RoundResult iRoundResult = (RoundResult) baseEvent.getData();
+                if (TextUtils.equals(pair.getStudent().getStudentCode(), iRoundResult.getStudentCode())) {
+                    String[] timeResult = pair.getTimeResult();
+
+                    timeResult[iRoundResult.getRoundNo() - 1] = ((iRoundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
+                            ResultDisplayUtils.getStrResultForDisplay(iRoundResult.getResult()));
+                    pair.setTimeResult(timeResult);
+                }
+                roundNo++;
+                if (roundNo < setTestCount()) {
+
+                    roundNo++;
+                    txtStuResult.setText("");
+                    toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), roundNo)
+                            , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), roundNo));
+                    Message msg = new Message();
+                    msg.obj = pair;
+                    ledHandler.sendMessageDelayed(msg, 2000);
+                    pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
+                    if (testType != 1) {
+                        pair.setTestTime(DateUtil.getCurrentTime() + "");
+                        sendTestCommand(pair);
+                    }
+
+                }
+                break;
+            case EventConfigs.UPDATE_RESULT:
+                RoundResult roundResult = (RoundResult) baseEvent.getData();
+                if (TextUtils.equals(pair.getStudent().getStudentCode(), roundResult.getStudentCode())) {
+                    String[] timeResult = pair.getTimeResult();
+
+                    timeResult[roundResult.getRoundNo() - 1] = ((roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
+                            ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()));
+                    pair.setTimeResult(timeResult);
+                }
+
+                break;
+
         }
     }
 
@@ -672,11 +716,14 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             }
 
         } else {
-            setBaseHeight(0);
-            //测试结束学生清除 ，设备设置空闲状态
-            roundNo = 1;
-            //4秒后清理学生信息
-            clearHandler.sendEmptyMessageDelayed(0, 4000);
+            if (isShowPenalizeFoul() != View.VISIBLE) {
+                setBaseHeight(0);
+                //测试结束学生清除 ，设备设置空闲状态
+                roundNo = 1;
+                //4秒后清理学生信息
+                clearHandler.sendEmptyMessageDelayed(0, 4000);
+            }
+
 
         }
         return false;
@@ -930,7 +977,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 PrinterManager.getInstance().print(String.format("第%1$d次：", i + 1));
             }
         }
-//        PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()));
+        PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()));
         PrinterManager.getInstance().print("\n");
 
     }

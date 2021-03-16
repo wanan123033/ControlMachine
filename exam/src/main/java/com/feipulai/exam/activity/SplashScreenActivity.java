@@ -1,7 +1,6 @@
 package com.feipulai.exam.activity;
 
 import android.Manifest;
-import android.app.ActivityManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -9,11 +8,9 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
-import com.arcsoft.face.ActiveFileInfo;
 import com.arcsoft.face.ErrorInfo;
 import com.arcsoft.face.FaceEngine;
 import com.feipulai.common.db.DataBaseExecutor;
@@ -22,21 +19,21 @@ import com.feipulai.common.db.DataBaseTask;
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.ActivityCollector;
 import com.feipulai.common.utils.DateUtil;
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.serial.RadioManager;
-import com.feipulai.exam.BuildConfig;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.ActivateBean;
-import com.feipulai.exam.bean.UserBean;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.netUtils.CommonUtils;
 import com.feipulai.exam.netUtils.OnResultListener;
 import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
 import com.orhanobut.logger.Logger;
@@ -56,7 +53,6 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.observers.DefaultObserver;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -70,6 +66,8 @@ public class SplashScreenActivity extends BaseActivity {
     public static final String SECRET_KEY = MyApplication.getInstance().getString(R.string.tts_secret_key);
     private ActivateBean activateBean;
     private SweetAlertDialog dialog;
+    boolean isInit = false;
+    private long runTime;
 
     // TtsMode.MIX; 离在线融合，在线优先； TtsMode.ONLINE 纯在线； 没有纯离线
     @Override
@@ -79,23 +77,10 @@ public class SplashScreenActivity extends BaseActivity {
         // 这里是否还需要延时需要再测试后再修改
         RadioManager.getInstance().init();
         DateUtil.setTimeZone(this, "Asia/Shanghai");
-        init();
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-        //   init();
-//                Intent intent = new Intent();
-//                intent.setClass(SplashScreenActivity.this, MainActivity.class);
-//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                startActivity(intent);
-//                finish();
-//            }
-//        }, 1000);
 
         activateBean = SharedPrefsUtil.loadFormSource(this, ActivateBean.class);
-        long runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0L);
-        if (activateBean != null) {
+        runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0L);
+        if (activateBean != null && activateBean.getValidRunTime() > 0) {
 
             if (runTime > activateBean.getValidRunTime()) {
                 //超出使用时长
@@ -104,9 +89,7 @@ public class SplashScreenActivity extends BaseActivity {
                 return;
             }
             activate();
-            if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
-                gotoMain();
-            }
+            gotoMain();
 
 
         } else {
@@ -127,7 +110,12 @@ public class SplashScreenActivity extends BaseActivity {
             public void run() {
                 if (activateBean != null && activateBean.getCurrentTime() < activateBean.getValidEndTime()) {
                     if (!ActivityCollector.getInstance().isExistActivity(MainActivity.class)) {
+                        if (!isInit) {
+                            init();
+                        }
+
                         Intent intent = new Intent();
+//                        intent.setClass(SplashScreenActivity.this, AccountActivity.class);
                         intent.setClass(SplashScreenActivity.this, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -143,12 +131,7 @@ public class SplashScreenActivity extends BaseActivity {
     }
 
     private void activate() {
-        long currentRunTime = 0;
-        if (activateBean != null) {
-            //超出使用时间 重新激活
-            currentRunTime = activateBean.getUseDeviceTime();
-        }
-        new HttpSubscriber().activate(currentRunTime, new OnResultListener<ActivateBean>() {
+        new HttpSubscriber().activate(runTime, new OnResultListener<ActivateBean>() {
             @Override
             public void onSuccess(ActivateBean result) {
                 activateBean = result;
@@ -157,8 +140,14 @@ public class SplashScreenActivity extends BaseActivity {
                     //需要确认激活
                     showActivateConfirm(1);
                 } else if (result.getCurrentTime() > result.getValidEndTime()) {
+                    LogUtil.logDebugMessage(result.getCurrentTime() + "-----" + result.getValidEndTime());
                     //超出使用时间 重新激活
                     showActivateConfirm(2);
+                } else if (runTime > result.getValidRunTime()) {
+                    //超出使用时长
+                    //弹窗确定重新激活
+                    showActivateConfirm(2);
+                    return;
                 } else {
                     //激活成功
                     gotoMain();
@@ -168,8 +157,10 @@ public class SplashScreenActivity extends BaseActivity {
 
             @Override
             public void onFault(int code, String errorMsg) {
-                toastSpeak(errorMsg);
-                if (activateBean==null){
+
+//                if (activateBean == null || !ActivityCollector.getInstance().isExistActivity(MainActivity.class)) {
+                if (activateBean == null && ActivityCollector.getInstance().isLastActivity(SplashScreenActivity.class)) {
+                    toastSpeak(errorMsg);
                     //需要确认激活
                     showActivateConfirm(1);
                 }
@@ -188,7 +179,7 @@ public class SplashScreenActivity extends BaseActivity {
         }
         dialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText("激活设备")
 
-                .setContentText(type == 1 ? "请联系管理员激活设备" : "已超出可使用时长，请联系管理员重新激活设备")
+                .setContentText((type == 1 ? "请联系管理员激活设备" : "已超出可使用时长\n请联系管理员重新激活设备") + "\n" + CommonUtils.getDeviceId(this))
                 .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
@@ -210,6 +201,7 @@ public class SplashScreenActivity extends BaseActivity {
 
 
     private void init() {
+        isInit = true;
         boolean isEngine = ConfigUtil.getISEngine(this);
         if (isEngine) {
             initLocalFace();
