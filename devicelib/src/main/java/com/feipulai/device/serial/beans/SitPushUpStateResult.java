@@ -28,7 +28,7 @@ public class SitPushUpStateResult implements Serializable, IDeviceResult {
     private int deviceId;
     private int projectCode;
     private int result;
-    private int state;
+    private int state = -1;
     private int batteryLeft;
     private int baseline;
 

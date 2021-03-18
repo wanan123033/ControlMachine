@@ -70,7 +70,7 @@ public class NewSitUpPairActivity extends BaseTitleActivity implements NewSitUpP
         mRvPairs.addItemDecoration(dividerItemDecoration);
         mAdapter = new NewDevicePairAdapter(this,deviceCollects);
         mRvPairs.setAdapter(mAdapter);
-        mAdapter.setOnItemClickListener(new DeviceChangeAdapter.OnItemClickListener() {
+        mAdapter.setOnItemClickListener(new NewDevicePairAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int viewId, int position) {
                 mAdapter.setSelected(position);

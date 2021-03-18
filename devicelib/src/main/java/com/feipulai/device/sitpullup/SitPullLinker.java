@@ -184,7 +184,7 @@ public class SitPullLinker implements Handler.Callback {
 
         void onNewDeviceConnect();
 
-        void setFrequency(int deviceId, int hostId, int targetFrequency);
+        void setFrequency(int deviceId, int originFrequency, int targetFrequency);
     }
 
 }

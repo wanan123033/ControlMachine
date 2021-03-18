@@ -7,9 +7,8 @@ import java.util.Arrays;
 public class ShoulderResult {
     private byte [] data;
     private int hostId;
-    private int deviceState;
-    private int state;
-
+    private int state  = -1;
+    private int battery;
     public ShoulderResult() {
 
     }
@@ -109,13 +108,20 @@ public class ShoulderResult {
                 }else if (data.length == 14){
                     deviceId = data[6];
                     hostId = data[5];
-                    deviceState = data[10];
+                    state = data[10];
                 }
                 break;
             case 0:
                 if (data.length == 19){
                     deviceId = data[6];
                     hostId = data[5];
+                    if (data[11] == 1){
+                        state = 4;
+                    }else {
+                        state = 1;
+                    }
+
+                    battery = data[10];
                 }
                 break;
             case 13:
@@ -134,12 +140,12 @@ public class ShoulderResult {
                 break;
 
         }
-        LogUtils.normal("运动计时返回设备数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+        LogUtils.normal("肩胛返回设备数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
     }
 
     @Override
     public String toString() {
-        return "SportResult{" +
+        return "ShoulderResult{" +
                 "data=" + Arrays.toString(data) +
                 ", hostId=" + hostId +
                 ", sumTimes=" + sumTimes +
@@ -147,7 +153,8 @@ public class ShoulderResult {
                 ", deviceId=" + deviceId +
                 ", frequency=" + frequency +
                 ", longTime=" + longTime +
-                ", deviceState=" + deviceState +
+                ", state=" + state +
+                ", battery=" + battery +
                 '}';
     }
 
@@ -178,13 +185,6 @@ public class ShoulderResult {
         return b;
     }
 
-    public int getDeviceState() {
-        return deviceState;
-    }
-
-    public void setDeviceState(int deviceState) {
-        this.deviceState = deviceState;
-    }
 
     public int getState() {
         return state;
@@ -192,5 +192,13 @@ public class ShoulderResult {
 
     public void setState(int state) {
         this.state = state;
+    }
+
+    public int getBattery() {
+        return battery;
+    }
+
+    public void setBattery(int battery) {
+        this.battery = battery;
     }
 }

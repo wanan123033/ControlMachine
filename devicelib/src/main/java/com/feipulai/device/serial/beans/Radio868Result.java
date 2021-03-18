@@ -470,9 +470,11 @@ public class Radio868Result {
                     setType(SerialConfigs.NEW_SIT_UP_SHOULDER);
                     break;
                 case 0 ://联络信号
-
+                    setType(SerialConfigs.NEW_SIT_UP_SHOULDER_CONNECT);
                     break;
-
+                case 2://同步时间
+                    setType(SerialConfigs.NEW_SIT_UP_SHOULDER_SYNC_TIME);
+                    break;
 
             }
         }
