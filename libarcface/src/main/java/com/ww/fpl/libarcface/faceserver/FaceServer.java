@@ -153,7 +153,7 @@ public class FaceServer {
      *
      * @param context 上下文对象
      */
-    public void initFaceList(Context context) {
+    public void     initFaceList(Context context) {
         synchronized (this) {
             if (ROOT_PATH == null) {
                 ROOT_PATH = context.getFilesDir().getAbsolutePath();

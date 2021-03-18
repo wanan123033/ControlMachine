@@ -70,7 +70,7 @@ public abstract class SitPullUpTestPresenter<Setting>
             return;
         }
         int what = msg.what;
-        if ((machineCode == ItemDefault.CODE_YWQZ||machineCode == ItemDefault.CODE_SGBQS) && what == SerialConfigs.SIT_UP_GET_STATE) {
+        if ((machineCode == ItemDefault.CODE_YWQZ || machineCode == ItemDefault.CODE_SGBQS) && what == SerialConfigs.SIT_UP_GET_STATE) {
             SitPushUpStateResult stateResult = (SitPushUpStateResult) msg.obj;
             setState(stateResult);
         } else if (machineCode == ItemDefault.CODE_YTXS && what == SerialConfigs.PULL_UP_GET_STATE) {
@@ -118,18 +118,18 @@ public abstract class SitPullUpTestPresenter<Setting>
             IDeviceResult deviceResult = pair.getDeviceResult();
             int res = deviceResult == null ? 0 : deviceResult.getResult();
             // 成绩只能增加
-            if (result.getResult() >= res) {
+            if (result.getResult() >= res && (deviceState == SitPushUpManager.STATE_COUNTING || deviceState == SitPushUpManager.STATE_ENDED)) {
                 pair.setDeviceResult(result);
             }
         }
 
         int newState;
 
-        if (((machineCode == ItemDefault.CODE_YWQZ||machineCode == ItemDefault.CODE_SGBQS) && deviceState == SitPushUpManager.STATE_COUNTING)
+        if (((machineCode == ItemDefault.CODE_YWQZ || machineCode == ItemDefault.CODE_SGBQS) && deviceState == SitPushUpManager.STATE_COUNTING)
                 || (machineCode == ItemDefault.CODE_YTXS && deviceState == PullUpManager.STATE_COUNTING)
-                ||(machineCode == ItemDefault.CODE_FWC && deviceState == SitPushUpManager.STATE_COUNTING)) {
+                || (machineCode == ItemDefault.CODE_FWC && deviceState == SitPushUpManager.STATE_COUNTING)) {
             newState = BaseDeviceState.STATE_COUNTING;
-        } else if (((machineCode == ItemDefault.CODE_YWQZ||machineCode == ItemDefault.CODE_SGBQS) && deviceState == SitPushUpManager.STATE_ENDED)
+        } else if (((machineCode == ItemDefault.CODE_YWQZ || machineCode == ItemDefault.CODE_SGBQS) && deviceState == SitPushUpManager.STATE_ENDED)
                 || (machineCode == ItemDefault.CODE_YTXS && deviceState == PullUpManager.STATE_ENDED)
                 || (machineCode == ItemDefault.CODE_FWC && deviceState == SitPushUpManager.STATE_ENDED)) {
             newState = BaseDeviceState.STATE_FINISHED;

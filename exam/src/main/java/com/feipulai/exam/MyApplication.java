@@ -72,7 +72,7 @@ public class MyApplication extends MultiDexApplication {
         FileUtil.mkdirs(PATH_SPECIFICATION);
         FileUtil.mkdirs(PATH_IMAGE);
         FileUtil.mkdirs(PATH_PDF_IMAGE);
-        FileUtil.mkdirs(PATH_FACE);
+//        FileUtil.mkdirs(PATH_FACE);
         FileUtil.mkdirs(FaceServer.ROOT_PATH);
         //视频播放初始化库
         PlayerLibrary.init(this);
