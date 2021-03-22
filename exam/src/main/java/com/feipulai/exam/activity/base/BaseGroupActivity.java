@@ -43,6 +43,8 @@ import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.activity.sitreach.SitReachSetting;
 import com.feipulai.exam.activity.sitreach.more_device.SitReachMoreGroupActivity;
+import com.feipulai.exam.activity.situp.newSitUp.SitUpArmCheckActivity;
+import com.feipulai.exam.activity.situp.setting.SitUpSetting;
 import com.feipulai.exam.activity.standjump.StandJumpSetting;
 import com.feipulai.exam.activity.standjump.more.StandJumpGroupMoreActivity;
 import com.feipulai.exam.activity.volleyball.VolleyBallGroupActivity;
@@ -564,6 +566,12 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     startActivity(new Intent(this, NewRadioGroupActivity.class));
                     return;
                 }
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_YWQZ
+                        && SharedPrefsUtil.loadFormSource(this, SitUpSetting.class).getTestType() == 1) {
+                    startActivity(new Intent(this, SitUpArmCheckActivity.class));
+                    return;
+                }
+
                 startActivity(new Intent(this, TestConfigs.groupActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
                 break;
 

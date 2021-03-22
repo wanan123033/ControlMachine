@@ -165,6 +165,11 @@ public abstract class AbstractRadioTestPresenter<Setting>
         resetDeviceResults();
         testState = WAIT_BGIN;
         startTest();
+        stopDevice();
+    }
+
+    public void stopDevice(){
+
     }
 
     private void resetDeviceResults() {
@@ -309,6 +314,11 @@ public abstract class AbstractRadioTestPresenter<Setting>
         view.enableStopUse(true);
         view.tickInUI("开始");
         testState = TESTING;
+        onTestStart();
+    }
+
+    public void onTestStart(){
+
     }
 
     @Override

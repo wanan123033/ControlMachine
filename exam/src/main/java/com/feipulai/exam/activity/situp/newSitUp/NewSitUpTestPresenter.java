@@ -9,6 +9,7 @@ import com.feipulai.device.manager.ShoulderManger;
 import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.IDeviceResult;
+import com.feipulai.device.serial.beans.ShoulderResult;
 import com.feipulai.device.serial.beans.SitPushUpStateResult;
 import com.feipulai.device.sitpullup.SitPullLinker;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
@@ -18,6 +19,10 @@ import com.feipulai.exam.activity.situp.base_test.SitPullUpTestContract;
 import com.feipulai.exam.activity.situp.base_test.SitPullUpTestPresenter;
 import com.feipulai.exam.activity.situp.setting.SitUpSetting;
 import com.feipulai.exam.config.TestConfigs;
+import com.orhanobut.logger.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NewSitUpTestPresenter extends SitPullUpTestPresenter<SitUpSetting> implements SitPullLinker.SitPullPairListener {
 
@@ -27,12 +32,23 @@ public class NewSitUpTestPresenter extends SitPullUpTestPresenter<SitUpSetting> 
     private SitPullUpTestContract.View<SitUpSetting> view;
     private SitPushUpManager deviceManager;
     private ShoulderManger shoulderManger;
+    private int[] shoulderResult;
+    private int[] sitUpResult ;
+    private boolean shoulderStart;
+    private List<ShoulderSitUp> shoulderSitUpList =  new ArrayList<>();
     protected NewSitUpTestPresenter(Context context, SitPullUpTestContract.View<SitUpSetting> view) {
         super(context, view);
         setting = SharedPrefsUtil.loadFormSource(context, SitUpSetting.class);
         deviceManager = new SitPushUpManager(SitPushUpManager.PROJECT_CODE_SIT_UP);
         shoulderManger = new ShoulderManger();
         this.view = view;
+        shoulderResult = new int[setting.getDeviceSum()];
+        sitUpResult = new int[setting.getDeviceSum()];
+        for (int i = 0; i < setting.getDeviceSum(); i++) {
+            ShoulderSitUp shoulderSitUp = new ShoulderSitUp(i+1,false,false);
+            shoulderSitUpList.add(shoulderSitUp);
+        }
+
     }
 
     @Override
@@ -57,8 +73,9 @@ public class NewSitUpTestPresenter extends SitPullUpTestPresenter<SitUpSetting> 
 
     @Override
     protected void resetDevices() {
+        shoulderStart = false;
+        shoulderManger.setDeviceState(1, SettingHelper.getSystemSetting().getHostId(), 0);
         deviceManager.endTest();
-        //TODO
     }
 
     @Override
@@ -78,12 +95,27 @@ public class NewSitUpTestPresenter extends SitPullUpTestPresenter<SitUpSetting> 
 
     @Override
     protected void onTestStarted() {
+        shoulderManger.setDeviceState(1, SettingHelper.getSystemSetting().getHostId(), 1);
         for (StuDevicePair pair : pairs) {
             pair.setPenalty(0);
         }
-        view.enablePenalize(false);
-        //todo  更改工作状态
+        for (ShoulderSitUp shoulderSitUp : shoulderSitUpList) {
+            shoulderSitUp.setShoulderUpdate(false);
+            shoulderSitUp.setSitUpUpdate(false);
+            shoulderSitUp.setDeviceResult(0);
+        }
 
+        for (int i = 0; i < setting.getDeviceSum(); i++) {
+            sitUpResult[i] = 0;
+            shoulderResult[i] = 0;
+        }
+        view.enablePenalize(false);
+//        shoulderManger.getDeviceState(1, SettingHelper.getSystemSetting().getHostId());
+    }
+
+    @Override
+    public void stopDevice() {
+        shoulderManger.setDeviceState(1, SettingHelper.getSystemSetting().getHostId(), 0);
     }
 
     @Override
@@ -102,8 +134,16 @@ public class NewSitUpTestPresenter extends SitPullUpTestPresenter<SitUpSetting> 
     public void onGettingState(int position) {
         BaseDeviceState deviceState = pairs.get(position).getBaseDevice();
         deviceManager.getState(deviceState.getDeviceId(),setting.getAngle());
-        //todo
-//        shoulderManger.getDeviceState();
+
+        if (shoulderStart){
+            shoulderManger.getRecentCache(position + 1, systemSetting.getHostId(), shoulderResult[position]-1);
+        }
+
+    }
+
+    @Override
+    public void onTestStart() {
+        shoulderStart = true;
     }
 
     @Override
@@ -117,7 +157,25 @@ public class NewSitUpTestPresenter extends SitPullUpTestPresenter<SitUpSetting> 
             setState(stateResult);
         }
 
-        //todo
+//        if ((machineCode == ItemDefault.CODE_YWQZ) && what == SerialConfigs.NEW_SIT_UP_SHOULDER_SYNC_STATE) {
+//            ShoulderResult stateResult = (ShoulderResult) msg.obj;
+//            if (stateResult.getState() == 1) {
+//            }
+//        }
+
+        if ((machineCode == ItemDefault.CODE_YWQZ) && what == SerialConfigs.NEW_SIT_UP_SHOULDER_DATA) {
+
+            ShoulderResult stateResult = (ShoulderResult) msg.obj;
+            Logger.i("肩胛============" + stateResult.toString());
+            if (stateResult.getSumTimes() == 0)
+                return;
+            for (int i = 0; i < setting.getDeviceSum(); i++) {
+                if (i == (stateResult.getDeviceId() - 1) && stateResult.getSumTimes() > shoulderResult[stateResult.getDeviceId() - 1]) {
+                    shoulderResult[i] = stateResult.getSumTimes();
+                    setResult(i,2,stateResult);
+                }
+            }
+        }
 
     }
 
@@ -144,19 +202,28 @@ public class NewSitUpTestPresenter extends SitPullUpTestPresenter<SitUpSetting> 
         if (testState == WAIT_BGIN || testState == TEST_COUNTING) {
             pair.setDeviceResult(null);
         } else if (pair.getStudent() != null) {
-            IDeviceResult deviceResult = pair.getDeviceResult();
-            int res = deviceResult == null ? 0 : deviceResult.getResult();
+//            IDeviceResult deviceResult = pair.getDeviceResult();
+//            int res = deviceResult == null ? 0 : deviceResult.getResult();
             // 成绩只能增加
-            if (result.getResult() >= res) {
-                pair.setDeviceResult(result);
+//            if (result.getResult() >= res) {
+//                pair.setDeviceResult(result);
+//            }
+
+            for (int i = 0; i < setting.getDeviceSum(); i++) {
+                if (i == (deviceId- 1) && result.getResult() > sitUpResult[deviceId - 1]) {
+                    Logger.i("腰带============" + result.getResult());
+                    sitUpResult[i] = result.getResult();
+                    setResult(i,1,result);
+                }
             }
+
         }
 
         int newState;
 
         if (((machineCode == ItemDefault.CODE_YWQZ) && deviceState == SitPushUpManager.STATE_COUNTING)) {
             newState = BaseDeviceState.STATE_COUNTING;
-        } else if (((machineCode == ItemDefault.CODE_YWQZ||machineCode == ItemDefault.CODE_SGBQS) && deviceState == SitPushUpManager.STATE_ENDED)) {
+        } else if (((machineCode == ItemDefault.CODE_YWQZ || machineCode == ItemDefault.CODE_SGBQS) && deviceState == SitPushUpManager.STATE_ENDED)) {
             newState = BaseDeviceState.STATE_FINISHED;
         } else {
             newState = batteryLeft <= 10 ? BaseDeviceState.STATE_LOW_BATTERY : BaseDeviceState.STATE_FREE;
@@ -167,6 +234,24 @@ public class NewSitUpTestPresenter extends SitPullUpTestPresenter<SitUpSetting> 
         if (testState == WAIT_MACHINE_RESULTS || testState == WAIT_CONFIRM_RESULTS) {
             endGetResultPairs[deviceId]++;
         }
+    }
+
+    private void setResult(int index, int deviceType,IDeviceResult state){
+        ShoulderSitUp shoulderSitUp = shoulderSitUpList.get(index);
+        if (deviceType == 1){
+            shoulderSitUp.setSitUpUpdate(true);
+        }else {
+            shoulderSitUp.setShoulderUpdate(true);
+        }
+        if (shoulderSitUp.isShoulderUpdate() && shoulderSitUp.isSitUpUpdate()){
+            shoulderSitUp.setDeviceResult(shoulderSitUp.getDeviceResult()+1);
+            shoulderSitUp.setSitUpUpdate(false);
+            shoulderSitUp.setShoulderUpdate(false);
+            state.setResult(shoulderSitUp.getDeviceResult());
+            pairs.get(index).setDeviceResult(state);
+            view.updateSpecificItem(index);
+        }
+
     }
 
     @Override
