@@ -475,6 +475,12 @@ public class Radio868Result {
                 case 2://同步时间
                     setType(SerialConfigs.NEW_SIT_UP_SHOULDER_SYNC_TIME);
                     break;
+                case 4://获取子机工作状态
+                    setType(SerialConfigs.NEW_SIT_UP_SHOULDER_SYNC_STATE);
+                    break;
+                case 9://获取子机工作状态
+                    setType(SerialConfigs.NEW_SIT_UP_SHOULDER_DATA);
+                    break;
 
             }
         }
