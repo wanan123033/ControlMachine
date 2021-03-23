@@ -159,7 +159,7 @@ public class SplashScreenActivity extends BaseActivity {
             public void onFault(int code, String errorMsg) {
 
 //                if (activateBean == null || !ActivityCollector.getInstance().isExistActivity(MainActivity.class)) {
-                if (activateBean == null && ActivityCollector.getInstance().isLastActivity(SplashScreenActivity.class)) {
+                if ((activateBean == null || runTime > activateBean.getValidRunTime()) && ActivityCollector.getInstance().isLastActivity(SplashScreenActivity.class)) {
                     toastSpeak(errorMsg);
                     //需要确认激活
                     showActivateConfirm(1);
