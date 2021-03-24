@@ -169,7 +169,7 @@ public class ShoulderManger {
         data[4] = (byte) 0X01;
         data[5] = (byte) hostId;
         data[6] = (byte) deviceId;
-        data[7] = (byte) 13;
+        data[7] = (byte) 9;
         data[8] = (byte) 0x00;
         data[9] = (byte) 0x00;
         data[10] = (byte) index;

@@ -41,7 +41,7 @@ public class LogUtils {
             }
         });
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd", Locale.CHINA);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH", Locale.CHINA);
         String logFileName = dateFormat.format(Calendar.getInstance().getTime()) + ".txt";
         // 非加密日志存储在在sd卡中“logger”目录中
         String diskLogFilePath = Environment.getExternalStorageDirectory() + "/" + pathName + "/" + logFileName;

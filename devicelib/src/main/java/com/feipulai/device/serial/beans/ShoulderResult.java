@@ -4,7 +4,7 @@ import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.Arrays;
 
-public class ShoulderResult {
+public class ShoulderResult implements IDeviceResult{
     private byte [] data;
     private int hostId;
     private int state  = -1;
@@ -124,8 +124,8 @@ public class ShoulderResult {
                     battery = data[10];
                 }
                 break;
-            case 13:
-                if (data.length == 19){
+            case 9://缓冲区数据
+                if (data.length == 21){
                     deviceId = data[6];
                     hostId = data[5];
                     sumTimes = data[10];
@@ -200,5 +200,15 @@ public class ShoulderResult {
 
     public void setBattery(int battery) {
         this.battery = battery;
+    }
+
+    @Override
+    public int getResult() {
+        return sumTimes;
+    }
+
+    @Override
+    public void setResult(int result) {
+        sumTimes = result;
     }
 }

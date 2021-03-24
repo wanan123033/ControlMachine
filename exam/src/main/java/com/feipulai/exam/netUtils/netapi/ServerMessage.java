@@ -176,8 +176,8 @@ public class ServerMessage {
                 }
             }
         });
-
-        subscriber.getScheduleAll();
+        subscriber.uploadResult(uploadResultsList);
+//        subscriber.getScheduleAll();
     }
 
     /**
