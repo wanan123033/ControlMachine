@@ -599,13 +599,13 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 //                faceHelper.setName(faceId, mContext.getString(R.string.recognize_success_notice, lastCompareResult.getUserName()));
                 Student student = DBManager.getInstance().queryStudentByCode(lastCompareResult.getUserName());
                 Logger.e("compareResult==》特征识别成功" + student);
-                View view = getView();
-                view.setDrawingCacheEnabled(true);
-                view.buildDrawingCache(true);
-                Bitmap b = view.getDrawingCache();
-                saveStuImage(student,b);
-                b.recycle();
-                b = null;
+//                View view = getView();
+//                view.setDrawingCacheEnabled(true);
+//                view.buildDrawingCache(true);
+//                Bitmap b = view.getDrawingCache();
+//                saveStuImage(student,b);
+//                b.recycle();
+//                b = null;
 
                 isOpenCamera = false;
                 hasTry = 0;
