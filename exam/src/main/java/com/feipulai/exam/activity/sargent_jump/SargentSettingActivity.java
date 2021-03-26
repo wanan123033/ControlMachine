@@ -370,7 +370,12 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
 
                 break;
             case R.id.tv_device_check:
-                SargentJumpMore.checkSelf(deviceId);
+                if(sargentSetting.getType() == 2){
+                    SargentJumpMore.checkSelf(deviceId);
+                }else {
+                    SargentJumpMore.checkSelf();
+                }
+
                 break;
             case R.id.tv_accuracy_use:
                 int type = sargentSetting.getType();
