@@ -54,6 +54,8 @@ public class RangerPersonTestActivity extends BasePersonTestActivity {
     @Override
     protected void initData() {
         super.initData();
+        tvStartTest.setVisibility(View.VISIBLE);
+        txtStartTest.setVisibility(View.GONE);
         setting = SharedPrefsUtil.loadFormSource(getApplicationContext(),RangerSetting.class);
         utils = BluetoothManager.getSpp(this);
 

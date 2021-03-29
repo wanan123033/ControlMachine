@@ -79,8 +79,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     public LinearLayout llState;
     @BindView(R.id.txt_test_result)
     TextView txtStuResult;
-    //    @BindView(R.id.txt_start_test)
-//    TextView txtStartTest;
+    @BindView(R.id.txt_start_test)
+    public TextView txtStartTest;
     @BindView(R.id.tv_base_height)
     TextView tvBaseHeight;
     @BindView(R.id.txt_stu_skip)
@@ -92,7 +92,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     @BindView(R.id.tv_device_pair)
     public TextView tvDevicePair;
     @BindView(R.id.tv_start_test)
-    public TextView txtStartTest;
+    public TextView tvStartTest;
     @BindView(R.id.tv_exit_test)
     TextView tvExitTest;
     @BindView(R.id.tv_stop_test)
@@ -235,7 +235,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         addStudent(student);
     }
 
-    @OnClick({R.id.txt_stu_skip,  R.id.txt_led_setting,
+    @OnClick({R.id.txt_stu_skip, R.id.txt_led_setting,
             R.id.tv_start_test, R.id.tv_exit_test, R.id.tv_stop_test, R.id.tv_abandon_test, R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -256,17 +256,15 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                     stuSkipDialog(0);
                 }
                 break;
-//            case R.id.txt_start_test:
-//
-//                if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
-//                    sendTestCommand(pair);
-//                }
-//
-//                break;
-            case R.id.tv_start_test:
+            case R.id.txt_start_test:
+
                 if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
                     sendTestCommand(pair);
                 }
+
+                break;
+            case R.id.tv_start_test:
+
                 setTextViewsVisibility(false, false, false, true, true);
                 pullStart();
                 break;
@@ -688,7 +686,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 activity.resultList.clear();
                 activity.resultList.addAll(Arrays.asList(activity.result));
                 activity.adapter.notifyDataSetChanged();
-                activity.setTextViewsVisibility(false,false,false,false,false);
+                activity.setTextViewsVisibility(false, false, false, false, false);
             }
 
         }
@@ -704,7 +702,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 //    @BindView(R.id.tv_abandon_test)
 //    TextView tvAbandonTest;
     public void setTextViewsVisibility(boolean start, boolean exit, boolean stop, boolean count, boolean abandon) {
-        txtStartTest.setVisibility(start ? View.VISIBLE : View.GONE);
+        tvStartTest.setVisibility(start ? View.VISIBLE : View.GONE);
         tvExitTest.setVisibility(exit ? View.VISIBLE : View.GONE);
         tvStopTest.setVisibility(stop ? View.VISIBLE : View.GONE);
         if (!TextUtils.isEmpty(tvTimeCount.getText().toString())) {
