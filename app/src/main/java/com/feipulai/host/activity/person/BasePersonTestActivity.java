@@ -264,6 +264,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 //
 //                break;
             case R.id.tv_start_test:
+                if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
+                    sendTestCommand(pair);
+                }
                 setTextViewsVisibility(false, false, false, true, true);
                 pullStart();
                 break;
