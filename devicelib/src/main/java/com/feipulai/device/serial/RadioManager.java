@@ -1,8 +1,14 @@
 package com.feipulai.device.serial;
 
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Message;
+import android.util.Log;
 
 import com.feipulai.device.serial.command.ConvertCommand;
+import com.orhanobut.logger.utils.LogUtils;
+
+import java.io.IOException;
 
 /**
  * Created by James on 2018/11/8 0008.
@@ -16,6 +22,8 @@ public class RadioManager {
     private static volatile RadioManager instance;
     public static final int RADIO_INTERVAL = 100;
     private long mlastSendTime;
+    private HandlerThread mSendingHandlerThread;
+    private Handler mSendingHandler;
 
     private RadioManager() {
     }
@@ -44,6 +52,8 @@ public class RadioManager {
         });
     }
 
+
+
     // 程序退出时才调用
     public synchronized void close() {
         if (mSerialPorter == null)
@@ -59,11 +69,18 @@ public class RadioManager {
     public void setOnRadioArrived(OnRadioArrivedListener onRadioArrived) {
         mOnRadioArrived = onRadioArrived;
     }
+
     public void setOnKwhListener(OnKwhListener onKwhListener) {
         mOnKwhListener = onKwhListener;
     }
+
     // 这个地方必须锁住,万恶之源
     public synchronized void sendCommand(ConvertCommand convertCommand) {
+//        if (null != mSendingHandler) {
+//            Message message = Message.obtain();
+//            message.obj = convertCommand;
+//            mSendingHandler.sendMessage(message);
+//        }
         ensureInterval();
         if (mSerialPorter == null)
             return;
@@ -75,8 +92,9 @@ public class RadioManager {
             //Thread.sleep(RADIO_INTERVAL);
             long curTime = System.currentTimeMillis();
             long expectTime = mlastSendTime + RADIO_INTERVAL;
+//            LogUtils.all("ensureInterval====>");
             if (curTime < expectTime) {
-                //Log.i("james",expectTime - curTime + "");
+//                LogUtils.all("ensureInterval====>" + (expectTime - curTime) + "");
                 Thread.sleep(expectTime - curTime);
             }
             mlastSendTime = System.currentTimeMillis();

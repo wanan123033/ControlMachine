@@ -181,6 +181,14 @@ public class BaseActivity extends FragmentActivity {
 //            startActivity(new Intent(this, LoginActivity.class));
 //        }
     }
+    @Subscribe
+    public void onEvent(BaseEvent event) {
+
+    }
+    @Subscribe
+    public void onEventAsync(BaseEvent event) {
+
+    }
 
     protected static class MyHandler extends Handler {
 

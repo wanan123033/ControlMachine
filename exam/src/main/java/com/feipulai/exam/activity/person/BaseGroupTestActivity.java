@@ -23,6 +23,7 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
+import com.feipulai.device.serial.RadioManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
@@ -135,8 +136,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         initData();
 
         mLEDManager = new LEDManager();
-        mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
-        mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
+//        mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+//        mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
 
         rvTestStu.setLayoutManager(new LinearLayoutManager(this));
         stuPairsList = new ArrayList<>();
@@ -190,6 +191,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             }
         });
     }
+
 
     protected abstract int isShowPenalizeFoul();
 
@@ -1317,7 +1319,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        RadioManager.getInstance().close();
+        RadioManager.getInstance().init();
         EventBus.getDefault().post(new BaseEvent(EventConfigs.UPDATE_TEST_RESULT));
         Intent serverIntent = new Intent(this, UploadService.class);
         stopService(serverIntent);

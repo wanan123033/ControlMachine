@@ -303,7 +303,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
     }
 
 
-    public boolean gotoUVCFaceCamera(boolean isOpen) {
+    public boolean  gotoUVCFaceCamera(boolean isOpen) {
         isLodingServer = false;
         if (isOpen) {
             isStartFace = true;

@@ -125,13 +125,13 @@ public class MGsonConverterFactory extends Converter.Factory {
         public T convert(ResponseBody value) throws IOException {
             try {
                 String httpValue = value.string();
-                Logger.i("string====>"+httpValue);
+//                Logger.i("string====>"+httpValue);
 
                 HttpResult<Object> httpResult = new Gson().fromJson(httpValue, HttpResult.class);
                 if (httpResult.getState() != 0) {
                     return (T) httpResult;
                 }
-                Logger.i("httpResult====>");
+//                Logger.i("httpResult====>");
                 JsonParser jsonParser = new JsonParser();
                 if (httpResult.getEncrypt() == HttpResult.ENCRYPT_TRUE && !TextUtils.isEmpty(httpResult.getBody().toString())) {
                     String decodeBody = EncryptUtil.decodeHttpData(httpResult);

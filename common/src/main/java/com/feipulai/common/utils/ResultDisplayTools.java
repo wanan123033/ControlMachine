@@ -215,14 +215,18 @@ public class ResultDisplayTools {
             return null;
         }
         result = dealResultWithCarryMode(digital, carryMode, tmpResult);
-        StringBuffer pattern = new StringBuffer("0.");
-        for (int i = 0; i < digital; i++) {
-            pattern.append("0");
-        }
-        DecimalFormat df = new DecimalFormat(pattern.toString());
-        if (digital != 0) {
+        if (digital > 0) {
+            StringBuffer pattern = new StringBuffer("0.");
+            for (int i = 0; i < digital; i++) {
+                pattern.append("0");
+            }
+            DecimalFormat df = new DecimalFormat(pattern.toString());
+            if (digital != 0) {
 
-            strResult = df.format(result) + (isReturnUnit ? unit : "");
+                strResult = df.format(result) + (isReturnUnit ? unit : "");
+            } else {
+                strResult = result + (isReturnUnit ? unit : "");
+            }
         } else {
             strResult = result + (isReturnUnit ? unit : "");
         }

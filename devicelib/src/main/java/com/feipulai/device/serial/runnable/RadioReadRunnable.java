@@ -88,6 +88,9 @@ public class RadioReadRunnable extends SerialReadRunnable {
 //				throwData();
                 return;
             }
+            if (data.length == 0) {
+                return;
+            }
             // 工厂模式
             switch (readLength[2] & 0xff) {
                 case 0xb5://设置无线频道
@@ -113,9 +116,9 @@ public class RadioReadRunnable extends SerialReadRunnable {
                     msg.obj = rs232Result.getResult();
                     break;
                 case 0xE0://电量
-                    msg.arg1=data[0]& 0xff;//充电状态
-                    msg.arg2=data[1]& 0xff;//电量百分比
-                    msg.what =SerialConfigs.CONVERTER_KWH_RESPONSE;
+                    msg.arg1 = data[0] & 0xff;//充电状态
+                    msg.arg2 = data[1] & 0xff;//电量百分比
+                    msg.what = SerialConfigs.CONVERTER_KWH_RESPONSE;
                     break;
             }
         } catch (IOException e) {

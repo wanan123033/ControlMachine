@@ -15,6 +15,7 @@ import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.JumpDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSetting;
+import com.feipulai.exam.activity.setting.SettingHelper;
 import com.orhanobut.logger.Logger;
 
 import java.util.concurrent.ExecutorService;
@@ -132,6 +133,7 @@ public class JumpRopeTestPresenter
         // 不同组 非当前范围内手柄
         if (result.getHandGroup() != setting.getDeviceGroup() + 1
                 || deviceId >= deviceIdPIV.length
+                || SettingHelper.getSystemSetting().getHostId() != result.getHostId()//不同主机号
                 || deviceIdPIV[deviceId] == INVALID_PIV) {
             return;
         }

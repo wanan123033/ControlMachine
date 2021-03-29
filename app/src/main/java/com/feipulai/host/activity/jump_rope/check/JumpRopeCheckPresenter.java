@@ -204,6 +204,7 @@ public class JumpRopeCheckPresenter
         if (setting.getDeviceGroup() != result.getHandGroup() - 1
                 || deviceId > setting.getDeviceSum()
                 || mCurrentConnect[deviceId] != 0
+                || SettingHelper.getSystemSetting().getHostId() != result.getHostId()//不同主机号
                 || result.getState() != JumpRopeManager.JUMP_ROPE_SPARE) {
             return;
         }

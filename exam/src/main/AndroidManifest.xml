@@ -450,13 +450,13 @@
         <service android:name="com.inuker.bluetooth.library.BluetoothService" />
         <service android:name=".service.UpdateService" />
 
-<!--        <receiver android:name=".receiver.WifiReceiver">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.net.wifi.RSSI_CHANGED" />-->
-<!--                <action android:name="android.net.wifi.STATE_CHANGE" />-->
-<!--                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />-->
-<!--            </intent-filter>-->
-<!--        </receiver>-->
+        <receiver android:name=".receiver.WifiReceiver">
+            <intent-filter>
+                <action android:name="android.net.wifi.RSSI_CHANGED" />
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

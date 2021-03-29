@@ -50,7 +50,7 @@ public class SerialPorter {
     }
 
     private void startReading(SerialParams config) {
-        Log.e("TAG",config +"---------");
+        Log.e("TAG", config + "---------");
         switch (config) {
 
             case QR_CODE:

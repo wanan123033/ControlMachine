@@ -23,6 +23,7 @@ import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;

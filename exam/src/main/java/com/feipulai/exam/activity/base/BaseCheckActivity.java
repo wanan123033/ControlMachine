@@ -557,11 +557,16 @@ public abstract class BaseCheckActivity
                         if (thermometer == null) {
                             activity.showThermometerDialog();
                         } else {
-                            activity.onCheckIn(activity.mStudent);
+                            if (activity.mStudent != null) {
+                                activity.onCheckIn(activity.mStudent);
+                            }
                         }
 
                     } else {
-                        activity.onCheckIn(activity.mStudent);
+                        if (activity.mStudent != null) {
+                            activity.onCheckIn(activity.mStudent);
+                        }
+
                     }
 
                     break;
@@ -608,7 +613,9 @@ public abstract class BaseCheckActivity
                             }
                         }, 2000);
 
-                        activity.onCheckIn(activity.mStudent);
+                        if (activity.mStudent != null) {
+                            activity.onCheckIn(activity.mStudent);
+                        }
 
 
                     }

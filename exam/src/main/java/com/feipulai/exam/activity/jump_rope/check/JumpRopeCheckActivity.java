@@ -234,7 +234,7 @@ public class JumpRopeCheckActivity
     }
 
 
-    @OnClick({R.id.btn_change_hand_group, R.id.btn_kill_devices,R.id.img_AFR})
+    @OnClick({R.id.btn_change_hand_group, R.id.btn_kill_devices, R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
@@ -252,6 +252,7 @@ public class JumpRopeCheckActivity
 
         }
     }
+
     public void showAFR() {
         if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
             ToastUtils.showShort("未选择人脸识别检录功能");
