@@ -25,8 +25,8 @@ public class RunTimerSelectActivity extends SubItemsSelectActivity {
         super.initData();
         mContext = this;
         itemList.clear();
-        itemList.add(new Item("模式一:有线模式"));
-        itemList.add(new Item("模式二:无线模式"));
+        itemList.add(new Item("V1版拦截器"));
+        itemList.add(new Item("V2版拦截器"));
         adapter.notifyDataSetChanged();
         getToolbar().setTitle("红外计时模式选择");
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
