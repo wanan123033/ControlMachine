@@ -7,6 +7,7 @@ import android.view.View;
 
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.device.manager.VitalCapacityManager;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
@@ -95,14 +96,15 @@ public class VitalTestActivity extends BaseMoreActivity {
      * @param deviceId 设备号
      */
     private void cmd(int index, int deviceId, int cmd) {
-        byte[] data = {(byte) 0xAB, (byte) index, 0x10, 0x02, (byte) deviceId, (byte) cmd, (byte) frequency, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, (byte) 0x00, 0x0A};
-        int sum = 0;
-        for (int i = 0; i < data.length - 2; i++) {
-            sum += data[i];
-        }
-        data[14] = (byte) sum;
-        LogUtils.normal("肺活量开始测试指令:"+ StringUtility.bytesToHexString(data));
-        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
+        VitalCapacityManager.cmd(index,deviceId,cmd,frequency);
+//        byte[] data = {(byte) 0xAB, (byte) index, 0x10, 0x02, (byte) deviceId, (byte) cmd, (byte) frequency, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, (byte) 0x00, 0x0A};
+//        int sum = 0;
+//        for (int i = 0; i < data.length - 2; i++) {
+//            sum += data[i];
+//        }
+//        data[14] = (byte) sum;
+//        LogUtils.normal("肺活量开始测试指令:"+ StringUtility.bytesToHexString(data));
+//        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
 
     }
 
@@ -110,21 +112,22 @@ public class VitalTestActivity extends BaseMoreActivity {
      * 新版本一对多控制命令
      */
     private void command(int deviceId, int cmd) {
-        byte[] data = {(byte) 0xAA, 0x12, 0x09, 0x03, 0x01, (byte) hostId, (byte) deviceId, (byte) cmd,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, (byte) 0x00, 0x0D};
-
-        if (MachineCode.machineCode == ItemDefault.CODE_WLJ) {
-            data[2] = 0x0c;
-        } else {
-            data[2] = 0x09;
-        }
-        int sum = 0;
-        for (int i = 1; i < data.length - 2; i++) {
-            sum += data[i];
-        }
-        data[16] = (byte) sum;
-        LogUtils.normal("肺活量开始测试指令:"+ StringUtility.bytesToHexString(data));
-        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
+        VitalCapacityManager.command(deviceId,cmd,hostId);
+//        byte[] data = {(byte) 0xAA, 0x12, 0x09, 0x03, 0x01, (byte) hostId, (byte) deviceId, (byte) cmd,
+//                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, (byte) 0x00, 0x0D};
+//
+//        if (MachineCode.machineCode == ItemDefault.CODE_WLJ) {
+//            data[2] = 0x0c;
+//        } else {
+//            data[2] = 0x09;
+//        }
+//        int sum = 0;
+//        for (int i = 1; i < data.length - 2; i++) {
+//            sum += data[i];
+//        }
+//        data[16] = (byte) sum;
+//        LogUtils.normal("肺活量开始测试指令:"+ StringUtility.bytesToHexString(data));
+//        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
     }
 
     public void sendEmpty() {
@@ -163,8 +166,6 @@ public class VitalTestActivity extends BaseMoreActivity {
             }
         }
         mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 1000);
-
-
     }
 
 
