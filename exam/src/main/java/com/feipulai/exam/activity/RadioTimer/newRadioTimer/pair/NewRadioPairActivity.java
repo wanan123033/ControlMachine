@@ -37,16 +37,16 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
     public RadioPairAdapter mAdapter;
     public RadioPairAdapter mEndAdapter;
     RadioTimerPairPresenter presenter;
-    @BindView(R.id.btn_helper)
-    Button btnHelper;
-    @BindView(R.id.btn_end_helper)
-    Button btnEndHelper;
+//    @BindView(R.id.btn_helper)
+//    Button btnHelper;
+//    @BindView(R.id.btn_end_helper)
+//    Button btnEndHelper;
     private RunTimerSetting setting;
     private static final int UPDATE_SPECIFIC_ITEM = 0x1;
     private MyHandler mHandler = new MyHandler(this);
     private final int START_POINT = 0;
     private final int END_POINT = 1;
-
+    private int selectPoint = 0;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_new_radio_pair;
@@ -64,7 +64,8 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
         presenter = new RadioTimerPairPresenter(this, this, Integer.parseInt(setting.getRunNum()));
         mSwAutoPair.setChecked(setting.isAutoPair());
         if (setting.getInterceptPoint() != 2) {//起点拦截
-            presenter.start(1, 0);
+            presenter.start(0, 0);
+            selectPoint = 0;
             beginningPoint.setVisibility(View.VISIBLE);
             mAdapter = new RadioPairAdapter(this, presenter.getPairs(), START_POINT);
             mRvPairs.setAdapter(mAdapter);
@@ -74,7 +75,8 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
         if (setting.getInterceptPoint() != 1) {//终点拦截
             endingPoint.setVisibility(View.VISIBLE);
             if (setting.getInterceptPoint() == 2) {
-                presenter.start(1, 1);
+                presenter.start(0, 1);
+                selectPoint = 1;
             }
             mEndAdapter = new RadioPairAdapter(this, presenter.getPairs(), END_POINT);
             mEndRvPairs.setLayoutManager(new GridLayoutManager(this, 5));
@@ -109,24 +111,31 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
 
     @Override
     public void select(int position, int point) {
-        if (point == START_POINT) {
-            mAdapter.setSelected(position);
-            if (mEndAdapter != null) {
+        int oldSelectPosition;
+        if (selectPoint != point){
+            if (point == START_POINT){
+                oldSelectPosition  = mEndAdapter.getSelected();
                 mEndAdapter.setSelected(-1);
-            }
-        } else if (point == END_POINT){
-            mEndAdapter.setSelected(position);
-            if (mAdapter != null) {
+                updateSpecificItem(oldSelectPosition,selectPoint);
+                mAdapter.setSelected(position);
+            }else {
+                oldSelectPosition  = mAdapter.getSelected();
                 mAdapter.setSelected(-1);
+                updateSpecificItem(oldSelectPosition,selectPoint);
+                mEndAdapter.setSelected(position);
             }
+            selectPoint = point;
+        }else {
+            if (point == START_POINT){
+                oldSelectPosition  = mAdapter.getSelected();
+                mAdapter.setSelected(position);
+            }else {
+                oldSelectPosition  = mEndAdapter.getSelected();
+                mEndAdapter.setSelected(position);
+            }
+            updateSpecificItem(oldSelectPosition,point);
         }
-        if (mAdapter != null) {
-            mAdapter.notifyDataSetChanged();
-        }
-        if (mEndAdapter != null) {
-            mEndAdapter.notifyDataSetChanged();
-        }
-        updateSpecificItem(position, point);
+        updateSpecificItem(position,point);
     }
 
     @Override
@@ -140,39 +149,39 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
         presenter.changeFocusPosition(position, point);
     }
 
-    @OnClick({R.id.sw_auto_pair,R.id.btn_helper,R.id.btn_end_helper})
+    @OnClick({R.id.sw_auto_pair})//,R.id.btn_helper,R.id.btn_end_helper
     public void btnOnClick(View v) {
         switch (v.getId()) {
             case R.id.sw_auto_pair:
                 LogUtils.operation("勾选了自动匹配");
                 presenter.changeAutoPair(mSwAutoPair.isChecked());
                 break;
-            case R.id.btn_helper:
-                LogUtils.operation("勾选了起始点辅助匹配");
-                presenter.changeFocusPosition(-1,4);
-                btnHelper.setEnabled(false);
-                if (mEndAdapter!= null){
-                    mEndAdapter.setSelected(-1);
-                    mEndAdapter.notifyDataSetChanged();
-                }
-                if (mAdapter!= null){
-                    mAdapter.setSelected(-1);
-                    mAdapter.notifyDataSetChanged();
-                }
-                break;
-            case R.id.btn_end_helper:
-                LogUtils.operation("勾选了终点辅助匹配");
-                presenter.changeFocusPosition(-1,5);
-                btnEndHelper.setEnabled(false);
-                if (mEndAdapter!= null){
-                    mEndAdapter.setSelected(-1);
-                    mEndAdapter.notifyDataSetChanged();
-                }
-                if (mAdapter!= null){
-                    mAdapter.setSelected(-1);
-                    mAdapter.notifyDataSetChanged();
-                }
-                break;
+//            case R.id.btn_helper:
+//                LogUtils.operation("勾选了起始点辅助匹配");
+//                presenter.changeFocusPosition(-1,4);
+//                btnHelper.setEnabled(false);
+//                if (mEndAdapter!= null){
+//                    mEndAdapter.setSelected(-1);
+//                    mEndAdapter.notifyDataSetChanged();
+//                }
+//                if (mAdapter!= null){
+//                    mAdapter.setSelected(-1);
+//                    mAdapter.notifyDataSetChanged();
+//                }
+//                break;
+//            case R.id.btn_end_helper:
+//                LogUtils.operation("勾选了终点辅助匹配");
+//                presenter.changeFocusPosition(-1,5);
+//                btnEndHelper.setEnabled(false);
+//                if (mEndAdapter!= null){
+//                    mEndAdapter.setSelected(-1);
+//                    mEndAdapter.notifyDataSetChanged();
+//                }
+//                if (mAdapter!= null){
+//                    mAdapter.setSelected(-1);
+//                    mAdapter.notifyDataSetChanged();
+//                }
+//                break;
         }
     }
 
@@ -185,18 +194,26 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
                 switch (msg.arg2){
                     case 0:
                         mAdapter.notifyItemChanged(msg.arg1);
+//                        final int pos = msg.arg1;
+//                        mHandler.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                presenter.setState(pos);
+//                            }
+//                        },100);
+
                         break;
                     case 1:
                         mEndAdapter.notifyItemChanged(msg.arg1);
                         break;
-                    case 4:
-                        btnHelper.setText("起点辅助拦截器√");
-                        btnHelper.setEnabled(true);
-                        break;
-                    case 5:
-                        btnEndHelper.setText("终点辅助拦截器√");
-                        btnEndHelper.setEnabled(true);
-                        break;
+//                    case 4:
+//                        btnHelper.setText("起点辅助拦截器√");
+//                        btnHelper.setEnabled(true);
+//                        break;
+//                    case 5:
+//                        btnEndHelper.setText("终点辅助拦截器√");
+//                        btnEndHelper.setEnabled(true);
+//                        break;
                 }
 
         }
