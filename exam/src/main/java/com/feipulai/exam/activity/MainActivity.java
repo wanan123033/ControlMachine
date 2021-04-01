@@ -101,9 +101,9 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                         int level = msg.arg2;
                         batteryView.setVisibility(View.VISIBLE);
                         batteryView.updateState(level);
-                        if (state==0){//放电
+                        if (state == 0) {//放电
                             batteryView.updateView(level);
-                        }else{//充电
+                        } else {//充电
                             batteryView.updateChargingView(level);
                         }
                     }
@@ -111,6 +111,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
 
             }
         });
+
 
         //测试数据
 //        List<GroupItem> items = DBManager.getInstance().queryGroupItemByCode("11");

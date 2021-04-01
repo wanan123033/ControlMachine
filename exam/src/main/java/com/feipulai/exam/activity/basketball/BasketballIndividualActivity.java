@@ -217,7 +217,12 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 editResultDialog.dismissDialog();
             }
         });
-
+//        //配置网络
+//        if (SettingHelper.getSystemSetting().isAddRoute() && !TextUtils.isEmpty(NetWorkUtils.getLocalIp())) {
+//            String locatIp = NetWorkUtils.getLocalIp();
+//            String routeIp = locatIp.substring(0, locatIp.lastIndexOf("."));
+//            UdpLEDUtil.shellExec("ip route add " + routeIp + ".0/24 dev eth0 proto static scope link table wlan0 \n");
+//        }
     }
 
     @Override
