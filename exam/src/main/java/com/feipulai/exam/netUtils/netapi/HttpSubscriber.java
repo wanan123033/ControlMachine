@@ -796,7 +796,7 @@ public class HttpSubscriber {
     private void sendTcpResult(final Activity activity, final int pageNo, final int pageSum, final List<UploadResults> uploadResultsList) {
         final List<UploadResults> uploadData;
         if (pageNo == pageSum - 1) {
-            uploadData = uploadResultsList.subList(pageNo * 50, uploadResultsList.size());
+            uploadData = uploadResultsList.subList(pageNo , uploadResultsList.size());
         } else {
             uploadData = uploadResultsList.subList(pageNo, (pageNo + 1));
         }
