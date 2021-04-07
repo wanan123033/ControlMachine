@@ -74,7 +74,7 @@ public class DBManager {
     private static ItemDao itemDao;
     private static StudentDao studentDao;
     private static StudentItemDao studentItemDao;
-    private static RoundResultDao roundResultDao;
+    public static RoundResultDao roundResultDao;
     private static ScheduleDao scheduleDao;
     private static ItemScheduleDao itemScheduleDao;
     private static GroupDao groupDao;
@@ -176,7 +176,7 @@ public class DBManager {
                     break;
 
                 case ItemDefault.CODE_PQ:
-                    insertItem(machineCode, "排球", "次", TEST_TYPE_COUNT);
+                    insertItem(machineCode, "排球垫球", "次", TEST_TYPE_COUNT);
                     break;
                 case ItemDefault.CODE_MG:
                     insertItem(machineCode, "摸高", "厘米", TEST_TYPE_DISTANCE);
@@ -191,8 +191,12 @@ public class DBManager {
                     insertItem(machineCode, "足球运球", "分'秒", TEST_TYPE_TIME);
                     break;
                 case ItemDefault.CODE_ZCP:
-                    insertItem(machineCode, "fpl_800", "800米", "分'秒", TEST_TYPE_TIME);
-                    insertItem(machineCode, "fpl_1000", "1000米", "分'秒", TEST_TYPE_TIME);
+                    Item item800 = DBManager.getInstance().queryItemByName("800米");
+                    if (item800 == null) {
+                        insertItem(machineCode, "fpl_800", "800米", "分'秒", TEST_TYPE_TIME);
+                        insertItem(machineCode, "fpl_1000", "1000米", "分'秒", TEST_TYPE_TIME);
+                    }
+
 //                    insertMiddleRaceItem(machineCode, "800米", "分'秒");
 //                    insertMiddleRaceItem(machineCode, "1000米", "分'秒");
                     break;
@@ -1870,7 +1874,7 @@ public class DBManager {
         for (String stuCode : stuCodeList) {
             //获取学生未上传成绩
             List<RoundResult> stuResult = roundResultDao.queryBuilder().where(RoundResultDao.Properties.StudentCode.eq(stuCode))
-//                    .where(RoundResultDao.Properties.UpdateState.eq(0))
+                    .where(RoundResultDao.Properties.UpdateState.eq(0))
                     .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
                     .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                     .list();

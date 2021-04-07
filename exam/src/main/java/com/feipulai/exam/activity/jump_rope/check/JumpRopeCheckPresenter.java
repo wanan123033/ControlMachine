@@ -224,6 +224,7 @@ public class JumpRopeCheckPresenter
         if (setting.getDeviceGroup() != result.getHandGroup() - 1// 不同组
                 || deviceId > setting.getDeviceSum()// 非当前范围内手柄
                 || mCurrentConnect[deviceId] != 0// 已经设置过状态
+                || deviceId == 0
                 || SettingHelper.getSystemSetting().getHostId() != result.getHostId()//不同主机号
                 || result.getState() != JumpRopeManager.JUMP_ROPE_SPARE/*非空闲手柄状态*/) {
             return;

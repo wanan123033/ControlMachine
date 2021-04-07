@@ -754,12 +754,12 @@ public class HttpSubscriber {
      */
     public void uploadResult(final List<UploadResults> uploadResultsList) {
         int pageSum = 1;
-        if (uploadResultsList.size() > 100) {
+        if (uploadResultsList.size() > 20) {
             //获取上传分页数目
-            if (uploadResultsList.size() % 100 == 0) {
-                pageSum = uploadResultsList.size() / 100;
+            if (uploadResultsList.size() % 20 == 0) {
+                pageSum = uploadResultsList.size() / 20;
             } else {
-                pageSum = uploadResultsList.size() / 100 + 1;
+                pageSum = uploadResultsList.size() / 20 + 1;
             }
         }
         setUploadResult(0, pageSum, uploadResultsList);
@@ -795,12 +795,13 @@ public class HttpSubscriber {
      */
     private void sendTcpResult(final Activity activity, final int pageNo, final int pageSum, final List<UploadResults> uploadResultsList) {
         final List<UploadResults> uploadData;
-//        if (pageNo == pageSum - 1) {
-//            uploadData = uploadResultsList.subList(pageNo * 50, uploadResultsList.size());
-//        } else {
-//            uploadData = uploadResultsList.subList(pageNo * 50, (pageNo + 1) * 50);
-//        }
-        uploadData = uploadResultsList.subList(pageNo, (pageNo + 1));
+        if (pageNo == pageSum - 1) {
+            uploadData = uploadResultsList.subList(pageNo , uploadResultsList.size());
+        } else {
+            uploadData = uploadResultsList.subList(pageNo, (pageNo + 1));
+        }
+
+
         Logger.i("setUploadResult===>" + pageNo);
 
         TCPResultPackage rcPackage = new TCPResultPackage();
@@ -965,9 +966,9 @@ public class HttpSubscriber {
     private void setUploadResult(final int pageNo, final int pageSum, final List<UploadResults> uploadResultsList) {
         final List<UploadResults> uploadData;
         if (pageNo == pageSum - 1) {
-            uploadData = uploadResultsList.subList(pageNo * 100, uploadResultsList.size());
+            uploadData = uploadResultsList.subList(pageNo * 20, uploadResultsList.size());
         } else {
-            uploadData = uploadResultsList.subList(pageNo * 100, (pageNo + 1) * 100);
+            uploadData = uploadResultsList.subList(pageNo * 20, (pageNo + 1) * 20);
         }
         Logger.i("setUploadResult===>" + pageNo);
         Observable<HttpResult<List<UploadResults>>> observable = HttpManager.getInstance().getHttpApi().uploadResult("bearer " + MyApplication.TOKEN,
