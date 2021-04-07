@@ -2,15 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="40dp"
-    android:orientation="horizontal"
     android:layout_marginLeft="20dp"
     android:layout_marginRight="34dp"
-    android:background="@mipmap/bg_rectangle_run">
+    android:background="@mipmap/bg_rectangle_run"
+    android:orientation="horizontal">
+
     <TextView
         android:id="@+id/tv_state_color"
         android:layout_width="40dp"
         android:layout_height="match_parent"
-        android:background="@drawable/shape_half_oval_green"/>
+        android:background="@drawable/shape_half_oval_green" />
+
     <TextView
         android:id="@+id/tv_device_state"
         style="@style/style_run_timer_title"
@@ -18,38 +20,35 @@
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
         android:text="正常" />
+
     <TextView
         android:id="@+id/tv_num"
         style="@style/style_run_timer_title"
         android:layout_width="70dp"
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
-        android:textStyle="bold"
-        />
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tv_stuCode"
         style="@style/style_run_timer_title"
         android:layout_width="220dp"
         android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
-        />
+        android:layout_gravity="center_vertical" />
 
     <TextView
         android:id="@+id/tv_stuName"
         style="@style/style_run_timer_title"
         android:layout_width="150dp"
         android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
-         />
+        android:layout_gravity="center_vertical" />
 
     <TextView
         android:id="@+id/tv_stuSex"
         style="@style/style_run_timer_title"
         android:layout_width="70dp"
         android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
-         />
+        android:layout_gravity="center_vertical" />
 
     <TextView
         android:id="@+id/tv_stuItem"
@@ -59,12 +58,34 @@
         android:layout_gravity="center_vertical"
         />
 
+    <LinearLayout
+        android:id="@+id/ll_test_time"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:visibility="gone">
+        <TextView
+            android:id="@+id/tv_stuTime"
+            style="@style/style_run_timer_title"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical" />
+        <TextView
+            android:id="@+id/tv_time_detail"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:textColor="@color/black"
+            android:background="@color/greenBG"
+            android:gravity="center"
+            android:layout_marginTop="3dp"
+            android:layout_gravity="center_vertical"
+            android:text="详情"/>
+    </LinearLayout>
     <TextView
         android:id="@+id/tv_stuMark"
         style="@style/style_run_timer_title"
         android:layout_width="100dp"
         android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
-         />
+        android:layout_gravity="center_vertical" />
 
 </LinearLayout>
