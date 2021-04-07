@@ -27,9 +27,10 @@ public class SerialDeviceManager {
         // Log.i("james", "listener===>" + listener == null ? "00" : "11");
         mDeviceListener = listener;
         if (SerialParams.RS232.getVersions() == 2) {
-            RadioManager.getInstance().setOnRadioArrived(new RadioManager.OnRadioArrivedListener() {
+            RadioManager.getInstance().setOnRadio232(new RadioManager.OnRadioR232Listener() {
+
                 @Override
-                public void onRadioArrived(Message msg) {
+                public void onRadio232(Message msg) {
                     if (mDeviceListener != null) {
                         mDeviceListener.onRS232Result(msg);
                     }
@@ -96,7 +97,7 @@ public class SerialDeviceManager {
         ensureInterval();
         if (SerialParams.RS232.getVersions() == 1) {
             mSerialPorter.sendCommand(convertCommand);
-        }else{
+        } else {
             RadioManager.getInstance().sendCommand(convertCommand);
         }
 
@@ -107,7 +108,7 @@ public class SerialDeviceManager {
         ensureInterval();
         if (SerialParams.RS232.getVersions() == 1) {
             mSerialPorter.sendCommand(convertCommand);
-        }else{
+        } else {
             RadioManager.getInstance().sendCommand(convertCommand);
         }
     }
@@ -131,7 +132,7 @@ public class SerialDeviceManager {
     }
 
     public void close() {
-        if (mSerialPorter!=null){
+        if (mSerialPorter != null) {
             mSerialPorter.close();
             sDeviceManager = null;
         }

@@ -107,12 +107,14 @@ public class RadioReadRunnable extends SerialReadRunnable {
                 case 0xd1://无线868->安卓
                     Radio868Result result = new Radio868Result(data);
                     msg.what = result.getType();
+                    msg.arg1 = 0xd1;
                     msg.obj = result.getResult();
 //					Log.i("radio 868 receive", StringUtility.bytesToHexString(data));
                     break;
                 case 0XD2://232->安卓
                     RS232Result rs232Result = new RS232Result(data);
                     msg.what = rs232Result.getType();
+                    msg.arg1 = 0XD2;
                     msg.obj = rs232Result.getResult();
                     break;
                 case 0xE0://电量
