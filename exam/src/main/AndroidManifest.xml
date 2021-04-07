@@ -45,7 +45,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.situp.newSitUp.NewSitUpTestActivity"></activity>
+        <activity android:name=".activity.RadioTimer.newRadioTimer.RadioDeviceDetailActivity"></activity>
+        <activity android:name=".activity.situp.newSitUp.NewSitUpTestActivity" />
         <activity android:name=".activity.situp.newSitUp.NewSitUpPairActivity" />
         <activity android:name=".activity.situp.newSitUp.DeviceChangeActivity" />
         <activity android:name=".activity.situp.newSitUp.SitUpArmCheckActivity" />

@@ -17,6 +17,7 @@ public class RunStudent implements Serializable {
     private int trackNo ;
     private List<WaitResult> resultList;
     private int originalMark ;
+    private int independentTime;
     public Student getStudent() {
         return student;
     }
@@ -81,6 +82,14 @@ public class RunStudent implements Serializable {
 
     public void setOriginalMark(int originalMark) {
         this.originalMark = originalMark;
+    }
+
+    public int getIndependentTime() {
+        return independentTime;
+    }
+
+    public void setIndependentTime(int independentTime) {
+        this.independentTime = independentTime;
     }
 
     public static class WaitResult{

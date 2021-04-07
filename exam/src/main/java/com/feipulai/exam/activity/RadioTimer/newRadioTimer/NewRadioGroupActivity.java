@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.utils.ToastUtils;
@@ -47,6 +48,7 @@ import butterknife.OnClick;
 import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_RESULT;
 import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_START;
 import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_STOP;
+import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_UPDATE_ADD_TIME;
 import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_UPDATE_DEVICE;
 
 public class NewRadioGroupActivity extends BaseTitleActivity implements SportContract.SportView, TimerKeeper.TimeUpdateListener {
@@ -68,6 +70,8 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
     TextView tvRunState;
     @BindView(R.id.tv_wait_ready)
     TextView tvWaitReady;
+    @BindView(R.id.rl_state)
+    RelativeLayout rlState;
     private int [] independent;
     /**
      * 从分组信息中选择的学生信息
@@ -83,7 +87,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
     private String startTime;
     private int currentTestTime = 0;
     private List<RunStudent> mList = new ArrayList<>();//测试的
-    private RunNumberAdapter2 mAdapter;
+    private NewRunAdapter mAdapter;
     private int runNum = 1;
     private int maxTestTimes = 1;
     private SportPresent sportPresent;
@@ -112,7 +116,12 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
             runStudent.setResultList(new ArrayList<RunStudent.WaitResult>());
             mList.add(runStudent);
         }
-        mAdapter = new RunNumberAdapter2(mList);
+        if (runTimerSetting.getInterceptPoint() == 3 && runTimerSetting.isTimer_select()){
+            mAdapter = new NewRunAdapter(mList,1);
+            rlState.setVisibility(View.GONE);
+        }else {
+            mAdapter = new NewRunAdapter(mList,0);
+        }
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         rvTimer.setLayoutManager(layoutManager);
@@ -264,7 +273,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
         resultPopWindow.showPopOrDismiss(view);
     }
 
-    @OnClick({R.id.tv_wait_start, R.id.tv_force_start, R.id.tv_fault_back, R.id.tv_mark_confirm,R.id.tv_wait_ready})
+    @OnClick({R.id.tv_wait_start, R.id.tv_force_start, R.id.tv_fault_back, R.id.tv_mark_confirm,R.id.tv_wait_ready,R.id.tv_device_detail})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_wait_start://等待发令
@@ -344,6 +353,9 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                     mAdapter.notifyDataSetChanged();
                     setIndependent();
                 }
+                break;
+            case R.id.tv_device_detail:
+                IntentUtil.gotoActivity(this,RadioDeviceDetailActivity.class);
                 break;
         }
     }
@@ -561,10 +573,26 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                 case RUN_UPDATE_DEVICE:
                     mAdapter.notifyDataSetChanged();
                     break;
+                case RUN_UPDATE_ADD_TIME:
+                    addTime();
+                    break;
             }
             return false;
         }
     });
+
+    private void addTime() {
+        if (testState == TestState.WAIT_RESULT){
+            mHandler.sendEmptyMessageDelayed(RUN_UPDATE_ADD_TIME,100);
+            for (int i = 0;i< mList.size();i++) {
+                RunStudent runStudent = mList.get(i);
+                if (null!=runStudent && independent[i]>0){
+                    runStudent.setIndependentTime(runStudent.getIndependentTime()+100);
+                    mAdapter.notifyItemChanged(i);
+                }
+            }
+        }
+    }
 
     @Override
     public void onTimeUpdate(int time) {
