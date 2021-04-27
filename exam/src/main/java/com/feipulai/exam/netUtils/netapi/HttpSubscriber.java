@@ -100,6 +100,11 @@ public class HttpSubscriber {
      * @param listener
      */
     public void activate(long currentRunTime, OnResultListener listener) {
+        //减少连接时长
+        HttpManager.DEFAULT_CONNECT_TIMEOUT = 5;
+        HttpManager.DEFAULT_READ_TIMEOUT = 5;
+        HttpManager.DEFAULT_WRITE_TIMEOUT = 5;
+        HttpManager.resetManager();
         Map<String, String> parameData = new HashMap<>();
         parameData.put("deviceIdentify", CommonUtils.getDeviceId(MyApplication.getInstance()));
         parameData.put("currentRunTime", currentRunTime + "");
@@ -108,6 +113,7 @@ public class HttpSubscriber {
 
         Observable<HttpResult<ActivateBean>> observable = HttpManager.getInstance().getHttpApi().activate(CommonUtils.encryptQuery("300021100", parameData));
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<ActivateBean>(listener));
+
     }
 
     /**
@@ -796,7 +802,7 @@ public class HttpSubscriber {
     private void sendTcpResult(final Activity activity, final int pageNo, final int pageSum, final List<UploadResults> uploadResultsList) {
         final List<UploadResults> uploadData;
         if (pageNo == pageSum - 1) {
-            uploadData = uploadResultsList.subList(pageNo , uploadResultsList.size());
+            uploadData = uploadResultsList.subList(pageNo, uploadResultsList.size());
         } else {
             uploadData = uploadResultsList.subList(pageNo, (pageNo + 1));
         }

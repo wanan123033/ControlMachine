@@ -27,16 +27,16 @@ public class HttpManager {
     public String TAG = "HttpManager";
     public static final String CACHE_NAME = "yourApkName";
     public static String BASE_URL = URLConstant.BASE_URL;
-    private static final int DEFAULT_CONNECT_TIMEOUT = 20;
-    private static final int DEFAULT_WRITE_TIMEOUT = 20;
-    private static final int DEFAULT_READ_TIMEOUT = 20;
+    public static int DEFAULT_CONNECT_TIMEOUT = 20;
+    public static int DEFAULT_WRITE_TIMEOUT = 20;
+    public static int DEFAULT_READ_TIMEOUT = 20;
     private Retrofit retrofit;
     private HttpApi httpApi;
     /**
      * 请求失败重连次数
      */
     private int RETRY_COUNT = 0;
-    private OkHttpClient.Builder okHttpBuilder;
+    public OkHttpClient.Builder okHttpBuilder;
     private static HttpManager instance;
 
     //构造方法私有
@@ -88,10 +88,10 @@ public class HttpManager {
         okHttpBuilder.connectTimeout(DEFAULT_CONNECT_TIMEOUT, TimeUnit.SECONDS);
 
 
-        okHttpBuilder.readTimeout(DEFAULT_WRITE_TIMEOUT, TimeUnit.SECONDS);
-        okHttpBuilder.connectTimeout(DEFAULT_READ_TIMEOUT, TimeUnit.SECONDS);
+        okHttpBuilder.readTimeout(DEFAULT_READ_TIMEOUT, TimeUnit.SECONDS);
+        okHttpBuilder.writeTimeout(DEFAULT_WRITE_TIMEOUT, TimeUnit.SECONDS);
         //错误重连
-        okHttpBuilder.retryOnConnectionFailure(true);
+//        okHttpBuilder.retryOnConnectionFailure(false);
         retrofit = new Retrofit.Builder()
                 .client(okHttpBuilder.build())
 //                .addConverterFactory(GsonConverterFactory.create())//json转换成JavaBean
