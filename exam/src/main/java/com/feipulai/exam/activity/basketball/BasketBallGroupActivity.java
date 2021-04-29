@@ -122,6 +122,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
     private String startTime;  //开始时间
     private boolean startTest = true;
     private EditResultDialog editResultDialog;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_group_basketball;
@@ -397,8 +398,13 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             int pResult = result.getResult() + (testResult.getPenalizeNum() * setting.getPenaltySecond() * 1000);
             testResult.setSelectMachineResult(machineResult.getResult());
             testResult.setResult(pResult);
-            testResult.getMachineResultList().clear();
-            testResult.getMachineResultList().addAll(machineResultList);
+            if (testResult.getMachineResultList() == null) {
+                testResult.setMachineResultList(machineResultList);
+            } else {
+                testResult.getMachineResultList().clear();
+                testResult.getMachineResultList().addAll(machineResultList);
+            }
+
             //更新本次轮次数据库数据
             RoundResult testRoundResult = DBManager.getInstance().queryGroupRoundNoResult(student.getStudentCode(), group.getId() + "", roundNo);
             testRoundResult.setResult(testResult.getResult());
@@ -831,7 +837,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             for (int i = 0; i < resultList.size(); i++) {
                 if (resultList.get(i).getResultState() == -999) {
                     resultAdapter.setSelectPosition(i);
-                    if (startTest){
+                    if (startTest) {
                         roundNo = i + 1;
                         startTest = false;
                     }
@@ -1200,7 +1206,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         toastSpeak("分组考生全部测试完成，请选择下一组");
         if (group.getIsTestComplete() != 1 &&
                 SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN &&
-                (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 ||SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP)&&
+                (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 || SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP) &&
                 SettingHelper.getSystemSetting().isAutoPrint()) {
             InteractUtils.printA4Result(this, group);
         }

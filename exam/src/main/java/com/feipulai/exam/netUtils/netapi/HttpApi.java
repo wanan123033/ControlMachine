@@ -74,7 +74,7 @@ public interface HttpApi {
      */
     String GET_RESULT_ACTION = "/run/checkTerminalStudentSingleTest";
 
-    String GET_SOFT_APP = "/public/checkSoftwareVersion";
+    String GET_SOFT_APP = "https://api.soft.fplcloud.com/public/checkSoftwareVersion";
     String UPDATE_SOFT_APP = "/public/updateSoftware";
 
     @POST(LOGIN_ACTION)

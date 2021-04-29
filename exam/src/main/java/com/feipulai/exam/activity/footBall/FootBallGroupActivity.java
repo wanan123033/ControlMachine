@@ -472,8 +472,12 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
             int pResult = result.getResult() + (testResult.getPenalizeNum() * setting.getPenaltySecond() * 1000);
             testResult.setSelectMachineResult(machineResult.getResult());
             testResult.setResult(pResult);
-            testResult.getMachineResultList().clear();
-            testResult.getMachineResultList().addAll(machineResultList);
+            if (testResult.getMachineResultList() == null) {
+                testResult.setMachineResultList(machineResultList);
+            } else {
+                testResult.getMachineResultList().clear();
+                testResult.getMachineResultList().addAll(machineResultList);
+            }
             //更新本次轮次数据库数据
             RoundResult testRoundResult = DBManager.getInstance().queryGroupRoundNoResult(student.getStudentCode(), group.getId() + "", roundNo);
             testRoundResult.setResult(testResult.getResult());

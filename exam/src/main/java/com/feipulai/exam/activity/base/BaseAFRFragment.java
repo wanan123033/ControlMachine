@@ -527,7 +527,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         drawHelper.draw(faceRectView2, drawInfoList);
     }
 
-    private final float SIMILAR_THRESHOLD = 0.80f;
+    private final float SIMILAR_THRESHOLD = 0.90f;
     private int hasTry = 0;
 
     //3个线程查找

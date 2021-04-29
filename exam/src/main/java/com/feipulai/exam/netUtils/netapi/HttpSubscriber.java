@@ -100,6 +100,11 @@ public class HttpSubscriber {
      * @param listener
      */
     public void activate(long currentRunTime, OnResultListener listener) {
+        //减少连接时长
+        HttpManager.DEFAULT_CONNECT_TIMEOUT = 5;
+        HttpManager.DEFAULT_READ_TIMEOUT = 5;
+        HttpManager.DEFAULT_WRITE_TIMEOUT = 5;
+        HttpManager.resetManager();
         Map<String, String> parameData = new HashMap<>();
         parameData.put("deviceIdentify", CommonUtils.getDeviceId(MyApplication.getInstance()));
         parameData.put("currentRunTime", currentRunTime + "");
@@ -108,6 +113,7 @@ public class HttpSubscriber {
 
         Observable<HttpResult<ActivateBean>> observable = HttpManager.getInstance().getHttpApi().activate(CommonUtils.encryptQuery("300021100", parameData));
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<ActivateBean>(listener));
+
     }
 
     /**
@@ -398,7 +404,7 @@ public class HttpSubscriber {
     private List<String> stuList = new ArrayList<>();
 
     // 获取学生信息
-    public void getItemStudent(final String itemCode, int batch, final int examType, final String lastDownLoadTime) {
+    public void getItemStudent(final String lastDownLoadTime, final String itemCode, int batch, final int examType) {
         getItemStudent(itemCode, batch, examType, lastDownLoadTime, new String[]{});
     }
 
@@ -796,7 +802,7 @@ public class HttpSubscriber {
     private void sendTcpResult(final Activity activity, final int pageNo, final int pageSum, final List<UploadResults> uploadResultsList) {
         final List<UploadResults> uploadData;
         if (pageNo == pageSum - 1) {
-            uploadData = uploadResultsList.subList(pageNo , uploadResultsList.size());
+            uploadData = uploadResultsList.subList(pageNo, uploadResultsList.size());
         } else {
             uploadData = uploadResultsList.subList(pageNo, (pageNo + 1));
         }
@@ -815,6 +821,11 @@ public class HttpSubscriber {
 
         if (tcpClientThread == null) {
             String tcpIp = SettingHelper.getSystemSetting().getTcpIp();
+            if (TextUtils.isEmpty(tcpIp)) {
+                ToastUtils.showShort("TCP上传失败，TCP地址不能为空");
+                onRequestEndListener.onFault(UPLOAD_BIZ);
+                return;
+            }
             String ipStr = tcpIp.split(":")[0];
             String portStr = tcpIp.split(":")[1];
             tcpClientThread = new SendTcpClientThread(ipStr, Integer.parseInt(portStr), new SendTcpClientThread.SendTcpListener() {
@@ -1036,7 +1047,7 @@ public class HttpSubscriber {
         parameData.put("deviceCode", MyApplication.DEVICECODE);
         final RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/json"), new JSONObject(parameData).toString());
         Observable<HttpResult<List<SoftApp>>> observable = HttpManager.getInstance().getHttpApi().getSoftApp(requestBody);
-        HttpManager.getInstance().changeBaseUrl("https://api.soft.fplcloud.com");
+//        HttpManager.getInstance().changeBaseUrl("https://api.soft.fplcloud.com");
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<List<SoftApp>>(new OnResultListener<List<SoftApp>>() {
             @Override
             public void onResponseTime(String responseTime) {

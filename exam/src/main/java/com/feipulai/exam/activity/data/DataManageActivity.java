@@ -1016,6 +1016,32 @@ public class DataManageActivity
         super.onBackPressed();
     }
 
+    private void showDownLoadDialog(final int examType) {
+        final String[] lastDownLoadTime = new String[1];
+        String item[] = getResources().getStringArray(R.array.download_select);
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.download_title)
+                .setSingleChoiceItems(item, 0, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0) {
+                            lastDownLoadTime[0] = "";
+                        } else {
+                            lastDownLoadTime[0] = SharedPrefsUtil.getValue(DataManageActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.LAST_DOWNLOAD_TIME, "");
+                        }
+                    }
+                })
+                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在下载最新数据...");
+                        ServerMessage.downloadData(DataManageActivity.this, examType, lastDownLoadTime[0]);
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null).show();
+    }
+
     private void showDownloadDataDialog() {
         String[] exemType = new String[]{"正常", "补考", "缓考"};
         new AlertDialog.Builder(this).setTitle("选择下载考试类型")
@@ -1034,9 +1060,16 @@ public class DataManageActivity
                                 examType = StudentItem.EXAM_DELAYED;
                                 break;
                         }
+                        String downTime = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS,
+                                SharedPrefsConfigs.LAST_DOWNLOAD_TIME, "");
 
-                        OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在下载最新数据...");
-                        ServerMessage.downloadData(DataManageActivity.this, examType);
+                        if (!TextUtils.isEmpty(downTime)) {
+                            showDownLoadDialog(examType);
+                        } else {
+                            OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在下载最新数据...");
+                            ServerMessage.downloadData(DataManageActivity.this, examType, "0");
+                        }
+
                     }
                 }).create().show();
     }
@@ -1182,6 +1215,7 @@ public class DataManageActivity
                 Logger.i(autoBackup ? "自动备份成功" : "自动备份失败");
                 DBManager.getInstance().clear();
                 SharedPrefsUtil.putValue(DataManageActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
+                SharedPrefsUtil.putValue(DataManageActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.LAST_DOWNLOAD_TIME, null);
                 SharedPrefsUtil.remove(DataManageActivity.this, DownLoadPhotoHeaders.class);
                 DBManager.getInstance().initDB();
                 TestConfigs.init(DataManageActivity.this, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), null);

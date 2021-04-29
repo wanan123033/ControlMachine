@@ -46,6 +46,7 @@ public class CommonUtils {
         }
         return null;
     }
+
     @SuppressLint({"HardwareIds", "MissingPermission"})
     public static String getDeviceId(Context context) {
 
@@ -66,7 +67,7 @@ public class CommonUtils {
         TelephonyManager phone = (TelephonyManager) MyApplication.getInstance().getSystemService(Context.TELEPHONY_SERVICE);
         WifiManager wifi = (WifiManager) MyApplication.getInstance().getSystemService(Context.WIFI_SERVICE);
 
-        return wifi.getConnectionInfo().getMacAddress() + "," + phone.getDeviceId() + "," + getCpuName() + "," + phone.getNetworkOperator();
+        return wifi.getConnectionInfo().getMacAddress() + "," + getDeviceId(MyApplication.getInstance()) + "," + getCpuName() + "," + phone.getNetworkOperator();
     }
 
     /**

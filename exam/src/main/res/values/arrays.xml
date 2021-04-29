@@ -91,4 +91,8 @@
         <item>最好成绩</item>
         <item>最好成绩+ 轮次成绩</item>
     </string-array>
+    <array name="download_select">
+        <item>下载全部</item>
+        <item>下载更新</item>
+    </array>
 </resources>
