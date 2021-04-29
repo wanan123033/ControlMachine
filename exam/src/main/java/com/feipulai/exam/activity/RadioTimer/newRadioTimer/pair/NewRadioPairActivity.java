@@ -36,7 +36,7 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
 
     public RadioPairAdapter mAdapter;
     public RadioPairAdapter mEndAdapter;
-    RadioTimerPairPresenter presenter;
+    private RadioTimerPairPresenter presenter;
 //    @BindView(R.id.btn_helper)
 //    Button btnHelper;
 //    @BindView(R.id.btn_end_helper)

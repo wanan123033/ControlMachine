@@ -22,6 +22,7 @@ import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.led.LEDManager;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
@@ -232,7 +233,16 @@ public class PreTestActivity extends BaseCheckActivity {
         }
         updateStuInfo(student);
         mAdapter.notifyDataSetChanged();
-//        showLedReady(mList, false);
+        showLedReady(mList, false);
+    }
+
+    /**
+     * 显示道次准备
+     */
+    private void showLedReady(List<RunStudent> runs, boolean ready) {
+        if (runs.size() < 0)
+            return;
+//        disposeManager.showReady(runs, ready);
     }
 
     private void updateStuInfo(Student student) {

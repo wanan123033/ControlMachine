@@ -38,6 +38,9 @@ import java.util.concurrent.Executors;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+/**
+ * 更换设备设备状态
+ */
 public class DeviceChangeActivity extends BaseTitleActivity implements GetDeviceStatesTask.OnGettingDeviceStatesListener, RadioManager.OnRadioArrivedListener, SitPullLinker.SitPullPairListener {
 
     private static final int UPDATE_SPECIFIC_ITEM = 1;

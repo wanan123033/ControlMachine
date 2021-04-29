@@ -72,16 +72,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         disposeManager = new RunTimerDisposeManager(this);
-        init();
     }
-
-    private void init() {
-        deviceManager = SerialDeviceManager.getInstance();
-        deviceManager.setRS232ResiltListener(runTimerListener);
-        getSetting();
-    }
-
-
 
     @Override
     protected void onResume() {
@@ -100,12 +91,15 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
             settingSensor = runTimerSetting.getSensor();
             reLoad = true ;
         }
+
     }
 
     /**
      * 设置
      */
-    private void getSetting() {
+    public void getSetting() {
+        deviceManager = SerialDeviceManager.getInstance();
+        deviceManager.setRS232ResiltListener(runTimerListener);
         runTimerSetting = SharedPrefsUtil.loadFormSource(this, RunTimerSetting.class);
         if (null == runTimerSetting) {
             runTimerSetting = new RunTimerSetting();

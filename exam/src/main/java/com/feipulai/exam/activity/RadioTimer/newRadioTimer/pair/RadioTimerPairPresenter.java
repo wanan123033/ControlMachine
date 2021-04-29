@@ -132,7 +132,7 @@ public class RadioTimerPairPresenter implements RadioContract.Presenter,
         view.showToast("未收到子机回复,设置失败,请重试");
     }
 
-    public static List<StuDevicePair> newPairs(int size) {
+    public List<StuDevicePair> newPairs(int size) {
         List<StuDevicePair> pairs = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             StuDevicePair pair = new StuDevicePair();

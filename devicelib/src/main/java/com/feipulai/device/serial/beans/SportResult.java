@@ -8,6 +8,7 @@ public class SportResult {
     private byte [] data;
     private int hostId;
     private int deviceState;
+    private int battery;
     public byte[] getData() {
         return data;
     }
@@ -110,6 +111,7 @@ public class SportResult {
                 if (data.length == 19){
                     deviceId = data[6];
                     hostId = data[5];
+                    battery = data[10];
                 }
                 break;
             case 13:
@@ -178,5 +180,13 @@ public class SportResult {
 
     public void setDeviceState(int deviceState) {
         this.deviceState = deviceState;
+    }
+
+    public int getBattery() {
+        return battery;
+    }
+
+    public void setBattery(int battery) {
+        this.battery = battery;
     }
 }

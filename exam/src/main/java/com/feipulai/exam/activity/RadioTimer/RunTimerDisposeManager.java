@@ -83,7 +83,7 @@ public class RunTimerDisposeManager {
         roundResult.setItemCode(TestConfigs.getCurrentItemCode());
         roundResult.setResult(result);
         roundResult.setMachineResult(result);
-        roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
+        roundResult.setResultState(result > 0?RoundResult.RESULT_STATE_NORMAL:RoundResult.RESULT_STATE_WAIVE);
         roundResult.setTestTime(startTime);
         roundResult.setRoundNo(currentTestTime);
         roundResult.setTestNo(testNo);

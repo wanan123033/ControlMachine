@@ -16,7 +16,7 @@ public class StuDevicePair implements Serializable {
 	private IDeviceResult deviceResult;
 	//判罚
 	private int penalty;
-	
+	private int battery;
 	public IDeviceResult getDeviceResult(){
 		return deviceResult;
 	}
@@ -58,5 +58,12 @@ public class StuDevicePair implements Serializable {
 				", penalty=" + penalty +
 				'}';
 	}
-	
+
+	public int getBattery() {
+		return battery;
+	}
+
+	public void setBattery(int battery) {
+		this.battery = battery;
+	}
 }
