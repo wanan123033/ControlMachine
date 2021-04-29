@@ -55,7 +55,7 @@ public class UpdateService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
         String lastDownLoadTime = SharedPrefsUtil.getValue(getApplicationContext(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.LAST_DOWNLOAD_TIME, "");
         HttpSubscriber subscriber = new HttpSubscriber();
-        subscriber.getItemStudent(TestConfigs.getCurrentItemCode(), 1, StudentItem.EXAM_NORMAL);
+        subscriber.getItemStudent(lastDownLoadTime,TestConfigs.getCurrentItemCode(), 1, StudentItem.EXAM_NORMAL);
 
         photoHeaders = SharedPrefsUtil.loadFormSource(this, DownLoadPhotoHeaders.class);
         uploadPhotos(1, photoHeaders.getUploadTime());

@@ -40,7 +40,7 @@ public class ServerMessage {
      *
      * @param context
      */
-    public static void downloadData(final Context context, final int examType) {
+    public static void downloadData(final Context context, final int examType, final String downTime) {
         itemList = null;
         final HttpSubscriber subscriber = new HttpSubscriber();
         subscriber.setOnRequestEndListener(new HttpSubscriber.OnRequestEndListener() {
@@ -63,20 +63,20 @@ public class ServerMessage {
                         if (itemList != null) {
                             for (int i = 0; i < itemList.size(); i++) {
                                 if (!TextUtils.isEmpty(itemList.get(i).getItemCode())) {
-                                    subscriber.getItemStudent(itemList.get(i).getItemCode(), 1, examType);
+                                    subscriber.getItemStudent(downTime, itemList.get(i).getItemCode(), 1, examType);
                                     position = i + 1;
                                     return;
                                 }
                             }
 
                         } else {
-                            subscriber.getItemStudent(TestConfigs.getCurrentItemCode(), 1, examType);
+                            subscriber.getItemStudent(downTime, TestConfigs.getCurrentItemCode(), 1, examType);
                         }
                         break;
                     case HttpSubscriber.STUDENT_BIZ://学生
                         if (itemList != null) {
                             if (position < itemList.size()) {
-                                subscriber.getItemStudent(itemList.get(position).getItemCode(), 1, examType);
+                                subscriber.getItemStudent(downTime, itemList.get(position).getItemCode(), 1, examType);
                                 position++;
                                 return;
                             }
@@ -148,6 +148,7 @@ public class ServerMessage {
             public void onRequestData(Object data) {
 
             }
+
             @Override
             public void onSuccess(int bizType) {
                 switch (bizType) {
@@ -211,6 +212,7 @@ public class ServerMessage {
             public void onRequestData(Object data) {
 
             }
+
             @Override
             public void onSuccess(int bizType) {
                 switch (bizType) {
@@ -273,6 +275,7 @@ public class ServerMessage {
             public void onRequestData(Object data) {
 
             }
+
             @Override
             public void onSuccess(int bizType) {
                 switch (bizType) {
@@ -323,6 +326,7 @@ public class ServerMessage {
             public void onRequestData(Object data) {
 
             }
+
             @Override
             public void onSuccess(int bizType) {
                 switch (bizType) {

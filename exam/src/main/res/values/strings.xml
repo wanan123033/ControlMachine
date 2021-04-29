@@ -83,4 +83,5 @@
 
     <string name="download_photo_select">继续下载（%1$d / %2$d）</string>
     <string name="afr_count_hint">全部考生：%1$d          考生特征：%2$d </string>
+    <string name="download_title">名单下载</string>
 </resources>
