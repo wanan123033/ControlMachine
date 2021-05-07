@@ -1,6 +1,5 @@
 package com.feipulai.exam.activity.RadioTimer.newRadioTimer;
 
-import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
@@ -10,30 +9,24 @@ import android.widget.LinearLayout;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
-import com.feipulai.device.manager.SportTimerManger;
-import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.SportResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.RadioTimer.RunTimerSetting;
+import com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioContract;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
-import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.view.DividerItemDecoration;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class RadioDeviceDetailActivity extends BaseTitleActivity implements DeviceDetailsAdapter.OnItemClickListener, RadioManager.OnRadioArrivedListener {
+public class RadioDeviceDetailActivity extends BaseTitleActivity implements DeviceDetailsAdapter.OnItemClickListener, RadioContract.View {
 
     @BindView(R.id.rv_pairs)
     public RecyclerView mRvPairs;
@@ -55,9 +48,9 @@ public class RadioDeviceDetailActivity extends BaseTitleActivity implements Devi
     private final int START_POINT = 0;
     private final int END_POINT = 1;
     private int selectPoint = 0;
-    SportTimerManger sportTimerManger;
-    private ScheduledExecutorService checkService;
     private int deviceNum;
+    private ChangeDeviceUtil changeDevice;
+    private int selectDeviceId;
 
     @Override
     protected int setLayoutResID() {
@@ -70,12 +63,14 @@ public class RadioDeviceDetailActivity extends BaseTitleActivity implements Devi
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this);
         dividerItemDecoration.setDrawBorderTopAndBottom(true);
         dividerItemDecoration.setDrawBorderLeftAndRight(true);
-        sportTimerManger = new SportTimerManger();
-        checkService = Executors.newSingleThreadScheduledExecutor();
+
+
         mRvPairs.addItemDecoration(dividerItemDecoration);
         setting = SharedPrefsUtil.loadFormSource(this, RunTimerSetting.class);
         deviceNum = Integer.parseInt(setting.getRunNum()) + 1;
-//        presenter = new RadioTimerPairPresenter(this, this, Integer.parseInt(setting.getRunNum()));
+        changeDevice = new ChangeDeviceUtil(this, setting);
+        changeDevice.setCheck(true);
+        changeDevice.setCheckState();
         if (setting.getInterceptPoint() != 2) {//起点拦截
             selectPoint = 0;
             beginningPoint.setVisibility(View.VISIBLE);
@@ -107,27 +102,8 @@ public class RadioDeviceDetailActivity extends BaseTitleActivity implements Devi
             mEndAdapter.setOnItemClickListener(this);
         }
 
-        checkService.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                intervalRun();
-            }
-        }, 100, 400, TimeUnit.MILLISECONDS);
     }
 
-    private void intervalRun() {
-        if (setting.getInterceptPoint() != 3) {
-            for (int i = 0; i < deviceNum; i++) {
-                sportTimerManger.connect(i, SettingHelper.getSystemSetting().getHostId());
-            }
-        } else {
-            int num = deviceNum * 2 - 2;
-            for (int i = 0; i < num; i++) {
-                sportTimerManger.connect(i, SettingHelper.getSystemSetting().getHostId());
-            }
-        }
-
-    }
 
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
@@ -144,20 +120,24 @@ public class RadioDeviceDetailActivity extends BaseTitleActivity implements Devi
                 mEndAdapter.setSelected(-1);
                 updateSpecificItem(oldSelectPosition, selectPoint);
                 mAdapter.setSelected(position);
+                selectDeviceId = mAdapter.stuPairs.get(position).getBaseDevice().getDeviceId();
             } else {
                 oldSelectPosition = mAdapter.getSelected();
                 mAdapter.setSelected(-1);
                 updateSpecificItem(oldSelectPosition, selectPoint);
                 mEndAdapter.setSelected(position);
+                selectDeviceId = mEndAdapter.stuPairs.get(position).getBaseDevice().getDeviceId();
             }
             selectPoint = point;
         } else {
             if (point == START_POINT) {
                 oldSelectPosition = mAdapter.getSelected();
                 mAdapter.setSelected(position);
+                selectDeviceId = mAdapter.stuPairs.get(position).getBaseDevice().getDeviceId();
             } else {
                 oldSelectPosition = mEndAdapter.getSelected();
                 mEndAdapter.setSelected(position);
+                selectDeviceId = mEndAdapter.stuPairs.get(position).getBaseDevice().getDeviceId();
             }
             updateSpecificItem(oldSelectPosition, point);
         }
@@ -173,6 +153,28 @@ public class RadioDeviceDetailActivity extends BaseTitleActivity implements Devi
         mHandler.sendMessage(msg);
     }
 
+    @Override
+    public void select(int position, int point) {
+        updateSpecificItem(position, point);
+        changeDevice.setCheck(true);
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void showToast(String msg) {
+        toastSpeak(msg);
+        changeDevice.setCheck(true);
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     private List<StuDevicePair> newPairs(int size) {
         List<StuDevicePair> pairs = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
@@ -184,17 +186,6 @@ public class RadioDeviceDetailActivity extends BaseTitleActivity implements Devi
         return pairs;
     }
 
-    @Override
-    public void onRadioArrived(Message msg) {
-        switch (msg.what) {
-            case SerialConfigs.SPORT_TIMER_CONNECT:
-                if (msg.obj instanceof SportResult) {
-                    mHandler.sendMessage(msg);
-                }
-                break;
-
-        }
-    }
 
     private MyHandler mHandler = new MyHandler(this);
 
@@ -230,14 +221,21 @@ public class RadioDeviceDetailActivity extends BaseTitleActivity implements Devi
                 adapter.notifyItemChanged(sportResult.getDeviceId());
             }
         }
-    }
 
+    }
 
 
     @OnClick({R.id.btn_change_bad})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_change_bad:
+                changeDevice.setCheck(false);
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                changeDevice.start(selectDeviceId, selectPoint);
 
                 break;
         }
