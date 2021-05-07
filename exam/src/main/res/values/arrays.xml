@@ -95,4 +95,11 @@
         <item>下载全部</item>
         <item>下载更新</item>
     </array>
+
+    <array name="afr_list">
+        <item>60%</item>
+        <item>70%</item>
+        <item>80%</item>
+        <item>90%</item>
+    </array>
 </resources>

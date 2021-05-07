@@ -1,6 +1,7 @@
 package com.feipulai.exam.activity;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,12 +29,14 @@ import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialParams;
 import com.feipulai.device.udp.UdpLEDUtil;
+import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForGroupActivity;
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForPersonActivity;
 import com.feipulai.exam.activity.MiddleDistanceRace.MyTcpService;
 import com.feipulai.exam.activity.base.BaseActivity;
 import com.feipulai.exam.activity.base.BaseGroupActivity;
+import com.feipulai.exam.activity.basketball.util.TimerUtil;
 import com.feipulai.exam.activity.data.DataManageActivity;
 import com.feipulai.exam.activity.data.DataRetrieveActivity;
 import com.feipulai.exam.activity.data.print.PrintPreviewActivity;
@@ -52,12 +55,14 @@ import com.feipulai.exam.netUtils.CommonUtils;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.service.UploadService;
 import com.feipulai.exam.view.BatteryView;
+import com.orhanobut.logger.Logger;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.videolibrary.StorageUtils;
 import com.ww.fpl.videolibrary.play.util.PUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -75,6 +80,15 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
     private boolean mIsExiting;
     private Intent serverIntent;
     private Intent bindIntent;
+    private TimerUtil timerUtil = new TimerUtil(new TimerUtil.TimerAccepListener() {
+        @Override
+        public void timer(Long time) {
+
+            long todayTime = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0l);
+            Logger.i("使用时长Log:" + (todayTime + 60 * 1000));
+            SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, todayTime + 60 * 1000);
+        }
+    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +125,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
 
             }
         });
-
+        timerUtil.startTime(60, TimeUnit.SECONDS);
 
         //测试数据
 //        List<GroupItem> items = DBManager.getInstance().queryGroupItemByCode("11");
@@ -321,10 +335,12 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
         RadioManager.getInstance().close();
         super.onDestroy();
         if (mIsExiting) {
+            timerUtil.stop();
             Intent tcpServiceIntent = new Intent(this, MyTcpService.class);
             stopService(tcpServiceIntent);
             ActivityCollector.getInstance().finishAllActivity();
             System.exit(0);
+
         }
     }
 

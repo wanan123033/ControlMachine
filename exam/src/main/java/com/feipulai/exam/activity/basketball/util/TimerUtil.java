@@ -35,6 +35,20 @@ public class TimerUtil {
                 });
     }
 
+    public void startTime(long period, TimeUnit timeUnit) {
+        disposable = Observable.interval(0, period, timeUnit)
+                .observeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Long>() {
+                    @Override
+                    public void accept(Long aLong) throws Exception {
+//                        Logger.i("accept-------->" + aLong);
+                        if (listener != null)
+                            listener.timer(aLong);
+                    }
+                });
+    }
+
     public void stop() {
         if (disposable != null) {
             disposable.dispose();

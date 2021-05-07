@@ -61,6 +61,7 @@ import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.CommonPopupWindow;
 import com.orhanobut.logger.utils.LogUtils;
 
@@ -498,10 +499,11 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 }
                 if (groupList.size() <= groupAdapter.getTestPosition())
                     return;
-                if (groupList.get(groupAdapter.getTestPosition()).getIsTestComplete() == 1) {
-                    ToastUtils.showShort("该组测试完，请选择下一组");
-                    return;
-                }
+
+//                if (groupList.get(groupAdapter.getTestPosition()).getIsTestComplete() == 1) {
+//                    ToastUtils.showShort("该组测试完，请选择下一组");
+//                    return;
+//                }
                 TestConfigs.baseGroupMap.put("group", groupList.get(groupAdapter.getTestPosition()));
                 pairs.clear();
                 for (BaseStuPair pair : stuPairsList) {
@@ -509,6 +511,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                         pairs.add(pair);
                         Student student = pair.getStudent();
                         List<RoundResult> results = getResults(student.getStudentCode());
+                        setStuPairsData(pair, results);
                         // 获取到组的考生时,将所有成绩均添加到 baseGroupMap中
                         TestConfigs.baseGroupMap.put(student, results);
                     }
@@ -517,6 +520,11 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     toastSpeak("当前无测试考生请重选!");
                     return;
                 }
+                if (isAllTest()) {
+                    ToastUtils.showShort("该组测试完，请选择下一组");
+                    return;
+                }
+
                 TestConfigs.baseGroupMap.put("basePairStu", pairs);
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_FWC) {
                     PushUpSetting setting = SharedPrefsUtil.loadFormSource(this, PushUpSetting.class);
@@ -591,7 +599,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     trackNoMap.put(student, stuPair.getTrackNo());
                 }
                 if (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4
-                        ||SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP) {
+                        || SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP) {
                     InteractUtils.printA4Result(this, groupList.get(groupAdapter.getTestPosition()));
                 } else {
                     InteractUtils.printResults(groupList.get(groupAdapter.getTestPosition()),
@@ -603,6 +611,42 @@ public class BaseGroupActivity extends BaseTitleActivity {
 
                 break;
         }
+    }
+
+    /**
+     * 设置位置考生已测成绩
+     *
+     * @param roundResultList
+     */
+    public void setStuPairsData(BaseStuPair pair, List<RoundResult> roundResultList) {
+
+        String[] result = new String[TestConfigs.getMaxTestCount(this)];
+        for (int j = 0; j < roundResultList.size(); j++) {
+            switch (roundResultList.get(j).getResultState()) {
+                case RoundResult.RESULT_STATE_FOUL:
+                    result[j] = "X";
+                    break;
+                case -2:
+                    result[j] = "中退";
+                    break;
+                default:
+                    result[j] = ResultDisplayUtils.getStrResultForDisplay(roundResultList.get(j).getResult());
+                    break;
+            }
+
+        }
+        pair.setTimeResult(result);
+    }
+
+    private boolean isAllTest() {
+        for (BaseStuPair stuPair : stuPairsList) {
+            for (String s : stuPair.getTimeResult()) {
+                if (TextUtils.isEmpty(s)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @Override

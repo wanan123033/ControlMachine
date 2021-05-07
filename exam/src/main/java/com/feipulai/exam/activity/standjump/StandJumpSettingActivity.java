@@ -225,8 +225,10 @@ public class StandJumpSettingActivity extends BaseTitleActivity implements Compo
         txtDeviceScope.setText("范围：51cm-" + (testPoints * 100 + 50 - 8) + "cm");
         scope = standSetting.getPointsScope();
 
+        if (standSetting.getTestType()==1){
+            initMorePoints(1);
+        }
 
-        initMorePoints(1);
     }
 
 

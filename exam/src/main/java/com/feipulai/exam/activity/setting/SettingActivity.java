@@ -136,6 +136,12 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     LinearLayout llPrintTool;
     @BindView(R.id.txt_host_hint)
     TextView txtHostHint;
+
+    @BindView(R.id.sp_afr)
+    Spinner spAfr;
+    @BindView(R.id.ll_afr)
+    LinearLayout llAfr;
+
     private String[] partternList = new String[]{"个人测试", "分组测试"};
     private List<Integer> hostIdList;
     private SystemSetting systemSetting;
@@ -256,6 +262,10 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_YWQZ || TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_SGBQS) {
             txtHostHint.setVisibility(View.VISIBLE);
         }
+
+        spAfr.setSelection(systemSetting.getAfrContrast());
+
+
     }
 
     @Nullable
@@ -271,7 +281,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     }
 
 
-    @OnItemSelected({R.id.sp_host_id, R.id.sp_check_tool, R.id.sp_pattern, R.id.sp_qr_length, R.id.sp_print_tool})
+    @OnItemSelected({R.id.sp_host_id, R.id.sp_check_tool, R.id.sp_pattern, R.id.sp_qr_length, R.id.sp_print_tool, R.id.sp_afr})
     public void spinnerItemSelected(Spinner spinner, int position) {
         switch (spinner.getId()) {
             case R.id.sp_host_id:
@@ -292,6 +302,11 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                 break;
             case R.id.sp_check_tool:
                 systemSetting.setCheckTool(position);
+                if (position == 4) {
+                    llAfr.setVisibility(View.VISIBLE);
+                } else {
+                    llAfr.setVisibility(View.GONE);
+                }
                 break;
             case R.id.sp_print_tool:
                 if (position == 0) {
@@ -300,6 +315,9 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                     btnPrintSetting.setVisibility(View.VISIBLE);
                 }
                 systemSetting.setPrintTool(position);
+                break;
+            case R.id.sp_afr:
+                systemSetting.setAfrContrast(position);
                 break;
         }
     }
@@ -334,7 +352,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        ToastUtils.showShort("人脸识别激活失败");
                     }
 
                     @Override

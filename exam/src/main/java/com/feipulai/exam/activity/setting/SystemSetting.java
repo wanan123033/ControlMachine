@@ -130,6 +130,22 @@ public class SystemSetting {
     //手动输入成绩测试
     private boolean isInputTest;
 
+    /**
+     * 0 60
+     * 1 70
+     * 2 80
+     * 3 90
+     */
+    private int afrContrast = 2;
+
+    public int getAfrContrast() {
+        return afrContrast;
+    }
+
+    public void setAfrContrast(int afrContrast) {
+        this.afrContrast = afrContrast;
+    }
+
     public boolean isInputTest() {
         return isInputTest;
     }
