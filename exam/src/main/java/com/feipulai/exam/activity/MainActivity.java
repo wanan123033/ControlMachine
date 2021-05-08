@@ -50,7 +50,10 @@ import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.Group;
+import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.RoundResult;
+import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.netUtils.CommonUtils;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.service.UploadService;
@@ -127,13 +130,13 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
         });
         timerUtil.startTime(60, TimeUnit.SECONDS);
 
-        //测试数据
+//        测试数据
 //        List<GroupItem> items = DBManager.getInstance().queryGroupItemByCode("11");
 //        List<RoundResult> roundResults = new ArrayList<>();
 //        RoundResult roundResult;
 //        int countI = 0;
 //        for (GroupItem groupItem : items
-//                ) {
+//        ) {
 //            Group group = DBManager.getInstance().queryGroup("11", 1);
 //            roundResult = new RoundResult();
 //            roundResult.setGroupId(group.getId());
@@ -153,6 +156,8 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
 //        }
 //        roundResults.get(2).setResultState(2);
 //        DBManager.getInstance().insertRoundResults(roundResults);
+
+
     }
 
     @Override
@@ -294,6 +299,26 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                 PrinterManager.getInstance().print("\n\n");
 //                addTestResult();
 //                IntentUtil.gotoActivity(this,PrintPreviewActivity.class);
+                    //todo 添加测试数据
+//                List<RoundResult> roundResults = new ArrayList<>();
+//                List<Student> studentList = DBManager.getInstance().dumpAllStudents();
+//                for (Student student : studentList) {
+//                    RoundResult roundResult = new RoundResult();
+//                    roundResult.setIsLastResult(1);
+//                    roundResult.setItemCode(TestConfigs.getCurrentItemCode());
+//                    roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
+//                    roundResult.setMachineResult(1130 * 100);
+//                    roundResult.setResult(1130 * 100);
+//                    roundResult.setResultState(1);
+//                    roundResult.setRoundNo(1);
+//                    roundResult.setScheduleNo("3");
+//                    roundResult.setStudentCode(student.getStudentCode());
+//                    roundResult.setTestNo(1);
+//                    roundResult.setTestTime(System.currentTimeMillis() + "");
+//                    roundResults.add(roundResult);
+//                }
+//                DBManager.getInstance().insertRoundResults(roundResults);
+//                toastSpeak("添加成功");
                 break;
             case R.id.card_parameter_setting:
                 startActivity(new Intent(MainActivity.this, SettingActivity.class));
