@@ -495,7 +495,9 @@ public class HttpSubscriber {
                     } else {
                         SettingHelper.getSystemSetting().setTestPattern(SystemSetting.GROUP_PATTERN);
                     }
-                    registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+                    if (!TextUtils.isEmpty(student.getFaceFeature())) {
+                        registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+                    }
                 }
                 if (SettingHelper.getSystemSetting().getCheckTool() == 4) {
                     FaceServer.getInstance().addFaceList(registerInfoList);
