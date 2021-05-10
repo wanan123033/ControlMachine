@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
@@ -18,6 +19,7 @@ import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.view.DividerItemDecoration;
+import com.feipulai.exam.view.WaitDialog;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
@@ -26,7 +28,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class RadioDeviceDetailActivity extends BaseTitleActivity implements DeviceDetailsAdapter.OnItemClickListener, RadioContract.View {
+public class RadioDeviceDetailActivity extends BaseTitleActivity implements DeviceDetailsAdapter.OnItemClickListener, RadioContract.View, ChangeDeviceUtil.ResponseArrivedListener {
 
     @BindView(R.id.rv_pairs)
     public RecyclerView mRvPairs;
@@ -45,12 +47,14 @@ public class RadioDeviceDetailActivity extends BaseTitleActivity implements Devi
 //    Button btnEndHelper;
     private RunTimerSetting setting;
     private static final int UPDATE_SPECIFIC_ITEM = 0x1;
+    private static final int UPDATE_DIALOG = 0x2;
     private final int START_POINT = 0;
     private final int END_POINT = 1;
     private int selectPoint = 0;
     private int deviceNum;
     private ChangeDeviceUtil changeDevice;
     private int selectDeviceId;
+    private WaitDialog changBadDialog;
 
     @Override
     protected int setLayoutResID() {
@@ -71,6 +75,7 @@ public class RadioDeviceDetailActivity extends BaseTitleActivity implements Devi
         changeDevice = new ChangeDeviceUtil(this, setting);
         changeDevice.setCheck(true);
         changeDevice.setCheckState();
+        changeDevice.setListener(this);
         if (setting.getInterceptPoint() != 2) {//起点拦截
             selectPoint = 0;
             beginningPoint.setVisibility(View.VISIBLE);
@@ -156,12 +161,7 @@ public class RadioDeviceDetailActivity extends BaseTitleActivity implements Devi
     @Override
     public void select(int position, int point) {
         updateSpecificItem(position, point);
-        changeDevice.setCheck(true);
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        mHandler.sendEmptyMessage(UPDATE_DIALOG);
     }
 
     @Override
@@ -194,11 +194,7 @@ public class RadioDeviceDetailActivity extends BaseTitleActivity implements Devi
         switch (msg.what) {
             case SerialConfigs.SPORT_TIMER_CONNECT:
                 SportResult sportResult = (SportResult) msg.obj;
-                if (sportResult.getDeviceId() < deviceNum) {
-                    updateDevice(sportResult, mAdapter);
-                } else {
-                    updateDevice(sportResult, mEndAdapter);
-                }
+                updateDevice(sportResult);
                 break;
             case UPDATE_SPECIFIC_ITEM:
                 switch (msg.arg2) {
@@ -210,15 +206,43 @@ public class RadioDeviceDetailActivity extends BaseTitleActivity implements Devi
                         break;
                 }
                 break;
+            case UPDATE_DIALOG:
+                changeDevice.setCheck(true);
+                if (changBadDialog != null && changBadDialog.isShowing()) {
+                    changBadDialog.dismiss();
+                }
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
     }
 
-    private void updateDevice(SportResult sportResult, DeviceDetailsAdapter adapter) {
-        for (StuDevicePair stuPair : adapter.stuPairs) {
-            if (stuPair.getBaseDevice().getDeviceId() == sportResult.getDeviceId()) {
+    private void updateDevice(SportResult sportResult) {
+        if (mEndAdapter != null) {
+            for (StuDevicePair stuPair : mEndAdapter.stuPairs) {
+                if (stuPair.getBaseDevice().getDeviceId() == sportResult.getDeviceId()) {
+                    stuPair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+                    stuPair.setBattery(sportResult.getBattery());
+                    if (sportResult.getDeviceId() < mEndAdapter.stuPairs.size()) {
+                        mEndAdapter.notifyItemChanged(sportResult.getDeviceId());
+                    } else {
+                        mEndAdapter.notifyItemChanged(sportResult.getDeviceId() - mEndAdapter.stuPairs.size() + 1);
+                    }
+
+                }
+            }
+        }
+
+        if (mAdapter != null) {
+            for (StuDevicePair stuPair : mAdapter.stuPairs) {
                 stuPair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
                 stuPair.setBattery(sportResult.getBattery());
-                adapter.notifyItemChanged(sportResult.getDeviceId());
+                if (stuPair.getBaseDevice().getDeviceId() == sportResult.getDeviceId()) {
+                    mAdapter.notifyItemChanged(sportResult.getDeviceId());
+                }
             }
         }
 
@@ -235,9 +259,37 @@ public class RadioDeviceDetailActivity extends BaseTitleActivity implements Devi
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                showChangeBadDialog();
                 changeDevice.start(selectDeviceId, selectPoint);
-
                 break;
         }
+    }
+
+    @Override
+    public void onReceiveResult(Message msg) {
+        mHandler.sendMessage(msg);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        changeDevice.setCheck(false);
+
+    }
+
+    public void showChangeBadDialog() {
+        changBadDialog = new WaitDialog(this);
+        changBadDialog.setCanceledOnTouchOutside(false);
+        changBadDialog.setCancelable(false);
+        changBadDialog.show();
+        // 必须在dialog显示出来后再调用
+        changBadDialog.setTitle("请重启待连接设备");
+        changBadDialog.btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changBadDialog.dismiss();
+                changeDevice.cancelChangeBad();
+            }
+        });
     }
 }

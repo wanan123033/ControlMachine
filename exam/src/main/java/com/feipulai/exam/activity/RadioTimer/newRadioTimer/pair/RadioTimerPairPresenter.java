@@ -43,6 +43,7 @@ public class RadioTimerPairPresenter implements RadioContract.Presenter,
     @Override
     public void start(int deviceId, int point) {
         pairs = newPairs(deviceSum + 1);
+        this.point = point;
         RadioManager.getInstance().setOnRadioArrived(this);
         if (linker == null) {
             linker = new RadioLinker(machineCode, TARGET_FREQUENCY, this);
@@ -108,18 +109,17 @@ public class RadioTimerPairPresenter implements RadioContract.Presenter,
 
     public void onNewDeviceConnect() {
         pairs.get(focusPosition).getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+        view.updateSpecificItem(focusPosition, point);
         if (isAutoPair && focusPosition != pairs.size() - 1) {
             changeFocusPosition(focusPosition + 1, point);
             //这里先清除下一个的连接状态,避免没有连接但是现实已连接
             BaseDeviceState originState = pairs.get(focusPosition).getBaseDevice();
             originState.setState(BaseDeviceState.STATE_DISCONNECT);
+
         }
-        view.updateSpecificItem(focusPosition, point);
+
     }
 
-    public void setState(int position){
-        pairs.get(position).getBaseDevice().setState(BaseDeviceState.STATE_DISCONNECT);
-    }
 
     @Override
     public void onRadioArrived(Message msg) {
