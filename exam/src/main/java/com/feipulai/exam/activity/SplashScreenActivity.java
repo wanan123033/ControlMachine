@@ -124,6 +124,8 @@ public class SplashScreenActivity extends BaseActivity {
 //            }
 //        }, 2000);
         HttpManager.DEFAULT_CONNECT_TIMEOUT = 20;
+        HttpManager.DEFAULT_READ_TIMEOUT = 20;
+        HttpManager.DEFAULT_WRITE_TIMEOUT = 20;
         HttpManager.resetManager();
         Intent intent = new Intent();
 //                        intent.setClass(SplashScreenActivity.this, AccountActivity.class);

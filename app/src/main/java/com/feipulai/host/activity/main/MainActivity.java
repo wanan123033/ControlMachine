@@ -20,6 +20,7 @@ import com.feipulai.common.view.baseToolbar.StatusBarUtil;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
+import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseActivity;
 import com.feipulai.host.activity.data.DataManageActivity;
@@ -35,9 +36,12 @@ import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.netUtils.CommonUtils;
+import com.feipulai.host.utils.TimerUtil;
+import com.orhanobut.logger.Logger;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,7 +61,15 @@ public class MainActivity extends BaseActivity {
     TextView txtDeviceId;
     private boolean mIsExiting;
     private Intent serverIntent;
+    private TimerUtil timerUtil = new TimerUtil(new TimerUtil.TimerAccepListener() {
+        @Override
+        public void timer(Long time) {
 
+            long todayTime = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0l);
+            Logger.i("使用时长Log:" + (todayTime + 60 * 1000));
+            SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, todayTime + 60 * 1000);
+        }
+    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +79,7 @@ public class MainActivity extends BaseActivity {
         DateUtil.setTimeZone(this, "Asia/Shanghai");
         RadioManager.getInstance().init();
         StatusBarUtil.setImmersiveTransparentStatusBar(this);//设置沉浸式透明状态栏 配合使用
-
+        timerUtil.startTime(60, TimeUnit.SECONDS);
     }
 
     private boolean isSettingFinished() {
