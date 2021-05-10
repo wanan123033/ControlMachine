@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 
 import com.feipulai.common.utils.DateUtil;
@@ -55,6 +56,8 @@ import com.feipulai.exam.netUtils.download.DownloadListener;
 import com.feipulai.exam.netUtils.download.DownloadUtils;
 import com.feipulai.exam.utils.EncryptUtil;
 import com.orhanobut.logger.Logger;
+import com.ww.fpl.libarcface.faceserver.FaceServer;
+import com.ww.fpl.libarcface.model.FaceRegisterInfo;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONObject;
@@ -454,7 +457,7 @@ public class HttpSubscriber {
 
                 final List<Student> studentList = new ArrayList<>();
                 final List<StudentItem> studentItemList = new ArrayList<>();
-
+                List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
                 for (StudentBean studentBean : result.getDataInfo()) {
                     if (!stuList.contains(studentBean.getIdCard())) {
                         stuList.add(studentBean.getIdCard());
@@ -492,6 +495,12 @@ public class HttpSubscriber {
                     } else {
                         SettingHelper.getSystemSetting().setTestPattern(SystemSetting.GROUP_PATTERN);
                     }
+                    if (!TextUtils.isEmpty(student.getFaceFeature())) {
+                        registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+                    }
+                }
+                if (SettingHelper.getSystemSetting().getCheckTool() == 4) {
+                    FaceServer.getInstance().addFaceList(registerInfoList);
                 }
                 SettingHelper.updateSettingCache(SettingHelper.getSystemSetting());
                 DBManager.getInstance().insertStudentList(studentList);

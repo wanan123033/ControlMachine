@@ -55,7 +55,7 @@ public class MyApplication extends MultiDexApplication {
         super.onCreate();
         instance = this;
         LogUtils.initLogger(true, true, PATH_LOG_NAME);
-//        CrashHandler.getInstance().init(this);
+        CrashHandler.getInstance().init(this);
         CrashHandler.getInstance().setUploadOpersion(new CrashHandler.UploadOpersion() {
             @Override
             public void upload(String erroMsg) {
@@ -95,7 +95,7 @@ public class MyApplication extends MultiDexApplication {
 
         SerialParams.init(this);
 
-        registerActivityLifecycleCallbacks(new ActivityLifeCycle(SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME));
+//        registerActivityLifecycleCallbacks(new ActivityLifeCycle(SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME));
         SOFTWAREUUID = MyApplication.getInstance().getString(R.string.software_uuid);//软件识别码
         HARDWAREUUID = MyApplication.getInstance().getString(R.string.hardware_uuid);//硬件识别码
     }

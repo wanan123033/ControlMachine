@@ -145,7 +145,15 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
     protected void initData() {
         initEngine();
         initCamera();
-
+        if (SettingHelper.getSystemSetting().getAfrContrast() == 0) {
+            SIMILAR_THRESHOLD = 0.60F;
+        } else if (SettingHelper.getSystemSetting().getAfrContrast() == 1) {
+            SIMILAR_THRESHOLD = 0.70F;
+        } else if (SettingHelper.getSystemSetting().getAfrContrast() == 2) {
+            SIMILAR_THRESHOLD = 0.80F;
+        } else {
+            SIMILAR_THRESHOLD = 0.90F;
+        }
     }
 
     private void initCamera() {
@@ -303,7 +311,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
     }
 
 
-    public boolean  gotoUVCFaceCamera(boolean isOpen) {
+    public boolean gotoUVCFaceCamera(boolean isOpen) {
         isLodingServer = false;
         if (isOpen) {
             isStartFace = true;
@@ -527,7 +535,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         drawHelper.draw(faceRectView2, drawInfoList);
     }
 
-    private final float SIMILAR_THRESHOLD = 0.90f;
+    private float SIMILAR_THRESHOLD = 0.90f;
     private int hasTry = 0;
 
     //3个线程查找
@@ -673,11 +681,12 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
     /**
      * 保存个人识别信息
+     *
      * @param student
      * @param b
      */
     private void saveStuImage(Student student, Bitmap b) {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_stu_saveinfo,null);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_stu_saveinfo, null);
         ImageView iv_real = view.findViewById(R.id.iv_real);
         ImageView iv_portrait = view.findViewById(R.id.iv_portrait);
         TextView tv_name = view.findViewById(R.id.tv_name);
@@ -688,12 +697,12 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         TextView tv_id_card = view.findViewById(R.id.tv_id_card);
         iv_real.setImageBitmap(textureView2.getBitmap());
         iv_portrait.setImageBitmap(student.getBitmapPortrait());
-        tv_name.setText("姓名:"+student.getStudentName());
-        tv_item.setText("项目:"+TestConfigs.sCurrentItem.getItemName());
-        tv_sex.setText("性别:"+(student.getSex() == 0 ? "男":"女"));
-        tv_school.setText("学校:"+student.getSchoolName());
-        tv_stu_code.setText("考号:"+student.getStudentCode());
-        tv_id_card.setText("身份证号:"+student.getIdCardNo());
+        tv_name.setText("姓名:" + student.getStudentName());
+        tv_item.setText("项目:" + TestConfigs.sCurrentItem.getItemName());
+        tv_sex.setText("性别:" + (student.getSex() == 0 ? "男" : "女"));
+        tv_school.setText("学校:" + student.getSchoolName());
+        tv_stu_code.setText("考号:" + student.getStudentCode());
+        tv_id_card.setText("身份证号:" + student.getIdCardNo());
 
         String path = MyApplication.PATH_FACE;
 
@@ -701,8 +710,8 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         ((Activity) mContext).getWindowManager().getDefaultDisplay().getMetrics(metric);
         int width = metric.widthPixels;     // 屏幕宽度（像素）
         int height = metric.heightPixels;   // 屏幕高度（像素）
-        ViewImageUtils.layoutView(view,  width, height);
-        ViewImageUtils.viewSaveToImage(view, path, student.getStudentCode()+"_"+TestConfigs.sCurrentItem.getItemName());
+        ViewImageUtils.layoutView(view, width, height);
+        ViewImageUtils.viewSaveToImage(view, path, student.getStudentCode() + "_" + TestConfigs.sCurrentItem.getItemName());
 
 //        view.setDrawingCacheEnabled(true);
 //        view.buildDrawingCache(true);
