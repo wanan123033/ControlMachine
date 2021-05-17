@@ -21,15 +21,21 @@ public class FootBallItemSelectActivity extends SubItemsSelectActivity {
         super.initData();
         this.itemList.clear();
         this.itemList.add(new Item("有线模式"));
-        this.itemList.add(new Item("无线模式"));
+        this.itemList.add(new Item("无线运球模式（V6.4）"));
+        this.itemList.add(new Item("无线运球模式（V6.6）"));
         this.adapter.notifyDataSetChanged();
         getToolbar().setTitle("足球运球模式选择");
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                FootBallSetting setting = SharedPrefsUtil.loadFormSource(FootBallItemSelectActivity.this,FootBallSetting.class);
-                setting.setTestType(position);
-                SharedPrefsUtil.save(FootBallItemSelectActivity.this,setting);
+                FootBallSetting setting = SharedPrefsUtil.loadFormSource(FootBallItemSelectActivity.this, FootBallSetting.class);
+                if (position == 2) {
+                    setting.setTestType(3);
+                } else {
+                    setting.setTestType(position);
+                }
+
+                SharedPrefsUtil.save(FootBallItemSelectActivity.this, setting);
                 if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
                     LogUtils.operation("跳转至FootballIndividualActivity");
                     IntentUtil.gotoActivity(FootBallItemSelectActivity.this, FootballIndividualActivity.class);
