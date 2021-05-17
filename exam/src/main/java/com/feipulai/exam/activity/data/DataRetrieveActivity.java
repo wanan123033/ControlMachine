@@ -45,6 +45,7 @@ import com.feipulai.exam.activity.data.adapter.ItemSelectAdapter;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.adapter.ScheduleAdapter;
 import com.feipulai.exam.bean.DataRetrieveBean;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
@@ -53,6 +54,7 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Item;
 import com.feipulai.exam.entity.RoundResult;
+import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.PrintResultUtil;
@@ -121,6 +123,9 @@ public class DataRetrieveActivity extends BaseTitleActivity
     TextView txtSpTitle;
     @BindView(R.id.sp_select_items)
     Spinner spSelectItems;
+    @BindView(R.id.sp_select_schedule)
+    Spinner spSelectSchedule;
+
     private List<Item> itemList;
     private DataRetrieveAdapter mAdapter;
     private List<DataRetrieveBean> mList;
@@ -135,6 +140,8 @@ public class DataRetrieveActivity extends BaseTitleActivity
             return false;
         }
     });
+
+    private List<Schedule> scheduleList = new ArrayList<>();
 
     @Override
     protected int setLayoutResID() {
@@ -381,29 +388,37 @@ public class DataRetrieveActivity extends BaseTitleActivity
         }
     }
 
-    @OnItemSelected({R.id.sp_select_items})
+    @OnItemSelected({R.id.sp_select_items, R.id.sp_select_schedule})
     public void spinnerItemSelected(Spinner spinner, int position) {
         switch (spinner.getId()) {
             case R.id.sp_select_items:
                 mCurrentItem = itemList.get(position);
-                mPageNum = 0;
-                //刷选条件必须至少有一个
-                if (cbUploaded.isChecked() || cbUnUpload.isChecked() || cbTested.isChecked() || cbUnTested.isChecked()) {
-                    //选择未测，证明没有成绩，所有选择已上传与未上传都是空列表
-                    if (cbUnTested.isChecked() && (cbUploaded.isChecked() || cbUnUpload.isChecked())) {
-                        mList.clear();
-                        mAdapter.notifyDataSetChanged();
-                    } else {
-                        chooseStudent();
-                    }
-                } else if (!TextUtils.isEmpty(mEtInputText.getText().toString())) {
-                    queryData(mEtInputText.getText().toString());
-                } else {
-                    mRbAll.setChecked(true);
-                    //查全部
-                    setAllList();
-                }
+
+                spSelectQuest();
                 break;
+            case R.id.sp_select_schedule:
+                spSelectQuest();
+                break;
+        }
+    }
+
+    private void spSelectQuest() {
+        mPageNum = 0;
+        //刷选条件必须至少有一个
+        if (cbUploaded.isChecked() || cbUnUpload.isChecked() || cbTested.isChecked() || cbUnTested.isChecked()) {
+            //选择未测，证明没有成绩，所有选择已上传与未上传都是空列表
+            if (cbUnTested.isChecked() && (cbUploaded.isChecked() || cbUnUpload.isChecked())) {
+                mList.clear();
+                mAdapter.notifyDataSetChanged();
+            } else {
+                chooseStudent();
+            }
+        } else if (!TextUtils.isEmpty(mEtInputText.getText().toString())) {
+            queryData(mEtInputText.getText().toString());
+        } else {
+            mRbAll.setChecked(true);
+            //查全部
+            setAllList();
         }
     }
 
@@ -501,8 +516,9 @@ public class DataRetrieveActivity extends BaseTitleActivity
         DataBaseExecutor.addTask(new DataBaseTask(this, getString(R.string.loading_hint), true) {
             @Override
             public DataBaseRespon executeOper() {
-                List<Student> studentList = DBManager.getInstance().getItemStudent(getItemCode(), LOAD_ITEMS, LOAD_ITEMS *
-                        mPageNum);
+                List<Student> studentList = DBManager.getInstance().getItemStudent(
+                        scheduleList.get(spSelectSchedule.getSelectedItemPosition()).getScheduleNo(), getItemCode(), LOAD_ITEMS,
+                        LOAD_ITEMS * mPageNum);
                 return new DataBaseRespon(true, "", studentList);
             }
 
@@ -512,7 +528,8 @@ public class DataRetrieveActivity extends BaseTitleActivity
                 List<Student> studentList = (List<Student>) respon.getObject();
                 if (mPageNum == 0) {
                     mList.clear();
-                    Map<String, Object> countMap = DBManager.getInstance().getItemStudenCount(getItemCode());
+                    Map<String, Object> countMap = DBManager.getInstance().getItemStudenCount(
+                            scheduleList.get(spSelectSchedule.getSelectedItemPosition()).getScheduleNo(), getItemCode());
                     setStuCount(countMap.get("count"), countMap.get("women_count"), countMap.get("man_count"));
                     Logger.i("zzs===>" + countMap.toString());
                 }
@@ -586,8 +603,8 @@ public class DataRetrieveActivity extends BaseTitleActivity
         DataBaseExecutor.addTask(new DataBaseTask(this, getString(R.string.loading_hint), true) {
             @Override
             public DataBaseRespon executeOper() {
-                List<Student> students = DBManager.getInstance().fuzzyQueryByStuCode(getItemCode(), inputText, LOAD_ITEMS, LOAD_ITEMS *
-                        mPageNum);
+                List<Student> students = DBManager.getInstance().fuzzyQueryByStuCode(
+                        scheduleList.get(spSelectSchedule.getSelectedItemPosition()).getScheduleNo(), getItemCode(), inputText, LOAD_ITEMS, LOAD_ITEMS * mPageNum);
                 return new DataBaseRespon(true, "", students);
             }
 
@@ -620,7 +637,8 @@ public class DataRetrieveActivity extends BaseTitleActivity
                 }
                 mRefreshView.finishRefreshAndLoad();
                 mAdapter.notifyDataSetChanged();
-                Map<String, Object> countMap = DBManager.getInstance().fuzzyQueryByStuCodeCount(getItemCode(), inputText);
+                Map<String, Object> countMap = DBManager.getInstance().fuzzyQueryByStuCodeCount(
+                        scheduleList.get(spSelectSchedule.getSelectedItemPosition()).getScheduleNo(), getItemCode(), inputText);
                 setStuCount(countMap.get("count"), countMap.get("women_count"), countMap.get("man_count"));
             }
 
@@ -652,6 +670,11 @@ public class DataRetrieveActivity extends BaseTitleActivity
         });
         mRefreshView.setOnRefreshLoadmoreListener(this);
         mRefreshView.setEnableAutoLoadmore(true);
+
+        scheduleList.add(new Schedule("-2", "全部日程", ""));
+        scheduleList.addAll(DBManager.getInstance().getAllSchedules());
+        spSelectSchedule.setAdapter(new ScheduleAdapter(this, scheduleList));
+
     }
 
     @OnClick({R.id.cb_tested, R.id.cb_un_tested, R.id.cb_uploaded, R.id.cb_un_upload})
@@ -781,7 +804,8 @@ public class DataRetrieveActivity extends BaseTitleActivity
         DataBaseExecutor.addTask(new DataBaseTask(this, getString(R.string.loading_hint), true) {
             @Override
             public DataBaseRespon executeOper() {
-                List<Student> studentList = DBManager.getInstance().getChooseStudentList(getItemCode(), cbTested.isChecked(),
+                List<Student> studentList = DBManager.getInstance().getChooseStudentList(scheduleList.get(spSelectSchedule.getSelectedItemPosition()).getScheduleNo(),
+                        getItemCode(), cbTested.isChecked(),
                         cbUnTested.isChecked(),
                         cbUploaded.isChecked(), cbUnUpload.isChecked(), LOAD_ITEMS, LOAD_ITEMS * mPageNum);
                 return new DataBaseRespon(true, "", studentList);
@@ -796,7 +820,9 @@ public class DataRetrieveActivity extends BaseTitleActivity
                     mList.clear();
                     if (cbTested.isChecked() || cbUnTested.isChecked() ||
                             cbUploaded.isChecked() || cbUnUpload.isChecked()) {
-                        Map<String, Object> countMap = DBManager.getInstance().getChooseStudentCount(getItemCode(), cbTested.isChecked(), cbUnTested.isChecked(),
+                        Map<String, Object> countMap = DBManager.getInstance().getChooseStudentCount(
+                                scheduleList.get(spSelectSchedule.getSelectedItemPosition()).getScheduleNo(),
+                                getItemCode(), cbTested.isChecked(), cbUnTested.isChecked(),
                                 cbUploaded.isChecked(), cbUnUpload.isChecked());
                         setStuCount(countMap.get("count"), countMap.get("women_count"), countMap.get("man_count"));
                         Logger.i("zzs===>" + countMap.toString());

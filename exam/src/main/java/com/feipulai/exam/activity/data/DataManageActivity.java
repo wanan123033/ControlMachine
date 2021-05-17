@@ -189,7 +189,7 @@ public class DataManageActivity
         DataBaseExecutor.addTask(new DataBaseTask() {
             @Override
             public DataBaseRespon executeOper() {
-                int stuCount = DBManager.getInstance().getItemStudent(TestConfigs.getCurrentItemCode(), -1, 0).size();
+                int stuCount = DBManager.getInstance().getItemStudent("-2", TestConfigs.getCurrentItemCode(), -1, 0).size();
                 int afrCount = DBManager.getInstance().queryByItemStudentFeatures().size();
 
                 return new DataBaseRespon(true, stuCount + "", afrCount);
