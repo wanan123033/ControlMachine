@@ -6,8 +6,8 @@ package com.feipulai.exam.activity.footBall;
  */
 public class FootBallSetting {
     private int testNo = 1;// 允许测试的次数
-    private int interceptSecond = 5;//默认5秒
-    private int sensitivity = 15;//灵敏度
+    private int interceptSecond = 2;//默认5秒
+    private int sensitivity = 20;//灵敏度
     private String hostIp = "192.168.0.227";//计时仪IP
     private int post = 1026;//端口
     private int penaltySecond;//违例罚秒

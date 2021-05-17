@@ -331,7 +331,25 @@ public class BallManager {
         LogUtils.normal(cmd.length + "---" + StringUtility.bytesToHexString(cmd) + "---篮足球");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
-
+    /**
+     * 离线：0
+     * 空闲：1
+     * 等待：2
+     * 计时：3
+     * 暂停：5（暂停显示时间，不停表只针对显示屏）
+     * 结束：6
+     * <p>
+     * 开始等待
+     *
+     * @param hostId
+     */
+    public void setRadioLEDStartAwait(int hostId) {
+        byte[] cmd = new byte[]{(byte) 0xAA, 0x14, 0x0D, 0x03, 0x01, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d};
+        cmd[5] = (byte) hostId;
+        cmd[18] = (byte) sum(cmd, 18);
+        LogUtils.normal(cmd.length + "---" + StringUtility.bytesToHexString(cmd) + "---篮足球");
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
+    }
     /**
      * LED开始计时
      *

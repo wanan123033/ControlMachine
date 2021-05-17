@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.net.NetworkInfo;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -124,6 +125,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
     private String startTime; //开始时间
     private boolean startTest = true;
     private EditResultDialog editResultDialog;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_group_basketball;
@@ -153,9 +155,12 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
             facade.setInterceptSecond(setting.getInterceptSecond());
         }
         //设置精度
-        //设置精度
         ballManager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), setting.getSensitivity(),
                 setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() - 1);
+        ballManager.sendSetDelicacy(SettingHelper.getSystemSetting().getHostId(), setting.getSensitivity(),
+                setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1);
+        ballManager.sendSetBlockertime(SettingHelper.getSystemSetting().getHostId(), setting.getSensitivity(),
+                setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1);
 
 
         timerUtil = new TimerUtil(this);
@@ -307,6 +312,51 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                     UdpLEDUtil.shellExec("ip route add " + routeIp + ".0/24 dev eth0 proto static scope link table wlan0 \n");
                 }
             }
+        } else if (baseEvent.getTagInt() == EventConfigs.BALL_STATE) {
+            Basketball868Result result = (Basketball868Result) baseEvent.getData();
+            if (result.getDeviceId() == 1) {
+                getDeviceStateString(cbNear, "近红外", result.getState());
+            }
+            if (result.getDeviceId() == 2) {
+                getDeviceStateString(cbFar, "远红外", result.getState());
+            }
+            if (result.getDeviceId() == 0) {
+                getDeviceStateString(cbLed, "显示屏", result.getState());
+            }
+        }
+    }
+
+    private void getDeviceStateString(CheckBox cb, String name, int state) {
+        switch (state) {
+            /**
+             * 离线：0x00
+             * 空闲：0x01
+             * 等待：0x02
+             * 计时：0x03
+             * 暂停：0x05（暂停显示时间，不停表只针对显示屏）
+             * 结束：0x06
+             */
+
+            case 1:
+                cb.setText(name + "空闲");
+                cb.setTextColor(ContextCompat.getColor(this, R.color.result_points));
+                break;
+            case 2:
+                cb.setText(name + "等待");
+                cb.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+                break;
+            case 3:
+                cb.setText(name + "计时");
+                cb.setTextColor(ContextCompat.getColor(this, R.color.OrangeRed));
+                break;
+            case 5:
+                cb.setText(name + "暂停");
+                cb.setTextColor(ContextCompat.getColor(this, R.color.Maroon));
+                break;
+            case 6:
+                cb.setText(name + "结束");
+                cb.setTextColor(ContextCompat.getColor(this, R.color.SaddleBrown));
+                break;
         }
     }
 
@@ -576,7 +626,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
     }
 
     @OnClick({R.id.tv_punish_add, R.id.tv_punish_subtract, R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal, R.id.tv_print, R.id.tv_confirm
-            , R.id.txt_waiting, R.id.txt_illegal_return, R.id.txt_continue_run, R.id.txt_stop_timing, R.id.txt_finish_test,R.id.tv_result})
+            , R.id.txt_waiting, R.id.txt_illegal_return, R.id.txt_continue_run, R.id.txt_stop_timing, R.id.txt_finish_test, R.id.tv_result})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_waiting://等待发令
@@ -593,6 +643,9 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                             sleep();
                             ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
                             startTime = System.currentTimeMillis() + "";
+                            if (setting.getTestType() == 1) {
+                                facade.awaitState();
+                            }
                         } else {
                             toastSpeak("存在未连接设备，请配对");
                         }
@@ -620,6 +673,8 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                         result.setSencond(time[2]);
                         result.setMinsencond(time[3]);
                         ballManager.setRadioLedStartTime(SettingHelper.getSystemSetting().getHostId(), result);
+                        state = TESTING;
+                        setOperationUI();
                     }
                 }
                 break;
@@ -1308,7 +1363,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                 List<MachineResult> machineResultList = testResult.getMachineResultList();
                 if (machineResultList != null && machineResultList.size() > 0) {
                     Student student = pairs.get(position()).getStudent();
-                    int testNo = TestCache.getInstance().getTestNoMap().get(student);
+                    int testNo = 1;
                     DBManager.getInstance().deleteStuResult(student.getStudentCode(), testNo, roundNo, group.getId());
                     DBManager.getInstance().deleteStuMachineResults(student.getStudentCode(), testNo, roundNo, group.getId());
                     testResult.setSelectMachineResult(0);
@@ -1322,6 +1377,9 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                 ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
                 sleep();
                 ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
+                if (setting.getTestType() == 1) {
+                    facade.awaitState();
+                }
             }
         }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
@@ -1357,14 +1415,14 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                 txtStopTiming.setEnabled(true);
                 break;
             case TESTING:
-                List<MachineResult> machineResultList = resultList.get(resultAdapter.getSelectPosition()).getMachineResultList();
-                if (machineResultList != null && machineResultList.size() > 0) {
-                    txtIllegalReturn.setEnabled(false);
-                } else {
-                    txtIllegalReturn.setEnabled(true);
-                }
+//                List<MachineResult> machineResultList = resultList.get(resultAdapter.getSelectPosition()).getMachineResultList();
+//                if (machineResultList != null && machineResultList.size() > 0) {
+//                    txtIllegalReturn.setEnabled(false);
+//                } else {
+//                    txtIllegalReturn.setEnabled(true);
+//                }
                 txtWaiting.setEnabled(false);
-//                txtIllegalReturn.setEnabled(true);
+                txtIllegalReturn.setEnabled(true);
                 txtContinueRun.setEnabled(false);
                 txtStopTiming.setEnabled(true);
                 break;

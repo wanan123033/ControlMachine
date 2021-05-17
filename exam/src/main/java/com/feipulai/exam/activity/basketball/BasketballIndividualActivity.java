@@ -5,6 +5,7 @@ import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -149,6 +150,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         if (setting == null)
             setting = new BasketBallSetting();
         facade = new BasketBallRadioFacade(setting.getTestType(), this);
+        facade.setTestType(setting.getTestType());
         ballManager = new BallManager.Builder((setting.getTestType())).setHostIp(setting.getHostIp()).setInetPost(1527).setPost(setting.getPost())
                 .setUdpListerner(new BasketBallListener(this)).build();
         timerUtil = new TimerUtil(this);
@@ -248,8 +250,14 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
 //            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1));
         }
         //设置精度
+
         ballManager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), setting.getSensitivity(),
                 setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() - 1);
+        ballManager.sendSetDelicacy(SettingHelper.getSystemSetting().getHostId(), setting.getSensitivity(),
+                setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1);
+        ballManager.sendSetBlockertime(SettingHelper.getSystemSetting().getHostId(),  setting.getSensitivity(),
+                setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1);
+
     }
 
     @Override
@@ -296,9 +304,53 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                     UdpLEDUtil.shellExec("ip route add " + routeIp + ".0/24 dev eth0 proto static scope link table wlan0 \n");
                 }
             }
+        } else if (baseEvent.getTagInt() == EventConfigs.BALL_STATE) {
+            Basketball868Result result = (Basketball868Result) baseEvent.getData();
+            if (result.getDeviceId() == 1) {
+                getDeviceStateString(cbNear, "近红外", result.getState());
+            }
+            if (result.getDeviceId() == 2) {
+                getDeviceStateString(cbFar, "远红外", result.getState());
+            }
+            if (result.getDeviceId() == 0) {
+                getDeviceStateString(cbLed, "显示屏", result.getState());
+            }
         }
     }
 
+    private void getDeviceStateString(CheckBox cb, String name, int state) {
+        switch (state) {
+            /**
+             * 离线：0x00
+             * 空闲：0x01
+             * 等待：0x02
+             * 计时：0x03
+             * 暂停：0x05（暂停显示时间，不停表只针对显示屏）
+             * 结束：0x06
+             */
+
+            case 1:
+                cb.setText(name + "空闲");
+                cb.setTextColor(ContextCompat.getColor(this, R.color.result_points));
+                break;
+            case 2:
+                cb.setText(name + "等待");
+                cb.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+                break;
+            case 3:
+                cb.setText(name + "计时");
+                cb.setTextColor(ContextCompat.getColor(this, R.color.OrangeRed));
+                break;
+            case 5:
+                cb.setText(name + "暂停");
+                cb.setTextColor(ContextCompat.getColor(this, R.color.Maroon));
+                break;
+            case 6:
+                cb.setText(name + "结束");
+                cb.setTextColor(ContextCompat.getColor(this, R.color.SaddleBrown));
+                break;
+        }
+    }
 
     @Override
     public void onIndividualCheckIn(Student student, StudentItem studentItem, List<RoundResult> results) {
@@ -400,7 +452,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 tvResult.setText(ResultDisplayUtils.getStrResultForDisplay(0));
                 break;
             case 3:
-                state = TESTING;
+                    state = TESTING;
                 Logger.i("篮球运球计时");
                 txtDeviceStatus.setText("计时");
 //                testDate = System.currentTimeMillis() + "";
@@ -711,6 +763,9 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                         }
                         sleep();
                         ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
+                        if (setting.getTestType() == 1) {
+                            facade.awaitState();
+                        }
                     } else {
                         toastSpeak("存在未连接设备，请配对");
                     }
@@ -736,6 +791,8 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                         result.setSencond(time[2]);
                         result.setMinsencond(time[3]);
                         ballManager.setRadioLedStartTime(SettingHelper.getSystemSetting().getHostId(), result);
+                        state = TESTING;
+                        setOperationUI();
                     }
                 }
                 break;
@@ -1231,7 +1288,10 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
                 sleep();
                 ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
-//                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
+                if (setting.getTestType() == 1) {
+                    facade.awaitState();
+                }
+                //                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
 //                sleep();
 //                UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
             }

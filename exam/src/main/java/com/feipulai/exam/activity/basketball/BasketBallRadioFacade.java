@@ -14,12 +14,14 @@ import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.Basketball868Result;
 import com.feipulai.device.udp.result.BasketballResult;
+import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.activity.basketball.bean.BallDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.netUtils.CommonUtils;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -46,6 +48,11 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
     private List<Basketball868Result> timeRountList;
     private Map<String, Basketball868Result> numResult;
     private int interceptSecond = 5;
+    private Basketball868Result nearResult;
+    private Basketball868Result farResult;
+    private Basketball868Result ledResult;
+    private int testType ;
+
 
     public void setInterceptSecond(int interceptSecond) {
         this.interceptSecond = interceptSecond;
@@ -53,6 +60,7 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
 
     public BasketBallRadioFacade(int patternType, final BasketBallListener.BasketBallResponseListener listener) {
         this.listener = listener;
+        this.testType = patternType;
         mExecutor = Executors.newFixedThreadPool(2);
         ballManager = new BallManager(patternType);
 
@@ -67,11 +75,11 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
                     ballManager.getRadioState(SettingHelper.getSystemSetting().getHostId(), position);
                 }
 
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    Thread.sleep(200);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
             }
 
             @Override
@@ -95,7 +103,7 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
                 return deviceStateList.size();
             }
         });
-
+        mGetDeviceStatesTask.setLoopCount(10);
         // 开始之前先全部不动,等待开始
         pause();
         mExecutor.execute(mGetDeviceStatesTask);
@@ -108,6 +116,40 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
             deviceStateList.add(deviceState);
         }
         mCurrentConnect = new int[deviceStateList.size()];
+    }
+
+    public void awaitState() {
+        if (testType == 3) {
+            nearResult = null;
+            farResult = null;
+            ledResult = null;
+            int time = TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ ? 500 : 700;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ) {
+                        // && ledResult != null && ledResult.getState() == 2
+                        if (nearResult != null && nearResult.getState() == 2) {
+                            listener.getDeviceStatus(2);
+                            ballManager.setRadioLEDStartAwait(SettingHelper.getSystemSetting().getHostId());
+                            isledStartTime = false;
+                            timeRountList = new ArrayList<>();
+                            numResult = new HashMap<>();
+                        }
+                    } else {
+                        if (nearResult != null && nearResult.getState() == 2 &&
+                                farResult != null && farResult.getState() == 2) {
+                            listener.getDeviceStatus(2);
+                            ballManager.setRadioLEDStartAwait(SettingHelper.getSystemSetting().getHostId());
+                            isledStartTime = false;
+                            timeRountList = new ArrayList<>();
+                            numResult = new HashMap<>();
+                        }
+                    }
+                }
+            }, time);
+        }
+
     }
 
     public void pause() {
@@ -150,11 +192,20 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
 
             if (msg.what == SerialConfigs.DRIBBLEING_START) {
                 Basketball868Result result = (Basketball868Result) msg.obj;
+                if (result.getDeviceId() == 0) {
+                    ledResult = result;
+                }
+                if (result.getDeviceId() == 1) {
+                    nearResult = result;
+                }
+                if (result.getDeviceId() == 2) {
+                    farResult = result;
+                }
                 BasketballResult basketballResult = new BasketballResult();
                 basketballResult.settNum(result.getDeviceId());
                 Log.i("zzs", result.toString());
                 setState(result);
-
+                EventBus.getDefault().post(new BaseEvent(result, EventConfigs.BALL_STATE));
                 if (result.getState() == 3 && timeRountList != null && result.getDeviceCode() != 2) {//计时
 
                     //保存每一次拦截成绩
@@ -215,10 +266,13 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
 
             } else if (msg.what == SerialConfigs.DRIBBLEING_AWAIT) {//等待
                 Log.i("zzzz", " DRIBBLEING_AWAIT=====>");
-                listener.getDeviceStatus(2);
-                isledStartTime = false;
-                timeRountList = new ArrayList<>();
-                numResult = new HashMap<>();
+                if (testType != 3) {
+                    listener.getDeviceStatus(2);
+                    isledStartTime = false;
+                    timeRountList = new ArrayList<>();
+                    numResult = new HashMap<>();
+                }
+
             } else if (msg.what == SerialConfigs.DRIBBLEING_STOP) {//停止
                 Log.i("zzzz", " DRIBBLEING_STOP=====>");
                 Basketball868Result result = (Basketball868Result) msg.obj;

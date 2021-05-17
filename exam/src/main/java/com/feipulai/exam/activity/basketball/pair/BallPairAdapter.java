@@ -50,10 +50,10 @@ public class BallPairAdapter extends DevicePairAdapter {
         } else {
             switch (position) {
                 case 0:
-                    holder.mTvDeviceId.setText("远红外" +version);
+                    holder.mTvDeviceId.setText("近红外" +version);
                     break;
                 case 1:
-                    holder.mTvDeviceId.setText("近红外" +version);
+                    holder.mTvDeviceId.setText("远红外" +version);
                     break;
                 case 2:
                     holder.mTvDeviceId.setText("计时屏" +version);

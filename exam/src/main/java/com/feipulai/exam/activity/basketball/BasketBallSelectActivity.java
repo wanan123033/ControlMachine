@@ -18,8 +18,9 @@ public class BasketBallSelectActivity
         super.initData();
         this.itemList.clear();
         this.itemList.add(new Item("有线运球模式"));
-        this.itemList.add(new Item("无线运球模式"));
+        this.itemList.add(new Item("无线运球模式（V6.4）"));
         this.itemList.add(new Item("往返运球投篮模式"));
+        this.itemList.add(new Item("无线运球模式（V6.6）"));
 //        this.itemList.add(new Item("投篮模式"));
         this.adapter.notifyDataSetChanged();
         getToolbar().setTitle("篮球模式选择");
@@ -31,9 +32,10 @@ public class BasketBallSelectActivity
                 ShootSetting shootSetting = SharedPrefsUtil.loadFormSource(BasketBallSelectActivity.this, ShootSetting.class);
                 shootSetting.setTestType(position);
                 if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
-                    switch (position){
+                    switch (position) {
                         case 0:
                         case 1:
+                        case 3:
                             LogUtils.operation("跳转:篮球有线无线运球模式");
                             IntentUtil.gotoActivity(BasketBallSelectActivity.this, BasketballIndividualActivity.class);
                             break;

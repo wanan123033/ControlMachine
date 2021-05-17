@@ -31,4 +31,7 @@ public class EventConfigs {
 
 
     public static final int LED_SHOW = 15;
+
+    //篮球状态
+    public static final int BALL_STATE = 16;
 }

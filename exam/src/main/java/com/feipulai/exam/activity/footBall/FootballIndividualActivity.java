@@ -5,6 +5,7 @@ import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -248,6 +249,11 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         //设置精度
         ballManager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), setting.getSensitivity(),
                 setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() - 1);
+        ballManager.sendSetDelicacy(SettingHelper.getSystemSetting().getHostId(), setting.getSensitivity(),
+                 setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1);
+        ballManager.sendSetBlockertime(SettingHelper.getSystemSetting().getHostId(),  setting.getSensitivity(),
+                setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1);
+
     }
 
     @Override
@@ -298,6 +304,51 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                     UdpLEDUtil.shellExec("ip route add " + routeIp + ".0/24 dev eth0 proto static scope link table wlan0 \n");
                 }
             }
+        } else if (baseEvent.getTagInt() == EventConfigs.BALL_STATE) {
+            Basketball868Result result = (Basketball868Result) baseEvent.getData();
+            if (result.getDeviceId() == 1) {
+                getDeviceStateString(cbNear, "近红外", result.getState());
+            }
+            if (result.getDeviceId() == 2) {
+                getDeviceStateString(cbFar, "远红外", result.getState());
+            }
+            if (result.getDeviceId() == 0) {
+                getDeviceStateString(cbLed, "显示屏", result.getState());
+            }
+        }
+    }
+
+    private void getDeviceStateString(CheckBox cb, String name, int state) {
+        switch (state) {
+            /**
+             * 离线：0x00
+             * 空闲：0x01
+             * 等待：0x02
+             * 计时：0x03
+             * 暂停：0x05（暂停显示时间，不停表只针对显示屏）
+             * 结束：0x06
+             */
+
+            case 1:
+                cb.setText(name + "空闲");
+                cb.setTextColor(ContextCompat.getColor(this, R.color.result_points));
+                break;
+            case 2:
+                cb.setText(name + "等待");
+                cb.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+                break;
+            case 3:
+                cb.setText(name + "计时");
+                cb.setTextColor(ContextCompat.getColor(this, R.color.OrangeRed));
+                break;
+            case 5:
+                cb.setText(name + "暂停");
+                cb.setTextColor(ContextCompat.getColor(this, R.color.Maroon));
+                break;
+            case 6:
+                cb.setText(name + "结束");
+                cb.setTextColor(ContextCompat.getColor(this, R.color.SaddleBrown));
+                break;
         }
     }
 
@@ -776,6 +827,9 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                         sleep();
                         ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
                         startTime = System.currentTimeMillis() + "";
+                        if (setting.getTestType() == 1) {
+                            facade.awaitState();
+                        }
                     } else {
                         toastSpeak("存在未连接设备，请配对");
                     }
@@ -799,7 +853,9 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                         result.setSencond(time[2]);
                         result.setMinsencond(time[3]);
                         ballManager.setRadioLedStartTime(SettingHelper.getSystemSetting().getHostId(), result);
-                    }
+                        state = TESTING;
+                        setOperationUI();
+                   }
                 }
                 break;
             case R.id.txt_stop_timing://停止计时
@@ -1315,6 +1371,9 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                 ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
                 sleep();
                 ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
+                if (setting.getTestType() == 1) {
+                    facade.awaitState();
+                }
             }
         }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override

@@ -11,8 +11,8 @@ public class BasketBallSetting {
     public static final int WIRELESS_TYPE = 1;
     private boolean autoPair = true;
     private int testNo = 1;// 允许测试的次数
-    private int interceptSecond = 5;//默认5秒
-    private int sensitivity = 15;//灵敏度
+    private int interceptSecond = 2;//默认5秒
+    private int sensitivity = 20;//灵敏度
     private String hostIp = "192.168.0.227";//计时仪IP
     private int post = 1026;//端口
     private int penaltySecond;//违例罚秒
@@ -26,7 +26,7 @@ public class BasketBallSetting {
      * 分组测试模式 0 连续 1 循环
      */
     private int testPattern = TestConfigs.GROUP_PATTERN_SUCCESIVE;
-    private int testType = 0;//0有线 1无线
+    private int testType = 0;//0有线 1无线 3无线6.6版本
 
     public int getTestNo() {
         return testNo;

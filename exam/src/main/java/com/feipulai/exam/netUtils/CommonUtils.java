@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.utils.EncryptUtil;
@@ -31,6 +32,26 @@ import java.util.HashMap;
  */
 
 public class CommonUtils {
+    /**
+     * 获取本地软件版本号
+     *
+     * @param ctx
+     * @return
+     */
+    public static int getLocalVersion(Context ctx) {
+        int localVersion = 0;
+        try {
+            PackageInfo packageInfo = ctx.getApplicationContext()
+                    .getPackageManager()
+                    .getPackageInfo(ctx.getPackageName(), 0);
+            localVersion = packageInfo.versionCode;
+            LogUtil.logDebugMessage("本软件的版本号。。" + localVersion);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return localVersion;
+    }
+
     /**
      * 获取应用程序名称
      */
