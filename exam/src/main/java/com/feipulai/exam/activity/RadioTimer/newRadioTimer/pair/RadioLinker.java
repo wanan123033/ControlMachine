@@ -89,7 +89,7 @@ public class RadioLinker implements Handler.Callback{
             // 0频段接收到的结果,肯定是设备的开机广播
             if (frequency == TARGET_FREQUENCY && deviceId == currentDeviceId) {
                 onNewDeviceConnect();
-                listener.setFrequency(currentDeviceId, hostId, TARGET_FREQUENCY);
+//                listener.setFrequency(currentDeviceId, hostId, TARGET_FREQUENCY);
             } else {
                 listener.setFrequency(currentDeviceId, hostId, TARGET_FREQUENCY);
                 currentFrequency = TARGET_FREQUENCY;

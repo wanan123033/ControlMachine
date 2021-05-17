@@ -436,6 +436,11 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 break;
             case R.id.txt_start_test:
                 LogUtils.operation("点击了开始测试");
+                if (roundNo > setTestCount()){
+                    ToastUtils.showShort("超过测试次数");
+                    clearData(this);
+                    return;
+                }
                 if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
                     pair.setTestTime(DateUtil.getCurrentTime() + "");
                     sendTestCommand(pair);
@@ -1017,16 +1022,20 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             BasePersonTestActivity activity = mActivityWeakReference.get();
             Logger.i("ClearHandler:清理学生信息");
             if (activity != null) {
-                activity.pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
-                activity.pair.setStudent(null);
-                activity.refreshTxtStu(null);
-                activity.result = null;
-                activity.result = new String[activity.setTestCount()];
-                activity.resultList.clear();
-                activity.resultList.addAll(Arrays.asList(activity.result));
-                activity.adapter.notifyDataSetChanged();
+                clearData(activity);
             }
 
         }
+    }
+
+    private static void clearData(BasePersonTestActivity activity) {
+        activity.pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+        activity.pair.setStudent(null);
+        activity.refreshTxtStu(null);
+        activity.result = null;
+        activity.result = new String[activity.setTestCount()];
+        activity.resultList.clear();
+        activity.resultList.addAll(Arrays.asList(activity.result));
+        activity.adapter.notifyDataSetChanged();
     }
 }

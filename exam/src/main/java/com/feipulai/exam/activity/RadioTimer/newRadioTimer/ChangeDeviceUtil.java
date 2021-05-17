@@ -27,9 +27,11 @@ public class ChangeDeviceUtil implements RadioManager.OnRadioArrivedListener, Ra
     private int point;
     private int deviceId;
     private volatile boolean check;
+    private ResponseArrivedListener listener;
     public ChangeDeviceUtil(RadioContract.View view, RunTimerSetting setting){
         this.view = view;
         this.setting = setting;
+        RadioManager.getInstance().setOnRadioArrived(this);
         checkService = Executors.newSingleThreadScheduledExecutor();
         sportTimerManger = new SportTimerManger();
 
@@ -43,12 +45,11 @@ public class ChangeDeviceUtil implements RadioManager.OnRadioArrivedListener, Ra
                     intervalRun();
                 }
             }
-        }, 100, 400, TimeUnit.MILLISECONDS);
+        }, 100, 2000, TimeUnit.MILLISECONDS);
     }
     public void start(int deviceId, int point) {
         this.point = point;
         this.deviceId = deviceId;
-        RadioManager.getInstance().setOnRadioArrived(this);
         if (linker == null) {
             linker = new RadioLinker(machineCode, TARGET_FREQUENCY, this);
         }
@@ -77,7 +78,9 @@ public class ChangeDeviceUtil implements RadioManager.OnRadioArrivedListener, Ra
         switch (msg.what) {
             case SerialConfigs.SPORT_TIMER_CONNECT:
                 if (msg.obj instanceof SportResult) {
-
+                    if (listener!= null){
+                        listener.onReceiveResult(msg);
+                    }
                 }
                 break;
             case SerialConfigs.SPORT_TIMER_MATCH:
@@ -108,4 +111,16 @@ public class ChangeDeviceUtil implements RadioManager.OnRadioArrivedListener, Ra
         this.check = check;
     }
 
+    public void setListener(ResponseArrivedListener listener) {
+        this.listener = listener;
+    }
+
+    public void cancelChangeBad() {
+        setCheck(true);
+        linker.cancelPair();
+    }
+
+    interface ResponseArrivedListener{
+        void onReceiveResult(Message msg);
+    }
 }
