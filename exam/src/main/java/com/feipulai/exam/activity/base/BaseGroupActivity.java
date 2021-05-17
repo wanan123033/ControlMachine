@@ -640,11 +640,16 @@ public class BaseGroupActivity extends BaseTitleActivity {
 
     private boolean isAllTest() {
         for (BaseStuPair stuPair : stuPairsList) {
-            for (String s : stuPair.getTimeResult()) {
-                if (TextUtils.isEmpty(s)) {
-                    return false;
+            if (stuPair.getTimeResult()!=null){
+                for (String s : stuPair.getTimeResult()) {
+                    if (TextUtils.isEmpty(s)) {
+                        return false;
+                    }
                 }
+            }else{
+                return false;
             }
+
         }
         return true;
     }
