@@ -142,6 +142,7 @@ public class SplashScreenActivity extends BaseActivity {
             public void onSuccess(ActivateBean result) {
 
                 activateBean = result;
+                SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, result.getCurrentRunTime());
                 SharedPrefsUtil.save(SplashScreenActivity.this, result);
                 if ((int) result.getActivateTime() == 0) {
                     //需要确认激活
@@ -340,7 +341,7 @@ public class SplashScreenActivity extends BaseActivity {
                             //本地人脸库初始化
                             FaceServer.getInstance().init(SplashScreenActivity.this);
                             if (SettingHelper.getSystemSetting().getCheckTool() == 5) {
-                                List<Student> studentList = DBManager.getInstance().getItemStudent(TestConfigs.getCurrentItemCode(), -1, 0);
+                                List<Student> studentList = DBManager.getInstance().getItemStudent("-2", TestConfigs.getCurrentItemCode(), -1, 0);
                                 List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
                                 for (Student student : studentList) {
                                     registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));

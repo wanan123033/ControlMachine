@@ -518,13 +518,14 @@ public class DBManager {
      * 根据学号模糊查询学生信息
      */
     public List<Student> fuzzyQueryByStuCode(String studentCode, int limit, int offset) {
-        return fuzzyQueryByStuCode(TestConfigs.getCurrentItemCode(), studentCode, limit, offset);
+        return fuzzyQueryByStuCode("-2",TestConfigs.getCurrentItemCode(), studentCode, limit, offset);
     }
 
     /**
      * 根据学号模糊查询学生信息
+          * @param scheduleNo   -2 查全部
      */
-    public List<Student> fuzzyQueryByStuCode(String itemCode, String studentCode, int limit, int offset) {
+    public List<Student> fuzzyQueryByStuCode(String scheduleNo, String itemCode, String studentCode, int limit, int offset) {
 //        List<Student> students = studentDao.queryBuilder()
 //                .where(StudentDao.Properties.StudentCode.like("%" + studentCode + "%"))
 //                .limit(limit)
@@ -536,9 +537,16 @@ public class DBManager {
         sqlBuf.append(" SELECT  " + StudentItemDao.Properties.StudentCode.columnName);
         sqlBuf.append(" FROM " + StudentItemDao.TABLENAME);
         sqlBuf.append(" WHERE  " + StudentItemDao.Properties.ItemCode.columnName + " = ?  ");
+        if (!TextUtils.equals(scheduleNo, "-2")) {
+            sqlBuf.append(" AND  " + StudentItemDao.Properties.ScheduleNo.columnName + " =  " + scheduleNo);
+        }
         sqlBuf.append(" UNION SELECT  " + GroupItemDao.Properties.StudentCode.columnName);
         sqlBuf.append(" FROM " + GroupItemDao.TABLENAME);
-        sqlBuf.append(" WHERE  " + GroupItemDao.Properties.ItemCode.columnName + " = ?  )");
+        sqlBuf.append(" WHERE  " + GroupItemDao.Properties.ItemCode.columnName + " = ? ");
+        if (!TextUtils.equals(scheduleNo, "-2")) {
+            sqlBuf.append(" AND  " + StudentItemDao.Properties.ScheduleNo.columnName + " =  " + scheduleNo);
+        }
+        sqlBuf.append(" )");
         sqlBuf.append(" AND  S." + StudentDao.Properties.StudentCode.columnName + " LIKE '%" + studentCode + "%' ");
         sqlBuf.append(" limit " + offset + "," + limit);
         Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{itemCode, itemCode});
@@ -554,20 +562,27 @@ public class DBManager {
 
     /**
      * 获取当前测试项目的所有学生信息
-     *
+     * @param scheduleNo   -2 查全部
      * @param limit  页码
      * @param offset 页数
      * @return
      */
-    public List<Student> getItemStudent(String itemCode, int limit, int offset) {
+    public List<Student> getItemStudent(String scheduleNo,String itemCode, int limit, int offset) {
         StringBuffer sqlBuf = new StringBuffer("SELECT S.* FROM " + StudentDao.TABLENAME + " S");
         sqlBuf.append(" WHERE S." + StudentDao.Properties.StudentCode.columnName + " IN ( ");
         sqlBuf.append(" SELECT  " + StudentItemDao.Properties.StudentCode.columnName);
         sqlBuf.append(" FROM " + StudentItemDao.TABLENAME);
         sqlBuf.append(" WHERE  " + StudentItemDao.Properties.ItemCode.columnName + " = ?  ");
+        if (!TextUtils.equals(scheduleNo, "-2")) {
+            sqlBuf.append(" AND  " + StudentItemDao.Properties.ScheduleNo.columnName + " =  " + scheduleNo);
+        }
         sqlBuf.append(" UNION SELECT  " + GroupItemDao.Properties.StudentCode.columnName);
         sqlBuf.append(" FROM " + GroupItemDao.TABLENAME);
-        sqlBuf.append(" WHERE  " + GroupItemDao.Properties.ItemCode.columnName + " = ?  )");
+        sqlBuf.append(" WHERE  " + GroupItemDao.Properties.ItemCode.columnName + " = ? ");
+        if (!TextUtils.equals(scheduleNo, "-2")) {
+            sqlBuf.append(" AND  " + StudentItemDao.Properties.ScheduleNo.columnName + " =  " + scheduleNo);
+        }
+        sqlBuf.append(" )");
         if (limit != -1)
             sqlBuf.append(" limit " + offset + "," + limit);
         Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{itemCode, itemCode});
@@ -580,103 +595,18 @@ public class DBManager {
         return students;
     }
 
-    /**
-     * 根据用户筛选获取学生列表
-     *
-     * @param itemCode   当前测试项目
-     * @param isTested   选择已测试 （传两个参数是会出现用户不选择两个筛选项）
-     * @param isUnTested 选择未测试
-     * @param isUpload   选择已上传
-     * @param isUnUpload 选择未上传
-     * @param limit      页码
-     * @param offset     页数
-     * @return
-     */
-//    public List<Map<String, Object>> getChooseStudentList(String itemCode, boolean isTested, boolean isUnTested, boolean isUpload, boolean isUnUpload, int
-//            limit, int offset) {
-//        Logger.i("zzs===>" + isTested + "---" + isUnTested + "---" + isUpload + "---" + isUnUpload);
-//
-//        StringBuffer sqlBuf = new StringBuffer("SELECT ");
-//        sqlBuf.append("S.*"
-//                //				+ StudentDao.Properties.Id.columnName + ",S." + StudentDao.Properties.StudentCode.columnName
-//                //				+ ",S." + StudentDao.Properties.StudentName.columnName + ",S." + StudentDao.Properties.Sex.columnName
-//                //				+ ",S." + StudentDao.Properties.IdCardNo.columnName + ",S." + StudentDao.Properties.IcCardNo.columnName
-//                //				+ ",S." + StudentDao.Properties.ClassName.columnName + ",S." + StudentDao.Properties.GradeName.columnName
-//                //				+ ",S." + StudentDao.Properties.MajorName.columnName + ",S." + StudentDao.Properties.FacultyName.columnName
-//                //				+ ",S." + StudentDao.Properties.DownloadTime.columnName + ",S." + StudentDao.Properties.Remark1.columnName
-//                //				+ ",S." + StudentDao.Properties.Remark2.columnName + ",S." + StudentDao.Properties.Remark3.columnName
-////                        + ",RR." + RoundResultDao.Properties.Result.columnName
-////                + ",RR." + RoundResultDao.Properties.UpdateState.columnName
-//        );
-//        sqlBuf.append("  FROM " + StudentDao.TABLENAME + " S");
-//        sqlBuf.append(" LEFT JOIN " + StudentItemDao.TABLENAME + " I ");
-//        sqlBuf.append(" ON S." + StudentDao.Properties.StudentCode.columnName + " = I." + StudentItemDao.Properties.StudentCode.columnName);
-////        sqlBuf.append(" LEFT JOIN " + RoundResultDao.TABLENAME + " RR  ");
-////        sqlBuf.append(" ON I." + StudentDao.Properties.StudentCode.columnName + " = RR." + StudentItemDao.Properties.StudentCode.columnName);
-//        sqlBuf.append(" WHERE I." + StudentItemDao.Properties.MachineCode.columnName + " = " + TestConfigs.sCurrentItem.getMachineCode());
-//        sqlBuf.append(" AND I." + StudentItemDao.Properties.ItemCode.columnName + " = '" + itemCode + "'");
-//        sqlBuf.append(" AND S." + StudentDao.Properties.StudentCode.columnName);
-//
-//        if (isTested || isUnTested) {
-//            if (isTested) {
-//                sqlBuf.append(" IN (SELECT " + RoundResultDao.Properties.StudentCode.columnName + " FROM " + RoundResultDao.TABLENAME + " R");
-//            } else {
-//                sqlBuf.append(" NOT IN (SELECT " + RoundResultDao.Properties.StudentCode.columnName + " FROM " + RoundResultDao.TABLENAME + " R");
-//            }
-//        }
-//        if (isUpload || isUnUpload) {
-//            if (isTested || isUnTested) {
-//                if (isUpload) {
-//                    sqlBuf.append("  WHERE R." + RoundResultDao.Properties.UpdateState.columnName + "= 1  AND ");
-//                } else {
-//                    sqlBuf.append("  WHERE R." + RoundResultDao.Properties.UpdateState.columnName + "= 0 AND ");
-//                }
-//            } else {
-//                if (isUpload) {
-//                    sqlBuf.append(" IN (SELECT " +
-//                            RoundResultDao.Properties.StudentCode.columnName + " FROM " + RoundResultDao.TABLENAME + " R  WHERE R." + RoundResultDao
-//                            .Properties.UpdateState.columnName + "= 1 AND ");
-//                } else {
-//                    sqlBuf.append(" IN (SELECT " +
-//                            RoundResultDao.Properties.StudentCode.columnName + " FROM " + RoundResultDao.TABLENAME + " R  WHERE R." + RoundResultDao
-//                            .Properties.UpdateState.columnName + "= 0 AND ");
-//                }
-//            }
-//        } else {
-//            sqlBuf.append(" WHERE ");
-//        }
-//        sqlBuf.append("  R." + RoundResultDao.Properties.ItemCode.columnName + " = '" + TestConfigs.getCurrentItemCode() + "'");
-//        sqlBuf.append(")  ");
-//        sqlBuf.append(" limit " + offset + "," + limit);
-//        Logger.i("=====sql1===>" + sqlBuf.toString());
-//
-//        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), null);
-//        List<Map<String, Object>> students = new ArrayList<>();
-//        Map<String, Object> studentMap;
-//        while (c.moveToNext()) {
-//            studentMap = new HashMap<>();
-//            Student student = studentDao.readEntity(c, 0);
-////            String result = c.isNull(14) ? null : c.getString(14);
-////            int updataState = c.isNull(15) ? 0 : c.getInt(15);
-//            studentMap.put("student", student);
-////            studentMap.put("result", result);
-////            studentMap.put("updataState", updataState);
-//            students.add(studentMap);
-//        }
-//        c.close();
-//        return students;
-//    }
+
 
     /**
      * 获取用户筛选的所有学生（男，女）数量
-     *
+     * @param scheduleNo   -2 查全部
      * @param isTested   选择已测试 （传两个参数是会出现用户不选择两个筛选项）
      * @param isUnTested 选择未测试
      * @param isUpload   选择已上传
      * @param isUnUpload 选择未上传
      * @return
      */
-    public Map<String, Object> getChooseStudentCount(String itemCode, boolean isTested, boolean isUnTested, boolean isUpload, boolean isUnUpload) {
+    public Map<String, Object> getChooseStudentCount(String scheduleNo, String itemCode, boolean isTested, boolean isUnTested, boolean isUpload, boolean isUnUpload) {
 
         StringBuffer sqlBuf = new StringBuffer("SELECT COUNT(*) AS STU_COUNT,");
 
@@ -692,9 +622,18 @@ public class DBManager {
         sqlBuf.append(" SELECT  " + StudentItemDao.Properties.StudentCode.columnName);
         sqlBuf.append(" FROM " + StudentItemDao.TABLENAME);
         sqlBuf.append(" WHERE  " + StudentItemDao.Properties.ItemCode.columnName + " = ?  ");
+
+        if (!TextUtils.equals(scheduleNo, "-2")) {
+            sqlBuf.append(" AND  " + StudentItemDao.Properties.ScheduleNo.columnName + " =  " + scheduleNo);
+        }
+
         sqlBuf.append(" UNION SELECT  " + GroupItemDao.Properties.StudentCode.columnName);
         sqlBuf.append(" FROM " + GroupItemDao.TABLENAME);
-        sqlBuf.append(" WHERE  " + GroupItemDao.Properties.ItemCode.columnName + " = ?  )");
+        sqlBuf.append(" WHERE  " + GroupItemDao.Properties.ItemCode.columnName + " = ? ");
+        if (!TextUtils.equals(scheduleNo, "-2")) {
+            sqlBuf.append(" AND  " + StudentItemDao.Properties.ScheduleNo.columnName + " =  " + scheduleNo);
+        }
+        sqlBuf.append(" )");
 
         if (isTested || isUnTested) {
             sqlBuf.append(" AND S." + StudentDao.Properties.StudentCode.columnName);
@@ -755,10 +694,10 @@ public class DBManager {
 
     /**
      * 获取项目中所有学生（男，女）数量
-     *
+     * @param scheduleNo   -2 查全部
      * @return
      */
-    public Map<String, Object> getItemStudenCount(String itemCode) {
+    public Map<String, Object> getItemStudenCount(String scheduleNo,String itemCode) {
         StringBuffer sqlBuf = new StringBuffer("SELECT COUNT(*) AS STU_COUNT,");
 
         sqlBuf.append(" COUNT( CASE WHEN S." + StudentDao.Properties.Sex.columnName + "=0 THEN " + StudentDao.Properties.Sex.columnName + " END) AS" +
@@ -773,9 +712,16 @@ public class DBManager {
         sqlBuf.append(" SELECT  " + StudentItemDao.Properties.StudentCode.columnName);
         sqlBuf.append(" FROM " + StudentItemDao.TABLENAME);
         sqlBuf.append(" WHERE  " + StudentItemDao.Properties.ItemCode.columnName + " = ?  ");
+        if (!TextUtils.equals(scheduleNo, "-2")) {
+            sqlBuf.append(" AND  " + StudentItemDao.Properties.ScheduleNo.columnName + " =  " + scheduleNo);
+        }
         sqlBuf.append(" UNION SELECT  " + GroupItemDao.Properties.StudentCode.columnName);
         sqlBuf.append(" FROM " + GroupItemDao.TABLENAME);
-        sqlBuf.append(" WHERE  " + GroupItemDao.Properties.ItemCode.columnName + " = ?  ) ");
+        sqlBuf.append(" WHERE  " + GroupItemDao.Properties.ItemCode.columnName + " = ? ");
+        if (!TextUtils.equals(scheduleNo, "-2")) {
+            sqlBuf.append(" AND  " + StudentItemDao.Properties.ScheduleNo.columnName + " =  " + scheduleNo);
+        }
+        sqlBuf.append(" )");
 
         Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{itemCode, itemCode});
 
@@ -797,8 +743,9 @@ public class DBManager {
 
     /**
      * 根据学号模糊查询学生信息
+     * @param scheduleNo   -2 查全部
      */
-    public Map<String, Object> fuzzyQueryByStuCodeCount(String itemCode, String studentCode) {
+    public Map<String, Object> fuzzyQueryByStuCodeCount(String scheduleNo,String itemCode, String studentCode) {
         StringBuffer sqlBuf = new StringBuffer("SELECT COUNT(*) AS STU_COUNT,");
 
         sqlBuf.append(" COUNT( CASE WHEN S." + StudentDao.Properties.Sex.columnName + "=0 THEN " + StudentDao.Properties.Sex.columnName + " END) AS" +
@@ -812,9 +759,17 @@ public class DBManager {
         sqlBuf.append(" SELECT  " + StudentItemDao.Properties.StudentCode.columnName);
         sqlBuf.append(" FROM " + StudentItemDao.TABLENAME);
         sqlBuf.append(" WHERE  " + StudentItemDao.Properties.ItemCode.columnName + " = ?  ");
+        if (!TextUtils.equals(scheduleNo, "-2")) {
+            sqlBuf.append(" AND  " + StudentItemDao.Properties.ScheduleNo.columnName + " =  " + scheduleNo);
+        }
         sqlBuf.append(" UNION SELECT  " + GroupItemDao.Properties.StudentCode.columnName);
         sqlBuf.append(" FROM " + GroupItemDao.TABLENAME);
-        sqlBuf.append(" WHERE  " + GroupItemDao.Properties.ItemCode.columnName + " = ?  )");
+        sqlBuf.append(" WHERE  " + GroupItemDao.Properties.ItemCode.columnName + " = ? ");
+        if (!TextUtils.equals(scheduleNo, "-2")) {
+            sqlBuf.append(" AND  " + StudentItemDao.Properties.ScheduleNo.columnName + " =  " + scheduleNo);
+        }
+        sqlBuf.append(" )");
+
         sqlBuf.append(" AND  S." + StudentDao.Properties.StudentCode.columnName + " LIKE '%" + studentCode + "%' ");
         Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{itemCode, itemCode});
         Map<String, Object> countMap = new HashMap<>();
@@ -833,7 +788,19 @@ public class DBManager {
 
     }
 
-    public List<Student> getChooseStudentList(String itemCode, boolean isTested, boolean isUnTested, boolean isUpload, boolean isUnUpload, int limit, int offset) {
+    /**
+     *
+     * @param scheduleNo   -2 查全部
+     * @param itemCode
+     * @param isTested
+     * @param isUnTested
+     * @param isUpload
+     * @param isUnUpload
+     * @param limit
+     * @param offset
+     * @return
+     */
+    public List<Student> getChooseStudentList(String scheduleNo, String itemCode, boolean isTested, boolean isUnTested, boolean isUpload, boolean isUnUpload, int limit, int offset) {
         //获取报名项目所有学生
         //查询学生在当前项目个人报名与分组报名的并集里的
         List<Student> studentList = new ArrayList<>();
@@ -843,9 +810,21 @@ public class DBManager {
         sqlBuf.append(" SELECT  " + StudentItemDao.Properties.StudentCode.columnName);
         sqlBuf.append(" FROM " + StudentItemDao.TABLENAME);
         sqlBuf.append(" WHERE  " + StudentItemDao.Properties.ItemCode.columnName + " = ?  ");
+
+        if (!TextUtils.equals(scheduleNo, "-2")) {
+            sqlBuf.append(" AND  " + StudentItemDao.Properties.ScheduleNo.columnName + " =  " + scheduleNo);
+        }
+
         sqlBuf.append(" UNION SELECT  " + GroupItemDao.Properties.StudentCode.columnName);
         sqlBuf.append(" FROM " + GroupItemDao.TABLENAME);
-        sqlBuf.append(" WHERE  " + GroupItemDao.Properties.ItemCode.columnName + " = ?  ) ");
+        sqlBuf.append(" WHERE  " + GroupItemDao.Properties.ItemCode.columnName + " = ? ");
+
+        if (!TextUtils.equals(scheduleNo, "-2")) {
+            sqlBuf.append(" AND  " + GroupItemDao.Properties.ScheduleNo.columnName + " =  " + scheduleNo);
+        }
+        sqlBuf.append(" ) ");
+
+
         //加筛选条件
         if (isTested || isUnTested) {
             sqlBuf.append(" AND " + StudentDao.Properties.StudentCode.columnName);

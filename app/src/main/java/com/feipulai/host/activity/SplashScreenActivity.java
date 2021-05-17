@@ -170,6 +170,8 @@ public class SplashScreenActivity extends BaseActivity {
             @Override
             public void onSuccess(ActivateBean result) {
                 activateBean = result;
+                SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, result.getCurrentRunTime());
+
                 SharedPrefsUtil.save(SplashScreenActivity.this, result);
                 if ((int) result.getActivateTime() == 0) {
                     //需要确认激活

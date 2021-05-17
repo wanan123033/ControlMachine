@@ -4,106 +4,151 @@
     android:orientation="vertical"
     android:windowSoftInputMode="stateHidden">
 
+
     <LinearLayout
         android:id="@+id/view_choose"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="25dp"
-        android:layout_marginTop="25dp"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-
-        <RadioButton
-            android:id="@+id/rb_all"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:button="@null"
-            android:drawableLeft="@drawable/checkbox_selected"
-            android:drawablePadding="@dimen/dp_10"
-            android:text="所有"
-            android:textSize="20sp" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="3dp">
 
-        <CheckBox
-            android:id="@+id/cb_un_upload"
-            android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/txt_schedule_title"
+                style="@style/style_setting_tv_title"
+                android:layout_marginLeft="20dp"
+                android:text="日程："
+                android:textSize="18sp" />
+
+            <Spinner
+                android:id="@+id/sp_select_schedule"
+                android:layout_width="300dp"
+                android:layout_height="35dp"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:background="@drawable/icon_spinner_bg" />
+
+
+            <TextView
+                android:id="@+id/txt_sp_title"
+                style="@style/style_setting_tv_title"
+                android:layout_marginLeft="50dp"
+                android:text="项目："
+                android:textSize="18sp"
+                android:visibility="gone" />
+
+            <Spinner
+                android:id="@+id/sp_select_items"
+                android:layout_width="150dp"
+                android:layout_height="35dp"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:background="@drawable/icon_spinner_bg"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_10"
-            android:button="@null"
-            android:drawableLeft="@drawable/checkbox_selected"
-            android:drawablePadding="@dimen/dp_10"
-            android:text="未上传"
-            android:textSize="20sp" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="3dp">
 
-        <CheckBox
-            android:id="@+id/cb_uploaded"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_10"
-            android:button="@null"
-            android:drawableLeft="@drawable/checkbox_selected"
-            android:drawablePadding="@dimen/dp_10"
-            android:text="已上传"
-            android:textSize="20sp" />
 
-        <CheckBox
-            android:id="@+id/cb_tested"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_10"
-            android:button="@null"
-            android:drawableLeft="@drawable/checkbox_selected"
-            android:drawablePadding="@dimen/dp_10"
-            android:text="已测"
-            android:textSize="20sp" />
+            <RadioButton
+                android:id="@+id/rb_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:button="@null"
+                android:drawableLeft="@drawable/checkbox_selected"
+                android:drawablePadding="@dimen/dp_10"
+                android:text="所有"
+                android:textSize="20sp" />
 
-        <CheckBox
-            android:id="@+id/cb_un_tested"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_10"
-            android:button="@null"
-            android:drawableLeft="@drawable/checkbox_selected"
-            android:drawablePadding="@dimen/dp_10"
-            android:text="未测"
-            android:textSize="20sp" />
+            <CheckBox
+                android:id="@+id/cb_un_upload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:button="@null"
+                android:drawableLeft="@drawable/checkbox_selected"
+                android:drawablePadding="@dimen/dp_10"
+                android:text="未上传"
+                android:textSize="20sp" />
 
-        <EditText
-            android:id="@+id/et_input_text"
-            android:layout_width="231dp"
-            android:layout_height="35dp"
-            android:layout_marginLeft="14dp"
-            android:background="@drawable/edit_search_bg"
-            android:gravity="left|center_vertical"
-            android:imeOptions="actionGo"
-            android:maxLines="1"
-            android:paddingLeft="10dp"
-            android:singleLine="true" />
+            <CheckBox
+                android:id="@+id/cb_uploaded"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:button="@null"
+                android:drawableLeft="@drawable/checkbox_selected"
+                android:drawablePadding="@dimen/dp_10"
+                android:text="已上传"
+                android:textSize="20sp" />
 
-        <Button
-            android:id="@+id/btn_query"
-            android:layout_width="91dp"
-            android:layout_height="35dp"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/btn_click_bg_selected"
-            android:text="检索"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
+            <CheckBox
+                android:id="@+id/cb_tested"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:button="@null"
+                android:drawableLeft="@drawable/checkbox_selected"
+                android:drawablePadding="@dimen/dp_10"
+                android:text="已测"
+                android:textSize="20sp" />
 
-        <Button
-            android:id="@+id/btn_upload"
-            android:layout_width="91dp"
-            android:layout_height="35dp"
-            android:layout_marginLeft="27dp"
-            android:background="@drawable/btn_click_bg_unselected"
-            android:drawableLeft="@mipmap/icon_data_upload"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="上传"
-            android:textSize="20sp" />
+            <CheckBox
+                android:id="@+id/cb_un_tested"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:button="@null"
+                android:drawableLeft="@drawable/checkbox_selected"
+                android:drawablePadding="@dimen/dp_10"
+                android:text="未测"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/et_input_text"
+                android:layout_width="231dp"
+                android:layout_height="35dp"
+                android:layout_marginLeft="14dp"
+                android:background="@drawable/edit_search_bg"
+                android:gravity="left|center_vertical"
+                android:imeOptions="actionGo"
+                android:maxLines="1"
+                android:paddingLeft="10dp"
+                android:singleLine="true" />
+
+            <Button
+                android:id="@+id/btn_query"
+                android:layout_width="91dp"
+                android:layout_height="35dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/btn_click_bg_selected"
+                android:text="检索"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/btn_upload"
+                android:layout_width="91dp"
+                android:layout_height="35dp"
+                android:layout_marginLeft="27dp"
+                android:background="@drawable/btn_click_bg_unselected"
+                android:drawableLeft="@mipmap/icon_data_upload"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="上传"
+                android:textSize="20sp" />
+        </LinearLayout>
     </LinearLayout>
-
 
     <LinearLayout
         android:id="@+id/view_seach"
@@ -145,20 +190,6 @@
         android:gravity="right|center_vertical"
         android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/txt_sp_title"
-            style="@style/style_setting_tv_title"
-            android:layout_marginLeft="50dp"
-            android:text="项目："
-            android:textSize="@dimen/sp_16"
-            android:visibility="gone" />
-
-        <Spinner
-            android:id="@+id/sp_select_items"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/icon_spinner_bg"
-            android:visibility="gone" />
 
         <TextView
             style="@style/style_setting_tv_title"
