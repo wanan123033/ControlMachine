@@ -109,8 +109,8 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="@dimen/dp_10"
             android:layout_marginTop="15dp"
-            android:paddingLeft="40dp"
-            android:paddingRight="37dp">
+            android:paddingLeft="10dp"
+            android:paddingRight="7dp">
 
             <TextView
                 android:id="@+id/img_last"
@@ -131,6 +131,17 @@
                 android:background="@drawable/icon_btn_blue_bg"
                 android:gravity="center"
                 android:text="下一组"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+            <TextView
+                android:id="@+id/score_upload"
+                android:layout_width="145dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/img_next"
+                android:background="@drawable/icon_btn_blue_bg"
+                android:gravity="center"
+                android:text="成绩上传"
                 android:textColor="@color/white"
                 android:textSize="18sp" />
 

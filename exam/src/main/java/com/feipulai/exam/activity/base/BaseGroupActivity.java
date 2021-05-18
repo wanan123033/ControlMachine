@@ -1,6 +1,7 @@
 package com.feipulai.exam.activity.base;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -465,7 +466,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
     }
 
     @SuppressWarnings("unchecked")
-    @OnClick({R.id.txt_group_name, R.id.img_last, R.id.img_next, R.id.txt_start_test, R.id.txt_print})
+    @OnClick({R.id.txt_group_name, R.id.img_last, R.id.img_next, R.id.txt_start_test, R.id.txt_print,R.id.score_upload})
 // R.id.tv_project_setting,
     public void onViewClicked(View view) {
         switch (view.getId()) {
