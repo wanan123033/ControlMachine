@@ -179,7 +179,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
         rgAccuracy.check(getAccuracy() == 1 ? R.id.rb_tenths : getAccuracy() == 2 ? R.id.rb_percentile : R.id.rb_thousand);
 
         etPenaltySecond.setText(setting.getPenaltySecond() + "");
-        if (setting.getTestType() == 1) {
+        if (setting.getTestType() == 1 || setting.getTestType() == 3) {
             tvPair.setVisibility(View.VISIBLE);
             etPort.setEnabled(false);
             etHostIp.setEnabled(false);
@@ -194,6 +194,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
         super.onResume();
         manager.init();
     }
+
     private int getAccuracy() {
         switch (TestConfigs.sCurrentItem.getDigital()) {
             case 1:

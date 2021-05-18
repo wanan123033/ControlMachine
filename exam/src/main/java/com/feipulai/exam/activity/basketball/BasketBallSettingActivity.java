@@ -169,7 +169,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
 
         etPenaltySecond.setText(setting.getPenaltySecond() + "");
 
-        if (setting.getTestType() == 1) {
+        if (setting.getTestType() == 1 || setting.getTestType() == 3) {
             tvPair.setVisibility(View.VISIBLE);
             etPort.setEnabled(false);
             etHostIp.setEnabled(false);
