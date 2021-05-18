@@ -54,6 +54,8 @@ import com.feipulai.exam.adapter.BaseGroupAdapter;
 import com.feipulai.exam.adapter.GroupAdapter;
 import com.feipulai.exam.adapter.ResultsAdapter;
 import com.feipulai.exam.adapter.ScheduleAdapter;
+import com.feipulai.exam.bean.RoundResultBean;
+import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
@@ -62,6 +64,7 @@ import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.CommonPopupWindow;
 import com.orhanobut.logger.utils.LogUtils;
@@ -611,6 +614,27 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 }
 
                 break;
+            case R.id.score_upload:
+                scoreUpload();
+                break;
+        }
+    }
+
+    /**
+     * 分组成绩上传
+     */
+    private void scoreUpload() {
+        List<BaseStuPair> data = stuAdapter.getData();
+        for (BaseStuPair stuPair : data){
+            List<RoundResult> roundResultList = getResults(stuPair.getStudent().getStudentCode());
+            List<UploadResults> uploadResultsList = new ArrayList<>();
+            if (roundResultList != null && !roundResultList.isEmpty()){
+                RoundResult currentResult = roundResultList.get(0);
+                UploadResults uploadResults = new UploadResults(currentResult.getScheduleNo(), TestConfigs.getCurrentItemCode(),
+                        currentResult.getStudentCode(), currentResult.getTestNo() + "", groupList.get(groupAdapter.getTestPosition()), RoundResultBean.beanCope(roundResultList));
+                uploadResultsList.add(uploadResults);
+            }
+            ServerMessage.uploadResult(uploadResultsList);
         }
     }
 
