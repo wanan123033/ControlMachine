@@ -31,6 +31,7 @@ import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.basketball.DribbleShootGroupActivity;
 import com.feipulai.exam.activity.basketball.ShootSetting;
 import com.feipulai.exam.activity.basketball.ShootSettingActivity;
+import com.feipulai.exam.activity.data.DataManageActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.medicineBall.MedicineBallSetting;
 import com.feipulai.exam.activity.medicineBall.more_device.BallGroupMoreActivity;
@@ -634,7 +635,8 @@ public class BaseGroupActivity extends BaseTitleActivity {
                         currentResult.getStudentCode(), currentResult.getTestNo() + "", groupList.get(groupAdapter.getTestPosition()), RoundResultBean.beanCope(roundResultList));
                 uploadResultsList.add(uploadResults);
             }
-            ServerMessage.uploadResult(uploadResultsList);
+//            ServerMessage.uploadResult(uploadResultsList);
+            ServerMessage.uploadResult(this, uploadResultsList);
         }
     }
 
