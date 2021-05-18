@@ -51,8 +51,11 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
     private Basketball868Result nearResult;
     private Basketball868Result farResult;
     private Basketball868Result ledResult;
-    private int testType ;
+    private int deviceVersion;
 
+    public void setDeviceVersion(int deviceVersion) {
+        this.deviceVersion = deviceVersion;
+    }
 
     public void setInterceptSecond(int interceptSecond) {
         this.interceptSecond = interceptSecond;
@@ -60,7 +63,6 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
 
     public BasketBallRadioFacade(int patternType, final BasketBallListener.BasketBallResponseListener listener) {
         this.listener = listener;
-        this.testType = patternType;
         mExecutor = Executors.newFixedThreadPool(2);
         ballManager = new BallManager(patternType);
 
@@ -119,7 +121,7 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
     }
 
     public void awaitState() {
-        if (testType == 3) {
+        if (deviceVersion == 1) {
             nearResult = null;
             farResult = null;
             ledResult = null;
@@ -266,7 +268,7 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
 
             } else if (msg.what == SerialConfigs.DRIBBLEING_AWAIT) {//等待
                 Log.i("zzzz", " DRIBBLEING_AWAIT=====>");
-                if (testType != 3) {
+                if (deviceVersion == 0) {
                     listener.getDeviceStatus(2);
                     isledStartTime = false;
                     timeRountList = new ArrayList<>();

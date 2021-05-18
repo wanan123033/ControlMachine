@@ -27,7 +27,15 @@ public class BasketBallSetting {
      */
     private int testPattern = TestConfigs.GROUP_PATTERN_SUCCESIVE;
     private int testType = 0;//0有线 1无线 3无线6.6版本
+    private int deviceVersion = 0;//0:6.4 1无线6.6版本
 
+    public int getDeviceVersion() {
+        return deviceVersion;
+    }
+
+    public void setDeviceVersion(int deviceVersion) {
+        this.deviceVersion = deviceVersion;
+    }
     public int getTestNo() {
         return testNo;
     }

@@ -144,6 +144,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
             setting = new FootBallSetting();
 
         facade = new BasketBallRadioFacade(setting.getTestType(), this);
+        facade.setDeviceVersion(setting.getDeviceVersion());
         ballManager = new BallManager.Builder((setting.getTestType())).setHostIp(setting.getHostIp()).setInetPost(1527).setPost(setting.getPost())
                 .setUdpListerner(new BasketBallListener(this)).build();
 

@@ -28,7 +28,12 @@ public class BasketBallSelectActivity
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 BasketBallSetting setting = SharedPrefsUtil.loadFormSource(BasketBallSelectActivity.this, BasketBallSetting.class);
-                setting.setTestType(position);
+                if (position == 3) {
+                    setting.setTestType(1);
+                    setting.setDeviceVersion(1);
+                } else{
+                    setting.setTestType(position);
+                }
                 ShootSetting shootSetting = SharedPrefsUtil.loadFormSource(BasketBallSelectActivity.this, ShootSetting.class);
                 shootSetting.setTestType(position);
                 if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {

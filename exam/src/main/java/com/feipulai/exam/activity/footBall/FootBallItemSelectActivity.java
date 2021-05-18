@@ -30,7 +30,8 @@ public class FootBallItemSelectActivity extends SubItemsSelectActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FootBallSetting setting = SharedPrefsUtil.loadFormSource(FootBallItemSelectActivity.this, FootBallSetting.class);
                 if (position == 2) {
-                    setting.setTestType(3);
+                    setting.setTestType(1);
+                    setting.setDeviceVersion(1);
                 } else {
                     setting.setTestType(position);
                 }

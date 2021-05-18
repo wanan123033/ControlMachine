@@ -25,7 +25,15 @@ public class FootBallSetting {
      */
     private int testPattern = 0;
     private int testType = 0;   //0 有线  1 无线
+    private int deviceVersion = 0;//0:6.4 1无线6.6版本
 
+    public int getDeviceVersion() {
+        return deviceVersion;
+    }
+
+    public void setDeviceVersion(int deviceVersion) {
+        this.deviceVersion = deviceVersion;
+    }
     public int getTestNo() {
         return testNo;
     }

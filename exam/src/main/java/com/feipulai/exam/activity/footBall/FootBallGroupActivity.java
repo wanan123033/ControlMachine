@@ -147,6 +147,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
 //        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1));
 //        sleep();
         facade = new BasketBallRadioFacade(setting.getTestType(), this);
+        facade.setDeviceVersion(setting.getDeviceVersion());
         ballManager = new BallManager.Builder((setting.getTestType())).setHostIp(setting.getHostIp()).setInetPost(1527).setPost(setting.getPost())
                 .setRadioListener(facade).setUdpListerner(new BasketBallListener(this)).build();
 
