@@ -17,6 +17,7 @@ public class BasketBallListener implements UdpClient.UDPChannelListerner {
 
     private BasketBallResponseListener listener;
     private Handler mHandler;
+    private BasketballResult topResult;
 
     public BasketBallListener(final BasketBallResponseListener listener) {
         this.listener = listener;
@@ -32,6 +33,7 @@ public class BasketBallListener implements UdpClient.UDPChannelListerner {
     @Override
     public void onDataArrived(UDPResult result) {
         BasketballResult basketballResult = (BasketballResult) result.getResult();
+
         Logger.i("onDataArrived===>" + basketballResult.toString());
         switch (basketballResult.getType()) {
             case UDPBasketBallConfig.CMD_GET_STATUS_RESPONSE:
@@ -53,7 +55,11 @@ public class BasketBallListener implements UdpClient.UDPChannelListerner {
                 break;
             case UDPBasketBallConfig.CMD_BREAK_RESPONSE://拦截成绩
                 Logger.i("onDataArrived===>getResult====>");
-                listener.getResult(basketballResult);
+                if (topResult == null || basketballResult.getResult() != topResult.getResult()) {
+                    listener.getResult(basketballResult);
+                    topResult = basketballResult;
+                }
+
                 break;
         }
     }
