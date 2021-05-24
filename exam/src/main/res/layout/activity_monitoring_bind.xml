@@ -31,7 +31,7 @@
 
             <EditText
                 android:id="@+id/et_serial"
-                android:layout_width="240dp"
+                android:layout_width="340dp"
                 android:layout_height="35dp"
                 android:layout_marginLeft="10dp"
                 android:paddingRight="@dimen/dp_10"
@@ -69,6 +69,19 @@
                 android:gravity="center"
                 android:padding="8dp"
                 android:text="解绑"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_16" />
+            <TextView
+                android:id="@+id/btn_bitBind"
+                android:layout_width="88dp"
+                android:layout_height="35dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toLeftOf="@+id/tv_start_test"
+                android:background="@drawable/btn_click_bg_unselected"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="图片识别"
                 android:textColor="@color/black"
                 android:textSize="@dimen/sp_16" />
         </LinearLayout>
