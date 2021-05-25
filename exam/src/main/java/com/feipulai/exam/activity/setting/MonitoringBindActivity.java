@@ -1,5 +1,11 @@
 package com.feipulai.exam.activity.setting;
 
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,6 +14,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.ToastUtils;
@@ -16,6 +23,7 @@ import com.feipulai.device.CheckDeviceOpener;
 import com.feipulai.device.ic.NFCDevice;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.utils.CodeUtils;
 import com.google.gson.Gson;
 import com.zkteco.android.biometric.module.idcard.meta.IDCardInfo;
 
@@ -43,6 +51,7 @@ public class MonitoringBindActivity extends BaseTitleActivity implements CheckDe
     private MonitoringBindAdapter bindAdapter;
     private List<MonitoringBean> selectBeans = new ArrayList<>();
 
+    private static final int RESULT_LOAD_IMAGE = 122;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_monitoring_bind;
@@ -101,24 +110,11 @@ public class MonitoringBindActivity extends BaseTitleActivity implements CheckDe
 
     }
 
-    @OnClick({R.id.btn_bind, R.id.btn_unBind, R.id.cb_select_all})
+    @OnClick({R.id.btn_bind, R.id.btn_unBind, R.id.cb_select_all,R.id.btn_bitBind})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_bind:
-                if (TextUtils.isEmpty(etSerial.getText().toString().trim())) {
-                    ToastUtils.showShort("请输入绑定监控序列号");
-                } else {
-                    MonitoringBean addBean = new MonitoringBean(etSerial.getText().toString().trim(), DateUtil.getCurrentTime2("yyyy-MM-dd HH:mm:ss"), cbSelectAll.isChecked());
-                    if (monitoringBeans.contains(addBean)) {
-                        ToastUtils.showShort("当前监控序列号已存在");
-                        return;
-                    }
-
-                    monitoringBeans.add(addBean);
-                    bindAdapter.notifyDataSetChanged();
-                    etSerial.setText("");
-                    ToastUtils.showShort("绑定成功");
-                }
+                bind();
                 break;
             case R.id.btn_unBind:
                 selectBeans.clear();
@@ -139,6 +135,27 @@ public class MonitoringBindActivity extends BaseTitleActivity implements CheckDe
                 }
                 bindAdapter.notifyDataSetChanged();
                 break;
+            case R.id.btn_bitBind:
+                Intent intent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, RESULT_LOAD_IMAGE);
+                break;
+        }
+    }
+
+    private void bind() {
+        if (TextUtils.isEmpty(etSerial.getText().toString().trim())) {
+            ToastUtils.showShort("请输入绑定监控序列号");
+        } else {
+            MonitoringBean addBean = new MonitoringBean(etSerial.getText().toString().trim(), DateUtil.getCurrentTime2("yyyy-MM-dd HH:mm:ss"), cbSelectAll.isChecked());
+            if (monitoringBeans.contains(addBean)) {
+                ToastUtils.showShort("当前监控序列号已存在");
+                return;
+            }
+
+            monitoringBeans.add(addBean);
+            bindAdapter.notifyDataSetChanged();
+            etSerial.setText("");
+            ToastUtils.showShort("绑定成功");
         }
     }
 
@@ -176,5 +193,36 @@ public class MonitoringBindActivity extends BaseTitleActivity implements CheckDe
                 sweetAlertDialog.dismissWithAnimation();
             }
         }).show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //我们需要判断requestCode是否是我们之前传给startActivityForResult()方法的RESULT_LOAD_IMAGE，并且返回的数据不能为空
+        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+            //查询我们需要的数据
+            Cursor cursor = getContentResolver().query(selectedImage,filePathColumn, null, null, null);
+            cursor.moveToFirst();
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String picturePath = cursor.getString(columnIndex);
+            cursor.close();
+
+
+            CodeUtils.analyzeBitmap(picturePath, new CodeUtils.AnalyzeCallback() {
+                @Override
+                public void onAnalyzeSuccess(Bitmap mBitmap, String result) {
+                    etSerial.setText(result);
+                    etSerial.setSelection(result.length());
+                    bind();
+                }
+
+                @Override
+                public void onAnalyzeFailed() {
+
+                }
+            });
+        }
     }
 }
