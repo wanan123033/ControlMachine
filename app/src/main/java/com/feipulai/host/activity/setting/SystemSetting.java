@@ -78,6 +78,21 @@ public class SystemSetting {
     private boolean isCustomChannel;
     //在线识别
     private boolean netCheckTool;
+    /**
+     * 0 60
+     * 1 70
+     * 2 80
+     * 3 90
+     */
+    private int afrContrast = 3;
+
+    public int getAfrContrast() {
+        return afrContrast;
+    }
+
+    public void setAfrContrast(int afrContrast) {
+        this.afrContrast = afrContrast;
+    }
 
     public boolean isFreedomTest() {
         return isFreedomTest;

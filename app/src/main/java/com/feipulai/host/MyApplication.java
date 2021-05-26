@@ -57,6 +57,8 @@ public class MyApplication extends MultiDexApplication {
         FileUtil.mkdirs(PATH_SPECIFICATION);
         FileUtil.mkdirs(PATH_IMAGE);
         FileUtil.mkdirs2(FaceServer.ROOT_PATH);
+
+        LogUtils.initLogger(BuildConfig.DEBUG, BuildConfig.DEBUG, MyApplication.LOG_PATH_NAME);
         SerialParams.init(this);
 //        registerActivityLifecycleCallbacks(new ActivityLifeCycle(SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME));
         SOFTWAREUUID = MyApplication.getInstance().getString(R.string.software_uuid);//软件识别码

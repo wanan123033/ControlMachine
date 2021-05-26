@@ -88,7 +88,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
         public void timer(Long time) {
 
             long todayTime = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0l);
-            Logger.i("使用时长Log:" + (todayTime + 60 * 1000));
+
             SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, todayTime + 60 * 1000);
         }
     });
@@ -299,7 +299,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                 PrinterManager.getInstance().print("\n\n");
 //                addTestResult();
 //                IntentUtil.gotoActivity(this,PrintPreviewActivity.class);
-                    //todo 添加测试数据
+                //todo 添加测试数据
 //                List<RoundResult> roundResults = new ArrayList<>();
 //                List<Student> studentList = DBManager.getInstance().dumpAllStudents();
 //                for (Student student : studentList) {

@@ -304,6 +304,10 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                 systemSetting.setCheckTool(position);
                 if (position == 4) {
                     llAfr.setVisibility(View.VISIBLE);
+                    boolean isEngine = ConfigUtil.getISEngine(this);
+                    if (!isEngine) {
+                        ToastUtils.showShort("请在参数设置激活人脸识别");
+                    }
                 } else {
                     llAfr.setVisibility(View.GONE);
                 }

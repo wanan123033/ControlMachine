@@ -127,7 +127,15 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
     protected void initData() {
         initEngine();
         initCamera();
-
+        if (SettingHelper.getSystemSetting().getAfrContrast() == 0) {
+            SIMILAR_THRESHOLD = 0.60F;
+        } else if (SettingHelper.getSystemSetting().getAfrContrast() == 1) {
+            SIMILAR_THRESHOLD = 0.70F;
+        } else if (SettingHelper.getSystemSetting().getAfrContrast() == 2) {
+            SIMILAR_THRESHOLD = 0.80F;
+        } else {
+            SIMILAR_THRESHOLD = 0.90F;
+        }
     }
 
     private void initCamera() {
@@ -509,7 +517,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         drawHelper.draw(faceRectView2, drawInfoList);
     }
 
-    private final float SIMILAR_THRESHOLD = 0.80f;
+    private   float SIMILAR_THRESHOLD = 0.90f;
     private int hasTry = 0;
 
     //3个线程查找

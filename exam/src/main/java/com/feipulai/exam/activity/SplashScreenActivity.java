@@ -107,22 +107,6 @@ public class SplashScreenActivity extends BaseActivity {
     }
 
     private void gotoMain() {
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (activateBean != null && activateBean.getCurrentTime() < activateBean.getValidEndTime()) {
-//                    if (!ActivityCollector.getInstance().isExistActivity(MainActivity.class)) {
-//
-//                        init();
-//
-//
-//                    }
-//                } else {
-//                    showActivateConfirm(2);
-//                }
-//
-//            }
-//        }, 2000);
         HttpManager.DEFAULT_CONNECT_TIMEOUT = 20;
         HttpManager.DEFAULT_READ_TIMEOUT = 20;
         HttpManager.DEFAULT_WRITE_TIMEOUT = 20;
@@ -235,15 +219,7 @@ public class SplashScreenActivity extends BaseActivity {
                             }
 
                         } else {
-//                            HttpManager.DEFAULT_CONNECT_TIMEOUT = 20;
-//                            HttpManager.resetManager();
-//                            Intent intent = new Intent();
-////                        intent.setClass(SplashScreenActivity.this, AccountActivity.class);
-//                            intent.setClass(SplashScreenActivity.this, MainActivity.class);
-//                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                            startActivity(intent);
-//                            finish();
+
                             gotoMain();
                         }
 
@@ -258,10 +234,6 @@ public class SplashScreenActivity extends BaseActivity {
         }, 1000);
 
 
-        // Log.i("james", CommonUtils.getDeviceInfo());
-        // AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        // int max = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM);
-        // mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, max,0);
     }
 
     private void initLocalFace() {
@@ -356,11 +328,6 @@ public class SplashScreenActivity extends BaseActivity {
                             finish();
                         }
 
-//                        ActiveFileInfo activeFileInfo = new ActiveFileInfo();
-//                        int res = FaceEngine.getActiveFileInfo(SplashScreenActivity.this, activeFileInfo);
-//                        if (res == ErrorInfo.MOK) {
-//                            Log.i("SplashScreenActivity", activeFileInfo.toString());
-//                        }
                     }
 
                     @Override

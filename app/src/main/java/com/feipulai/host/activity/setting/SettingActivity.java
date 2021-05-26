@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -88,6 +89,10 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     CheckBox sw_net;
     @BindView(R.id.txt_host_hint)
     TextView txtHostHint;
+    @BindView(R.id.sp_afr)
+    Spinner spAfr;
+    @BindView(R.id.ll_afr)
+    LinearLayout llAfr;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_system_setting;
@@ -125,11 +130,11 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         spCheckTool.setAdapter(spCheckToolAdapter);
 
         spCheckTool.setSelection(setting.getCheckTool());
-        if (setting.getCheckTool() == 4){
+        if (setting.getCheckTool() == 4) {
             rl_net.setVisibility(View.VISIBLE);
             view_itemd.setVisibility(View.VISIBLE);
             sw_net.setChecked(setting.isNetCheckTool());
-        }else {
+        } else {
             rl_net.setVisibility(View.GONE);
             view_itemd.setVisibility(View.GONE);
         }
@@ -160,6 +165,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_YWQZ || TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_SGBQS) {
             txtHostHint.setVisibility(View.VISIBLE);
         }
+        spAfr.setSelection(setting.getAfrContrast());
     }
 
     @Nullable
@@ -168,7 +174,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         return builder.setTitle(R.string.setting_title);
     }
 
-    @OnItemSelected({R.id.sp_host_id, R.id.sp_check_tool})
+    @OnItemSelected({R.id.sp_host_id, R.id.sp_check_tool, R.id.sp_afr})
     public void spinnerItemSelected(Spinner spinner, int position) {
         switch (spinner.getId()) {
 
@@ -178,19 +184,28 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                 break;
             case R.id.sp_check_tool:
                 setting.setCheckTool(position);
-                if (position == 4){
+                if (position == 4) {
+                    llAfr.setVisibility(View.VISIBLE);
+                    boolean isEngine = ConfigUtil.getISEngine(this);
+                    if (!isEngine) {
+                        ToastUtils.showShort("请在参数设置激活人脸识别");
+                    }
                     rl_net.setVisibility(View.VISIBLE);
                     view_itemd.setVisibility(View.VISIBLE);
                     sw_net.setChecked(setting.isNetCheckTool());
-                }else {
+                } else {
                     rl_net.setVisibility(View.GONE);
                     view_itemd.setVisibility(View.GONE);
+                    llAfr.setVisibility(View.GONE);
                 }
+                break;
+            case R.id.sp_afr:
+                setting.setAfrContrast(position);
                 break;
         }
     }
 
-    @OnClick({R.id.btn_face_init, R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting, R.id.cb_custom_channel,R.id.sw_net})
+    @OnClick({R.id.btn_face_init, R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting, R.id.cb_custom_channel, R.id.sw_net})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.sw_auto_broadcast:

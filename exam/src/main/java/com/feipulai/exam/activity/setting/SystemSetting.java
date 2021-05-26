@@ -136,7 +136,7 @@ public class SystemSetting {
      * 2 80
      * 3 90
      */
-    private int afrContrast = 2;
+    private int afrContrast = 3;
 
     public int getAfrContrast() {
         return afrContrast;

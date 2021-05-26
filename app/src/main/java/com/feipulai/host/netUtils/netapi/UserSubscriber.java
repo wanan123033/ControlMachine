@@ -65,6 +65,11 @@ public class UserSubscriber {
      * @param listener
      */
     public void activate(long currentRunTime, OnResultListener listener) {
+        //减少连接时长
+        HttpManager.DEFAULT_CONNECT_TIMEOUT = 5;
+        HttpManager.DEFAULT_READ_TIMEOUT = 5;
+        HttpManager.DEFAULT_WRITE_TIMEOUT = 5;
+        HttpManager.resetManager();
         Map<String, String> parameData = new HashMap<>();
         parameData.put("deviceIdentify", CommonUtils.getDeviceId(MyApplication.getInstance()));
         parameData.put("currentRunTime", currentRunTime + "");
