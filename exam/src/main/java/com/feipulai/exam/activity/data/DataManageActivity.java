@@ -95,6 +95,10 @@ import com.ww.fpl.videolibrary.camera.HkCameraManager;
 import com.yhy.gvp.listener.OnItemClickListener;
 import com.yhy.gvp.widget.GridViewPager;
 
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
+import net.lingala.zip4j.model.ZipParameters;
+import net.lingala.zip4j.util.Zip4jConstants;
 import net.lucode.hackware.magicindicator.MagicIndicator;
 import net.lucode.hackware.magicindicator.ViewPagerHelper;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator;
@@ -1182,7 +1186,14 @@ public class DataManageActivity
                     Logger.i(backupSuccess ? ("数据库备份成功,备份文件名:" +
                             FileSelectActivity.sSelectedFile.getName() + "/" + targetFile.getName())
                             : "数据库备份失败");
-                    FileSelectActivity.sSelectedFile = null;
+//                    FileSelectActivity.sSelectedFile = null;
+                    if (backupSuccess){
+                        UsbFile excelFile = FileSelectActivity.sSelectedFile.createFile(text + ".xls");
+                        new ResultExlWriter(TestConfigs.getMaxTestCount(DataManageActivity.this), DataManageActivity.this)
+                                .writeExelData(excelFile);
+                        zipFile(FileSelectActivity.sSelectedFile.getName() + "/" + targetFile.getName(),
+                                FileSelectActivity.sSelectedFile.getName() + "/" + excelFile.getName());
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                     ToastUtils.showShort("文件创建失败,请确保路径目录不存在已有文件");
@@ -1190,6 +1201,36 @@ public class DataManageActivity
                 }
             }
         });
+    }
+
+    private void zipFile(String backUp,String excel) {
+            // 生成的压缩文件
+            try {
+                File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/" +backUp);
+                File file1 = new File(Environment.getExternalStorageDirectory().getAbsolutePath() +"/"+excel);
+//                File file2 = new File(Environment.getExternalStorageDirectory().getAbsolutePath() +"/KS_LOGGER/operationLogger");
+                ZipFile zipFile = new ZipFile(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/"+"test.zip");
+                ZipParameters parameters = new ZipParameters();
+                // 压缩方式
+                parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
+                // 压缩级别
+                parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
+                if (file.exists()){
+                    zipFile.addFile(file,parameters);
+                    Log.i("zipFile",Environment.getExternalStorageDirectory().getAbsolutePath() +backUp+"file is exists");
+                }else {
+                    Log.i("zipFile",Environment.getExternalStorageDirectory().getAbsolutePath() +backUp+"file is not exists");
+                }
+                if (file1.exists()){
+                    zipFile.addFile(file1,parameters);
+                    Log.i("zipFile",Environment.getExternalStorageDirectory().getAbsolutePath() +excel+"file is  exists");
+                }else {
+                    Log.i("zipFile",Environment.getExternalStorageDirectory().getAbsolutePath() +excel+"file1 is not exists");
+                }
+                zipFile.addFolder(Environment.getExternalStorageDirectory().getAbsolutePath() +"/KS_LOGGER/operationLogger",parameters);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
     }
 
     public void chooseFile() {
