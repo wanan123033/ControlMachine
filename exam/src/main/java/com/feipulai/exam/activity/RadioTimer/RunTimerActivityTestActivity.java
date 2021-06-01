@@ -95,8 +95,8 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     TextView tvGetTime;
     private int testNo;
     private List<RunStudent> mList = new ArrayList<>();
-    private RunNumberAdapter2 mAdapter2;
-    private RunNumberAdapter mAdapter;
+    private RunNumberAdapter2 mAdapter2;//测试界面
+    private RunNumberAdapter mAdapter;//第一页显示道次
     private ResultPopWindow resultPopWindow;
     //    private ListView lvResults;
     @BindView(R.id.lv_results)
@@ -505,7 +505,8 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
 
     @Override
     public void updateTableUI(RunTimerResult result) {
-
+        if (result.getTrackNum() == 0)
+            return;
         int realTime = (int) (result.getResult() - baseTimer);
         mList.get(result.getTrackNum() - 1).setMark(getFormatTime(realTime));
         mList.get(result.getTrackNum() - 1).setOriginalMark(realTime);

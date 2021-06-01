@@ -307,7 +307,8 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                 playUtils.play(13);//播放各就各位
                 testState = TestState.UN_STARTED;
                 tvTimer.setText(ResultDisplayUtils.getStrResultForDisplay(0, false));
-                if (runTimerSetting.getInterceptWay() == 0 && runTimerSetting.getInterceptPoint() == 3){
+                tvRunState.setText("等待");
+                if (runTimerSetting.getInterceptWay() == 0 && runTimerSetting.getInterceptPoint() != 2){//红外拦截&&触发方式必须有起点
                     testState = TestState.DATA_DEALING;
                     sportPresent.waitStart();
                 }

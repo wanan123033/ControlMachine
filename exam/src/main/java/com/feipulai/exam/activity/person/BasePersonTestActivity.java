@@ -701,6 +701,10 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         //当前的测试次数是否在项目设置的轮次中，是否满分跳过考生测试，满分由子类处理，基类只做界面展示
         if (roundNo < setTestCount()) {
             if (pair.getResultState() == RoundResult.RESULT_STATE_NORMAL && pair.isFullMark()) {
+                if (isShowPenalizeFoul() == View.VISIBLE){
+                    toastSpeak("是否需要判罚,否则请选择跳过");
+                    return true;
+                }
                 //测试结束学生清除 ，设备设置空闲状态
                 roundNo = 1;
                 //4秒后清理学生信息
