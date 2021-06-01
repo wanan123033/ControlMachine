@@ -579,7 +579,9 @@ public class DataRetrieveActivity extends BaseTitleActivity
     }
 
     private void chooseStudent() {
-
+        if (!cbUploaded.isChecked() && !cbUnUpload.isChecked() && !cbTested.isChecked() && !cbUnTested.isChecked()) {
+            return;
+        }
         DataBaseExecutor.addTask(new DataBaseTask(this, getString(R.string.loading_hint), true) {
             @Override
             public DataBaseRespon executeOper() {

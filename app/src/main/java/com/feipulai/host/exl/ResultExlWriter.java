@@ -1,5 +1,7 @@
 package com.feipulai.host.exl;
 
+import android.database.Cursor;
+
 import com.feipulai.common.exl.ExlListener;
 import com.feipulai.common.exl.ExlWriter;
 import com.feipulai.common.exl.ExlWriterUtil;
@@ -10,6 +12,7 @@ import com.feipulai.host.activity.height_weight.HWConfigs;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
+import com.feipulai.host.entity.RoundResultDao;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.entity.StudentItem;
 import com.feipulai.host.utils.ResultDisplayUtils;
@@ -45,27 +48,30 @@ public class ResultExlWriter extends ExlWriter {
         }
         // 所有该项目的报名信息
         // 这里以报名信息开始,因为报名信息是每个报名信息 学生 机器码 项目代码 的组合是唯一的
-        List<StudentItem> studentItems = DBManager.getInstance()
-                .querystuItemsByMachineItemCode(TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.getCurrentItemCode());
-
+//        List<StudentItem> studentItems = DBManager.getInstance()
+//                .querystuItemsByMachineItemCode(TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.getCurrentItemCode());
+        List<String> stuCodeList = DBManager.getInstance().getResultsStudentByItem(TestConfigs.getCurrentItemCode());
         if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_HW) {
-            generateRowsHW(studentItems);
+//            generateRowsHW(studentItems);
+            generateRowsHW(stuCodeList);
         } else {
-            generateRows(studentItems);
+//            generateRows(studentItems);
+            generateRows(stuCodeList);
         }
         new ExlWriterUtil.Builder(file).setWriteData(writeData).setExlListener(listener).setSheetname("测试成绩").build().write();
 
     }
 
-    private void generateRows(List<StudentItem> studentItems) {
+    //    private void generateRows(List<StudentItem> studentItems) {
+    private void generateRows(List<String> studentItems) {
         List<RoundResult> roundResults;
         Student student;
         String itemName = TestConfigs.sCurrentItem.getItemName();
+//        for (StudentItem stuItem : studentItems) {
+        for (String stuCode : studentItems) {
 
-        for (StudentItem stuItem : studentItems) {
-
-            roundResults = DBManager.getInstance().queryResultsByStuItem(stuItem);
-            student = DBManager.getInstance().queryStudentByStuCode(stuItem.getStudentCode());
+            roundResults = DBManager.getInstance().queryResultsByStudentCode(stuCode);
+            student = DBManager.getInstance().queryStudentByStuCode(stuCode);
 
             for (RoundResult result : roundResults) {
                 String[] rowData = new String[5];
@@ -74,7 +80,12 @@ public class ResultExlWriter extends ExlWriter {
                 rowData[2] = student.getSex() == Student.MALE ? MyApplication.getInstance().getString(R.string.male) :
                         MyApplication.getInstance().getString(R.string.female);
                 rowData[3] = itemName;
-                rowData[4] = ResultDisplayUtils.getStrResultForDisplay(result.getResult(), false);
+                if (result.getResultState() != RoundResult.RESULT_STATE_NORMAL) {
+                    rowData[4] = "0";
+                } else {
+                    rowData[4] = ResultDisplayUtils.getStrResultForDisplay(result.getResult(), false);
+                }
+
                 writeData.add(Arrays.asList(rowData));
             }
         }
@@ -87,18 +98,19 @@ public class ResultExlWriter extends ExlWriter {
         }
     });
 
-    private void generateRowsHW(List<StudentItem> studentItems) {
+    //    private void generateRowsHW(List<StudentItem> studentItems) {
+    private void generateRowsHW(List<String> studentItems) {
 
         Student student;
         String itemName = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode());
 
-        for (StudentItem stuItem : studentItems) {
+        for (String stuCode : studentItems) {
 
-            student = DBManager.getInstance().queryStudentByStuCode(stuItem.getStudentCode());
+            student = DBManager.getInstance().queryStudentByStuCode(stuCode);
 
-            List<RoundResult> heightResults = DBManager.getInstance().queryResultsByStudentCode(stuItem.getStudentCode(), HWConfigs
+            List<RoundResult> heightResults = DBManager.getInstance().queryResultsByStudentCode(stuCode, HWConfigs
                     .HEIGHT_ITEM);
-            List<RoundResult> weightResults = DBManager.getInstance().queryResultsByStudentCode(stuItem.getStudentCode(), HWConfigs
+            List<RoundResult> weightResults = DBManager.getInstance().queryResultsByStudentCode(stuCode, HWConfigs
                     .WEIGHT_ITEM);
             Collections.sort(heightResults, roundResultComparator);
             Collections.sort(weightResults, roundResultComparator);
@@ -109,8 +121,14 @@ public class ResultExlWriter extends ExlWriter {
                 rowData[2] = student.getSex() == Student.MALE ? MyApplication.getInstance().getString(R.string.male) :
                         MyApplication.getInstance().getString(R.string.female);
                 rowData[3] = itemName;
-                rowData[4] = ResultDisplayUtils.getStrResultForDisplay(heightResults.get(i).getResult(), HWConfigs.HEIGHT_ITEM, false);
-                rowData[5] = ResultDisplayUtils.getStrResultForDisplay(weightResults.get(i).getResult(), HWConfigs.WEIGHT_ITEM, false);
+                if (heightResults.get(i).getResultState() != RoundResult.RESULT_STATE_NORMAL) {
+                    rowData[4] = "0";
+                    rowData[5] = "0";
+                } else {
+                    rowData[4] = ResultDisplayUtils.getStrResultForDisplay(heightResults.get(i).getResult(), HWConfigs.HEIGHT_ITEM, false);
+                    rowData[5] = ResultDisplayUtils.getStrResultForDisplay(weightResults.get(i).getResult(), HWConfigs.WEIGHT_ITEM, false);
+                }
+
                 writeData.add(Arrays.asList(rowData));
             }
         }
