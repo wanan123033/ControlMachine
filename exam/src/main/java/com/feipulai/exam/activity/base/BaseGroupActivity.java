@@ -2,6 +2,7 @@ package com.feipulai.exam.activity.base;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -133,7 +134,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
     protected void initData() {
         ButterKnife.bind(this);
         initView();
-        if (MachineCode.machineCode == ItemDefault.CODE_ZFP) {
+        if (MachineCode.machineCode == ItemDefault.CODE_ZFP && SettingHelper.getSystemSetting().getRadioLed() == 0) {
             runLEDManager = new RunLEDManager();
         } else {
             mLEDManager = new LEDManager();
@@ -748,7 +749,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     for (int i = 0; i < page; i++) {// 页
                         if (mLEDManager == null && runLEDManager == null)
                             return;
-                        if (MachineCode.machineCode == ItemDefault.CODE_ZFP) {
+                        if (MachineCode.machineCode == ItemDefault.CODE_ZFP && SettingHelper.getSystemSetting().getRadioLed() == 0) {
                             runLEDManager.showString(hostId, title, 0, 0, true, false);
                         } else {
                             mLEDManager.showString(hostId, title, 0, 0, true, false);
@@ -763,7 +764,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                             String rightStuName = showList.get(i * 6 + j * 2 + 1).getStudent().getStudentName();
                             rightStuName = InteractUtils.getStrWithLength(rightStuName, 4);
 
-                            if (MachineCode.machineCode == ItemDefault.CODE_ZFP) {
+                            if (MachineCode.machineCode == ItemDefault.CODE_ZFP&& SettingHelper.getSystemSetting().getRadioLed() == 0) {
                                 runLEDManager.showString(hostId, leftStuName + rightStuName, 0, j + 1, false, j == 2);
                             } else {
                                 mLEDManager.showString(hostId, leftStuName + rightStuName, 0, j + 1, false, j == 2);

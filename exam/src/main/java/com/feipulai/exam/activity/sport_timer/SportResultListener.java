@@ -28,7 +28,7 @@ public class SportResultListener implements RadioManager.OnRadioArrivedListener 
                         sportMsgListener.onGetTime();
                         Log.i("SportResultListener","获取时间");
                     }else {
-                        sportMsgListener.onGetDeviceState(((SportResult) msg.obj).getDeviceState());
+                        sportMsgListener.onGetDeviceState(((SportResult) msg.obj).getDeviceState(),((SportResult) msg.obj).getDeviceId());
                     }
 
                 }
@@ -46,6 +46,6 @@ public class SportResultListener implements RadioManager.OnRadioArrivedListener 
         void onConnect(SportResult result);
         void onGetTime();
         void onGetResult(SportResult result);
-        void onGetDeviceState(int deviceState);
+        void onGetDeviceState(int deviceState,int deviceId);
     }
 }

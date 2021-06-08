@@ -123,4 +123,13 @@ public class ChangeDeviceUtil implements RadioManager.OnRadioArrivedListener, Ra
     interface ResponseArrivedListener{
         void onReceiveResult(Message msg);
     }
+
+    public void release(){
+        if (checkService!=null){
+            checkService.shutdown();
+        }
+        if (linker!=null){
+            linker.cancelPair();
+        }
+    }
 }

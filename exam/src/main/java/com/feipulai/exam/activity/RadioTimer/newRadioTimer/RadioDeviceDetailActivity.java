@@ -273,7 +273,7 @@ public class RadioDeviceDetailActivity extends BaseTitleActivity implements Devi
     protected void onStop() {
         super.onStop();
         changeDevice.setCheck(false);
-
+        changeDevice.release();
     }
 
     public void showChangeBadDialog() {
@@ -290,5 +290,11 @@ public class RadioDeviceDetailActivity extends BaseTitleActivity implements Devi
                 changeDevice.cancelChangeBad();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        changeDevice = null;
     }
 }

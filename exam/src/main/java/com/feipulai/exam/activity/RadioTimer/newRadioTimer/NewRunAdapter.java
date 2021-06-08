@@ -1,6 +1,7 @@
 package com.feipulai.exam.activity.RadioTimer.newRadioTimer;
 
 import android.support.annotation.Nullable;
+import android.util.SparseArray;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -16,10 +17,16 @@ import java.util.List;
 public class NewRunAdapter extends BaseQuickAdapter<RunStudent, BaseViewHolder> {
 
     private int type;//统一, 1独立
-
+    private int intercept;// 0只有起点或终点 1有起终点
+    private SparseArray<Integer> array;
     public NewRunAdapter(@Nullable List<RunStudent> data, int type) {
-        super(R.layout.item_runner_layout2, data);
+        super(R.layout.item_runner_layout_radio, data);
         this.type = type;
+    }
+
+    public void setIntercept(int intercept,SparseArray<Integer> array){
+        this.intercept = intercept;
+        this.array = array;
     }
 
     @Override
@@ -48,10 +55,31 @@ public class NewRunAdapter extends BaseQuickAdapter<RunStudent, BaseViewHolder> 
             //            helper.setText(R.id.tv_stuClass,"");
             helper.setText(R.id.tv_stuMark, "");
         }
-        helper.setText(R.id.tv_device_state, item.getConnectState() == 1 ?
-                "正常" : "异常");
-        helper.setBackgroundRes(R.id.tv_state_color, item.getConnectState() == 1 ? R.mipmap.icon_green : R.mipmap.icon_red);
-        //        helper.setText(R.id.tv_stuDelete,"删除");
-        //        helper.addOnClickListener(R.id.tv_stuDelete);
+        if (intercept == 0){
+            helper.getView(R.id.tv_device_state).setVisibility(View.INVISIBLE);
+        }else {
+            switch (array.get(helper.getAdapterPosition())){
+                case 0:
+                    helper.setBackgroundRes(R.id.tv_device_state,  R.drawable.red_circle);
+                    break;
+                case 1:
+                    helper.setBackgroundRes(R.id.tv_device_state,  R.drawable.green_circle);
+                    break;
+                case 2:
+                    helper.setBackgroundRes(R.id.tv_device_state,  R.drawable.yellow_circle);
+                    break;
+            }
+        }
+        switch (item.getConnectState()){
+            case 0:
+                helper.setBackgroundRes(R.id.tv_state_color,  R.drawable.red_circle);
+                break;
+            case 1:
+                helper.setBackgroundRes(R.id.tv_state_color,  R.drawable.green_circle);
+                break;
+            case 2:
+                helper.setBackgroundRes(R.id.tv_state_color,  R.drawable.yellow_circle);
+                break;
+        }
     }
 }
