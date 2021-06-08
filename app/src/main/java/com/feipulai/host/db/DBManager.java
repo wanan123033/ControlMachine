@@ -400,7 +400,19 @@ public class DBManager {
 //        }
 //        return students;
     }
-
+    public List<String> getResultsStudentByItem(String itemCode) {
+        List<String> stuCodeList = new ArrayList<>();
+        StringBuffer sqlBuf1 = new StringBuffer("SELECT  DISTINCT " + RoundResultDao.Properties.StudentCode.columnName);
+        sqlBuf1.append(" FROM " + RoundResultDao.TABLENAME);
+        sqlBuf1.append(" WHERE " + RoundResultDao.Properties.ItemCode.columnName + " =  ?  AND ");
+        sqlBuf1.append(RoundResultDao.Properties.MachineCode.columnName + " = ? ");
+        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf1.toString(), new String[]{itemCode, TestConfigs.sCurrentItem.getMachineCode() + ""});
+        while (c.moveToNext()) {
+            stuCodeList.add(c.getString(0));
+        }
+        c.close();
+        return stuCodeList;
+    }
     /**
      * 根据用户筛选获取学生列表
      *

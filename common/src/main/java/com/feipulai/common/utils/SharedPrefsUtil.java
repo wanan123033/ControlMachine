@@ -492,12 +492,12 @@ public class SharedPrefsUtil {
                     field.set(target, value);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
-                    Logger.d(String.format("Set field error, Key:%s, type:%s, value:%s",
-                            key, fieldType, value));
+//                    Logger.d(String.format("Set field error, Key:%s, type:%s, value:%s",
+//                            key, fieldType, value));
                 }
             } else {
-                Logger.d(String.format("Get field value error, Key:%s, type:%s",
-                        key, fieldType));
+//                Logger.d(String.format("Get field value error, Key:%s, type:%s",
+//                        key, fieldType));
             }
         }
         return buildTargetFromSource(clx.getSuperclass(), target, preFix, existKeys, sp);
