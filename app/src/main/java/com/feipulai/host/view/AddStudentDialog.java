@@ -20,6 +20,7 @@ import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.entity.StudentItem;
+import com.orhanobut.logger.utils.LogUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -111,9 +112,10 @@ public class AddStudentDialog {
             student.setStudentName(editStuName.getText().toString().trim());
             student.setSex(sex);
             // 插入学生信息
-            if (SettingHelper.getSystemSetting().isNetCheckTool()){
+            if (SettingHelper.getSystemSetting().isNetCheckTool()) {
 
-            }else {
+            } else {
+                LogUtils.operation("考生添加" + student.toString());
                 DBManager.getInstance().insertStudent(student);
             }
 
@@ -122,9 +124,10 @@ public class AddStudentDialog {
         studentItem.setStudentCode(editStuCode.getText().toString());
         studentItem.setItemCode(TestConfigs.getCurrentItemCode());
         studentItem.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
-        if (SettingHelper.getSystemSetting().isNetCheckTool()){
+        if (SettingHelper.getSystemSetting().isNetCheckTool()) {
 
-        }else {
+        } else {
+
             DBManager.getInstance().insertStudentItem(studentItem);
             ToastUtils.showShort("考生添加成功");
         }

@@ -28,6 +28,10 @@ public class TestCache{
 	 * 指定学生的当前测试次数,用于保存成绩时使用
 	 */
 	private Map<Student,Integer> testNoMap;
+	/**
+	 * 指定学生的当前测试次数的第几轮,用于保存成绩时使用（重测指定轮次，之前按成绩按成绩条数判断已不适用）
+	 */
+	private Map<Student,Integer>roundNoMap;
 	
 	private Map<Student, StudentItem> studentItemMap;
 	
@@ -47,6 +51,7 @@ public class TestCache{
 		results = new IdentityHashMap<>();
 		group = null;
 		testNoMap = new IdentityHashMap<>();
+		roundNoMap = new IdentityHashMap<>();
 		studentItemMap = new IdentityHashMap<>();
 		trackNoMap = new IdentityHashMap<>();
 	}

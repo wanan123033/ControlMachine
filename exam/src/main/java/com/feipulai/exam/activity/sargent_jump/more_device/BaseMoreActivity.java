@@ -167,7 +167,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                         deviceListAdapter.notifyDataSetChanged();
                         toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), deviceDetail.getRound())
                                 , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), deviceDetail.getRound()));
-
+                        LogUtils.operation((i + 1) + "号机：" + pair.getStudent().getStudentName());
+                        LogUtils.operation(String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), deviceDetail.getRound()));
                         if (!isNextClickStart) {
                             if (deviceDetails.size() == 1) {
                                 new Handler().postDelayed(new Runnable() {
@@ -342,7 +343,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         int count = deviceDetail.getRound();
         toastSpeak(String.format(getString(R.string.test_speak_hint), student.getStudentName(), count)
                 , String.format(getString(R.string.test_speak_hint), student.getStudentName(), count));
-
+        LogUtils.operation((index + 1) + "号机：" +student.getStudentName());
+        LogUtils.operation(String.format(getString(R.string.test_speak_hint), student.getStudentName(), count));
         setShowLed(deviceDetail.getStuDevicePair(), index);
 
     }
@@ -428,8 +430,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                             pair.setTestTime(DateUtil.getCurrentTime() + "");
                             sendTestCommand(pair, pos);
                             deviceListAdapter.setPenalize(false);
-                            if (isPenalize){
-                                setConfirmVisible(pos,true);
+                            if (isPenalize) {
+                                setConfirmVisible(pos, true);
                             }
                         }
                         break;
@@ -461,8 +463,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                             doResult(pair, pos);
                             deviceDetails.get(pos).setConfirmVisible(false);
                             deviceListAdapter.notifyItemChanged(pos);
-                            if (isPenalize){
-                                setConfirmVisible(pos,false);
+                            if (isPenalize) {
+                                setConfirmVisible(pos, false);
                             }
                         }
                         break;
@@ -733,7 +735,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 detail.setRound(count + 1);
                 toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), count + 1)
                         , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), count + 1));
-
+                LogUtils.operation((index + 1) + "号机：" + pair.getStudent().getStudentName());
+                LogUtils.operation(String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), count));
                 if (!isNextClickStart) {
                     if (deviceDetails.size() == 1) {
                         new Handler().postDelayed(new Runnable() {

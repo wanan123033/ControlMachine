@@ -60,6 +60,7 @@ import com.inuker.bluetooth.library.connect.response.BleConnectResponse;
 import com.inuker.bluetooth.library.connect.response.BleNotifyResponse;
 import com.inuker.bluetooth.library.model.BleGattProfile;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 import com.zkteco.android.biometric.module.idcard.meta.IDCardInfo;
 
 import java.lang.ref.WeakReference;
@@ -409,7 +410,6 @@ public abstract class BaseCheckActivity
     }
 
     protected void checkInUIThread(Student student, StudentItem studentItem) {
-        Logger.e("-------------单机测试");
         SystemSetting setting = SettingHelper.getSystemSetting();
         if (setting.isAutoScore()) {
             HttpSubscriber subscriber = new HttpSubscriber();
@@ -437,6 +437,7 @@ public abstract class BaseCheckActivity
             if (SettingHelper.getSystemSetting().isStartThermometer()) {
                 showThermometerDialog();
             } else {
+                LogUtils.operation("检入考生：" + mStudent.toString());
                 onCheckIn(mStudent);
             }
 
@@ -558,12 +559,14 @@ public abstract class BaseCheckActivity
                             activity.showThermometerDialog();
                         } else {
                             if (activity.mStudent != null) {
+                                LogUtils.operation("检入考生：" + activity.mStudent.toString());
                                 activity.onCheckIn(activity.mStudent);
                             }
                         }
 
                     } else {
                         if (activity.mStudent != null) {
+                            LogUtils.operation("检入考生：" + activity.mStudent.toString());
                             activity.onCheckIn(activity.mStudent);
                         }
 
@@ -614,6 +617,7 @@ public abstract class BaseCheckActivity
                         }, 2000);
 
                         if (activity.mStudent != null) {
+                            LogUtils.operation("检入考生：" + activity.mStudent.toString());
                             activity.onCheckIn(activity.mStudent);
                         }
 

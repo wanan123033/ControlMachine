@@ -58,6 +58,8 @@ public class DBOpenHelper extends DaoMaster.OpenHelper {
                     MigrationHelper.migrate(db, AccountDao.class);
                     MigrationHelper.migrate(db, ItemDao.class);
                     MigrationHelper.migrate(db, RoundResultDao.class);
+                case 14:
+                    MigrationHelper.migrate(db, RoundResultDao.class);
                     break;
 
             }

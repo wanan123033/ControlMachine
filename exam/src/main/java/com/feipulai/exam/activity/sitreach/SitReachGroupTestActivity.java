@@ -78,7 +78,6 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
     @Override
     protected void onResume() {
         super.onResume();
-        LogUtils.life("SitReachGroupTestActivity onResume");
         mHandler = new MyHandler(this);
         if (sitReachResiltListener == null) {
             sitReachResiltListener = new SitReachResiltListener(this);
@@ -154,7 +153,6 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
     @Override
     protected void onPause() {
         super.onPause();
-        LogUtils.life("SitReachGroupTestActivity onPause");
         if (SerialDeviceManager.getInstance() != null) {
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_END));
         }

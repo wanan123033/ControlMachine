@@ -33,8 +33,8 @@
             android:id="@+id/tv_studentCode"
             android:layout_width="match_parent"
             android:layout_height="25dp"
-            android:paddingLeft="5dp"
             android:background="@drawable/edit_search_bg"
+            android:paddingLeft="5dp"
             android:textColor="@color/grey_A8"
             android:textSize="18sp" />
 
@@ -91,14 +91,14 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_margin="5dp"
-        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:text="成绩："
             android:textColor="@color/grey_A8"
             android:textSize="18sp" />
@@ -109,7 +109,14 @@
             android:layout_height="wrap_content"
             android:background="@drawable/edit_search_bg"
             android:textColor="@color/black"
-            android:textSize="18sp" />
+            android:textSize="18sp"  />
+
+        <LinearLayout
+            android:id="@+id/ll_grade"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" />
+
 
     </LinearLayout>
 

@@ -63,11 +63,11 @@ public class FileUtils {
     }
 
 
-    public static void log(String log) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.CHINA);
-        String logTime = dateFormat.format(Calendar.getInstance().getTime());
-        fileLinesWrite(diskLogFilePath, "time:" + logTime + " log:" + log, true);
-    }
+//    public static void log(String log) {
+//        DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.CHINA);
+//        String logTime = dateFormat.format(Calendar.getInstance().getTime());
+//        fileLinesWrite(diskLogFilePath, "time:" + logTime + " log:" + log, true);
+//    }
 
     /**
      * 复制文件夹及其中的文件

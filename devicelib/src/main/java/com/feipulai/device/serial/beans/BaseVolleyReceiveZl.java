@@ -1,5 +1,6 @@
 package com.feipulai.device.serial.beans;
 
+import com.feipulai.device.serial.SerialConfigs;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.Arrays;
@@ -33,7 +34,7 @@ public class BaseVolleyReceiveZl {
     private byte ganchang; //1 米杆：0x02；2 米杆：0x04；3 米杆：0x06
     private byte[] result = new byte[5]; //对管自检结果，每对对管占一位，0 正常，1 异常；
 
-    public BaseVolleyReceiveZl(byte[] data){
+    public BaseVolleyReceiveZl(byte[] data) {
 
         tou = data[0];
         chang = data[1];
@@ -44,7 +45,7 @@ public class BaseVolleyReceiveZl {
         device_child = data[6];
         zl = data[7];
         device_sn = ((((data[8] & 0xff) << 8 | (data[9] & 0xff)) << 8) | (data[10] & 0xff)) << 8 | (data[11] & 0xff);
-        switch (zl){
+        switch (zl) {
             case (byte) 0xB1:   //联机
             case (byte) 0xb0:
                 wireless = data[12];
@@ -55,12 +56,12 @@ public class BaseVolleyReceiveZl {
                 break;
             case (byte) 0xB2:   //查询版本
                 StringBuffer sb = new StringBuffer();
-                for (int i = 12 ; i <= 19 ; i++){
+                for (int i = 12; i <= 19; i++) {
                     sb.append(data[i]);
                 }
                 soft = sb.toString();
-                sb.delete(0,soft.length());
-                for (int i = 20 ; i <= 27 ; i++){
+                sb.delete(0, soft.length());
+                for (int i = 20; i <= 27; i++) {
                     sb.append(data[i]);
                 }
                 harware = sb.toString();
@@ -85,8 +86,12 @@ public class BaseVolleyReceiveZl {
                 wei = data[20];
                 break;
         }
+        if (SerialConfigs.LOGGER_STATE == 0) {
+            LogUtils.normal("排球返回数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
+        } else {
+            LogUtils.operation("排球返回数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
+        }
 
-        LogUtils.normal("排球返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
     }
 
     public byte getTou() {
@@ -169,7 +174,7 @@ public class BaseVolleyReceiveZl {
         return ganchang;
     }
 
-    public byte[] getResult(){
+    public byte[] getResult() {
         return result;
     }
 

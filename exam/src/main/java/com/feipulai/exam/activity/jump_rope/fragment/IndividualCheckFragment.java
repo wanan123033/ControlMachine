@@ -64,6 +64,7 @@ import com.inuker.bluetooth.library.connect.response.BleConnectResponse;
 import com.inuker.bluetooth.library.connect.response.BleNotifyResponse;
 import com.inuker.bluetooth.library.model.BleGattProfile;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 import com.zkteco.android.biometric.module.idcard.meta.IDCardInfo;
 
 import org.greenrobot.eventbus.EventBus;
@@ -121,7 +122,6 @@ public class IndividualCheckFragment
     public void setOnIndividualCheckInListener(OnIndividualCheckInListener listener) {
         this.listener = listener;
     }
-
 
 
     @Nullable
@@ -264,13 +264,13 @@ public class IndividualCheckFragment
     public void onDestroyView() {
         super.onDestroyView();
         EventBus.getDefault().unregister(this);
+        listener = null;
         //null.unbind();
     }
 
 
     private void checkInUIThread(Student student, StudentItem studentItem) {
 
-        Logger.e("-------------单机测试");
         SystemSetting setting = SettingHelper.getSystemSetting();
         if (setting.isAutoScore()) {
             OperateProgressBar.showLoadingUi(getActivity(), "正在获取云端成绩...");
@@ -285,7 +285,6 @@ public class IndividualCheckFragment
 
     @Override
     public boolean onInputCheck(Student student) {
-        LogUtil.logDebugMessage("onInputCheck=============>" + student.getStudentCode());
         boolean needAdd = checkQulification(student.getStudentCode(), STUDENT_CODE);
         if (needAdd) {
             showAddHint(student);
@@ -382,10 +381,12 @@ public class IndividualCheckFragment
         checkInUIThread(student, studentItem);
         return false;
     }
+
     @Override
     public void onResponseTime(String responseTime) {
 
     }
+
     @Override
     public void onSuccess(RoundScoreBean result) {
         OperateProgressBar.removeLoadingUiIfExist(getActivity());
@@ -527,6 +528,9 @@ public class IndividualCheckFragment
     private void check() {
         if (listener != null) {
             hideSoftInput();
+            if (mStudent != null) {
+                LogUtils.operation("检入考生：" + mStudent.toString());
+            }
             listener.onIndividualCheckIn(mStudent, mStudentItem, mResults);
         }
     }

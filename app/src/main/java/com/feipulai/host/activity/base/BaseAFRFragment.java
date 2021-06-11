@@ -19,6 +19,7 @@ import com.arcsoft.face.GenderInfo;
 import com.arcsoft.face.LivenessInfo;
 import com.arcsoft.face.enums.DetectFaceOrientPriority;
 import com.arcsoft.face.enums.DetectMode;
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.host.R;
@@ -611,6 +612,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                         }
                     }
                 }else{
+                    LogUtil.logDebugMessage("特征识别成功考生：" + student.toString());
                     compareListener.compareStu(student);
                     isStartFace = false;
                     isNetWork = false;

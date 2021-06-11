@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -45,7 +46,9 @@ import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.libarcface.model.FaceRegisterInfo;
 import com.ww.fpl.libarcface.util.ConfigUtil;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -79,7 +82,6 @@ public class SplashScreenActivity extends BaseActivity {
         // 这里是否还需要延时需要再测试后再修改
         RadioManager.getInstance().init();
         DateUtil.setTimeZone(this, "Asia/Shanghai");
-
         activateBean = SharedPrefsUtil.loadFormSource(this, ActivateBean.class);
         runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0L);
         if (activateBean != null && activateBean.getValidRunTime() > 0) {
@@ -126,6 +128,7 @@ public class SplashScreenActivity extends BaseActivity {
             public void onSuccess(ActivateBean result) {
 
                 activateBean = result;
+                runTime = result.getCurrentRunTime();
                 SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, result.getCurrentRunTime());
                 SharedPrefsUtil.save(SplashScreenActivity.this, result);
                 if ((int) result.getActivateTime() == 0) {
@@ -239,7 +242,7 @@ public class SplashScreenActivity extends BaseActivity {
     private void initLocalFace() {
         //本地人脸库初始化
         boolean isFaceInit = FaceServer.getInstance().init(SplashScreenActivity.this);
-        Logger.d("initLocalFace====>" + isFaceInit);
+        Logger.i("本地人脸库初始化====>" + isFaceInit);
         if (SettingHelper.getSystemSetting().getCheckTool() == 4) {
 
             DataBaseExecutor.addTask(new DataBaseTask(this, "", true) {

@@ -1,5 +1,6 @@
 package com.feipulai.device.serial.beans;
 
+import com.feipulai.device.serial.SerialConfigs;
 import com.orhanobut.logger.utils.LogUtils;
 
 /**
@@ -31,7 +32,13 @@ public class PullUpVersionResult{
 		deviceId = data[4] & 0xff;
 		version = (data[8] >>> 4) + "." + (data[8] & 0x0f) + "." + (data[9] & 0xff);
 		publishDay = (2000 + (data[10] & 0xff)) + "" + String.format("%02d",(data[11] & 0xff)) + String.format("%02d",(data[12] & 0xff));
-		LogUtils.normal("引体向上返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+		if (SerialConfigs.LOGGER_STATE == 0) {
+
+			LogUtils.normal("引体向上返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+		}else{
+			LogUtils.operation("引体向上返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+
+		}
 
 	}
 	

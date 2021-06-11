@@ -83,6 +83,7 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.view.ItemDecideDialogBuilder;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -217,7 +218,7 @@ public class TestConfigs {
                 sCurrentItem = item;
                 // 有项目代码,证明同步过项目信息,这时候要看成绩是否也同步了过来,这种就是之前的某次这样的操作没有完成而已,这里继续完成就是
                 MachineItemCodeUtil.fillDefaultItemCode(studentItems, roundResults, machineResults, itemCode);
-                Logger.i("sCurrentItem:" + sCurrentItem.toString());
+                LogUtils.operation("当前选择项目:" + sCurrentItem.toString());
                 return INIT_SUCCESS;
             }
         }
@@ -241,7 +242,7 @@ public class TestConfigs {
             SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, machineCode);
             SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, newItemCode);
             sCurrentItem = itemList.get(0);
-            Logger.i("sCurrentItem:" + sCurrentItem.toString());
+            LogUtils.operation("当前选择项目:" + sCurrentItem.toString());
 
             return INIT_SUCCESS;
 
@@ -252,7 +253,7 @@ public class TestConfigs {
             MachineItemCodeUtil.fillDefaultItemCode(studentItems, roundResults, machineResults, newItemCode);
             SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, machineCode);
             SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, newItemCode);
-            Logger.i("sCurrentItem:" + sCurrentItem.toString());
+            LogUtils.operation("当前选择项目:" + sCurrentItem.toString());
             return INIT_SUCCESS;
         }
         sCurrentItem = null;

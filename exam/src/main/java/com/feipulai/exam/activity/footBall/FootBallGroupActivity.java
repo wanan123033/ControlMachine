@@ -137,6 +137,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         setting = SharedPrefsUtil.loadFormSource(this, FootBallSetting.class);
         if (setting == null)
             setting = new FootBallSetting();
+        LogUtils.operation("项目设置" + setting.toString());
         useMode = setting.getUseMode();
 //        //初始化UDP
 //        UdpClient.getInstance().init(1527);
@@ -177,7 +178,6 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         //获取分组学生数据
         TestCache.getInstance().init();
         pairs = CheckUtils.newPairs(((List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu")).size());
-        LogUtils.operation("足球获取到分组学生:" + pairs.size() + "---" + pairs.toString());
         CheckUtils.groupCheck(pairs);
 
         rvTestingPairs.setLayoutManager(new LinearLayoutManager(this));
@@ -243,14 +243,12 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
 
     @Override
     protected void onPause() {
-        LogUtils.life("FootBallGroupActivity onPause");
         super.onPause();
         facade.pause();
     }
 
     @Override
     protected void onDestroy() {
-        LogUtils.life("FootBallGroupActivity onDestroy");
         super.onDestroy();
         facade.finish();
         facade = null;
@@ -259,7 +257,6 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
 
     @Override
     public void finish() {
-        LogUtils.life("FootBallGroupActivity finish");
         if (isConfigurableNow()) {
             toastSpeak("测试中,不允许退出当前界面");
             return;
@@ -534,6 +531,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
             testRoundResult.setResult(testResult.getResult());
             testRoundResult.setMachineResult(testResult.getSelectMachineResult());
             testRoundResult.setPenaltyNum(testResult.getPenalizeNum());
+            LogUtils.operation("足球更新本次轮次成绩:result = " + testRoundResult.getResult() + "---" + testRoundResult.toString());
             DBManager.getInstance().updateRoundResult(testRoundResult);
 
             //获取所有成绩设置为非最好成绩
@@ -1215,13 +1213,12 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
             }
             stuPairAdapter.setTestPosition(i);
             rvTestingPairs.scrollToPosition(i);
-            prepareForBegin();
             presetResult();
+            prepareForBegin();
             //最后一次测试的成绩
             toastSpeak(String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getSpeakStuName(), roundNo),
                     String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getStudentName(), roundNo));
-            Logger.i("addStudent:" + pairs.get(i).getStudent().toString());
-            Logger.i("addStudent:当前考生进行第" + 1 + "次的第" + roundNo + "轮测试");
+
 
             group.setIsTestComplete(2);
             DBManager.getInstance().updateGroup(group);
@@ -1281,8 +1278,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
             //最后一次测试的成绩
             toastSpeak(String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getSpeakStuName(), roundNo),
                     String.format(getString(R.string.test_speak_hint), pairs.get(position()).getStudent().getStudentName(), roundNo));
-            Logger.i("addStudent:" + pairs.get(i).getStudent().toString());
-            Logger.i("addStudent:当前考生进行第" + 1 + "次的第" + roundNo + "轮测试");
+
             stuPairAdapter.notifyDataSetChanged();
 
             group.setIsTestComplete(2);
@@ -1372,7 +1368,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                     testResult.setResultState(-999);
                     testResult.setMachineResultList(null);
                     resultAdapter.notifyDataSetChanged();
-                    LogUtils.operation("足球考生" + student.getStudentName() + "第" + testNo + "次,第" + roundNo + "轮已违规");
+                    LogUtils.operation("足球考生" + student.getStudentName() + "第" + roundNo + "轮进行违规返回");
                 }
                 state = WAIT_CONFIRM;
                 ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());

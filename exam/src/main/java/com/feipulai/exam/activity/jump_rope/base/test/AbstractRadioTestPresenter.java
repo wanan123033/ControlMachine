@@ -168,7 +168,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
         stopDevice();
     }
 
-    public void stopDevice(){
+    public void stopDevice() {
 
     }
 
@@ -317,7 +317,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
         onTestStart();
     }
 
-    public void onTestStart(){
+    public void onTestStart() {
 
     }
 

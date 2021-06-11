@@ -43,6 +43,7 @@ import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseActivity;
 import com.feipulai.host.activity.main.MainActivity;
 import com.feipulai.host.tts.TtsConfig;
+import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.common.Constants;
 import com.ww.fpl.libarcface.model.FaceRegisterInfo;
 import com.ww.fpl.libarcface.util.ConfigUtil;
@@ -207,7 +208,7 @@ public class SplashScreenActivity extends BaseActivity {
                             ToastUtils.init(getApplicationContext());
                             //这里初始化时间很长,大约需要3s左右
                             TtsManager.getInstance().init(SplashScreenActivity.this, TtsConfig.APP_ID, TtsConfig.APP_KEY, TtsConfig.SECRET_KEY);
-
+                            LogUtils.initLogger(true, BuildConfig.DEBUG, MyApplication.LOG_PATH_NAME);
                             boolean isEngine = ConfigUtil.getISEngine(SplashScreenActivity.this);
                             if (isEngine) {
                                 initLocalFace();

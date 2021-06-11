@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.feipulai.common.dbutils.BackupManager;
+import com.feipulai.common.dbutils.FileSelectActivity;
 import com.feipulai.common.dbutils.UsbFileAdapter;
 import com.github.mjdev.libaums.fs.UsbFile;
 import com.github.mjdev.libaums.fs.UsbFileOutputStream;
@@ -203,6 +204,43 @@ public class FileUtil {
         }
         return true;
     }
+
+
+    public static boolean copyFile(File dbFile, UsbFile destFile) {
+        InputStream inputStream;
+        OutputStream outputStream;
+        try {
+            inputStream = new FileInputStream(dbFile);
+            if (destFile instanceof UsbFileAdapter) {
+                File parentFile = dbFile.getParentFile();
+                if (!parentFile.exists()) {
+                    parentFile.mkdirs();
+                }
+                outputStream = new FileOutputStream(((UsbFileAdapter) destFile).getFile());
+            } else {
+                outputStream = new UsbFileOutputStream(destFile);
+            }
+            byte[] buf = new byte[4096];
+            int length;
+            while ((length = inputStream.read(buf)) != -1) {
+                outputStream.write(buf, 0, length);
+            }
+            outputStream.flush();
+            inputStream.close();
+            outputStream.close();
+            // 非自动备份时需要进行这个处理
+            if (FileSelectActivity.sSelectedFile != null && FileSelectActivity.sSelectedFile.isDirectory()) {
+                UsbFile deleteFile = FileSelectActivity.sSelectedFile.createFile("." + destFile.getName() + "_delete.db");
+                deleteFile.delete();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
 
     /**
      * 判断目录是否存在，不存在则判断是否创建成功

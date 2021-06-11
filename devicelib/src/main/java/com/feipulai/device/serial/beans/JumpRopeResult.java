@@ -1,5 +1,6 @@
 package com.feipulai.device.serial.beans;
 
+import com.feipulai.device.serial.SerialConfigs;
 import com.orhanobut.logger.utils.LogUtils;
 
 /**
@@ -36,7 +37,13 @@ public class JumpRopeResult implements IDeviceResult {
             batteryLeftPercent = getPower(result[9] & 0xff);
         }
         //Log.i("james","handId:" + handId + "\t\tfacttoryId:" + factoryId);
-        LogUtils.normal("跳绳返回数据(解析前):" + result.length + "---" + StringUtility.bytesToHexString(result) + "---\n(解析后):" + toString());
+        if (SerialConfigs.LOGGER_STATE == 0) {
+
+            LogUtils.normal("跳绳返回数据(解析前):" + result.length + "---" + StringUtility.bytesToHexString(result) + "---\n(解析后):" + toString());
+        }else{
+            LogUtils.operation("跳绳返回数据(解析前):" + result.length + "---" + StringUtility.bytesToHexString(result) + "---\n(解析后):" + toString());
+
+        }
     }
 
     // vol 100-150,表示 1.0-1.5v, 1.1v时,为低电量,这里直接映射到百分数,1.1v映射到10%

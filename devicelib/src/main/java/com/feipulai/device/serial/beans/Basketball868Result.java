@@ -1,5 +1,6 @@
 package com.feipulai.device.serial.beans;
 
+import com.feipulai.device.serial.SerialConfigs;
 import com.orhanobut.logger.utils.LogUtils;
 
 public class Basketball868Result {
@@ -78,8 +79,12 @@ public class Basketball868Result {
             uPrecision = data[15] & 0xff;
 
         }
+        if (SerialConfigs.LOGGER_STATE == 0) {
 
-        LogUtils.normal("篮球返回数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
+            LogUtils.normal("篮球返回数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
+        }else{
+            LogUtils.operation("篮球返回数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
+        }
     }
 
     public int getDeviceId() {

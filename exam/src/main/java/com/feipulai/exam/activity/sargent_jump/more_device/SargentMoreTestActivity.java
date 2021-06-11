@@ -59,7 +59,6 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        LogUtils.life("SargentMoreTestActivity onResume");
         sargentSetting = SharedPrefsUtil.loadFormSource(this, SargentSetting.class);
         if (null == sargentSetting) {
             sargentSetting = new SargentSetting();

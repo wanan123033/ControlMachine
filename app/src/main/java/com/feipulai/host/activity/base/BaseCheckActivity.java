@@ -28,6 +28,7 @@ import com.feipulai.host.entity.Student;
 import com.feipulai.host.entity.StudentItem;
 import com.feipulai.host.view.AddStudentDialog;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 import com.zkteco.android.biometric.module.idcard.meta.IDCardInfo;
 
 import java.lang.ref.WeakReference;
@@ -68,7 +69,7 @@ public abstract class BaseCheckActivity
             afrFrameLayout = findViewById(setAFRFrameLayoutResID());
             afrFragment = new BaseAFRFragment();
             afrFragment.setCompareListener(this);
-            if (SettingHelper.getSystemSetting().isNetCheckTool()){
+            if (SettingHelper.getSystemSetting().isNetCheckTool()) {
                 catureFragment = new BaseCatupeFragment();
             }
         }
@@ -140,6 +141,7 @@ public abstract class BaseCheckActivity
         transaction.replace(setAFRFrameLayoutResID(), afrFragment);
         transaction.commitAllowingStateLoss();// 提交更改
     }
+
     private void initCature(Student student) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         catureFragment.setStudent(student);
@@ -147,6 +149,7 @@ public abstract class BaseCheckActivity
         transaction.replace(setAFRFrameLayoutResID(), catureFragment);
         transaction.commitAllowingStateLoss();// 提交更改
     }
+
     public void showAFR() {
         if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
             ToastUtils.showShort("未选择人脸识别检录功能");
@@ -171,6 +174,7 @@ public abstract class BaseCheckActivity
         initCature(student);
         afrFrameLayout.setVisibility(View.VISIBLE);
     }
+
     @Override
     public void compareStu(final Student student) {
         runOnUiThread(new Runnable() {
@@ -182,16 +186,15 @@ public abstract class BaseCheckActivity
         });
         if (student == null) {
             InteractUtils.toastSpeak(this, "该考生不存在");
-            if (SettingHelper.getSystemSetting().isNetCheckTool()){
+            if (SettingHelper.getSystemSetting().isNetCheckTool()) {
                 showAddHint(student);
                 afrFrameLayout.setVisibility(View.GONE);
             }
             return;
         }
-        LogUtil.logDebugMessage("检入考生：" + student.toString());
+
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
         if (studentItem == null) {
-            LogUtil.logDebugMessage("检入考生：无此项目");
             InteractUtils.toastSpeak(this, "无此项目");
             return;
         }
@@ -306,6 +309,7 @@ public abstract class BaseCheckActivity
     }
 
     private void checkInUIThread(Student student) {
+        LogUtils.operation("检入考生：" + student.toString());
         Message msg = Message.obtain();
         msg.what = CHECK_IN;
         msg.obj = student;
@@ -319,7 +323,8 @@ public abstract class BaseCheckActivity
         if (baseEvent.getTagInt() == EventConfigs.TEMPORARY_ADD_STU) {
             if (SettingHelper.getSystemSetting().isNetCheckTool() && SettingHelper.getSystemSetting().getCheckTool() == 4) {
                 gotoCatureFragment((Student) baseEvent.getData());
-            }else {
+            } else {
+                LogUtils.operation("检入考生：" + baseEvent.getData().toString());
                 onCheckIn((Student) baseEvent.getData());
             }
         }
@@ -338,6 +343,7 @@ public abstract class BaseCheckActivity
         } else {
             StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
             if (studentItem != null) {
+                LogUtils.operation("检入考生：" + student.toString());
                 onCheckIn(student);
             } else {
                 toastSpeak(getString(R.string.no_project));
@@ -370,25 +376,27 @@ public abstract class BaseCheckActivity
                 break;
         }
     }
+
     private SweetAlertDialog dialog;
+
     private void showAddHint(final Student student) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                    new SweetAlertDialog(BaseCheckActivity.this).setTitleText(getString(R.string.addStu_dialog_title))
-                            .setContentText(getString(R.string.addStu_dialog_content))
-                            .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            sweetAlertDialog.dismissWithAnimation();
-                            new AddStudentDialog(BaseCheckActivity.this).showDialog(student, false);
-                        }
-                    }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            sweetAlertDialog.dismissWithAnimation();
-                        }
-                    }).show();
+                new SweetAlertDialog(BaseCheckActivity.this).setTitleText(getString(R.string.addStu_dialog_title))
+                        .setContentText(getString(R.string.addStu_dialog_content))
+                        .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                        new AddStudentDialog(BaseCheckActivity.this).showDialog(student, false);
+                    }
+                }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                    }
+                }).show();
 
 
 //                new AlertDialog.Builder(BaseCheckActivity.this)

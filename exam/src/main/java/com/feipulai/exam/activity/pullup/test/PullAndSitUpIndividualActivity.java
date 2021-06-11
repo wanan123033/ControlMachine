@@ -61,6 +61,7 @@ import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.WaitDialog;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -119,6 +120,7 @@ public class PullAndSitUpIndividualActivity extends BaseTitleActivity
     private List<StuDevicePair> pairs = new ArrayList<>(1);
     private FrameLayout afrFrameLayout;
     private BaseAFRFragment afrFragment;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_individual_pullup;
@@ -152,14 +154,17 @@ public class PullAndSitUpIndividualActivity extends BaseTitleActivity
             initAFR();
         }
     }
+
     public int setAFRFrameLayoutResID() {
         return R.id.frame_camera;
     }
+
     private void initAFR() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(setAFRFrameLayoutResID(), afrFragment);
         transaction.commitAllowingStateLoss();// 提交更改
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -173,6 +178,7 @@ public class PullAndSitUpIndividualActivity extends BaseTitleActivity
         }
         return super.dispatchKeyEvent(event);
     }
+
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
@@ -259,11 +265,13 @@ public class PullAndSitUpIndividualActivity extends BaseTitleActivity
     }
 
     @OnClick({R.id.tv_start_test, R.id.tv_stop_test, R.id.tv_print, R.id.tv_led_setting, R.id.tv_confirm,
-            R.id.tv_punish, R.id.tv_abandon_test, R.id.tv_finish_test, R.id.tv_exit_test, R.id.tv_pair,R.id.img_AFR})
+            R.id.tv_punish, R.id.tv_abandon_test, R.id.tv_finish_test, R.id.tv_exit_test, R.id.tv_pair, R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
             case R.id.tv_led_setting:
+                LogUtils.operation("点击LED设置按钮");
+
                 if (isConfigurableNow()) {
                     startActivity(new Intent(this, LEDSettingActivity.class));
                 } else {
@@ -272,46 +280,55 @@ public class PullAndSitUpIndividualActivity extends BaseTitleActivity
                 break;
 
             case R.id.tv_start_test:
+                LogUtils.operation("点击开始按钮");
                 prepareForTesting();
                 break;
 
             case R.id.tv_stop_test:
+                LogUtils.operation("点击停止按钮");
                 facade.stopTest();
                 SoundPlayUtils.play(12);
                 prepareForConfirmResult();
                 break;
 
             case R.id.tv_print:
+                LogUtils.operation("点击打印按钮");
                 TestCache testCache = TestCache.getInstance();
                 InteractUtils.printResults(null, testCache.getAllStudents(), testCache.getResults(),
                         TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
                 break;
 
             case R.id.tv_confirm:
+                LogUtils.operation("点击确定按钮");
                 tvResult.setText("");
                 InteractUtils.saveResults(pairs, testDate);
                 onResultConfirmed();
                 break;
 
             case R.id.tv_punish:
+                LogUtils.operation("点击判罚按钮");
                 showPenalizeDialog(pairs.get(0).getDeviceResult().getResult());
                 break;
 
             case R.id.tv_abandon_test:
+                LogUtils.operation("点击放弃按钮");
                 facade.abandonTest();
                 state = WAIT_BEGIN;
                 prepareForBegin();
                 break;
 
             case R.id.tv_finish_test:
+                LogUtils.operation("点击测试完成按钮");
                 prepareForCheckIn();
                 break;
 
             case R.id.tv_exit_test:
+                LogUtils.operation("点击退出按钮");
                 prepareForCheckIn();
                 break;
 
             case R.id.tv_pair:
+                LogUtils.operation("点击配对按钮");
                 IntentUtil.gotoActivity(this, PullSitUpPairActivity.class);
                 break;
             case R.id.img_AFR:
@@ -320,6 +337,7 @@ public class PullAndSitUpIndividualActivity extends BaseTitleActivity
 
         }
     }
+
     public void showAFR() {
         if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
             ToastUtils.showShort("未选择人脸识别检录功能");
@@ -338,10 +356,11 @@ public class PullAndSitUpIndividualActivity extends BaseTitleActivity
             }
         }
     }
+
     private void onResultConfirmed() {
         StuDevicePair pair = pairs.get(0);
         int result = pair.getDeviceResult().getResult() + pair.getPenalty();
-        Logger.i("引体向上成绩："+ResultDisplayUtils.getStrResultForDisplay(result));
+        Logger.i("引体向上成绩：" + ResultDisplayUtils.getStrResultForDisplay(result));
         if (systemSetting.isAutoBroadcast()) {
 
             TtsManager.getInstance().speak(String.format(getString(R.string.speak_result), pair.getStudent().getSpeakStuName(),
@@ -403,7 +422,7 @@ public class PullAndSitUpIndividualActivity extends BaseTitleActivity
         TestCache testCache = TestCache.getInstance();
         Student student = pairs.get(0).getStudent();
         InteractUtils.showStuInfo(llStuDetail, student, testCache.getResults().get(student));
-
+//        LogUtils.operation(student.getStudentName() + " 考生进行第" + testCache.getResults().get(student).size() + 1 + "轮");
         tvResult.setText(student.getStudentName());
 
         prepareView(true, false, true, true,
@@ -562,37 +581,6 @@ public class PullAndSitUpIndividualActivity extends BaseTitleActivity
         rvTestResult.setAdapter(adapter);
     }
 
-//    public void showPenalizeDialog(int max) {
-//        final NumberPicker numberPicker = new NumberPicker(this);
-//        numberPicker.setMinValue(0);
-//        numberPicker.setValue(pairs.get(0).getPenalty());
-//        numberPicker.setMaxValue(max);
-//        LinearLayout layout = new LinearLayout(this);
-//        layout.setGravity(Gravity.CENTER);
-//        layout.addView(numberPicker, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
-//        numberPicker.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS); //禁止输入
-//
-//        new AlertDialog.Builder(this).setTitle("请输入判罚值")
-//                .setIcon(android.R.drawable.ic_dialog_info)
-//                .setView(layout)
-//                .setCancelable(false)
-//                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        int value = -1 * numberPicker.getValue();
-//                        if (value != pairs.get(0).getPenalty()) {
-//                            ledManager.showString(systemSetting.getHostId(), "判罚:" + ResultDisplayUtils.getStrResultForDisplay(value), 1, 2, false, false);
-//                            ledManager.showString(systemSetting.getHostId(),
-//                                    "最终:" + ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult() + value),
-//                                    1, 3, false, true);
-//                        }
-//                        pairs.get(0).setPenalty(value);
-//                        Logger.i("判罚："+value);
-//                        toastSpeak("判罚成功");
-//                    }
-//                })
-//                .setNegativeButton("返回", null).show();
-//    }
 
     public void showPenalizeDialog(int max) {
         Log.e("TAG=====", max + "");
@@ -639,9 +627,9 @@ public class PullAndSitUpIndividualActivity extends BaseTitleActivity
     }
 
     private void updateResult() {
-        if (pairs.get(0).getPenalty() != 0){
+        if (pairs.get(0).getPenalty() != 0) {
             tvResult.setText(ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult()) + "(判罚:" + pairs.get(0).getPenalty() + ")");
-        }else {
+        } else {
             tvResult.setText(ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult()));
         }
     }
@@ -666,7 +654,7 @@ public class PullAndSitUpIndividualActivity extends BaseTitleActivity
                 if (student == null) {
                     InteractUtils.toastSpeak(PullAndSitUpIndividualActivity.this, "该考生不存在");
                     return;
-                }else{
+                } else {
                     afrFrameLayout.setVisibility(View.GONE);
                 }
                 final StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
@@ -679,7 +667,8 @@ public class PullAndSitUpIndividualActivity extends BaseTitleActivity
                     InteractUtils.toastSpeak(PullAndSitUpIndividualActivity.this, "该考生已测试");
                     return;
                 }
-                onIndividualCheckIn(student,studentItem,results);
+                LogUtils.operation("检入考生：" + student.toString());
+                onIndividualCheckIn(student, studentItem, results);
             }
         });
 

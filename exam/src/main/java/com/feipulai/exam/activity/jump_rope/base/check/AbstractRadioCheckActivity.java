@@ -42,6 +42,7 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.view.DividerItemDecoration;
 import com.feipulai.exam.view.WaitDialog;
+import com.orhanobut.logger.utils.LogUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -147,7 +148,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
         getStartTestView().setOnClickListener(this);
         getLedSettingView().setOnClickListener(this);
         getPairView().setOnClickListener(this);
-        if (getDetailsView()!= null){
+        if (getDetailsView() != null) {
             getDetailsView().setOnClickListener(this);
         }
         if (SettingHelper.getSystemSetting().getCheckTool() == 4 && setAFRFrameLayoutResID() != 0) {
@@ -185,7 +186,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
             showDeleteAllWarning();
         } else if (v == getDeleteStuView()) {// 删除考生
             presenter.deleteStudent();
-        }else if (v == getDetailsView()){
+        } else if (v == getDetailsView()) {
             startActivity(new Intent(this, DeviceChangeActivity.class));
         }
     }
@@ -272,7 +273,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
         mAdapter.setSelected(position);
         mAdapter.notifyItemChanged(oldPosition);
         mAdapter.notifyItemChanged(position);
-        if (isRefreshStu) {
+        if (isRefreshStu && presenter != null) {
             presenter.showStuInfo(position);
         }
 
@@ -393,6 +394,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
         super.onDestroy();
         TestCache.getInstance().clear();
         presenter.finishGetStateAndDisplay();
+        presenter = null;
     }
 
     private void initAFR() {
@@ -410,7 +412,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
                 if (student == null) {
                     InteractUtils.toastSpeak(AbstractRadioCheckActivity.this, "该考生不存在");
                     return;
-                }else{
+                } else {
                     afrFrameLayout.setVisibility(View.GONE);
                 }
                 StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
@@ -423,6 +425,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
                     InteractUtils.toastSpeak(AbstractRadioCheckActivity.this, "该考生已测试");
                     return;
                 }
+                LogUtils.operation("检入考生：" + student.toString());
                 // 可以直接检录
                 presenter.onIndividualCheckIn(student, studentItem, results);
             }

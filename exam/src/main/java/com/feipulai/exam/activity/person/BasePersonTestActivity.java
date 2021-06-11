@@ -274,6 +274,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                             ResultDisplayUtils.getStrResultForDisplay(iRoundResult.getResult()));
                     pair.setTimeResult(timeResult);
                 }
+                resultList.clear();
+                resultList.addAll(Arrays.asList(result));
+                adapter.notifyDataSetChanged();
                 roundNo++;
                 if (roundNo < setTestCount()) {
 
@@ -291,6 +294,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                     }
 
                 }
+                adapter.notifyDataSetChanged();
                 break;
             case EventConfigs.UPDATE_RESULT:
                 RoundResult roundResult = (RoundResult) baseEvent.getData();
@@ -301,7 +305,32 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                             ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()));
                     pair.setTimeResult(timeResult);
                 }
+                resultList.clear();
+                resultList.addAll(Arrays.asList(result));
+                adapter.notifyDataSetChanged();
 
+                List<RoundResult> roundResultList = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(roundResult.getStudentCode(), roundResult.getExamType());
+                boolean isFull = false;
+                for (RoundResult dbRoundResult : roundResultList) {
+                    if (dbRoundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && isResultFullReturn(pair.getStudent().getSex(), dbRoundResult.getResult())) {
+                        isFull = true;
+                        break;
+                    }
+                }
+                if (!isFull && roundResultList.size() < setTestCount()) {
+                    roundNo = roundResultList.size() + 1;
+                    txtStuResult.setText("");
+                    toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), roundNo)
+                            , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), roundNo));
+                    Message msg = new Message();
+                    msg.obj = pair;
+                    ledHandler.sendMessageDelayed(msg, 2000);
+                    pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
+                    if (testType != 1) {
+                        pair.setTestTime(DateUtil.getCurrentTime() + "");
+                        sendTestCommand(pair);
+                    }
+                }
                 break;
 
         }
@@ -369,12 +398,6 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         List<RoundResult> roundResultList = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(student.getStudentCode(), studentItem.getExamType());
         testNo = roundResultList == null || roundResultList.size() == 0 ? 1 : roundResultList.get(0).getTestNo();
         //保存成绩，并测试轮次大于测试轮次次数
-        if (student != null)
-            LogUtils.operation("检入到学生:" + student.toString());
-        if (studentItem != null)
-            LogUtils.operation("检入到学生StudentItem:" + studentItem.toString());
-        if (roundResultList != null)
-            LogUtils.operation("检入到学生成绩:" + roundResultList.size() + "----" + roundResultList.toString());
         if (roundResultList != null && roundResultList.size() >= setTestCount()) {
             //已测试，不重测
 //            roundNo = roundResult.getRoundNo();
@@ -436,7 +459,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 break;
             case R.id.txt_start_test:
                 LogUtils.operation("点击了开始测试");
-                if (roundNo > setTestCount()){
+                if (roundNo > setTestCount()) {
                     ToastUtils.showShort("超过测试次数");
                     clearData(this);
                     return;
@@ -537,7 +560,6 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LogUtils.life("BasePersonTestActivity onDestroy");
         Intent serverIntent = new Intent(this, UploadService.class);
         stopService(serverIntent);
         PrinterManager.getInstance().close();
@@ -577,9 +599,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 sendTestCommand(pair);
             }
             setShowLed(pair);
-
-            Logger.i("addStudent:" + student.toString());
-            LogUtils.operation("当前考生进行第" + testNo + "次的第" + roundNo + "轮测试");
+            LogUtils.operation("当前考生'" + student.getStudentName() + "'进行第" + testNo + "次的第" + roundNo + "轮测试");
         } else {
             toastSpeak("当前无设备可添加学生测试");
         }
@@ -594,9 +614,6 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             txtStuName.setText(student.getStudentName());
             txtStuSex.setText((student.getSex() == 0 ? "男" : "女"));
             txtStuCode.setText(student.getStudentCode());
-//            if (student.getBitmapPortrait() != null) {
-//                imgPortrait.setImageBitmap(student.getBitmapPortrait());
-//            }
             Glide.with(imgPortrait.getContext()).load(MyApplication.PATH_IMAGE + student.getStudentCode() + ".jpg")
                     .error(R.mipmap.icon_head_photo).placeholder(R.mipmap.icon_head_photo).into(imgPortrait);
         } else {
@@ -666,9 +683,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             }
             //状态为测试已结束
             if (deviceState.getState() == BaseDeviceState.STATE_END) {
-                if (pair.getStudent() != null) {
-                    Logger.i("考生" + pair.getStudent().toString());
-                }
+
                 Logger.i("设备成绩信息STATE_END==>" + deviceState.toString());
                 if (pair.getStudent() == null) {
                     return;
@@ -701,7 +716,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         //当前的测试次数是否在项目设置的轮次中，是否满分跳过考生测试，满分由子类处理，基类只做界面展示
         if (roundNo < setTestCount()) {
             if (pair.getResultState() == RoundResult.RESULT_STATE_NORMAL && pair.isFullMark()) {
-                if (isShowPenalizeFoul() == View.VISIBLE){
+                if (isShowPenalizeFoul() == View.VISIBLE) {
                     toastSpeak("是否需要判罚,否则请选择跳过");
                     return true;
                 }
@@ -715,6 +730,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             txtStuResult.setText("");
             toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), roundNo)
                     , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), roundNo));
+            LogUtils.operation(pair.getStudent().getStudentName() + " 考生进行第" + roundNo + "轮测试");
             Message msg = new Message();
             msg.obj = pair;
             ledHandler.sendMessageDelayed(msg, 2000);
@@ -988,6 +1004,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         }
         PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()));
         PrinterManager.getInstance().print("\n");
+        LogUtils.operation("自动打印完成");
 
     }
 

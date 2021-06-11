@@ -89,14 +89,10 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
     protected void onResume() {
         super.onResume();
         LogUtils.life("StandJumpGroupTestActivity onResume");
-//        updateDevice(new BaseDeviceState(BaseDeviceState.STATE_ERROR, 1));
         SerialDeviceManager.getInstance().setRS232ResiltListener(standResiltListener);
-        sendCheck();
-//        cbDeviceState.setVisibility(View.INVISIBLE);
-//        if (SerialDeviceManager.getInstance() != null && standResiltListener.getTestState() != StandResiltListener.TestState.UN_STARTED) {
-//            //开始测试
-//            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
-//        }
+        if (standResiltListener.getTestState() != StandResiltListener.TestState.WAIT_RESULT) {
+            sendCheck();
+        }
     }
 
     @Override
@@ -134,17 +130,18 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mHandler.removeCallbacksAndMessages(null);
         LogUtils.life("StandJumpGroupTestActivity onPause");
         //结束测试 发送结束指令
         LogUtils.normal(SerialConfigs.CMD_END_JUMP.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_END_JUMP)+"---跳远结束指令");
 
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_END_JUMP));
         SerialDeviceManager.getInstance().close();
-    }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mHandler.removeCallbacksAndMessages(null);
     }
     /**
      * 发送检测设备指令

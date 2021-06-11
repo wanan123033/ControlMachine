@@ -33,9 +33,10 @@ public class MyApplication extends MultiDexApplication {
     public static String SOFTWAREUUID = "FP-KTA2108_KS";//软件识别码
     public static String HARDWAREUUID = "FP-KTA2108_KS_ANDROID";//硬件识别码
     public static final String PATH_FACE = FileUtil.PATH_BASE + "KS_FACE_IMG/"; //人脸识别图片信息文件路径
-
+    public static final String BACKUP_DIR = FileUtil.PATH_BASE + "/KS_BACKUP/";
     public static final String DEVICECODE = "111";//硬件识别码
     public static Account account;
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -72,6 +73,7 @@ public class MyApplication extends MultiDexApplication {
         FileUtil.mkdirs(PATH_SPECIFICATION);
         FileUtil.mkdirs(PATH_IMAGE);
         FileUtil.mkdirs(PATH_PDF_IMAGE);
+        FileUtil.mkdirs(BACKUP_DIR);
 //        FileUtil.mkdirs(PATH_FACE);
         FileUtil.mkdirs(FaceServer.ROOT_PATH);
         //视频播放初始化库

@@ -171,7 +171,7 @@ public class CommonUtils {
         respost.setSign(EncryptUtil.getSignData(gson.toJson(object)));
         respost.setData(EncryptUtil.setEncryptData(object));
         respost.setRequestTime(String.valueOf(System.currentTimeMillis()));
-        Logger.d(respost.toString());
+        Logger.d("请求请口参数：" + respost.toString());
         return respost;
     }
 

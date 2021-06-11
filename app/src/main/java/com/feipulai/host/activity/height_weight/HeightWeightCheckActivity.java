@@ -119,13 +119,11 @@ public class HeightWeightCheckActivity
     }
 
     private void prepareForCheckIn() {
-        LogUtils.operation("HeightWeightCheckActivity prepareForCheckIn");
         isTesting = false;
         isTestFinished = false;
     }
 
     private void prepareForTest() {
-        LogUtils.operation("HeightWeightCheckActivity prepareForTest " + mStudent.toString());
         isTesting = true;
         isTestFinished = false;
 
@@ -150,7 +148,6 @@ public class HeightWeightCheckActivity
 
     @Override
     protected void onResume() {
-        LogUtils.operation("HeightWeightCheckActivity onResume");
         super.onResume();
         SerialDeviceManager.getInstance().setRS232ResiltListener(this);
         //mLEDManager.resetLEDScreen(hostId,TestConfigs.machineNameMap.get(ItemDefault.CODE_HW));

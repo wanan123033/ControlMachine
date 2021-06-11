@@ -62,6 +62,9 @@ public class RoundResult implements Serializable {
     private Long groupId = DEAFULT_GROUP_ID;//分组id
     private String scheduleNo;  //日程编号
     private String mtEquipment;//监控设备
+    private int roundTestState;//轮次测试标识 0 正常 1重测 （标识本轮成绩是否设置为重测）
+    private int resultTestState;//轮次成绩测试标识  0 正常 1重测
+    private boolean isDelete = false;//数据是否为删除状态：true 本条数据为弃用，默认为false
     private String remark1;
     private String remark2;
     private String remark3;//保存校验信息  studentCode+ 项目+ 考试类型+ 成绩 + 测试时间
@@ -73,8 +76,41 @@ public class RoundResult implements Serializable {
     public RoundResult() {
     }
 
-
-    @Generated(hash = 1001432630)
+    @Generated(hash = 1790186008)
+    public RoundResult(Long id, @NotNull String studentCode, @NotNull String itemCode, int machineCode,
+            int roundNo, int testNo, int machineResult, int penaltyNum, int result, int resultState,
+            int isLastResult, int examType, @NotNull String testTime, String printTime, String endTime,
+            int stumbleCount, int updateState, byte[] cycleResult, Long groupId, String scheduleNo,
+            String mtEquipment, int roundTestState, int resultTestState, boolean isDelete,
+            String remark1, String remark2, String remark3) {
+        this.id = id;
+        this.studentCode = studentCode;
+        this.itemCode = itemCode;
+        this.machineCode = machineCode;
+        this.roundNo = roundNo;
+        this.testNo = testNo;
+        this.machineResult = machineResult;
+        this.penaltyNum = penaltyNum;
+        this.result = result;
+        this.resultState = resultState;
+        this.isLastResult = isLastResult;
+        this.examType = examType;
+        this.testTime = testTime;
+        this.printTime = printTime;
+        this.endTime = endTime;
+        this.stumbleCount = stumbleCount;
+        this.updateState = updateState;
+        this.cycleResult = cycleResult;
+        this.groupId = groupId;
+        this.scheduleNo = scheduleNo;
+        this.mtEquipment = mtEquipment;
+        this.roundTestState = roundTestState;
+        this.resultTestState = resultTestState;
+        this.isDelete = isDelete;
+        this.remark1 = remark1;
+        this.remark2 = remark2;
+        this.remark3 = remark3;
+    }
     public RoundResult(Long id, @NotNull String studentCode, @NotNull String itemCode, int machineCode,
                        int roundNo, int testNo, int machineResult, int penaltyNum, int result, int resultState,
                        int isLastResult, int examType, @NotNull String testTime, String printTime, String endTime,
@@ -106,6 +142,29 @@ public class RoundResult implements Serializable {
         this.remark3 = remark3;
     }
 
+    public int getRoundTestState() {
+        return roundTestState;
+    }
+
+    public void setRoundTestState(int roundTestState) {
+        this.roundTestState = roundTestState;
+    }
+
+    public int getResultTestState() {
+        return resultTestState;
+    }
+
+    public void setResultTestState(int resultTestState) {
+        this.resultTestState = resultTestState;
+    }
+
+    public boolean isDelete() {
+        return isDelete;
+    }
+
+    public void setDelete(boolean delete) {
+        isDelete = delete;
+    }
 
     public Long getId() {
         return this.id;
@@ -283,6 +342,25 @@ public class RoundResult implements Serializable {
         this.mtEquipment = mtEquipment;
     }
 
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+
+    public String getPrintTime() {
+        return this.printTime;
+    }
+
+
+    public void setPrintTime(String printTime) {
+        this.printTime = printTime;
+    }
+
     @Override
     public String toString() {
         return "RoundResult{" +
@@ -307,27 +385,20 @@ public class RoundResult implements Serializable {
                 ", groupId=" + groupId +
                 ", scheduleNo='" + scheduleNo + '\'' +
                 ", mtEquipment='" + mtEquipment + '\'' +
+                ", roundTestState=" + roundTestState +
+                ", resultTestState=" + resultTestState +
+                ", isDelete=" + isDelete +
                 ", remark1='" + remark1 + '\'' +
                 ", remark2='" + remark2 + '\'' +
                 ", remark3='" + remark3 + '\'' +
                 '}';
     }
 
-    public String getEndTime() {
-        return endTime;
+    public boolean getIsDelete() {
+        return this.isDelete;
     }
 
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
-    }
-
-
-    public String getPrintTime() {
-        return this.printTime;
-    }
-
-
-    public void setPrintTime(String printTime) {
-        this.printTime = printTime;
+    public void setIsDelete(boolean isDelete) {
+        this.isDelete = isDelete;
     }
 }

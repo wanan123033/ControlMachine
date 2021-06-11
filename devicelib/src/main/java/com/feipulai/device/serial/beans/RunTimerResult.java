@@ -1,5 +1,6 @@
 package com.feipulai.device.serial.beans;
 
+import com.feipulai.device.serial.SerialConfigs;
 import com.orhanobut.logger.utils.LogUtils;
 
 /**
@@ -77,7 +78,13 @@ public class RunTimerResult {
 		result = ((data[10] & 0xff) << 24) | ((data[11] & 0xff) << 16) |((data[12] & 0xff) << 8)|(data[13] & 0xff);
 		trackNum = data[8];
 		order = data[9];
-		LogUtils.normal("折返跑返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+		if (SerialConfigs.LOGGER_STATE == 0) {
+
+			LogUtils.normal("折返跑返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+		}else{
+			LogUtils.operation("折返跑返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+
+		}
 
 	}
 

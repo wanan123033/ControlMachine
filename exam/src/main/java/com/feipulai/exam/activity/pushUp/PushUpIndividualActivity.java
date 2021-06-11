@@ -618,7 +618,6 @@ public class PushUpIndividualActivity extends BaseTitleActivity
 
     @Override
     public void finish() {
-        LogUtils.life("PushUpIndividualActivity finish");
         if (!isConfigurableNow()) {
             toastSpeak("测试中,不允许退出当前界面");
             return;
@@ -781,6 +780,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
                     InteractUtils.toastSpeak(PushUpIndividualActivity.this, "该考生已测试");
                     return;
                 }
+                LogUtils.operation("检入考生：" + student.toString());
                 // 可以直接检录
                 onIndividualCheckIn(student, studentItem, results);
             }

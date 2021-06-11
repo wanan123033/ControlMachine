@@ -98,7 +98,6 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         super.initData();
         PrinterManager.getInstance().init();
         group = (Group) TestConfigs.baseGroupMap.get("group");
-        LogUtils.operation("获取到分组数据:" + group.toString());
         mLEDManager = new LEDManager();
         mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
@@ -109,7 +108,6 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         studentList = new ArrayList<>();
         pairList = new ArrayList<>();
         pairList.addAll((List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu"));
-        LogUtils.operation("获取到分组信息:basePairStu=" + pairList.toString());
         for (BaseStuPair pair : pairList) {
             studentList.add(pair.getStudent());
         }
@@ -135,7 +133,6 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        LogUtils.life("BaseMoreGroupActivity onResume");
         if (!isUse()) {
             if (deviceDetails.size() != setTestDeviceCount()) {
                 setDeviceCount(setTestDeviceCount());
@@ -356,8 +353,8 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                                 toStart(pos);
                                 updateLastResultLed("", pos);
                                 deviceListAdapter.setPenalize(false);
-                                if (isPenalize){
-                                    setConfirmVisible(pos,true);
+                                if (isPenalize) {
+                                    setConfirmVisible(pos, true);
                                 }
                             }
                         } else {
@@ -373,8 +370,8 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                             doResult(pair, pos);
                             deviceDetails.get(pos).setConfirmVisible(false);
                             deviceListAdapter.notifyItemChanged(pos);
-                            if (isPenalize){
-                                setConfirmVisible(pos,false);
+                            if (isPenalize) {
+                                setConfirmVisible(pos, false);
                             }
                         }
                         break;
@@ -728,6 +725,11 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                                 roundNo = testTimes + 1;
                                 toastSpeak(String.format(getString(R.string.test_speak_hint), studentList.get(j).getStudentName(), testTimes + 1),
                                         String.format(getString(R.string.test_speak_hint), studentList.get(j).getStudentName(), testTimes + 1));
+
+                                LogUtils.operation((index + 1) + "号机：" + studentList.get(stuAdapter.getTestPosition()).getStudentName());
+                                LogUtils.operation(String.format(getString(R.string.test_speak_hint), studentList.get(stuAdapter.getTestPosition()).getStudentName(), testTimes + 1));
+
+
                                 deviceDetails.get(index).setRound(roundNo);
                                 deviceListAdapter.notifyDataSetChanged();
                                 rvTestStu.scrollToPosition(j);
@@ -784,7 +786,9 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 deviceDetails.get(index).getStuDevicePair().setTimeResult(pairList.get(stuPos).getTimeResult());
                 toastSpeak(String.format(getString(R.string.test_speak_hint), studentList.get(stuPos).getStudentName(), testTimes + 1),
                         String.format(getString(R.string.test_speak_hint), studentList.get(stuPos).getStudentName(), testTimes + 1));
-                LogUtils.operation("考生:" + studentList.get(stuPos).getStudentName() + "进行第" + roundNo + "轮测试");
+                LogUtils.operation((index + 1) + "号机：" + studentList.get(stuAdapter.getTestPosition()).getStudentName());
+                LogUtils.operation(String.format(getString(R.string.test_speak_hint), studentList.get(stuAdapter.getTestPosition()).getStudentName(), testTimes + 1));
+
                 rvTestStu.scrollToPosition(stuPos);
                 stuAdapter.setTestPosition(stuPos);
                 stuAdapter.notifyDataSetChanged();
@@ -1069,6 +1073,8 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         toastSpeak(String.format(getString(R.string.test_speak_hint),
                 pair.getStudent().getStudentName(), testTimes),
                 String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), testTimes));
+        LogUtils.operation((deviceIndex + 1) + "号机：" + pair.getStudent().getStudentName());
+        LogUtils.operation(String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), testTimes));
         group.setIsTestComplete(2);
         DBManager.getInstance().updateGroup(group);
         if (!isNextClickStart) {
@@ -1104,7 +1110,8 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                                     roundNo + 1),
                                     String.format(getString(R.string.test_speak_hint), studentList.get(stuAdapter.getTestPosition()).getStudentName(),
                                             roundNo + 1));
-
+                            LogUtils.operation((index + 1) + "号机：" + studentList.get(stuAdapter.getTestPosition()).getStudentName());
+                            LogUtils.operation(String.format(getString(R.string.test_speak_hint), studentList.get(stuAdapter.getTestPosition()).getStudentName(), roundNo + 1));
                             deviceDetails.get(index).getStuDevicePair().setTimeResult(pairList.get(stuPos).getTimeResult());
                             deviceDetails.get(index).getStuDevicePair().setStudent(studentList.get(stuPos));
                             deviceDetails.get(index).getStuDevicePair().setResult(-999);
@@ -1183,10 +1190,11 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 deviceDetails.get(deviceIndex).getStuDevicePair().setBaseHeight(0);
                 deviceDetails.get(deviceIndex).setRound(testTimes + 1);
 
-                Logger.i("addStudent:" + studentList.get(i).toString());
-                Logger.i("addStudent:当前考生进行第" + 1 + "次的第" + testTimes + "轮测试");
                 toastSpeak(String.format(getString(R.string.test_speak_hint), studentList.get(stuAdapter.getTestPosition()).getSpeakStuName(), testTimes + 1),
                         String.format(getString(R.string.test_speak_hint), studentList.get(stuAdapter.getTestPosition()).getStudentName(), testTimes + 1));
+
+                LogUtils.operation((deviceIndex + 1) + "号机：" + studentList.get(stuAdapter.getTestPosition()).getStudentName());
+                LogUtils.operation(String.format(getString(R.string.test_speak_hint), studentList.get(stuAdapter.getTestPosition()).getStudentName(), testTimes + 1));
                 return;
             }
         }

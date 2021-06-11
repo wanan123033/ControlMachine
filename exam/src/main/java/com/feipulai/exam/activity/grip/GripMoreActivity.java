@@ -24,6 +24,7 @@ import com.orhanobut.logger.utils.LogUtils;
 import butterknife.OnClick;
 
 /**
+ * 握力
  * Created by pengjf on 2020/6/30.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
@@ -52,7 +53,7 @@ public class GripMoreActivity extends BaseMoreActivity {
         setting = SharedPrefsUtil.loadFormSource(this, GripSetting.class);
         if (setting == null)
             setting = new GripSetting();
-
+        LogUtils.operation("项目设置" + setting.toString());
         deviceState = new int[setting.getDeviceSum()];
         resultUpdate = new boolean[setting.getDeviceSum()];
         for (int i = 0; i < deviceState.length; i++) {
@@ -124,7 +125,7 @@ public class GripMoreActivity extends BaseMoreActivity {
 
     @Override
     protected void sendTestCommand(BaseStuPair pair, int index) {
-        LogUtils.operation("坐位体前屈开始测试:index=" + index + ",pair=" + pair.toString());
+        LogUtils.operation("、开始测试:index=" + index + ",pair=" + pair.toString());
         pair.setTestTime(DateUtil.getCurrentTime() + "");
         pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
         updateDevice(pair.getBaseDevice());
@@ -234,7 +235,6 @@ public class GripMoreActivity extends BaseMoreActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LogUtils.life("SitReachMoreActivity onDestroy");
         mHandler.removeCallbacksAndMessages(null);
         RadioManager.getInstance().setOnRadioArrived(null);
     }

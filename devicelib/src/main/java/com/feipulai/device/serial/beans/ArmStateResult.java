@@ -1,6 +1,7 @@
 package com.feipulai.device.serial.beans;
 
 
+import com.feipulai.device.serial.SerialConfigs;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.io.Serializable;
@@ -48,7 +49,12 @@ public class ArmStateResult implements Serializable,IDeviceResult {
             result = data[12]& 0xff;
             angleState = data[10];
             angle = data[11]&0xff;
-            LogUtils.normal("手臂检测(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+            if (SerialConfigs.LOGGER_STATE==0){
+                LogUtils.normal("手臂检测(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+            }else{
+                LogUtils.operation("手臂检测(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+            }
+
         }
 
 	}

@@ -36,6 +36,7 @@ public class LogUtils {
     //初始化日志工具
     public static void initLogger(final boolean logToConsole, boolean logToRaw, String pathName) {
         fileName = pathName;
+        Logger.clearLogAdapters();
         //日志打印到控制台,在发布release版本时，会自动不打印
         Logger.addLogAdapter(new AndroidLogAdapter() {
             @Override

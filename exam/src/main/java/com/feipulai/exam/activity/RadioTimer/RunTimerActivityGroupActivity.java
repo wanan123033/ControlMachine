@@ -430,12 +430,7 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
 //        RoundResult roundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
         List<RoundResult> roundResult = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(student.getStudentCode(), studentItem.getExamType());
-        if (student != null)
-            LogUtils.operation("红外计时检入到学生:"+student.toString());
-        if (studentItem != null)
-            LogUtils.operation("红外计时检入到学生StudentItem:"+studentItem.toString());
-        if (roundResult != null)
-            LogUtils.operation("红外计时检入到学生成绩:"+roundResult.size()+"----"+roundResult.toString());
+
         if (roundResult != null) {
 //            selectTestDialog(student);
             return;

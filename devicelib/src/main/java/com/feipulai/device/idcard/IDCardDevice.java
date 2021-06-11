@@ -90,7 +90,7 @@ public class IDCardDevice {
         if (isOpen) {
             return;
         }
-        if (SerialParams.ID_CARD.getVersions()==1){
+        if (SerialParams.ID_CARD.getVersions() == 1) {
             for (int i = 0; i < 3; i++) {
                 IOPower.getInstance().setIdentityPwr(1);
                 try {
@@ -116,7 +116,7 @@ public class IDCardDevice {
 
         } catch (IDCardReaderException e) {
             e.printStackTrace();
-            if (SerialParams.ID_CARD.getVersions()==1){
+            if (SerialParams.ID_CARD.getVersions() == 1) {
                 IOPower.getInstance().setIdentityPwr(0);
             }
 
@@ -197,9 +197,14 @@ public class IDCardDevice {
             }
 
         } else {
+            try {
+                idCardReader.close(0);
+                IDCardReaderFactory.destroy(idCardReader);
+            } catch (IDCardReaderException e) {
+                e.printStackTrace();
+            }
             // 直接断电,省得麻烦
-            // IDCardReaderFactory.destroy(idCardReader);
-            IOPower.getInstance().setIdentityPwr(0);
+//            IOPower.getInstance().setIdentityPwr(0);
         }
     }
 

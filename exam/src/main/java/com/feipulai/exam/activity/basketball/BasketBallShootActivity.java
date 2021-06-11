@@ -429,7 +429,7 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
 
     @Override
     public void changeState(final int testState) {
-        LogUtils.operation("篮球投篮状态..."+testState);
+        LogUtils.operation("篮球投篮返回状态..."+testState);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

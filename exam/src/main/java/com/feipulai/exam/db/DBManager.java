@@ -54,6 +54,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import okhttp3.internal.connection.RouteDatabase;
+
 import static com.feipulai.exam.activity.MiddleDistanceRace.TimingBean.GROUP_FINISH;
 
 /**
@@ -518,12 +520,13 @@ public class DBManager {
      * 根据学号模糊查询学生信息
      */
     public List<Student> fuzzyQueryByStuCode(String studentCode, int limit, int offset) {
-        return fuzzyQueryByStuCode("-2",TestConfigs.getCurrentItemCode(), studentCode, limit, offset);
+        return fuzzyQueryByStuCode("-2", TestConfigs.getCurrentItemCode(), studentCode, limit, offset);
     }
 
     /**
      * 根据学号模糊查询学生信息
-          * @param scheduleNo   -2 查全部
+     *
+     * @param scheduleNo -2 查全部
      */
     public List<Student> fuzzyQueryByStuCode(String scheduleNo, String itemCode, String studentCode, int limit, int offset) {
 //        List<Student> students = studentDao.queryBuilder()
@@ -562,12 +565,13 @@ public class DBManager {
 
     /**
      * 获取当前测试项目的所有学生信息
-     * @param scheduleNo   -2 查全部
-     * @param limit  页码
-     * @param offset 页数
+     *
+     * @param scheduleNo -2 查全部
+     * @param limit      页码
+     * @param offset     页数
      * @return
      */
-    public List<Student> getItemStudent(String scheduleNo,String itemCode, int limit, int offset) {
+    public List<Student> getItemStudent(String scheduleNo, String itemCode, int limit, int offset) {
         StringBuffer sqlBuf = new StringBuffer("SELECT S.* FROM " + StudentDao.TABLENAME + " S");
         sqlBuf.append(" WHERE S." + StudentDao.Properties.StudentCode.columnName + " IN ( ");
         sqlBuf.append(" SELECT  " + StudentItemDao.Properties.StudentCode.columnName);
@@ -596,10 +600,10 @@ public class DBManager {
     }
 
 
-
     /**
      * 获取用户筛选的所有学生（男，女）数量
-     * @param scheduleNo   -2 查全部
+     *
+     * @param scheduleNo -2 查全部
      * @param isTested   选择已测试 （传两个参数是会出现用户不选择两个筛选项）
      * @param isUnTested 选择未测试
      * @param isUpload   选择已上传
@@ -694,10 +698,11 @@ public class DBManager {
 
     /**
      * 获取项目中所有学生（男，女）数量
-     * @param scheduleNo   -2 查全部
+     *
+     * @param scheduleNo -2 查全部
      * @return
      */
-    public Map<String, Object> getItemStudenCount(String scheduleNo,String itemCode) {
+    public Map<String, Object> getItemStudenCount(String scheduleNo, String itemCode) {
         StringBuffer sqlBuf = new StringBuffer("SELECT COUNT(*) AS STU_COUNT,");
 
         sqlBuf.append(" COUNT( CASE WHEN S." + StudentDao.Properties.Sex.columnName + "=0 THEN " + StudentDao.Properties.Sex.columnName + " END) AS" +
@@ -743,9 +748,10 @@ public class DBManager {
 
     /**
      * 根据学号模糊查询学生信息
-     * @param scheduleNo   -2 查全部
+     *
+     * @param scheduleNo -2 查全部
      */
-    public Map<String, Object> fuzzyQueryByStuCodeCount(String scheduleNo,String itemCode, String studentCode) {
+    public Map<String, Object> fuzzyQueryByStuCodeCount(String scheduleNo, String itemCode, String studentCode) {
         StringBuffer sqlBuf = new StringBuffer("SELECT COUNT(*) AS STU_COUNT,");
 
         sqlBuf.append(" COUNT( CASE WHEN S." + StudentDao.Properties.Sex.columnName + "=0 THEN " + StudentDao.Properties.Sex.columnName + " END) AS" +
@@ -789,8 +795,7 @@ public class DBManager {
     }
 
     /**
-     *
-     * @param scheduleNo   -2 查全部
+     * @param scheduleNo -2 查全部
      * @param itemCode
      * @param isTested
      * @param isUnTested
@@ -1030,6 +1035,7 @@ public class DBManager {
 
         return (int) roundResultDao.queryBuilder()
                 .where(RoundResultDao.Properties.UpdateState.eq(0))
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .count();
@@ -1156,6 +1162,7 @@ public class DBManager {
     public List<RoundResult> queryResultsByItemCode(String itemCode) {
         return roundResultDao
                 .queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
                 .list();
@@ -1170,6 +1177,7 @@ public class DBManager {
     public List<RoundResult> queryResultsByStudentCode(String studentCode) {
         return roundResultDao
                 .queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
@@ -1180,6 +1188,7 @@ public class DBManager {
         Log.e("tat", "itemCode=" + itemCode + ",studentCode=" + studentCode);
         return roundResultDao
                 .queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
@@ -1190,6 +1199,7 @@ public class DBManager {
         Log.e("tat", "itemCode=" + itemCode + ",studentCode=" + studentCode);
         return roundResultDao
                 .queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
                 .where(RoundResultDao.Properties.GroupId.eq(groupId))
@@ -1202,6 +1212,7 @@ public class DBManager {
     public List<Student> getStudentsByGroup(Group group) {
         List<GroupItem> groupItems = groupItemDao
                 .queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(GroupItemDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(GroupItemDao.Properties.ScheduleNo.eq(group.getScheduleNo()))
                 .where(GroupItemDao.Properties.GroupType.eq(group.getGroupType()))
@@ -1224,6 +1235,7 @@ public class DBManager {
     public List<RoundResult> queryResultsByStuItem(StudentItem studentItem) {
         return roundResultDao
                 .queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.MachineCode.eq(studentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(studentItem.getItemCode()))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentItem.getStudentCode()))
@@ -1239,6 +1251,7 @@ public class DBManager {
     public List<RoundResult> queryResultsByStuItemExamType(String studentCode) {
         return roundResultDao
                 .queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
@@ -1248,6 +1261,7 @@ public class DBManager {
     public List<RoundResult> queryResultsByStudentCode(String studentCode, Item item) {
         return roundResultDao
                 .queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getItemCode(item)))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
@@ -1257,6 +1271,7 @@ public class DBManager {
     public List<RoundResult> queryResultsByStudentCode(String studentCode, Long groupId, int examType, String scheduleNo, Item item) {
         return roundResultDao
                 .queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getItemCode(item)))
                 .where(RoundResultDao.Properties.GroupId.eq(groupId))
@@ -1272,6 +1287,7 @@ public class DBManager {
     public RoundResult queryLastScoreByStuCode(String stuCode) {
         return roundResultDao
                 .queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(stuCode))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
@@ -1283,6 +1299,7 @@ public class DBManager {
     public RoundResult queryLastIndividualScoreByStuCode(String stuCode) {
         return roundResultDao
                 .queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(stuCode))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
@@ -1296,6 +1313,7 @@ public class DBManager {
     public RoundResult queryLastScoreByStuCode(String stuCode, Item item) {
         return roundResultDao
                 .queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(stuCode))
                 .where(RoundResultDao.Properties.MachineCode.eq(item.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getItemCode(item)))
@@ -1310,6 +1328,7 @@ public class DBManager {
     public List<RoundResult> queryResultsByItemCodeDefault() {
         return roundResultDao
                 .queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.DEFAULT_ITEM_CODE))
                 .list();
@@ -1318,6 +1337,7 @@ public class DBManager {
     public List<RoundResult> queryResultsByItemCodeDefault(int machineCode) {
         return roundResultDao
                 .queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.MachineCode.eq(machineCode))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.DEFAULT_ITEM_CODE))
                 .list();
@@ -1329,13 +1349,11 @@ public class DBManager {
      * @param allScores
      */
     public void updateRoundResult(List<RoundResult> allScores) {
-        LogUtils.operation("批量修改成绩信息==前====》" + allScores.toString());
         for (RoundResult allScore : allScores) {
             String encryptData = allScore.getStudentCode() + "," + allScore.getItemCode() + "," + allScore.getExamType()
                     + "," + allScore.getResult() + "," + allScore.getResultState() + "," + allScore.getTestTime();
             allScore.setRemark3(EncryptUtil.setEncryptString(RoundResult.ENCRYPT_KEY, encryptData));
         }
-        LogUtils.operation("批量修改成绩信息==后====》" + allScores.toString());
         roundResultDao.updateInTx(allScores);
         roundResultDao.detachAll();
     }
@@ -1362,6 +1380,7 @@ public class DBManager {
      */
     public List<RoundResult> queryUploadStudentResults(String studentCode, boolean upLoaded) {
         return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
@@ -1416,6 +1435,7 @@ public class DBManager {
         Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
                 + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\ttestNo:" + testNo);
         return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
@@ -1435,6 +1455,7 @@ public class DBManager {
         Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
                 + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\ttestNo:" + testNo);
         return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.MachineCode.eq(item.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(item.getItemCode()))
@@ -1454,6 +1475,7 @@ public class DBManager {
         Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
                 + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\ttestNo:" + testNo);
         return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.MachineCode.eq(item.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(item.getItemCode()))
@@ -1473,6 +1495,7 @@ public class DBManager {
         Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
                 + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\ttestNo:" + testNo);
         return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
@@ -1494,6 +1517,7 @@ public class DBManager {
         Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
                 + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\ttestNo:" + testNo);
         return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
@@ -1512,6 +1536,7 @@ public class DBManager {
      */
     public RoundResult queryGroupOrderAscScore(String studentCode, long groupId) {
         return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
@@ -1530,6 +1555,7 @@ public class DBManager {
      */
     public RoundResult queryGroupOrderDescScore(String studentCode, long groupId) {
         return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
@@ -1581,6 +1607,7 @@ public class DBManager {
         Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
                 + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\tIsLastResult:" + 1);
         return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
@@ -1595,6 +1622,7 @@ public class DBManager {
         //Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
         //		+ "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\tIsLastResult:" + 1);
         return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.MachineCode.eq(item.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getItemCode(item)))
@@ -1612,6 +1640,7 @@ public class DBManager {
         Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
                 + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\tIsLastResult:" + 1);
         return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
@@ -1624,6 +1653,7 @@ public class DBManager {
         Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
                 + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\tIsLastResult:" + 1);
         return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
@@ -1640,6 +1670,7 @@ public class DBManager {
         Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
                 + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\tIsLastResult:" + 1);
         return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
@@ -1659,6 +1690,7 @@ public class DBManager {
         Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
                 + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\tIsLastResult:" + 1);
         return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
@@ -1677,6 +1709,7 @@ public class DBManager {
     public RoundResult queryGroupFinallyRountScore(String studentCode, String groupId) {
 
         return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.GroupId.eq(groupId))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
@@ -1697,6 +1730,7 @@ public class DBManager {
     public RoundResult queryGroupRoundNoResult(String studentCode, String groupId, int roundNo) {
 
         return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.GroupId.eq(groupId))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
@@ -1713,6 +1747,7 @@ public class DBManager {
      */
     public List<RoundResult> queryGroupRound(String studentCode, String groupId) {
         return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
@@ -1730,6 +1765,7 @@ public class DBManager {
         Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
                 + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\tIsLastResult:" + 1);
         return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
@@ -1747,6 +1783,7 @@ public class DBManager {
      */
     public RoundResult queryResultByStudentCode(String studentCode, String itemCode, Long groupId) {
         return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
                 .where(RoundResultDao.Properties.GroupId.eq(groupId))
@@ -1763,6 +1800,7 @@ public class DBManager {
      */
     public RoundResult queryRoundByRoundNo(String studentCode, int testNo, int roundNo) {
         return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
@@ -1781,6 +1819,7 @@ public class DBManager {
     public RoundResult queryResultsByStudentCodeIsLastResult(String itemCode, String studentCode) {
         return roundResultDao
                 .queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
@@ -1796,6 +1835,7 @@ public class DBManager {
      */
     public void deleteStuResult(String studentCode) {
         roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
@@ -1809,6 +1849,7 @@ public class DBManager {
      */
     public void deleteStuResult(String studentCode, int testNo, int rountNo, long groupId) {
         roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
@@ -1828,12 +1869,26 @@ public class DBManager {
                 .buildDelete().executeDeleteWithoutDetachingEntities();
     }
 
+    public List<String> getResultsStudentByItem(String itemCode) {
+        List<String> stuCodeList = new ArrayList<>();
+        StringBuffer sqlBuf1 = new StringBuffer("SELECT  DISTINCT " + RoundResultDao.Properties.StudentCode.columnName);
+        sqlBuf1.append(" FROM " + RoundResultDao.TABLENAME);
+        sqlBuf1.append(" WHERE " + RoundResultDao.Properties.ItemCode.columnName + " =  ?  AND ");
+        sqlBuf1.append(RoundResultDao.Properties.MachineCode.columnName + " = ? ");
+        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf1.toString(), new String[]{itemCode, TestConfigs.sCurrentItem.getMachineCode() + ""});
+        while (c.moveToNext()) {
+            stuCodeList.add(c.getString(0));
+        }
+        c.close();
+        return stuCodeList;
+    }
+
     /**
      * 获取当前项目学生未上传数据
      *
      * @return
      */
-    public List<UploadResults> getUploadResultsAll(String itemCode) {
+    public List<UploadResults> getUploadResultsAll(boolean isUploadAll, String itemCode) {
         //查成绩表去重学生号  条件当前项目未上传成绩
         //获取根据考生号 获取考生当前项目未上传生所有成绩
         //根据成绩分组id 分配上传成绩内容（按分组、日程）
@@ -1844,6 +1899,9 @@ public class DBManager {
 //        sqlBuf1.append(" WHERE " + RoundResultDao.Properties.UpdateState.columnName + " = ? AND ");
         sqlBuf1.append(" WHERE " + RoundResultDao.Properties.ItemCode.columnName + " =  ?  AND ");
         sqlBuf1.append(RoundResultDao.Properties.MachineCode.columnName + " = ? ");
+        if (!isUploadAll) {
+            sqlBuf1.append(" AND " + RoundResultDao.Properties.UpdateState.columnName + " = 0  ");
+        }
         Cursor c = daoSession.getDatabase().rawQuery(sqlBuf1.toString(), new String[]{itemCode, TestConfigs.sCurrentItem.getMachineCode() + ""});
         while (c.moveToNext()) {
             stuCodeList.add(c.getString(0));
@@ -1853,8 +1911,9 @@ public class DBManager {
         for (String stuCode : stuCodeList) {
             //获取学生未上传成绩
             List<RoundResult> stuResult = roundResultDao.queryBuilder().where(RoundResultDao.Properties.StudentCode.eq(stuCode))
-                    .where(RoundResultDao.Properties.UpdateState.eq(0))
+//                    .where(RoundResultDao.Properties.UpdateState.eq(0))
                     .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
+                    .where(RoundResultDao.Properties.IsDelete.eq(false))
                     .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                     .list();
             Map<Long, List<RoundResult>> groupResult = new HashMap<>();
@@ -1947,6 +2006,7 @@ public class DBManager {
             List<RoundResult> stuResult = roundResultDao.queryBuilder().where(RoundResultDao.Properties.StudentCode.eq(stuCode))
 //                    .where(RoundResultDao.Properties.UpdateState.eq(0))
                     .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
+                    .where(RoundResultDao.Properties.IsDelete.eq(false))
                     .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                     .list();
             Map<Long, List<RoundResult>> groupResult = new HashMap<>();
@@ -2045,6 +2105,7 @@ public class DBManager {
             //获取学生未上传成绩
             List<RoundResult> stuResult = roundResultDao.queryBuilder().where(RoundResultDao.Properties.StudentCode.eq(stu.getStudentCode()))
                     .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
+                    .where(RoundResultDao.Properties.IsDelete.eq(false))
                     .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                     .list();
             Map<Long, List<RoundResult>> groupResult = new HashMap<>();

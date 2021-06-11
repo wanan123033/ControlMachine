@@ -1,5 +1,6 @@
 package com.feipulai.device.serial.beans;
 
+import com.feipulai.device.serial.SerialConfigs;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.Arrays;
@@ -60,8 +61,13 @@ public class StandJumpResult {
         } else {
             mTerminalCondition = NORMAL;
         }
+        if (SerialConfigs.LOGGER_STATE == 0) {
 
-        LogUtils.normal("立定跳远返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+            LogUtils.normal("立定跳远返回数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
+        } else {
+            LogUtils.operation("立定跳远返回数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
+
+        }
 
     }
 

@@ -114,7 +114,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
         executor.execute(mGetReadyCountDownTimer);
         tmp = 0;
         invalid = 0;
-        FileUtils.log("开始测试");
+        LogUtils.operation("开始测试");
     }
 
     public void stopTest() {
@@ -127,7 +127,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
         sitUpLists.clear();
         invalid = 0;
         listener.onInvalid(invalid);
-        FileUtils.log("结束测试");
+        LogUtils.operation("结束测试");
     }
 
     public void abandonTest() {
@@ -139,7 +139,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
         tmp = 0;
         invalid = 0;
         sitUpLists.clear();
-        FileUtils.log("放弃测试");
+        LogUtils.operation("放弃测试");
     }
 
     private void stopTimers() {
@@ -197,7 +197,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
                         updateResult();
                     }
 
-                    FileUtils.log("手臂检测====" + result.toString());
+                    LogUtils.normal("手臂检测====" + result.toString());
                 }
 
                 break;
@@ -213,8 +213,8 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
         }
         high = getHeightSitResult();
         low = getLowSitResult();
-        FileUtils.log(pull.getResult() + "==========引体向上数据变化更新===========" + tmp + "hand==" + hand);
-        FileUtils.log(high.getAngle() + "======高点与低点角度===========" + low.getAngle());
+        LogUtils.normal(pull.getResult() + "==========引体向上数据变化更新===========" + tmp + "hand==" + hand);
+        LogUtils.normal(high.getAngle() + "======高点与低点角度===========" + low.getAngle());
 //        int t = hand - handCheck;
         if (Math.abs(high.getAngle() - low.getAngle()) > 55) {
 //            if (t > 1) {
@@ -270,7 +270,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
             public Integer apply(@NonNull PullUpStateResult s, @NonNull ArmStateResult result) throws Exception {
                 if (s.getResult()-tmp>2){
                     invalid += s.getResult()-tmp;
-                    FileUtils.log("invalid:"+invalid);
+                    LogUtils.normal("invalid:"+invalid);
                 }
                 tmp = s.getResult();
 
@@ -293,7 +293,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
                 if (!e.isDisposed() && tmpResult!= null) {
                     e.onNext(tmpResult);
                     Log.i("pullArm",tmpResult.toString());
-                    FileUtils.log(tmpResult.toString());
+                    LogUtils.normal(tmpResult.toString());
                 }
             }
         });
@@ -306,7 +306,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
                 if (!e.isDisposed() && high!=null) {
                     e.onNext(high);
                     Log.i("pullArm",high.toString());
-                    FileUtils.log(high.toString());
+                    LogUtils.normal(high.toString());
                 }
             }
         });

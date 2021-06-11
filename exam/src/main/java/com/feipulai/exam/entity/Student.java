@@ -275,9 +275,9 @@ public class Student implements Serializable {
     public String toString() {
         return "Student{" +
                 "id=" + id +
-                ", studentCode='" + studentCode + '\'' +
-                ", studentName='" + studentName + '\'' +
-                ", sex=" + sex +
+                ", 考号='" + studentCode + '\'' +
+                ", 姓名='" + studentName + '\'' +
+                ", 姓别=" + sex +
                 ", idCardNo='" + idCardNo + '\'' +
                 ", icCardNo='" + icCardNo + '\'' +
                 ", className='" + className + '\'' +

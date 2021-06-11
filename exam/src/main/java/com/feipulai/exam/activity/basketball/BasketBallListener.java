@@ -41,20 +41,16 @@ public class BasketBallListener implements UdpClient.UDPChannelListerner {
                 if (basketballResult.getUcStatus() == 0) {
                     if (basketballResult.gettNum() == -1)
                         break;
-                    Logger.i("onDataArrived===>triggerStart");
                     listener.triggerStart(basketballResult);
                 } else {
-                    Logger.i("onDataArrived===>getDeviceStatus====>" + basketballResult.getUcStatus());
                     listener.getDeviceStatus(basketballResult.getUcStatus());
                 }
                 break;
             case UDPBasketBallConfig.CMD_SET_STATUS_STOP_RESPONSE://停止计时
-                Logger.i("onDataArrived===>getStatusStop====>");
                 listener.getStatusStop(basketballResult);
 
                 break;
             case UDPBasketBallConfig.CMD_BREAK_RESPONSE://拦截成绩
-                Logger.i("onDataArrived===>getResult====>");
                 if (topResult == null || basketballResult.getResult() != topResult.getResult()) {
                     listener.getResult(basketballResult);
                     topResult = basketballResult;

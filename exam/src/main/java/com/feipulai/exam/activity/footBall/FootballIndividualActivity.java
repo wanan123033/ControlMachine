@@ -142,7 +142,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         setting = SharedPrefsUtil.loadFormSource(this, FootBallSetting.class);
         if (setting == null)
             setting = new FootBallSetting();
-
+        LogUtils.operation("项目设置" + setting.toString());
         facade = new BasketBallRadioFacade(setting.getTestType(), this);
         facade.setDeviceVersion(setting.getDeviceVersion());
         ballManager = new BallManager.Builder((setting.getTestType())).setHostIp(setting.getHostIp()).setInetPost(1527).setPost(setting.getPost())
@@ -162,9 +162,6 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         individualCheckFragment.setOnIndividualCheckInListener(this);
         ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), individualCheckFragment, R.id.ll_individual_check);
 
-//        UdpClient.getInstance().init(1527);
-//        UdpClient.getInstance().setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(), new BasketBallListener(this));
-//        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
 
         resultAdapter = new FootBallResultAdapter(resultList, setting);
         rvTestResult.setLayoutManager(new LinearLayoutManager(this));
@@ -236,10 +233,6 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
     @Override
     protected void onResume() {
         super.onResume();
-        LogUtils.life("FootballIndividualActivity onResume");
-//        UdpClient.getInstance().setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(), new BasketBallListener(this));
-//        //设置精度
-//        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1));
         if (setting.getTestType() == 1) {
             RadioManager.getInstance().setOnRadioArrived(facade);
             facade.resume();
@@ -251,8 +244,8 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         ballManager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), setting.getSensitivity(),
                 setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() - 1);
         ballManager.sendSetDelicacy(SettingHelper.getSystemSetting().getHostId(), setting.getSensitivity(),
-                 setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1);
-        ballManager.sendSetBlockertime(SettingHelper.getSystemSetting().getHostId(),  setting.getSensitivity(),
+                setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1);
+        ballManager.sendSetBlockertime(SettingHelper.getSystemSetting().getHostId(), setting.getSensitivity(),
                 setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1);
 
     }
@@ -260,14 +253,12 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
     @Override
     protected void onPause() {
         super.onPause();
-        LogUtils.life("FootballIndividualActivity onPause");
         facade.pause();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LogUtils.life("FootballIndividualActivity onDestroy");
         facade.finish();
         facade = null;
         RadioManager.getInstance().setOnRadioArrived(null);
@@ -355,12 +346,6 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
 
     @Override
     public void onIndividualCheckIn(Student student, StudentItem studentItem, List<RoundResult> results) {
-        if (student != null)
-            LogUtils.operation("足球检入到学生:" + student.toString());
-        if (studentItem != null)
-            LogUtils.operation("足球检入到学生StudentItem:" + studentItem.toString());
-        if (results != null)
-            LogUtils.operation("足球检入到学生成绩:" + results.size() + "----" + results.toString());
 
         if (state == WAIT_FREE || state == WAIT_CHECK_IN) {
 
@@ -392,17 +377,17 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                 RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
                 testNo = testRoundResult == null ? 1 : testRoundResult.getTestNo() + 1;
                 if (student != null)
-                    LogUtils.operation("足球该学生未测试:" + student.getStudentCode() + ",testNo =  " + testNo);
+                    LogUtils.operation("足球该学生未测试:" + student.getStudentCode() + ",测试次数 =  " + testNo);
             } else {
                 TestCache.getInstance().getResults().put(student, results);
                 //是否有成绩，没有成绩查底该项目是否有成绩，没有成绩测试次数为1，有成绩测试次数+1
                 RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
                 testNo = testRoundResult == null ? 1 : testRoundResult.getTestNo();
                 if (student != null)
-                    LogUtils.operation("足球该学生有成绩:" + student.getStudentCode() + ",testNo = " + testNo);
+                    LogUtils.operation("足球该学生有成绩:" + student.getStudentCode() + ",测试次数 = " + testNo);
             }
             roundNo = results.size() + 1;
-            LogUtils.operation("足球当前轮次 roundNo = " + roundNo);
+            LogUtils.operation("足球当前轮次 ： " + roundNo);
             TestCache.getInstance().getTestNoMap().put(student, testNo);
 
             presetResult(student, testNo);
@@ -812,7 +797,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
     }
 
     @OnClick({R.id.tv_punish_add, R.id.tv_punish_subtract, R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal, R.id.tv_print, R.id.tv_confirm
-            ,R.id.tv_result, R.id.txt_waiting, R.id.txt_illegal_return, R.id.txt_continue_run, R.id.txt_stop_timing, R.id.txt_finish_test, R.id.img_AFR})
+            , R.id.tv_result, R.id.txt_waiting, R.id.txt_illegal_return, R.id.txt_continue_run, R.id.txt_stop_timing, R.id.txt_finish_test, R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_waiting://等待发令
@@ -856,7 +841,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                         ballManager.setRadioLedStartTime(SettingHelper.getSystemSetting().getHostId(), result);
                         state = TESTING;
                         setOperationUI();
-                   }
+                    }
                 }
                 break;
             case R.id.txt_stop_timing://停止计时

@@ -76,7 +76,6 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        LogUtils.life("MedicineBallGroupActivity onResume");
         //设置基点
 //        mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
 //                SerialConfigs.CMD_MEDICINE_BALL_SET_BASE_POINT));
@@ -299,7 +298,6 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LogUtils.life("MedicineBallGroupActivity onDestroy");
         mHandler.removeCallbacksAndMessages(null);
         if (executorService != null && !executorService.isShutdown())
             executorService.shutdown();

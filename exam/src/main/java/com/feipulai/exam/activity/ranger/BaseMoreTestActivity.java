@@ -192,7 +192,6 @@ public abstract class BaseMoreTestActivity extends BaseCheckActivity implements 
 
     @Override
     public void onCheckIn(Student student) {
-        Logger.i("onCheckIn====>" + student.toString());
         if (student == null) {
             toastSpeak("该考生不存在");
             return;

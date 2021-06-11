@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
 
 import com.arcsoft.face.ErrorInfo;
 import com.arcsoft.face.FaceEngine;
@@ -295,12 +296,15 @@ public class ItemSubscriber {
                 .subscribe();
     }
 
+//    int index = 0;
+
     /**
      * 上传多个成绩
      *
      * @param uploadResultsList
      */
     public void uploadResult(final List<UploadResults> uploadResultsList) {
+//        index = 0;
         int pageSum = 1;
 
         if (uploadResultsList.size() > 100) {

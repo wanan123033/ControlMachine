@@ -44,6 +44,7 @@ import com.lgh.uvccamera.UVCCameraProxy;
 import com.lgh.uvccamera.callback.ConnectCallback;
 import com.lgh.uvccamera.callback.PreviewCallback;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.faceserver.CompareResult;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.libarcface.faceserver.ThreadManager;
@@ -606,7 +607,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                 requestFeatureStatusMap.put(faceId, RequestFeatureStatus.SUCCEED);
 //                faceHelper.setName(faceId, mContext.getString(R.string.recognize_success_notice, lastCompareResult.getUserName()));
                 Student student = DBManager.getInstance().queryStudentByCode(lastCompareResult.getUserName());
-                Logger.e("compareResult==》特征识别成功" + student);
+
 //                View view = getView();
 //                view.setDrawingCacheEnabled(true);
 //                view.buildDrawingCache(true);
@@ -637,6 +638,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                         }
                     }
                 } else {
+                    LogUtils.operation("特征识别成功" + student);
                     compareListener.compareStu(student);
                     isStartFace = false;
                     isNetWork = false;
@@ -645,7 +647,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 //                isOpenCamera=false;
             } else {
                 hasTry++;
-                Logger.e("compareResult==>null----" + hasTry);
+//                Logger.e("compareResult==>null----" + hasTry);
                 if (hasTry < 3) {
                     faceHelper.setName(faceId, getString(R.string.recognize_failed_notice, ""));
                     isStartFace = true;
@@ -737,6 +739,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             isNetface = true;
             isNetWork = false;
             isStartFace = false;
+            LogUtils.operation("进行在线人脸识别");
             if (getActivity() != null)
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
@@ -797,13 +800,14 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                         UserPhoto photo = (UserPhoto) data;
                         if (TextUtils.isEmpty(photo.getStudentcode())) {
                             //新增学生
+                            LogUtils.operation("进行在线人脸识别失败");
                             ToastUtils.showShort("在线识别失败");
                             compareListener.compareStu(null);
 
                         } else {
                             //识别成功，当前考生是否存在，不存在下载当前考生数据
                             Student student = DBManager.getInstance().queryStudentByCode(photo.getStudentcode());
-                            Log.e("TAG", "STUDENT=" + student);
+                            LogUtils.operation("进行在线人脸识别成功：" + student.toString());
                             if (student != null) {
                                 compareListener.compareStu(student);
                                 Intent intent = new Intent(mContext, UpdateService.class);

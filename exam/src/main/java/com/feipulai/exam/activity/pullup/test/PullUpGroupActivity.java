@@ -128,7 +128,6 @@ public class PullUpGroupActivity extends BaseTitleActivity
         setting = SharedPrefsUtil.loadFormSource(this, PullUpSetting.class);
 
         group = (Group) TestConfigs.baseGroupMap.get("group");
-        LogUtils.operation("引体向上获取分组信息:" + group.toString());
         String type = "男女混合";
         if (group.getGroupType() == Group.MALE) {
             type = "男子";

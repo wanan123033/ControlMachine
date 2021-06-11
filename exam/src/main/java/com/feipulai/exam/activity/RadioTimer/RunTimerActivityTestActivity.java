@@ -629,6 +629,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
                     InteractUtils.toastSpeak(RunTimerActivityTestActivity.this, "无此项目");
                     return;
                 }
+                LogUtils.operation("检入考生：" + student.toString());
                 // 可以直接检录
                 checkInUIThread(student,studentItem);
             }

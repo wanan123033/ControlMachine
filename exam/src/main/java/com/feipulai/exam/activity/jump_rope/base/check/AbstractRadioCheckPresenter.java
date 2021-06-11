@@ -160,7 +160,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
             checkBeforeTest(true);
         }
         TestCache testCache = TestCache.getInstance();
-        Logger.i("用户点击开始测试,所有考生信息:" + testCache.getAllStudents()
+        LogUtils.operation("用户点击开始测试,所有考生信息:" + testCache.getAllStudents()
                 + "\n设备配对信息:" + testCache.getTestingPairs()
                 + "\n设置项信息:" + setting.toString());
     }

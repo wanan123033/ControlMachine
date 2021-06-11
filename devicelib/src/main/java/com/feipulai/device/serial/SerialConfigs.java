@@ -11,6 +11,7 @@ import java.util.Map;
  */
 public class SerialConfigs {
 
+    public static int LOGGER_STATE = 0;
 
     private SerialConfigs() {
     }

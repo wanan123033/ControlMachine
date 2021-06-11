@@ -1,5 +1,6 @@
 package com.feipulai.device.serial.beans;
 
+import com.feipulai.device.serial.SerialConfigs;
 import com.orhanobut.logger.utils.LogUtils;
 
 /**
@@ -23,7 +24,13 @@ public class PullUpSetFrequencyResult{
 		frequency = data[8] & 0xff;
 		rate = data[9] & 0xff;
 		deviceId = data[4] & 0xff;
-		LogUtils.normal("引体向上返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+		if (SerialConfigs.LOGGER_STATE == 0) {
+
+			LogUtils.normal("引体向上返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+		}else{
+			LogUtils.operation("引体向上返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+
+		}
 
 	}
 

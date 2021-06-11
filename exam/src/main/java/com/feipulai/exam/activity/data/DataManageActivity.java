@@ -360,19 +360,8 @@ public class DataManageActivity
 
                     case 10://成绩上传
                         LogUtils.operation("用户点击了成绩上传...");
-                        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
-                            List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
-                            if (itemList != null && itemList.size() > 0)
-                                showZcpSelect(itemList);
-                        } else {
-//                            if (TestConfigs.sCurrentItem.getItemCode() == null && TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZFP){
-//                                List<Item> items = DBManager.getInstance().queryItemsByMachineCode(18);
-//                                if (items.size()>0){
-//                                    TestConfigs.sCurrentItem.setItemCode(items.get(0).getItemCode());
-//                                }
-//                            }
-                            uploadData();
-                        }
+
+                        showUploadDataDialog();
                         break;
                     case 11://数据导出
                         LogUtils.operation("用户点击了数据导出...");
@@ -502,7 +491,7 @@ public class DataManageActivity
                     @Override
                     public void onResponse(Headers headers) {
                         saveHeaders = headers;
-                        LogUtils.operation("saveHeaders=" + saveHeaders.toString());
+                        LogUtils.normal("保存头像返回头部信息=" + saveHeaders.toString());
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -677,7 +666,7 @@ public class DataManageActivity
     /**
      * 中长跑选择项目上传（和后面的上传更新逻辑有关，所以此处最好分项目上传)
      */
-    private void showZcpSelect(final List<Item> itemList) {
+    private void showZcpSelect(final boolean isUploadAll, final List<Item> itemList) {
         //默认选中第一个
         final String[] items = new String[itemList.size()];
         for (int i = 0; i < itemList.size(); i++) {
@@ -694,7 +683,7 @@ public class DataManageActivity
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if (choice != -1) {
-                            uploadDataZCP(itemList.get(choice).getItemCode());
+                            uploadDataZCP(isUploadAll, itemList.get(choice).getItemCode());
                         }
                     }
                 });
@@ -702,7 +691,7 @@ public class DataManageActivity
     }
 
 
-    public void uploadData() {
+    public void uploadData(final boolean isUploadAll) {
         DataBaseExecutor.addTask(new DataBaseTask(this, "成绩上传中，请稍后...", false) {
             @Override
             public DataBaseRespon executeOper() {
@@ -710,12 +699,12 @@ public class DataManageActivity
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
                     List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
                     for (Item item : itemList) {
-                        List<UploadResults> dbResultsList = DBManager.getInstance().getUploadResultsAll(item.getItemCode());
+                        List<UploadResults> dbResultsList = DBManager.getInstance().getUploadResultsAll(isUploadAll, item.getItemCode());
                         if (dbResultsList != null && dbResultsList.size() > 0)
                             uploadResultsList.addAll(dbResultsList);
                     }
                 } else {
-                    uploadResultsList = DBManager.getInstance().getUploadResultsAll(TestConfigs.getCurrentItemCode());
+                    uploadResultsList = DBManager.getInstance().getUploadResultsAll(isUploadAll, TestConfigs.getCurrentItemCode());
                 }
 
                 return new DataBaseRespon(true, "", uploadResultsList);
@@ -735,11 +724,12 @@ public class DataManageActivity
         });
     }
 
-    public void uploadDataZCP(final String itemCode) {
+    public void uploadDataZCP(final boolean isUploadAll, final String itemCode) {
         DataBaseExecutor.addTask(new DataBaseTask(this, "成绩上传中，请稍后...", false) {
             @Override
             public DataBaseRespon executeOper() {
-                List<UploadResults> uploadResultsList = DBManager.getInstance().getUploadResultsAll(itemCode);
+                List<UploadResults> uploadResultsList = DBManager.getInstance().getUploadResultsAll(isUploadAll
+                        , itemCode);
 
                 return new DataBaseRespon(true, "", uploadResultsList);
             }
@@ -1046,6 +1036,24 @@ public class DataManageActivity
                 .setNegativeButton(R.string.cancel, null).show();
     }
 
+    private void showUploadDataDialog() {
+        String[] uploadType = new String[]{"上传全部成绩", "上传未上传考生成绩"};
+        new AlertDialog.Builder(this).setTitle("选择成绩上传类型")
+                .setItems(uploadType, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+                            List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
+                            if (itemList != null && itemList.size() > 0)
+                                showZcpSelect(which == 0, itemList);
+                        } else {
+                            uploadData(which == 0);
+                        }
+
+                    }
+                }).create().show();
+    }
+
     private void showDownloadDataDialog() {
         String[] exemType = new String[]{"正常", "补考", "缓考"};
         new AlertDialog.Builder(this).setTitle("选择下载考试类型")
@@ -1094,7 +1102,7 @@ public class DataManageActivity
                 .setCanelable(false)
                 .setMessage("输入合法保存文件名")
                 .setEditHint("请输入文件名")
-                .setEditText(SettingHelper.getSystemSetting().getTestName() +
+                .setEditText(SettingHelper.getSystemSetting().getTestName() + TestConfigs.sCurrentItem.getItemName() +
                         SettingHelper.getSystemSetting().getHostId() + "号机" + df.format(new Date()))
                 .setPositiveButton(confirmListener)
                 .build().show();
@@ -1175,62 +1183,150 @@ public class DataManageActivity
         createFileNameDialog(new EditDialog.OnConfirmClickListener() {
             @Override
             public void OnClickListener(Dialog dialog, String content) {
-                String text = content.trim();
-                UsbFile targetFile;
+                backData(content);
+//                OperateProgressBar.showLoadingUi(DataManageActivity.this, "数据备份中...");
+//                String text = content.trim();
+//                UsbFile targetFile;
+//
+//                try {
+//                    targetFile = FileSelectActivity.sSelectedFile.createFile(text + ".db");
+//                    boolean backupSuccess = backupManager.backup(targetFile);
+//                    UsbFile deleteFile = FileSelectActivity.sSelectedFile.createFile("." + text + "delete.db");
+//                    deleteFile.delete();
+//                    ToastUtils.showShort(backupSuccess ? "数据库备份成功" : "数据库备份失败");
+//                    Logger.i(backupSuccess ? ("数据库备份成功,备份文件名:" +
+//                            FileSelectActivity.sSelectedFile.getName() + "/" + targetFile.getName())
+//                            : "数据库备份失败");
+////                    FileSelectActivity.sSelectedFile = null;
+//                    if (backupSuccess) {
+//                        UsbFile excelFile = FileSelectActivity.sSelectedFile.createFile(text + ".xls");
+//                        new ResultExlWriter(TestConfigs.getMaxTestCount(DataManageActivity.this), DataManageActivity.this)
+//                                .writeExelData(excelFile);
+//                        zipFile(FileSelectActivity.sSelectedFile.getAbsolutePath() + "/" + text, FileSelectActivity.sSelectedFile.getName() + "/" + targetFile.getName(),
+//                                FileSelectActivity.sSelectedFile.getName() + "/" + excelFile.getName());
+//                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                    ToastUtils.showShort("文件创建失败,请确保路径目录不存在已有文件");
+//                    Logger.i("文件创建失败,数据库备份失败");
+//                }
+            }
+        });
+    }
+
+    private DateFormat df = new SimpleDateFormat("HH:mm:ss");
+
+    private void backData(final String fileName) {
+
+        OperateProgressBar.showLoadingUi(DataManageActivity.this, "数据备份中...");
+        final UsbFile file = new UsbFileAdapter(new File(MyApplication.BACKUP_DIR));
+
+        DataBaseExecutor.addTask(new DataBaseTask() {
+            @Override
+            public DataBaseRespon executeOper() {
+                UsbFile targetFile = null;
                 try {
-                    targetFile = FileSelectActivity.sSelectedFile.createFile(text + ".db");
+                    targetFile = file.createFile(fileName + df.format(new Date()) + ".db");
                     boolean backupSuccess = backupManager.backup(targetFile);
-                    UsbFile deleteFile = FileSelectActivity.sSelectedFile.createFile("." + text + "delete.db");
+                    UsbFile deleteFile = file.createFile("." + fileName + "delete.db");
                     deleteFile.delete();
                     ToastUtils.showShort(backupSuccess ? "数据库备份成功" : "数据库备份失败");
-                    Logger.i(backupSuccess ? ("数据库备份成功,备份文件名:" +
-                            FileSelectActivity.sSelectedFile.getName() + "/" + targetFile.getName())
-                            : "数据库备份失败");
-//                    FileSelectActivity.sSelectedFile = null;
-                    if (backupSuccess){
-                        UsbFile excelFile = FileSelectActivity.sSelectedFile.createFile(text + ".xls");
-                        new ResultExlWriter(TestConfigs.getMaxTestCount(DataManageActivity.this), DataManageActivity.this)
-                                .writeExelData(excelFile);
-                        zipFile(FileSelectActivity.sSelectedFile.getName() + "/" + targetFile.getName(),
-                                FileSelectActivity.sSelectedFile.getName() + "/" + excelFile.getName());
-                    }
+
                 } catch (IOException e) {
                     e.printStackTrace();
                     ToastUtils.showShort("文件创建失败,请确保路径目录不存在已有文件");
                     Logger.i("文件创建失败,数据库备份失败");
                 }
+
+                return new DataBaseRespon(true, "", ((UsbFileAdapter) targetFile).getFile());
+            }
+
+            @Override
+            public void onExecuteSuccess(DataBaseRespon respon) {
+                final UsbFile excelFile;
+                final File dbFile = (File) respon.getObject();
+                try {
+                    excelFile = file.createFile(fileName + df.format(new Date()) + ".xls");
+                    new ResultExlWriter(TestConfigs.getMaxTestCount(DataManageActivity.this), new ExlListener() {
+                        @Override
+                        public void onExlResponse(final int responseCode, final String reason) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ToastUtils.showShort(reason);
+                                    OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
+                                    if (responseCode == ExlListener.EXEL_WRITE_SUCCESS) {
+                                        OperateProgressBar.showLoadingUi(DataManageActivity.this, "备份文件压缩中...");
+
+                                    } else {
+                                        isProcessingData = false;
+                                    }
+                                }
+                            });
+
+                            if (responseCode == ExlListener.EXEL_WRITE_SUCCESS) {
+                                zipFile(fileName, MyApplication.BACKUP_DIR + fileName + df.format(new Date()) + ".zip",
+                                        dbFile, ((UsbFileAdapter) excelFile).getFile());
+                            }
+
+
+                        }
+                    }).writeExelData(excelFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onExecuteFail(DataBaseRespon respon) {
+
             }
         });
     }
 
-    private void zipFile(String backUp,String excel) {
-            // 生成的压缩文件
-            try {
-                File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/" +backUp);
-                File file1 = new File(Environment.getExternalStorageDirectory().getAbsolutePath() +"/"+excel);
+    private void zipFile(String fileName, String zipPathName, File dbFile, File excelFile) {
+        // 生成的压缩文件
+        try {
+//            File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + backUp);
+//            File file1 = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + excel);
 //                File file2 = new File(Environment.getExternalStorageDirectory().getAbsolutePath() +"/KS_LOGGER/operationLogger");
-                ZipFile zipFile = new ZipFile(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/"+"test.zip");
-                ZipParameters parameters = new ZipParameters();
-                // 压缩方式
-                parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
-                // 压缩级别
-                parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
-                if (file.exists()){
-                    zipFile.addFile(file,parameters);
-                    Log.i("zipFile",Environment.getExternalStorageDirectory().getAbsolutePath() +backUp+"file is exists");
-                }else {
-                    Log.i("zipFile",Environment.getExternalStorageDirectory().getAbsolutePath() +backUp+"file is not exists");
-                }
-                if (file1.exists()){
-                    zipFile.addFile(file1,parameters);
-                    Log.i("zipFile",Environment.getExternalStorageDirectory().getAbsolutePath() +excel+"file is  exists");
-                }else {
-                    Log.i("zipFile",Environment.getExternalStorageDirectory().getAbsolutePath() +excel+"file1 is not exists");
-                }
-                zipFile.addFolder(Environment.getExternalStorageDirectory().getAbsolutePath() +"/KS_LOGGER/operationLogger",parameters);
-            } catch (Exception e) {
-                e.printStackTrace();
+            ZipFile zipFile = new ZipFile(zipPathName);
+            ZipParameters parameters = new ZipParameters();
+            // 压缩方式
+            parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
+            // 压缩级别
+            parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
+            if (dbFile.exists()) {
+                zipFile.addFile(dbFile, parameters);
+                Log.i("zipFile", Environment.getExternalStorageDirectory().getAbsolutePath() + dbFile + "file is exists");
+            } else {
+                Log.i("zipFile", Environment.getExternalStorageDirectory().getAbsolutePath() + dbFile + "file is not exists");
             }
+            if (excelFile.exists()) {
+                zipFile.addFile(excelFile, parameters);
+                Log.i("zipFile", Environment.getExternalStorageDirectory().getAbsolutePath() + excelFile + "file is  exists");
+            } else {
+                Log.i("zipFile", Environment.getExternalStorageDirectory().getAbsolutePath() + excelFile + "file1 is not exists");
+            }
+            zipFile.addFolder(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + MyApplication.PATH_LOG_NAME + "/" + "operationLogger", parameters);
+
+            UsbFile copeFile = FileSelectActivity.sSelectedFile.createFile(fileName + ".zip");
+            FileUtil.copyFile(zipFile.getFile(), copeFile);
+
+            UsbFile deleteFile = FileSelectActivity.sSelectedFile.createFile(".Delete" + fileName + ".zip");
+            deleteFile.delete();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
+            }
+        });
+
+
     }
 
     public void chooseFile() {

@@ -136,7 +136,8 @@ public class BasketBallSetting {
     @Override
     public String toString() {
         return "BasketBallSetting{" +
-                "testNo=" + testNo +
+                "autoPair=" + autoPair +
+                ", testNo=" + testNo +
                 ", interceptSecond=" + interceptSecond +
                 ", sensitivity=" + sensitivity +
                 ", hostIp='" + hostIp + '\'' +
@@ -146,6 +147,8 @@ public class BasketBallSetting {
                 ", maleFullScore=" + maleFullScore +
                 ", femaleFullScore=" + femaleFullScore +
                 ", testPattern=" + testPattern +
+                ", testType=" + testType +
+                ", deviceVersion=" + deviceVersion +
                 '}';
     }
 }
