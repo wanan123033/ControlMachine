@@ -30,15 +30,16 @@ public class StudentItem {
     private String itemCode;//默认为default
     @NotNull
     private int machineCode;
-    private int studentType;//考生类型（0.正常，1.缓考，2.补考） 暂不使用
+    private int studentType;//考生类型（0.正常，1.择考，2.免考）
     @NotNull
     private int examType;//考试类型 0.正常，1.缓考，2.补考
+    private int makeUpType;//补考类型  0禁止补考  1 可补考
     private String scheduleNo;  //日程编号
     private String remark1;
     private String remark2;
     private String remark3;
 
-    public StudentItem(String studentCode, String itemCode, int machineCode, int studentType, int examType, String scheduleNo) {
+    public StudentItem(String studentCode, String itemCode, int machineCode, int studentType, int examType, int makeUpType, String scheduleNo) {
         this.studentCode = studentCode;
         this.itemCode = itemCode;
         this.machineCode = machineCode;

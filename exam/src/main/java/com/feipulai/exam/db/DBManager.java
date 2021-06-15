@@ -1371,6 +1371,7 @@ public class DBManager {
         roundResultDao.update(score);
     }
 
+
     /**
      * 根据学生号获取是否上传的成绩列表
      *
@@ -1696,6 +1697,27 @@ public class DBManager {
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(RoundResultDao.Properties.ExamType.eq(exemType))
                 .orderDesc(RoundResultDao.Properties.TestNo)
+                .limit(1)
+                .unique();
+    }
+
+    /**
+     * 查询对应考生当前项目最好一次成绩
+     *
+     * @param studentCode 考号
+     * @param exemType
+     * @return
+     */
+    public RoundResult queryLastRountScoreByExamType(String studentCode, int exemType, String itemCode) {
+        Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
+                + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\tIsLastResult:" + 1);
+        return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
+                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
+                .where(RoundResultDao.Properties.ExamType.eq(exemType))
+                .where(RoundResultDao.Properties.IsLastResult.eq(1))
                 .limit(1)
                 .unique();
     }

@@ -308,7 +308,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 resultList.clear();
                 resultList.addAll(Arrays.asList(result));
                 adapter.notifyDataSetChanged();
-
+                updateLastResultLed(DBManager.getInstance().queryLastRountScoreByExamType(roundResult.getStudentCode(), mStudentItem.getExamType(), TestConfigs.getCurrentItemCode()));
                 List<RoundResult> roundResultList = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(roundResult.getStudentCode(), roundResult.getExamType());
                 boolean isFull = false;
                 for (RoundResult dbRoundResult : roundResultList) {

@@ -257,6 +257,9 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             case EventConfigs.UPDATE_RESULT:
                 for (BaseStuPair baseStuPair : stuPairsList) {
                     RoundResult roundResult = (RoundResult) baseEvent.getData();
+                    if (roundResult.getGroupId() == RoundResult.DEAFULT_GROUP_ID || roundResult.getGroupId() != group.getId()) {
+                        return;
+                    }
                     if (TextUtils.equals(baseStuPair.getStudent().getStudentCode(), roundResult.getStudentCode())) {
                         String[] timeResult = baseStuPair.getTimeResult();
 
@@ -266,6 +269,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                         resultList.clear();
                         resultList.addAll(Arrays.asList(timeResult));
                         testResultAdapter.notifyDataSetChanged();
+                        updateLastResultLed(DBManager.getInstance().queryGroupBestScore(roundResult.getStudentCode(), group.getId()));
                         //更新考生轮次位置
                         if (setTestPattern() == TestConfigs.GROUP_PATTERN_SUCCESIVE) {
                             //考生分组测试的成绩

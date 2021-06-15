@@ -50,7 +50,7 @@ public class RoundResult implements Serializable {
     @NotNull
     private int isLastResult;//是否为最好成绩 0-不是 1-是     身高体重最后成绩即为最好成绩
     @NotNull
-    private int examType;//考试类型 0.正常 1.补考，(2.缓考,现没有这功能)
+    private int examType;//考试类型 0.正常 2.补考
     @NotNull
     private String testTime;//测试时间  时间戳
     private String printTime = "";//w打印时间 时间戳
@@ -78,11 +78,11 @@ public class RoundResult implements Serializable {
 
     @Generated(hash = 1790186008)
     public RoundResult(Long id, @NotNull String studentCode, @NotNull String itemCode, int machineCode,
-            int roundNo, int testNo, int machineResult, int penaltyNum, int result, int resultState,
-            int isLastResult, int examType, @NotNull String testTime, String printTime, String endTime,
-            int stumbleCount, int updateState, byte[] cycleResult, Long groupId, String scheduleNo,
-            String mtEquipment, int roundTestState, int resultTestState, boolean isDelete,
-            String remark1, String remark2, String remark3) {
+                       int roundNo, int testNo, int machineResult, int penaltyNum, int result, int resultState,
+                       int isLastResult, int examType, @NotNull String testTime, String printTime, String endTime,
+                       int stumbleCount, int updateState, byte[] cycleResult, Long groupId, String scheduleNo,
+                       String mtEquipment, int roundTestState, int resultTestState, boolean isDelete,
+                       String remark1, String remark2, String remark3) {
         this.id = id;
         this.studentCode = studentCode;
         this.itemCode = itemCode;
@@ -111,6 +111,7 @@ public class RoundResult implements Serializable {
         this.remark2 = remark2;
         this.remark3 = remark3;
     }
+
     public RoundResult(Long id, @NotNull String studentCode, @NotNull String itemCode, int machineCode,
                        int roundNo, int testNo, int machineResult, int penaltyNum, int result, int resultState,
                        int isLastResult, int examType, @NotNull String testTime, String printTime, String endTime,

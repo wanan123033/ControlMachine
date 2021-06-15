@@ -87,7 +87,7 @@ public abstract class BaseCheckActivity
     private static final int CHECK_IN = 0x0;
     private static final int CHECK_THERMOMETER = 0x1;
     private Student mStudent;
-    private StudentItem mStudentItem;
+    protected StudentItem mStudentItem;
     private List<RoundResult> mResults;
 
     protected FrameLayout afrFrameLayout;
