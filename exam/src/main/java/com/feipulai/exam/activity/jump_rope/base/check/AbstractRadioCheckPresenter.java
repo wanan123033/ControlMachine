@@ -239,6 +239,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
     public void settingChanged() {
         if (pairs != null && pairs.size() != getDeviceSumFromSetting()) {
             List<StuDevicePair> newPairs = CheckUtils.newPairs(getDeviceSumFromSetting());
+            focusPosition = 0;
             for (int i = 0; i < pairs.size(); i++) {
                 if (i == newPairs.size()) {
                     break;

@@ -488,24 +488,27 @@ public class HttpSubscriber {
                     studentList.add(student);
                     if (ScheduleBean.SITE_EXAMTYPE == 0) {
                         SettingHelper.getSystemSetting().setTestPattern(SystemSetting.PERSON_PATTERN);
-                        if (studentBean.getExamType() == 0 || studentBean.getExamType() == 1) {
-                            StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
-                                    studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
-                                    studentBean.getExamType(), 0, studentBean.getScheduleNo());
-                            studentItemList.add(studentItem);
-                        } else if (studentBean.getExamType() == 2) {
-                            StudentItem dbStuItem = DBManager.getInstance().queryStudentItemByCode(studentBean.getExamItemCode(), studentBean.getStudentCode());
-                            StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
-                                    studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
-                                    dbStuItem == null ? 0 : dbStuItem.getExamType(), 1, studentBean.getScheduleNo());
-                            studentItemList.add(studentItem);
-                        } else {
-                            StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
-                                    studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
-                                    1, 1, studentBean.getScheduleNo());
-                            studentItemList.add(studentItem);
-                        }
-
+//                        if (studentBean.getExamType() == 0 || studentBean.getExamType() == 1) {
+//                            StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
+//                                    studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
+//                                    studentBean.getExamType(), 0, studentBean.getScheduleNo());
+//                            studentItemList.add(studentItem);
+//                        } else if (studentBean.getExamType() == 2) {
+//                            StudentItem dbStuItem = DBManager.getInstance().queryStudentItemByCode(studentBean.getExamItemCode(), studentBean.getStudentCode());
+//                            StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
+//                                    studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
+//                                    dbStuItem == null ? 0 : dbStuItem.getExamType(), 1, studentBean.getScheduleNo());
+//                            studentItemList.add(studentItem);
+//                        } else {
+//                            StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
+//                                    studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
+//                                    1, 1, studentBean.getScheduleNo());
+//                            studentItemList.add(studentItem);
+//                        }
+                        StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
+                                studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
+                                studentBean.getExamType(),  studentBean.getScheduleNo());
+                        studentItemList.add(studentItem);
                     } else {
                         SettingHelper.getSystemSetting().setTestPattern(SystemSetting.GROUP_PATTERN);
                     }

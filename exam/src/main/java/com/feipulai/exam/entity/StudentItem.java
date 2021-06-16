@@ -33,13 +33,13 @@ public class StudentItem {
     private int studentType;//考生类型（0.正常，1.择考，2.免考）
     @NotNull
     private int examType;//考试类型 0.正常，1.缓考，2.补考
-    private int makeUpType;//补考类型  0禁止补考  1 可补考
+//    private int makeUpType;//补考类型  0禁止补考  1 可补考
     private String scheduleNo;  //日程编号
     private String remark1;
     private String remark2;
     private String remark3;
 
-    public StudentItem(String studentCode, String itemCode, int machineCode, int studentType, int examType, int makeUpType, String scheduleNo) {
+    public StudentItem(String studentCode, String itemCode, int machineCode, int studentType, int examType, String scheduleNo) {
         this.studentCode = studentCode;
         this.itemCode = itemCode;
         this.machineCode = machineCode;
@@ -48,9 +48,24 @@ public class StudentItem {
         this.scheduleNo = scheduleNo;
     }
 
+//    public StudentItem(String studentCode, String itemCode, int machineCode, int studentType, int examType, int makeUpType, String scheduleNo) {
+//        this.studentCode = studentCode;
+//        this.itemCode = itemCode;
+//        this.machineCode = machineCode;
+//        this.studentType = studentType;
+//        this.examType = examType;
+//        this.scheduleNo = scheduleNo;
+//    }
+
+
+
+    @Generated(hash = 383807586)
+    public StudentItem() {
+    }
+
     @Generated(hash = 1667857632)
-    public StudentItem(Long id, @NotNull String studentCode, @NotNull String itemCode, int machineCode, int studentType, int examType,
-                       String scheduleNo, String remark1, String remark2, String remark3) {
+    public StudentItem(Long id, @NotNull String studentCode, @NotNull String itemCode, int machineCode, int studentType, int examType, String scheduleNo,
+            String remark1, String remark2, String remark3) {
         this.id = id;
         this.studentCode = studentCode;
         this.itemCode = itemCode;
@@ -61,10 +76,6 @@ public class StudentItem {
         this.remark1 = remark1;
         this.remark2 = remark2;
         this.remark3 = remark3;
-    }
-
-    @Generated(hash = 383807586)
-    public StudentItem() {
     }
 
     @Override
@@ -179,4 +190,12 @@ public class StudentItem {
                 return "正常";
         }
     }
+
+//    public int getMakeUpType() {
+//        return this.makeUpType;
+//    }
+//
+//    public void setMakeUpType(int makeUpType) {
+//        this.makeUpType = makeUpType;
+//    }
 }
