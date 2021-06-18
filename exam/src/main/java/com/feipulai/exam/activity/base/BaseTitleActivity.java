@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.common.view.baseToolbar.StatusBarUtil;
 import com.feipulai.exam.R;
+import com.orhanobut.logger.Logger;
 
 import butterknife.ButterKnife;
 

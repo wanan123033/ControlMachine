@@ -98,7 +98,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
     private int baseTimer;//初始化时间 用于记录计时器开始计数的时间
     private TimerKeeper timerKeeper;
     private SparseArray<Integer> array;
-
+    private static final String TAG = "NewRadioGroupActivity";
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_new_radio_group;
@@ -106,6 +106,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
 
     @Override
     protected void initData() {
+        Log.e(TAG,"initData启动次数======================================================================");
         runTimerSetting = SharedPrefsUtil.loadFormSource(this, RunTimerSetting.class);
         runNum = Integer.parseInt(runTimerSetting.getRunNum());
         if (TestConfigs.sCurrentItem.getTestNum() != 0) {
@@ -324,20 +325,22 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                 mAdapter.notifyDataSetChanged();
                 setView(true);
                 tvMarkConfirm.setSelected(false);
-                playUtils.play(13);//播放各就各位
+                if (tvWaitStart.getVisibility() == View.VISIBLE) {
+                    playUtils.play(13);//播放各就各位
+                }
                 testState = TestState.UN_STARTED;
                 tvTimer.setText(ResultDisplayUtils.getStrResultForDisplay(0, false));
                 tvRunState.setText("等待");
-                if (runTimerSetting.getInterceptWay() == 0 && runTimerSetting.getInterceptPoint() != 2) {//红外拦截&&触发方式必须有起点
-                    testState = TestState.DATA_DEALING;//预处理
-                    sportPresent.waitStart();
-                }
+//                if (runTimerSetting.getInterceptWay() == 0 && runTimerSetting.getInterceptPoint() != 2) {//红外拦截&&触发方式必须有起点
+                testState = TestState.DATA_DEALING;//预处理
+                sportPresent.waitStart();
+//                }
                 break;
             case R.id.tv_force_start://强制启动
                 if (testState == TestState.UN_STARTED || testState == TestState.DATA_DEALING) {
                     LogUtils.operation("红外计时点击了开始");
-                    testState = TestState.WAIT_RESULT;
-                    sportPresent.waitStart();
+                    testState = TestState.FORCE_START;
+                    setBeginTime();
                 }
 
                 break;
@@ -350,6 +353,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                 LogUtils.operation("红外计时点击了违规返回");
                 sportPresent.setDeviceStateStop();
                 setView(false);
+                timerKeeper.stopKeepTime();
                 for (RunStudent runStudent : mList) {
                     runStudent.setMark("");
                     runStudent.getResultList().clear();
@@ -381,6 +385,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                 break;
         }
     }
+
 
     /**
      * 循环测试
@@ -453,34 +458,34 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
             if (deviceId > runNum)
                 return;
             if (mList.get(deviceId - 1).getConnectState() != state) {
-                if (tvRunState.getText().equals("等待")&& state == 2) {//不处于计时状态
+                if (tvRunState.getText().equals("等待") && state == 2) {//不处于计时状态
                     mList.get(deviceId - 1).setConnectState(2);
                     mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
-                }else if (testState == TestState.UN_STARTED){
+                } else if (testState == TestState.UN_STARTED) {
                     mList.get(deviceId - 1).setConnectState(state);
                     mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
                 }
-        }
+            }
 
         } else {
             if (deviceId / 2 > runNum)
                 return;
             if (deviceId <= runNum) {
                 if (mList.get(deviceId - 1).getConnectState() != state) {
-                    if (tvRunState.getText().equals("等待")&& state == 2) {//不处于计时状态
+                    if (tvRunState.getText().equals("等待") && state == 2) {//不处于计时状态
                         mList.get(deviceId - 1).setConnectState(2);
                         mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
-                    }else if (testState == TestState.UN_STARTED){
+                    } else if (testState == TestState.UN_STARTED) {
                         mList.get(deviceId - 1).setConnectState(state);
                         mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
                     }
                 }
             } else {
                 if (array.get(deviceId - runNum - 1) != state) {
-                    if (tvRunState.getText().equals("等待")&& state == 2) {//即将计时
+                    if (tvRunState.getText().equals("等待") && state == 2) {//即将计时
                         array.put(deviceId - runNum - 1, 2);
                         mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
-                    }else if (testState == TestState.UN_STARTED) {
+                    } else if (testState == TestState.UN_STARTED) {
                         array.put(deviceId - runNum - 1, state);
                         mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
                     }
@@ -492,16 +497,18 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
 
     @Override
     public void getDeviceStart() {
-        if (testState != TestState.DATA_DEALING) {
-            setBeginTime();
-        } else {
-            sportPresent.setRunState(1);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+        sportPresent.setRunState(1);
     }
 
     private void setBeginTime() {
         sportPresent.setRunState(1);
         baseTimer = sportPresent.getTime();
+        LogUtils.operation("红外计时开始时间：" + baseTimer);
         testState = TestState.WAIT_RESULT;
         mHandler.sendEmptyMessage(RUN_START);
         timerKeeper.setStartInit();
@@ -576,8 +583,8 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
      */
     private void setRunWayTime(int temp, int realTime) {
         List<RunStudent.WaitResult> list = mList.get(temp).getResultList();
-        if (list.size()>0 && null !=list.get(list.size() - 1)){
-            if (realTime< list.get(list.size() - 1).getOriResult()){
+        if (list.size() > 0 && null != list.get(list.size() - 1)) {
+            if (realTime < list.get(list.size() - 1).getOriResult()) {
                 return;
             }
         }

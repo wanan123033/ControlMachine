@@ -57,7 +57,6 @@ import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.EditResultDialog;
 import com.feipulai.exam.view.WaitDialog;
 import com.orhanobut.logger.Logger;
-import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -402,7 +401,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
         TestCache testCache = TestCache.getInstance();
         Student student = pairs.get(0).getStudent();
         InteractUtils.showStuInfo(llStuDetail, student, testCache.getResults().get(student));
-//        LogUtils.operation(student.getStudentName() + " 考生进行第" + testCache.getResults().get(student).size() + 1 + "轮");
+
         tvResult.setText(student.getStudentName());
 
         prepareView(true, false, true, true,
@@ -658,7 +657,6 @@ public class PullUpIndividualActivity extends BaseTitleActivity
                     InteractUtils.toastSpeak(PullUpIndividualActivity.this, "该考生已测试");
                     return;
                 }
-                LogUtils.operation("检入考生：" + student.toString());
                 onIndividualCheckIn(student, studentItem, results);
             }
         });

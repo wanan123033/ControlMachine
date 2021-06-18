@@ -50,10 +50,21 @@
         <activity android:name=".activity.situp.newSitUp.NewSitUpPairActivity" />
         <activity android:name=".activity.situp.newSitUp.DeviceChangeActivity" />
         <activity android:name=".activity.situp.newSitUp.SitUpArmCheckActivity" />
-        <activity android:name=".activity.RadioTimer.newRadioTimer.NewRadioGroupActivity" />
-        <activity android:name=".activity.RadioTimer.newRadioTimer.pair.NewRadioPairActivity" />
-        <activity android:name=".activity.RadioTimer.newRadioTimer.NewRadioTestActivity" />
-        <activity android:name=".activity.RadioTimer.newRadioTimer.PreTestActivity" />
+        <activity android:name=".activity.RadioTimer.newRadioTimer.NewRadioGroupActivity"
+            android:configChanges="keyboardHidden|keyboard"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <activity android:name=".activity.RadioTimer.newRadioTimer.pair.NewRadioPairActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|keyboard"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <activity android:name=".activity.RadioTimer.newRadioTimer.NewRadioTestActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|keyboard"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <activity android:name=".activity.RadioTimer.newRadioTimer.PreTestActivity"
+            android:configChanges="keyboardHidden|keyboard"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
         <activity android:name=".activity.data.UpdateAppActivity" />
         <activity android:name=".activity.basketball.DribbleShootGroupActivity" />
         <activity android:name=".activity.basketball.BasketBallShootGroupActivity" />
@@ -239,6 +250,7 @@
             android:configChanges="keyboardHidden|keyboard" />
         <activity
             android:name=".activity.pullup.test.PullUpIndividualActivity"
+            android:screenOrientation="landscape"
             android:configChanges="keyboardHidden|keyboard" />
         <activity
             android:name=".activity.pullup.test.PullAndSitUpIndividualActivity"

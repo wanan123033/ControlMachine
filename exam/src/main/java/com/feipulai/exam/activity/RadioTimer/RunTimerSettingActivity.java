@@ -23,21 +23,30 @@ import android.widget.TextView;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.manager.RunTimerManager;
+import com.feipulai.device.manager.SportTimerManger;
+import com.feipulai.device.serial.RadioManager;
+import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.RunTimerConnectState;
 import com.feipulai.device.serial.beans.RunTimerResult;
+import com.feipulai.device.serial.beans.SportResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.NewRadioPairActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.activity.sport_timer.SportPresent;
 import com.feipulai.exam.config.TestConfigs;
+
+import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-public class RunTimerSettingActivity extends BaseTitleActivity implements AdapterView.OnItemSelectedListener, RadioGroup.OnCheckedChangeListener, CompoundButton.OnCheckedChangeListener, TextWatcher, RunTimerImpl.RunTimerListener {
+public class RunTimerSettingActivity extends BaseTitleActivity implements AdapterView.OnItemSelectedListener,
+        RadioGroup.OnCheckedChangeListener, CompoundButton.OnCheckedChangeListener,
+        TextWatcher, RunTimerImpl.RunTimerListener, RadioManager.OnRadioArrivedListener {
 
     @BindView(R.id.sp_test_times)
     Spinner spTestTimes;
@@ -73,10 +82,14 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     RadioButton rbHundredSecond;
     @BindView(R.id.rb_ten_second)
     RadioButton rbTenSecond;
+    @BindView(R.id.btn_sync_time)
+    TextView syncTime;
+
     private RunTimerSetting runTimerSetting;
     private int intercept_point;
     private SweetAlertDialog alertDialog;
     private SerialDeviceManager deviceManager;
+    private SportTimerManger sportTimerManger;
 
     @Override
     protected int setLayoutResID() {
@@ -108,12 +121,19 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         etRunNum.addTextChangedListener(this);
         deviceManager = SerialDeviceManager.getInstance();
         etSensitivityNum.setText(String.format("%d", runTimerSetting.getSensitivityNum()));
-        if (runTimerSetting.getConnectType() == 1){
+        if (runTimerSetting.getConnectType() == 1) {
             selfCheck.setText("设备配对");
         }
 
-        if (runTimerSetting.getConnectType() == 1){
+        if (runTimerSetting.getConnectType() == 1) {
             rgModel.setVisibility(View.GONE);
+        }
+
+        if (SettingHelper.getSystemSetting().getRadioLed() == 1) {
+            syncTime.setVisibility(View.VISIBLE);
+            RadioManager.getInstance().setOnRadioArrived(this);
+            sportTimerManger = new SportTimerManger();
+            sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
         }
     }
 
@@ -305,11 +325,11 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
      * 判断去盒子版统一计时独立计时显示
      */
     private void setTimerSelect() {
-        if (runTimerSetting.getInterceptPoint() == 3 && runTimerSetting.getConnectType() == 1){//有起终点 并且是无盒子版
+        if (runTimerSetting.getInterceptPoint() == 3 && runTimerSetting.getConnectType() == 1) {//有起终点 并且是无盒子版
             rg_timerSelect.setVisibility(View.VISIBLE);
             rg_timerSelect.setOnCheckedChangeListener(this);
-            rg_timerSelect.check(runTimerSetting.isTimer_select() ? R.id.rb_independent:R.id.rb_unified);
-        }else {
+            rg_timerSelect.check(runTimerSetting.isTimer_select() ? R.id.rb_independent : R.id.rb_unified);
+        } else {
             rg_timerSelect.setVisibility(View.GONE);
         }
     }
@@ -335,18 +355,18 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     protected void onPause() {
         super.onPause();
         String senNum = etSensitivityNum.getText().toString();
-        runTimerSetting.setSensitivityNum(TextUtils.isEmpty(senNum)?5:Integer.parseInt(senNum));
+        runTimerSetting.setSensitivityNum(TextUtils.isEmpty(senNum) ? 5 : Integer.parseInt(senNum));
         getInterceptPoint();
         SharedPrefsUtil.save(this, runTimerSetting);
     }
 
-    @OnClick({R.id.btn_self_check})
+    @OnClick({R.id.btn_self_check, R.id.btn_sync_time})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_self_check:
-                if (runTimerSetting.getConnectType() == 1){
+                if (runTimerSetting.getConnectType() == 1) {
                     startActivity(new Intent(this, NewRadioPairActivity.class));
-                }else {
+                } else {
                     if (runTimerSetting.getStartPoint() + runTimerSetting.getEndPoint() == 0) {
                         toastSpeak("必须设置拦截点");
                         return;
@@ -374,7 +394,25 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
                     mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 5000);
                     break;
                 }
+            case R.id.btn_sync_time:
+                sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());
+                mHandler.sendEmptyMessageDelayed(MSG_SYNC_TIME, 500);
+                break;
         }
+    }
+
+    /**
+     * 返回当前时间精确到毫秒 不要年月日
+     *
+     * @return
+     */
+    public int getTime() {
+        Calendar Cld = Calendar.getInstance();
+        int HH = Cld.get(Calendar.HOUR_OF_DAY);
+        int mm = Cld.get(Calendar.MINUTE);
+        int SS = Cld.get(Calendar.SECOND);
+        int MI = Cld.get(Calendar.MILLISECOND);
+        return HH * 60 * 60 * 1000 + mm * 60 * 1000 + SS * 1000 + MI;
     }
 
 //    private byte[] cmd(byte cmd, byte mark, byte value) {
@@ -428,6 +466,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
 
     private final int MSG_DISCONNECT = 0x1001;
     private final int MSG_CONNECT = 0x1002;
+    private final int MSG_SYNC_TIME = 0x1003;
     private int promote = 0;
     //3秒内检设备是否可用
     private volatile boolean isDisconnect = true;
@@ -455,11 +494,44 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
                         promote++;
                     }
                     break;
+                case MSG_SYNC_TIME:
+                    int runNum = Integer.parseInt(runTimerSetting.getRunNum());
+                    if (runTimerSetting.getInterceptPoint() == 3) {
+                        runNum = runNum * 2;
+                    }
+                    for (int i = 0; i < runNum; i++) {
+                        try {
+                            sportTimerManger.syncTime(i + 1, SettingHelper.getSystemSetting().getHostId(), getTime());
+                            Thread.sleep(500);
+                            sportTimerManger.getTime(i + 1, SettingHelper.getSystemSetting().getHostId());
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    break;
             }
             if (!isDialogShow && alertDialog != null && alertDialog.isShowing()) {
                 alertDialog.dismiss();
             }
+
+
             return false;
         }
     });
+
+    @Override
+    public void onRadioArrived(Message msg) {
+        switch (msg.what) {
+            case SerialConfigs.SPORT_TIMER_GET_TIME:
+                if (msg.obj instanceof SportResult) {
+                    if (((SportResult) msg.obj).getLongTime() > 0) {
+                        Log.i("SportResultListener", "获取时间");
+                    }
+
+                }
+                break;
+        }
+
+    }
 }

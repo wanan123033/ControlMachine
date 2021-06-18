@@ -195,8 +195,8 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         marks.clear();
         RunStudent runStudent = mList.get(pos);
         if (runStudent.getStudent() != null) {
-            List<RunStudent.WaitResult> hashMap = runStudent.getResultList();
-            for (RunStudent.WaitResult entry : hashMap) {
+            List<RunStudent.WaitResult> list = runStudent.getResultList();
+            for (RunStudent.WaitResult entry : list) {
 //                Log.i("key= "+entry.getKey()," and value= "+entry.getValue());
                 marks.add(entry.getWaitResult());
             }
@@ -263,10 +263,10 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
      */
     @Override
     public void getDeviceStart() {
-        if (testState != TestState.DATA_DEALING) {
-            setBeginTime();
-        } else {
+        if (testState == TestState.WAIT_RESULT) {
             sportPresent.setRunState(1);
+        } else {
+            setBeginTime();
         }
 
     }
@@ -274,6 +274,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     private void setBeginTime() {
         sportPresent.setRunState(1);
         baseTimer = sportPresent.getTime();
+        LogUtils.operation("红外计时开始时间："+baseTimer);
         testState = TestState.WAIT_RESULT;
         mHandler.sendEmptyMessage(RUN_START);
         timerKeeper.setStartInit();
@@ -469,7 +470,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 if (testState == TestState.UN_STARTED || testState == TestState.DATA_DEALING) {
                     LogUtils.operation("红外计时点击了开始");
                     sportPresent.waitStart();
-                    testState = TestState.WAIT_RESULT;
+                    testState = TestState.FORCE_START;
                 }
                 break;
             case R.id.tv_mark_confirm:
