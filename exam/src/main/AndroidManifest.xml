@@ -457,6 +457,7 @@
             android:name=".activity.sport_timer.SportInitWayActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".activity.jump_rope.setting.JumpRopeCorrespondTestActivity" />
 
         <receiver android:name="com.feipulai.device.spputils.SppReciver" />
 

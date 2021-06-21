@@ -11,6 +11,7 @@ import com.feipulai.exam.R;
 import com.feipulai.exam.activity.jump_rope.base.setting.AbstractRadioSettingActivity;
 import com.feipulai.exam.activity.jump_rope.base.setting.AbstractRadioSettingPresenter;
 import com.feipulai.exam.activity.jump_rope.pair.JumpRopePairActivity;
+import com.feipulai.exam.activity.jump_rope.test.JumpRopeTestActivity;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -22,6 +23,8 @@ public class JumpRopeSettingActivity extends AbstractRadioSettingActivity {
     LinearLayout llJumpRope;
     @BindView(R.id.cb_show_stumble)
     CheckBox cbShowStumble;
+    @BindView(R.id.btn_connect)
+    Button btnConnect;
     private JumpRopeSettingPresenter jPresenter;
 
     @Override
@@ -35,6 +38,7 @@ public class JumpRopeSettingActivity extends AbstractRadioSettingActivity {
         jPresenter = (JumpRopeSettingPresenter) presenter;
         btnMatching.setVisibility(View.VISIBLE);
         llJumpRope.setVisibility(View.VISIBLE);
+        btnConnect.setVisibility(View.VISIBLE);
         cbShowStumble.setChecked(jPresenter.setting.isShowStumbleCount());
 
     }
@@ -47,5 +51,10 @@ public class JumpRopeSettingActivity extends AbstractRadioSettingActivity {
     @OnClick(R.id.cb_show_stumble)
     public void onCbShowStumble() {
         jPresenter.setShowStumbleCount(cbShowStumble.isChecked());
+    }
+
+    @OnClick(R.id.btn_connect)
+    public void onBtnConnect(){
+        startActivity(new Intent(this, JumpRopeCorrespondTestActivity.class));
     }
 }

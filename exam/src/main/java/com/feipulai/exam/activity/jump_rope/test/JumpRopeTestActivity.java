@@ -35,6 +35,7 @@ public class JumpRopeTestActivity
         changBadDialog.setCancelable(false);
         changBadDialog.show();
         // 必须在dialog显示出来后再调用
+
         changBadDialog.setTitle("请按下手柄按钮");
         changBadDialog.btn.setOnClickListener(new View.OnClickListener() {
             @Override
