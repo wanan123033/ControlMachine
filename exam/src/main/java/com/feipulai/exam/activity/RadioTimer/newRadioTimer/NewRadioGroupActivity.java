@@ -33,6 +33,7 @@ import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.RunStudent;
+import com.feipulai.exam.utils.FileUtils;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.CommonPopupWindow;
 import com.feipulai.exam.view.ResultPopWindow;
@@ -99,6 +100,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
     private TimerKeeper timerKeeper;
     private SparseArray<Integer> array;
     private static final String TAG = "NewRadioGroupActivity";
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_new_radio_group;
@@ -106,7 +108,6 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
 
     @Override
     protected void initData() {
-        Log.e(TAG,"initData启动次数======================================================================");
         runTimerSetting = SharedPrefsUtil.loadFormSource(this, RunTimerSetting.class);
         runNum = Integer.parseInt(runTimerSetting.getRunNum());
         if (TestConfigs.sCurrentItem.getTestNum() != 0) {
@@ -356,6 +357,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                 timerKeeper.stopKeepTime();
                 for (RunStudent runStudent : mList) {
                     runStudent.setMark("");
+                    runStudent.setOriginalMark(0);
                     runStudent.getResultList().clear();
                 }
                 mAdapter.notifyDataSetChanged();
@@ -508,7 +510,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
     private void setBeginTime() {
         sportPresent.setRunState(1);
         baseTimer = sportPresent.getTime();
-        LogUtils.operation("红外计时开始时间：" + baseTimer);
+        FileUtils.log("红外计时开始时间：" + baseTimer);
         testState = TestState.WAIT_RESULT;
         mHandler.sendEmptyMessage(RUN_START);
         timerKeeper.setStartInit();
@@ -569,7 +571,10 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                         temp = (result.getDeviceId() - runNum) - 1;
                     }
                 }
+                LogUtils.operation("time:" + result.getLongTime() + "base:" + baseTimer);
                 int realTime = (result.getLongTime() - baseTimer);
+                if (realTime < 0)
+                    return;
                 setRunWayTime(temp, realTime);
             }
         }
@@ -583,10 +588,8 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
      */
     private void setRunWayTime(int temp, int realTime) {
         List<RunStudent.WaitResult> list = mList.get(temp).getResultList();
-        if (list.size() > 0 && null != list.get(list.size() - 1)) {
-            if (realTime < list.get(list.size() - 1).getOriResult()) {
-                return;
-            }
+        if (realTime < mList.get(temp).getOriginalMark()) {
+            return;
         }
         mList.get(temp).setMark(getFormatTime(realTime));
         mList.get(temp).setOriginalMark(realTime);

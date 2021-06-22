@@ -119,11 +119,12 @@ public class SportResult {
                 }
                 break;
             case 13:
-                if (data.length == 19) {
+                if (data.length == 21) {
                     deviceId = data[6];
                     hostId = data[5];
                     sumTimes = data[10];
                     currentTime = data[11];
+                    deviceState = data[16];
                     byte[] bytes = new byte[4];
                     bytes[0] = data[12];
                     bytes[1] = data[13];

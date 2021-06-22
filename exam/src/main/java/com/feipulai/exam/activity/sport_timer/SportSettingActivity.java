@@ -1,6 +1,8 @@
 package com.feipulai.exam.activity.sport_timer;
 
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -12,6 +14,8 @@ import android.widget.TextView;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.manager.SportTimerManger;
+import com.feipulai.device.serial.RadioManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -20,10 +24,12 @@ import com.feipulai.exam.activity.sport_timer.bean.SportTimerSetting;
 import com.feipulai.exam.activity.sport_timer.pair.SportPairActivity;
 import com.feipulai.exam.config.TestConfigs;
 
+import java.util.Calendar;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class SportSettingActivity extends BaseTitleActivity implements AdapterView.OnItemSelectedListener, RadioGroup.OnCheckedChangeListener {
+public class SportSettingActivity extends BaseTitleActivity implements AdapterView.OnItemSelectedListener, RadioGroup.OnCheckedChangeListener, RadioManager.OnRadioArrivedListener {
 
     @BindView(R.id.sp_device_count)
     Spinner spDeviceCount;
@@ -37,11 +43,14 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
     TextView tvInitWay;
     @BindView(R.id.rg_model)
     RadioGroup rg_model;
+    @BindView(R.id.btn_sync_time)
+    TextView syncTime;
     private SportTimerSetting setting;
     private String[] carryMode = new String[]{"四舍五入", "不进位", "非零进位"};
     private String[] digital = new String[]{"十分位", "百分位", "千分位"};
     private String[] deviceCount = new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
     private String[] testCount = new String[]{"1", "2", "3"};
+    private SportTimerManger sportTimerManger;
 
     @Override
     protected int setLayoutResID() {
@@ -101,6 +110,10 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
             rg_model.setOnCheckedChangeListener(this);
         }
 
+        RadioManager.getInstance().setOnRadioArrived(this);
+        sportTimerManger = new SportTimerManger();
+        sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
+
     }
 
     @Override
@@ -140,7 +153,7 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
         return builder.setTitle("项目设置");
     }
 
-    @OnClick({R.id.tv_init_way, R.id.tv_pair})
+    @OnClick({R.id.tv_init_way, R.id.tv_pair, R.id.btn_sync_time})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
@@ -150,7 +163,35 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
             case R.id.tv_pair:
                 startActivity(new Intent(this, SportPairActivity.class));
                 break;
+            case R.id.btn_sync_time:
+                sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        int runNum = setting.getDeviceCount();
+                        for (int i = 0; i < runNum; i++) {
+                            try {
+                                sportTimerManger.syncTime(i + 1, SettingHelper.getSystemSetting().getHostId(), getTime());
+                                Thread.sleep(500);
+                                sportTimerManger.getTime(i + 1, SettingHelper.getSystemSetting().getHostId());
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                },500);
+                break;
         }
+    }
+
+    public int getTime() {
+        Calendar Cld = Calendar.getInstance();
+        int HH = Cld.get(Calendar.HOUR_OF_DAY);
+        int mm = Cld.get(Calendar.MINUTE);
+        int SS = Cld.get(Calendar.SECOND);
+        int MI = Cld.get(Calendar.MILLISECOND);
+        return HH * 60 * 60 * 1000 + mm * 60 * 1000 + SS * 1000 + MI;
     }
 
     @Override
@@ -163,5 +204,10 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
                 setting.setGroupType(0);
                 break;
         }
+    }
+
+    @Override
+    public void onRadioArrived(Message msg) {
+
     }
 }

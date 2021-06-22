@@ -21,7 +21,7 @@ import java.util.Locale;
 public class FileUtils {
     private static DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH", Locale.CHINA);//yyyy_MM_dd_HH_mm_ss
     private static String logFileName = dateFormat.format(Calendar.getInstance().getTime()) + ".txt";
-    private static String diskLogFilePath = Environment.getExternalStorageDirectory() + "/logger/pullSitUp/" + logFileName;
+    private static String diskLogFilePath = Environment.getExternalStorageDirectory() + "/KS_LOGGER/radio/" + logFileName;
 
     /**
      * 文件数据写入（如果文件夹和文件不存在，则先创建，再写入）
@@ -62,12 +62,15 @@ public class FileUtils {
         return filedo;
     }
 
-
-//    public static void log(String log) {
-//        DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.CHINA);
-//        String logTime = dateFormat.format(Calendar.getInstance().getTime());
-//        fileLinesWrite(diskLogFilePath, "time:" + logTime + " log:" + log, true);
-//    }
+    /**
+     * 记录日志时间精确到毫秒级别
+     * @param log
+     */
+    public static void log(String log) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_SSS", Locale.CHINA);
+        String time = dateFormat.format(Calendar.getInstance().getTime());
+        fileLinesWrite(diskLogFilePath, time + " " + log, true);
+    }
 
     /**
      * 复制文件夹及其中的文件

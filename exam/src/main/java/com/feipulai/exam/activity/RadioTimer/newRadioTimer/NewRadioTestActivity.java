@@ -31,6 +31,7 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.RunStudent;
+import com.feipulai.exam.utils.FileUtils;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.CommonPopupWindow;
 import com.feipulai.exam.view.ResultPopWindow;
@@ -263,11 +264,12 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
      */
     @Override
     public void getDeviceStart() {
-        if (testState == TestState.WAIT_RESULT) {
-            sportPresent.setRunState(1);
-        } else {
-            setBeginTime();
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+        sportPresent.setRunState(1);
 
     }
 
@@ -353,10 +355,8 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
      */
     private void setRunWayTime(int temp, int realTime) {
         List<RunStudent.WaitResult> list = mList.get(temp).getResultList();
-        if (list.size()>0 && null !=list.get(list.size() - 1)){
-            if (realTime< list.get(list.size() - 1).getOriResult()){
-                return;
-            }
+        if (realTime < mList.get(temp).getOriginalMark()) {
+            return;
         }
         mList.get(temp).setMark(getFormatTime(realTime));
         mList.get(temp).setOriginalMark(realTime);
@@ -435,16 +435,19 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                     runStudent.getResultList().clear();
                 }
                 adapter.notifyDataSetChanged();
-                playUtils.play(13);
                 setView(true);
                 tvMarkConfirm.setSelected(false);
+                if (tvWaitStart.getVisibility() == View.VISIBLE) {
+                    playUtils.play(13);//播放各就各位
+                }
                 testState = TestState.UN_STARTED;
                 tvTimer.setText(ResultDisplayUtils.getStrResultForDisplay(0, false));
                 tvRunState.setText("等待");
-                if (runTimerSetting.getInterceptWay() == 0 && runTimerSetting.getInterceptPoint() != 2) {//红外拦截&&触发方式必须有起点
-                    testState = TestState.DATA_DEALING;
-                    sportPresent.waitStart();
-                }
+//                if (runTimerSetting.getInterceptWay() == 0 && runTimerSetting.getInterceptPoint() != 2) {//红外拦截&&触发方式必须有起点
+//                    testState = TestState.DATA_DEALING;
+//                    sportPresent.waitStart();
+//                }
+                sportPresent.waitStart();
                 break;
             case R.id.tv_wait_ready:
                 LogUtils.operation("红外计时点击了预备");
@@ -459,6 +462,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                         continue;
                     }
                     runStudent.setMark("");
+                    runStudent.setOriginalMark(0);
                     runStudent.getResultList().clear();
                 }
                 adapter.notifyDataSetChanged();
@@ -469,8 +473,8 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
             case R.id.tv_force_start:
                 if (testState == TestState.UN_STARTED || testState == TestState.DATA_DEALING) {
                     LogUtils.operation("红外计时点击了开始");
-                    sportPresent.waitStart();
                     testState = TestState.FORCE_START;
+                    setBeginTime();
                 }
                 break;
             case R.id.tv_mark_confirm:
