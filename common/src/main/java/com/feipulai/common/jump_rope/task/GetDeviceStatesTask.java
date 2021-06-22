@@ -36,6 +36,10 @@ public class GetDeviceStatesTask implements Runnable {
         mIsGettingHandState = true;
     }
 
+    public void start(){
+        mIsFinished = false;
+    }
+
     @Override
     public void run() {
         if (listener == null) {

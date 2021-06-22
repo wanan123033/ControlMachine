@@ -92,7 +92,6 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
             SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, todayTime + 60 * 1000);
         }
     });
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
