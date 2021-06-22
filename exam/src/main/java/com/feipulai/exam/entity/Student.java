@@ -278,15 +278,7 @@ public class Student implements Serializable {
                 ", 考号='" + studentCode + '\'' +
                 ", 姓名='" + studentName + '\'' +
                 ", 姓别=" + sex +
-                ", idCardNo='" + idCardNo + '\'' +
-                ", icCardNo='" + icCardNo + '\'' +
-                ", className='" + className + '\'' +
-                ", schoolName='" + schoolName + '\'' +
-                ", downloadTime='" + downloadTime + '\'' +
-                ", studentItemList=" + studentItemList +
-                ", remark1='" + remark1 + '\'' +
-                ", remark2='" + remark2 + '\'' +
-                ", remark3='" + remark3 + '\'' +
+                ", 身份证号='" + idCardNo + '\'' +
                 // ", daoSession=" + daoSession +
                 // ", myDao=" + myDao +
                 '}';

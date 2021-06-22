@@ -113,12 +113,12 @@ public class SitPushUpStateResult implements Serializable, IDeviceResult {
     @Override
     public String toString() {
         return "SitPushUpStateResult{" +
-                "deviceId=" + deviceId +
+                "设备ID=" + deviceId +
                 ", projectCode=" + projectCode +
-                ", result=" + result +
-                ", state=" + state +
+                ", 成绩=" + result +
+                ", 状态=" + state +
                 ", batteryLeft=" + batteryLeft +
-                ", baseline=" + baseline +
+                ", 易中难=" + baseline +
                 '}';
     }
 }

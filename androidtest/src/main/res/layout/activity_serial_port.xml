@@ -87,6 +87,7 @@
                 android:hint="@string/input_data"
                 android:inputType="textCapCharacters"
                 android:singleLine="true"
+                android:text="A55AC206010203040506FFAA55"
                 android:textSize="@dimen/edit_text_size" />
 
             <Button

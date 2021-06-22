@@ -100,8 +100,16 @@ public abstract class AbstractRadioCheckPresenter<Setting>
     public void showStuInfo(int position) {
         StuDevicePair pair = pairs.get(position);
         Student student = pair.getStudent();
-        List<RoundResult> resultList = TestCache.getInstance().getResults().get(student);
-        view.showStuInfo(student, resultList);
+        try {
+            if (TestCache.getInstance().getResults() != null) {
+                List<RoundResult> resultList = TestCache.getInstance().getResults().get(student);
+                view.showStuInfo(student, resultList);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     @Override

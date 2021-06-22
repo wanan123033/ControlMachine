@@ -596,13 +596,13 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
 
         switch (msg.what) {
             case VolleyBallManager.VOLLEY_BALL_DISCONNECT:
-                LogUtils.operation("排球设备断开连接...");
+                LogUtils.normal("排球设备断开连接...");
                 cbDeviceState.setChecked(false);
                 pairs.get(0).getBaseDevice().setState(BaseDeviceState.STATE_DISCONNECT);
                 break;
 
             case VolleyBallManager.VOLLEY_BALL_CONNECT:
-                LogUtils.operation("排球设备已连接...");
+                LogUtils.normal("排球设备已连接...");
                 cbDeviceState.setChecked(true);
                 pairs.get(0).getBaseDevice().setState(BaseDeviceState.STATE_FREE);
                 break;

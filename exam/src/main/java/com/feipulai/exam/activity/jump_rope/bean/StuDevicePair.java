@@ -52,10 +52,10 @@ public class StuDevicePair implements Serializable {
 	@Override
 	public String toString() {
 		return "StuDevicePair{" +
-				"student=" + student +
+				"学生=" + student +
 				", baseDevice=" + baseDevice +
-				", deviceResult=" + deviceResult +
-				", penalty=" + penalty +
+				", 成绩=" + deviceResult +
+				", 判罚=" + penalty +
 				'}';
 	}
 

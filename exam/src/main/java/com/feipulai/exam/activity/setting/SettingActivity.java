@@ -3,6 +3,7 @@ package com.feipulai.exam.activity.setting;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Paint;
+import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -33,6 +34,8 @@ import com.feipulai.common.voice.VoiceSettingActivity;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
+import com.feipulai.device.serial.SerialParams;
+import com.feipulai.device.serial.beans.ConverterVersion;
 import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
@@ -141,6 +144,11 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     Spinner spAfr;
     @BindView(R.id.ll_afr)
     LinearLayout llAfr;
+
+    @BindView(R.id.ll_device_version)
+    LinearLayout llDeviceVersion;
+    @BindView(R.id.txt_device_version)
+    TextView txtDeviceVersion;
 
     private String[] partternList = new String[]{"个人测试", "分组测试"};
     private List<Integer> hostIdList;
@@ -265,7 +273,32 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
 
         spAfr.setSelection(systemSetting.getAfrContrast());
 
+        setDeviceVersion();
+    }
 
+    /**
+     * 获取硬件模块版本
+     */
+    public void setDeviceVersion() {
+
+        RadioManager.getInstance().setOnRadioArrived(new RadioManager.OnRadioArrivedListener() {
+            @Override
+            public void onRadioArrived(Message msg) {
+
+                if (msg.what == SerialConfigs.CONVERTER_VERSION_RESPONSE) {
+                    final ConverterVersion ver = (ConverterVersion) msg.obj;
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            llDeviceVersion.setVisibility(View.VISIBLE);
+                            txtDeviceVersion.setText(ver.getVersionCode());
+                        }
+                    });
+                }
+            }
+        });
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.CONVERTER, SerialConfigs.CMD_GET_CONVERTER_VERSION));
     }
 
     @Nullable

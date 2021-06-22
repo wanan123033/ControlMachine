@@ -50,7 +50,7 @@ public class VolleyBallResult implements IDeviceResult {
     @Override
     public String toString() {
         return "VolleyBallResult{" +
-                "result=" + result +
+                "成绩=" + result +
                 ", isFoul=" + isFoul +
                 '}';
     }

@@ -117,11 +117,11 @@ public class PullUpStateResult implements IDeviceResult {
     @Override
     public String toString() {
         return "PullUpStateResult{" +
-                "deviceId=" + deviceId +
-                ", validCountNum=" + validCountNum +
-                ", totalCountNum=" + totalCountNum +
-                ", state=" + state +
-                ", batteryLeft=" + batteryLeft +
+                "设备ID=" + deviceId +
+                ", 有效计数（成绩）=" + validCountNum +
+                ", 总计数=" + totalCountNum +
+                ", 状态=" + state +
+                ", 电量=" + batteryLeft +
                 ", interval=" + interval +
                 '}';
     }

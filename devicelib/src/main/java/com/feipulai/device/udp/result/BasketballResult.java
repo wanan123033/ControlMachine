@@ -149,11 +149,12 @@ public class BasketballResult implements IDeviceResult {
     @Override
     public String toString() {
         return "BasketballResult{" +
-                "type=" + type +
-                ", hour=" + hour +
-                ", minute=" + minute +
-                ", second=" + second +
-                ", hund=" + hund +
+                "指令类型=" + type +
+                ", 时=" + hour +
+                ", 分=" + minute +
+                ", 秒=" + second +
+                ", 毫秒=" + hund +
+                ",拦截时间=" + getResult() +
                 ", uPrecision=" + uPrecision +
                 ", ucFD=" + ucFD +
                 ", tNum=" + tNum +

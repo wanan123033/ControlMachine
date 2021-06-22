@@ -107,7 +107,6 @@ public class IndividualCheckFragment
     private StudentItem mStudentItem;
     private List<RoundResult> mResults;
     private SystemSetting systemSetting;
-    private SweetAlertDialog addDialog;
 
     private BlueBindBean blueBindBean;
     private volatile boolean isStartThermometer = false;
@@ -539,28 +538,23 @@ public class IndividualCheckFragment
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (addDialog == null) {
-                    addDialog = new SweetAlertDialog(getActivity()).setTitleText(getString(R.string.addStu_dialog_title))
-                            .setContentText(getString(R.string.addStu_dialog_content))
-                            .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                @Override
-                                public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                    sweetAlertDialog.dismissWithAnimation();
-                                    addDialog = null;
-                                    new AddStudentDialog(getActivity()).showDialog(student, false);
-                                }
-                            }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                @Override
-                                public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                    sweetAlertDialog.dismissWithAnimation();
-                                    addDialog = null;
-                                }
-                            });
-                }
 
-                if (addDialog != null) {
-                    addDialog.show();
-                }
+                new SweetAlertDialog(getActivity()).setTitleText(getString(R.string.addStu_dialog_title))
+                        .setContentText(getString(R.string.addStu_dialog_content))
+                        .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                        new AddStudentDialog(getActivity()).showDialog(student, false);
+                    }
+                }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                    }
+                }).show();
+
+
             }
         });
     }

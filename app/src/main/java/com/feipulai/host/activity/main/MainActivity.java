@@ -3,6 +3,7 @@ package com.feipulai.host.activity.main;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Message;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -37,6 +38,7 @@ import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.netUtils.CommonUtils;
 import com.feipulai.host.utils.TimerUtil;
+import com.feipulai.host.view.BatteryView;
 import com.orhanobut.logger.Logger;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 
@@ -59,6 +61,8 @@ public class MainActivity extends BaseActivity {
     TextView txtMainTitle;
     @BindView(R.id.txt_deviceid)
     TextView txtDeviceId;
+    @BindView(R.id.view_battery)
+    BatteryView batteryView;
     private boolean mIsExiting;
     private Intent serverIntent;
     private TimerUtil timerUtil = new TimerUtil(new TimerUtil.TimerAccepListener() {
@@ -80,6 +84,26 @@ public class MainActivity extends BaseActivity {
         RadioManager.getInstance().init();
         StatusBarUtil.setImmersiveTransparentStatusBar(this);//设置沉浸式透明状态栏 配合使用
         timerUtil.startTime(60, TimeUnit.SECONDS);
+        RadioManager.getInstance().setOnKwhListener(new RadioManager.OnKwhListener() {
+            @Override
+            public void onKwhArrived(final Message msg) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        int state = msg.arg1;
+                        int level = msg.arg2;
+                        batteryView.setVisibility(View.VISIBLE);
+                        batteryView.updateState(level);
+                        if (state == 0) {//放电
+                            batteryView.updateView(level);
+                        } else {//充电
+                            batteryView.updateChargingView(level);
+                        }
+                    }
+                });
+
+            }
+        });
     }
 
     private boolean isSettingFinished() {

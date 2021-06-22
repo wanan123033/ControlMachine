@@ -161,6 +161,10 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                                 ResultDisplayUtils.getStrResultForDisplay(iRoundResult.getResult()));
                         deviceDetail.getStuDevicePair().setTimeResult(timeResult);
                         deviceListAdapter.notifyDataSetChanged();
+                        pair.setResult(iRoundResult.getResult());
+                        pair.setResultState(iRoundResult.getResultState());
+                        updateResultLed(pair, i);
+
                         if (iRoundResult.getRoundNo() < setTestCount()) {
                             deviceDetail.setRound(iRoundResult.getRoundNo() + 1);
                         }
@@ -193,13 +197,21 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 break;
             case EventConfigs.UPDATE_RESULT:
                 RoundResult roundResult = (RoundResult) baseEvent.getData();
-                for (DeviceDetail deviceDetail : deviceDetails) {
-                    if (TextUtils.equals(deviceDetail.getStuDevicePair().getStudent().getStudentCode(), roundResult.getStudentCode())) {
-                        String[] timeResult = deviceDetail.getStuDevicePair().getTimeResult();
+                for (int i = 0; i < deviceDetails.size(); i++) {
+                    DeviceDetail deviceDetail = deviceDetails.get(i);
+                    BaseStuPair pair = deviceDetail.getStuDevicePair();
+                    if (TextUtils.equals(pair.getStudent().getStudentCode(), roundResult.getStudentCode())) {
+                        String[] timeResult = pair.getTimeResult();
 
                         timeResult[roundResult.getRoundNo() - 1] = ((roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
                                 ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()));
-                        deviceDetail.getStuDevicePair().setTimeResult(timeResult);
+                        pair.setTimeResult(timeResult);
+                        if (roundResult.getRoundNo() == deviceDetail.getRound()) {
+                            pair.setResult(roundResult.getResult());
+                            pair.setResultState(roundResult.getResultState());
+                            updateResultLed(pair, 0);
+                        }
+
                     }
                 }
                 deviceListAdapter.notifyDataSetChanged();
@@ -343,7 +355,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         int count = deviceDetail.getRound();
         toastSpeak(String.format(getString(R.string.test_speak_hint), student.getStudentName(), count)
                 , String.format(getString(R.string.test_speak_hint), student.getStudentName(), count));
-        LogUtils.operation((index + 1) + "号机：" +student.getStudentName());
+        LogUtils.operation((index + 1) + "号机：" + student.getStudentName());
         LogUtils.operation(String.format(getString(R.string.test_speak_hint), student.getStudentName(), count));
         setShowLed(deviceDetail.getStuDevicePair(), index);
 

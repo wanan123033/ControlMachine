@@ -269,6 +269,9 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                         resultList.clear();
                         resultList.addAll(Arrays.asList(timeResult));
                         testResultAdapter.notifyDataSetChanged();
+                        if (roundResult.getRoundNo() == roundNo) {
+                            updateResultLed(((roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult())));
+                        }
                         updateLastResultLed(DBManager.getInstance().queryGroupBestScore(roundResult.getStudentCode(), group.getId()));
                         //更新考生轮次位置
                         if (setTestPattern() == TestConfigs.GROUP_PATTERN_SUCCESIVE) {

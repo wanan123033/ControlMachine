@@ -1717,7 +1717,23 @@ public class DBManager {
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
                 .where(RoundResultDao.Properties.ExamType.eq(exemType))
-                .where(RoundResultDao.Properties.IsLastResult.eq(1))
+                .where(RoundResultDao.Properties.ResultState.eq(RoundResult.RESULT_STATE_NORMAL))
+                .orderDesc(RoundResultDao.Properties.Result)
+                .limit(1)
+                .unique();
+    }
+
+    public RoundResult queryLastRountGroupBestScore(String studentCode, long groupId) {
+        Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
+                + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\tIsLastResult:" + 1);
+        return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
+                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(RoundResultDao.Properties.GroupId.eq(groupId))
+                .where(RoundResultDao.Properties.ResultState.eq(RoundResult.RESULT_STATE_NORMAL))
+                .orderDesc(RoundResultDao.Properties.Result)
                 .limit(1)
                 .unique();
     }

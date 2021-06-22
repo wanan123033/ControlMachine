@@ -162,6 +162,9 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                             deviceDetail.setRound(iRoundResult.getRoundNo() + 1);
                         }
                         deviceListAdapter.notifyDataSetChanged();
+                        pair.setResult(iRoundResult.getResult());
+                        pair.setResultState(iRoundResult.getResultState());
+                        updateResultLed(pair, i);
                         matchStudent(pair, i);
                     }
                 }
@@ -169,13 +172,20 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 break;
             case EventConfigs.UPDATE_RESULT:
                 RoundResult roundResult = (RoundResult) baseEvent.getData();
-                for (DeviceDetail deviceDetail : deviceDetails) {
+                for (int i = 0; i < deviceDetails.size(); i++) {
+                    DeviceDetail deviceDetail = deviceDetails.get(i);
+                    BaseStuPair pair = deviceDetail.getStuDevicePair();
                     if (TextUtils.equals(deviceDetail.getStuDevicePair().getStudent().getStudentCode(), roundResult.getStudentCode())) {
                         String[] timeResult = deviceDetail.getStuDevicePair().getTimeResult();
 
                         timeResult[roundResult.getRoundNo() - 1] = ((roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
                                 ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()));
                         deviceDetail.getStuDevicePair().setTimeResult(timeResult);
+                        if (roundResult.getRoundNo() == deviceDetail.getRound()) {
+                            pair.setResult(roundResult.getResult());
+                            pair.setResultState(roundResult.getResultState());
+                            updateResultLed(pair, 0);
+                        }
                     }
                 }
                 deviceListAdapter.notifyDataSetChanged();

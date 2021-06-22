@@ -80,8 +80,8 @@ public class SerialPortActivity extends BaseActivity implements AdapterView.OnIt
 //        mDeviceIndex = PrefHelper.getDefault().getInt(PreferenceKeys.SERIAL_PORT_DEVICES, 0);
 //        mDeviceIndex = mDeviceIndex >= mDevices.length ? mDevices.length - 1 : mDeviceIndex;
 //        mBaudrateIndex = PrefHelper.getDefault().getInt(PreferenceKeys.BAUD_RATE, 0);
-        mDeviceIndex = 0;
-        mBaudrateIndex = 0;
+        mDeviceIndex = 2;
+        mBaudrateIndex = 1;
         mDevice = new Device(mDevices[mDeviceIndex], mBaudrates[mBaudrateIndex]);
     }
 

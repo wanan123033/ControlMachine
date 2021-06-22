@@ -277,6 +277,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 resultList.clear();
                 resultList.addAll(Arrays.asList(result));
                 adapter.notifyDataSetChanged();
+                updateResultLed(((iRoundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(iRoundResult.getResult())));
                 roundNo++;
                 if (roundNo < setTestCount()) {
 
@@ -308,6 +309,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 resultList.clear();
                 resultList.addAll(Arrays.asList(result));
                 adapter.notifyDataSetChanged();
+                if (roundResult.getRoundNo() == roundNo) {
+                    updateResultLed(((roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult())));
+                }
                 updateLastResultLed(DBManager.getInstance().queryLastRountScoreByExamType(roundResult.getStudentCode(), mStudentItem.getExamType(), TestConfigs.getCurrentItemCode()));
                 List<RoundResult> roundResultList = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(roundResult.getStudentCode(), roundResult.getExamType());
                 boolean isFull = false;

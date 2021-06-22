@@ -3,7 +3,6 @@ package com.feipulai.device.serial;
 import android.os.Message;
 import android.util.Log;
 
-import com.feipulai.device.manager.FileUtils;
 import com.feipulai.device.printer.PrinterReadRunnable;
 import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
@@ -11,6 +10,7 @@ import com.feipulai.device.serial.runnable.QRReadRunnable;
 import com.feipulai.device.serial.runnable.RS232ReadRunnable;
 import com.feipulai.device.serial.runnable.RadioReadRunnable;
 import com.feipulai.device.serial.runnable.SerialReadRunnable;
+import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.io.File;
@@ -79,10 +79,9 @@ public class SerialPorter {
 
     public void sendCommand(ConvertCommand cmd) {
         byte[] toSend = cmd.getCmdBytes();
-//        LogUtils.all(StringUtility.bytesToHexString(toSend));
+        LogUtils.normal(StringUtility.bytesToHexString(toSend));
 ////        //TODO 添加写入文件给测试用
 //        DistanceParser.writeFileByString(DistanceParser.PATH_BASE, "PARSER_DEVICE_RETURN.txt", "发送==》" + DistanceParser.bytes2HexString(toSend));
-        FileUtils.log(StringUtility.bytesToHexString(toSend));
         sendCommand(toSend);
 
 

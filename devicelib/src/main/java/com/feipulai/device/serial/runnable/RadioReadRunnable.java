@@ -40,12 +40,6 @@ public class RadioReadRunnable extends SerialReadRunnable {
                 return;
             }
 
-//            //todo 视力只是按键，做特殊处理解析
-//            if ((readLength[0] & 0xff) == 0xaa) {
-//                byte[] data = new byte[readLength.length + 1];
-//                mInputStream.read(data, 1, 4);
-//                return;
-//            }
             while (mInputStream.available() < 1) {
                 Thread.sleep(10);
             }
@@ -75,8 +69,6 @@ public class RadioReadRunnable extends SerialReadRunnable {
             //read checksum
             byte[] checksum = new byte[1];
             mInputStream.read(checksum);
-
-            // TODO: 2017/12/4 14:19 we should check checksum here
 
             //read packet end
             byte[] packetEnd = new byte[2];

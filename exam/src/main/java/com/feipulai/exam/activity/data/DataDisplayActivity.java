@@ -333,11 +333,21 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
                                 if (currentResult.getGroupId() == RoundResult.DEAFULT_GROUP_ID) {
                                     laseResult = DBManager.getInstance().queryLastRountScoreByExamType(mDataRetrieveBean.getStudentCode(), mDataRetrieveBean.getExamType(), itemCode);
                                 } else {
-                                    laseResult = DBManager.getInstance().queryGroupBestScore(mDataRetrieveBean.getStudentCode(), currentResult.getGroupId());
+                                    laseResult = DBManager.getInstance().queryLastRountGroupBestScore(mDataRetrieveBean.getStudentCode(), currentResult.getGroupId());
                                 }
-                                if (laseResult.getIsLastResult() == 0) {
-                                    laseResult.setIsLastResult(1);
-                                    DBManager.getInstance().updateRoundResult(laseResult);
+                                if (laseResult != null && laseResult.getIsLastResult() == 0) {
+                                    //更新最好成绩
+                                    List<RoundResult> resultList = resultDetailAdapter.getData();
+                                    for (RoundResult roundResult : resultList) {
+                                        if (roundResult.getId() == laseResult.getId()) {
+                                            roundResult.setIsLastResult(1);
+                                        } else {
+                                            roundResult.setIsLastResult(0);
+                                        }
+
+                                    }
+//                                    laseResult.setIsLastResult(1);
+                                    DBManager.getInstance().updateRoundResult(resultList);
                                 }
 
                                 EventBus.getDefault().post(new BaseEvent(currentResult, EventConfigs.UPDATE_RESULT));
