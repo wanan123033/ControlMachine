@@ -82,9 +82,13 @@ public class SplashScreenActivity extends BaseActivity {
         // 这里是否还需要延时需要再测试后再修改
         RadioManager.getInstance().init();
         DateUtil.setTimeZone(this, "Asia/Shanghai");
+
         activateBean = SharedPrefsUtil.loadFormSource(this, ActivateBean.class);
         runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0L);
-        if (activateBean != null && activateBean.getValidRunTime() > 0) {
+
+        if (runTime == 0) {
+            showActivateConfirm(1);
+        } else if (activateBean != null && activateBean.getValidRunTime() > 0) {
 
             if (runTime > activateBean.getValidRunTime()) {
                 //超出使用时长
@@ -126,7 +130,7 @@ public class SplashScreenActivity extends BaseActivity {
         new HttpSubscriber().activate(runTime, new OnResultListener<ActivateBean>() {
             @Override
             public void onSuccess(ActivateBean result) {
-
+                DateUtil.setSysDate(SplashScreenActivity.this, result.getCurrentTime());
                 activateBean = result;
                 runTime = result.getCurrentRunTime();
                 SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, result.getCurrentRunTime());

@@ -46,6 +46,7 @@ import com.feipulai.exam.activity.setting.MonitoringBindActivity;
 import com.feipulai.exam.activity.setting.SettingActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.bean.ActivateBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
@@ -92,6 +93,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
             SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, todayTime + 60 * 1000);
         }
     });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -296,6 +298,10 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                 PrinterManager.getInstance().init();
                 PrinterManager.getInstance().selfCheck();
                 PrinterManager.getInstance().print("\n\n");
+//                ActivateBean activateBean = SharedPrefsUtil.loadFormSource(this, ActivateBean.class);
+//                DateUtil.setSysDate(this, activateBean.getCurrentTime());
+
+
 //                addTestResult();
 //                IntentUtil.gotoActivity(this,PrintPreviewActivity.class);
                 //todo 添加测试数据

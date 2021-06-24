@@ -289,18 +289,19 @@ public class DateUtil {
 //        String curr_time = "20160606.120403";
 //        UdpLEDUtil.shellExec("/system/bin/date -s " + curr_time + "\n clock -w\n");
 //        String curr_time = "052514412019.52";
-//        String curr_time = formatTime(time, "MMddhhmmyyyy.ss");
-//        LogUtil.logDebugMessage(curr_time);
-//        UdpLEDUtil.shellExec("date " +
-//                curr_time + "\n busybox hwclock -w \n");
-        Calendar c = Calendar.getInstance();
-        c.set(c.YEAR, 2016);
-        c.set(c.MONTH, 1);
-        c.set(c.DAY_OF_MONTH, 1);
-        c.set(c.HOUR, 1);
-        c.set(c.MINUTE, 1);
-        Long value = c.getTimeInMillis();
-        SystemClock.setCurrentTimeMillis(value);
+
+        String curr_time = formatTime1(time, "MMddHHmmyyyy.ss");
+        LogUtil.logDebugMessage(curr_time);
+        UdpLEDUtil.shellExec("date " +
+                curr_time + "\n busybox hwclock -w \n");
+//        Calendar c = Calendar.getInstance();
+//        c.set(c.YEAR, 2016);
+//        c.set(c.MONTH, 1);
+//        c.set(c.DAY_OF_MONTH, 1);
+//        c.set(c.HOUR, 1);
+//        c.set(c.MINUTE, 1);
+//        Long value = c.getTimeInMillis();
+//        SystemClock.setCurrentTimeMillis(value);
 
     }
 
