@@ -198,7 +198,9 @@ public class IDCardDevice {
 
         } else {
             try {
-                idCardReader.close(0);
+                if (null!=idCardReader){
+                    idCardReader.close(0);
+                }
                 IDCardReaderFactory.destroy(idCardReader);
             } catch (IDCardReaderException e) {
                 e.printStackTrace();

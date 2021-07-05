@@ -42,6 +42,8 @@ import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -50,6 +52,7 @@ import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioCons
 import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_START;
 import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_STOP;
 import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_UPDATE_ADD_TIME;
+import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_UPDATE_COMPLETE;
 import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_UPDATE_DEVICE;
 
 public class NewRadioGroupActivity extends BaseTitleActivity implements SportContract.SportView, TimerKeeper.TimeUpdateListener {
@@ -100,7 +103,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
     private TimerKeeper timerKeeper;
     private SparseArray<Integer> array;
     private static final String TAG = "NewRadioGroupActivity";
-
+    ExecutorService service = Executors.newFixedThreadPool(2);
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_new_radio_group;
@@ -245,6 +248,9 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                         queryGroupRound(tempGroup.get(i).getStudent().getStudentCode(), group.getId() + "").size();
                 if (size < maxTestTimes) {
                     mList.get(i).setStudent(tempGroup.get(i).getStudent());
+                    mList.get(i).setOriginalMark(0);
+                    mList.get(i).setMark("");
+                    mList.get(i).setIndependentTime(0);
                     LogUtils.operation("红外计时已在准备的学生:" + tempGroup.get(i).getStudent().toString());
                 } else {
                     List<RoundResult> roundResults = DBManager.getInstance().
@@ -256,9 +262,15 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
 //                    disposeManager.printResult(tempGroup.get(i).getStudent(), list, maxTestTimes, maxTestTimes, group.getGroupNo());
                     list.clear();
                     mList.get(i).setStudent(null);
+                    mList.get(i).setOriginalMark(0);
+                    mList.get(i).setMark("");
+                    mList.get(i).setIndependentTime(0);
                 }
             } else {
                 mList.get(i).setStudent(null);
+                mList.get(i).setOriginalMark(0);
+                mList.get(i).setMark("");
+                mList.get(i).setIndependentTime(0);
             }
         }
 
@@ -321,7 +333,9 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                 }
                 for (RunStudent runStudent : mList) {
                     runStudent.setMark("");
+                    runStudent.setOriginalMark(0);
                     runStudent.getResultList().clear();
+                    runStudent.setIndependentTime(0);
                 }
                 mAdapter.notifyDataSetChanged();
                 setView(true);
@@ -359,27 +373,19 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                     runStudent.setMark("");
                     runStudent.setOriginalMark(0);
                     runStudent.getResultList().clear();
+                    runStudent.setIndependentTime(0);
                 }
                 mAdapter.notifyDataSetChanged();
                 testState = TestState.UN_STARTED;
+                currentTestTime--;
                 setIndependent();
                 break;
             case R.id.tv_mark_confirm://成绩确认
                 if (testState == TestState.WAIT_RESULT) {
                     LogUtils.operation("红外计时点击了成绩确认");
                     sportPresent.setDeviceStateStop();
-                    testState = TestState.RESULT_CONFIRM;
-                    group.setIsTestComplete(2);
-                    confirmResult();
-                    for (int i = 0; i < runNum; i++) {
-                        if (mList.size() < i + 1)
-                            return;
-                        mList.get(i).setMark("");
-                        mList.get(i).setStudent(null);
-                    }
-                    cycleRun();
-                    mAdapter.notifyDataSetChanged();
-                    setIndependent();
+                    testState = TestState.UN_STARTED;
+                    updateComplete();
                 }
                 break;
             case R.id.tv_device_detail:
@@ -388,7 +394,28 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
         }
     }
 
+    private void updateComplete() {
+        MyRunnable r = new MyRunnable();
+        service.submit(r);
+    }
 
+    private class MyRunnable implements Runnable {
+
+        @Override
+        public void run() {
+            group.setIsTestComplete(2);
+            confirmResult();
+            for (int i = 0; i < runNum; i++) {
+                if (mList.size() < i + 1)
+                    break;
+                mList.get(i).setMark("");
+                mList.get(i).setStudent(null);
+            }
+            cycleRun();
+            mHandler.sendEmptyMessage(RUN_UPDATE_COMPLETE);
+            setIndependent();
+        }
+    }
     /**
      * 循环测试
      */
@@ -416,9 +443,10 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
         toastSpeak("分组考生全部测试完成，请选择下一组");
         group.setIsTestComplete(1);
         DBManager.getInstance().updateGroup(group);
-        mList.clear();
-        tempGroup.clear();
-        mAdapter.notifyDataSetChanged();
+//        mList.clear();
+//        tempGroup.clear();
+//        mAdapter.notifyDataSetChanged();
+        finish();
     }
 
     /**
@@ -456,11 +484,13 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
 
     @Override
     public void updateDeviceState(int deviceId, int state) {
+        if (mList.size() == 0)
+            return;
         if (runTimerSetting.getInterceptPoint() != 3) {
             if (deviceId > runNum)
                 return;
             if (mList.get(deviceId - 1).getConnectState() != state) {
-                if (tvRunState.getText().equals("等待") && state == 2) {//不处于计时状态
+                if ( state == 2) {//不处于计时状态
                     mList.get(deviceId - 1).setConnectState(2);
                     mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
                 } else if (testState == TestState.UN_STARTED) {
@@ -474,7 +504,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                 return;
             if (deviceId <= runNum) {
                 if (mList.get(deviceId - 1).getConnectState() != state) {
-                    if (tvRunState.getText().equals("等待") && state == 2) {//不处于计时状态
+                    if ( state == 2) {//不处于计时状态
                         mList.get(deviceId - 1).setConnectState(2);
                         mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
                     } else if (testState == TestState.UN_STARTED) {
@@ -484,7 +514,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                 }
             } else {
                 if (array.get(deviceId - runNum - 1) != state) {
-                    if (tvRunState.getText().equals("等待") && state == 2) {//即将计时
+                    if ( state == 2) {//即将计时
                         array.put(deviceId - runNum - 1, 2);
                         mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
                     } else if (testState == TestState.UN_STARTED) {
@@ -499,6 +529,9 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
 
     @Override
     public void getDeviceStart() {
+        if (sportPresent.getRunState() == 1){
+            return;
+        }
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
@@ -509,7 +542,12 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
 
     private void setBeginTime() {
         sportPresent.setRunState(1);
-        baseTimer = sportPresent.getTime();
+        if (sportPresent.getSynKeep()>0){
+            baseTimer = sportPresent.getSynKeep();
+        }else {
+            baseTimer = sportPresent.getTime();
+            sportPresent.setSynKeep(baseTimer);
+        }
         FileUtils.log("红外计时开始时间：" + baseTimer);
         testState = TestState.WAIT_RESULT;
         mHandler.sendEmptyMessage(RUN_START);
@@ -522,16 +560,17 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
         //起终点拦截 独立计时
         if (runTimerSetting.getInterceptPoint() == 3 && runTimerSetting.isTimer_select()) {
             if (testState == TestState.DATA_DEALING) {
+                if (result.getDeviceId()> runNum)
+                    return;
                 testState = TestState.WAIT_RESULT;
                 mHandler.sendEmptyMessage(RUN_START);
                 startTime = System.currentTimeMillis() + "";
-                currentTestTime++;
                 independent[result.getDeviceId() - 1] = sportPresent.getTime();
                 mHandler.sendEmptyMessage(RUN_UPDATE_ADD_TIME);
                 return;
             }
 
-            if (result.getDeviceId() < runNum && independent[result.getDeviceId() - 1] == 0) {//判断是不是第一次启动
+            if (result.getDeviceId() <= runNum && independent[result.getDeviceId() - 1] == 0) {//判断是不是第一次启动
                 independent[result.getDeviceId() - 1] = sportPresent.getTime();
             } else {
                 int temp;
@@ -588,7 +627,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
      */
     private void setRunWayTime(int temp, int realTime) {
         List<RunStudent.WaitResult> list = mList.get(temp).getResultList();
-        if (realTime < mList.get(temp).getOriginalMark()) {
+        if (realTime <= mList.get(temp).getOriginalMark()) {
             return;
         }
         mList.get(temp).setMark(getFormatTime(realTime));
@@ -603,6 +642,8 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
 
     @Override
     public void getDeviceStop() {
+        if (sportPresent.getRunState() == 0)
+            return;
         timerKeeper.stopKeepTime();
         mHandler.sendEmptyMessage(RUN_STOP);
         sportPresent.setRunState(0);
@@ -630,6 +671,9 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                     break;
                 case RUN_UPDATE_ADD_TIME:
                     addTime();
+                    break;
+                case RUN_UPDATE_COMPLETE:
+                    mAdapter.notifyDataSetChanged();
                     break;
             }
             return false;
@@ -659,5 +703,6 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
         super.onDestroy();
         sportPresent.presentRelease();
         timerKeeper.release();
+        service.shutdown();
     }
 }

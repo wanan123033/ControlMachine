@@ -31,7 +31,6 @@ import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.FileUtils;
 import com.feipulai.exam.utils.ResultDisplayUtils;
-import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -39,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -58,10 +58,11 @@ public class SportPresent implements SportContract.Presenter {
     private LEDManager mLEDManager;
     private volatile int interval;
     private ScheduledExecutorService checkService;
+    ExecutorService service = Executors.newFixedThreadPool(2);
 //    private volatile boolean[] syncTime;//与子机同步时间是否结束
     private boolean keepTime;//是否开始计时
     private boolean pause;//暂停
-//    private int synKeep;//累计同步时间此时
+    private int synKeep = -1;//计时标记
     private static final String TAG = "SportPresent";
     public SportPresent(SportContract.SportView sportView, int deviceCount) {
         mLEDManager = new LEDManager();
@@ -96,6 +97,8 @@ public class SportPresent implements SportContract.Presenter {
         }, 1000, 1000, TimeUnit.MILLISECONDS);
 
     }
+
+
 
     private void intervalRun() {
         while (connect) {
@@ -178,24 +181,12 @@ public class SportPresent implements SportContract.Presenter {
         }
     }
 
-    //释放资源
-    public void presentRelease() {
-//        if (disposable != null) {
-//            disposable.dispose();
-//        }
-        connect = false;
-        keepTime = false;
-        sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
-        try {
-            if (checkService != null)
-                checkService.shutdown();
-            checkService = null;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        RadioManager.getInstance().setOnRadioArrived(null);
+    public int getSynKeep() {
+        return synKeep;
     }
-
+    public void setSynKeep(int synKeep) {
+        this.synKeep = synKeep;
+    }
 
     @Override
     public void setContinueRoll(boolean connect) {
@@ -208,6 +199,7 @@ public class SportPresent implements SportContract.Presenter {
     @Override
     public void waitStart() {
         try {
+            synKeep = -1;
             keepTime = true;
             setPause(true);
 //            sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
@@ -236,6 +228,27 @@ public class SportPresent implements SportContract.Presenter {
             e.printStackTrace();
         }
 
+    }
+
+    //释放资源
+    public void presentRelease() {
+//        if (disposable != null) {
+//            disposable.dispose();
+//        }
+        connect = false;
+        keepTime = false;
+        sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
+        try {
+            if (checkService != null)
+                checkService.shutdown();
+            checkService = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        RadioManager.getInstance().setOnRadioArrived(null);
+        if (null!=service){
+            service.shutdownNow();
+        }
     }
 
     private void setDeviceState(int deviceId, int state) {
@@ -285,17 +298,19 @@ public class SportPresent implements SportContract.Presenter {
             }else {
                 sportView.updateDeviceState(result.getDeviceId(), 2);//计时
             }
-
+            if (result.getLongTime() == 0xFFFFFFFF){
+                return;
+            }
             if (result.getSumTimes() > 0) {
+                if (synKeep == -1){
+                    synKeep = result.getLongTime();
+                }
                 for (int i = 0; i < connectState.length; i++) {
                     if (i == result.getDeviceId() - 1) {
                         if (result.getSumTimes()< sendIndex[i]){
                             sendIndex[i] = result.getSumTimes();
                         }else if (result.getSumTimes() >= sendIndex[i]) {
                             sendIndex[i]++;
-                        }
-                        if (result.getLongTime() == 0xFFFFFFFF){
-                            return;
                         }
                         sportView.receiveResult(result);
                     }
@@ -594,6 +609,22 @@ public class SportPresent implements SportContract.Presenter {
      * @param runs
      */
     public void setShowLed(List<RunStudent> runs) {
+        MyRunnable r = new MyRunnable(runs);
+        service.submit(r);
+    }
+
+    private class MyRunnable implements Runnable {
+        private List<RunStudent> runs;
+        private MyRunnable(List<RunStudent> runs) {
+            this.runs = runs;
+        }
+        @Override
+        public void run() {
+            runLed(runs);
+        }
+    }
+
+    private void runLed(List<RunStudent> runs) {
         mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
 
         int y;
@@ -628,7 +659,6 @@ public class SportPresent implements SportContract.Presenter {
                 }
             }
         }
-
     }
 
     public void updateResultLed(String result) {
