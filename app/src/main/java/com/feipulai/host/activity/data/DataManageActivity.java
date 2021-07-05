@@ -1109,7 +1109,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
             } else {
                 Log.i("zipFile", Environment.getExternalStorageDirectory().getAbsolutePath() + excelFile + "file1 is not exists");
             }
-            zipFile.addFolder(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + MyApplication.LOG_PATH_NAME + "/" + "operationLogger", parameters);
+            zipFile.addFolder(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + MyApplication.LOG_PATH_NAME , parameters);
 
             UsbFile copeFile = FileSelectActivity.sSelectedFile.createFile(fileName + ".zip");
             FileUtil.copyFile(zipFile.getFile(), copeFile);

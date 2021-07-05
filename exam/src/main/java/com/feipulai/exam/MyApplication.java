@@ -8,9 +8,12 @@ import android.text.TextUtils;
 import com.feipulai.common.CrashHandler;
 import com.feipulai.common.utils.ActivityLifeCycle;
 import com.feipulai.common.utils.FileUtil;
+import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.AdaptiveConfig;
 import com.feipulai.device.serial.SerialParams;
+import com.feipulai.exam.activity.SplashScreenActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.entity.Account;
@@ -61,6 +64,7 @@ public class MyApplication extends MultiDexApplication {
             @Override
             public void upload(String erroMsg) {
                 new HttpSubscriber().uploadLog(erroMsg);
+                IntentUtil.gotoActivity(instance, SplashScreenActivity.class);
             }
         });
         SettingHelper.init(this);
