@@ -79,11 +79,16 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
     TextView txtMainTitle;
     @BindView(R.id.txt_deviceid)
     TextView txtDeviceId;
+    @BindView(R.id.txt_cut_time)
+    TextView txtCutTime;
+    @BindView(R.id.txt_use_time)
+    TextView txtUseTime;
     @BindView(R.id.view_battery)
     BatteryView batteryView;
     private boolean mIsExiting;
     private Intent serverIntent;
     private Intent bindIntent;
+    private ActivateBean activateBean;
     private TimerUtil timerUtil = new TimerUtil(new TimerUtil.TimerAccepListener() {
         @Override
         public void timer(Long time) {
@@ -91,6 +96,12 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
             long todayTime = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0l);
 
             SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, todayTime + 60 * 1000);
+
+            if (activateBean.getValidEndTime() - DateUtil.getCurrentTime() <= 3 * 24 * 60 * 60 * 1000 ||
+                    activateBean.getValidRunTime() - todayTime <= 24 * 60 * 60 * 1000) {
+                txtCutTime.setText("截止时间：" + DateUtil.formatTime1(activateBean.getValidEndTime(), "yyyy年MM月dd日 HH:mm:ss"));
+                txtUseTime.setText("可用时长：" + DateUtil.formatTime1(activateBean.getValidRunTime() - todayTime, "HH:mm"));
+            }
         }
     });
 
@@ -101,7 +112,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
         ButterKnife.bind(this);
 
         StatusBarUtil.setImmersiveTransparentStatusBar(this);//设置沉浸式透明状态栏 配合使用
-
+        activateBean = SharedPrefsUtil.loadFormSource(this, ActivateBean.class);
         //配置网络
         if (SettingHelper.getSystemSetting().isAddRoute() && !TextUtils.isEmpty(NetWorkUtils.getLocalIp())) {
             String locatIp = NetWorkUtils.getLocalIp();

@@ -107,7 +107,7 @@ public class TestConfigs {
 
     public static final int UPDATE_GRIDVIEW = 0x4;
     public static final int MAX_TEST_NO = 3;
-    public static final String DEFAULT_IP_ADDRESS = "http://feipulai.com";
+    public static final String DEFAULT_IP_ADDRESS = "192.168.1.100:7979";
     public static final Map<Integer, Class<?>> proActivity = new HashMap<>();
     public static final Map<Integer, Class<?>> groupActivity = new HashMap<>();
     public static final List<Integer> selectActivity = new ArrayList<>();

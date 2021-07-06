@@ -25,8 +25,7 @@ import java.util.Locale;
 public abstract class SitPullUpCheckPresenter<Setting>
         extends AbstractRadioCheckPresenter<Setting>
         implements SitPullLinker.SitPullPairListener {
-
-    private int machineCode = TestConfigs.sCurrentItem.getMachineCode();
+ 
     private SitPullLinker linker;
 
     public SitPullUpCheckPresenter(Context context, RadioCheckContract.View<Setting> view) {
@@ -58,7 +57,7 @@ public abstract class SitPullUpCheckPresenter<Setting>
     @Override
     public void changeBadDevice() {
         if (linker == null) {
-            linker = new SitPullLinker(machineCode, TARGET_FREQUENCY, this);
+            linker = new SitPullLinker(TestConfigs.sCurrentItem.getMachineCode(), TARGET_FREQUENCY, this);
         }
         facade.pause();
         linker.startPair(focusPosition + 1);
@@ -81,13 +80,13 @@ public abstract class SitPullUpCheckPresenter<Setting>
             return;
         }
         int what = msg.what;
-        if ((machineCode == ItemDefault.CODE_YWQZ||machineCode == ItemDefault.CODE_SGBQS) && what == SerialConfigs.SIT_UP_GET_STATE) {
+        if ((TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_YWQZ||TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_SGBQS) && what == SerialConfigs.SIT_UP_GET_STATE) {
             SitPushUpStateResult stateResult = (SitPushUpStateResult) msg.obj;
             setState(stateResult);
-        } else if (machineCode == ItemDefault.CODE_YTXS && what == SerialConfigs.PULL_UP_GET_STATE) {
+        } else if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_YTXS && what == SerialConfigs.PULL_UP_GET_STATE) {
             PullUpStateResult stateResult = (PullUpStateResult) msg.obj;
             setState(stateResult);
-        } else if (machineCode == ItemDefault.CODE_FWC && what == SerialConfigs.PUSH_UP_GET_STATE) {
+        } else if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_FWC && what == SerialConfigs.PUSH_UP_GET_STATE) {
             SitPushUpStateResult stateResult = (SitPushUpStateResult) msg.obj;
             setState(stateResult);
         }
@@ -110,8 +109,8 @@ public abstract class SitPullUpCheckPresenter<Setting>
             return;
         }
         // 必须为空闲状态
-        if (((machineCode == ItemDefault.CODE_YWQZ||machineCode == ItemDefault.CODE_SGBQS) && deviceState != SitPushUpManager.STATE_FREE)
-                || (machineCode == ItemDefault.CODE_YTXS && deviceState != PullUpManager.STATE_FREE)) {
+        if (((TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_YWQZ||TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_SGBQS) && deviceState != SitPushUpManager.STATE_FREE)
+                || (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_YTXS && deviceState != PullUpManager.STATE_FREE)) {
             return;
         }
 
