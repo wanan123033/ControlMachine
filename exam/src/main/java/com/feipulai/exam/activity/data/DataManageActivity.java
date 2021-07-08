@@ -1097,7 +1097,7 @@ public class DataManageActivity
     }
 
     private void createFileNameDialog(EditDialog.OnConfirmClickListener confirmListener) {
-        DateFormat df = new SimpleDateFormat("yyyy年MM月dd日");
+        DateFormat df = new SimpleDateFormat("yyyy年MM月dd日HH");
         new EditDialog.Builder(this).setTitle("文件名")
                 .setCanelable(false)
                 .setMessage("输入合法保存文件名")

@@ -70,7 +70,12 @@ public class JumpRopeCheckActivity
     TextView tvConflict;
     @BindView(R.id.ll_device_group)
     LinearLayout llDeviceGroup;
-
+    @BindView(R.id.img_AFR)
+    ImageView imgAFR;
+    @Override
+    protected View getImgAFR() {
+        return imgAFR;
+    }
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_jump_rope_check;

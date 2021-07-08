@@ -410,17 +410,16 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                 break;
             case 1://"2:起点1:终点"
             case 4://2:起终点1:折返点
-                if (result.gettNum() == 1) { //起点触发
+                if (result.gettNum() == 2) { //起点触发
                     doTriggerStart();
                 } else {
 //                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
                     ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
                 }
-
                 break;
             case 2://2:终点1:起点
             case 3://2:折返点1:起终点
-                if (result.gettNum() == 2) { //起点触发
+                if (result.gettNum() == 1) { //起点触发
                     doTriggerStart();
                 } else {
 //                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));

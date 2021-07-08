@@ -1,4 +1,5 @@
 package com.feipulai.exam.db;
+
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -180,45 +181,91 @@ public final class MigrationHelper {
     }
 
     private static void restoreData(Database db, Class<? extends AbstractDao<?, ?>>... daoClasses) {
+
         for (int i = 0; i < daoClasses.length; i++) {
             DaoConfig daoConfig = new DaoConfig(db, daoClasses[i]);
             String tableName = daoConfig.tablename;
             String tempTableName = daoConfig.tablename.concat("_TEMP");
-
-            if (!isTableExists(db, true, tempTableName)) {
-                continue;
-            }
-
-            try {
-                // get all columns from tempTable, take careful to use the columns list
-                List<String> columns = getColumns(db, tempTableName);
-                ArrayList<String> properties = new ArrayList<>(columns.size());
-                for (int j = 0; j < daoConfig.properties.length; j++) {
-                    String columnName = daoConfig.properties[j].columnName;
-                    if (columns.contains(columnName)) {
-                        properties.add(columnName);
+            ArrayList properties = new ArrayList();
+            ArrayList propertiesQuery = new ArrayList();
+            for (int j = 0; j < daoConfig.properties.length; j++) {
+                String columnName = daoConfig.properties[j].columnName;
+                if (getColumns(db, tempTableName).contains(columnName)) {
+                    properties.add(columnName);
+                    propertiesQuery.add(columnName);
+                } else {
+                    try {
+                        if (getTypeByClass(daoConfig.properties[j].type).equals("INTEGER")) {
+                            propertiesQuery.add("0 as " + columnName);
+                            properties.add(columnName);
+                        }
+                        if (getTypeByClass(daoConfig.properties[j].type).equals("BOOLEAN")) {
+                            propertiesQuery.add("0 as " + columnName);
+                            properties.add(columnName);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
-                if (properties.size() > 0) {
-                    final String columnSQL = TextUtils.join(",", properties);
+            }
+            try {
+                StringBuilder insertTableStringBuilder = new StringBuilder();
+                insertTableStringBuilder.append("INSERT INTO ").append(tableName).append(" (");
+                insertTableStringBuilder.append(TextUtils.join(",", properties));
+                insertTableStringBuilder.append(") SELECT ");
+                insertTableStringBuilder.append(TextUtils.join(",", propertiesQuery));
+                insertTableStringBuilder.append(" FROM ").append(tempTableName).append(";");
 
-                    StringBuilder insertTableStringBuilder = new StringBuilder();
-                    insertTableStringBuilder.append("INSERT INTO ").append(tableName).append(" (");
-                    insertTableStringBuilder.append(columnSQL);
-                    insertTableStringBuilder.append(") SELECT ");
-                    insertTableStringBuilder.append(columnSQL);
-                    insertTableStringBuilder.append(" FROM ").append(tempTableName).append(";");
-                    db.execSQL(insertTableStringBuilder.toString());
-                    printLog("【Restore data】 to " + tableName);
-                }
                 StringBuilder dropTableStringBuilder = new StringBuilder();
                 dropTableStringBuilder.append("DROP TABLE ").append(tempTableName);
+
+                db.execSQL(insertTableStringBuilder.toString());
                 db.execSQL(dropTableStringBuilder.toString());
-                printLog("【Drop temp table】" + tempTableName);
+
+                Log.e("DBMigrationHelper", "restoreData: sql:" + insertTableStringBuilder.toString());
+                Log.e("DBMigrationHelper", "restoreData: sql:" + dropTableStringBuilder.toString());
             } catch (SQLException e) {
                 Log.e(TAG, "【Failed to restore data from temp table 】" + tempTableName, e);
             }
         }
+//        for (int i = 0; i < daoClasses.length; i++) {
+//            DaoConfig daoConfig = new DaoConfig(db, daoClasses[i]);
+//            String tableName = daoConfig.tablename;
+//            String tempTableName = daoConfig.tablename.concat("_TEMP");
+//
+//            if (!isTableExists(db, true, tempTableName)) {
+//                continue;
+//            }
+
+//            try {
+//                // get all columns from tempTable, take careful to use the columns list
+//                List<String> columns = getColumns(db, tempTableName);
+//                ArrayList<String> properties = new ArrayList<>(columns.size());
+//                for (int j = 0; j < daoConfig.properties.length; j++) {
+//                    String columnName = daoConfig.properties[j].columnName;
+//                    if (columns.contains(columnName)) {
+//                        properties.add(columnName);
+//                    }
+//                }
+//                if (properties.size() > 0) {
+//                    final String columnSQL = TextUtils.join(",", properties);
+//
+//                    StringBuilder insertTableStringBuilder = new StringBuilder();
+//                    insertTableStringBuilder.append("INSERT INTO ").append(tableName).append(" (");
+//                    insertTableStringBuilder.append(columnSQL);
+//                    insertTableStringBuilder.append(") SELECT ");
+//                    insertTableStringBuilder.append(columnSQL);
+//                    insertTableStringBuilder.append(" FROM ").append(tempTableName).append(";");
+//                    db.execSQL(insertTableStringBuilder.toString());
+//                    printLog("【Restore data】 to " + tableName);
+//                }
+//                StringBuilder dropTableStringBuilder = new StringBuilder();
+//                dropTableStringBuilder.append("DROP TABLE ").append(tempTableName);
+//                db.execSQL(dropTableStringBuilder.toString());
+//                printLog("【Drop temp table】" + tempTableName);
+//            } catch (SQLException e) {
+//                Log.e(TAG, "【Failed to restore data from temp table 】" + tempTableName, e);
+//            }
     }
 
     private static List<String> getColumns(Database db, String tableName) {
@@ -246,4 +293,27 @@ public final class MigrationHelper {
         }
     }
 
+    /**
+     * @param type
+     * @return
+     * @throws Exception
+     */
+    private static String getTypeByClass(Class type) throws Exception {
+        if (type.equals(String.class)) {
+            return "TEXT";
+        }
+
+        if (type.equals(Long.class) || type.equals(Integer.class) ||
+                type.equals(long.class) || type.equals(int.class)) {
+            return "INTEGER";
+        }
+
+        if (type.equals(Boolean.class) || type.equals(boolean.class)) {
+            return "BOOLEAN";
+        }
+
+        Exception exception = new Exception("migration helper - class doesn't match with the current parameters".concat(" - Class: ").concat(type.toString()));
+        exception.printStackTrace();
+        throw exception;
+    }
 }

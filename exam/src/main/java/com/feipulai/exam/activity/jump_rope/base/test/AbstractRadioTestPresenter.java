@@ -210,9 +210,9 @@ public abstract class AbstractRadioTestPresenter<Setting>
 
     @Override
     public void confirmResults() {
+        LogUtils.operation("用户手动点击确认成绩,考生设备信息:" + pairs.toString());
         onResultConfirmed();
         resetDevices();
-        LogUtils.operation("用户手动点击确认成绩,考生设备信息:" + pairs.toString());
         // view.tickInUI("");
 
         for (StuDevicePair pair : pairs) {

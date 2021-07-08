@@ -11,10 +11,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
+import android.view.MotionEvent;
 import android.view.WindowManager;
 
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.ActivityCollector;
+import com.feipulai.common.utils.ActivityUtils;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.ic.utils.ItemDefault;
@@ -131,6 +133,18 @@ public class BaseActivity extends FragmentActivity {
         ActivityCollector.getInstance().onDestroy(this);
         EventBus.getDefault().unregister(this);
     }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            // 判断连续点击事件时间差
+            if (ActivityUtils.isFastClick()) {
+                return true;
+            }
+        }
+        return super.dispatchTouchEvent(event);
+    }
+
 
     protected void toastSpeak(final String msg) {
         LogUtils.operation("页面提示:" + msg);

@@ -260,6 +260,24 @@ public class DateUtil {
         }
     }
 
+    public static String getUseTime(long caculTime) {
+
+        int day = (int) (caculTime / 1000 / 60 / 60 / 24);
+        int hour = (int) (caculTime / 1000 / 60 / 60 % 24);
+        int minute = (int) (caculTime / 1000 / 60 % 60);
+        int second = (int) (caculTime / 1000 % 60);
+
+        if (caculTime < 60 * 1000) {
+            return second + "秒";
+        } else if (caculTime >= 60 * 1000 && caculTime < 60 * 60 * 1000) { // 一小时之内
+            return minute + "分钟";
+        } else if (caculTime >= 60 * 60 * 1000 && caculTime < 60 * 60 * 24 * 1000) { // 同一天之内
+            return hour + "小时" + minute + "分钟";
+        } else {//同一年内
+            return day + "天" + hour + "小时" + minute + "分钟";
+        }
+    }
+
     /**
      * 设置时区 Asia/Shangha
      *

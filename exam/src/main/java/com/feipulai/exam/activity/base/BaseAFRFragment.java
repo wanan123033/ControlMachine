@@ -319,24 +319,13 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             isOpenCamera = true;
             if (faceId == null) {
                 faceId = 0;
+            }else{
+                faceHelper.setName(faceId, Integer.toString(faceId));
+                requestFeatureStatusMap.put(faceId, RequestFeatureStatus.TO_RETRY);
             }
-            retryRecognizeDelayed(faceId);
-//            new Handler().postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    //每次恢复初始状态
-//                    if (faceHelper != null) {
-//                        faceHelper.clearFace();
-//                        faceId = 0;
-//                        requestFeatureStatusMap.clear();
-//                        extractErrorRetryMap.clear();
-//                        delayFaceTaskCompositeDisposable.clear();
-//                    }
-//                    mUVCCamera.startPreview();
-//                }
-//            }, 100);
+//            retryRecognizeDelayed(faceId);
+
         } else {
-//            mUVCCamera.stopPreview();
             isOpenCamera = false;
             isStartFace = false;
         }

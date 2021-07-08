@@ -49,7 +49,7 @@ public class TestConfigs {
     public static final int UPDATE_GRIDVIEW = 0x4;
     public static final int GROUP_PATTERN_SUCCESIVE = 0x0;
 
-    public static final String DEFAULT_IP_ADDRESS = "http://192.168.0.53:8036";
+    public static final String DEFAULT_IP_ADDRESS = "192.168.0.100:8099";
     public static final Map<Integer, Class<?>> proActivity = new HashMap<>();
     public static final Map<Integer, Class<?>> freedomActivity = new HashMap<>();
     public static final Map<Integer, String> machineNameMap = new HashMap<>();
@@ -89,7 +89,7 @@ public class TestConfigs {
         // 每个机器码对应的机器名称
         TestConfigs.machineNameMap.put(ItemDefault.CODE_TS, MyApplication.getInstance().getString(R.string.jump_rope));
         TestConfigs.machineNameMap.put(ItemDefault.CODE_YWQZ, MyApplication.getInstance().getString(R.string.sit_up));
-        TestConfigs.machineNameMap.put(ItemDefault.CODE_SGBQS,"双杠臂屈伸");
+        TestConfigs.machineNameMap.put(ItemDefault.CODE_SGBQS, "双杠臂屈伸");
         TestConfigs.machineNameMap.put(ItemDefault.CODE_HW, MyApplication.getInstance().getString(R.string.height_weight));
 
         TestConfigs.machineNameMap.put(ItemDefault.CODE_ZWTQQ, MyApplication.getInstance().getString(R.string.sit_reach));

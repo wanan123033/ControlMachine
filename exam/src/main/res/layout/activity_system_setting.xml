@@ -90,7 +90,8 @@
                     android:gravity="center"
                     android:imeOptions="actionDone"
                     android:inputType="textUri"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:text="192.168.1.100:7979" />
 
                 <TextView
                     android:id="@+id/btn_default"

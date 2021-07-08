@@ -31,6 +31,7 @@ import com.feipulai.host.activity.setting.LEDSettingActivity;
 import com.feipulai.host.activity.setting.SettingActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.activity.setting.SystemSetting;
+import com.feipulai.host.bean.ActivateBean;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
@@ -65,6 +66,13 @@ public class MainActivity extends BaseActivity {
     BatteryView batteryView;
     private boolean mIsExiting;
     private Intent serverIntent;
+
+
+    @BindView(R.id.txt_cut_time)
+    TextView txtCutTime;
+    @BindView(R.id.txt_use_time)
+    TextView txtUseTime;
+    private ActivateBean activateBean;
     private TimerUtil timerUtil = new TimerUtil(new TimerUtil.TimerAccepListener() {
         @Override
         public void timer(Long time) {
@@ -72,6 +80,15 @@ public class MainActivity extends BaseActivity {
             long todayTime = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0l);
 
             SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, todayTime + 60 * 1000);
+            if (activateBean.getValidEndTime() - DateUtil.getCurrentTime() <= 3 * 24 * 60 * 60 * 1000 ||
+                    activateBean.getValidRunTime() - todayTime <= 24 * 60 * 60 * 1000) {
+                txtCutTime.setVisibility(View.VISIBLE);
+                txtCutTime.setText("截止时间：" + DateUtil.formatTime1(activateBean.getValidEndTime(), "yyyy年MM月dd日"));
+                if (activateBean.getValidEndTime() - DateUtil.getCurrentTime() <= 3 * 24 * 60 * 60 * 1000){
+                    txtUseTime.setVisibility(View.VISIBLE);
+                    txtUseTime.setText("可用时长：" + DateUtil.getUseTime(activateBean.getValidRunTime() - todayTime));
+                }
+            }
         }
     });
 
@@ -84,6 +101,7 @@ public class MainActivity extends BaseActivity {
         RadioManager.getInstance().init();
         StatusBarUtil.setImmersiveTransparentStatusBar(this);//设置沉浸式透明状态栏 配合使用
         timerUtil.startTime(60, TimeUnit.SECONDS);
+        activateBean = SharedPrefsUtil.loadFormSource(this, ActivateBean.class);
         RadioManager.getInstance().setOnKwhListener(new RadioManager.OnKwhListener() {
             @Override
             public void onKwhArrived(final Message msg) {

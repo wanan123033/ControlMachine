@@ -44,6 +44,7 @@ import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
 import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -106,6 +107,8 @@ public class DBManager {
      * 数据库初始化
      */
     public void initDB() {
+//        QueryBuilder.LOG_SQL = true;
+//        QueryBuilder.LOG_VALUES = true;
         helper = new DBOpenHelper(MyApplication.getInstance(), DB_NAME);
         db = BuildConfig.DEBUG ? helper.getWritableDb() : helper.getEncryptedWritableDb(DB_PASSWORD);
         daoMaster = new DaoMaster(db);
@@ -1212,7 +1215,6 @@ public class DBManager {
     public List<Student> getStudentsByGroup(Group group) {
         List<GroupItem> groupItems = groupItemDao
                 .queryBuilder()
-                .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(GroupItemDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(GroupItemDao.Properties.ScheduleNo.eq(group.getScheduleNo()))
                 .where(GroupItemDao.Properties.GroupType.eq(group.getGroupType()))

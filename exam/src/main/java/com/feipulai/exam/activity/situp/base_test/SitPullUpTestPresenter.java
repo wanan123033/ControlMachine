@@ -26,8 +26,7 @@ public abstract class SitPullUpTestPresenter<Setting>
         extends AbstractRadioTestPresenter<Setting>
         implements SitPullUpTestContract.Presenter,
         SitPullLinker.SitPullPairListener {
-
-    private int machineCode = TestConfigs.sCurrentItem.getMachineCode();
+ 
     private final int TARGET_FREQUENCY = SettingHelper.getSystemSetting().getUseChannel();
     private SitPullLinker linker;
     private SitPullUpTestContract.View<Setting> view;
@@ -41,7 +40,7 @@ public abstract class SitPullUpTestPresenter<Setting>
     public void changeBadDevice() {
         facade.pauseGettingState();
         if (linker == null) {
-            linker = new SitPullLinker(machineCode, TARGET_FREQUENCY, this);
+            linker = new SitPullLinker(TestConfigs.sCurrentItem.getMachineCode(), TARGET_FREQUENCY, this);
             linker.startPair(deviceIdPIV[focusPosition]);
         }
         view.showChangeBadDialog();
@@ -70,13 +69,13 @@ public abstract class SitPullUpTestPresenter<Setting>
             return;
         }
         int what = msg.what;
-        if ((machineCode == ItemDefault.CODE_YWQZ || machineCode == ItemDefault.CODE_SGBQS) && what == SerialConfigs.SIT_UP_GET_STATE) {
+        if ((TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_YWQZ || TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_SGBQS) && what == SerialConfigs.SIT_UP_GET_STATE) {
             SitPushUpStateResult stateResult = (SitPushUpStateResult) msg.obj;
             setState(stateResult);
-        } else if (machineCode == ItemDefault.CODE_YTXS && what == SerialConfigs.PULL_UP_GET_STATE) {
+        } else if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_YTXS && what == SerialConfigs.PULL_UP_GET_STATE) {
             PullUpStateResult stateResult = (PullUpStateResult) msg.obj;
             setState(stateResult);
-        } else if (machineCode == ItemDefault.CODE_FWC && what == SerialConfigs.PUSH_UP_GET_STATE) {
+        } else if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_FWC && what == SerialConfigs.PUSH_UP_GET_STATE) {
             SitPushUpStateResult stateResult = (SitPushUpStateResult) msg.obj;
             setState(stateResult);
         }
@@ -125,13 +124,13 @@ public abstract class SitPullUpTestPresenter<Setting>
 
         int newState;
 
-        if (((machineCode == ItemDefault.CODE_YWQZ || machineCode == ItemDefault.CODE_SGBQS) && deviceState == SitPushUpManager.STATE_COUNTING)
-                || (machineCode == ItemDefault.CODE_YTXS && deviceState == PullUpManager.STATE_COUNTING)
-                || (machineCode == ItemDefault.CODE_FWC && deviceState == SitPushUpManager.STATE_COUNTING)) {
+        if (((TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_YWQZ || TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_SGBQS) && deviceState == SitPushUpManager.STATE_COUNTING)
+                || (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_YTXS && deviceState == PullUpManager.STATE_COUNTING)
+                || (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_FWC && deviceState == SitPushUpManager.STATE_COUNTING)) {
             newState = BaseDeviceState.STATE_COUNTING;
-        } else if (((machineCode == ItemDefault.CODE_YWQZ || machineCode == ItemDefault.CODE_SGBQS) && deviceState == SitPushUpManager.STATE_ENDED)
-                || (machineCode == ItemDefault.CODE_YTXS && deviceState == PullUpManager.STATE_ENDED)
-                || (machineCode == ItemDefault.CODE_FWC && deviceState == SitPushUpManager.STATE_ENDED)) {
+        } else if (((TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_YWQZ || TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_SGBQS) && deviceState == SitPushUpManager.STATE_ENDED)
+                || (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_YTXS && deviceState == PullUpManager.STATE_ENDED)
+                || (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_FWC && deviceState == SitPushUpManager.STATE_ENDED)) {
             newState = BaseDeviceState.STATE_FINISHED;
         } else {
             newState = batteryLeft <= 10 ? BaseDeviceState.STATE_LOW_BATTERY : BaseDeviceState.STATE_FREE;
