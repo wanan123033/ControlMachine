@@ -127,6 +127,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
             getDeleteAllView().setVisibility(View.GONE);
             getDeleteStuView().setVisibility(View.GONE);
             getStopUseView().setVisibility(View.GONE);
+            getImgAFR().setVisibility(View.GONE);
         }
 
         getRvPairs().setLayoutManager(new GridLayoutManager(this, 5));
@@ -461,6 +462,8 @@ public abstract class AbstractRadioCheckActivity<Setting>
     protected abstract View getDeleteAllView();
 
     protected abstract View getCheckInLayout();
+
+    protected abstract View getImgAFR();
 
     protected abstract LinearLayout getStuDetailLayout();
 

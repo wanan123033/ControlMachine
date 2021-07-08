@@ -29,6 +29,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true">
+        <TextView
+            android:id="@+id/txt_cut_time"
+            style="@style/style_txt_white_title"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="60dp"
+            android:layout_toRightOf="@+id/img_logo"
+            android:text="截止时间："
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/txt_use_time"
+            style="@style/style_txt_white_title"
+            android:layout_below="@+id/txt_cut_time"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@+id/img_logo"
+            android:text="可用时长："
+            android:visibility="invisible" />
 
         <ImageView
             android:id="@+id/img_logo"

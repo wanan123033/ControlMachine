@@ -551,7 +551,10 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 stuAdapter.setTestPosition(stuAdapter.getTestPosition() + 1);
                 loopTestNext();
             }
-            print(stuPairsList.get(stuAdapter.getTestPosition()));
+            if (stuAdapter.getTestPosition() != -1) {
+                print(stuPairsList.get(stuAdapter.getTestPosition()));
+            }
+
         }
     }
 

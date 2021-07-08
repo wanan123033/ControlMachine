@@ -99,8 +99,12 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
 
             if (activateBean.getValidEndTime() - DateUtil.getCurrentTime() <= 3 * 24 * 60 * 60 * 1000 ||
                     activateBean.getValidRunTime() - todayTime <= 24 * 60 * 60 * 1000) {
-                txtCutTime.setText("截止时间：" + DateUtil.formatTime1(activateBean.getValidEndTime(), "yyyy年MM月dd日 HH:mm:ss"));
-                txtUseTime.setText("可用时长：" + DateUtil.formatTime1(activateBean.getValidRunTime() - todayTime, "HH:mm"));
+                txtCutTime.setVisibility(View.VISIBLE);
+                txtCutTime.setText("截止时间：" + DateUtil.formatTime1(activateBean.getValidEndTime(), "yyyy年MM月dd日"));
+                if (activateBean.getValidEndTime() - DateUtil.getCurrentTime() <= 3 * 24 * 60 * 60 * 1000){
+                    txtUseTime.setVisibility(View.VISIBLE);
+                    txtUseTime.setText("可用时长：" + DateUtil.getUseTime(activateBean.getValidRunTime() - todayTime));
+                }
             }
         }
     });
