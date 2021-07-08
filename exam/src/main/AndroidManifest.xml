@@ -290,6 +290,9 @@
         <activity
             android:name=".activity.base.BaseGroupActivity"
             android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.setting.CorrespondTestActivity"
+            android:configChanges="keyboardHidden|keyboard" />
 
         <service
             android:name=".service.UploadService"

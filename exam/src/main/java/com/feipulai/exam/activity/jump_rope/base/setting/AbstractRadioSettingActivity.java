@@ -9,6 +9,8 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
@@ -44,13 +46,25 @@ public abstract class AbstractRadioSettingActivity
     EditText mNpSecond;
     @BindView(R.id.ll_test_time)
     protected LinearLayout llTestTime;
+    @BindView(R.id.ll_test_min)
+    protected LinearLayout llTestMin;
+    @BindView(R.id.ll_test_max)
+    protected LinearLayout llTestMax;
+    @BindView(R.id.ll_test_led)
+    protected LinearLayout llTestLed;
     @BindView(R.id.ll_test_angle)
     protected LinearLayout llTestAngle;
     public AbstractRadioSettingPresenter presenter;
     @BindView(R.id.et_test_angle)
     EditText mTestAngle;
+    @BindView(R.id.et_test_min)
+    EditText mTestValMin;
+    @BindView(R.id.et_test_max)
+    EditText mTestValMax;
     @BindView(R.id.tv_angle_use)
     TextView mAngleUse;
+    @BindView(R.id.cb_show_led)
+    CheckBox mCbShowLed;
     private SitPushUpManager sitUpManager = new SitPushUpManager(SitPushUpManager.PROJECT_CODE_SIT_UP_HAND);
     @Override
     protected int setLayoutResID() {
@@ -107,6 +121,8 @@ public abstract class AbstractRadioSettingActivity
                 break;
         }
     }
+
+
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {

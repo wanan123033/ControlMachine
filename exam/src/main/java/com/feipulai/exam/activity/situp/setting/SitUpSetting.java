@@ -16,7 +16,9 @@ public class SitUpSetting {
 	private boolean autoPair = true;
 	private boolean isPenalize;
 	private int angle = 65;
-
+	private boolean showLed;//是否显示子机LED个数
+	private int minVal = 10;//最小有效距离
+	private int maxVal = 50;//最大有效距离
 	public int getGroupMode(){
 		return groupMode;
 	}
@@ -92,5 +94,29 @@ public class SitUpSetting {
 
 	public void setTestType(int testType) {
 		this.testType = testType;
+	}
+
+	public boolean isShowLed() {
+		return showLed;
+	}
+
+	public void setShowLed(boolean showLed) {
+		this.showLed = showLed;
+	}
+
+	public int getMinVal() {
+		return minVal;
+	}
+
+	public void setMinVal(int minVal) {
+		this.minVal = minVal;
+	}
+
+	public int getMaxVal() {
+		return maxVal;
+	}
+
+	public void setMaxVal(int maxVal) {
+		this.maxVal = maxVal;
 	}
 }

@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -33,9 +34,9 @@ import com.feipulai.device.serial.beans.SportResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.NewRadioPairActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.setting.CorrespondTestActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
-import com.feipulai.exam.activity.sport_timer.SportPresent;
 import com.feipulai.exam.config.TestConfigs;
 
 import java.util.Calendar;
@@ -84,7 +85,8 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     RadioButton rbTenSecond;
     @BindView(R.id.btn_sync_time)
     TextView syncTime;
-
+    @BindView(R.id.btn_connect)
+    Button btnConnect;
     private RunTimerSetting runTimerSetting;
     private int intercept_point;
     private SweetAlertDialog alertDialog;
@@ -134,6 +136,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
             RadioManager.getInstance().setOnRadioArrived(this);
             sportTimerManger = new SportTimerManger();
             sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
+            btnConnect.setVisibility(View.VISIBLE);
         }
     }
 
@@ -360,7 +363,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         SharedPrefsUtil.save(this, runTimerSetting);
     }
 
-    @OnClick({R.id.btn_self_check, R.id.btn_sync_time})
+    @OnClick({R.id.btn_self_check, R.id.btn_sync_time,R.id.btn_connect})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_self_check:
@@ -397,6 +400,9 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
             case R.id.btn_sync_time:
                 sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());
                 mHandler.sendEmptyMessageDelayed(MSG_SYNC_TIME, 500);
+                break;
+            case R.id.btn_connect:
+                startActivity(new Intent(this, CorrespondTestActivity.class));
                 break;
         }
     }

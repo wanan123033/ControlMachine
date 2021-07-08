@@ -661,6 +661,46 @@ public class SportPresent implements SportContract.Presenter {
         }
     }
 
+    public void showReadyLed(List<RunStudent> runs){
+        ShowReady r = new ShowReady(runs);
+        service.submit(r);
+    }
+
+    private class ShowReady implements Runnable {
+        private List<RunStudent> runs;
+        private ShowReady(List<RunStudent> runs) {
+            this.runs = runs;
+        }
+        @Override
+        public void run() {
+            showReady(runs);
+        }
+    }
+
+    public void showReady(List<RunStudent> runs) {
+        mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+        for (int i = 0; i < runs.size(); i++) {
+            Student student = runs.get(i).getStudent();
+            if (student != null) {
+                String studentName = getFormatName(student.getStudentName());
+                if (i<3) {
+                    mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), String.format("%1d %-4s  %s", i + 1, studentName, "准备"),
+                            0, i, false, true);
+                }else {
+                    try {
+                        Thread.sleep(4000);
+                        mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+                        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), String.format("%1d %-4s  %s", i + 1, studentName, "准备"),
+                                0, i-3, false, true);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        }
+    }
+
     public void updateResultLed(String result) {
 
         byte[] data = new byte[16];
@@ -800,6 +840,9 @@ public class SportPresent implements SportContract.Presenter {
 
         return studentName;
     }
+
+
+
 
 
 }
