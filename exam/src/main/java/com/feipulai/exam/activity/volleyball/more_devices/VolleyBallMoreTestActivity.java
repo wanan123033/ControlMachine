@@ -21,6 +21,7 @@ import com.feipulai.device.serial.beans.VolleyPair868Result;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
 import com.feipulai.exam.activity.volleyball.VolleyBallSettingActivity;
 import com.feipulai.exam.bean.DeviceDetail;
@@ -81,7 +82,6 @@ public class VolleyBallMoreTestActivity extends BaseVolleyBallMoreActivity {
             return 4;
         }
     });
-
 
     private VolleyBallJumpImpl resultJump = new VolleyBallJumpImpl(new VolleyBallJumpImpl.VolleyBallCallBack() {
         @Override

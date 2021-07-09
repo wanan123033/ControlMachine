@@ -94,6 +94,13 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
     }
 
     @Override
+    public void setRoundNo(int roundNo) {
+        SystemSetting systemSetting = SettingHelper.getSystemSetting();
+        if (systemSetting.isResit())
+            this.roundNo = roundNo;
+    }
+
+    @Override
     protected void initData() {
         super.initData();
         PrinterManager.getInstance().init();

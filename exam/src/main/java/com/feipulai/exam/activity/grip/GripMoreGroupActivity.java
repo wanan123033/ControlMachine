@@ -41,7 +41,6 @@ public class GripMoreGroupActivity extends BaseMoreGroupActivity {
         super.initData();
 
     }
-
     private void getState() {
         for (int i = 0; i < deviceDetails.size(); i++) {
             BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();

@@ -1,6 +1,5 @@
 package com.feipulai.exam.activity.data;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,14 +13,17 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.device.led.LEDManager;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.data.adapter.ResultDetailAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.bean.DataRetrieveBean;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
@@ -32,7 +34,6 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
-import com.feipulai.exam.service.UploadService;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.utils.LogUtils;
 
@@ -74,7 +75,9 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
     TextView tv_ins_penalizeFoul;
     private DataRetrieveBean mDataRetrieveBean;
     private ResultDetailAdapter resultDetailAdapter;
+    private SystemSetting systemSetting;
     //    private Item mCurrentItem;
+    private LEDManager ledManager;
 
     private Comparator<RoundResult> roundResultComparator = Collections.reverseOrder(new Comparator<RoundResult>() {
         @Override
@@ -95,11 +98,14 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
     protected void initData() {
         mDataRetrieveBean = (DataRetrieveBean) getIntent().getSerializableExtra(DataRetrieveActivity.DATA_EXTRA);
         itemCode = getIntent().getStringExtra(DataRetrieveActivity.DATA_ITEM_CODE);
-
+        systemSetting = SharedPrefsUtil.loadFormSource(getApplicationContext(), SystemSetting.class);
         vistity = getIntent().getIntExtra(ISSHOWPENALIZEFOUL, View.GONE);
         testNo = getIntent().getIntExtra(TESTNO, 1);
         tv_penalizeFoul.setVisibility(vistity);
         tv_ins_penalizeFoul.setVisibility(vistity);
+        if (vistity == View.VISIBLE){
+            ledManager = new LEDManager();
+        }
         Log.e("itemCode", "---------" + itemCode);
         mTvStuCode.setText(mDataRetrieveBean.getStudentCode());
         mTvStuName.setText(mDataRetrieveBean.getStudentName());
@@ -355,6 +361,12 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
                                 sweetAlertDialog.dismissWithAnimation();
                                 displayResults();
                                 uploadResult(currentResult);
+
+                                ledManager.showString(systemSetting.getHostId(),mDataRetrieveBean.getStudentName(),0,0,true,true);
+                                ledManager.showString(systemSetting.getHostId(),"第"+currentResult.getRoundNo()+"次",10,0,false,true);
+                                ledManager.showString(systemSetting.getHostId(),"当前：",0,1,false,true);
+                                ledManager.showString(systemSetting.getHostId(),"X",13,1,false,true);
+
                             }
 
                         }

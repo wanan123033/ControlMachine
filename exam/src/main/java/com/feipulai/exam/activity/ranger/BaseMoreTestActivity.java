@@ -116,6 +116,12 @@ public abstract class BaseMoreTestActivity extends BaseCheckActivity implements 
     protected int setLayoutResID() {
         return R.layout.activity_base_more_test;
     }
+    @Override
+    public void setRoundNo(int roundNo) {
+        SystemSetting systemSetting = SettingHelper.getSystemSetting();
+        if (systemSetting.isResit())
+            this.roundNo = roundNo;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

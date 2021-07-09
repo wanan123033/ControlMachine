@@ -30,6 +30,7 @@ import com.feipulai.device.ic.NFCDevice;
 import com.feipulai.device.ic.entity.StuInfo;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.jump_rope.fragment.IndividualCheckFragment;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.AdvancedSettingActivity;
 import com.feipulai.exam.activity.setting.SettingActivity;
@@ -78,7 +79,7 @@ import static com.inuker.bluetooth.library.Constants.STATUS_CONNECTED;
  */
 public abstract class BaseCheckActivity
         extends BaseTitleActivity
-        implements CheckDeviceOpener.OnCheckDeviceArrived, BaseAFRFragment.onAFRCompareListener, OnResultListener<RoundScoreBean> {
+        implements CheckDeviceOpener.OnCheckDeviceArrived, BaseAFRFragment.onAFRCompareListener, OnResultListener<RoundScoreBean>, IndividualCheckFragment.OnIndividualCheckInListener {
 
     public MyHandler mHandler = new MyHandler(this);
     private boolean isOpenDevice = true;
@@ -357,14 +358,56 @@ public abstract class BaseCheckActivity
             }
             return canTemporaryAdd;
         }
-        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+        final StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
         if (studentItem == null) {
             InteractUtils.toastSpeak(this, "无此项目");
             return false;
         }
-        List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
+        final List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
         if (results != null && results.size() >= TestConfigs.getMaxTestCount(this)) {
-            InteractUtils.toastSpeak(this, "该考生已测试");
+            SystemSetting setting = SettingHelper.getSystemSetting();
+            if (setting.isAgainTest() && setting.isResit()){
+                final Student finalStudent = student;
+                new SweetAlertDialog(this).setContentText("需要重测还是补考呢?")
+                        .setCancelText("重测")
+                        .setConfirmText("补考")
+                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                AgainTestDialog dialog = new AgainTestDialog();
+                                dialog.setArguments(finalStudent,results,studentItem);
+                                dialog.setOnIndividualCheckInListener(BaseCheckActivity.this);
+                                dialog.show(getSupportFragmentManager(),"AgainTestDialog");
+                                sweetAlertDialog.dismissWithAnimation();
+                            }
+                        })
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                ResitDialog dialog = new ResitDialog();
+                                dialog.setArguments(finalStudent,results,studentItem);
+                                dialog.setOnIndividualCheckInListener(BaseCheckActivity.this);
+                                dialog.show(getSupportFragmentManager(),"ResitDialog");
+                                sweetAlertDialog.dismissWithAnimation();
+                            }
+                        }).show();
+                return false;
+            }
+            if (setting.isAgainTest()){
+                AgainTestDialog dialog = new AgainTestDialog();
+                dialog.setArguments(student,results,studentItem);
+                dialog.setOnIndividualCheckInListener(this);
+                dialog.show(getSupportFragmentManager(),"AgainTestDialog");
+            }
+            if (setting.isResit()){
+                ResitDialog dialog = new ResitDialog();
+                dialog.setArguments(student,results,studentItem);
+                dialog.setOnIndividualCheckInListener(this);
+                dialog.show(getSupportFragmentManager(),"ResitDialog");
+            }else {
+                InteractUtils.toastSpeak(this, "该考生已测试");
+            }
+
             return false;
         }
         mStudent = student;
@@ -398,7 +441,9 @@ public abstract class BaseCheckActivity
         }
         List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
         if (results != null && results.size() >= TestConfigs.getMaxTestCount(this)) {
-            InteractUtils.toastSpeak(this, "该考生已测试");
+//            InteractUtils.toastSpeak(this, "该考生已测试");
+            //TODO  考虑重测
+
             return;
         }
         mStudent = student;
@@ -535,6 +580,14 @@ public abstract class BaseCheckActivity
         ToastUtils.showLong(errorMsg);
 //        sendCheckHandlerMessage(mStudent);
     }
+
+    @Override
+    public void onIndividualCheckIn(Student student, StudentItem studentItem, List<RoundResult> results) {
+        setRoundNo(results.size());
+        onCheckIn(student);
+    }
+
+    protected abstract void setRoundNo(int size);
 
 
     private static class MyHandler extends Handler {

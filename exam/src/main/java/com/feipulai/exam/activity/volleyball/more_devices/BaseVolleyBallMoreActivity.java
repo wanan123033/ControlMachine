@@ -26,6 +26,7 @@ import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
 import com.feipulai.exam.activity.volleyball.adapter.DeviceListAdapter;
 import com.feipulai.exam.bean.DeviceDetail;
@@ -63,7 +64,6 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
     protected LEDManager mLEDManager;
     private Intent serverIntent;
     private VolleyBallSetting setting;
-
 
     @Override
     protected int setLayoutResID() {
@@ -420,8 +420,10 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
             refreshDevice(index);
 
         }
-    }
+    }@Override
+    public void setRoundNo(int roundNo) {
 
+    }
     public void saveResult(final BaseStuPair baseStuPair, final int index) {
         Logger.i("saveResult==>" + baseStuPair.toString());
         if (baseStuPair.getStudent() == null)

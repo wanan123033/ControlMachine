@@ -137,6 +137,8 @@ public class SystemSetting {
      * 3 90
      */
     private int afrContrast = 3;
+    private boolean againTest;  //现场重测
+    private boolean isResit;  //现场补考
 
     public int getAfrContrast() {
         return afrContrast;
@@ -466,5 +468,21 @@ public class SystemSetting {
 
     public void setRadioLed(int radioLed) {
         this.radioLed = radioLed;
+    }
+
+    public void setAgainTest(boolean againTest) {
+        this.againTest = againTest;
+    }
+
+    public void setIsResit(boolean isResit) {
+        this.isResit = isResit;
+    }
+
+    public boolean isResit() {
+        return isResit;
+    }
+
+    public boolean isAgainTest() {
+        return againTest;
     }
 }

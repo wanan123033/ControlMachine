@@ -35,7 +35,9 @@ import com.feipulai.device.ic.entity.StuInfo;
 import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.base.AgainTestDialog;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
+import com.feipulai.exam.activity.base.ResitDialog;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.jump_rope.view.StuSearchEditText;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -362,14 +364,55 @@ public class IndividualCheckFragment
             }
             return canTemporaryAdd;
         }
-        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+        final StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
         if (studentItem == null) {
             InteractUtils.toastSpeak(getActivity(), "无此项目");
             return false;
         }
-        List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
+        final List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
         if (results != null && results.size() >= TestConfigs.getMaxTestCount(getActivity())) {
-            InteractUtils.toastSpeak(getActivity(), "该考生已测试");
+            SystemSetting setting = SettingHelper.getSystemSetting();
+            if (setting.isAgainTest() && setting.isResit()){
+                final Student finalStudent = student;
+                new SweetAlertDialog(getContext()).setContentText("需要重测还是补考呢?")
+                        .setCancelText("重测")
+                        .setConfirmText("补考")
+                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                AgainTestDialog dialog = new AgainTestDialog();
+                                dialog.setArguments(finalStudent,results,studentItem);
+                                dialog.setOnIndividualCheckInListener(listener);
+                                dialog.show(getActivity().getSupportFragmentManager(),"AgainTestDialog");
+                                sweetAlertDialog.dismissWithAnimation();
+                            }
+                        })
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                ResitDialog dialog = new ResitDialog();
+                                dialog.setArguments(finalStudent,results,studentItem);
+                                dialog.setOnIndividualCheckInListener(listener);
+                                dialog.show(getActivity().getSupportFragmentManager(),"ResitDialog");
+                                sweetAlertDialog.dismissWithAnimation();
+                            }
+                        }).show();
+                return false;
+            }
+            if (setting.isAgainTest()){
+                AgainTestDialog dialog = new AgainTestDialog();
+                dialog.setArguments(student,results,studentItem);
+                dialog.setOnIndividualCheckInListener(listener);
+                dialog.show(getActivity().getSupportFragmentManager(),"AgainTestDialog");
+            }
+            if (setting.isResit()){
+                ResitDialog dialog = new ResitDialog();
+                dialog.setArguments(student,results,studentItem);
+                dialog.setOnIndividualCheckInListener(listener);
+                dialog.show(getActivity().getSupportFragmentManager(),"ResitDialog");
+            }else {
+                InteractUtils.toastSpeak(getActivity(), "该考生已测试");
+            }
             return false;
         }
         mStudent = student;

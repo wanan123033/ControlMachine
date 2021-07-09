@@ -32,6 +32,7 @@ import com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.NewRadioPairActi
 import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.adapter.RunNumberAdapter;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
@@ -108,7 +109,10 @@ public class PreTestActivity extends BaseCheckActivity {
         return R.layout.activity_pre_test;
     }
 
+    @Override
+    public void setRoundNo(int roundNo) {
 
+    }
     @Override
     protected void initData() {
         getSetting();

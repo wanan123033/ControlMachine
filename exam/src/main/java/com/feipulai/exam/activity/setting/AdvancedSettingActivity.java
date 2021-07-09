@@ -171,7 +171,7 @@ public class AdvancedSettingActivity extends BaseTitleActivity {
         SharedPrefsUtil.save(this, sargentSetting);
     }
 
-    @OnCheckedChanged({R.id.sw_pullup, R.id.sw_situp, R.id.sw_volleyball, R.id.sw_sit_reach, R.id.sw_standjump2, R.id.sw_sargent, R.id.sw_medicine_ball, R.id.cb_input_test})
+    @OnCheckedChanged({R.id.sw_pullup, R.id.sw_situp, R.id.sw_volleyball, R.id.sw_sit_reach, R.id.sw_standjump2, R.id.sw_sargent, R.id.sw_medicine_ball, R.id.cb_input_test,R.id.cb_again,R.id.cb_resit})
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()) {
 
@@ -201,6 +201,11 @@ public class AdvancedSettingActivity extends BaseTitleActivity {
             case R.id.cb_input_test:
                 systemSetting.setInputTest(isChecked);
                 break;
+            case R.id.cb_again:
+                systemSetting.setAgainTest(isChecked);
+                break;
+            case R.id.cb_resit:
+                systemSetting.setIsResit(isChecked);
         }
     }
 

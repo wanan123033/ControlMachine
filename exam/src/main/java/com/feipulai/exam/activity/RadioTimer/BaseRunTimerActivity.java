@@ -14,6 +14,7 @@ import com.feipulai.device.serial.beans.RunTimerConnectState;
 import com.feipulai.device.serial.beans.RunTimerResult;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
@@ -83,7 +84,10 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
         promoteTimes.put("endIntercept", 0);
         getSetting();
     }
+    @Override
+    public void setRoundNo(int roundNo) {
 
+    }
 
     @Override
     protected void onResume() {

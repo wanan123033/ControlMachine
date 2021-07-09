@@ -35,6 +35,7 @@ import com.feipulai.exam.activity.data.DataDisplayActivity;
 import com.feipulai.exam.activity.data.DataRetrieveActivity;
 import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.bean.DataRetrieveBean;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.bean.RoundResultBean;
@@ -159,7 +160,12 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 
     protected abstract int isShowPenalizeFoul();
 
-
+    @Override
+    public void setRoundNo(int roundNo) {
+        SystemSetting systemSetting = SettingHelper.getSystemSetting();
+        if (systemSetting.isResit())
+            this.roundNo = roundNo;
+    }
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
@@ -667,7 +673,6 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
-
             }
         }).show();
 
@@ -716,7 +721,14 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         saveResult(pair);
         printResult(pair);
         broadResult(pair);
+        //TODO  当轮次大于等于测试次数时自动跳过
+        if (roundNo > setTestCount()){
+            roundNo = 1;
+            clearHandler.sendEmptyMessageDelayed(0, 0);
+            stuSkip();
+            mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
 
+        }
         //当前的测试次数是否在项目设置的轮次中，是否满分跳过考生测试，满分由子类处理，基类只做界面展示
         if (roundNo < setTestCount()) {
             if (pair.getResultState() == RoundResult.RESULT_STATE_NORMAL && pair.isFullMark()) {
@@ -895,6 +907,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             refreshDevice();
             updateResultLed(((baseStu.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult())));
         }
+
     }
 
 

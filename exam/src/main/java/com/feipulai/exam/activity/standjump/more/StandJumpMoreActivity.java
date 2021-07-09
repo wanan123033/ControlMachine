@@ -20,8 +20,6 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
 
-import java.util.Date;
-
 import butterknife.OnClick;
 
 /**
@@ -120,7 +118,7 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
 
     }
 
-    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair,R.id.img_AFR})
+    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair, R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_led_setting:

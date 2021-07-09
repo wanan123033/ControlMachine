@@ -36,6 +36,7 @@ import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.BaseEvent;
@@ -130,6 +131,12 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
     private Intent serverIntent;
     private int testType = 1;//0自动 1手动
     private boolean isFault;
+    @Override
+    public void setRoundNo(int roundNo) {
+        SystemSetting systemSetting = SettingHelper.getSystemSetting();
+        if (systemSetting.isResit())
+            this.roundNo = roundNo;
+    }
 
     @Override
     protected int setLayoutResID() {

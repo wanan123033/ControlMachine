@@ -135,6 +135,10 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     }
 
+    @Override
+    protected void setRoundNo(int size) {
+
+    }
 
     @Override
     public void finish() {
@@ -441,10 +445,11 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                                 pair.getBaseDevice().getState() == BaseDeviceState.STATE_END) {
                             pair.setTestTime(DateUtil.getCurrentTime() + "");
                             sendTestCommand(pair, pos);
-                            deviceListAdapter.setPenalize(false);
-                            if (isPenalize) {
-                                setConfirmVisible(pos, true);
-                            }
+
+//                            if (isPenalize) {
+//                                deviceListAdapter.setPenalize(true);
+////                                setConfirmVisible(pos, true);
+//                            }
                         }
                         break;
                     case R.id.txt_skip:
@@ -473,11 +478,11 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 //                            confirmResult(pos);
                             updateResult(pair);
                             doResult(pair, pos);
-                            deviceDetails.get(pos).setConfirmVisible(false);
+//                            deviceDetails.get(pos).setConfirmVisible(false);
                             deviceListAdapter.notifyItemChanged(pos);
-                            if (isPenalize) {
-                                setConfirmVisible(pos, false);
-                            }
+//                            if (isPenalize) {
+//                                setConfirmVisible(pos, false);
+//                            }
                         }
                         break;
                     case R.id.txt_get_data:
@@ -784,7 +789,11 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
 
         }
-
+        if (detail.getRound() > setTestCount()){
+            Message msg = new Message();
+            msg.obj = detail;
+            clearHandler.sendMessageDelayed(msg, 4000);
+        }
         deviceListAdapter.notifyItemChanged(index);
         pair.setCanTest(true);
 //        pair.getBaseDevice().setResultState(BaseDeviceState.STATE_FREE);

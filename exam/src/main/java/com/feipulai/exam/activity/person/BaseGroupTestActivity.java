@@ -190,6 +190,12 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         });
     }
 
+    @Override
+    public void setRoundNo(int roundNo) {
+        SystemSetting systemSetting = SettingHelper.getSystemSetting();
+        if (systemSetting.isResit())
+            this.roundNo = roundNo;
+    }
 
     protected abstract int isShowPenalizeFoul();
 
