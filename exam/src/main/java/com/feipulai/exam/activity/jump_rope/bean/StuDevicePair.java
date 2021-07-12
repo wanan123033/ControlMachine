@@ -17,6 +17,8 @@ public class StuDevicePair implements Serializable {
 	//判罚
 	private int penalty;
 	private int battery;
+
+	private int currentRoundNo;  //当前轮次
 	public IDeviceResult getDeviceResult(){
 		return deviceResult;
 	}
@@ -65,5 +67,13 @@ public class StuDevicePair implements Serializable {
 
 	public void setBattery(int battery) {
 		this.battery = battery;
+	}
+
+	public int getCurrentRoundNo() {
+		return currentRoundNo;
+	}
+
+	public void setCurrentRoundNo(int currentRoundNo) {
+		this.currentRoundNo = currentRoundNo;
 	}
 }

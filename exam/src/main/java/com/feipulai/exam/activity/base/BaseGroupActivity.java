@@ -66,6 +66,7 @@ import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.CommonPopupWindow;
@@ -202,7 +203,21 @@ public class BaseGroupActivity extends BaseTitleActivity {
 
             @Override
             public void itemClick(int pos, boolean isChecked) {
+                SystemSetting setting = SettingHelper.getSystemSetting();
+                List<StudentItem> studentItemList = stuPairsList.get(pos).getStudent().getStudentItemList();
+                boolean isItem = false;
+                for (StudentItem item : studentItemList){
+                    if(item.getItemCode().equals(TestConfigs.sCurrentItem.getItemCode())){
+
+                    }
+                }
+                if (setting.isResit() || setting.isAgainTest()){
+
+                }
+
                 stuPairsList.get(pos).setCanTest(isChecked);
+
+
             }
         });
         stuAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
