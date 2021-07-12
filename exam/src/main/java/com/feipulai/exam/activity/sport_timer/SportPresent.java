@@ -143,11 +143,11 @@ public class SportPresent implements SportContract.Presenter {
                         }
                     }
                     interval++;
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+//                    try {
+//                        Thread.sleep(200);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
                 }
 
             }
@@ -840,9 +840,5 @@ public class SportPresent implements SportContract.Presenter {
 
         return studentName;
     }
-
-
-
-
 
 }
