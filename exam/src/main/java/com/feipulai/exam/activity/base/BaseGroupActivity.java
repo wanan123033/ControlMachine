@@ -203,17 +203,17 @@ public class BaseGroupActivity extends BaseTitleActivity {
 
             @Override
             public void itemClick(int pos, boolean isChecked) {
-                SystemSetting setting = SettingHelper.getSystemSetting();
-                List<StudentItem> studentItemList = stuPairsList.get(pos).getStudent().getStudentItemList();
-                boolean isItem = false;
-                for (StudentItem item : studentItemList){
-                    if(item.getItemCode().equals(TestConfigs.sCurrentItem.getItemCode())){
-
-                    }
-                }
-                if (setting.isResit() || setting.isAgainTest()){
-
-                }
+//                SystemSetting setting = SettingHelper.getSystemSetting();
+//                List<StudentItem> studentItemList = stuPairsList.get(pos).getStudent().getStudentItemList();
+//                boolean isItem = false;
+//                for (StudentItem item : studentItemList){
+//                    if(item.getItemCode().equals(TestConfigs.sCurrentItem.getItemCode())){
+//
+//                    }
+//                }
+//                if (setting.isResit() || setting.isAgainTest()){
+//
+//                }
 
                 stuPairsList.get(pos).setCanTest(isChecked);
 

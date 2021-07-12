@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.View;
 
 import com.feipulai.common.utils.DateUtil;
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
@@ -294,6 +295,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
     }
 
     private void showValidResult(final int result, final boolean fault, final BaseStuPair stuPair) {
+        LogUtils.operation("成绩只扫描到两个点："+result);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("成绩是否有效");
         builder.setNegativeButton("否", new DialogInterface.OnClickListener() {

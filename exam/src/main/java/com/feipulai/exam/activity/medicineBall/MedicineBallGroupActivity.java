@@ -42,7 +42,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
     private Handler mHandler = new MedicineBallHandler(this);
     private boolean checkFlag = false;
     private ScheduledExecutorService executorService;
-    private ScheduledExecutorService checkService;
+//    private ScheduledExecutorService checkService;
     private static final int DELAY = 0X1000;
     private static final int UPDATEDEVICE = 0X1001;
     //保存当前测试考生
@@ -56,7 +56,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
 
     @Override
     public void initData() {
-        checkService = Executors.newSingleThreadScheduledExecutor();
+//        checkService = Executors.newSingleThreadScheduledExecutor();
         medicineBallSetting = SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class);
         if (null == medicineBallSetting) {
             medicineBallSetting = new MedicineBallSetting();
@@ -301,8 +301,8 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
         mHandler.removeCallbacksAndMessages(null);
         if (executorService != null && !executorService.isShutdown())
             executorService.shutdown();
-        mSerialManager.close();
-        checkService.shutdown();
+        mSerialManager.setRS232ResiltListener(null);
+//        checkService.shutdown();
 
     }
 
