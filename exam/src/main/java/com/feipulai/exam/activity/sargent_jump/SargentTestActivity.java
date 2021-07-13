@@ -333,6 +333,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
             stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
             updateResult(stuPair);
             updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, 1));
+            testState = TestState.UN_STARTED;
             // 发送结束命令
             LogUtils.normal(SerialConfigs.CMD_SARGENT_JUMP_STOP.length+"---"+StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_STOP)+"摸高结束测试指令");
 
@@ -378,6 +379,9 @@ public class SargentTestActivity extends BasePersonTestActivity {
     private SargentJumpImpl resultImpl = new SargentJumpImpl(new SargentJumpImpl.SargentJumpListener() {
         @Override
         public void onResultArrived(SargentJumpResult result) {
+            if (testState == TestState.UN_STARTED){
+                return;
+            }
             Message msg = mHandler.obtainMessage();
             msg.obj = result;
             msg.what = GET_SCORE_RESPONSE;

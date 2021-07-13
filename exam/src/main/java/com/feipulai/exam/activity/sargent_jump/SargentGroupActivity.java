@@ -229,6 +229,9 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
     private SargentJumpImpl resultImpl = new SargentJumpImpl(new SargentJumpImpl.SargentJumpListener() {
         @Override
         public void onResultArrived(SargentJumpResult result) {
+            if (testState == TestState.UN_STARTED){
+                return;
+            }
             Message msg = mHandler.obtainMessage();
             msg.obj = result;
             msg.what = GET_SCORE_RESPONSE;
@@ -357,6 +360,7 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
                     stuPair.setFullMark(result >= Integer.parseInt(sargentSetting.getFemaleFull()) * 10);
                 }
             }
+            testState = TestState.UN_STARTED;
             stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
             updateTestResult(stuPair);
             updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, 1));
@@ -383,6 +387,11 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
     protected void onStop() {
         super.onStop();
         LogUtils.life("SargentGroupActivity onStop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         mHandler.removeCallbacksAndMessages(null);
         SerialDeviceManager.getInstance().setRS232ResiltListener(null);
         RadioManager.getInstance().setOnRadioArrived(null);
