@@ -60,7 +60,12 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         setting = getSetting();
         systemSetting = SettingHelper.getSystemSetting();
         mLEDManager = new LEDManager();
-        pairs = CheckUtils.newPairs(getDeviceSumFromSetting());
+        if (TestCache.getInstance().getTestingPairs()==null){
+            pairs = CheckUtils.newPairs(getDeviceSumFromSetting());
+        }else{
+            pairs = TestCache.getInstance().getTestingPairs();
+        }
+
         mCurrentConnect = new int[pairs.size() + 1];
         TestCache.getInstance().init();
         view.initView(systemSetting, setting, pairs);
@@ -346,6 +351,8 @@ public abstract class AbstractRadioCheckPresenter<Setting>
 
         facade.letDisplayWait3Sec();
         facade.resume();
+
+        TestCache.getInstance().setTestingPairs(pairs);
     }
 
     @Override

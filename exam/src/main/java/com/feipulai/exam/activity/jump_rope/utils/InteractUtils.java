@@ -634,6 +634,7 @@ public class InteractUtils {
 //                sb.append("\n");
 //            }
 //            mTvGrade.setText(sb.toString());
+            mllGrade.removeAllViews();
             for (int i = 0; i < results.size(); i++) {
                 TextView textView = new TextView(llStuDetail.getContext());
                 textView.setBackgroundResource(R.drawable.edit_search_bg);

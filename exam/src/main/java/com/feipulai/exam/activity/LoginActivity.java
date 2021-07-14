@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.widget.EditText;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -75,11 +76,15 @@ public class LoginActivity extends BaseTitleActivity {
         new HttpSubscriber().login(this, editAccount.getText().toString(), editPass.getText().toString(), new OnResultListener<UserBean>() {
             @Override
             public void onResponseTime(String responseTime) {
+                if (!TextUtils.isEmpty(responseTime)) {
+                    DateUtil.setSysDate(LoginActivity.this, Long.valueOf(responseTime));
+                }
 
             }
 
             @Override
             public void onSuccess(UserBean userBean) {
+
                 MyApplication.TOKEN = userBean.getToken();
                 SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.TOKEN, userBean.getToken());
                 ToastUtils.showShort("登录成功");

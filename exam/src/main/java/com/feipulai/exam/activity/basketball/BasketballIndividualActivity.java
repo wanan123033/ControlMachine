@@ -855,10 +855,29 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 showAFR();
                 break;
             case R.id.tv_result:
+                if (pairs.size() > 0 && pairs.get(0).getStudent() != null) {
+                    if (SettingHelper.getSystemSetting().isInputTest()) {
+                        editResultDialog.showDialog(pairs.get(0).getStudent());
+                    } else {
+                        if (setting.getTestType() == 0) {
+                            new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText("手动获取成绩")
+                                    .setContentText("是否进行拦截成绩获取").setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    sweetAlertDialog.dismissWithAnimation();
+                                    ballManager.getUDPResultTime();
+                                }
+                            }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    sweetAlertDialog.dismissWithAnimation();
+                                }
+                            }).show();
+                        }
 
-                if (SettingHelper.getSystemSetting().isInputTest() && pairs.size() > 0 && pairs.get(0).getStudent() != null) {
-                    editResultDialog.showDialog(pairs.get(0).getStudent());
+                    }
                 }
+
                 break;
         }
     }

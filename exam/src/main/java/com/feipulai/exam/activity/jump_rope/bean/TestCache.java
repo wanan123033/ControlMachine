@@ -47,14 +47,17 @@ public class TestCache {
     }
 
     public void init() {
-        testingPairs = new ArrayList<>();
-        allStudents = new ArrayList<>();
-        results = new IdentityHashMap<>();
-        group = null;
-        testNoMap = new IdentityHashMap<>();
-        roundNoMap = new IdentityHashMap<>();
-        studentItemMap = new IdentityHashMap<>();
-        trackNoMap = new IdentityHashMap<>();
+        if (testingPairs==null){
+            testingPairs = new ArrayList<>();
+            allStudents = new ArrayList<>();
+            results = new IdentityHashMap<>();
+            group = null;
+            testNoMap = new IdentityHashMap<>();
+            roundNoMap = new IdentityHashMap<>();
+            studentItemMap = new IdentityHashMap<>();
+            trackNoMap = new IdentityHashMap<>();
+        }
+
     }
 
     public void clear() {

@@ -20,6 +20,7 @@ public class UDPBasketBallConfig {
     public static final int CMD_GET_BLOCKERTIME_RESPONSE = 71;
     public static final int CMD_SET_PRECISION_RESPONSE = 72;
     public static final int CMD_GET_PRECISION_RESPONSE = 73;
+    public static final int CMD_GET_RESULT_RESPONSE = 74;
     /*--------------------------------------篮球-----------------------------------------*/
     /**
      * 获取工作状态
@@ -37,6 +38,10 @@ public class UDPBasketBallConfig {
      * 获取计时器时间显示精度
      */
     public static final byte[] BASKETBALL_CMD_GET_PRECISION = {(byte) 0XA6, 0X49, (byte) 0XFF};
+    /**
+     * 获取拦截时间
+     */
+    public static final byte[] BASKETBALL_CMD_GET_RESULT = {(byte) 0XA6, 0X4A, (byte) 0XFF};
 
     /**
      * 设置显示内容
@@ -52,12 +57,14 @@ public class UDPBasketBallConfig {
 
     /**
      * 设置工作状态
+     *
      * @return
      */
     public static final byte[] BASKETBALL_CMD_SET_STOP_STATUS() {
         byte[] cmdBype = {(byte) 0XA6, 0X02, 0X36, (byte) 0XFF};
         return cmdBype;
     }
+
     /**
      * 设置工作状态
      *
@@ -73,6 +80,7 @@ public class UDPBasketBallConfig {
         cmdBype[2] = (byte) (status & 0xff);// 毫秒
         return cmdBype;
     }
+
     /**
      * 设置显示内容
      *

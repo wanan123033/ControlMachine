@@ -393,7 +393,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        TestCache.getInstance().clear();
+//        TestCache.getInstance().clear();
         presenter.finishGetStateAndDisplay();
         presenter = null;
     }

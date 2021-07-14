@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Message;
@@ -19,9 +20,11 @@ import android.widget.Toast;
 import com.feipulai.common.utils.ActivityCollector;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SystemBrightUtils;
+import com.feipulai.common.utils.SystemUtil;
 import com.feipulai.common.view.baseToolbar.StatusBarUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.printer.PrinterManager;
@@ -96,12 +99,15 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
             long todayTime = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0l);
 
             SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, todayTime + 60 * 1000);
+            if (activateBean == null || activateBean.getValidEndTime() == 0) {
+                activateBean = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), ActivateBean.class);
+            }
 
-            if (activateBean.getValidEndTime() - DateUtil.getCurrentTime() <= 3 * 24 * 60 * 60 * 1000 ||
-                    activateBean.getValidRunTime() - todayTime <= 24 * 60 * 60 * 1000) {
+            if (activateBean.getValidEndTime() != 0 && (activateBean.getValidEndTime() - DateUtil.getCurrentTime() <= 3 * 24 * 60 * 60 * 1000 ||
+                    activateBean.getValidRunTime() - todayTime <= 24 * 60 * 60 * 1000)) {
                 txtCutTime.setVisibility(View.VISIBLE);
                 txtCutTime.setText("截止时间：" + DateUtil.formatTime1(activateBean.getValidEndTime(), "yyyy年MM月dd日"));
-                if (activateBean.getValidEndTime() - DateUtil.getCurrentTime() <= 3 * 24 * 60 * 60 * 1000){
+                if (activateBean.getValidEndTime() - DateUtil.getCurrentTime() <= 3 * 24 * 60 * 60 * 1000) {
                     txtUseTime.setVisibility(View.VISIBLE);
                     txtUseTime.setText("可用时长：" + DateUtil.getUseTime(activateBean.getValidRunTime() - todayTime));
                 }
@@ -116,7 +122,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
         ButterKnife.bind(this);
 
         StatusBarUtil.setImmersiveTransparentStatusBar(this);//设置沉浸式透明状态栏 配合使用
-        activateBean = SharedPrefsUtil.loadFormSource(this, ActivateBean.class);
+
         //配置网络
         if (SettingHelper.getSystemSetting().isAddRoute() && !TextUtils.isEmpty(NetWorkUtils.getLocalIp())) {
             String locatIp = NetWorkUtils.getLocalIp();
@@ -313,6 +319,8 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                 PrinterManager.getInstance().init();
                 PrinterManager.getInstance().selfCheck();
                 PrinterManager.getInstance().print("\n\n");
+
+//                LogUtil.logDebugMessage("固件版本：" + SystemUtil.getFirmwareVersion());
 //                ActivateBean activateBean = SharedPrefsUtil.loadFormSource(this, ActivateBean.class);
 //                DateUtil.setSysDate(this, activateBean.getCurrentTime());
 

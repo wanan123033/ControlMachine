@@ -51,7 +51,8 @@ public class BasketBallListener implements UdpClient.UDPChannelListerner {
 
                 break;
             case UDPBasketBallConfig.CMD_BREAK_RESPONSE://拦截成绩
-                if (topResult == null || basketballResult.getResult() != topResult.getResult()) {
+            case UDPBasketBallConfig.CMD_GET_RESULT_RESPONSE:
+                if (basketballResult.getResult() != 0 && topResult == null || basketballResult.getResult() != topResult.getResult()) {
                     listener.getResult(basketballResult);
                     topResult = basketballResult;
                 }

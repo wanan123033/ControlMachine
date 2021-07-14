@@ -55,6 +55,10 @@ public class BallManager {
         }
     }
 
+    public void getUDPResultTime() {
+        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_GET_RESULT);
+    }
+
     /**
      * 设置停止工作状态
      */
@@ -331,6 +335,7 @@ public class BallManager {
         LogUtils.normal(cmd.length + "---" + StringUtility.bytesToHexString(cmd) + "---篮足球");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
+
     /**
      * 离线：0
      * 空闲：1
@@ -350,6 +355,7 @@ public class BallManager {
         LogUtils.normal(cmd.length + "---" + StringUtility.bytesToHexString(cmd) + "---篮足球");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
+
     /**
      * LED开始计时
      *

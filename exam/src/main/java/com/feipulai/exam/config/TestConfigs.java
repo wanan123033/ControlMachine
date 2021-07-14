@@ -30,6 +30,7 @@ import com.feipulai.exam.activity.footBall.FootBallSetting;
 import com.feipulai.exam.activity.footBall.FootBallSettingActivity;
 import com.feipulai.exam.activity.grip.GripMoreActivity;
 import com.feipulai.exam.activity.grip.GripMoreGroupActivity;
+import com.feipulai.exam.activity.grip.GripSetting;
 import com.feipulai.exam.activity.grip.GripSettingActivity;
 import com.feipulai.exam.activity.jump_rope.check.JumpRopeCheckActivity;
 import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSetting;
@@ -560,6 +561,9 @@ public class TestConfigs {
                 break;
             case ItemDefault.CODE_SPORT_TIMER:
                 result = SharedPrefsUtil.loadFormSource(context, SportTimerSetting.class).getTestTimes();
+                break;
+            case ItemDefault.CODE_WLJ:
+                result = SharedPrefsUtil.loadFormSource(context, GripSetting.class).getTestRound();
                 break;
             default:
                 throw new IllegalArgumentException("wrong machine code");
