@@ -518,7 +518,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         drawHelper.draw(faceRectView2, drawInfoList);
     }
 
-    private   float SIMILAR_THRESHOLD = 0.90f;
+    private float SIMILAR_THRESHOLD = 0.90f;
     private int hasTry = 0;
 
     //3个线程查找
@@ -533,7 +533,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         }
     };
     private CompareResult compareResult2;
-//    private Runnable searchFace2 = new Runnable() {
+    //    private Runnable searchFace2 = new Runnable() {
 //        @Override
 //        public void run() {
 //            compareResult2 = FaceServer.getInstance().getTopOfFaceLib2(mFaceFeature);
@@ -561,7 +561,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             if (SettingHelper.getSystemSetting().isNetCheckTool() && !isNetface) {
                 isNetWork = true;
                 isStartFace = false;
-                Log.e("TAG","++++++++++++++++++++++++netFace553");
+                Log.e("TAG", "++++++++++++++++++++++++netFace553");
                 netFace();
             }
             return;
@@ -586,13 +586,13 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             compareResult2 = null;
             compareResult3 = null;
             if (lastCompareResult.getSimilar() > SIMILAR_THRESHOLD) {
-                    requestFeatureStatusMap.put(faceId, RequestFeatureStatus.SUCCEED);
+                requestFeatureStatusMap.put(faceId, RequestFeatureStatus.SUCCEED);
 //                faceHelper.setName(faceId, mContext.getString(R.string.recognize_success_notice, lastCompareResult.getUserName()));
                 Student student = DBManager.getInstance().queryStudentByCode(lastCompareResult.getUserName());
                 Logger.e("compareResult==》特征识别成功" + student);
                 isOpenCamera = false;
                 hasTry = 0;
-                if (student==null){
+                if (student == null) {
                     hasTry = 0;
                     faceHelper.setName(faceId, getString(R.string.recognize_failed_notice, ""));
                     isOpenCamera = false;
@@ -600,18 +600,18 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
                     if (SettingHelper.getSystemSetting().isNetCheckTool() && !isNetface) {
                         isNetWork = true;
-                        Log.e("TAG","++++++++++++++++++++++++netFace602");
+                        Log.e("TAG", "++++++++++++++++++++++++netFace602");
                         netFace();
                         return;
                     } else {
                         if (isLodingServer) {
                             compareListener.compareStu(null);
                         } else {
-                            showAddHint();
+                            showAddHint(lastCompareResult.getUserName());
                             return;
                         }
                     }
-                }else{
+                } else {
                     LogUtil.logDebugMessage("特征识别成功考生：" + student.toString());
                     compareListener.compareStu(student);
                     isStartFace = false;
@@ -621,7 +621,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 //                isOpenCamera=false;
             } else {
                 hasTry++;
-                Logger.e("compareResult==>null----"+hasTry);
+                Logger.e("compareResult==>null----" + hasTry);
                 if (hasTry < 3) {
                     faceHelper.setName(faceId, getString(R.string.recognize_failed_notice, ""));
                     isStartFace = true;
@@ -634,27 +634,29 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
                     if (SettingHelper.getSystemSetting().isNetCheckTool() && !isNetface) {
                         isNetWork = true;
-                        Log.e("TAG","++++++++++++++++++++++++netFace602");
+                        Log.e("TAG", "++++++++++++++++++++++++netFace602");
                         netFace();
                         return;
                     } else {
                         if (isLodingServer) {
                             compareListener.compareStu(null);
                         } else {
-                            showAddHint();
+                            showAddHint(null);
                             return;
                         }
                     }
                 }
 
             }
-        }else {
+        } else {
             isStartFace = true;
             retryRecognizeDelayed(faceId);
         }
 
     }
+
     private boolean isNetface = false; //控制netFace()是否还没有走完  只有走完了才能再次调用哟
+
     public void netFace() {
         if (isNetWork) {
             isNetface = true;
@@ -664,7 +666,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        OperateProgressBar.showLoadingUi(getActivity(),"在线识别中...");
+                        OperateProgressBar.showLoadingUi(getActivity(), "在线识别中...");
                     }
                 });
 
@@ -742,7 +744,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         }
     }
 
-    private void showAddHint() {
+    private void showAddHint(final String stuCode) {
         isStartFace = false;
 
         ((Activity) mContext).runOnUiThread(new Runnable() {
@@ -755,7 +757,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                                 @Override
                                 public void onClick(SweetAlertDialog sweetAlertDialog) {
                                     sweetAlertDialog.dismissWithAnimation();
-                                    getStudent(null);
+                                    getStudent(stuCode);
                                 }
                             }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                 @Override
@@ -833,7 +835,11 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
             }
         });
-        itemSubscriber.getStudentData(1, "", studentCode);
+        String lastDownTime = "";
+        if (TextUtils.isEmpty(studentCode)) {
+            lastDownTime = SharedPrefsUtil.getValue(getContext(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.LAST_DOWNLOAD_TIME, "");
+        }
+        itemSubscriber.getStudentData(1, lastDownTime, studentCode);
     }
 
     private onAFRCompareListener compareListener;
