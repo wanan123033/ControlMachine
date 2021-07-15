@@ -54,7 +54,7 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
         RadioManager.getInstance().setOnRadioArrived(resultImpl);
         sendEmpty();
 
-//        setFaultEnable(setting.isPenalize());
+        setFaultEnable(setting.isPenalizeFoul());
     }
 
     @Override

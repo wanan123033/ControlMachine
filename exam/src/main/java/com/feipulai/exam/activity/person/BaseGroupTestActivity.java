@@ -263,7 +263,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             case EventConfigs.UPDATE_RESULT:
                 for (BaseStuPair baseStuPair : stuPairsList) {
                     RoundResult roundResult = (RoundResult) baseEvent.getData();
-                    if (roundResult.getGroupId() == RoundResult.DEAFULT_GROUP_ID || roundResult.getGroupId() != group.getId()) {
+                    if (roundResult.getGroupId() == RoundResult.DEAFULT_GROUP_ID ||
+                           !TextUtils.equals(roundResult.getGroupId().toString(),group.getId().toString() )) {
                         return;
                     }
                     if (TextUtils.equals(baseStuPair.getStudent().getStudentCode(), roundResult.getStudentCode())) {
@@ -399,7 +400,13 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 //                showPenalize();
 //                break;
             case R.id.tv_penalizeFoul:
-                BaseStuPair baseStuPair = stuPairsList.get(stuAdapter.getTestPosition());
+                BaseStuPair baseStuPair;
+                if (stuAdapter.getTestPosition()==-1){
+                    baseStuPair = stuPairsList.get(stuPairsList.size()-1);
+                }else{
+                    baseStuPair  = stuPairsList.get(stuAdapter.getTestPosition());
+                }
+
                 if (baseStuPair.getStudent() != null) {
                     DataRetrieveBean bean = new DataRetrieveBean();
                     bean.setStudentCode(baseStuPair.getStudent().getStudentCode());

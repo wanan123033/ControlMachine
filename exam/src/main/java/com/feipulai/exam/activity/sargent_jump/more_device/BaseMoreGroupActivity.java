@@ -155,15 +155,15 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         switch (baseEvent.getTagInt()) {
             case EventConfigs.INSTALL_RESULT:
                 RoundResult iRoundResult = (RoundResult) baseEvent.getData();
-                for (int i = 0; i < deviceDetails.size(); i++) {
-                    DeviceDetail deviceDetail = deviceDetails.get(i);
+                for (int i = 0; i < deviceListAdapter.getData().size(); i++) {
+                    DeviceDetail deviceDetail = deviceListAdapter.getData().get(i);
 
                     if (TextUtils.equals(deviceDetail.getStuDevicePair().getStudent().getStudentCode(), iRoundResult.getStudentCode())) {
                         String[] timeResult = deviceDetail.getStuDevicePair().getTimeResult();
                         final BaseStuPair pair = deviceDetail.getStuDevicePair();
                         timeResult[iRoundResult.getRoundNo() - 1] = ((iRoundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
                                 ResultDisplayUtils.getStrResultForDisplay(iRoundResult.getResult()));
-                        deviceDetail.getStuDevicePair().setTimeResult(timeResult);
+//                        deviceDetail.getStuDevicePair().setTimeResult(timeResult);
                         deviceListAdapter.notifyDataSetChanged();
                         if (iRoundResult.getRoundNo() < setTestCount()) {
                             deviceDetail.setRound(iRoundResult.getRoundNo() + 1);
@@ -179,15 +179,15 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 break;
             case EventConfigs.UPDATE_RESULT:
                 RoundResult roundResult = (RoundResult) baseEvent.getData();
-                for (int i = 0; i < deviceDetails.size(); i++) {
-                    DeviceDetail deviceDetail = deviceDetails.get(i);
+                for (int i = 0; i < deviceListAdapter.getData().size(); i++) {
+                    DeviceDetail deviceDetail = deviceListAdapter.getData().get(i);
                     BaseStuPair pair = deviceDetail.getStuDevicePair();
                     if (TextUtils.equals(deviceDetail.getStuDevicePair().getStudent().getStudentCode(), roundResult.getStudentCode())) {
                         String[] timeResult = deviceDetail.getStuDevicePair().getTimeResult();
 
                         timeResult[roundResult.getRoundNo() - 1] = ((roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
                                 ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()));
-                        deviceDetail.getStuDevicePair().setTimeResult(timeResult);
+//                        deviceDetail.getStuDevicePair().setTimeResult(timeResult);
                         if (roundResult.getRoundNo() == deviceDetail.getRound()) {
                             pair.setResult(roundResult.getResult());
                             pair.setResultState(roundResult.getResultState());
@@ -370,9 +370,9 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                                 toStart(pos);
                                 updateLastResultLed("", pos);
                                 deviceListAdapter.setPenalize(false);
-                                if (isPenalize) {
-                                    setConfirmVisible(pos, true);
-                                }
+//                                if (isPenalize) {
+//                                    setConfirmVisible(pos, true);
+//                                }
                             }
                         } else {
                             toastSpeak("当前设备异常");
@@ -456,6 +456,10 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
     public void setFaultEnable(boolean isPenalize) {
         this.isPenalize = isPenalize;
         deviceListAdapter.setPenalize(isPenalize);
+
+        if (deviceDetails.size()==1){
+            deviceDetails.get(0).setPunish(true);
+        }
     }
 
     public void setNextClickStart(boolean nextClickStart) {
@@ -743,8 +747,8 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                                 toastSpeak(String.format(getString(R.string.test_speak_hint), studentList.get(j).getStudentName(), testTimes + 1),
                                         String.format(getString(R.string.test_speak_hint), studentList.get(j).getStudentName(), testTimes + 1));
 
-                                LogUtils.operation((index + 1) + "号机：" + studentList.get(stuAdapter.getTestPosition()).getStudentName());
-                                LogUtils.operation(String.format(getString(R.string.test_speak_hint), studentList.get(stuAdapter.getTestPosition()).getStudentName(), testTimes + 1));
+                                LogUtils.operation((index + 1) + "号机：" + studentList.get(j).getStudentName());
+                                LogUtils.operation(String.format(getString(R.string.test_speak_hint), studentList.get(j).getStudentName(), testTimes + 1));
 
 
                                 deviceDetails.get(index).setRound(roundNo);
