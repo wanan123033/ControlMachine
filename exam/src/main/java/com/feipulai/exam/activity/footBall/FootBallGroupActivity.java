@@ -452,7 +452,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         switch (useMode) {
 
             case 1://"2:起点1:终点"
-                if (result.gettNum() == 1) {//拦截到了起点，重新计时
+                if (result.gettNum() == 2) {//拦截到了起点，重新计时
                     tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()));
                 } else {//拦截到终点，正常
                     doGetResult(result);
@@ -460,12 +460,12 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
 
                 break;
             case 2://2:终点1:起点
-                if (result.gettNum() == 2) {//拦截到了起点，重新计时
+
+                if (result.gettNum() == 1) {//拦截到了起点，重新计时
                     tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital()));
                 } else {//拦截到终点，正常
                     doGetResult(result);
                 }
-
                 break;
             case 0://单拦截
             case 3://2:折返点1:起终点

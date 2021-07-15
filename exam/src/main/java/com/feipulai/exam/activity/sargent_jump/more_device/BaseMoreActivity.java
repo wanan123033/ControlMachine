@@ -54,6 +54,7 @@ import com.feipulai.exam.view.EditResultDialog;
 import com.feipulai.exam.view.StuSearchEditText;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
+import com.serenegiant.usb.IFrameCallback;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -83,6 +84,11 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     private boolean isPenalize;
     private boolean isNextClickStart = true;
     private EditResultDialog editResultDialog;
+
+    @Override
+    protected void setRoundNo(int size) {
+
+    }
 
     @Override
     protected int setLayoutResID() {
@@ -135,10 +141,6 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     }
 
-    @Override
-    protected void setRoundNo(int size) {
-
-    }
 
     @Override
     public void finish() {
@@ -339,6 +341,9 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     public void setFaultEnable(boolean isPenalize) {
         this.isPenalize = isPenalize;
         deviceListAdapter.setPenalize(isPenalize);
+        if (deviceDetails.size()==1){
+            deviceDetails.get(0).setPunish(true);
+        }
     }
 
     public void setNextClickStart(boolean nextClickStart) {
@@ -445,10 +450,9 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                                 pair.getBaseDevice().getState() == BaseDeviceState.STATE_END) {
                             pair.setTestTime(DateUtil.getCurrentTime() + "");
                             sendTestCommand(pair, pos);
-
+                            deviceListAdapter.setPenalize(false);
 //                            if (isPenalize) {
-//                                deviceListAdapter.setPenalize(true);
-////                                setConfirmVisible(pos, true);
+//                                setConfirmVisible(pos, true);
 //                            }
                         }
                         break;
@@ -478,11 +482,11 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 //                            confirmResult(pos);
                             updateResult(pair);
                             doResult(pair, pos);
-//                            deviceDetails.get(pos).setConfirmVisible(false);
+                            deviceDetails.get(pos).setConfirmVisible(false);
                             deviceListAdapter.notifyItemChanged(pos);
-//                            if (isPenalize) {
-//                                setConfirmVisible(pos, false);
-//                            }
+                            if (isPenalize) {
+                                setConfirmVisible(pos, false);
+                            }
                         }
                         break;
                     case R.id.txt_get_data:
@@ -789,11 +793,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
 
         }
-        if (detail.getRound() > setTestCount()){
-            Message msg = new Message();
-            msg.obj = detail;
-            clearHandler.sendMessageDelayed(msg, 4000);
-        }
+
         deviceListAdapter.notifyItemChanged(index);
         pair.setCanTest(true);
 //        pair.getBaseDevice().setResultState(BaseDeviceState.STATE_FREE);

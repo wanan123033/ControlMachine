@@ -16,6 +16,7 @@ import com.feipulai.exam.activity.sargent_jump.more_device.BaseMoreActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.standjump.StandJumpSetting;
 import com.feipulai.exam.activity.standjump.StandJumpSettingActivity;
+import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
@@ -38,11 +39,7 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
             standJumpSetting = new StandJumpSetting();
         super.initData();
         setFaultEnable(standJumpSetting.isPenalizeFoul());
-//        setFaultEnable(standJumpSetting.isPenalize());
-//        if (!standJumpSetting.isPenalize()) {
-//            setNextClickStart(false);
-//        }
-
+        setNextClickStart(false);
         facade = new StandJumpRadioFacade(deviceDetails, standJumpSetting, this);
     }
 
@@ -55,10 +52,18 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
             facade.setStandJumpSetting(standJumpSetting);
         }
         facade.setDeviceList(deviceDetails);
-        updateAdapterTestCount();
+
         facade.resume();
         RadioManager.getInstance().setOnRadioArrived(facade);
-
+        boolean isUser=false;
+        for (DeviceDetail detail : deviceDetails) {
+            if (detail.getStuDevicePair().getStudent()!=null){
+                isUser=true;
+            }
+        }
+        if (!isUser){
+            updateAdapterTestCount();
+        }
     }
 
     @Override
