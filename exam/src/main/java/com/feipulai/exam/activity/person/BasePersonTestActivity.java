@@ -109,8 +109,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     public TextView tvDevicePair;
     @BindView(R.id.rl)
     RelativeLayout rl;
-    @BindView(R.id.tv_penalizeFoul)
-    TextView tv_penalizeFoul;
+//    @BindView(R.id.tv_penalizeFoul)
+//    TextView tv_penalizeFoul;
     //    @BindView(R.id.txt_stu_fault)
 //    TextView txtStuFault;
     //成绩
@@ -134,6 +134,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     private int testType = 0;//0自动 1手动
     //    private boolean isFault;
     private EditResultDialog editResultDialog;
+    private PenalizeDialog penalizeDialog;
 
     @Override
     protected int setLayoutResID() {
@@ -155,7 +156,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             serverIntent = new Intent(this, UploadService.class);
             startService(serverIntent);
         }
-        tv_penalizeFoul.setVisibility(isShowPenalizeFoul());
+//        tv_penalizeFoul.setVisibility(isShowPenalizeFoul());
     }
 
     protected abstract int isShowPenalizeFoul();
@@ -240,6 +241,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 doResult();
             }
         });
+        penalizeDialog = new PenalizeDialog(this);
     }
 
 
@@ -452,7 +454,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         addStudent(student);
     }
 
-    @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting, R.id.img_AFR, R.id.tv_penalizeFoul, R.id.txt_test_result})
+    @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting, R.id.img_AFR,  R.id.txt_test_result,
+            R.id.tv_foul,R.id.tv_inBack,R.id.tv_abandon,R.id.tv_normal})//R.id.tv_penalizeFoul,
 //R.id.txt_stu_fault
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -487,28 +490,44 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 //                gotoUVCFaceCamera();
                 showAFR();
                 break;
-            case R.id.tv_penalizeFoul:
-                if (pair.getStudent() != null) {
-                    DataRetrieveBean bean = new DataRetrieveBean();
-                    bean.setStudentCode(pair.getStudent().getStudentCode());
-                    bean.setSex(pair.getStudent().getSex());
-                    bean.setTestState(1);
-                    bean.setStudentName(pair.getStudent().getStudentName());
-                    Intent intent = new Intent(this, DataDisplayActivity.class);
-                    intent.putExtra(DataDisplayActivity.ISSHOWPENALIZEFOUL, isShowPenalizeFoul());
-                    intent.putExtra(DataRetrieveActivity.DATA_ITEM_CODE, getItemCode());
-                    intent.putExtra(DataRetrieveActivity.DATA_EXTRA, bean);
-                    intent.putExtra(DataDisplayActivity.TESTNO, testNo);
-                    startActivity(intent);
-                } else {
-                    toastSpeak("无考生成绩信息");
-                }
-                break;
+//            case R.id.tv_penalizeFoul:
+//                if (pair.getStudent() != null) {
+//                    DataRetrieveBean bean = new DataRetrieveBean();
+//                    bean.setStudentCode(pair.getStudent().getStudentCode());
+//                    bean.setSex(pair.getStudent().getSex());
+//                    bean.setTestState(1);
+//                    bean.setStudentName(pair.getStudent().getStudentName());
+//                    Intent intent = new Intent(this, DataDisplayActivity.class);
+//                    intent.putExtra(DataDisplayActivity.ISSHOWPENALIZEFOUL, isShowPenalizeFoul());
+//                    intent.putExtra(DataRetrieveActivity.DATA_ITEM_CODE, getItemCode());
+//                    intent.putExtra(DataRetrieveActivity.DATA_EXTRA, bean);
+//                    intent.putExtra(DataDisplayActivity.TESTNO, testNo);
+//                    startActivity(intent);
+//                } else {
+//                    toastSpeak("无考生成绩信息");
+//                }
+//                break;
             case R.id.txt_test_result:
 
                 if (SettingHelper.getSystemSetting().isInputTest() && pair.getStudent() != null) {
                     editResultDialog.showDialog(pair.getStudent());
                 }
+                break;
+            case R.id.tv_foul:
+                penalizeDialog = new PenalizeDialog(this);
+                penalizeDialog.showDialog(0);
+                break;
+            case R.id.tv_inBack:
+                penalizeDialog = new PenalizeDialog(this);
+                penalizeDialog.showDialog(1);
+                break;
+            case R.id.tv_abandon:
+                penalizeDialog = new PenalizeDialog(this);
+                penalizeDialog.showDialog(2);
+                break;
+            case R.id.tv_normal:
+                penalizeDialog = new PenalizeDialog(this);
+                penalizeDialog.showDialog(3);
                 break;
         }
     }
