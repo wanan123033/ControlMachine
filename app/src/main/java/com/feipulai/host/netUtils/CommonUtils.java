@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
+import com.feipulai.common.utils.SystemUtil;
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.utils.EncryptUtil;
@@ -56,7 +57,10 @@ public class CommonUtils {
             id = mTelephony.getDeviceId();
         } else {
             //android.provider.Settings;
-            id = Settings.Secure.getString(context.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+            id = SystemUtil.getCPUSerial();
+            if (TextUtils.isEmpty(id)) {
+                id = Settings.Secure.getString(context.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+            }
         }
         return id;
     }

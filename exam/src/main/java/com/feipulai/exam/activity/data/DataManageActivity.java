@@ -209,7 +209,8 @@ public class DataManageActivity
         String[] typeName = getResources().getStringArray(R.array.data_admin);
         int[] typeRes = new int[]{R.mipmap.icon_data_import, R.mipmap.icon_group_import, R.mipmap.icon_data_down, R.mipmap.icon_position_import, R.mipmap.icon_position_down, R.mipmap.icon_delete_position
                 , R.mipmap.icon_data_backup, R.mipmap.icon_data_restore, R.mipmap.icon_data_look, R.mipmap.icon_data_clear, R.mipmap.icon_result_upload,
-                R.mipmap.icon_result_import, R.mipmap.icon_template_export, R.mipmap.icon_thermometer, R.mipmap.icon_result_import, R.mipmap.icon_position_down, R.mipmap.icon_data_backup, R.mipmap.icon_data_backup};
+                R.mipmap.icon_result_import, R.mipmap.icon_template_export, R.mipmap.icon_thermometer, R.mipmap.icon_result_import, R.mipmap.icon_position_down, R.mipmap.icon_data_backup, R.mipmap.icon_data_backup
+                , R.mipmap.icon_delete_logger};
         for (int i = 0; i < typeName.length; i++) {
             TypeListBean bean = new TypeListBean();
             bean.setName(typeName[i]);
@@ -389,6 +390,25 @@ public class DataManageActivity
                         break;
                     case 17://软件更新
                         getAPPS();
+                        break;
+                    case 18://日志删除
+                        new SweetAlertDialog(DataManageActivity.this, SweetAlertDialog.WARNING_TYPE).setTitleText("温馨提示")
+                                .setContentText("是否清空删除所有日志文件").setConfirmText(getString(R.string.confirm))
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        sweetAlertDialog.dismissWithAnimation();
+                                        FileUtil.deleteDirectory(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + MyApplication.PATH_LOG_NAME);
+                                        LogUtils.initLogger(true, true, MyApplication.PATH_LOG_NAME);
+                                        toastSpeak("日志文件删除成功");
+                                    }
+                                }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismissWithAnimation();
+                            }
+                        }).show();
+
                         break;
                     default:
                         break;
