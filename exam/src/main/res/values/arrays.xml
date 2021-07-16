@@ -39,6 +39,7 @@
         <item>人脸特征检入</item>
         <item>备份视频</item>
         <item>软件更新</item>
+        <item>日志清空</item>
     </array>
 
     <array name="check_tool">
