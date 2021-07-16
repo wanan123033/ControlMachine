@@ -31,13 +31,9 @@ import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
-import com.feipulai.exam.activity.data.DataDisplayActivity;
-import com.feipulai.exam.activity.data.DataRetrieveActivity;
 import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
-import com.feipulai.exam.bean.DataRetrieveBean;
-import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.BaseEvent;
@@ -49,7 +45,6 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.service.UploadService;
 import com.feipulai.exam.utils.ResultDisplayUtils;
-import com.feipulai.exam.view.AddStudentDialog;
 import com.feipulai.exam.view.EditResultDialog;
 import com.feipulai.exam.view.StuSearchEditText;
 import com.orhanobut.logger.Logger;
@@ -109,7 +104,15 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     public TextView tvDevicePair;
     @BindView(R.id.rl)
     RelativeLayout rl;
-//    @BindView(R.id.tv_penalizeFoul)
+    @BindView(R.id.tv_foul)
+    TextView tvFoul;
+    @BindView(R.id.tv_inBack)
+    TextView tvInBack;
+    @BindView(R.id.tv_abandon)
+    TextView tvAbandon;
+    @BindView(R.id.tv_normal)
+    TextView tvNormal;
+    //    @BindView(R.id.tv_penalizeFoul)
 //    TextView tv_penalizeFoul;
     //    @BindView(R.id.txt_stu_fault)
 //    TextView txtStuFault;
@@ -135,6 +138,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     //    private boolean isFault;
     private EditResultDialog editResultDialog;
     private PenalizeDialog penalizeDialog;
+    private String[] lastResult;
+    private Student lastStudent;
 
     @Override
     protected int setLayoutResID() {
@@ -167,6 +172,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         if (systemSetting.isResit())
             this.roundNo = roundNo;
     }
+
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
@@ -241,7 +247,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 doResult();
             }
         });
-        penalizeDialog = new PenalizeDialog(this);
+        penalizeDialog = new PenalizeDialog(this, setTestCount());
     }
 
 
@@ -452,10 +458,11 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         resultList.addAll(Arrays.asList(result));
         adapter.notifyDataSetChanged();
         addStudent(student);
+        setBackGround(true);
     }
 
-    @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting, R.id.img_AFR,  R.id.txt_test_result,
-            R.id.tv_foul,R.id.tv_inBack,R.id.tv_abandon,R.id.tv_normal})//R.id.tv_penalizeFoul,
+    @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting, R.id.img_AFR, R.id.txt_test_result,
+            R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal})//R.id.tv_penalizeFoul,
 //R.id.txt_stu_fault
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -514,19 +521,16 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 }
                 break;
             case R.id.tv_foul:
-                penalizeDialog = new PenalizeDialog(this);
                 penalizeDialog.showDialog(0);
+                penalizeDialog.setData(0, pair.getStudent(), result, lastStudent, lastResult);
                 break;
             case R.id.tv_inBack:
-                penalizeDialog = new PenalizeDialog(this);
                 penalizeDialog.showDialog(1);
                 break;
             case R.id.tv_abandon:
-                penalizeDialog = new PenalizeDialog(this);
                 penalizeDialog.showDialog(2);
                 break;
             case R.id.tv_normal:
-                penalizeDialog = new PenalizeDialog(this);
                 penalizeDialog.showDialog(3);
                 break;
         }
@@ -736,12 +740,14 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         resultList.addAll(Arrays.asList(result));
         adapter.notifyDataSetChanged();
         pair.setTimeResult(result);
+        lastResult = pair.getTimeResult();
+        lastStudent = pair.getStudent();
         //保存成绩
         saveResult(pair);
         printResult(pair);
         broadResult(pair);
         //TODO  当轮次大于等于测试次数时自动跳过
-        if (roundNo > setTestCount()){
+        if (roundNo > setTestCount()) {
             roundNo = 1;
             clearHandler.sendEmptyMessageDelayed(0, 0);
             stuSkip();
@@ -888,8 +894,6 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         UploadResults uploadResults = new UploadResults(studentItem.getScheduleNo(), TestConfigs.getCurrentItemCode(),
                 baseStuPair.getStudent().getStudentCode(), testNo + "", null, RoundResultBean.beanCope(roundResultList));
         uploadResult(uploadResults);
-
-
     }
 
     /**
@@ -1094,5 +1098,15 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         activity.resultList.clear();
         activity.resultList.addAll(Arrays.asList(activity.result));
         activity.adapter.notifyDataSetChanged();
+        activity.setBackGround(false);
+    }
+
+    private void setBackGround(boolean enable){
+        tvInBack.setEnabled(enable);
+        tvAbandon.setEnabled(enable);
+        tvInBack.setBackground(enable? getResources().getDrawable(R.drawable.btn_blue):
+                getResources().getDrawable(R.drawable.btn_gray));
+        tvAbandon.setBackground(enable? getResources().getDrawable(R.drawable.btn_blue):
+                getResources().getDrawable(R.drawable.btn_gray));
     }
 }
