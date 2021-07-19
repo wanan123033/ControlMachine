@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.feipulai.common.utils.DateUtil;
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.BuildConfig;
 import com.feipulai.exam.MyApplication;
@@ -2142,7 +2143,7 @@ public class DBManager {
             uploadResultsList = new ArrayList<>();
             dataMap = new HashMap<>();
             dataMap.put("stu", stu);
-            //获取学生未上传成绩
+            //获取学生成绩
             List<RoundResult> stuResult = roundResultDao.queryBuilder().where(RoundResultDao.Properties.StudentCode.eq(stu.getStudentCode()))
                     .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
                     .where(RoundResultDao.Properties.IsDelete.eq(false))
@@ -2190,6 +2191,9 @@ public class DBManager {
                         resultList.add(result);
                     }
                     testNumResult.put(result.getTestNo(), resultList);
+                    if (TextUtils.equals("0106620396", result.getStudentCode())) {
+                        LogUtil.logDebugMessage(resultList.toString());
+                    }
                 }
                 //处理上传数据
                 for (Map.Entry<Integer, List<RoundResult>> testEntity : testNumResult.entrySet()) {
@@ -2198,7 +2202,7 @@ public class DBManager {
                         UploadResults uploadResults = new UploadResults(
                                 TextUtils.equals(testEntity.getValue().get(0).getScheduleNo(), "-1") ? "" : testEntity.getValue().get(0).getScheduleNo(),
                                 TestConfigs.getCurrentItemCode(), stu.getStudentCode(), testEntity.getKey() + "",
-                                null, RoundResultBean.beanCope(entity.getValue()));
+                                null, RoundResultBean.beanCope(testEntity.getValue()));
                         uploadResultsList.add(uploadResults);
                     }
                 }
