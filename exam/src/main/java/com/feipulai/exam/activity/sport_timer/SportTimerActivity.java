@@ -513,6 +513,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                     sportPresent.setDeviceStateStop();
                     setTxtEnable(true);
                     receiveTime = 0;
+                    testState = TestState.UN_STARTED;
                 }
                 timeResultAdapter.notifyDataSetChanged();
                 sportPresent.getDeviceState();
@@ -555,6 +556,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                     toastSpeak("测试成绩未保存不可结束");
                 }else {
                     txtFinishTest.setEnabled(false);
+                    txtWaiting.setEnabled(true);
                     InteractUtils.showStuInfo(llStuDetail, null, null);
                     tvResult.setText("请检录");
                     for (SportTestResult testResult : testResults) {
@@ -623,7 +625,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
 
         boolean flag = false;
         for (DeviceState deviceState : deviceStates) {
-            if (deviceState.getDeviceState() != 1) {
+            if (deviceState.getDeviceState() == 0) {//1 2为连接正常
                 flag = false;
                 break;
             } else {

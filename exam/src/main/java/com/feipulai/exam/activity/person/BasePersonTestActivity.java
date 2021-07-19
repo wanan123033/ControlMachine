@@ -248,6 +248,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             }
         });
         penalizeDialog = new PenalizeDialog(this, setTestCount());
+        setBackGround(false);
     }
 
 
@@ -522,7 +523,12 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 break;
             case R.id.tv_foul:
                 penalizeDialog.showDialog(0);
-                penalizeDialog.setData(0, pair.getStudent(), result, lastStudent, lastResult);
+                if (pair.getStudent() == null){
+                    penalizeDialog.setData(0, pair.getStudent(), result, lastStudent, lastResult);
+                }else {
+                    penalizeDialog.setData(1, pair.getStudent(), result, lastStudent, lastResult);
+                }
+
                 break;
             case R.id.tv_inBack:
                 penalizeDialog.showDialog(1);
@@ -532,6 +538,11 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 break;
             case R.id.tv_normal:
                 penalizeDialog.showDialog(3);
+                if (null == pair.getStudent()){
+                    penalizeDialog.setData(0, pair.getStudent(), result, lastStudent, lastResult);
+                }else {
+                    penalizeDialog.setData(1, pair.getStudent(), result, lastStudent, lastResult);
+                }
                 break;
         }
     }

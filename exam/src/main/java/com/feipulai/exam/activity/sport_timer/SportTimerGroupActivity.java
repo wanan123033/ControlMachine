@@ -358,6 +358,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                 }
                 resultAdapter.notifyDataSetChanged();
                 sportPresent.getDeviceState();
+                testState = TestState.UN_STARTED;
                 break;
             case R.id.tv_end_result:
                 endResult.setSelected(true);
@@ -682,7 +683,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
 
         boolean flag = false;
         for (DeviceState deviceState : deviceStates) {
-            if (deviceState.getDeviceState() != 1) {
+            if (deviceState.getDeviceState() == 0) {
                 flag = false;
                 break;
             } else {

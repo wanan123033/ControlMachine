@@ -169,12 +169,11 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
                     @Override
                     public void run() {
                         int runNum = setting.getDeviceCount();
+                        sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());
                         for (int i = 0; i < runNum; i++) {
                             try {
-                                sportTimerManger.syncTime(i + 1, SettingHelper.getSystemSetting().getHostId(), getTime());
-                                Thread.sleep(500);
+                                Thread.sleep(200);
                                 sportTimerManger.getTime(i + 1, SettingHelper.getSystemSetting().getHostId());
-                                Thread.sleep(500);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
