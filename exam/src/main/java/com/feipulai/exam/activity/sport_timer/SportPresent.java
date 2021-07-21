@@ -298,9 +298,10 @@ public class SportPresent implements SportContract.Presenter {
             }else {
                 sportView.updateDeviceState(result.getDeviceId(), 2);//计时
             }
-            if (result.getLongTime() == 0xFFFFFFFF){
+            if (result.getLongTime() == 0xFFFFFFFF || result.getLongTime() == 0){
                 return;
             }
+
             if (result.getSumTimes() > 0) {
                 if (synKeep == -1){
                     synKeep = result.getLongTime();
@@ -725,14 +726,14 @@ public class SportPresent implements SportContract.Presenter {
      * @param currentTestTime
      * @param group
      */
-    public void saveGroupResult(Student student, int result, int currentTestTime, Group group, String startTime) {
+    public void saveGroupResult(Student student, int result, int resultState,int currentTestTime, Group group, String startTime) {
         RoundResult roundResult = new RoundResult();
         roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
         roundResult.setStudentCode(student.getStudentCode());
         roundResult.setItemCode(TestConfigs.getCurrentItemCode());
         roundResult.setResult(result);
         roundResult.setMachineResult(result);
-        roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
+        roundResult.setResultState(resultState);
         roundResult.setTestTime(startTime);
         roundResult.setEndTime(System.currentTimeMillis() + "");
         roundResult.setRoundNo(currentTestTime);

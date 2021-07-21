@@ -2,6 +2,8 @@ package com.feipulai.exam.activity.sport_timer;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -127,6 +129,10 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
     private boolean startTest = true;
     private SystemSetting systemSetting;
     private LEDManager ledManager = new LEDManager();
+    private final int UPDATE_STOP = 0XF1;
+    private final int UPDATE_RESULT = 0XF2;
+    private final int UPDATE_ON_STOP = 0XF3;
+    private final int UPDATE_ON_WAIT = 0XF4;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_group_sport_timer;
@@ -196,6 +202,10 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
         testCountAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                if (resultList.get(position).getResult()!= -1){
+                    toastSpeak("该轮次已测试");
+                    return;
+                }
                 partResultAdapter.replaceData(resultList.get(roundNo - 1).getSportTimeResults());
                 testCountAdapter.setSelectPosition(position);
                 testCountAdapter.notifyDataSetChanged();
@@ -337,7 +347,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                 if (testState == TestState.UN_STARTED && cbDeviceState.isChecked()) {
                     sportPresent.waitStart();
                 } else {
-                    ToastUtils.showShort("当前设备不可用或当前学生为空");
+                    toastSpeak("当前设备不可用或当前学生为空");
                 }
                 break;
             case R.id.txt_illegal_return:
@@ -358,7 +368,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                 }
                 resultAdapter.notifyDataSetChanged();
                 sportPresent.getDeviceState();
-                testState = TestState.UN_STARTED;
+
                 break;
             case R.id.tv_end_result:
                 endResult.setSelected(true);
@@ -387,7 +397,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                     txtWaiting.setEnabled(true);
                     testState = TestState.UN_STARTED;
                     Student stu = pairs.get(position()).getStudent();
-                    sportPresent.saveGroupResult(stu, resultList.get(roundNo - 1).getResult(),
+                    sportPresent.saveGroupResult(stu, resultList.get(roundNo - 1).getResult(),resultList.get(roundNo - 1).getResultState(),
                             roundNo,group, resultList.get(roundNo - 1).getTestTime());
 
                     List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(stu.getStudentCode());
@@ -420,6 +430,9 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                 }
                 break;
             case R.id.txt_finish_test:
+                if (testState == TestState.UN_STARTED){
+                    finish();
+                }
                 break;
             case R.id.cb_device_state:
                 deviceDialog = new DeviceDialog(this, deviceStates);
@@ -672,6 +685,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
         group.setIsTestComplete(1);
         DBManager.getInstance().updateGroup(group);
         testState = TestState.UN_STARTED;
+        finish();
     }
 
     @Override
@@ -707,20 +721,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
      */
     @Override
     public void getDeviceStart() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                txtWaiting.setEnabled(false);
-                txtStopTiming.setEnabled(true);
-                txtIllegalReturn.setEnabled(true);
-                sportPresent.setRunState(1);
-                testState = TestState.WAIT_RESULT;
-                setTxtEnable(false);
-                resultList.get(roundNo - 1).setTestTime(System.currentTimeMillis() + "");
-                receiveTime = 0;
-                txtDeviceStatus.setText("计时");
-            }
-        });
+        mHandler.sendEmptyMessage(UPDATE_ON_WAIT);
     }
     private int lastTime;//上一次接收时间
     @Override
@@ -731,10 +732,14 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
             if (sportResult.getDeviceId() == 1 && sportResult.getSumTimes() == 1) {
                 lastTime = 0;
                 initTime = sportResult.getLongTime();
+                mHandler.sendEmptyMessage(UPDATE_STOP);
             }
             if (receiveTime >= resultList.get(roundNo - 1).getSportTimeResults().size())
                 return;
             if ((sportResult.getLongTime()-initTime) <lastTime){
+                return;
+            }
+            if (partResultAdapter.getData().size() == 0){
                 return;
             }
             final SportTimeResult timeResult = partResultAdapter.getData().get(receiveTime);
@@ -751,15 +756,8 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
             resultList.get(roundNo - 1).setResult(timeResult.getPartResult());
             resultList.get(roundNo - 1).setResultState(resultList.get(roundNo - 1).getResultState() ==
                     RoundResult.RESULT_STATE_FOUL ? RoundResult.RESULT_STATE_FOUL : timeResult.getResultState());
-            final String s =  resultList.get(roundNo - 1).getResultState() == RoundResult.RESULT_STATE_NORMAL?
-                    ResultDisplayUtils.getStrResultForDisplay(resultList.get(roundNo - 1).getResult()):"犯规";
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    partResultAdapter.notifyDataSetChanged();
-                    tvResult.setText(s);
-                }
-            });
+
+            mHandler.sendEmptyMessage(UPDATE_RESULT);
             receiveTime++;
         }
     }
@@ -773,14 +771,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
         if (testState == TestState.WAIT_RESULT) {
             testState = TestState.RESULT_CONFIRM;
             sportPresent.setRunState(0);
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    txtStopTiming.setEnabled(false);
-                    txtIllegalReturn.setEnabled(false);
-                    txtDeviceStatus.setText("停止计时");
-                }
-            });
+            mHandler.sendEmptyMessage(UPDATE_ON_STOP);
         }
     }
 
@@ -789,6 +780,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
         super.onStop();
         sportPresent.setDeviceStateStop();
         sportPresent.presentRelease();
+        TestCache.getInstance().clear();
     }
 
     @Override
@@ -800,4 +792,38 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
         super.onBackPressed();
 
     }
+
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case UPDATE_STOP:
+                    txtStopTiming.setEnabled(true);
+                    break;
+                case UPDATE_RESULT:
+                    final String s =  resultList.get(roundNo - 1).getResultState() == RoundResult.RESULT_STATE_NORMAL?
+                            ResultDisplayUtils.getStrResultForDisplay(resultList.get(roundNo - 1).getResult()):"犯规";
+                    partResultAdapter.notifyDataSetChanged();
+                    tvResult.setText(s);
+                    break;
+                case UPDATE_ON_STOP:
+                    txtStopTiming.setEnabled(false);
+                    txtIllegalReturn.setEnabled(false);
+                    txtDeviceStatus.setText("停止计时");
+                    break;
+                case UPDATE_ON_WAIT:
+                    txtWaiting.setEnabled(false);
+                    txtIllegalReturn.setEnabled(true);
+                    sportPresent.setRunState(1);
+                    testState = TestState.WAIT_RESULT;
+                    setTxtEnable(false);
+                    resultList.get(roundNo - 1).setTestTime(System.currentTimeMillis() + "");
+                    receiveTime = 0;
+                    txtDeviceStatus.setText("计时");
+                    break;
+
+            }
+            return false;
+        }
+    });
 }

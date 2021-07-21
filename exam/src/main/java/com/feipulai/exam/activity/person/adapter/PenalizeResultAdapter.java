@@ -1,5 +1,6 @@
 package com.feipulai.exam.activity.person.adapter;
 
+import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
@@ -17,7 +18,7 @@ import java.util.List;
  */
 public class PenalizeResultAdapter extends BaseQuickAdapter<String, BaseViewHolder> {
 
-
+    private int click = -1;
     public PenalizeResultAdapter(@Nullable List<String> data) {
         super(R.layout.item_results_penalize, data);
 
@@ -46,6 +47,17 @@ public class PenalizeResultAdapter extends BaseQuickAdapter<String, BaseViewHold
                 holder.setText(R.id.tv_index, "④");
                 break;
         }
+        holder.setBackgroundColor(R.id.ll_content,holder.getLayoutPosition() == click? Color.YELLOW:Color.WHITE);
+        holder.addOnClickListener(R.id.ll_content);
 
+    }
+
+    public void setClick(int click) {
+        this.click = click;
+        notifyDataSetChanged();
+    }
+
+    public int getClick(){
+        return click;
     }
 }
