@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SoundPlayUtils;
@@ -49,8 +50,9 @@ import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioCons
 import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_STOP;
 import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_UPDATE_ADD_TIME;
 import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_UPDATE_DEVICE;
+import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_UPDATE_TEXT;
 
-public class NewRadioTestActivity extends BaseTitleActivity implements SportContract.SportView, TimerKeeper.TimeUpdateListener {
+public class NewRadioTestActivity extends BaseTitleActivity implements SportContract.SportView,  TimerTask.TimeUpdateListener {
 
     @BindView(R.id.tv_device_state)
     TextView tvDeviceState;
@@ -94,7 +96,6 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     private RunTimerSetting runTimerSetting;
     private NewRunAdapter adapter;
     private int baseTimer;//初始化时间 用于记录计时器开始计数的时间
-    private TimerKeeper timerKeeper;
     private int maxTestTimes;
     private int currentTestTime;
     private SoundPlayUtils playUtils;
@@ -109,6 +110,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     private int runNum;
     private int[] independent;
     private SparseArray<Integer> array;
+    private TimerTask timerTask;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_new_radio_test;
@@ -138,8 +140,8 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         rvTimer2.setAdapter(adapter);
         runTimerSetting = SharedPrefsUtil.loadFormSource(this, RunTimerSetting.class);
         runNum = Integer.parseInt(runTimerSetting.getRunNum());
-        timerKeeper = new TimerKeeper(this);
-        timerKeeper.keepTime();
+        timerTask = new TimerTask(this,100);
+        timerTask.keepTime();
         maxTestTimes = runTimerSetting.getTestTimes();
         playUtils = SoundPlayUtils.init(this);
 
@@ -175,6 +177,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         currentTestTime = 0;
         independent = new int[runNum];
         setIndependent();
+        sportPresent.showReadyLed(mList);
     }
 
     @Override
@@ -286,9 +289,10 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         LogUtils.operation("红外计时开始时间："+baseTimer);
         testState = TestState.WAIT_RESULT;
         mHandler.sendEmptyMessage(RUN_START);
-        timerKeeper.setStartInit();
         currentTestTime++;
         startTime = System.currentTimeMillis() + "";
+        sportPresent.clearLed();
+        timerTask.setStartInit();
     }
 
     @Override
@@ -387,7 +391,6 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
      */
     @Override
     public void getDeviceStop() {
-        timerKeeper.stopKeepTime();
         mHandler.sendEmptyMessage(RUN_STOP);
         sportPresent.setRunState(0);
     }
@@ -403,12 +406,6 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
 
         return builder.setTitle(title);
     }
-
-    @Override
-    public void onTimeUpdate(int time) {
-        tvTimer.setText(ResultDisplayUtils.getStrResultForDisplay(time, false));
-    }
-
 
     @OnClick({R.id.tv_wait_start, R.id.tv_wait_ready, R.id.tv_fault_back, R.id.tv_force_start, R.id.tv_mark_confirm, R.id.tv_device_detail})
     public void onViewClicked(View view) {
@@ -465,6 +462,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 tvWaitReady.setSelected(false);
                 break;
             case R.id.tv_fault_back:
+                timerTask.stopKeepTime();
                 sportPresent.setDeviceStateStop();
                 setView(false);
                 for (RunStudent runStudent : mList) {
@@ -490,8 +488,9 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
             case R.id.tv_mark_confirm:
                 if (testState == TestState.WAIT_RESULT) {
                     LogUtils.operation("红外计时点击了成绩确认");
-                    sportPresent.setDeviceStateStop();
                     testState = TestState.UN_STARTED;
+                    timerTask.stopKeepTime();
+                    sportPresent.setDeviceStateStop();
                     sportPresent.setShowLed(mList);
                     for (RunStudent runStudent : mList) {
                         if (runStudent.getStudent() != null) {
@@ -540,6 +539,9 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 case RUN_UPDATE_ADD_TIME:
                     addTime();
                     break;
+                case RUN_UPDATE_TEXT:
+                    tvTimer.setText(ResultDisplayUtils.getStrResultForDisplay(msg.arg1, false));
+                    break;
             }
             return false;
         }
@@ -562,6 +564,24 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     protected void onDestroy() {
         super.onDestroy();
         sportPresent.presentRelease();
-        timerKeeper.release();
+        timerTask.release();
+    }
+
+    @Override
+    public void onTimeTaskUpdate(int time) {
+        Message msg = Message.obtain();
+        msg.what = RUN_UPDATE_TEXT;
+        msg.arg1 = time;
+        mHandler.sendMessage(msg);
+        if (testState == TestState.WAIT_RESULT){
+            String formatTime ;
+            if (time<60*60*1000){
+                formatTime = DateUtil.formatTime1(time, "mm:ss.SSS");
+            }else {
+                formatTime = DateUtil.formatTime1(time, "HH:mm:ss");
+            }
+            sportPresent.showLedString(formatTime);
+        }
+
     }
 }

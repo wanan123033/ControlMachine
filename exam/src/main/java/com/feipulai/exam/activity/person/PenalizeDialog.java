@@ -73,6 +73,7 @@ public class PenalizeDialog {
     private String[] results;
     private int resultState;
     private int groupId;
+    private int selectPosition = -1;
     /**
      * @param context
      */
@@ -156,6 +157,10 @@ public class PenalizeDialog {
         if (lastStudent == null && student==null){
             setDialogDismiss();
         }
+        if (selectPosition != -1){
+            mAdapter.setClick(selectPosition);
+            mAdapter.notifyItemChanged(selectPosition);
+        }
     }
 
     public void setData(int state,Student student ,String[] result,Student lastStudent,String[] lastResult){
@@ -183,6 +188,7 @@ public class PenalizeDialog {
                     turnLast.setVisibility(View.VISIBLE);
                     if (student!=null){
                         mList = Arrays.asList(result);//当前
+                        selectPosition = 0;
                     }
                 }
                 mAdapter.notifyDataSetChanged();
@@ -214,6 +220,7 @@ public class PenalizeDialog {
         this.student = null;
         resultState = -1;
         groupId = -1;
+        selectPosition = -1;
     }
 
 
@@ -268,5 +275,13 @@ public class PenalizeDialog {
 
     public void setGroupId(int groupId) {
         this.groupId = groupId;
+    }
+
+    public int getSelectPosition() {
+        return selectPosition;
+    }
+
+    public void setSelectPosition(int selectPosition) {
+        this.selectPosition = selectPosition;
     }
 }

@@ -242,9 +242,20 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
         sportPresent = new SportPresent(this,setting.getDeviceCount());
         sportPresent.rollConnect();
         sportPresent.setContinueRoll(true);
+        showGroupLed("");
+
     }
 
-    protected void displayCheckedInLED() {
+
+    private void showGroupLed(String result) {
+        if (pairs.size()> (position()+1)){
+            sportPresent.displayGroupLED(pairs.get(position()).getStudent(),roundNo,group.getId(),pairs.get((position()+1)).getStudent().getStudentName(),result);
+        }else {
+            sportPresent.displayGroupLED(pairs.get(position()).getStudent(),roundNo,group.getId(),"",result);
+        }
+    }
+
+    /*private void displayCheckedInLED() {
         Student student = TestCache.getInstance().getAllStudents().get(position());
         List<RoundResult> results = TestCache.getInstance().getResults().get(student);
 
@@ -258,7 +269,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
             String displayResult = ResultDisplayUtils.getStrResultForDisplay(lastResult.getResult());
             ledManager.showString(hostId, "已有成绩:" + displayResult, 2, 3, false, true);
         }
-    }
+    }*/
 
     //左边点击考生
     @Override
@@ -315,7 +326,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
         if (roundNo>testNum)
             return;
         partResultAdapter.replaceData(resultList.get(roundNo - 1).getSportTimeResults());
-        displayCheckedInLED();
+
     }
 
     @OnClick({R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal, R.id.txt_waiting, R.id.txt_illegal_return,
@@ -340,6 +351,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                 break;
             case R.id.txt_waiting:
                 Logger.i("运动计时测试次数>>>>>>>>>等待"+roundNo);
+                showGroupLed("");
                 if (roundNo > testNum) {
                     toastSpeak("已超过测试次数");
                     return;
@@ -404,7 +416,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                     if (results != null) {
                         TestCache.getInstance().getResults().put(stu, results);
                     }
-
+                    showGroupLed(ResultDisplayUtils.getStrResultForDisplay(resultList.get(roundNo - 1).getResult()));
 //                    sportPresent.showStuInfo(llStuDetail, pair.getStudent(), testResults);
                     if (roundNo <= testNum) {
                         partResultAdapter.replaceData(resultList.get(roundNo - 1).getSportTimeResults());
