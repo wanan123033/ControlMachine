@@ -225,7 +225,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         GridLayoutManager layoutManager = new GridLayoutManager(this, setTestCount());
         rvTestResult.setLayoutManager(layoutManager);
         result = new String[setTestCount()];
-
+        lastResult = new String[setTestCount()];
         //创建适配器
         resultList.addAll(Arrays.asList(result));
         adapter = new BasePersonTestResultAdapter(resultList);

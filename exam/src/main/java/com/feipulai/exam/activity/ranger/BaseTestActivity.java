@@ -34,6 +34,7 @@ import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
+import com.feipulai.exam.activity.person.PenalizeDialog;
 import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
@@ -93,10 +94,10 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
     TextView txtStartTest;
     @BindView(R.id.txt_commit)
     TextView txtCommit;
-    @BindView(R.id.txt_fg)
-    TextView txtFg;
-    @BindView(R.id.txt_pf)
-    TextView txtPf;
+//    @BindView(R.id.txt_fg)
+//    TextView txtFg;
+//    @BindView(R.id.txt_pf)
+//    TextView txtPf;
     @BindView(R.id.tv_base_height)
     TextView tvBaseHeight;
     @BindView(R.id.txt_stu_skip)
@@ -131,6 +132,15 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
     private Intent serverIntent;
     private int testType = 1;//0自动 1手动
     private boolean isFault;
+    private PenalizeDialog penalizeDialog;
+    private String[] lastResult;
+    private Student lastStudent;
+    @BindView(R.id.tv_inBack)
+    TextView tvInBack;
+    @BindView(R.id.tv_abandon)
+    TextView tvAbandon;
+    @BindView(R.id.tv_normal)
+    TextView tvNormal;
     @Override
     public void setRoundNo(int roundNo) {
         SystemSetting systemSetting = SettingHelper.getSystemSetting();
@@ -211,7 +221,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
         GridLayoutManager layoutManager = new GridLayoutManager(this, setTestCount());
         rvTestResult.setLayoutManager(layoutManager);
         result = new String[setTestCount()];
-
+        lastResult = new String[setTestCount()];
         //创建适配器
         resultList.addAll(Arrays.asList(result));
         adapter = new BasePersonTestResultAdapter(resultList);
@@ -222,7 +232,8 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
 
         pair.setBaseDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE));
         refreshDevice();
-
+        penalizeDialog = new PenalizeDialog(this, setTestCount());
+        setBackGround(false);
     }
 
     public void setTestType(int testType) {
@@ -352,9 +363,11 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
         resultList.addAll(Arrays.asList(result));
         adapter.setNewData(resultList);
         addStudent(student);
+        setBackGround(true);
     }
 
-    @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting, R.id.img_AFR,R.id.txt_pf,R.id.txt_fg,R.id.txt_commit})
+    @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting, R.id.img_AFR,R.id.txt_commit,
+            R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal})//R.id.txt_pf,R.id.txt_fg,
 //R.id.txt_stu_fault
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -375,21 +388,55 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
                     pair.setTestTime(System.currentTimeMillis()+"");
                 }
                 break;
-            case R.id.txt_pf:
-                showPenalize();
-                break;
+//            case R.id.txt_pf:
+//                showPenalize();
+//                break;
             case R.id.img_AFR:
 //                gotoUVCFaceCamera();
                 showAFR();
                 break;
-            case R.id.txt_fg:
-                pair.setResultState(2);
-                updateResult(pair);
-                break;
+//            case R.id.txt_fg:
+//                pair.setResultState(2);
+//                updateResult(pair);
+//                break;
             case R.id.txt_commit:
                 confrim();
                 break;
+            case R.id.tv_foul:
+                penalizeDialog.showDialog(0);
+                if (pair.getStudent() == null){
+                    penalizeDialog.setData(0, pair.getStudent(), result, lastStudent, lastResult);
+                }else {
+                    penalizeDialog.setData(1, pair.getStudent(), result, lastStudent, lastResult);
+                }
+
+                break;
+            case R.id.tv_inBack:
+                penalizeDialog.showDialog(1);
+                if (pair.getStudent() == null){
+                    penalizeDialog.setData(0, pair.getStudent(), result, lastStudent, lastResult);
+                }else {
+                    penalizeDialog.setData(1, pair.getStudent(), result, lastStudent, lastResult);
+                }
+                break;
+            case R.id.tv_abandon:
+                penalizeDialog.showDialog(2);
+                if (pair.getStudent() == null){
+                    penalizeDialog.setData(0, pair.getStudent(), result, lastStudent, lastResult);
+                }else {
+                    penalizeDialog.setData(1, pair.getStudent(), result, lastStudent, lastResult);
+                }
+                break;
+            case R.id.tv_normal:
+                penalizeDialog.showDialog(3);
+                if (null == pair.getStudent()){
+                    penalizeDialog.setData(0, pair.getStudent(), result, lastStudent, lastResult);
+                }else {
+                    penalizeDialog.setData(1, pair.getStudent(), result, lastStudent, lastResult);
+                }
+                break;
         }
+
     }
 
     protected abstract void confrim();
@@ -602,6 +649,8 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
         resultList.addAll(Arrays.asList(result));
         adapter.notifyDataSetChanged();
         pair.setTimeResult(result);
+        lastResult = pair.getTimeResult();
+        lastStudent = pair.getStudent();
         //保存成绩
         saveResult(pair);
         printResult(pair);
@@ -894,6 +943,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
                 activity.resultList.clear();
                 activity.resultList.addAll(Arrays.asList(activity.result));
                 activity.adapter.notifyDataSetChanged();
+                activity.setBackGround(false);
             }
 
         }
@@ -902,15 +952,15 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
         txtStartTest.setVisibility(View.VISIBLE);
         txtStuSkip.setVisibility(View.VISIBLE);
         txtCommit.setVisibility(View.GONE);
-        txtPf.setVisibility(View.GONE);
-        txtFg.setVisibility(View.GONE);
+//        txtPf.setVisibility(View.GONE);
+//        txtFg.setVisibility(View.GONE);
     }
     protected void updateTestBtnState(){
         txtStartTest.setVisibility(View.GONE);
         txtStuSkip.setVisibility(View.GONE);
         txtCommit.setVisibility(View.VISIBLE);
-        txtPf.setVisibility(View.VISIBLE);
-        txtFg.setVisibility(View.VISIBLE);
+//        txtPf.setVisibility(View.VISIBLE);
+//        txtFg.setVisibility(View.VISIBLE);
     }
 
     public void setScore(RangerResult result){
@@ -942,5 +992,12 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
     }
 
     public abstract RangerSetting getRangerSetting();
-
+    private void setBackGround(boolean enable){
+        tvInBack.setEnabled(enable);
+        tvAbandon.setEnabled(enable);
+        tvInBack.setBackground(enable? getResources().getDrawable(R.drawable.btn_blue):
+                getResources().getDrawable(R.drawable.btn_gray));
+        tvAbandon.setBackground(enable? getResources().getDrawable(R.drawable.btn_blue):
+                getResources().getDrawable(R.drawable.btn_gray));
+    }
 }
