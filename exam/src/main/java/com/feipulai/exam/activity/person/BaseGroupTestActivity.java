@@ -92,14 +92,22 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     TextView tvBaseHeight;
     @BindView(R.id.txt_stu_skip)
     TextView txtStuSkip;
-    @BindView(R.id.tv_penalizeFoul)
-    TextView tv_penalizeFoul;
+//    @BindView(R.id.tv_penalizeFoul)
+//    TextView tv_penalizeFoul;
     //    @BindView(R.id.txt_stu_fault)
 //    TextView txtStuFault;
     private List<BaseStuPair> stuPairsList;
     private BaseGroupTestStuAdapter stuAdapter;
     private List<String> resultList = new ArrayList<>();
     private BasePersonTestResultAdapter testResultAdapter;
+    @BindView(R.id.tv_foul)
+    TextView tvFoul;
+    @BindView(R.id.tv_inBack)
+    TextView tvInBack;
+    @BindView(R.id.tv_abandon)
+    TextView tvAbandon;
+    @BindView(R.id.tv_normal)
+    TextView tvNormal;
     /**
      * 当前测试次数位
      */
@@ -120,7 +128,9 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     public int baseHeight;
     //    private boolean isFault;
     private EditResultDialog editResultDialog;
-
+    private PenalizeDialog penalizeDialog;
+    private String[] lastResult;
+    private Student lastStudent;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_base_group_test;
@@ -176,7 +186,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         getTestStudent(group);
         setStuShowLed(stuAdapter.getTestPosition() != -1 ? stuPairsList.get(stuAdapter.getTestPosition()) : null);
 
-        tv_penalizeFoul.setVisibility(isShowPenalizeFoul());
+//        tv_penalizeFoul.setVisibility(isShowPenalizeFoul());
         editResultDialog = new EditResultDialog(this);
         editResultDialog.setListener(new EditResultDialog.OnInputResultListener() {
 
@@ -188,6 +198,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 doTestEnd(getTestPair().getBaseDevice(), getTestPair());
             }
         });
+        penalizeDialog = new PenalizeDialog(this, setTestCount());
+        lastResult = new String[setTestCount()];
     }
 
     @Override
@@ -341,7 +353,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         this.testType = testType;
     }
 
-    @OnClick({R.id.txt_start_test, R.id.txt_led_setting, R.id.txt_stu_skip, R.id.tv_penalizeFoul, R.id.txt_test_result})
+    @OnClick({R.id.txt_start_test, R.id.txt_led_setting, R.id.txt_stu_skip,  R.id.txt_test_result,
+            R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal})//R.id.tv_penalizeFoul,
     public void onViewClicked(View view) {
         switch (view.getId()) {
 //            case R.id.txt_setting:
@@ -399,41 +412,66 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 //            case R.id.txt_stu_fault:
 //                showPenalize();
 //                break;
-            case R.id.tv_penalizeFoul:
-                BaseStuPair baseStuPair;
-                if (stuAdapter.getTestPosition()==-1){
-                    baseStuPair = stuPairsList.get(stuPairsList.size()-1);
-                }else{
-                    baseStuPair  = stuPairsList.get(stuAdapter.getTestPosition());
-                }
-
-                if (baseStuPair.getStudent() != null) {
-                    DataRetrieveBean bean = new DataRetrieveBean();
-                    bean.setStudentCode(baseStuPair.getStudent().getStudentCode());
-                    bean.setSex(baseStuPair.getStudent().getSex());
-                    bean.setTestState(1);
-                    bean.setGroupId(group.getId());
-                    bean.setScheduleNo(group.getScheduleNo());
-                    bean.setExamType(group.getExamType());
-                    bean.setStudentName(baseStuPair.getStudent().getStudentName());
-                    Intent intent = new Intent(this, DataDisplayActivity.class);
-                    intent.putExtra(DataDisplayActivity.ISSHOWPENALIZEFOUL, isShowPenalizeFoul());
-                    intent.putExtra(DataRetrieveActivity.DATA_ITEM_CODE, getItemCode());
-                    intent.putExtra(DataDisplayActivity.TESTNO, 1);
-                    intent.putExtra(DataRetrieveActivity.DATA_EXTRA, bean);
-
-                    startActivity(intent);
-                } else {
-                    toastSpeak("无考生成绩信息");
-                }
-                break;
+//            case R.id.tv_penalizeFoul:
+//                BaseStuPair baseStuPair;
+//                if (stuAdapter.getTestPosition()==-1){
+//                    baseStuPair = stuPairsList.get(stuPairsList.size()-1);
+//                }else{
+//                    baseStuPair  = stuPairsList.get(stuAdapter.getTestPosition());
+//                }
+//
+//                if (baseStuPair.getStudent() != null) {
+//                    DataRetrieveBean bean = new DataRetrieveBean();
+//                    bean.setStudentCode(baseStuPair.getStudent().getStudentCode());
+//                    bean.setSex(baseStuPair.getStudent().getSex());
+//                    bean.setTestState(1);
+//                    bean.setGroupId(group.getId());
+//                    bean.setScheduleNo(group.getScheduleNo());
+//                    bean.setExamType(group.getExamType());
+//                    bean.setStudentName(baseStuPair.getStudent().getStudentName());
+//                    Intent intent = new Intent(this, DataDisplayActivity.class);
+//                    intent.putExtra(DataDisplayActivity.ISSHOWPENALIZEFOUL, isShowPenalizeFoul());
+//                    intent.putExtra(DataRetrieveActivity.DATA_ITEM_CODE, getItemCode());
+//                    intent.putExtra(DataDisplayActivity.TESTNO, 1);
+//                    intent.putExtra(DataRetrieveActivity.DATA_EXTRA, bean);
+//
+//                    startActivity(intent);
+//                } else {
+//                    toastSpeak("无考生成绩信息");
+//                }
+//                break;
             case R.id.txt_test_result:
 
                 if (SettingHelper.getSystemSetting().isInputTest() && getTestPair().getStudent() != null) {
                     editResultDialog.showDialog(getTestPair().getStudent());
                 }
                 break;
+            case R.id.tv_foul:
+                penalizeDialog.setGroupId(group.getId());
+                penalizeDialog.setData(1,stuPairsList.get(stuAdapter.getTestPosition()).getStudent(),
+                        stuPairsList.get(stuAdapter.getTestPosition()).getTimeResult(),lastStudent,lastResult);
+                penalizeDialog.showDialog(0);
+                break;
+            case R.id.tv_inBack:
+                penalizeDialog.setGroupId(group.getId());
+                penalizeDialog.setData(1,stuPairsList.get(stuAdapter.getTestPosition()).getStudent(),
+                        stuPairsList.get(stuAdapter.getTestPosition()).getTimeResult(),lastStudent,lastResult);
+                penalizeDialog.showDialog(1);
+                break;
+            case R.id.tv_abandon:
+                penalizeDialog.setGroupId(group.getId());
+                penalizeDialog.setData(1,stuPairsList.get(stuAdapter.getTestPosition()).getStudent(),
+                        stuPairsList.get(stuAdapter.getTestPosition()).getTimeResult(),lastStudent,lastResult);
+                penalizeDialog.showDialog(1);
+                break;
+            case R.id.tv_normal:
+                penalizeDialog.setGroupId(group.getId());
+                penalizeDialog.setData(2,stuPairsList.get(stuAdapter.getTestPosition()).getStudent(),
+                        stuPairsList.get(stuAdapter.getTestPosition()).getTimeResult(),lastStudent,lastResult);
+                penalizeDialog.showDialog(3);
+                break;
         }
+
     }
 
     private String getItemCode() {
@@ -762,7 +800,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         resultList.clear();
         resultList.addAll(Arrays.asList(stuPairsList.get(stuAdapter.getTestPosition()).getTimeResult()));
         testResultAdapter.notifyDataSetChanged();
-
+        lastStudent = pair.getStudent();
+        lastResult = stuPairsList.get(stuAdapter.getTestPosition()).getTimeResult();
         //保存成绩
         saveResult(pair);
         printResult(pair);

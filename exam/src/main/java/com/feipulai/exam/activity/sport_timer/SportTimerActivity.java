@@ -1,6 +1,8 @@
 package com.feipulai.exam.activity.sport_timer;
 
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
@@ -65,6 +67,12 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
+
+import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_RESULT;
+import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_START;
+import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_STOP;
+import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_UPDATE_ADD_TIME;
+import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_UPDATE_DEVICE;
 
 /**
  * 根据实测知道频段换成25最好
@@ -161,7 +169,10 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
     private int initTime;
     private List<SportTestResult> testResults = new ArrayList<>();//保存成绩
     private int testNum;
-
+    private final int UPDATE_STOP = 0XF1;
+    private final int UPDATE_RESULT = 0XF2;
+    private final int UPDATE_ON_STOP = 0XF3;
+    private final int UPDATE_ON_WAIT = 0XF4;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_sport_timer;
@@ -555,6 +566,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                     toastSpeak("测试成绩未保存不可结束");
                 }else {
                     txtFinishTest.setEnabled(false);
+                    txtWaiting.setEnabled(true);
                     InteractUtils.showStuInfo(llStuDetail, null, null);
                     tvResult.setText("请检录");
                     for (SportTestResult testResult : testResults) {
@@ -623,7 +635,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
 
         boolean flag = false;
         for (DeviceState deviceState : deviceStates) {
-            if (deviceState.getDeviceState() != 1) {
+            if (deviceState.getDeviceState() == 0) {//1 2为连接正常
                 flag = false;
                 break;
             } else {
@@ -644,20 +656,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
 
     @Override
     public void getDeviceStart() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                txtWaiting.setEnabled(false);
-                txtStopTiming.setEnabled(true);
-                txtIllegalReturn.setEnabled(true);
-                sportPresent.setRunState(1);
-                testState = TestState.WAIT_RESULT;
-                setTxtEnable(false);
-                testResults.get(roundNo - 1).setTestTime(System.currentTimeMillis() + "");
-                receiveTime = 0;
-                txtDeviceStatus.setText("计时");
-            }
-        });
+        mHandler.sendEmptyMessage(UPDATE_ON_WAIT);
     }
 
     private int lastTime;//上一次接收时间
@@ -669,6 +668,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
             if (sportResult.getDeviceId() == 1 && sportResult.getSumTimes() == 1) {
                 lastTime = 0;
                 initTime = sportResult.getLongTime();
+                mHandler.sendEmptyMessage(UPDATE_STOP);
             }
             if (receiveTime >= testResults.get(roundNo - 1).getSportTimeResults().size())
                 return;
@@ -689,15 +689,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
             testResults.get(roundNo - 1).setResult(timeResult.getPartResult());
             testResults.get(roundNo - 1).setResultState(testResults.get(roundNo - 1).getResultState() ==
                     RoundResult.RESULT_STATE_FOUL ? RoundResult.RESULT_STATE_FOUL : timeResult.getResultState());
-            final String s =  testResults.get(roundNo - 1).getResultState() == RoundResult.RESULT_STATE_NORMAL?
-                    ResultDisplayUtils.getStrResultForDisplay(testResults.get(roundNo - 1).getResult()):"犯规";
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    partResultAdapter.notifyDataSetChanged();
-                    tvResult.setText(s);
-                }
-            });
+            mHandler.sendEmptyMessage(UPDATE_RESULT);
             receiveTime++;
         }
     }
@@ -707,15 +699,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
         if (testState == TestState.WAIT_RESULT) {
             testState = TestState.RESULT_CONFIRM;
             sportPresent.setRunState(0);
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    txtStopTiming.setEnabled(false);
-                    txtIllegalReturn.setEnabled(false);
-                    txtDeviceStatus.setText("停止计时");
-                }
-            });
-
+            mHandler.sendEmptyMessage(UPDATE_ON_STOP);
         }
     }
 
@@ -768,4 +752,38 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
         }
         super.finish();
     }
+
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case UPDATE_STOP:
+                    txtStopTiming.setEnabled(true);
+                    break;
+                case UPDATE_RESULT:
+                    String s =  testResults.get(roundNo - 1).getResultState() == RoundResult.RESULT_STATE_NORMAL?
+                            ResultDisplayUtils.getStrResultForDisplay(testResults.get(roundNo - 1).getResult()):"犯规";
+                    partResultAdapter.notifyDataSetChanged();
+                    tvResult.setText(s);
+                    break;
+                case UPDATE_ON_STOP:
+                    txtStopTiming.setEnabled(false);
+                    txtIllegalReturn.setEnabled(false);
+                    txtDeviceStatus.setText("停止计时");
+                    break;
+                case UPDATE_ON_WAIT:
+                    txtWaiting.setEnabled(false);
+                    txtIllegalReturn.setEnabled(true);
+                    sportPresent.setRunState(1);
+                    testState = TestState.WAIT_RESULT;
+                    setTxtEnable(false);
+                    testResults.get(roundNo - 1).setTestTime(System.currentTimeMillis() + "");
+                    receiveTime = 0;
+                    txtDeviceStatus.setText("计时");
+                    break;
+
+            }
+            return false;
+        }
+    });
 }

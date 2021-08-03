@@ -225,7 +225,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         GridLayoutManager layoutManager = new GridLayoutManager(this, setTestCount());
         rvTestResult.setLayoutManager(layoutManager);
         result = new String[setTestCount()];
-
+        lastResult = new String[setTestCount()];
         //创建适配器
         resultList.addAll(Arrays.asList(result));
         adapter = new BasePersonTestResultAdapter(resultList);
@@ -248,6 +248,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             }
         });
         penalizeDialog = new PenalizeDialog(this, setTestCount());
+        setBackGround(false);
     }
 
 
@@ -522,16 +523,36 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 break;
             case R.id.tv_foul:
                 penalizeDialog.showDialog(0);
-                penalizeDialog.setData(0, pair.getStudent(), result, lastStudent, lastResult);
+                if (pair.getStudent() == null){
+                    penalizeDialog.setData(0, pair.getStudent(), result, lastStudent, lastResult);
+                }else {
+                    penalizeDialog.setData(1, pair.getStudent(), result, lastStudent, lastResult);
+                }
+
                 break;
             case R.id.tv_inBack:
                 penalizeDialog.showDialog(1);
+                if (pair.getStudent() == null){
+                    penalizeDialog.setData(0, pair.getStudent(), result, lastStudent, lastResult);
+                }else {
+                    penalizeDialog.setData(1, pair.getStudent(), result, lastStudent, lastResult);
+                }
                 break;
             case R.id.tv_abandon:
                 penalizeDialog.showDialog(2);
+                if (pair.getStudent() == null){
+                    penalizeDialog.setData(0, pair.getStudent(), result, lastStudent, lastResult);
+                }else {
+                    penalizeDialog.setData(1, pair.getStudent(), result, lastStudent, lastResult);
+                }
                 break;
             case R.id.tv_normal:
                 penalizeDialog.showDialog(3);
+                if (null == pair.getStudent()){
+                    penalizeDialog.setData(0, pair.getStudent(), result, lastStudent, lastResult);
+                }else {
+                    penalizeDialog.setData(1, pair.getStudent(), result, lastStudent, lastResult);
+                }
                 break;
         }
     }

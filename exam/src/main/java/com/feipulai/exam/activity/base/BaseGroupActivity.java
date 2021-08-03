@@ -125,7 +125,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
     private String scheduleText;
     private List<RoundResult> resultList = new ArrayList<>();
     private ResultsAdapter resultsAdapter;
-
+    private boolean isBack;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_base_group;
@@ -544,7 +544,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     ToastUtils.showShort("该组测试完，请选择下一组");
                     return;
                 }
-
+                isBack = true;
                 TestConfigs.baseGroupMap.put("basePairStu", pairs);
                 LogUtils.operation("分组进入测试学生:" + pairs.toString());
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_FWC) {
@@ -600,7 +600,6 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     startActivity(new Intent(this, SitUpArmCheckActivity.class));
                     return;
                 }
-
                 startActivity(new Intent(this, TestConfigs.groupActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
                 break;
 
@@ -807,4 +806,13 @@ public class BaseGroupActivity extends BaseTitleActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isBack){
+            updateStudents(groupList.get(groupAdapter.getTestPosition()));
+            isBack = false;
+        }
+
+    }
 }
