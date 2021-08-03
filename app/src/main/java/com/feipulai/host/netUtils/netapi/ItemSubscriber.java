@@ -37,6 +37,8 @@ import com.feipulai.host.netUtils.RequestSub;
 import com.feipulai.host.utils.EncryptUtil;
 import com.orhanobut.logger.Logger;
 import com.ww.fpl.libarcface.common.Constants;
+import com.ww.fpl.libarcface.faceserver.FaceServer;
+import com.ww.fpl.libarcface.model.FaceRegisterInfo;
 import com.ww.fpl.libarcface.util.ConfigUtil;
 
 import java.util.ArrayList;
@@ -216,8 +218,9 @@ public class ItemSubscriber {
                 Logger.i("下载考生数量====》" + size);
                 final List<Student> studentList = new ArrayList<>();
                 final List<StudentItem> studentItemList = new ArrayList<>();
-                //TODO 头像保存数据库导致数据过大OOM， 保存成图片保存固定位置使用
-                savePortrait(result.getDataInfo());
+                List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
+//                //TODO 头像保存数据库导致数据过大OOM， 保存成图片保存固定位置使用
+//                savePortrait(result.getDataInfo());
                 for (StudentBean studentBean : result.getDataInfo()) {
                     if (!stuList.contains(studentBean.getIdCard())) {
                         stuList.add(studentBean.getIdCard());
@@ -248,8 +251,14 @@ public class ItemSubscriber {
                             studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
                             studentBean.getExamType(), studentBean.getScheduleNo());
                     studentItemList.add(studentItem);
-                }
 
+                    if (!TextUtils.isEmpty(student.getFaceFeature())) {
+                        registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+                    }
+                }
+                if (SettingHelper.getSystemSetting().getCheckTool() == 4) {
+                    FaceServer.getInstance().addFaceList(registerInfoList);
+                }
                 DBManager.getInstance().insertStudentList(studentList);
                 DBManager.getInstance().insertStuItemList(studentItemList);
                 if (onRequestEndListener != null) {
