@@ -115,6 +115,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         studentList = new ArrayList<>();
         pairList = new ArrayList<>();
         pairList.addAll((List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu"));
+        pairList.get(0).setResit(true);
         for (BaseStuPair pair : pairList) {
             studentList.add(pair.getStudent());
         }

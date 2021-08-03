@@ -54,6 +54,7 @@ import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.MachineResult;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.PrintResultUtil;
 import com.feipulai.exam.utils.ResultDisplayUtils;
@@ -125,6 +126,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
     private String startTime; //开始时间
     private boolean startTest = true;
     private EditResultDialog editResultDialog;
+    private List<BaseStuPair> stuPairs;
 
     @Override
     protected int setLayoutResID() {
@@ -177,7 +179,8 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         tvGroupName.setText(String.format(Locale.CHINA, "%s第%d组", type, group.getGroupNo()));
         //获取分组学生数据
         TestCache.getInstance().init();
-        pairs = CheckUtils.newPairs(((List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu")).size());
+        stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
+        pairs = CheckUtils.newPairs(stuPairs.size());
         CheckUtils.groupCheck(pairs);
 
         rvTestingPairs.setLayoutManager(new LinearLayoutManager(this));
@@ -932,7 +935,8 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         Student student = TestCache.getInstance().getAllStudents().get(position());
         List<RoundResult> roundResults = TestCache.getInstance().getResults().get(student);
         roundNo = (roundResults == null ? 1 : roundResults.size() + 1);
-        for (int i = 0; i < TestConfigs.getMaxTestCount(this); i++) {
+        int testNo = setTestCount();
+        for (int i = 0; i < testNo; i++) {
             RoundResult roundResult = DBManager.getInstance().queryGroupRoundNoResult(student.getStudentCode(), group.getId() + "", i + 1);
             if (roundResult == null) {
                 resultList.add(new BasketBallTestResult(i + 1, null, 0, -999, 0, -999));
@@ -1037,7 +1041,14 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                     roundResult.setUpdateState(0);
                     roundResult.setGroupId(group.getId());
                     roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
+
                     DBManager.getInstance().insertRoundResult(roundResult);
+                    SystemSetting setting = SettingHelper.getSystemSetting();
+                    StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
+                    //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
+                    if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
+                        stuPairs.get(stuPairAdapter.getTestPosition()).setResit(true);
+                    }
                     resultList.get(i).setResult(0);
                     resultAdapter.notifyDataSetChanged();
                 }
@@ -1197,7 +1208,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
      * 连续测试
      */
     private void continuousTest() {
-        if (roundNo < TestConfigs.getMaxTestCount(this)) {
+        if (roundNo <= setTestCount()) {
             //是否存在可以测试位置
             if (isExistTestPlace()) {
                 prepareForBegin();
@@ -1216,6 +1227,15 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
 
 
         }
+    }
+
+    private int setTestCount() {
+        SystemSetting setting = SettingHelper.getSystemSetting();
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(position()).getStudent().getStudentCode());
+        if (setting.isResit() || studentItem.getMakeUpType()==1){
+            return stuPairs.get(position()).getTestNo() == -1 ? TestConfigs.getMaxTestCount() : stuPairs.get(position()).getTestNo();
+        }
+        return TestConfigs.getMaxTestCount();
     }
 
 

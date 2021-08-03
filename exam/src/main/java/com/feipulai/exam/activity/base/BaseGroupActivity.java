@@ -1,13 +1,12 @@
 package com.feipulai.exam.activity.base;
 
 import android.content.Intent;
-import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -27,12 +26,11 @@ import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.RadioTimer.RunTimerSetting;
 import com.feipulai.exam.activity.RadioTimer.newRadioTimer.NewRadioGroupActivity;
-import com.feipulai.exam.activity.basketball.BasketBallSelectActivity;
 import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.basketball.DribbleShootGroupActivity;
 import com.feipulai.exam.activity.basketball.ShootSetting;
 import com.feipulai.exam.activity.basketball.ShootSettingActivity;
-import com.feipulai.exam.activity.data.DataManageActivity;
+import com.feipulai.exam.activity.jump_rope.fragment.IndividualCheckFragment;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.medicineBall.MedicineBallSetting;
 import com.feipulai.exam.activity.medicineBall.more_device.BallGroupMoreActivity;
@@ -126,6 +124,8 @@ public class BaseGroupActivity extends BaseTitleActivity {
     private List<RoundResult> resultList = new ArrayList<>();
     private ResultsAdapter resultsAdapter;
     private boolean isBack;
+    private SystemSetting systemSetting;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_base_group;
@@ -202,21 +202,72 @@ public class BaseGroupActivity extends BaseTitleActivity {
         stuAdapter.setItemClickListener(new BaseGroupAdapter.OnPopItemClickListener() {
 
             @Override
-            public void itemClick(int pos, boolean isChecked) {
-//                SystemSetting setting = SettingHelper.getSystemSetting();
-//                List<StudentItem> studentItemList = stuPairsList.get(pos).getStudent().getStudentItemList();
-//                boolean isItem = false;
-//                for (StudentItem item : studentItemList){
-//                    if(item.getItemCode().equals(TestConfigs.sCurrentItem.getItemCode())){
-//
-//                    }
-//                }
-//                if (setting.isResit() || setting.isAgainTest()){
-//
-//                }
+            public void itemClick(final int pos, boolean isChecked) {
+                if (isChecked){
 
-                stuPairsList.get(pos).setCanTest(isChecked);
+                    StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.sCurrentItem.getItemCode(),stuPairsList.get(pos).getStudent().getStudentCode());
+                    List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(TestConfigs.sCurrentItem.getItemCode(), stuPairsList.get(pos).getStudent().getStudentCode());
+                    Log.e("TAG",results.toString());
+                    if (results != null && results.size() >= TestConfigs.getMaxTestCount(getApplicationContext())) {
+                        Log.e("TAG", systemSetting.isResit() + "---" + systemSetting.isAgainTest() + "---" + (studentItem.getMakeUpType() == 1));
+                        if (systemSetting.isResit() || systemSetting.isAgainTest() || studentItem.getMakeUpType() == 1) {
+                            if (systemSetting.isResit() || studentItem.getMakeUpType() == 1) {
+                                ResitDialog dialog = new ResitDialog();
+                                dialog.setArguments(stuPairsList.get(pos).getStudent(), results, studentItem);
+                                dialog.setOnIndividualCheckInListener(new ResitDialog.onClickQuitListener() {
+                                    @Override
+                                    public void onCancel() {
+                                        stuPairsList.get(pos).setCanTest(false);
+                                        stuPairsList.get(pos).setResit(false);
+                                        stuAdapter.notifyItemChanged(pos);
+                                    }
 
+                                    @Override
+                                    public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results) {
+                                        stuPairsList.get(pos).setTestNo(1);
+                                        stuPairsList.get(pos).setRoundNo(1);
+                                        stuPairsList.get(pos).setCanTest(true);
+                                        stuAdapter.notifyItemChanged(pos);
+                                    }
+                                });
+                                dialog.show(getSupportFragmentManager(), "ResitDialog");
+                            }
+                            if (systemSetting.isAgainTest()){
+                                AgainTestDialog dialog = new AgainTestDialog();
+                                dialog.setArguments(stuPairsList.get(pos).getStudent(),results,studentItem);
+                                dialog.setOnIndividualCheckInListener(new ResitDialog.onClickQuitListener() {
+                                    @Override
+                                    public void onCancel() {
+                                        stuPairsList.get(pos).setCanTest(false);
+                                        stuPairsList.get(pos).setAgain(false);
+                                        stuAdapter.notifyItemChanged(pos);
+                                    }
+
+                                    @Override
+                                    public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results) {
+                                        for (int i = 0 ; i < results.size() ; i++){
+                                            RoundResult result = results.get(i);
+                                            if (result.isDelete()){
+                                                stuPairsList.get(pos).setTestNo(1);
+                                                stuPairsList.get(pos).setRoundNo(result.getRoundNo());
+                                                stuPairsList.get(pos).setCanTest(true);
+                                                stuAdapter.notifyItemChanged(pos);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                });
+                                dialog.show(getSupportFragmentManager(),"AgainTestDialog");
+                            }
+                        }else {
+                            stuPairsList.get(pos).setCanTest(isChecked);
+                        }
+                    }else {
+                        stuPairsList.get(pos).setCanTest(isChecked);
+                    }
+                }else {
+                    stuPairsList.get(pos).setCanTest(isChecked);
+                }
 
             }
         });
@@ -600,6 +651,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     startActivity(new Intent(this, SitUpArmCheckActivity.class));
                     return;
                 }
+
                 startActivity(new Intent(this, TestConfigs.groupActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
                 break;
 
@@ -806,13 +858,4 @@ public class BaseGroupActivity extends BaseTitleActivity {
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (isBack){
-            updateStudents(groupList.get(groupAdapter.getTestPosition()));
-            isBack = false;
-        }
-
-    }
 }

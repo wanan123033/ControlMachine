@@ -29,6 +29,7 @@ import com.feipulai.exam.activity.jump_rope.check.CheckUtils;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.adapter.VolleyBallGroupStuAdapter;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
@@ -37,6 +38,7 @@ import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.PrintResultUtil;
 import com.feipulai.exam.utils.ResultDisplayUtils;
@@ -122,6 +124,7 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
     private String name;
     private String testDate;
     private boolean saved;
+    private List<BaseStuPair> stuPairsList;
 
     protected int setLayoutResID() {
         return R.layout.activity_basket_ball_shoot_group;
@@ -708,6 +711,12 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
         }
         LogUtils.operation("篮球投篮确认保存成绩:result = " + roundResult.getResult() + "---" + roundResult.toString());
         DBManager.getInstance().insertRoundResult(roundResult);
+        SystemSetting setting = SettingHelper.getSystemSetting();
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairsList.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
+        //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
+        if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairsList.get(stuPairAdapter.getTestPosition()).isResit()){
+            stuPairsList.get(stuPairAdapter.getTestPosition()).setResit(true);
+        }
         //获取所有成绩设置为非最好成绩
         List<RoundResult> results = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");
         TestCache.getInstance().getResults().put(student, results);

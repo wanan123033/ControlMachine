@@ -63,8 +63,8 @@ public class MyApplication extends MultiDexApplication {
         CrashHandler.getInstance().setUploadOpersion(new CrashHandler.UploadOpersion() {
             @Override
             public void upload(String erroMsg) {
-                new HttpSubscriber().uploadLog(erroMsg);
-                IntentUtil.gotoActivity(instance, SplashScreenActivity.class);
+//                new HttpSubscriber().uploadLog(erroMsg);
+//                IntentUtil.gotoActivity(instance, SplashScreenActivity.class);
             }
         });
         SettingHelper.init(this);

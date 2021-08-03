@@ -67,6 +67,10 @@ public class AdvancedSettingActivity extends BaseTitleActivity {
     CheckBox swMedicineBall;
     @BindView(R.id.cb_input_test)
     CheckBox cbInputTest;
+    @BindView(R.id.cb_again)
+    CheckBox cbAgain;
+    @BindView(R.id.cb_resit)
+    CheckBox cbResit;
     @BindView(R.id.sp_jump_rope_state_count)
     Spinner spJumpRopeStateCount;
     private SystemSetting systemSetting;
@@ -136,6 +140,9 @@ public class AdvancedSettingActivity extends BaseTitleActivity {
         ropeStateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spJumpRopeStateCount.setAdapter(ropeStateAdapter);
         spJumpRopeStateCount.setSelection(jumpRopeSetting.getGetStateLoopCount() - 3);
+
+        cbResit.setChecked(systemSetting.isResit());
+        cbAgain.setChecked(systemSetting.isAgainTest());
     }
 
     @OnItemSelected({R.id.sp_situp_angle, R.id.sp_jump_rope_state_count})

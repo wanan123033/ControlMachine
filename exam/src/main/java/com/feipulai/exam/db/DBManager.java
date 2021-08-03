@@ -1796,6 +1796,17 @@ public class DBManager {
                 .list();
     }
 
+    public List<RoundResult> queryGroupRound(String studentCode, String groupId,int examType) {
+        return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
+                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(RoundResultDao.Properties.ExamType.eq(examType))
+                .where(RoundResultDao.Properties.GroupId.eq(groupId))
+                .list();
+    }
+
     /**
      * 查询对应考生当前项目轮次所有成绩
      *

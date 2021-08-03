@@ -1,6 +1,7 @@
 package com.feipulai.exam.adapter;
 
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
@@ -17,7 +18,7 @@ import java.util.List;
  * Created by pengjf on 2018/11/20.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
-
+@Deprecated
 public class BaseGroupAdapter extends BaseQuickAdapter<BaseStuPair, BaseViewHolder> {
 
     private OnPopItemClickListener itemClickListener;
@@ -46,6 +47,7 @@ public class BaseGroupAdapter extends BaseQuickAdapter<BaseStuPair, BaseViewHold
             helper.setOnCheckedChangeListener(R.id.rb_can_test, new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    Log.e("TAG","----------");
                     if (itemClickListener != null) {
                         itemClickListener.itemClick(helper.getAdapterPosition(), isChecked);
                     }

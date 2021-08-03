@@ -8,6 +8,7 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.MachineCode;
+import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForGroupActivity;
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForPersonActivity;
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleRaceSettingActivity;
@@ -569,6 +570,9 @@ public class TestConfigs {
                 throw new IllegalArgumentException("wrong machine code");
         }
         return result;
+    }
+    public static int getMaxTestCount() {
+        return getMaxTestCount(MyApplication.getInstance());
     }
 
 }

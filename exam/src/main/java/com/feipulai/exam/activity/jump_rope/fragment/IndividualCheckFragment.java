@@ -115,6 +115,19 @@ public class IndividualCheckFragment
     private SweetAlertDialog thermometerDialog;
     private SweetAlertDialog thermometerOpenDialog;
     private ScannerGunManager scannerGunManager;
+    private ResitDialog.onClickQuitListener onClickQuitListener = new ResitDialog.onClickQuitListener() {
+        @Override
+        public void onCancel() {
+
+        }
+
+        @Override
+        public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results) {
+            if (listener != null){
+                listener.onIndividualCheckIn(student, studentItem, results);
+            }
+        }
+    };
 
     public void setResultView(ListView lvResults) {
         this.lvResults = lvResults;
@@ -382,7 +395,7 @@ public class IndividualCheckFragment
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 AgainTestDialog dialog = new AgainTestDialog();
                                 dialog.setArguments(finalStudent,results,studentItem);
-                                dialog.setOnIndividualCheckInListener(listener);
+                                dialog.setOnIndividualCheckInListener(onClickQuitListener);
                                 dialog.show(getActivity().getSupportFragmentManager(),"AgainTestDialog");
                                 sweetAlertDialog.dismissWithAnimation();
                             }
@@ -392,7 +405,7 @@ public class IndividualCheckFragment
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 ResitDialog dialog = new ResitDialog();
                                 dialog.setArguments(finalStudent,results,studentItem);
-                                dialog.setOnIndividualCheckInListener(listener);
+                                dialog.setOnIndividualCheckInListener(onClickQuitListener);
                                 dialog.show(getActivity().getSupportFragmentManager(),"ResitDialog");
                                 sweetAlertDialog.dismissWithAnimation();
                             }
@@ -402,13 +415,14 @@ public class IndividualCheckFragment
             if (setting.isAgainTest()){
                 AgainTestDialog dialog = new AgainTestDialog();
                 dialog.setArguments(student,results,studentItem);
-                dialog.setOnIndividualCheckInListener(listener);
+                dialog.setOnIndividualCheckInListener(onClickQuitListener);
                 dialog.show(getActivity().getSupportFragmentManager(),"AgainTestDialog");
+                return false;
             }
             if (setting.isResit()){
                 ResitDialog dialog = new ResitDialog();
                 dialog.setArguments(student,results,studentItem);
-                dialog.setOnIndividualCheckInListener(listener);
+                dialog.setOnIndividualCheckInListener(onClickQuitListener);
                 dialog.show(getActivity().getSupportFragmentManager(),"ResitDialog");
             }else {
                 InteractUtils.toastSpeak(getActivity(), "该考生已测试");

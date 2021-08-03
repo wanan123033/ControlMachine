@@ -30,6 +30,7 @@ import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseAFRFragment;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.adapter.PopAdapter;
 import com.feipulai.exam.adapter.RunNumberAdapter;
 import com.feipulai.exam.adapter.RunNumberAdapter2;
@@ -298,7 +299,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
             case R.id.tv_wait_start://等待发令
                 LogUtils.operation("红外计时点击了等待发令");
                 waitStart();
-                if (currentTestTime >= maxTestTimes) {
+                if (currentTestTime >= setTestCount()) {
                     isOverTimes = true;
                 } else {
                     showReady(mList, true);
@@ -339,13 +340,13 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
                             list.add(getFormatTime(result.getResult()));
                         }
 
-                        disposeManager.printResult(runStudent.getStudent(), list, currentTestTime, maxTestTimes, -1);
+                        disposeManager.printResult(runStudent.getStudent(), list, currentTestTime, setTestCount(), -1);
                         list.clear();
                     }
                 }
                 disposeManager.setShowLed(mList);
 
-                if (currentTestTime >= maxTestTimes) {//回到初始界面
+                if (currentTestTime >= setTestCount()) {//回到初始界面
                     currentTestTime = 0;
                     llFirst.setVisibility(View.VISIBLE);
                     rlSecond.setVisibility(View.GONE);
@@ -372,6 +373,13 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
         }
     }
 
+    private int setTestCount() {
+        SystemSetting setting = SettingHelper.getSystemSetting();
+        if (setting.isResit()){
+            return 1;
+        }
+        return TestConfigs.getMaxTestCount();
+    }
 
 
     @Override
@@ -406,7 +414,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
             LogUtils.operation("红外计时检入到学生StudentItem:"+studentItem.toString());
         if (roundResultList != null)
             LogUtils.operation("红外计时检入到学生成绩:"+roundResultList.size()+"----"+roundResultList.toString());
-        if (roundResultList != null && roundResultList.size() >= maxTestTimes) {
+        if (roundResultList != null && roundResultList.size() >= setTestCount()) {
             //已测试，不重测
 //            roundNo = roundResult.getRoundNo();
 //            selectTestDialog(student);
@@ -446,7 +454,6 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
             mAdapter.notifyDataSetChanged();
             showReady(mList, false);
         } else {
-
             ToastUtils.showShort("设备正在使用中");
         }
     }

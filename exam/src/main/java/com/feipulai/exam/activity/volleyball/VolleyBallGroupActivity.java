@@ -54,6 +54,7 @@ import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.WaitDialog;
@@ -122,6 +123,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
     private WaitDialog changBadDialog;
     private SitPullLinker linker;
     protected final int TARGET_FREQUENCY = SettingHelper.getSystemSetting().getUseChannel();
+    private List<BaseStuPair> stuPairs;
 
     @Override
     protected int setLayoutResID() {
@@ -144,7 +146,8 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         tvGroupName.setText(String.format(Locale.CHINA, "%s第%d组", type, group.getGroupNo()));
 
         TestCache.getInstance().init();
-        pairs = CheckUtils.newPairs(((List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu")).size());
+        stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
+        pairs = CheckUtils.newPairs(stuPairs.size());
         LogUtils.operation("排球获取分组信息:" + pairs.size() + "---" + pairs.toString());
         CheckUtils.groupCheck(pairs);
 
@@ -204,7 +207,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
                 LogUtils.operation("排球点击了打印");
                 TestCache testCache = TestCache.getInstance();
                 InteractUtils.printResults(group, testCache.getAllStudents(), testCache.getResults(),
-                        TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
+                        setTestCount(), testCache.getTrackNoMap());
                 break;
 
             case R.id.tv_confirm:
@@ -254,7 +257,12 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         List<StuDevicePair> pairList = new ArrayList<>(1);
         pairList.add(pairs.get(position()));
         InteractUtils.saveResults(pairList, testDate);
-
+        SystemSetting setting = SettingHelper.getSystemSetting();
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
+        //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
+        if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
+            stuPairs.get(stuPairAdapter.getTestPosition()).setResit(true);
+        }
         int isTestComplete = group.getIsTestComplete();
         if (isTestComplete == Group.NOT_TEST) {
             group.setIsTestComplete(Group.NOT_FINISHED);
@@ -295,7 +303,13 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
                 StuDevicePair pair = pairs.get(i);
                 List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound
                         (pair.getStudent().getStudentCode(), group.getId() + "");
-                if ((roundResultList == null || roundResultList.size() == 0 || roundResultList.size() < TestConfigs.getMaxTestCount(this))) {
+                SystemSetting setting = SettingHelper.getSystemSetting();
+                StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),pair.getStudent().getStudentCode());
+                //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
+                if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(position()).isResit()){
+                    roundResultList.clear();
+                }
+                if ((roundResultList == null || roundResultList.size() == 0 || roundResultList.size() < setTestCount())) {
                     switchToPosition(i);
                     return;
                 }
@@ -306,7 +320,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
                     StuDevicePair pair = pairs.get(j);
                     List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound
                             (pair.getStudent().getStudentCode(), group.getId() + "");
-                    if ((roundResultList.size() < (i + 1))) {
+                    if ((roundResultList.size() < setTestCount())) {
                         switchToPosition(j);
                         return;
                     }
@@ -342,7 +356,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
                         InteractUtils.printA4Result(this, group);
                     } else {
                         InteractUtils.printResults(group, testCache.getAllStudents(), testCache.getResults(),
-                                TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
+                                setTestCount(), testCache.getTrackNoMap());
                     }
 
                 }
@@ -419,7 +433,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
     }
 
     private boolean hasRemains(List<RoundResult> roundResults) {
-        return roundResults.size() < TestConfigs.getMaxTestCount(this);
+        return roundResults.size() < setTestCount();
     }
 
     private void prepareView(boolean tvPrintEnable, boolean tvStartTestEnable, boolean tvAbandonTestEnable, boolean tvConfirmEnable,
@@ -461,7 +475,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         List<RoundResult> results = TestCache.getInstance().getResults().get(student);
 
         prepareView(true,
-                results == null || results.size() < TestConfigs.getMaxTestCount(this),
+                results == null || results.size() < setTestCount(),
                 false, false, false, false,
                 false);
 
@@ -597,7 +611,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
     }
 
     private void setAdapter() {
-        int maxTestNo = TestConfigs.getMaxTestCount(this);
+        int maxTestNo = setTestCount();
         GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
         rvTestResult.setLayoutManager(layoutManager);
         Student student = TestCache.getInstance().getAllStudents().get(position());
@@ -611,6 +625,19 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         }
         BasePersonTestResultAdapter adapter = new BasePersonTestResultAdapter(results);
         rvTestResult.setAdapter(adapter);
+    }
+
+    public int setTestCount() {
+        SystemSetting setting = SettingHelper.getSystemSetting();
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(position()).getStudent().getStudentCode());
+        if (setting.isResit() || studentItem.getMakeUpType() == 1){
+            return stuPairs.get(position()).getTestNo();
+        }
+        if (TestConfigs.sCurrentItem.getTestNum() != 0) {
+            return TestConfigs.sCurrentItem.getTestNum();
+        } else {
+            return TestConfigs.getMaxTestCount();
+        }
     }
 
     public void showPenalizeDialog(int max) {

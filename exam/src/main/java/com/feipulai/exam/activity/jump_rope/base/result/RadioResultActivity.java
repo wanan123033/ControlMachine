@@ -15,6 +15,7 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.jump_rope.adapter.ResultDisplayAdapter;
+import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;

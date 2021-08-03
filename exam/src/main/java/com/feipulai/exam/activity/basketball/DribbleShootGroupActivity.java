@@ -34,6 +34,7 @@ import com.feipulai.exam.activity.jump_rope.check.CheckUtils;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.adapter.VolleyBallGroupStuAdapter;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
@@ -43,6 +44,7 @@ import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.MachineResult;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.PrintResultUtil;
 import com.feipulai.exam.utils.ResultDisplayUtils;
@@ -141,6 +143,7 @@ public class DribbleShootGroupActivity extends BaseTitleActivity implements Base
     private String[] interceptRound = new String[]{"1起点", "2折返1", "3投篮", "4折返2", "5投篮", "6折返1", "7投篮", "8折返2", "9投篮"};
     private List<MachineResult> machineResultList = new ArrayList<>();
     private Student student;
+    private List<BaseStuPair> stuPairs;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_dribble_shoot_group;
@@ -164,7 +167,8 @@ public class DribbleShootGroupActivity extends BaseTitleActivity implements Base
 
         //获取分组学生数据
         TestCache.getInstance().init();
-        pairs = CheckUtils.newPairs(((List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu")).size());
+        stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
+        pairs = CheckUtils.newPairs(stuPairs.size());
         LogUtils.operation("篮球获取到分组学生:" + pairs.size() + "---" + pairs.toString());
         CheckUtils.groupCheck(pairs);
 
@@ -316,8 +320,14 @@ public class DribbleShootGroupActivity extends BaseTitleActivity implements Base
         //  查询学生成绩 当有成绩则添加数据跳过测试
         List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound
                 (studentCode, group.getId() + "");
+        SystemSetting setting = SettingHelper.getSystemSetting();
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
+        //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
+        if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
+            roundResultList.clear();
+        }
         //成绩数量是否小于测试次数
-        if (roundResultList.size() < TestConfigs.getMaxTestCount(this)) {
+        if (roundResultList.size() < setTestCount()) {
             boolean isSkip = false;
             for (RoundResult roundResult : roundResultList) {
                 //成绩是否存在满分跳过
@@ -340,7 +350,7 @@ public class DribbleShootGroupActivity extends BaseTitleActivity implements Base
         Student student = TestCache.getInstance().getAllStudents().get(position());
         List<RoundResult> roundResults = TestCache.getInstance().getResults().get(student);
         roundNo = (roundResults == null ? 1 : roundResults.size() + 1);
-        for (int i = 0; i < TestConfigs.getMaxTestCount(this); i++) {
+        for (int i = 0; i < setTestCount(); i++) {
             RoundResult roundResult = DBManager.getInstance().queryGroupRoundNoResult(student.getStudentCode(), group.getId() + "", i + 1);
             if (roundResult == null) {
                 resultList.add(new BasketBallTestResult(i + 1, new ArrayList<MachineResult>(), 0, -999, 0, -999));
@@ -759,6 +769,12 @@ public class DribbleShootGroupActivity extends BaseTitleActivity implements Base
         LogUtils.operation("篮球确认保存成绩:result = " + roundResult.getResult() + "---" + roundResult.toString());
         DBManager.getInstance().insertRoundResult(roundResult);
         //获取所有成绩设置为非最好成绩
+        SystemSetting setting = SettingHelper.getSystemSetting();
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
+        //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
+        if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
+            stuPairs.get(stuPairAdapter.getTestPosition()).setResit(true);
+        }
         List<RoundResult> results = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");
         TestCache.getInstance().getResults().put(student, results);
 
@@ -899,5 +915,13 @@ public class DribbleShootGroupActivity extends BaseTitleActivity implements Base
         super.onDestroy();
         if (timer!=null)
             timer.dispose();
+    }
+    private int setTestCount() {
+        SystemSetting setting = SettingHelper.getSystemSetting();
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(position()).getStudent().getStudentCode());
+        if (setting.isResit() || studentItem.getMakeUpType()==1){
+            return stuPairs.get(position()).getTestNo() == -1 ? TestConfigs.getMaxTestCount() : stuPairs.get(position()).getTestNo();
+        }
+        return TestConfigs.getMaxTestCount();
     }
 }

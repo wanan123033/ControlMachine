@@ -53,6 +53,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
         if (uploadOpersion != null) {
             uploadOpersion.upload(erroMsg);
         }
+        ex.printStackTrace();
         //使用Toast来显示异常信息
         new Thread() {
 

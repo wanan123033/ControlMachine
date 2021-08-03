@@ -1,5 +1,6 @@
 package com.feipulai.exam.activity.person;
 
+import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.Student;
 
 import java.io.Serializable;
@@ -40,18 +41,22 @@ public class BaseStuPair implements Serializable {
     private int time;
     private String testTime; //测试当前轮次的开始时间
     private String endTime; // 结束时间
-    private int testNo; //测试次数
+    private int testNo = -1; //测试次数   不是补考或重测时为-1
+    private boolean isResit;  // 是否已补考完成  分组模式要用到
+    private boolean isAgain; //是否已重测 分组模式要用到
 
     public BaseStuPair(int result, int resultState, Student student, BaseDeviceState baseDevice) {
         this.result = result;
         this.resultState = resultState;
         this.student = student;
         this.baseDevice = baseDevice;
+        testNo = TestConfigs.getMaxTestCount();
     }
 
     public BaseStuPair(Student student, BaseDeviceState baseDevice) {
         this.student = student;
         this.baseDevice = baseDevice;
+        testNo = TestConfigs.getMaxTestCount();
     }
 
     public BaseStuPair() {
@@ -230,5 +235,21 @@ public class BaseStuPair implements Serializable {
 
     public void setTestNo(int testNo) {
         this.testNo = testNo;
+    }
+
+    public boolean isResit() {
+        return isResit;
+    }
+
+    public void setResit(boolean resit) {
+        isResit = resit;
+    }
+
+    public boolean isAgain() {
+        return isAgain;
+    }
+
+    public void setAgain(boolean again) {
+        isAgain = again;
     }
 }

@@ -63,7 +63,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
     /**
      * 最大测试次数
      */
-    public int maxTestTimes;
+//    public int maxTestTimes;
     public boolean isOverTimes;
     public RunTimerDisposeManager disposeManager;
     private int interceptWay;
@@ -97,11 +97,11 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
         if (null == runTimerSetting) {
             runTimerSetting = new RunTimerSetting();
         }
-        if (TestConfigs.sCurrentItem.getTestNum() != 0) {
-            maxTestTimes = TestConfigs.sCurrentItem.getTestNum();
-        } else {
-            maxTestTimes = runTimerSetting.getTestTimes();
-        }
+//        if (TestConfigs.sCurrentItem.getTestNum() != 0) {
+//            maxTestTimes = TestConfigs.sCurrentItem.getTestNum();
+//        } else {
+//            maxTestTimes = runTimerSetting.getTestTimes();
+//        }
         if (runNum != Integer.parseInt(runTimerSetting.getRunNum()) || interceptPoint != runTimerSetting.getInterceptPoint()
                 || interceptWay != runTimerSetting.getInterceptWay() || settingSensor != runTimerSetting.getSensor()) {
 //            getSetting();
@@ -123,11 +123,11 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
         }
         Logger.i("runTimerSetting:" + runTimerSetting.toString());
 
-        if (TestConfigs.sCurrentItem.getTestNum() != 0) {
-            maxTestTimes = TestConfigs.sCurrentItem.getTestNum();
-        } else {
-            maxTestTimes = runTimerSetting.getTestTimes();
-        }
+//        if (TestConfigs.sCurrentItem.getTestNum() != 0) {
+//            maxTestTimes = TestConfigs.sCurrentItem.getTestNum();
+//        } else {
+//            maxTestTimes = runTimerSetting.getTestTimes();
+//        }
 
         //跑道数量
         runNum = Integer.parseInt(runTimerSetting.getRunNum());
@@ -137,7 +137,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
         int senNum = runTimerSetting.getSensitivityNum();
         int hostId = SettingHelper.getSystemSetting().getHostId();
         RunTimerManager.cmdSetting(runNum,hostId,interceptPoint,interceptWay,settingSensor,senNum);
-        maxTestTimes = runTimerSetting.getTestTimes();
+//        maxTestTimes = runTimerSetting.getTestTimes();
     }
 
 
