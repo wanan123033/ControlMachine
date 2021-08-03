@@ -82,7 +82,7 @@ public class ScannerGunManager {
 //            }
 
             //识别到结束，当下使用的设备是  是还会有个KEYCODE_DPAD_DOWN 事件，不知道其它设备有没有  先忽略
-            if (code == KeyEvent.KEYCODE_ENTER) {
+            if (code == KeyEvent.KEYCODE_ENTER||code==KeyEvent.KEYCODE_TAB) {
 
                 if (listener != null) {
                     listener.onResult(codeStr);

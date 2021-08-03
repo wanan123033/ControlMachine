@@ -230,12 +230,13 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
     private void addTestResult() {
         RoundResult roundResult = new RoundResult();
         roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
-        roundResult.setStudentCode("193012100030");
+        roundResult.setStudentCode("0111960128");
         String itemCode = TestConfigs.sCurrentItem.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : TestConfigs.sCurrentItem.getItemCode();
         roundResult.setItemCode(itemCode);
-        roundResult.setResult(122);
+        roundResult.setResult(54500);
         roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
-        roundResult.setTestTime(DateUtil.getCurrentTime() + "");
+        roundResult.setTestTime("1621038454000");
+        roundResult.setEndTime("1621038499500");
         roundResult.setRoundNo(1);
         roundResult.setTestNo(1);
         roundResult.setExamType(0);
@@ -243,7 +244,22 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
         roundResult.setIsLastResult(1);
         roundResult.setScheduleNo("1");
         roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
-        roundResult.setIsLastResult(1);
+        DBManager.getInstance().insertRoundResult(roundResult);
+        roundResult = new RoundResult();
+        roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
+        roundResult.setStudentCode("0111960128");
+        roundResult.setItemCode(itemCode);
+        roundResult.setResult(54700);
+        roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
+        roundResult.setTestTime("1621039570000");
+        roundResult.setEndTime("1621039624700");
+        roundResult.setRoundNo(2);
+        roundResult.setTestNo(1);
+        roundResult.setExamType(0);
+        roundResult.setUpdateState(0);
+        roundResult.setIsLastResult(0);
+        roundResult.setScheduleNo("1");
+        roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
         DBManager.getInstance().insertRoundResult(roundResult);
 
 //        List<RoundResult> results = new ArrayList<>();

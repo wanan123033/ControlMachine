@@ -60,9 +60,9 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         setting = getSetting();
         systemSetting = SettingHelper.getSystemSetting();
         mLEDManager = new LEDManager();
-        if (TestCache.getInstance().getTestingPairs()==null){
+        if (TestCache.getInstance().getTestingPairs() == null || TestCache.getInstance().getTestingPairs().size() == 0) {
             pairs = CheckUtils.newPairs(getDeviceSumFromSetting());
-        }else{
+        } else {
             pairs = TestCache.getInstance().getTestingPairs();
         }
 
