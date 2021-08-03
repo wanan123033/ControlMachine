@@ -13,11 +13,13 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.manager.JumpRopeManager;
+import com.feipulai.device.manager.MedicineBallMore;
 import com.feipulai.device.manager.SitPushUpManager;
 import com.feipulai.device.manager.SportTimerManger;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.JumpRopeResult;
+import com.feipulai.device.serial.beans.MedicineBallNewResult;
 import com.feipulai.device.serial.beans.SitPushUpStateResult;
 import com.feipulai.device.serial.beans.SportResult;
 import com.feipulai.exam.R;
@@ -163,6 +165,9 @@ public class CorrespondTestActivity extends BaseTitleActivity implements GetDevi
             case ItemDefault.CODE_YWQZ:
                 sitPushUpManager.getState(position + 1);
                 break;
+            case ItemDefault.CODE_HWSXQ:
+                MedicineBallMore.sendGetState(systemSetting.getHostId(), position+1);
+                break;
         }
 
         for (int i = 0; i < correspondBeans.size(); i++) {
@@ -221,6 +226,20 @@ public class CorrespondTestActivity extends BaseTitleActivity implements GetDevi
             case SerialConfigs.SIT_UP_GET_STATE:
                 if (msg.obj instanceof SitPushUpStateResult) {
                     SitPushUpStateResult sitResult = (SitPushUpStateResult) msg.obj;
+                    for (int i = 0; i < correspondBeans.size(); i++) {
+                        CorrespondBean bean = correspondBeans.get(i);
+                        if (sitResult.getDeviceId() == bean.deviceId) {
+                            bean.receiverNum++;
+                            bean.quality = String.format("%.1f", (((double) bean.sendNum - (double) bean.receiverNum) / (double) bean.sendNum * 100)) + "%";
+//                            bean.quality = (((double)bean.sendNum - (double)bean.receiverNum) / (double)bean.sendNum *100) + "%";
+                        }
+                    }
+                    runOnUiThread(runnable);
+                }
+                break;
+            case SerialConfigs.MEDICINE_BALL_MATCH_MORE:
+                if (msg.obj instanceof SitPushUpStateResult) {
+                    MedicineBallNewResult sitResult = (MedicineBallNewResult) msg.obj;
                     for (int i = 0; i < correspondBeans.size(); i++) {
                         CorrespondBean bean = correspondBeans.get(i);
                         if (sitResult.getDeviceId() == bean.deviceId) {

@@ -29,9 +29,9 @@ public class PenalizeResultAdapter extends BaseQuickAdapter<String, BaseViewHold
 
 //        holder.setText(R.id.item_txt_test_time, String.format("第%1$d次成绩：", holder.getLayoutPosition() + 1));
         if (!TextUtils.isEmpty(result)) {
-            holder.setText(R.id.item_txt_test_result, result);
+            holder.setText(R.id.tv_result, result);
         } else {
-            holder.setText(R.id.item_txt_test_result, "");
+            holder.setText(R.id.tv_result, "");
         }
         switch (holder.getLayoutPosition()) {
             case 0:

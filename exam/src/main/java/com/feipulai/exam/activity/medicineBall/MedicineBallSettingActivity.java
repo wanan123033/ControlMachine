@@ -10,6 +10,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -26,6 +27,7 @@ import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseActivity;
 import com.feipulai.exam.activity.medicineBall.pair.MedicineBallPairActivity;
+import com.feipulai.exam.activity.setting.CorrespondTestActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.BaseEvent;
@@ -62,6 +64,9 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
     TextView tvDeviceCheck;
     @BindView(R.id.tv_device_result)
     TextView tvDeviceResult;
+    @BindView(R.id.btn_connect)
+    Button btnConnect;
+
     private String[] spinnerItems;
     private MedicineBallSetting medicineBallSetting;
     @BindView(R.id.et_begin_point)
@@ -153,6 +158,7 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
         });
 
         tvMatch.setVisibility(medicineBallSetting.getConnectType() == 1 ? View.VISIBLE : View.GONE);
+        btnConnect.setVisibility(medicineBallSetting.getConnectType() == 1 ? View.VISIBLE : View.GONE);
         tvDeviceCheck.setVisibility(medicineBallSetting.getConnectType() == 0 ? View.VISIBLE : View.GONE);
     }
 
@@ -269,11 +275,14 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
         }
     };
 
-    @OnClick({R.id.tv_match})
+    @OnClick({R.id.tv_match,R.id.btn_connect})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_match:
                 startActivity(new Intent(this, MedicineBallPairActivity.class));
+                break;
+            case R.id.btn_connect:
+                startActivity(new Intent(this, CorrespondTestActivity.class));
                 break;
         }
     }
