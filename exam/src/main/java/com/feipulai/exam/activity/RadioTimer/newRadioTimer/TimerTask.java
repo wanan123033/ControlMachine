@@ -1,18 +1,7 @@
 package com.feipulai.exam.activity.RadioTimer.newRadioTimer;
 
-import android.os.SystemClock;
-import android.util.Log;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 public class TimerTask {
     private TimeUpdateListener timeUpdateListener;
@@ -57,7 +46,7 @@ public class TimerTask {
         }
     }
 
-    public void setStartInit() {
+    public void setStart() {
 //        disposeTime = SystemClock.elapsedRealtime();
         disposeTime = System.currentTimeMillis();
         keepTime = true;
@@ -75,7 +64,7 @@ public class TimerTask {
         }
     }
 
-    interface TimeUpdateListener {
+    public interface TimeUpdateListener {
         void onTimeTaskUpdate(int time);
     }
 }

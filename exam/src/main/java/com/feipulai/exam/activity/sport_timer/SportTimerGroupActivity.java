@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.led.LEDManager;
@@ -22,6 +23,7 @@ import com.feipulai.device.serial.beans.SportResult;
 import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.RadioTimer.newRadioTimer.TimerTask;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
@@ -59,7 +61,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-public class SportTimerGroupActivity extends BaseTitleActivity implements SportContract.SportView, BaseQuickAdapter.OnItemClickListener {
+public class SportTimerGroupActivity extends BaseTitleActivity implements SportContract.SportView, BaseQuickAdapter.OnItemClickListener, TimerTask.TimeUpdateListener {
     @BindView(R.id.rv_testing_pairs)
     RecyclerView rvTestingPairs;
     @BindView(R.id.tv_group_name)
@@ -127,12 +129,12 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
     private List<StuDevicePair> pairs = new ArrayList<>(1);
     private VolleyBallGroupStuAdapter stuPairAdapter;
     private boolean startTest = true;
-    private SystemSetting systemSetting;
-    private LEDManager ledManager = new LEDManager();
     private final int UPDATE_STOP = 0XF1;
     private final int UPDATE_RESULT = 0XF2;
     private final int UPDATE_ON_STOP = 0XF3;
     private final int UPDATE_ON_WAIT = 0XF4;
+    private final int UPDATE_ON_TEXT = 0XF5;
+    private TimerTask timerTask;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_group_sport_timer;
@@ -140,7 +142,6 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
 
     @Override
     protected void initData() {
-        systemSetting = SettingHelper.getSystemSetting();
         setting = SharedPrefsUtil.loadFormSource(this, SportTimerSetting.class);
         if (setting == null)
             setting = new SportTimerSetting();
@@ -243,7 +244,8 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
         sportPresent.rollConnect();
         sportPresent.setContinueRoll(true);
         showGroupLed("");
-
+        timerTask = new TimerTask(this,100);
+        timerTask.keepTime();
     }
 
 
@@ -364,6 +366,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                 break;
             case R.id.txt_illegal_return:
                 if (testState == TestState.WAIT_RESULT) {
+                    timerTask.stopKeepTime();
                     sportPresent.setDeviceStateStop();
                     receiveTime = 0;
                     testState = TestState.UN_STARTED;
@@ -374,6 +377,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                 }
                 break;
             case R.id.txt_stop_timing:
+                timerTask.stopKeepTime();
                 if (testState == TestState.WAIT_RESULT) {
                     sportPresent.setDeviceStateStop();
                     setTxtEnable(true);
@@ -745,6 +749,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                 lastTime = 0;
                 initTime = sportResult.getLongTime();
                 mHandler.sendEmptyMessage(UPDATE_STOP);
+                timerTask.setStart();
             }
             if (receiveTime >= resultList.get(roundNo - 1).getSportTimeResults().size())
                 return;
@@ -793,6 +798,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
         sportPresent.setDeviceStateStop();
         sportPresent.presentRelease();
         TestCache.getInstance().clear();
+        timerTask.release();
     }
 
     @Override
@@ -813,10 +819,10 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                     txtStopTiming.setEnabled(true);
                     break;
                 case UPDATE_RESULT:
-                    final String s =  resultList.get(roundNo - 1).getResultState() == RoundResult.RESULT_STATE_NORMAL?
-                            ResultDisplayUtils.getStrResultForDisplay(resultList.get(roundNo - 1).getResult()):"犯规";
+//                    final String s =  resultList.get(roundNo - 1).getResultState() == RoundResult.RESULT_STATE_NORMAL?
+//                            ResultDisplayUtils.getStrResultForDisplay(resultList.get(roundNo - 1).getResult()):"犯规";
                     partResultAdapter.notifyDataSetChanged();
-                    tvResult.setText(s);
+//                    tvResult.setText(s);
                     break;
                 case UPDATE_ON_STOP:
                     txtStopTiming.setEnabled(false);
@@ -833,9 +839,26 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                     receiveTime = 0;
                     txtDeviceStatus.setText("计时");
                     break;
-
+                case UPDATE_ON_TEXT:
+                    int time = (int) msg.obj;
+                    String formatTime ;
+                    if (time<60*60*1000){
+                        formatTime = DateUtil.formatTime1(time, "mm:ss.SSS");
+                    }else {
+                        formatTime = DateUtil.formatTime1(time, "HH:mm:ss");
+                    }
+                    tvResult.setText(formatTime);
+                    break;
             }
             return false;
         }
     });
+
+    @Override
+    public void onTimeTaskUpdate(int time) {
+        Message message = mHandler.obtainMessage();
+        message.what = UPDATE_ON_TEXT;
+        message.obj = time;
+        mHandler.sendMessage(message);
+    }
 }
