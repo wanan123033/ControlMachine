@@ -165,21 +165,21 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
                 break;
             case R.id.btn_sync_time:
                 sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        int runNum = setting.getDeviceCount();
-                        sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());
-                        for (int i = 0; i < runNum; i++) {
-                            try {
-                                Thread.sleep(200);
-                                sportTimerManger.getTime(i + 1, SettingHelper.getSystemSetting().getHostId());
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                },500);
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        int runNum = setting.getDeviceCount();
+//                        sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());
+//                        for (int i = 0; i < runNum; i++) {
+//                            try {
+//                                Thread.sleep(200);
+//                                sportTimerManger.getTime(i + 1, SettingHelper.getSystemSetting().getHostId());
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    }
+//                },500);
                 break;
         }
     }

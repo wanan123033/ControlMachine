@@ -30,6 +30,7 @@
             android:paddingLeft="10dp"
             android:text="00:00.00"
             android:layout_gravity="center_vertical"
+            android:gravity="center"
             android:textColor="@color/black"
             android:textSize="@dimen/sp_16" />
     </LinearLayout>

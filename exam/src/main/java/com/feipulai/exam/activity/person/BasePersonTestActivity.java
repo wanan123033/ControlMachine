@@ -283,12 +283,14 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             case EventConfigs.INSTALL_RESULT:
                 RoundResult iRoundResult = (RoundResult) baseEvent.getData();
                 if (TextUtils.equals(pair.getStudent().getStudentCode(), iRoundResult.getStudentCode())) {
-                    String[] timeResult = pair.getTimeResult();
+                    String[] timeResult = result;
 
                     timeResult[iRoundResult.getRoundNo() - 1] = ((iRoundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
                             ResultDisplayUtils.getStrResultForDisplay(iRoundResult.getResult()));
                     pair.setTimeResult(timeResult);
                 }
+                StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(pair.getStudent().getStudentCode());
+                uploadServer(pair,studentItem,iRoundResult);
                 resultList.clear();
                 resultList.addAll(Arrays.asList(result));
                 adapter.notifyDataSetChanged();
@@ -315,7 +317,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             case EventConfigs.UPDATE_RESULT:
                 RoundResult roundResult = (RoundResult) baseEvent.getData();
                 if (TextUtils.equals(pair.getStudent().getStudentCode(), roundResult.getStudentCode())) {
-                    String[] timeResult = pair.getTimeResult();
+                    String[] timeResult = result;
 
                     timeResult[roundResult.getRoundNo() - 1] = ((roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
                             ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()));
@@ -324,6 +326,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 resultList.clear();
                 resultList.addAll(Arrays.asList(result));
                 adapter.notifyDataSetChanged();
+                StudentItem stuI = DBManager.getInstance().queryStuItemByStuCode(pair.getStudent().getStudentCode());
+                uploadServer(pair,stuI,roundResult);
                 if (roundResult.getRoundNo() == roundNo) {
                     updateResultLed(((roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult())));
                 }
@@ -909,6 +913,10 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 
         DBManager.getInstance().insertRoundResult(roundResult);
         LogUtils.operation("保存成绩:" + roundResult.toString());
+        uploadServer(baseStuPair, studentItem, roundResult);
+    }
+
+    private void uploadServer(@NonNull BaseStuPair baseStuPair, StudentItem studentItem, RoundResult roundResult) {
         List<RoundResult> roundResultList = new ArrayList<>();
         roundResultList.add(roundResult);
         UploadResults uploadResults = new UploadResults(studentItem.getScheduleNo(), TestConfigs.getCurrentItemCode(),
