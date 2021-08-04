@@ -301,9 +301,11 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                         resultList.clear();
                         resultList.addAll(Arrays.asList(timeResult));
                         testResultAdapter.notifyDataSetChanged();
+                        uploadServer(baseStuPair, roundResult);
                         if (roundResult.getRoundNo() == roundNo) {
                             updateResultLed(((roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult())));
                         }
+
                         updateLastResultLed(DBManager.getInstance().queryGroupBestScore(roundResult.getStudentCode(), group.getId()));
                         //更新考生轮次位置
                         if (setTestPattern() == TestConfigs.GROUP_PATTERN_SUCCESIVE) {
@@ -932,6 +934,12 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairsList.get(stuAdapter.getTestPosition()).isResit()){
             stuPairsList.get(stuAdapter.getTestPosition()).setResit(true);
         }
+        uploadServer(baseStuPair, roundResult);
+
+
+    }
+
+    private void uploadServer(@NonNull BaseStuPair baseStuPair, RoundResult roundResult) {
         List<RoundResult> roundResultList = new ArrayList<>();
         roundResultList.add(roundResult);
         UploadResults uploadResults = new UploadResults(group.getScheduleNo()
@@ -939,8 +947,6 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 , "1", group, RoundResultBean.beanCope(roundResultList, group));
 
         uploadResult(uploadResults);
-
-
     }
 
 
