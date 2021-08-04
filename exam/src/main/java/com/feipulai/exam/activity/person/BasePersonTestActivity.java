@@ -522,37 +522,36 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 }
                 break;
             case R.id.tv_foul:
-                penalizeDialog.showDialog(0);
                 if (pair.getStudent() == null){
                     penalizeDialog.setData(0, pair.getStudent(), result, lastStudent, lastResult);
                 }else {
                     penalizeDialog.setData(1, pair.getStudent(), result, lastStudent, lastResult);
                 }
-
+                penalizeDialog.showDialog(0);
                 break;
             case R.id.tv_inBack:
-                penalizeDialog.showDialog(1);
                 if (pair.getStudent() == null){
                     penalizeDialog.setData(0, pair.getStudent(), result, lastStudent, lastResult);
                 }else {
                     penalizeDialog.setData(1, pair.getStudent(), result, lastStudent, lastResult);
                 }
+                penalizeDialog.showDialog(1);
                 break;
             case R.id.tv_abandon:
-                penalizeDialog.showDialog(2);
                 if (pair.getStudent() == null){
                     penalizeDialog.setData(0, pair.getStudent(), result, lastStudent, lastResult);
                 }else {
                     penalizeDialog.setData(1, pair.getStudent(), result, lastStudent, lastResult);
                 }
+                penalizeDialog.showDialog(2);
                 break;
             case R.id.tv_normal:
-                penalizeDialog.showDialog(3);
                 if (null == pair.getStudent()){
                     penalizeDialog.setData(0, pair.getStudent(), result, lastStudent, lastResult);
                 }else {
                     penalizeDialog.setData(1, pair.getStudent(), result, lastStudent, lastResult);
                 }
+                penalizeDialog.showDialog(3);
                 break;
         }
     }

@@ -171,7 +171,7 @@ public class PenalizeDialog {
                 break;
         }
         if (lastStudent == null && student==null){
-            dismissDialog();
+            setDialogDismiss("未找到考生");
         }
         if (selectPosition != -1){
             mAdapter.setClick(selectPosition);
