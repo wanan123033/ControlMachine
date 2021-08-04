@@ -11,16 +11,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.jump_rope.fragment.IndividualCheckFragment;
+import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.adapter.ScoreAdapter;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
+import com.feipulai.exam.utils.Toast;
 
 import java.util.List;
 
@@ -43,7 +47,9 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
     @BindView(R.id.rv_score)
     RecyclerView rv_score;
     private int selectPos;
-
+    @BindView(R.id.et_password)
+    EditText et_password;
+    private SystemSetting systemSetting;
     public void setArguments(Student student, List<RoundResult> results, StudentItem studentItem) {
         this.student = student;
         this.results = results;
@@ -62,12 +68,20 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        tv_message.setText("该学生已测试完成,是否要重新测试?");
+        systemSetting = SettingHelper.getSystemSetting();
         tv_stu_info.setText(student.getStudentCode()+"      "+student.getStudentName());
         rv_score.setLayoutManager(new GridLayoutManager(getContext(),3));
         adapter = new ScoreAdapter(results);
         rv_score.setAdapter(adapter);
         adapter.setOnItemChildClickListener(this);
+
+        if (systemSetting.getAgainPassBool()){
+            et_password.setVisibility(View.VISIBLE);
+            tv_message.setText("该考生已有成绩,请输入验证密码重新测试?");
+        }else {
+            et_password.setVisibility(View.GONE);
+            tv_message.setText("该学生已测试完成,是否要重新测试?");
+        }
     }
 
     public void setOnIndividualCheckInListener(ResitDialog.onClickQuitListener listener) {
@@ -81,11 +95,25 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
                 dismiss();
                 break;
             case R.id.tv_commit:
-                RoundResult roundResult = results.get(selectPos);
-                roundResult.setIsDelete(true);
-                DBManager.getInstance().updateRoundResult(roundResult);
-                listener.onCommit(student, studentItem, results);
-                dismiss();
+                if (systemSetting.getAgainPassBool()){
+                    String pass = et_password.getText().toString().trim();
+                    if (pass.equals(systemSetting.getAgainPass())){
+                        RoundResult roundResult = results.get(selectPos);
+                        roundResult.setIsDelete(true);
+                        DBManager.getInstance().updateRoundResult(roundResult);
+                        listener.onCommit(student, studentItem, results);
+                        dismiss();
+                    }else {
+                        Toast.makeText(getContext(),"密码错误",Toast.LENGTH_LONG).show();
+                    }
+                }else {
+                    RoundResult roundResult = results.get(selectPos);
+                    roundResult.setIsDelete(true);
+                    DBManager.getInstance().updateRoundResult(roundResult);
+                    listener.onCommit(student, studentItem, results);
+                    dismiss();
+                }
+
                 break;
         }
     }

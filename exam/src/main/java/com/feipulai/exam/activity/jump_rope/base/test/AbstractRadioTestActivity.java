@@ -323,6 +323,7 @@ public abstract class AbstractRadioTestActivity<Setting>
     @Override
     public void finishTest() {
         Intent intent = new Intent(this, RadioResultActivity.class);
+
         startActivityForResult(intent, 1);
     }
 

@@ -838,7 +838,11 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         roundResult.setMachineResult(basketballResult.getResult());
         roundResult.setRoundNo(roundNo);
         roundResult.setTestNo(1);
-        roundResult.setExamType(group.getExamType());
+//        roundResult.setExamType(group.getExamType());
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
+        if (studentItem != null){
+            roundResult.setExamType(studentItem.getExamType());
+        }
         roundResult.setScheduleNo(group.getScheduleNo());
         roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
         roundResult.setEndTime(DateUtil.getCurrentTime() + "");

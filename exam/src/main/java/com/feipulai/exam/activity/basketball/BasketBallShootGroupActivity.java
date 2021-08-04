@@ -688,7 +688,11 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
         roundResult.setMachineResult(result);
         roundResult.setRoundNo(roundNo);
         roundResult.setTestNo(1);
-        roundResult.setExamType(group.getExamType());
+//        roundResult.setExamType(group.getExamType());
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
+        if (studentItem != null){
+            roundResult.setExamType(studentItem.getExamType());
+        }
         roundResult.setScheduleNo(group.getScheduleNo());
         roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
         roundResult.setTestTime(testDate);
@@ -712,7 +716,6 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
         LogUtils.operation("篮球投篮确认保存成绩:result = " + roundResult.getResult() + "---" + roundResult.toString());
         DBManager.getInstance().insertRoundResult(roundResult);
         SystemSetting setting = SettingHelper.getSystemSetting();
-        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairsList.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
         //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
         if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairsList.get(stuPairAdapter.getTestPosition()).isResit()){
             stuPairsList.get(stuPairAdapter.getTestPosition()).setResit(true);

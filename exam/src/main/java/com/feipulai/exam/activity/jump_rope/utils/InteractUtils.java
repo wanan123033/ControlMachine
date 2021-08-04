@@ -266,7 +266,11 @@ public class InteractUtils {
                 // 分组模式下,在一个分组只允许测试一次
                 roundResult.setTestNo(1);
                 roundResult.setGroupId(TestCache.getInstance().getGroup().getId());
-                roundResult.setExamType(TestCache.getInstance().getGroup().getExamType());
+//                roundResult.setExamType(TestCache.getInstance().getGroup().getExamType());
+                StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
+                if (studentItem != null){
+                    roundResult.setExamType(studentItem.getExamType());
+                }
                 roundResult.setScheduleNo(TestCache.getInstance().getGroup().getScheduleNo());
             } else {
                 StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
@@ -289,7 +293,7 @@ public class InteractUtils {
                     Logger.i("更新成绩:" + bestResult.toString());
                 }
             }
-            results.add(roundResult);
+            results.add(0,roundResult);
 
             DBManager.getInstance().insertRoundResult(roundResult);
             LogUtils.operation("保存成绩:" + roundResult.toString());

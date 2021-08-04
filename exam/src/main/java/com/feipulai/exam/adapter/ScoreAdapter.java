@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -30,7 +31,8 @@ public class ScoreAdapter extends BaseQuickAdapter<RoundResult, ScoreAdapter.Sco
 
     @Override
     protected void convert(final ScoreViewHolder helper, final RoundResult item) {
-        helper.getView(R.id.tv_result).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT,1));
+        TextView textView = helper.getView(R.id.tv_result);
+        textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT,1));
         if (item.getResultState() == RoundResult.RESULT_STATE_NORMAL){
             helper.setText(R.id.tv_result,item.getRoundNo()+"-"+ResultDisplayUtils.getStrResultForDisplay(item.getResult()));
         }else {
@@ -41,7 +43,11 @@ public class ScoreAdapter extends BaseQuickAdapter<RoundResult, ScoreAdapter.Sco
         }else {
             helper.setBackgroundColor(R.id.tv_result, Color.WHITE);
         }
-        helper.getView(R.id.tv_result).setOnClickListener(new View.OnClickListener() {
+
+        if (item.getExamType() == 2){
+            textView.append("(补考)");
+        }
+        textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.e("TAG","onClick-------------");

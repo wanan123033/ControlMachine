@@ -6,6 +6,7 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,14 +72,23 @@ public class TestCache {
     }
 
     public Map<Student, Integer> getTestNoMap() {
+        if (testNoMap == null){
+            testNoMap = new IdentityHashMap<>();
+        }
         return testNoMap;
     }
 
     public Map<Student, StudentItem> getStudentItemMap() {
+        if (studentItemMap == null){
+            studentItemMap = new IdentityHashMap<>();
+        }
         return studentItemMap;
     }
 
     public Map<Student, Integer> getTrackNoMap() {
+        if (trackNoMap == null){
+            trackNoMap = new IdentityHashMap<>();
+        }
         return trackNoMap;
     }
 
@@ -111,6 +121,9 @@ public class TestCache {
     }
 
     public List<Student> getAllStudents() {
+        if (allStudents == null){
+            allStudents = new ArrayList<>();
+        }
         return allStudents;
     }
 

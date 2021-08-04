@@ -575,4 +575,54 @@ public class TestConfigs {
         return getMaxTestCount(MyApplication.getInstance());
     }
 
+    public static int getDeviceSumNum() {
+        int result = 0;
+        int machineCode = TestConfigs.sCurrentItem.getMachineCode();
+        switch (machineCode) {
+            case ItemDefault.CODE_ZWTQQ:
+                result = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), SitReachSetting.class).getTestDeviceCount();
+                break;
+            case ItemDefault.CODE_LDTY:
+                result = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), StandJumpSetting.class).getTestDeviceCount();
+                break;
+            case ItemDefault.CODE_ZFP:
+                result = Integer.parseInt(SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), RunTimerSetting.class).getRunNum());
+                break;
+            case ItemDefault.CODE_HWSXQ:
+                result = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), MedicineBallSetting.class).getSpDeviceCount();
+                break;
+            case ItemDefault.CODE_TS:
+                result = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), JumpRopeSetting.class).getDeviceSum();
+                break;
+            case ItemDefault.CODE_YWQZ:
+            case ItemDefault.CODE_SGBQS:
+                result = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), SitUpSetting.class).getDeviceSum();
+                break;
+            case ItemDefault.CODE_YTXS:
+                result = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), PullUpSetting.class).getDeviceSum();
+                break;
+            case ItemDefault.CODE_PQ:
+                result = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), VolleyBallSetting.class).getSpDeviceCount();
+                break;
+            case ItemDefault.CODE_FWC:
+                result = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), PushUpSetting.class).getDeviceSum();
+                break;
+            case ItemDefault.CODE_WLJ:
+            case ItemDefault.CODE_SHOOT:
+            case ItemDefault.CODE_ZCP:
+            case ItemDefault.CODE_ZQYQ:
+            case ItemDefault.CODE_LQYQ:
+                result = 1;
+                break;
+            case ItemDefault.CODE_MG:
+                result = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), SargentSetting.class).getSpDeviceCount();
+                break;
+            case ItemDefault.CODE_SPORT_TIMER:
+                result = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), SportTimerSetting.class).getDeviceCount();
+                break;
+            default:
+                throw new IllegalArgumentException("wrong machine code");
+        }
+        return result;
+    }
 }
