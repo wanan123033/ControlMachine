@@ -116,6 +116,10 @@ public class AdvancedSettingActivity extends BaseTitleActivity implements TextWa
 
         String serverToken = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.DEFAULT_SERVER_TOKEN, "dGVybWluYWw6dGVybWluYWxfc2VjcmV0");
         editAppkey.setText(serverToken);
+        etResitPass.setText(systemSetting.getResitPass());
+        etAgainPass.setText(systemSetting.getAgainPass());
+        cbResitPass.setChecked(systemSetting.getResitPassBool());
+        cbAgainPass.setChecked(systemSetting.getAgainPassBool());
         etAgainPass.addTextChangedListener(this);
         etResitPass.addTextChangedListener(this);
         swSitup.setChecked(sitUpSetting.isPenalize());
