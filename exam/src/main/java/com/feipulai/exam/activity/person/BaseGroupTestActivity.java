@@ -173,9 +173,9 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         }
 
 
-        GridLayoutManager layoutManager = new GridLayoutManager(this, setTestCount());
+        GridLayoutManager layoutManager = new GridLayoutManager(this, TestConfigs.getMaxTestCount());
         rvTestResult.setLayoutManager(layoutManager);
-        String result[] = new String[setTestCount()];
+        String result[] = new String[TestConfigs.getMaxTestCount()];
 
         //创建适配器
         resultList.addAll(Arrays.asList(result));
@@ -204,9 +204,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 
     @Override
     public void setRoundNo(int roundNo) {
-        SystemSetting systemSetting = SettingHelper.getSystemSetting();
-        if (systemSetting.isResit())
-            this.roundNo = roundNo;
+
     }
 
     protected abstract int isShowPenalizeFoul();
@@ -249,7 +247,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");
             //学生在分组中是否有进行检入
             GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(group, student.getStudentCode());
-            if ((roundResultList.size() == 0 || roundResultList.size() < setTestCount()) && groupItem != null) {
+            int testNo = stuPairsList.get(stuAdapter.getTestPosition()).getTestNo() == -1 ? setTestCount() : stuPairsList.get(stuAdapter.getTestPosition()).getTestNo();
+            if ((roundResultList.size() == 0 || roundResultList.size() < testNo) && groupItem != null) {
                 isStop = false;
                 roundNo = roundResultList.size() == 0 ? 1 : roundResultList.size() + 1;
                 gotoTest(student);
@@ -259,8 +258,22 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 toastSpeak(student.getSpeakStuName() + "考生没有在选择的分组内，无法测试",
                         student.getStudentName() + "考生没有在选择的分组内，无法测试");
             } else if (roundResultList.size() > 0) {
-                toastSpeak(student.getSpeakStuName() + "考生已测试完成",
-                        student.getStudentName() + "考生已测试完成");
+                SystemSetting setting = SettingHelper.getSystemSetting();
+                if (setting.isResit()){
+                    for (BaseStuPair pair : stuPairsList){
+                        if (pair.getStudent().getStudentCode().equals(student.getStudentCode())){
+                            isStop = false;
+                            roundNo = pair.getRoundNo();
+
+                            gotoTest(student);
+                            groupItem.setIdentityMark(1);
+                            DBManager.getInstance().updateStudentGroupItem(groupItem);
+                        }
+                    }
+                }else {
+                    toastSpeak(student.getSpeakStuName() + "考生已测试完成",
+                            student.getStudentName() + "考生已测试完成");
+                }
             }
         }
     }
@@ -288,9 +301,11 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                         resultList.clear();
                         resultList.addAll(Arrays.asList(timeResult));
                         testResultAdapter.notifyDataSetChanged();
+                        uploadServer(baseStuPair, roundResult);
                         if (roundResult.getRoundNo() == roundNo) {
                             updateResultLed(((roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult())));
                         }
+
                         updateLastResultLed(DBManager.getInstance().queryGroupBestScore(roundResult.getStudentCode(), group.getId()));
                         //更新考生轮次位置
                         if (setTestPattern() == TestConfigs.GROUP_PATTERN_SUCCESIVE) {
@@ -582,11 +597,12 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         }
         Logger.i("studentSkip=>跳过考生：" + stuPairsList.get(stuAdapter.getTestPosition()).getStudent());
         //设置测试学生，当学生有满分跳过则寻找需要测试学生
+        int testNo = stuPairsList.get(stuAdapter.getTestPosition()).getTestNo() == -1 ? setTestCount() : stuPairsList.get(stuAdapter.getTestPosition()).getTestNo();
         if (stuAdapter.getTestPosition() == stuPairsList.size() - 1) {
             if (setTestPattern() == 0) { //连续测试
                 continuousTestNext();
                 return;
-            } else if (setTestPattern() == 1 && setTestCount() > roundNo) {
+            } else if (setTestPattern() == 1 && testNo > roundNo) {
                 //循环测试到最后一位，当前测试次数小于测试次数则进行下一轮测试
                 roundNo++;
                 stuAdapter.setTestPosition(0);
@@ -651,7 +667,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         stuPairsList.addAll((List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu"));
         for (BaseStuPair stuPair : stuPairsList) {
             stuPair.setBaseDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE));
-            stuPair.setTimeResult(new String[setTestCount()]);
+            int testNo = stuPair.getTestNo() == -1 ? setTestCount() : stuPair.getTestNo();
+            stuPair.setTimeResult(new String[testNo]);
         }
         //身份验证模式
         if (SettingHelper.getSystemSetting().isIdentityMark()) {
@@ -665,8 +682,14 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 //  查询学生成绩 当有成绩则添加数据跳过测试
                 List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound
                         (stuPairsList.get(i).getStudent().getStudentCode(), group.getId() + "");
-
-                if (roundResultList == null || roundResultList.size() == 0 || roundResultList.size() < setTestCount()) {
+                SystemSetting setting = SettingHelper.getSystemSetting();
+                StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairsList.get(i).getStudent().getStudentCode());
+                //判断是否开启补考需要加上是否已完成本次补考，不然一直会停留在这个人上面测试
+                if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairsList.get(i).isResit()){
+                    roundResultList.clear();
+                }
+                int testNo = stuPairsList.get(i).getTestNo() == -1 ? setTestCount() : stuPairsList.get(i).getTestNo();
+                if (roundResultList == null || roundResultList.size() == 0 || roundResultList.size() < testNo) {
                     if (stuAdapter.getTestPosition() == -1) {
                         stuAdapter.setTestPosition(i);
                         rvTestStu.scrollToPosition(i);
@@ -676,6 +699,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                         setStuPairsData(i, roundResultList);
                     }
                 } else {
+
                     setStuPairsData(i, roundResultList);
                 }
 
@@ -697,7 +721,9 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             }
             if (stuAdapter.getTestPosition() == -1) {
                 //循环测试轮次 判断考生轮次是否有成绩 定位当前测试轮次和考生位置
-                for (int i = roundNo; i <= setTestCount(); i++) {
+                //判断当前考生是不是补考类型
+                int testNo = stuPairsList.get(stuAdapter.getTestPosition()).getTestNo() == -1 ? setTestCount() : stuPairsList.get(stuAdapter.getTestPosition()).getTestNo();
+                for (int i = roundNo; i <= testNo; i++) {
                     for (int j = 0; j < stuPairsList.size(); j++) {
                         if (TextUtils.isEmpty(stuPairsList.get(j).getTimeResult()[i - 1]) && stuAdapter.getTestPosition() == -1) {
                             roundNo = i;
@@ -729,7 +755,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
      */
     public void setStuPairsData(int index, List<RoundResult> roundResultList) {
         stuPairsList.get(index).setResultState(-99);
-        String[] result = new String[setTestCount()];
+        int testNo = stuPairsList.get(index).getTestNo() == -1 ? setTestCount() : stuPairsList.get(index).getTestNo();
+        String[] result = new String[TestConfigs.getMaxTestCount()];
         for (int j = 0; j < roundResultList.size(); j++) {
             switch (roundResultList.get(j).getResultState()) {
                 case RoundResult.RESULT_STATE_FOUL:
@@ -869,7 +896,11 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         roundResult.setRoundNo(roundNo);
         roundResult.setTestNo(1);
         roundResult.setGroupId(group.getId());
-        roundResult.setExamType(group.getExamType());
+//        roundResult.setExamType(group.getExamType());
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),baseStuPair.getStudent().getStudentCode());
+        if (studentItem != null){
+            roundResult.setExamType(studentItem.getExamType());
+        }
         roundResult.setScheduleNo(group.getScheduleNo());
         roundResult.setUpdateState(0);
         roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
@@ -901,7 +932,17 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 
         DBManager.getInstance().insertRoundResult(roundResult);
         LogUtils.operation("保存成绩:" + roundResult.toString());
+        SystemSetting setting = SettingHelper.getSystemSetting();
+        //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
+        if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairsList.get(stuAdapter.getTestPosition()).isResit()){
+            stuPairsList.get(stuAdapter.getTestPosition()).setResit(true);
+        }
+        uploadServer(baseStuPair, roundResult);
 
+
+    }
+
+    private void uploadServer(@NonNull BaseStuPair baseStuPair, RoundResult roundResult) {
         List<RoundResult> roundResultList = new ArrayList<>();
         roundResultList.add(roundResult);
         UploadResults uploadResults = new UploadResults(group.getScheduleNo()
@@ -909,8 +950,6 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 , "1", group, RoundResultBean.beanCope(roundResultList, group));
 
         uploadResult(uploadResults);
-
-
     }
 
 
@@ -1021,7 +1060,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             if (setTestPattern() == 0) {//连续
                 return "";
             } else {
-                if (roundNo == setTestCount()) {
+                int testNo = stuPairsList.get(stuAdapter.getTestPosition()).getTestNo() == -1 ? setTestCount() : stuPairsList.get(stuAdapter.getTestPosition()).getTestNo();
+                if (roundNo == testNo) {
                     return "";
                 } else {
                     return stuPairsList.get(0).getStudent().getLEDStuName();
@@ -1059,7 +1099,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         if (!SettingHelper.getSystemSetting().isAutoPrint())
             return;
         //是否已全部次数测试完成，非满分跳过
-        if (roundNo < setTestCount() && !baseStuPair.isFullMark()) {
+        int testNo = baseStuPair.getTestNo() == -1 ? setTestCount() : baseStuPair.getTestNo();
+        if (roundNo < testNo && !baseStuPair.isFullMark()) {
             return;
         }
         print(baseStuPair);
@@ -1089,7 +1130,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     private void continuousTest() {
         BaseStuPair pair = stuPairsList.get(stuAdapter.getTestPosition());
         //当前的测试次数是否在项目设置的轮次中，是否满分跳过考生测试，满分由子类处理，基类只做界面展示
-        if (roundNo < setTestCount()) {
+        int testNo = pair.getTestNo() == -1 ? setTestCount() : pair.getTestNo();
+        if (roundNo < testNo) {
             if (pair.isFullMark() && pair.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
 //                //是否测试到最后一位
 //                if (stuAdapter.getTestPosition() == stuPairsList.size() - 1) {
@@ -1145,7 +1187,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             //  查询学生成绩 当有成绩则添加数据跳过测试
             List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound
                     (stuPairsList.get(i).getStudent().getStudentCode(), group.getId() + "");
-            if (roundResultList == null || roundResultList.size() == 0 || roundResultList.size() < setTestCount()) {
+            int testNo = stuPairsList.get(i).getTestNo() == -1 ? setTestCount() : stuPairsList.get(i).getTestNo();
+            if (roundResultList == null || roundResultList.size() == 0 || roundResultList.size() < testNo) {
 
                 roundNo = roundResultList == null || roundResultList.size() == 0 ? 1 : roundResultList.size() + 1;
 
@@ -1189,7 +1232,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         //是否测试到最后一位
         if (stuAdapter.getTestPosition() == stuPairsList.size() - 1) {
             //是否为最后一次测试，开启新的测试
-            if (setTestCount() > roundNo) {
+            int testNo = stuPairsList.get(stuAdapter.getTestPosition()).getTestNo() == -1 ? setTestCount() : stuPairsList.get(stuAdapter.getTestPosition()).getTestNo();
+            if (testNo > roundNo) {
                 if (isShowPenalizeFoul() == View.GONE) {
                     roundNo++;
                     //设置测试学生，当学生有满分跳过则寻找需要测试学生
@@ -1224,7 +1268,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             setBaseHeight(0);
         }
         //循环测试轮次 判断考生轮次是否有成绩 定位当前测试轮次和考生位置
-        for (int i = roundNo; i <= setTestCount(); i++) {
+        int testNo = stuPairsList.get(stuAdapter.getTestPosition()).getTestNo() == -1 ? setTestCount() : stuPairsList.get(stuAdapter.getTestPosition()).getTestNo();
+        for (int i = roundNo; i <= testNo; i++) {
             for (int j = stuAdapter.getTestPosition(); j < stuPairsList.size(); j++) {
                 if (TextUtils.isEmpty(stuPairsList.get(j).getTimeResult()[i - 1])) {
                     if (stuPairsList.get(j).isFullMark() && stuPairsList.get(j).getResultState() == RoundResult.RESULT_STATE_NORMAL) {
@@ -1280,7 +1325,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
      */
     private void identityMarkTest() {
         BaseStuPair pair = stuPairsList.get(stuAdapter.getTestPosition());
-        if (roundNo < setTestCount() && !pair.isFullMark()) {
+        int testNo = pair.getTestNo() == -1 ? setTestCount() : pair.getTestNo();
+        if (roundNo < testNo && !pair.isFullMark()) {
             roundNo++;
             pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
             if (testType == 1) {

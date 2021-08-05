@@ -15,8 +15,12 @@ import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseGroupTestActivity;
 import com.feipulai.exam.activity.person.BaseStuPair;
+import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.entity.StudentItem;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
@@ -76,12 +80,16 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
 
     }
 
-    @Override
     public int setTestCount() {
+        SystemSetting setting = SettingHelper.getSystemSetting();
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),baseStuPair.getStudent().getStudentCode());
+        if (setting.isResit() || studentItem.getMakeUpType() == 1){
+            return baseStuPair.getTestNo();
+        }
         if (TestConfigs.sCurrentItem.getTestNum() != 0) {
             return TestConfigs.sCurrentItem.getTestNum();
         } else {
-            return jumpSetting.getTestCount();
+            return TestConfigs.getMaxTestCount();
         }
     }
 

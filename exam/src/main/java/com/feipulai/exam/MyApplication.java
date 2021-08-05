@@ -25,7 +25,6 @@ import com.kk.taurus.playerbase.record.PlayRecordManager;
 import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 
-
 public class MyApplication extends MultiDexApplication {
 
     public static final String PATH_SPECIFICATION = FileUtil.PATH_BASE + "KS/";//说明文档路径
@@ -59,14 +58,14 @@ public class MyApplication extends MultiDexApplication {
         super.onCreate();
         instance = this;
         LogUtils.initLogger(true, true, PATH_LOG_NAME);
-        CrashHandler.getInstance().init(this);
-        CrashHandler.getInstance().setUploadOpersion(new CrashHandler.UploadOpersion() {
-            @Override
-            public void upload(String erroMsg) {
-                new HttpSubscriber().uploadLog(erroMsg);
-                IntentUtil.gotoActivity(instance, SplashScreenActivity.class);
-            }
-        });
+//        CrashHandler.getInstance().init(this);
+//        CrashHandler.getInstance().setUploadOpersion(new CrashHandler.UploadOpersion() {
+//            @Override
+//            public void upload(String erroMsg) {
+//                new HttpSubscriber().uploadLog(erroMsg);
+//                IntentUtil.gotoActivity(instance, SplashScreenActivity.class);
+//            }
+//        });
         SettingHelper.init(this);
         BlueToothHelper.init(this);
         TOKEN = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.TOKEN, "");

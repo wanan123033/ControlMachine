@@ -399,7 +399,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
                 break;
             case R.id.btn_sync_time:
                 sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());
-                mHandler.sendEmptyMessageDelayed(MSG_SYNC_TIME, 500);
+//                mHandler.sendEmptyMessageDelayed(MSG_SYNC_TIME, 500);
                 break;
             case R.id.btn_connect:
                 startActivity(new Intent(this, CorrespondTestActivity.class));
@@ -507,8 +507,6 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
                     }
                     for (int i = 0; i < runNum; i++) {
                         try {
-//                            sportTimerManger.syncTime(i + 1, SettingHelper.getSystemSetting().getHostId(), getTime());
-//                            Thread.sleep(500);
                             sportTimerManger.getTime(i + 1, SettingHelper.getSystemSetting().getHostId());
                             Thread.sleep(500);
                         } catch (InterruptedException e) {

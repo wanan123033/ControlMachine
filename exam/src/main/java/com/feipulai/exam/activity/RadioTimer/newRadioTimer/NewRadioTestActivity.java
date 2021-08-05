@@ -32,7 +32,6 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.RunStudent;
-import com.feipulai.exam.utils.FileUtils;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.CommonPopupWindow;
 import com.feipulai.exam.view.ResultPopWindow;
@@ -292,7 +291,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         currentTestTime++;
         startTime = System.currentTimeMillis() + "";
         sportPresent.clearLed();
-        timerTask.setStartInit();
+        timerTask.setStart();
     }
 
     @Override

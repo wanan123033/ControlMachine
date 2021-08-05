@@ -38,7 +38,7 @@
 
     <LinearLayout
         android:id="@+id/ll_content"
-        android:layout_width="150dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tip"
         android:layout_toRightOf="@+id/turn_last"

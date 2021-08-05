@@ -2,6 +2,8 @@ package com.feipulai.exam.activity.setting;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -45,7 +47,7 @@ import io.reactivex.schedulers.Schedulers;
  * Created by zzs on 2018/11/23
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
-public class AdvancedSettingActivity extends BaseTitleActivity {
+public class AdvancedSettingActivity extends BaseTitleActivity implements TextWatcher {
 
     @BindView(R.id.edit_appkey)
     EditText editAppkey;
@@ -67,8 +69,20 @@ public class AdvancedSettingActivity extends BaseTitleActivity {
     CheckBox swMedicineBall;
     @BindView(R.id.cb_input_test)
     CheckBox cbInputTest;
+    @BindView(R.id.cb_again)
+    CheckBox cbAgain;
+    @BindView(R.id.cb_resit)
+    CheckBox cbResit;
     @BindView(R.id.sp_jump_rope_state_count)
     Spinner spJumpRopeStateCount;
+    @BindView(R.id.et_again_pass)
+    EditText etAgainPass;
+    @BindView(R.id.cb_again_pass)
+    CheckBox cbAgainPass;
+    @BindView(R.id.et_resit_pass)
+    EditText etResitPass;
+    @BindView(R.id.cb_resit_pass)
+    CheckBox cbResitPass;
     private SystemSetting systemSetting;
     private SitUpSetting sitUpSetting;
     private PullUpSetting pullUpSetting;
@@ -102,6 +116,12 @@ public class AdvancedSettingActivity extends BaseTitleActivity {
 
         String serverToken = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.DEFAULT_SERVER_TOKEN, "dGVybWluYWw6dGVybWluYWxfc2VjcmV0");
         editAppkey.setText(serverToken);
+        etResitPass.setText(systemSetting.getResitPass());
+        etAgainPass.setText(systemSetting.getAgainPass());
+        cbResitPass.setChecked(systemSetting.getResitPassBool());
+        cbAgainPass.setChecked(systemSetting.getAgainPassBool());
+        etAgainPass.addTextChangedListener(this);
+        etResitPass.addTextChangedListener(this);
         swSitup.setChecked(sitUpSetting.isPenalize());
 
         cbInputTest.setChecked(systemSetting.isInputTest());
@@ -136,6 +156,9 @@ public class AdvancedSettingActivity extends BaseTitleActivity {
         ropeStateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spJumpRopeStateCount.setAdapter(ropeStateAdapter);
         spJumpRopeStateCount.setSelection(jumpRopeSetting.getGetStateLoopCount() - 3);
+
+        cbResit.setChecked(systemSetting.isResit());
+        cbAgain.setChecked(systemSetting.isAgainTest());
     }
 
     @OnItemSelected({R.id.sp_situp_angle, R.id.sp_jump_rope_state_count})
@@ -171,7 +194,7 @@ public class AdvancedSettingActivity extends BaseTitleActivity {
         SharedPrefsUtil.save(this, sargentSetting);
     }
 
-    @OnCheckedChanged({R.id.sw_pullup, R.id.sw_situp, R.id.sw_volleyball, R.id.sw_sit_reach, R.id.sw_standjump2, R.id.sw_sargent, R.id.sw_medicine_ball, R.id.cb_input_test,R.id.cb_again,R.id.cb_resit})
+    @OnCheckedChanged({R.id.sw_pullup, R.id.sw_situp, R.id.sw_volleyball, R.id.sw_sit_reach, R.id.sw_standjump2, R.id.sw_sargent, R.id.sw_medicine_ball, R.id.cb_input_test,R.id.cb_again,R.id.cb_resit,R.id.cb_again_pass,R.id.cb_resit_pass})
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()) {
 
@@ -206,6 +229,13 @@ public class AdvancedSettingActivity extends BaseTitleActivity {
                 break;
             case R.id.cb_resit:
                 systemSetting.setIsResit(isChecked);
+                break;
+            case R.id.cb_resit_pass:
+                systemSetting.setResitPassBool(isChecked);
+                break;
+            case R.id.cb_again_pass:
+                systemSetting.setAgainPassBool(isChecked);
+                break;
         }
     }
 
@@ -251,4 +281,19 @@ public class AdvancedSettingActivity extends BaseTitleActivity {
 
     }
 
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+        systemSetting.setAgainPass(etAgainPass.getText().toString());
+        systemSetting.setResitPass(etResitPass.getText().toString());
+    }
 }

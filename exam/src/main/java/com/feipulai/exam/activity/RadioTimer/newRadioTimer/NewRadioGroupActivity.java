@@ -555,7 +555,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
         FileUtils.log("红外计时开始时间：" + baseTimer);
         testState = TestState.WAIT_RESULT;
         mHandler.sendEmptyMessage(RUN_START);
-        timerKeeper.setStartInit();
+        timerKeeper.setStart();
         startTime = System.currentTimeMillis() + "";
         sportPresent.clearLed();
     }

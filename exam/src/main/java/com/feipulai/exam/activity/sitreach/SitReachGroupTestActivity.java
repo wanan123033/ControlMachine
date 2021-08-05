@@ -15,6 +15,8 @@ import com.feipulai.exam.R;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseGroupTestActivity;
 import com.feipulai.exam.activity.person.BaseStuPair;
+import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.RoundResult;
 import com.orhanobut.logger.Logger;
@@ -104,13 +106,17 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
 
     @Override
     public int setTestCount() {
+        int testNo = getTestPair().getTestNo();
+        if (testNo != -1){
+            return testNo;
+        }
         if (TestConfigs.sCurrentItem.getTestNum() != 0) {
             return TestConfigs.sCurrentItem.getTestNum();
         } else {
+
             return reachSetting.getTestCount();
         }
     }
-
     @Override
     public void gotoItemSetting() {
         LogUtils.operation("坐位体前屈跳转至SitReachSettingActivity");

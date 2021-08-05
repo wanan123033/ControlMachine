@@ -22,6 +22,7 @@ import com.feipulai.exam.activity.jump_rope.adapter.RTResultAdapter;
 import com.feipulai.exam.activity.jump_rope.base.result.RadioResultActivity;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
+import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.utils.ResultDisplayUtils;
@@ -85,6 +86,7 @@ public abstract class AbstractRadioTestActivity<Setting>
     private SweetAlertDialog sweetAlertDialog;
     private RTResultAdapter mAdapter;
     private EditResultDialog editResultDialog;
+    private List<StuDevicePair> pairs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,6 +150,7 @@ public abstract class AbstractRadioTestActivity<Setting>
 
     @Override
     public void initView(List<StuDevicePair> pairs, Setting setting) {
+        this.pairs = pairs;
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 5);
         DividerItemDecoration itemDecoration = new DividerItemDecoration(this);
         itemDecoration.setDrawBorderTopAndBottom(true);
@@ -320,6 +323,7 @@ public abstract class AbstractRadioTestActivity<Setting>
     @Override
     public void finishTest() {
         Intent intent = new Intent(this, RadioResultActivity.class);
+
         startActivityForResult(intent, 1);
     }
 

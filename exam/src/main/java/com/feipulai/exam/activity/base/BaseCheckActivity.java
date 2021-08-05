@@ -79,7 +79,7 @@ import static com.inuker.bluetooth.library.Constants.STATUS_CONNECTED;
  */
 public abstract class BaseCheckActivity
         extends BaseTitleActivity
-        implements CheckDeviceOpener.OnCheckDeviceArrived, BaseAFRFragment.onAFRCompareListener, OnResultListener<RoundScoreBean>, IndividualCheckFragment.OnIndividualCheckInListener {
+        implements CheckDeviceOpener.OnCheckDeviceArrived, BaseAFRFragment.onAFRCompareListener, OnResultListener<RoundScoreBean>, IndividualCheckFragment.OnIndividualCheckInListener, ResitDialog.onClickQuitListener {
 
     public MyHandler mHandler = new MyHandler(this);
     private boolean isOpenDevice = true;
@@ -398,6 +398,7 @@ public abstract class BaseCheckActivity
                 dialog.setArguments(student,results,studentItem);
                 dialog.setOnIndividualCheckInListener(this);
                 dialog.show(getSupportFragmentManager(),"AgainTestDialog");
+                return false;
             }
             if (setting.isResit()){
                 ResitDialog dialog = new ResitDialog();
@@ -588,6 +589,16 @@ public abstract class BaseCheckActivity
     }
 
     protected abstract void setRoundNo(int size);
+
+    @Override
+    public void onCancel() {
+
+    }
+
+    @Override
+    public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results) {
+        onIndividualCheckIn(student,studentItem,results);
+    }
 
 
     private static class MyHandler extends Handler {

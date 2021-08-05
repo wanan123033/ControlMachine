@@ -80,7 +80,7 @@ public class PenalizeDialog {
     private Student student;//当前学生
     private String[] results;
     private int resultState;
-    private long groupId;
+    private long groupId = -1;
     private int selectPosition = -1;
     /**
      * @param context
@@ -88,9 +88,7 @@ public class PenalizeDialog {
     public PenalizeDialog(Context context,int testTimes) {
         this.context = context;
         this.testTimes = testTimes;
-        for (int i = 0; i < testTimes; i++) {
-            mList.add("");
-        }
+        results = new String[testTimes];
         init();
     }
 
@@ -104,6 +102,7 @@ public class PenalizeDialog {
         dialog.setContentView(view);
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
+        mList.addAll(Arrays.asList(results));
         mAdapter = new PenalizeResultAdapter(mList);
         GridLayoutManager layoutManager = new GridLayoutManager(context, testTimes);
         rvPenalize.setLayoutManager(layoutManager);
@@ -123,13 +122,20 @@ public class PenalizeDialog {
             case R.id.turn_last:
                 turnNext.setVisibility(View.VISIBLE);
                 turnLast.setVisibility(View.INVISIBLE);
-                mList = Arrays.asList(lastResult);
+                if (null == lastStudent){
+                    setDialogDismiss("未找到考生");
+                }
+                mList.clear();
+                mList.addAll(Arrays.asList(lastResult));//上一个
+                setSelect(lastResult);
                 mAdapter.notifyDataSetChanged();
                 break;
             case R.id.turn_next:
                 turnNext.setVisibility(View.INVISIBLE);
                 turnLast.setVisibility(View.VISIBLE);
-                mList = Arrays.asList(results);
+                mList.clear();
+                mList.addAll(Arrays.asList(results));//当前
+                setSelect(results);
                 mAdapter.notifyDataSetChanged();
                 break;
             case R.id.view_txt_cancel:
@@ -158,20 +164,20 @@ public class PenalizeDialog {
         tvTitle.setText(title[tip]);
         switch (tip){
             case 0:
-                resultState = 2;
+                resultState = RoundResult.RESULT_STATE_FOUL;
                 break;
             case 1:
-                resultState = 1;
+                resultState = RoundResult.RESULT_STATE_BACK;
                 break;
             case 2:
-                resultState = 3;
+                resultState = RoundResult.RESULT_STATE_WAIVE;
                 break;
             case 3:
-                resultState = 4;
+                resultState = RoundResult.RESULT_STATE_NORMAL;
                 break;
         }
         if (lastStudent == null && student==null){
-            dismissDialog();
+            setDialogDismiss("未找到考生");
         }
         if (selectPosition != -1){
             mAdapter.setClick(selectPosition);
@@ -190,26 +196,21 @@ public class PenalizeDialog {
                 if (null == lastStudent){
                     setDialogDismiss("未找到考生");
                 }else {
-                    mList = Arrays.asList(lastResult);
-                    mAdapter.notifyDataSetChanged();
-                    for (int i = 0; i < lastResult.length; i++) {
-                        if (!TextUtils.isEmpty(lastResult[i])){
-                            selectPosition = i;
-                        }
-                    }
+                    mList.clear();
+                    mList.addAll(Arrays.asList(lastResult));//上一个
+                    setSelect(lastResult);
+                    setStuInfo(lastStudent);
                 }
+                mAdapter.notifyDataSetChanged();
                 break;
             case 1:
                 if (groupId == -1){//个人模式
                     if (resultState == RoundResult.RESULT_STATE_NORMAL){
                         if (lastStudent !=null){
                             setStuInfo(lastStudent);
-                            mList = Arrays.asList(lastResult);//上一个
-                            for (int i = 0; i < lastResult.length; i++) {
-                                if (!TextUtils.isEmpty(lastResult[i])){
-                                    selectPosition = i;
-                                }
-                            }
+                            mList.clear();
+                            mList.addAll(Arrays.asList(lastResult));//上一个
+                            setSelect(lastResult);
                         }else {
                             setDialogDismiss("未找到考生");
                         }
@@ -217,8 +218,9 @@ public class PenalizeDialog {
                         turnLast.setVisibility(View.VISIBLE);
                         if (student!=null){
                             setStuInfo(student);
-                            mList = Arrays.asList(result);//当前
-                            selectPosition = 0;
+                            mList.clear();
+                            mList.addAll(Arrays.asList(result));//当前
+                            setSelect(result);
                         }
                     }
                 }else {//分组模式
@@ -227,8 +229,9 @@ public class PenalizeDialog {
                     }
                     if (student!=null){
                         setStuInfo(student);
-                        mList = Arrays.asList(result);//当前
-                        selectPosition = 0;
+                        mList.clear();
+                        mList.addAll(Arrays.asList(result));//当前
+                        setSelect(result);
                     }
                 }
 
@@ -236,19 +239,25 @@ public class PenalizeDialog {
                 break;
             case 2:
                 if (student!=null){
-                    mList = Arrays.asList(result);
+                    setStuInfo(student);
+                    mList.clear();
+                    mList.addAll(Arrays.asList(result));//当前
                     selectPosition = -1;
-                    for (int i = 0; i < result.length; i++) {
-                        if (!TextUtils.isEmpty(result[i])){
-                            selectPosition = i;
-                        }
-                    }
+                    setSelect(result);
                     if (selectPosition == -1){
                         setDialogDismiss("成绩不能为空");
                     }
                     mAdapter.notifyDataSetChanged();
                 }
                 break;
+        }
+    }
+
+    private void setSelect(String[] res) {
+        for (int i = 0; i < res.length; i++) {
+            if (!TextUtils.isEmpty(res[i])) {
+                selectPosition = i;
+            }
         }
     }
 
@@ -272,13 +281,17 @@ public class PenalizeDialog {
     private void dismissDialog(){
         llContent.setVisibility(View.VISIBLE);
         tvNoStudent.setVisibility(View.GONE);
-        if (dialog!=null && dialog.isShowing())
-            dialog.dismiss();
+        turnLast.setVisibility(View.GONE);
+        turnNext.setVisibility(View.GONE);
         this.student = null;
         this.student = null;
         resultState = -1;
         groupId = -1;
         selectPosition = -1;
+        txtStuCode.setText("");
+        txtStuName.setText("");
+        if (dialog!=null && dialog.isShowing())
+            dialog.dismiss();
     }
 
 

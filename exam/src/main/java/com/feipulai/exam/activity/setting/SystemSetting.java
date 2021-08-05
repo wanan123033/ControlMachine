@@ -139,6 +139,10 @@ public class SystemSetting {
     private int afrContrast = 3;
     private boolean againTest;  //现场重测
     private boolean isResit;  //现场补考
+    private String againPass;
+    private String resitPass;
+    private boolean resitPassBool;
+    private boolean againPassBool;
 
     public int getAfrContrast() {
         return afrContrast;
@@ -484,5 +488,37 @@ public class SystemSetting {
 
     public boolean isAgainTest() {
         return againTest;
+    }
+
+    public void setAgainPass(String againPass) {
+        this.againPass = againPass;
+    }
+
+    public String getAgainPass() {
+        return againPass;
+    }
+
+    public void setResitPass(String resitPass) {
+        this.resitPass = resitPass;
+    }
+
+    public String getResitPass() {
+        return resitPass;
+    }
+
+    public void setResitPassBool(boolean resitPassBool) {
+        this.resitPassBool = resitPassBool;
+    }
+
+    public boolean getResitPassBool() {
+        return resitPassBool;
+    }
+
+    public void setAgainPassBool(boolean againPassBool) {
+        this.againPassBool = againPassBool;
+    }
+
+    public boolean getAgainPassBool() {
+        return againPassBool;
     }
 }

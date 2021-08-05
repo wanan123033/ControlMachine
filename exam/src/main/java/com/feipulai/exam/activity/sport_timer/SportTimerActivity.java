@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.ActivityUtils;
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
@@ -30,6 +31,7 @@ import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.RadioTimer.newRadioTimer.TimerTask;
 import com.feipulai.exam.activity.base.BaseAFRFragment;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
@@ -68,17 +70,11 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_RESULT;
-import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_START;
-import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_STOP;
-import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_UPDATE_ADD_TIME;
-import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_UPDATE_DEVICE;
-
 /**
  * 根据实测知道频段换成25最好
  */
 public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFragment.onAFRCompareListener,
-        IndividualCheckFragment.OnIndividualCheckInListener, SportContract.SportView {
+        IndividualCheckFragment.OnIndividualCheckInListener, SportContract.SportView, TimerTask.TimeUpdateListener {
 
     @BindView(R.id.lv_results)
     ListView lvResults;
@@ -169,10 +165,12 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
     private int initTime;
     private List<SportTestResult> testResults = new ArrayList<>();//保存成绩
     private int testNum;
-    private final int UPDATE_STOP = 0XF1;
+    private final int UPDATE_STOP_ENABLE = 0XF1;
     private final int UPDATE_RESULT = 0XF2;
     private final int UPDATE_ON_STOP = 0XF3;
     private final int UPDATE_ON_WAIT = 0XF4;
+    private final int UPDATE_ON_TEXT = 0XF5;
+    private TimerTask timerTask;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_sport_timer;
@@ -261,6 +259,8 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
 
         setTxtEnable(false);
         testState = TestState.UN_STARTED;
+        timerTask = new TimerTask(this,100);
+        timerTask.keepTime();
     }
 
     private void setTxtEnable(boolean enable) {
@@ -510,6 +510,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 break;
             case R.id.txt_illegal_return:
                 if (testState == TestState.WAIT_RESULT) {
+                    timerTask.stopKeepTime();
                     sportPresent.setDeviceStateStop();
                     receiveTime = 0;
                     testState = TestState.UN_STARTED;
@@ -520,6 +521,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 }
                 break;
             case R.id.txt_stop_timing:
+                timerTask.stopKeepTime();
                 if (testState == TestState.WAIT_RESULT) {
                     sportPresent.setDeviceStateStop();
                     setTxtEnable(true);
@@ -668,7 +670,8 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
             if (sportResult.getDeviceId() == 1 && sportResult.getSumTimes() == 1) {
                 lastTime = 0;
                 initTime = sportResult.getLongTime();
-                mHandler.sendEmptyMessage(UPDATE_STOP);
+                mHandler.sendEmptyMessage(UPDATE_STOP_ENABLE);
+                timerTask.setStart();
             }
             if (receiveTime >= testResults.get(roundNo - 1).getSportTimeResults().size())
                 return;
@@ -742,6 +745,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
     protected void onDestroy() {
         super.onDestroy();
         sportPresent.presentRelease();
+        timerTask.release();
     }
 
     @Override
@@ -757,14 +761,14 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
-                case UPDATE_STOP:
+                case UPDATE_STOP_ENABLE:
                     txtStopTiming.setEnabled(true);
                     break;
                 case UPDATE_RESULT:
-                    String s =  testResults.get(roundNo - 1).getResultState() == RoundResult.RESULT_STATE_NORMAL?
-                            ResultDisplayUtils.getStrResultForDisplay(testResults.get(roundNo - 1).getResult()):"犯规";
+//                    String s =  testResults.get(roundNo - 1).getResultState() == RoundResult.RESULT_STATE_NORMAL?
+//                            ResultDisplayUtils.getStrResultForDisplay(testResults.get(roundNo - 1).getResult()):"犯规";
                     partResultAdapter.notifyDataSetChanged();
-                    tvResult.setText(s);
+//                    tvResult.setText(s);
                     break;
                 case UPDATE_ON_STOP:
                     txtStopTiming.setEnabled(false);
@@ -781,9 +785,27 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                     receiveTime = 0;
                     txtDeviceStatus.setText("计时");
                     break;
+                case UPDATE_ON_TEXT:
+                    int time = msg.arg1;
+                    String formatTime ;
+                    if (time<60*60*1000){
+                        formatTime = DateUtil.formatTime1(time, "mm:ss.SSS");
+                    }else {
+                        formatTime = DateUtil.formatTime1(time, "HH:mm:ss");
+                    }
+                    tvResult.setText(formatTime);
+                    break;
 
             }
             return false;
         }
     });
+
+    @Override
+    public void onTimeTaskUpdate(int time) {
+        Message message = mHandler.obtainMessage();
+        message.what = UPDATE_ON_TEXT;
+        message.arg1 = time;
+        mHandler.sendMessage(message);
+    }
 }

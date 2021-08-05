@@ -1,6 +1,7 @@
 package com.feipulai.exam.activity.jump_rope.base.check;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.feipulai.common.jump_rope.facade.GetStateLedFacade;
 import com.feipulai.common.jump_rope.task.OnGetStateWithLedListener;
@@ -66,6 +67,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         } else {
             pairs = TestCache.getInstance().getTestingPairs();
         }
+        Log.e("PAIR",pairs.toString());
 
         mCurrentConnect = new int[pairs.size() + 1];
         TestCache.getInstance().init();
