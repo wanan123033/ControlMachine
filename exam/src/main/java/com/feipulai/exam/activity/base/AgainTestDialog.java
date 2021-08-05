@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.fragment.IndividualCheckFragment;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
@@ -27,6 +28,8 @@ import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.utils.Toast;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -100,6 +103,7 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
                     if (pass.equals(systemSetting.getAgainPass())){
                         RoundResult roundResult = results.get(selectPos);
                         roundResult.setIsDelete(true);
+                        Log.e("TAG----",roundResult.getId()+"----"+roundResult.getIsDelete());
                         DBManager.getInstance().updateRoundResult(roundResult);
                         listener.onCommit(student, studentItem, results);
                         dismiss();
@@ -109,8 +113,9 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
                 }else {
                     RoundResult roundResult = results.get(selectPos);
                     roundResult.setIsDelete(true);
+                    Log.e("TAG----",roundResult.getId()+"----"+roundResult.getIsDelete());
                     DBManager.getInstance().updateRoundResult(roundResult);
-                    listener.onCommit(student, studentItem, results);
+                    listener.onCommit(student, studentItem, this.results);
                     dismiss();
                 }
 
@@ -120,5 +125,9 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
     @Override
     public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
         this.selectPos = position;
+        RoundResult roundResult = results.get(selectPos);
+        this.adapter.setselPos(selectPos);
+        this.adapter.notifyDataSetChanged();
+        Log.e("TAG",roundResult.getId()+"----"+roundResult.getResult()+"-----"+roundResult.getRoundNo());
     }
 }

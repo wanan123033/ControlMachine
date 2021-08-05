@@ -296,6 +296,16 @@ public class InteractUtils {
             results.add(0,roundResult);
 
             DBManager.getInstance().insertRoundResult(roundResult);
+            if (pair.isAgain()){
+                roundResult.setRoundNo(pair.getCurrentRoundNo());
+                List<RoundResult> roundResults = DBManager.getInstance().queryResultsByStudentCode(roundResult.getItemCode(), roundResult.getStudentCode());
+                for (RoundResult rr : roundResults){
+                    if (rr.getRoundNo() == pair.getCurrentRoundNo()){
+                        rr.setIsDelete(true);
+                    }
+                }
+
+            }
             LogUtils.operation("保存成绩:" + roundResult.toString());
         }
         ToastUtils.showShort("成绩保存成功");

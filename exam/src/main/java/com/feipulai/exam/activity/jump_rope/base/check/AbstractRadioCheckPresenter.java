@@ -303,6 +303,12 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         for (int i = 0; i < pairs.size(); i++) {
             StuDevicePair pair = pairs.get(i);
             Student stu = pair.getStudent();
+            for (RoundResult result : results){
+                if (result.getIsDelete()){
+                    pair.setCurrentRoundNo(result.getRoundNo());
+                    pair.setIsAgain(true);
+                }
+            }
             if (stu != null && stu.getStudentCode().equals(student.getStudentCode())) {
                 view.showToast("该考生已绑定设备");
                 return;

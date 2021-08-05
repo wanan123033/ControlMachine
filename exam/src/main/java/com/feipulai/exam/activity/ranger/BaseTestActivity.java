@@ -31,8 +31,12 @@ import com.feipulai.device.spputils.beans.RangerResult;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
+import com.feipulai.exam.activity.base.AgainTestDialog;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
+import com.feipulai.exam.activity.base.ResitDialog;
+import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.BaseDeviceState;
+import com.feipulai.exam.activity.person.BasePersonTestActivity;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.person.PenalizeDialog;
 import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
@@ -318,8 +322,8 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
             ToastUtils.showShort("查无此人");
             return;
         }
-        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
-        List<RoundResult> roundResultList = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(student.getStudentCode(), studentItem.getExamType());
+        final StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+        final List<RoundResult> roundResultList = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(student.getStudentCode(), studentItem.getExamType());
         if (student != null)
             LogUtils.operation("测距检入到学生:"+student.toString());
         if (studentItem != null)
@@ -330,8 +334,52 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
         testNo = roundResultList == null || roundResultList.size() == 0 ? 1 : roundResultList.get(0).getTestNo();
         //保存成绩，并测试轮次大于测试轮次次数
         if (roundResultList != null && roundResultList.size() >= setTestCount()) {
-            LogUtils.operation("该考生已测试完成:"+student.toString());
-            toastSpeak("该考生已测试完成");
+            if (roundResultList != null && roundResultList.size() >= TestConfigs.getMaxTestCount(this)) {
+                SystemSetting setting = SettingHelper.getSystemSetting();
+                if (setting.isAgainTest() && setting.isResit()){
+                    final Student finalStudent = student;
+                    new SweetAlertDialog(this).setContentText("需要重测还是补考呢?")
+                            .setCancelText("重测")
+                            .setConfirmText("补考")
+                            .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    AgainTestDialog dialog = new AgainTestDialog();
+                                    dialog.setArguments(finalStudent,roundResultList,studentItem);
+                                    dialog.setOnIndividualCheckInListener(BaseTestActivity.this);
+                                    dialog.show(getSupportFragmentManager(),"AgainTestDialog");
+                                    sweetAlertDialog.dismissWithAnimation();
+                                }
+                            })
+                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    ResitDialog dialog = new ResitDialog();
+                                    dialog.setArguments(finalStudent,roundResultList,studentItem);
+                                    dialog.setOnIndividualCheckInListener(BaseTestActivity.this);
+                                    dialog.show(getSupportFragmentManager(),"ResitDialog");
+                                    sweetAlertDialog.dismissWithAnimation();
+                                }
+                            }).show();
+                }
+                if (setting.isAgainTest()){
+                    AgainTestDialog dialog = new AgainTestDialog();
+                    dialog.setArguments(student,roundResultList,studentItem);
+                    dialog.setOnIndividualCheckInListener(this);
+                    dialog.show(getSupportFragmentManager(),"AgainTestDialog");
+                    return;
+                }
+                if (setting.isResit()){
+                    ResitDialog dialog = new ResitDialog();
+                    dialog.setArguments(student,roundResultList,studentItem);
+                    dialog.setOnIndividualCheckInListener(this);
+                    dialog.show(getSupportFragmentManager(),"ResitDialog");
+                    return;
+                }else {
+                    InteractUtils.toastSpeak(this, "该考生已测试");
+                }
+
+            }
             return;
         }
         //是否有成绩，没有成绩查底该项目是否有成绩，没有成绩测试次数为1，有成绩测试次数+1
