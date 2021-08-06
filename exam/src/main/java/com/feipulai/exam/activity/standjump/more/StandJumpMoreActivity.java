@@ -10,6 +10,7 @@ import com.feipulai.device.manager.StandJumpManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
+import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.sargent_jump.more_device.BaseMoreActivity;
@@ -20,6 +21,8 @@ import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
+
+import java.util.List;
 
 import butterknife.OnClick;
 
@@ -209,5 +212,9 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
         facade.finish();
         facade = null;
         RadioManager.getInstance().setOnRadioArrived(null);
+    }
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
+
     }
 }

@@ -180,7 +180,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         //获取分组学生数据
         TestCache.getInstance().init();
         stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
-        pairs = CheckUtils.newPairs(stuPairs.size());
+        pairs = CheckUtils.newPairs(stuPairs.size(),stuPairs);
         CheckUtils.groupCheck(pairs);
 
         rvTestingPairs.setLayoutManager(new LinearLayoutManager(this));
@@ -1038,7 +1038,19 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                     roundResult.setResultState(testResult.getResultState());
                     roundResult.setTestTime(startTime);
                     roundResult.setEndTime(System.currentTimeMillis() + "");
-                    roundResult.setRoundNo(resultList.get(i).getRoundNo());
+                    if (pairs.get(position()).getCurrentRoundNo() != 0){
+                        roundResult.setRoundNo(pairs.get(position()).getCurrentRoundNo());
+                        pairs.get(position()).setCurrentRoundNo(0);
+                        List<BaseStuPair> stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
+                        if (stuPairs != null){
+                            for (BaseStuPair pp : stuPairs){
+                                if (pp.getStudent().getStudentCode().equals(pairs.get(position()).getStudent().getStudentCode()))
+                                    pp.setRoundNo(0);
+                            }
+                        }
+                    }else {
+                        roundResult.setRoundNo(resultList.get(i).getRoundNo());
+                    }
                     roundResult.setTestNo(1);
                     roundResult.setExamType(group.getExamType());
                     roundResult.setScheduleNo(group.getScheduleNo());

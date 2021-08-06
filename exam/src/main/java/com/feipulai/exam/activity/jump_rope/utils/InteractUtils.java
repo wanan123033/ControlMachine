@@ -256,12 +256,23 @@ public class InteractUtils {
                 results = new ArrayList<>();
                 TestCache.getInstance().getResults().put(student, results);
             }
-            if (results.size() == 0) {
-                roundResult.setRoundNo(1);
-            } else {
-                roundResult.setRoundNo(results.size() + 1);
+            if (pair.getCurrentRoundNo() != 0){
+                roundResult.setRoundNo(pair.getCurrentRoundNo());
+                pair.setCurrentRoundNo(0);
+                List<BaseStuPair> stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
+                if (stuPairs != null){
+                    for (BaseStuPair pp : stuPairs){
+                        if (pp.getStudent().getStudentCode().equals(pair.getStudent().getStudentCode()))
+                            pp.setRoundNo(0);
+                    }
+                }
+            }else {
+                if (results.size() == 0) {
+                    roundResult.setRoundNo(1);
+                } else {
+                    roundResult.setRoundNo(results.size() + 1);
+                }
             }
-
             if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN) {
                 // 分组模式下,在一个分组只允许测试一次
                 roundResult.setTestNo(1);
@@ -296,16 +307,7 @@ public class InteractUtils {
             results.add(0,roundResult);
 
             DBManager.getInstance().insertRoundResult(roundResult);
-            if (pair.isAgain()){
-                roundResult.setRoundNo(pair.getCurrentRoundNo());
-                List<RoundResult> roundResults = DBManager.getInstance().queryResultsByStudentCode(roundResult.getItemCode(), roundResult.getStudentCode());
-                for (RoundResult rr : roundResults){
-                    if (rr.getRoundNo() == pair.getCurrentRoundNo()){
-                        rr.setIsDelete(true);
-                    }
-                }
 
-            }
             LogUtils.operation("保存成绩:" + roundResult.toString());
         }
         ToastUtils.showShort("成绩保存成功");

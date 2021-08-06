@@ -1107,7 +1107,12 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                     roundResult.setResultState(testResult.getResultState());
                     roundResult.setTestTime(testDate);
                     roundResult.setEndTime(System.currentTimeMillis() + "");
-                    roundResult.setRoundNo(resultList.get(i).getRoundNo());
+                    if (pair.getCurrentRoundNo() != 0){
+                        roundResult.setRoundNo(pair.getCurrentRoundNo());
+                        pair.setCurrentRoundNo(0);
+                    }else {
+                        roundResult.setRoundNo(resultList.get(i).getRoundNo());
+                    }
                     roundResult.setTestNo(testNo);
                     roundResult.setExamType(mStudentItem.getExamType());
                     roundResult.setScheduleNo(mStudentItem.getScheduleNo());
@@ -1470,5 +1475,14 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                 onIndividualCheckIn(student, studentItem, results);
             }
         });
+    }
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
+        for (StuDevicePair pair : pairs){
+            Student student1 = pair.getStudent();
+            if (student1 != null && student1.getStudentCode().equals(student.getStudentCode())){
+                pair.setCurrentRoundNo(roundNo);
+            }
+        }
     }
 }

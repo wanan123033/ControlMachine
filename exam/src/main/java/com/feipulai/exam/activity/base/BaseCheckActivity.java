@@ -584,11 +584,9 @@ public abstract class BaseCheckActivity
 
     @Override
     public void onIndividualCheckIn(Student student, StudentItem studentItem, List<RoundResult> results) {
-        setRoundNo(results.size());
         onCheckIn(student);
     }
 
-    protected abstract void setRoundNo(int size);
 
     @Override
     public void onCancel() {
@@ -596,8 +594,9 @@ public abstract class BaseCheckActivity
     }
 
     @Override
-    public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results) {
+    public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results,int roundNo) {
         onIndividualCheckIn(student,studentItem,results);
+        setRoundNo(student,roundNo);
     }
 
 

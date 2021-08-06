@@ -97,7 +97,7 @@ public class ResitDialog extends DialogFragment{
                     if (pass.equals(systemSetting.getResitPass())){
                         studentItem.setExamType(2);
                         DBManager.getInstance().updateStudentItem(studentItem);
-                        listener.onCommit(student, studentItem, results);
+                        listener.onCommit(student, studentItem, results,0);
                         dismiss();
                     }else {
                         Toast.makeText(getContext(),"密码错误",Toast.LENGTH_LONG).show();
@@ -105,7 +105,7 @@ public class ResitDialog extends DialogFragment{
                 }else {
                     studentItem.setExamType(2);
                     DBManager.getInstance().updateStudentItem(studentItem);
-                    listener.onCommit(student, studentItem, results);
+                    listener.onCommit(student, studentItem, results,0);
                     dismiss();
                 }
 
@@ -117,6 +117,6 @@ public class ResitDialog extends DialogFragment{
 
     public interface onClickQuitListener{
         void onCancel();
-        void onCommit(Student student,StudentItem studentItem,List<RoundResult> results);
+        void onCommit(Student student,StudentItem studentItem,List<RoundResult> results,int roundNo);
     }
 }

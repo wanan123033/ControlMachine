@@ -33,6 +33,7 @@ import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.AgainTestDialog;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.base.ResitDialog;
+import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -170,13 +171,6 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     }
 
     protected abstract int isShowPenalizeFoul();
-
-    @Override
-    public void setRoundNo(int roundNo) {
-        SystemSetting systemSetting = SettingHelper.getSystemSetting();
-        if (systemSetting.isResit())
-            this.roundNo = roundNo;
-    }
 
     @Nullable
     @Override
@@ -926,7 +920,13 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         roundResult.setTestTime(baseStuPair.getTestTime());
         //生成结束时间
         roundResult.setEndTime(System.currentTimeMillis() + "");
-        roundResult.setRoundNo(roundNo);
+        if (pair.getRoundNo() != 0){
+            roundResult.setRoundNo(pair.getRoundNo());
+            pair.setRoundNo(0);
+        }else {
+            roundResult.setRoundNo(roundNo);
+        }
+
         roundResult.setTestNo(testNo);
         roundResult.setExamType(studentItem.getExamType());
         roundResult.setScheduleNo(studentItem.getScheduleNo());
@@ -1183,5 +1183,12 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 getResources().getDrawable(R.drawable.btn_gray));
         tvAbandon.setBackground(enable? getResources().getDrawable(R.drawable.btn_blue):
                 getResources().getDrawable(R.drawable.btn_gray));
+    }
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
+            Student student1 = pair.getStudent();
+            if (student1 != null && student1.getStudentCode().equals(student.getStudentCode())){
+                pair.setRoundNo(roundNo);
+            }
     }
 }

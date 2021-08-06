@@ -105,7 +105,7 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
                         roundResult.setIsDelete(true);
                         Log.e("TAG----",roundResult.getId()+"----"+roundResult.getIsDelete());
                         DBManager.getInstance().updateRoundResult(roundResult);
-                        listener.onCommit(student, studentItem, results);
+                        listener.onCommit(student, studentItem, results,roundResult.getRoundNo());
                         dismiss();
                     }else {
                         Toast.makeText(getContext(),"密码错误",Toast.LENGTH_LONG).show();
@@ -115,7 +115,7 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
                     roundResult.setIsDelete(true);
                     Log.e("TAG----",roundResult.getId()+"----"+roundResult.getIsDelete());
                     DBManager.getInstance().updateRoundResult(roundResult);
-                    listener.onCommit(student, studentItem, this.results);
+                    listener.onCommit(student, studentItem, this.results,roundResult.getRoundNo());
                     dismiss();
                 }
 

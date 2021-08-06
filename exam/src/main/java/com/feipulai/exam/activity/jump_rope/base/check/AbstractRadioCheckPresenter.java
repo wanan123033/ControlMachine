@@ -15,6 +15,7 @@ import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.check.CheckUtils;
+import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.TestConfigs;
@@ -55,15 +56,17 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         this.view = view;
         this.context = context;
     }
-
+    List stuPairs;
     @Override
     public void start() {
         setting = getSetting();
         systemSetting = SettingHelper.getSystemSetting();
         mLEDManager = new LEDManager();
+
+        stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
         if (    SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN
                 ||TestCache.getInstance().getTestingPairs() == null || TestCache.getInstance().getTestingPairs().size() == 0) {
-            pairs = CheckUtils.newPairs(getDeviceSumFromSetting());
+            pairs = CheckUtils.newPairs(getDeviceSumFromSetting(),stuPairs);
         } else {
             pairs = TestCache.getInstance().getTestingPairs();
         }
@@ -124,7 +127,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
     public void refreshEveryThing() {
         TestCache.getInstance().init();
         focusPosition = 0;
-        pairs = CheckUtils.newPairs(getDeviceSumFromSetting());
+        pairs = CheckUtils.newPairs(getDeviceSumFromSetting(),stuPairs);
         view.refreshPairs(pairs);
         view.showStuInfo(null, null);
         resetLED();
@@ -254,7 +257,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
     @Override
     public void settingChanged() {
         if (pairs != null && pairs.size() != getDeviceSumFromSetting()) {
-            List<StuDevicePair> newPairs = CheckUtils.newPairs(getDeviceSumFromSetting());
+            List<StuDevicePair> newPairs = CheckUtils.newPairs(getDeviceSumFromSetting(),stuPairs);
             focusPosition = 0;
             for (int i = 0; i < pairs.size(); i++) {
                 if (i == newPairs.size()) {
@@ -404,5 +407,13 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         mCurrentConnect = new int[getDeviceSumFromSetting() + 1];
         endTest();
     }
-
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
+        for (StuDevicePair pair : pairs){
+            Student student1 = pair.getStudent();
+            if (student1 != null && student1.getStudentCode().equals(student.getStudentCode())){
+                pair.setCurrentRoundNo(roundNo);
+            }
+        }
+    }
 }

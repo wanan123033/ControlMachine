@@ -26,6 +26,7 @@ import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseAFRFragment;
 import com.feipulai.exam.activity.basketball.adapter.ShootResultAdapter;
 import com.feipulai.exam.activity.basketball.result.BasketBallTestResult;
+import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -308,7 +309,20 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
                     toastSpeak("已保存，请勿重复点击");
                     return;
                 }
-                disposeResult(testResult, student, testRound, testNo);
+                int roundNo = 0;
+                List<StuDevicePair> pairs = getPairs();
+                for (StuDevicePair pair : pairs){
+                    if (pair.getCurrentRoundNo() != 0){
+                        roundNo = pair.getCurrentRoundNo();
+                        pair.setCurrentRoundNo(0);
+                        break;
+                    }
+                }
+                if (roundNo != 0) {
+                    disposeResult(testResult, student, roundNo, testNo);
+                }else {
+                    disposeResult(testResult, student, testRound, testNo);
+                }
                 StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
                 List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
                 InteractUtils.showStuInfo(llStuDetail, student, results);
@@ -564,5 +578,16 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
             timer = null;
         }
         service.shutdown();
+    }
+
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
+        List<StuDevicePair> pairs = getPairs();
+        for (StuDevicePair pair : pairs){
+            Student student1 = pair.getStudent();
+            if (student1 != null && student1.getStudentCode().equals(student.getStudentCode())){
+                pair.setCurrentRoundNo(roundNo);
+            }
+        }
     }
 }

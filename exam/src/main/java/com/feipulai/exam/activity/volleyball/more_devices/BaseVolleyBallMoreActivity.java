@@ -26,7 +26,6 @@ import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.base.ResitDialog;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.BaseDeviceState;
-import com.feipulai.exam.activity.person.BasePersonTestActivity;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
@@ -470,7 +469,7 @@ public abstract class BaseVolleyBallMoreActivity extends BaseCheckActivity {
 
         }
     }@Override
-    public void setRoundNo(int roundNo) {
+    public void setRoundNo(Student student, int roundNo) {
 
     }
     public void saveResult(final BaseStuPair baseStuPair, final int index) {

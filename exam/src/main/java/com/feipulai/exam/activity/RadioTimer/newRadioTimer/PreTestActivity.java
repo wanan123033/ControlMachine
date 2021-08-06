@@ -3,7 +3,6 @@ package com.feipulai.exam.activity.RadioTimer.newRadioTimer;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,12 +16,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.feipulai.common.utils.ActivityUtils;
-import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
-import com.feipulai.device.led.LEDManager;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
@@ -32,7 +28,6 @@ import com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.NewRadioPairActi
 import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
-import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.adapter.RunNumberAdapter;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
@@ -110,7 +105,7 @@ public class PreTestActivity extends BaseCheckActivity {
     }
 
     @Override
-    public void setRoundNo(int roundNo) {
+    public void setRoundNo(Student student, int roundNo) {
 
     }
     @Override

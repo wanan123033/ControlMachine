@@ -90,11 +90,6 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     private EditResultDialog editResultDialog;
 
     @Override
-    protected void setRoundNo(int size) {
-
-    }
-
-    @Override
     protected int setLayoutResID() {
         return R.layout.activity_sargent_jump_more;
     }

@@ -32,11 +32,9 @@ import com.feipulai.device.CheckDeviceOpener;
 import com.feipulai.device.ic.ICCardDealer;
 import com.feipulai.device.ic.NFCDevice;
 import com.feipulai.device.ic.entity.StuInfo;
-import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.AgainTestDialog;
-import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.base.ResitDialog;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.jump_rope.view.StuSearchEditText;
@@ -122,9 +120,10 @@ public class IndividualCheckFragment
         }
 
         @Override
-        public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results) {
+        public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results,int roundNo) {
             if (listener != null){
                 listener.onIndividualCheckIn(student, studentItem, results);
+                listener.setRoundNo(student, roundNo);
             }
         }
     };
@@ -703,6 +702,8 @@ public class IndividualCheckFragment
          * 检录的考生----对应的报名信息-----报名信息对应的成绩
          */
         void onIndividualCheckIn(Student student, StudentItem studentItem, List<RoundResult> results);
+
+        void setRoundNo(Student student, int roundNo);
     }
 
 }

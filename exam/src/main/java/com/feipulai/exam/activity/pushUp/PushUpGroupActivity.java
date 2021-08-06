@@ -142,7 +142,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
 
         TestCache.getInstance().init();
         stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
-        pairs = CheckUtils.newPairs(stuPairs.size());
+        pairs = CheckUtils.newPairs(stuPairs.size(),stuPairs);
         LogUtils.operation("俯卧撑获取到分组信息:" + pairs.toString());
         CheckUtils.groupCheck(pairs);
 

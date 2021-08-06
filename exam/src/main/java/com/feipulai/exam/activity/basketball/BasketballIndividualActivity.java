@@ -136,6 +136,16 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
     }
 
     @Override
+    public void setRoundNo(Student student, int roundNo) {
+        for (StuDevicePair pair : pairs){
+            Student student1 = pair.getStudent();
+            if (student1 != null && student1.getStudentCode().equals(student.getStudentCode())){
+                pair.setCurrentRoundNo(roundNo);
+            }
+        }
+    }
+
+    @Override
     protected void initData() {
 
         if (SettingHelper.getSystemSetting().getCheckTool() == 4 && setAFRFrameLayoutResID() != 0) {
@@ -1016,7 +1026,12 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                     roundResult.setMachineResult(0);
                     roundResult.setResultState(testResult.getResultState());
                     roundResult.setTestTime(System.currentTimeMillis() + "");
-                    roundResult.setRoundNo(resultList.get(i).getRoundNo());
+                    if (pair.getCurrentRoundNo() != 0){
+                        roundResult.setRoundNo(pair.getCurrentRoundNo());
+                        pair.setCurrentRoundNo(0);
+                    }else {
+                        roundResult.setRoundNo(resultList.get(i).getRoundNo());
+                    }
                     roundResult.setTestNo(testNo);
                     roundResult.setExamType(mStudentItem.getExamType());
                     roundResult.setScheduleNo(mStudentItem.getScheduleNo());

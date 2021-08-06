@@ -18,6 +18,7 @@ public class RunStudent implements Serializable {
     private List<WaitResult> resultList;
     private int originalMark ;
     private int independentTime;
+    private int roundNo;
     public Student getStudent() {
         return student;
     }
@@ -90,6 +91,14 @@ public class RunStudent implements Serializable {
 
     public void setIndependentTime(int independentTime) {
         this.independentTime = independentTime;
+    }
+
+    public void setRoundNo(int roundNo) {
+        this.roundNo = roundNo;
+    }
+
+    public int getRoundNo() {
+        return roundNo;
     }
 
     public static class WaitResult{
