@@ -28,7 +28,9 @@ import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
+import com.feipulai.exam.activity.base.AgainTestDialog;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
+import com.feipulai.exam.activity.base.ResitDialog;
 import com.feipulai.exam.activity.data.DataDisplayActivity;
 import com.feipulai.exam.activity.data.DataRetrieveActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
@@ -37,6 +39,8 @@ import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.sargent_jump.adapter.DeviceListAdapter;
 import com.feipulai.exam.activity.sargent_jump.pair.SargentPairActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.activity.volleyball.more_devices.BaseVolleyBallMoreActivity;
 import com.feipulai.exam.bean.DataRetrieveBean;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.bean.RoundResultBean;
@@ -84,11 +88,6 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     private boolean isPenalize;
     private boolean isNextClickStart = true;
     private EditResultDialog editResultDialog;
-
-    @Override
-    protected void setRoundNo(int size) {
-
-    }
 
     @Override
     protected int setLayoutResID() {
@@ -254,12 +253,57 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     @Override
     public void onCheckIn(Student student) {
-        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
-        List<RoundResult> roundResultList = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(student.getStudentCode(), studentItem.getExamType());
+        final StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+        final List<RoundResult> roundResultList = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(student.getStudentCode(), studentItem.getExamType());
         testNo = roundResultList == null || roundResultList.size() == 0 ? 1 : roundResultList.get(0).getTestNo();
         //保存成绩，并测试轮次大于测试轮次次数
         if (roundResultList != null && roundResultList.size() >= setTestCount()) {
-            toastSpeak("该考生已测试完成");
+            if (roundResultList != null && roundResultList.size() >= TestConfigs.getMaxTestCount(this)) {
+                SystemSetting setting = SettingHelper.getSystemSetting();
+                if (setting.isAgainTest() && setting.isResit()){
+                    final Student finalStudent = student;
+                    new SweetAlertDialog(this).setContentText("需要重测还是补考呢?")
+                            .setCancelText("重测")
+                            .setConfirmText("补考")
+                            .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    AgainTestDialog dialog = new AgainTestDialog();
+                                    dialog.setArguments(finalStudent,roundResultList,studentItem);
+                                    dialog.setOnIndividualCheckInListener(BaseMoreActivity.this);
+                                    dialog.show(getSupportFragmentManager(),"AgainTestDialog");
+                                    sweetAlertDialog.dismissWithAnimation();
+                                }
+                            })
+                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    ResitDialog dialog = new ResitDialog();
+                                    dialog.setArguments(finalStudent,roundResultList,studentItem);
+                                    dialog.setOnIndividualCheckInListener(BaseMoreActivity.this);
+                                    dialog.show(getSupportFragmentManager(),"ResitDialog");
+                                    sweetAlertDialog.dismissWithAnimation();
+                                }
+                            }).show();
+                }
+                if (setting.isAgainTest()){
+                    AgainTestDialog dialog = new AgainTestDialog();
+                    dialog.setArguments(student,roundResultList,studentItem);
+                    dialog.setOnIndividualCheckInListener(this);
+                    dialog.show(getSupportFragmentManager(),"AgainTestDialog");
+                    return;
+                }
+                if (setting.isResit()){
+                    ResitDialog dialog = new ResitDialog();
+                    dialog.setArguments(student,roundResultList,studentItem);
+                    dialog.setOnIndividualCheckInListener(this);
+                    dialog.show(getSupportFragmentManager(),"ResitDialog");
+                    return;
+                }else {
+                    InteractUtils.toastSpeak(this, "该考生已测试");
+                }
+
+            }
             return;
         } else if (roundResultList != null) {
             for (RoundResult roundResult : roundResultList) {

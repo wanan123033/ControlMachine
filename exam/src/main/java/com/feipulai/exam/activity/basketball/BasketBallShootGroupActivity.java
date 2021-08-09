@@ -148,7 +148,8 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
         tvGroupName.setText(String.format(Locale.CHINA, "%s第%d组", type, group.getGroupNo()));
         //获取分组学生数据
         TestCache.getInstance().init();
-        pairs = CheckUtils.newPairs(((List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu")).size());
+        List<BaseStuPair> stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
+        pairs = CheckUtils.newPairs(stuPairs.size(),stuPairs);
         LogUtils.operation("篮球获取到分组学生:" + pairs.size() + "---" + pairs.toString());
         CheckUtils.groupCheck(pairs);
 
@@ -686,9 +687,18 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
         roundResult.setItemCode(TestConfigs.getCurrentItemCode());
         roundResult.setResult(result);
         roundResult.setMachineResult(result);
-        roundResult.setRoundNo(roundNo);
+        if (pairs.get(position()).getCurrentRoundNo() != 0){
+            roundResult.setRoundNo(pairs.get(position()).getCurrentRoundNo());
+            pairs.get(position()).setCurrentRoundNo(0);
+        }else {
+            roundResult.setRoundNo(roundNo);
+        }
         roundResult.setTestNo(1);
-        roundResult.setExamType(group.getExamType());
+//        roundResult.setExamType(group.getExamType());
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
+        if (studentItem != null){
+            roundResult.setExamType(studentItem.getExamType());
+        }
         roundResult.setScheduleNo(group.getScheduleNo());
         roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
         roundResult.setTestTime(testDate);
@@ -712,7 +722,6 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
         LogUtils.operation("篮球投篮确认保存成绩:result = " + roundResult.getResult() + "---" + roundResult.toString());
         DBManager.getInstance().insertRoundResult(roundResult);
         SystemSetting setting = SettingHelper.getSystemSetting();
-        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairsList.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
         //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
         if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairsList.get(stuPairAdapter.getTestPosition()).isResit()){
             stuPairsList.get(stuPairAdapter.getTestPosition()).setResit(true);

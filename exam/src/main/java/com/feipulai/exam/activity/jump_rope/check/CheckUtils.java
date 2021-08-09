@@ -1,16 +1,21 @@
 package com.feipulai.exam.activity.jump_rope.check;
 
+import android.util.Log;
+
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.JumpDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.person.BaseStuPair;
+import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.entity.StudentItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,10 +63,13 @@ public class CheckUtils {
         return state;
     }
 
-    public static List<StuDevicePair> newPairs(int size) {
+    public static List<StuDevicePair> newPairs(int size,List<BaseStuPair> pairss) {
         List<StuDevicePair> pairs = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             StuDevicePair pair = new StuDevicePair();
+            if (pairss != null && pairss.size() == size) {
+                pair.setCurrentRoundNo(pairss.get(i).getRoundNo());
+            }
             pair.setBaseDevice(createBaseDeviceState(i + 1));
             pairs.add(pair);
         }
@@ -102,6 +110,7 @@ public class CheckUtils {
     }
 
     public static void groupCheck(List<StuDevicePair> pairs, int maxTestCount, int testPattern) {
+        SystemSetting systemSetting = SettingHelper.getSystemSetting();
         // 分组测试,直接分配考生
         TestCache testCache = TestCache.getInstance();
         Map<Object, Object> map = TestConfigs.baseGroupMap;
@@ -114,6 +123,14 @@ public class CheckUtils {
                 //  查询学生成绩 当有成绩则添加数据跳过测试
                 List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound
                         (stuPair.getStudent().getStudentCode(), testCache.getGroup().getId() + "");
+                StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.sCurrentItem.getItemCode(),stuPair.getStudent().getStudentCode());
+                if (roundResultList != null && roundResultList.size() >= TestConfigs.getMaxTestCount()) {
+                    if (systemSetting.isResit() || systemSetting.isAgainTest() || studentItem.getMakeUpType() == 1) {
+                        if (systemSetting.isResit() || studentItem.getMakeUpType() == 1) {
+                            roundResultList.clear();
+                        }
+                    }
+                }
                 if ((roundResultList == null || roundResultList.size() == 0 || roundResultList.size() < maxTestCount)
                         && addPostion < size) {
                     pairs.get(addPostion).setStudent(stuPair.getStudent());
@@ -136,6 +153,14 @@ public class CheckUtils {
                     //  查询学生成绩 当有成绩则添加数据跳过测试
                     List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound
                             (stuPair.getStudent().getStudentCode(), testCache.getGroup().getId() + "");
+                    StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.sCurrentItem.getItemCode(),stuPair.getStudent().getStudentCode());
+                    if (roundResultList != null && roundResultList.size() >= TestConfigs.getMaxTestCount()) {
+                        if (systemSetting.isResit() || systemSetting.isAgainTest() || studentItem.getMakeUpType() == 1) {
+                            if (systemSetting.isResit() || studentItem.getMakeUpType() == 1) {
+                                roundResultList.clear();
+                            }
+                        }
+                    }
                     if ((roundResultList.size() < (i + 1))
                             && addPostion < size) {
                         pairs.get(addPostion).setStudent(stuPair.getStudent());

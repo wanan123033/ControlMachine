@@ -1,6 +1,7 @@
 package com.feipulai.exam.activity.jump_rope.base.check;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.feipulai.common.jump_rope.facade.GetStateLedFacade;
 import com.feipulai.common.jump_rope.task.OnGetStateWithLedListener;
@@ -14,6 +15,7 @@ import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.check.CheckUtils;
+import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.TestConfigs;
@@ -54,17 +56,21 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         this.view = view;
         this.context = context;
     }
-
+    List stuPairs;
     @Override
     public void start() {
         setting = getSetting();
         systemSetting = SettingHelper.getSystemSetting();
         mLEDManager = new LEDManager();
-        if (TestCache.getInstance().getTestingPairs() == null || TestCache.getInstance().getTestingPairs().size() == 0) {
-            pairs = CheckUtils.newPairs(getDeviceSumFromSetting());
+
+        stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
+        if (    SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN
+                ||TestCache.getInstance().getTestingPairs() == null || TestCache.getInstance().getTestingPairs().size() == 0) {
+            pairs = CheckUtils.newPairs(getDeviceSumFromSetting(),stuPairs);
         } else {
             pairs = TestCache.getInstance().getTestingPairs();
         }
+        Log.e("PAIR",pairs.toString());
 
         mCurrentConnect = new int[pairs.size() + 1];
         TestCache.getInstance().init();
@@ -121,7 +127,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
     public void refreshEveryThing() {
         TestCache.getInstance().init();
         focusPosition = 0;
-        pairs = CheckUtils.newPairs(getDeviceSumFromSetting());
+        pairs = CheckUtils.newPairs(getDeviceSumFromSetting(),stuPairs);
         view.refreshPairs(pairs);
         view.showStuInfo(null, null);
         resetLED();
@@ -251,7 +257,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
     @Override
     public void settingChanged() {
         if (pairs != null && pairs.size() != getDeviceSumFromSetting()) {
-            List<StuDevicePair> newPairs = CheckUtils.newPairs(getDeviceSumFromSetting());
+            List<StuDevicePair> newPairs = CheckUtils.newPairs(getDeviceSumFromSetting(),stuPairs);
             focusPosition = 0;
             for (int i = 0; i < pairs.size(); i++) {
                 if (i == newPairs.size()) {
@@ -301,6 +307,12 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         for (int i = 0; i < pairs.size(); i++) {
             StuDevicePair pair = pairs.get(i);
             Student stu = pair.getStudent();
+            for (RoundResult result : results){
+                if (result.getIsDelete()){
+                    pair.setCurrentRoundNo(result.getRoundNo());
+                    pair.setIsAgain(true);
+                }
+            }
             if (stu != null && stu.getStudentCode().equals(student.getStudentCode())) {
                 view.showToast("该考生已绑定设备");
                 return;
@@ -395,5 +407,13 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         mCurrentConnect = new int[getDeviceSumFromSetting() + 1];
         endTest();
     }
-
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
+        for (StuDevicePair pair : pairs){
+            Student student1 = pair.getStudent();
+            if (student1 != null && student1.getStudentCode().equals(student.getStudentCode())){
+                pair.setCurrentRoundNo(roundNo);
+            }
+        }
+    }
 }

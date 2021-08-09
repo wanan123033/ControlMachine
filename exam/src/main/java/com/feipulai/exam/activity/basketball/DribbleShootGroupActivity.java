@@ -168,7 +168,7 @@ public class DribbleShootGroupActivity extends BaseTitleActivity implements Base
         //获取分组学生数据
         TestCache.getInstance().init();
         stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
-        pairs = CheckUtils.newPairs(stuPairs.size());
+        pairs = CheckUtils.newPairs(stuPairs.size(),stuPairs);
         LogUtils.operation("篮球获取到分组学生:" + pairs.size() + "---" + pairs.toString());
         CheckUtils.groupCheck(pairs);
 
@@ -743,9 +743,18 @@ public class DribbleShootGroupActivity extends BaseTitleActivity implements Base
         roundResult.setItemCode(TestConfigs.getCurrentItemCode());
         roundResult.setResult(timeResult);
         roundResult.setMachineResult(timeResult);
-        roundResult.setRoundNo(roundNo);
+        if (pairs.get(position()).getCurrentRoundNo() != 0){
+            roundResult.setRoundNo(pairs.get(position()).getCurrentRoundNo());
+            pairs.get(position()).setCurrentRoundNo(0);
+        }else {
+            roundResult.setRoundNo(roundNo);
+        }
         roundResult.setTestNo(1);
-        roundResult.setExamType(group.getExamType());
+//        roundResult.setExamType(group.getExamType());
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
+        if (studentItem != null){
+            roundResult.setExamType(studentItem.getExamType());
+        }
         roundResult.setScheduleNo(group.getScheduleNo());
         roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
         roundResult.setTestTime(testDate);
@@ -770,7 +779,6 @@ public class DribbleShootGroupActivity extends BaseTitleActivity implements Base
         DBManager.getInstance().insertRoundResult(roundResult);
         //获取所有成绩设置为非最好成绩
         SystemSetting setting = SettingHelper.getSystemSetting();
-        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
         //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
         if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
             stuPairs.get(stuPairAdapter.getTestPosition()).setResit(true);

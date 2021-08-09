@@ -227,7 +227,8 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
         tvGroupName.setText(String.format(Locale.CHINA, "%s第%d组", type, group.getGroupNo()));
         //获取分组学生数据
         TestCache.getInstance().init();
-        pairs = CheckUtils.newPairs(((List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu")).size());
+        List stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
+        pairs = CheckUtils.newPairs(stuPairs.size(),stuPairs);
         LogUtils.operation("运动计时获取到分组学生:" + pairs.size() + "---" + pairs.toString());
         CheckUtils.groupCheck(pairs);
 
@@ -413,9 +414,21 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                     txtWaiting.setEnabled(true);
                     testState = TestState.UN_STARTED;
                     Student stu = pairs.get(position()).getStudent();
-                    sportPresent.saveGroupResult(stu, resultList.get(roundNo - 1).getResult(),resultList.get(roundNo - 1).getResultState(),
-                            roundNo,group, resultList.get(roundNo - 1).getTestTime());
-
+                    if (pairs.get(position()).getCurrentRoundNo() != 0){
+                        sportPresent.saveGroupResult(stu, resultList.get(roundNo - 1).getResult(),resultList.get(roundNo - 1).getResultState(),
+                                pairs.get(position()).getCurrentRoundNo(),group, resultList.get(roundNo - 1).getTestTime());
+                        pairs.get(position()).setCurrentRoundNo(0);
+                        List<BaseStuPair> stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
+                        if (stuPairs != null){
+                            for (BaseStuPair pp : stuPairs){
+                                if (pp.getStudent().getStudentCode().equals(pairs.get(position()).getStudent().getStudentCode()))
+                                    pp.setRoundNo(0);
+                            }
+                        }
+                    }else {
+                        sportPresent.saveGroupResult(stu, resultList.get(roundNo - 1).getResult(), resultList.get(roundNo - 1).getResultState(),
+                                roundNo, group, resultList.get(roundNo - 1).getTestTime());
+                    }
                     List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(stu.getStudentCode());
                     if (results != null) {
                         TestCache.getInstance().getResults().put(stu, results);

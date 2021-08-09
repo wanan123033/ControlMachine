@@ -25,7 +25,6 @@ import com.kk.taurus.playerbase.record.PlayRecordManager;
 import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 
-
 public class MyApplication extends MultiDexApplication {
 
     public static final String PATH_SPECIFICATION = FileUtil.PATH_BASE + "KS/";//说明文档路径

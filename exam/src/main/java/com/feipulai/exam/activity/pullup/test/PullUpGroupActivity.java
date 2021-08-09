@@ -139,7 +139,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
 
         TestCache.getInstance().init();
         stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
-        pairs = CheckUtils.newPairs(stuPairs.size());
+        pairs = CheckUtils.newPairs(stuPairs.size(),stuPairs);
         CheckUtils.groupCheck(pairs);
         LogUtils.operation("引体向上获取分组信息:" + pairs.size() + "---" + pairs.toString());
 
@@ -643,5 +643,4 @@ public class PullUpGroupActivity extends BaseTitleActivity
         cancelChangeBad();
         toastSpeak("设备连接成功");
     }
-
 }

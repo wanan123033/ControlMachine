@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -17,6 +18,7 @@ import java.util.List;
 public class ScoreAdapter extends BaseQuickAdapter<RoundResult, ScoreAdapter.ScoreViewHolder> {
     private final List<RoundResult> data;
     private OnItemChildClickListener listener;
+    private int selPos = -1;
 
     public ScoreAdapter(@Nullable List<RoundResult> data) {
         super(R.layout.item_score,data);
@@ -30,28 +32,33 @@ public class ScoreAdapter extends BaseQuickAdapter<RoundResult, ScoreAdapter.Sco
 
     @Override
     protected void convert(final ScoreViewHolder helper, final RoundResult item) {
-        helper.getView(R.id.tv_result).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT,1));
+        TextView textView = helper.getView(R.id.tv_result);
+        textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT,1));
         if (item.getResultState() == RoundResult.RESULT_STATE_NORMAL){
             helper.setText(R.id.tv_result,item.getRoundNo()+"-"+ResultDisplayUtils.getStrResultForDisplay(item.getResult()));
         }else {
             helper.setText(R.id.tv_result,ResultDisplayUtils.setResultState(item.getResultState()));
         }
-        if (item.isDelete()){
-            helper.setBackgroundColor(R.id.tv_result, Color.BLUE);
+        if (helper.getAdapterPosition() == selPos){
+            helper.setBackgroundColor(R.id.tv_result, Color.YELLOW);
         }else {
             helper.setBackgroundColor(R.id.tv_result, Color.WHITE);
         }
         helper.getView(R.id.tv_result).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("TAG","onClick-------------");
-                for (RoundResult result : data){
-                    result.setIsDelete(false);
+                if (listener != null){
+                    listener.onItemChildClick(ScoreAdapter.this,null,helper.getAdapterPosition());
                 }
-                item.setIsDelete(true);
-                notifyDataSetChanged();
             }
         });
+        if (item.getExamType() == 2){
+            textView.append("(补考)");
+        }
+    }
+
+    public void setselPos(int selectPos) {
+        this.selPos = selectPos;
     }
 
     static class ScoreViewHolder extends BaseViewHolder{

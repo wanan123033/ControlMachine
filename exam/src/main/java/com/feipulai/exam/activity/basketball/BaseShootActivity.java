@@ -82,7 +82,6 @@ public abstract class BaseShootActivity extends BaseTitleActivity
         if (state == WAIT_FREE || state == WAIT_CHECK_IN) {
 
             pairs.get(0).setStudent(student);
-
             for (RoundResult result : results) {
                 if (isFullSkip(result.getResult(), result.getResultState())) {
                     toastSpeak("满分");

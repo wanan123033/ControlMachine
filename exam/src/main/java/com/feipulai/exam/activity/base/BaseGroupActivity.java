@@ -30,6 +30,9 @@ import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.basketball.DribbleShootGroupActivity;
 import com.feipulai.exam.activity.basketball.ShootSetting;
 import com.feipulai.exam.activity.basketball.ShootSettingActivity;
+import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
+import com.feipulai.exam.activity.jump_rope.bean.TestCache;
+import com.feipulai.exam.activity.jump_rope.check.CheckUtils;
 import com.feipulai.exam.activity.jump_rope.fragment.IndividualCheckFragment;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.medicineBall.MedicineBallSetting;
@@ -185,7 +188,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
         rvTestStu.setLayoutManager(new LinearLayoutManager(this));
         stuPairsList = new ArrayList<>();
         stuAdapter = new BaseGroupAdapter(stuPairsList);
-
+        systemSetting = SettingHelper.getSystemSetting();
         rvTestStu.setAdapter(stuAdapter);
         scheduleAdapter = new ScheduleAdapter(this, scheduleList);
         spSchedule.setAdapter(scheduleAdapter);
@@ -203,79 +206,70 @@ public class BaseGroupActivity extends BaseTitleActivity {
 
             @Override
             public void itemClick(final int pos, boolean isChecked) {
-                if (isChecked){
-
-                    StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.sCurrentItem.getItemCode(),stuPairsList.get(pos).getStudent().getStudentCode());
-                    List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(TestConfigs.sCurrentItem.getItemCode(), stuPairsList.get(pos).getStudent().getStudentCode());
-                    Log.e("TAG",results.toString());
-                    if (results != null && results.size() >= TestConfigs.getMaxTestCount(getApplicationContext())) {
-                        Log.e("TAG", systemSetting.isResit() + "---" + systemSetting.isAgainTest() + "---" + (studentItem.getMakeUpType() == 1));
-                        if (systemSetting.isResit() || systemSetting.isAgainTest() || studentItem.getMakeUpType() == 1) {
-                            if (systemSetting.isResit() || studentItem.getMakeUpType() == 1) {
-                                ResitDialog dialog = new ResitDialog();
-                                dialog.setArguments(stuPairsList.get(pos).getStudent(), results, studentItem);
-                                dialog.setOnIndividualCheckInListener(new ResitDialog.onClickQuitListener() {
-                                    @Override
-                                    public void onCancel() {
-                                        stuPairsList.get(pos).setCanTest(false);
-                                        stuPairsList.get(pos).setResit(false);
-                                        stuAdapter.notifyItemChanged(pos);
-                                    }
-
-                                    @Override
-                                    public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results) {
-                                        stuPairsList.get(pos).setTestNo(1);
-                                        stuPairsList.get(pos).setRoundNo(1);
-                                        stuPairsList.get(pos).setCanTest(true);
-                                        stuAdapter.notifyItemChanged(pos);
-                                    }
-                                });
-                                dialog.show(getSupportFragmentManager(), "ResitDialog");
-                            }
-                            if (systemSetting.isAgainTest()){
-                                AgainTestDialog dialog = new AgainTestDialog();
-                                dialog.setArguments(stuPairsList.get(pos).getStudent(),results,studentItem);
-                                dialog.setOnIndividualCheckInListener(new ResitDialog.onClickQuitListener() {
-                                    @Override
-                                    public void onCancel() {
-                                        stuPairsList.get(pos).setCanTest(false);
-                                        stuPairsList.get(pos).setAgain(false);
-                                        stuAdapter.notifyItemChanged(pos);
-                                    }
-
-                                    @Override
-                                    public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results) {
-                                        for (int i = 0 ; i < results.size() ; i++){
-                                            RoundResult result = results.get(i);
-                                            if (result.isDelete()){
-                                                stuPairsList.get(pos).setTestNo(1);
-                                                stuPairsList.get(pos).setRoundNo(result.getRoundNo());
-                                                stuPairsList.get(pos).setCanTest(true);
-                                                stuAdapter.notifyItemChanged(pos);
-                                                break;
-                                            }
-                                        }
-                                    }
-                                });
-                                dialog.show(getSupportFragmentManager(),"AgainTestDialog");
-                            }
-                        }else {
-                            stuPairsList.get(pos).setCanTest(isChecked);
-                        }
-                    }else {
-                        stuPairsList.get(pos).setCanTest(isChecked);
-                    }
-                }else {
-                    stuPairsList.get(pos).setCanTest(isChecked);
-                }
-
+                stuPairsList.get(pos).setCanTest(isChecked);
             }
         });
         stuAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+            public void onItemClick(BaseQuickAdapter adapter, View view, final int position) {
                 if (stuPairsList.size() > 0) {
                     showStuInfo(stuPairsList.get(position).getStudent());
+                }
+                StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.sCurrentItem.getItemCode(),stuPairsList.get(position).getStudent().getStudentCode());
+                List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(TestConfigs.sCurrentItem.getItemCode(), stuPairsList.get(position).getStudent().getStudentCode());
+                Log.e("TAG",results.toString());
+                if (results != null && results.size() >= TestConfigs.getMaxTestCount(getApplicationContext())) {
+                    Log.e("TAG", systemSetting.isResit() + "---" + systemSetting.isAgainTest() + "---" + (studentItem.getMakeUpType() == 1));
+                    if (systemSetting.isResit() || systemSetting.isAgainTest() || studentItem.getMakeUpType() == 1) {
+                        if (systemSetting.isResit() || studentItem.getMakeUpType() == 1) {
+                            ResitDialog dialog = new ResitDialog();
+                            dialog.setArguments(stuPairsList.get(position).getStudent(), results, studentItem);
+                            dialog.setOnIndividualCheckInListener(new ResitDialog.onClickQuitListener() {
+                                @Override
+                                public void onCancel() {
+                                    stuPairsList.get(position).setCanTest(false);
+                                    stuPairsList.get(position).setResit(false);
+                                    stuAdapter.notifyItemChanged(position);
+                                }
+
+                                @Override
+                                public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results,int roundNo) {
+                                    stuPairsList.get(position).setTestNo(1);
+                                    stuPairsList.get(position).setRoundNo(0);
+                                    stuPairsList.get(position).setCanTest(true);
+                                    stuAdapter.notifyItemChanged(position);
+                                }
+                            });
+                            dialog.show(getSupportFragmentManager(), "ResitDialog");
+                        }
+                        if (systemSetting.isAgainTest()){
+                            AgainTestDialog dialog = new AgainTestDialog();
+                            dialog.setArguments(stuPairsList.get(position).getStudent(),results,studentItem);
+                            dialog.setOnIndividualCheckInListener(new ResitDialog.onClickQuitListener() {
+                                @Override
+                                public void onCancel() {
+                                    stuPairsList.get(position).setCanTest(false);
+                                    stuPairsList.get(position).setAgain(false);
+                                    stuAdapter.notifyItemChanged(position);
+                                }
+
+                                @Override
+                                public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results,int roundNo) {
+                                    for (int i = 0 ; i < results.size() ; i++){
+                                        RoundResult result = results.get(i);
+                                        if (result.isDelete()){
+                                            stuPairsList.get(position).setTestNo(1);
+                                            stuPairsList.get(position).setRoundNo(roundNo);
+                                            stuPairsList.get(position).setCanTest(true);
+                                            stuAdapter.notifyItemChanged(position);
+                                            break;
+                                        }
+                                    }
+                                }
+                            });
+                            dialog.show(getSupportFragmentManager(),"AgainTestDialog");
+                        }
+                    }
                 }
             }
         });

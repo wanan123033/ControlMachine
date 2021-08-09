@@ -31,6 +31,7 @@ import com.feipulai.exam.activity.base.BaseAFRFragment;
 import com.feipulai.exam.activity.basketball.adapter.DribbleShootAdapter;
 import com.feipulai.exam.activity.basketball.adapter.ShootResultAdapter;
 import com.feipulai.exam.activity.basketball.result.BasketBallResult;
+import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -608,6 +609,16 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
 
         if (timer != null ) {
             timer.dispose();
+        }
+    }
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
+        List<StuDevicePair> pairs = getPairs();
+        for (StuDevicePair pair : pairs){
+            Student student1 = pair.getStudent();
+            if (student1 != null && student1.getStudentCode().equals(student.getStudentCode())){
+                pair.setCurrentRoundNo(roundNo);
+            }
         }
     }
 }

@@ -785,7 +785,14 @@ public class PushUpIndividualActivity extends BaseTitleActivity
                 onIndividualCheckIn(student, studentItem, results);
             }
         });
-
-
+    }
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
+        for (StuDevicePair pair : pairs){
+            Student student1 = pair.getStudent();
+            if (student1 != null && student1.getStudentCode().equals(student.getStudentCode())){
+                pair.setCurrentRoundNo(roundNo);
+            }
+        }
     }
 }

@@ -27,14 +27,11 @@ import com.feipulai.device.serial.RadioManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
-import com.feipulai.exam.activity.data.DataDisplayActivity;
-import com.feipulai.exam.activity.data.DataRetrieveActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.adapter.BaseGroupTestStuAdapter;
 import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
-import com.feipulai.exam.bean.DataRetrieveBean;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.BaseEvent;
@@ -52,7 +49,6 @@ import com.feipulai.exam.view.EditResultDialog;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
-import org.apache.poi.ss.formula.functions.T;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.UnsupportedEncodingException;
@@ -65,7 +61,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * 分组
@@ -203,7 +198,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     }
 
     @Override
-    public void setRoundNo(int roundNo) {
+    public void setRoundNo(Student student, int roundNo) {
 
     }
 
@@ -893,10 +888,19 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         }
 
         roundResult.setTestTime(baseStuPair.getTestTime());
-        roundResult.setRoundNo(roundNo);
+        if (baseStuPair.getRoundNo() != 0){
+            roundResult.setRoundNo(baseStuPair.getRoundNo());
+            baseStuPair.setRoundNo(0);
+        }else {
+            roundResult.setRoundNo(roundNo);
+        }
         roundResult.setTestNo(1);
         roundResult.setGroupId(group.getId());
-        roundResult.setExamType(group.getExamType());
+//        roundResult.setExamType(group.getExamType());
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),baseStuPair.getStudent().getStudentCode());
+        if (studentItem != null){
+            roundResult.setExamType(studentItem.getExamType());
+        }
         roundResult.setScheduleNo(group.getScheduleNo());
         roundResult.setUpdateState(0);
         roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
@@ -929,7 +933,6 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         DBManager.getInstance().insertRoundResult(roundResult);
         LogUtils.operation("保存成绩:" + roundResult.toString());
         SystemSetting setting = SettingHelper.getSystemSetting();
-        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getStudentCode());
         //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
         if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairsList.get(stuAdapter.getTestPosition()).isResit()){
             stuPairsList.get(stuAdapter.getTestPosition()).setResit(true);

@@ -13,21 +13,21 @@ import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.RunTimerConnectState;
 import com.feipulai.device.serial.beans.RunTimerResult;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
+import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.setting.SettingHelper;
-import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
-import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
@@ -83,10 +83,6 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
         promoteTimes.put("startIntercept", 0);
         promoteTimes.put("endIntercept", 0);
         getSetting();
-    }
-    @Override
-    public void setRoundNo(int roundNo) {
-
     }
 
     @Override

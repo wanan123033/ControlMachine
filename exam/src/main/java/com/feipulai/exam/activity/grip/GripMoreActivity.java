@@ -19,6 +19,7 @@ import com.feipulai.exam.activity.sargent_jump.more_device.BaseMoreActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.entity.RoundResult;
+import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.utils.LogUtils;
 
 import butterknife.OnClick;
@@ -37,6 +38,11 @@ public class GripMoreActivity extends BaseMoreActivity {
     private boolean[] resultUpdate;//成绩更新
     private static final String TAG = "GripMoreActivity";
     private boolean isResume = true;
+
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
+
+    }
 
     @Override
     protected void initData() {

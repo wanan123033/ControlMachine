@@ -169,7 +169,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         TestCache.getInstance().init();
 
         stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
-        pairs = CheckUtils.newPairs(stuPairs.size());
+        pairs = CheckUtils.newPairs(stuPairs.size(),stuPairs);
         CheckUtils.groupCheck(pairs);
 
         rvTestingPairs.setLayoutManager(new LinearLayoutManager(this));
@@ -777,9 +777,18 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         roundResult.setItemCode(TestConfigs.getCurrentItemCode());
         roundResult.setResult(basketballResult.getResult());
         roundResult.setMachineResult(basketballResult.getResult());
-        roundResult.setRoundNo(roundNo);
+        if (pairs.get(position()).getCurrentRoundNo() != 0){
+            roundResult.setRoundNo(pairs.get(position()).getCurrentRoundNo());
+            pairs.get(position()).setCurrentRoundNo(0);
+        }else {
+            roundResult.setRoundNo(roundNo);
+        }
         roundResult.setTestNo(1);
-        roundResult.setExamType(group.getExamType());
+//        roundResult.setExamType(group.getExamType());
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
+        if (studentItem != null){
+            roundResult.setExamType(studentItem.getExamType());
+        }
         roundResult.setScheduleNo(group.getScheduleNo());
         roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
         roundResult.setTestTime(testDate);
