@@ -58,14 +58,14 @@ public class MyApplication extends MultiDexApplication {
         super.onCreate();
         instance = this;
         LogUtils.initLogger(true, true, PATH_LOG_NAME);
-//        CrashHandler.getInstance().init(this);
-//        CrashHandler.getInstance().setUploadOpersion(new CrashHandler.UploadOpersion() {
-//            @Override
-//            public void upload(String erroMsg) {
-//                new HttpSubscriber().uploadLog(erroMsg);
-//                IntentUtil.gotoActivity(instance, SplashScreenActivity.class);
-//            }
-//        });
+        CrashHandler.getInstance().init(this);
+        CrashHandler.getInstance().setUploadOpersion(new CrashHandler.UploadOpersion() {
+            @Override
+            public void upload(String erroMsg) {
+                new HttpSubscriber().uploadLog(erroMsg);
+                IntentUtil.gotoActivity(instance, SplashScreenActivity.class);
+            }
+        });
         SettingHelper.init(this);
         BlueToothHelper.init(this);
         TOKEN = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.TOKEN, "");
