@@ -258,7 +258,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                                     for (int i = 0 ; i < results.size() ; i++){
                                         RoundResult result = results.get(i);
                                         if (result.isDelete()){
-                                            stuPairsList.get(position).setTestNo(1);
+                                            stuPairsList.get(position).setTestNo(TestConfigs.getMaxTestCount());
                                             stuPairsList.get(position).setRoundNo(roundNo);
                                             stuPairsList.get(position).setCanTest(true);
                                             stuAdapter.notifyItemChanged(position);
