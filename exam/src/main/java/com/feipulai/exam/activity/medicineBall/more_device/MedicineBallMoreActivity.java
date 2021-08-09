@@ -12,6 +12,7 @@ import com.feipulai.device.manager.MedicineBallMore;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.MedicineBallNewResult;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.medicineBall.MedicineBallSetting;
 import com.feipulai.exam.activity.medicineBall.MedicineBallSettingActivity;
 import com.feipulai.exam.activity.medicineBall.MedicineConstant;
@@ -27,6 +28,7 @@ import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
 
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.Random;
 
 import butterknife.OnClick;
@@ -302,5 +304,9 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
                 sweetAlertDialog.dismissWithAnimation();
             }
         }).show();
+    }
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
+
     }
 }

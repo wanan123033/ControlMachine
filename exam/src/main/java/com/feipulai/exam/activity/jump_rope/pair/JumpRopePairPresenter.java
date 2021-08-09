@@ -14,7 +14,9 @@ import com.feipulai.exam.activity.jump_rope.bean.JumpDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.check.CheckUtils;
 import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSetting;
+import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.config.TestConfigs;
 
 import java.util.List;
 import java.util.Objects;
@@ -54,7 +56,8 @@ public class JumpRopePairPresenter
         jumpRopeManager = new JumpRopeManager();
         PairTask pairTask = new PairTask();
         executor.execute(pairTask);
-        pairs = CheckUtils.newPairs(setting.getDeviceSum());
+        List<BaseStuPair> stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
+        pairs = CheckUtils.newPairs(setting.getDeviceSum(),stuPairs);
         view.initView(setting, pairs);
     }
 

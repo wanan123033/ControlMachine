@@ -147,7 +147,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
 
         TestCache.getInstance().init();
         stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
-        pairs = CheckUtils.newPairs(stuPairs.size());
+        pairs = CheckUtils.newPairs(stuPairs.size(),stuPairs);
         LogUtils.operation("排球获取分组信息:" + pairs.size() + "---" + pairs.toString());
         CheckUtils.groupCheck(pairs);
 

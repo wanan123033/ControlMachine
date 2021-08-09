@@ -29,8 +29,11 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.view.DividerItemDecoration;
 
+import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -48,11 +51,19 @@ public class RadioResultActivity
     RecyclerView mRvResults;
     @BindView(R.id.btn_print)
     Button btnPrint;
+    @BindView(R.id.rv_results_resit)
+    RecyclerView rv_results_resit;
+    @BindView(R.id.ll_title_resit)
+    LinearLayout ll_title_resit;
 
     private SystemSetting systemSetting;
     private ResultDisplayAdapter mAdapter;
     private boolean needPrint;
     private Map<Student, List<RoundResult>> results;
+
+    private Map<Student,List<RoundResult>> resitResult;
+    private Map<Student,List<RoundResult>> nomalResult;
+    private ResultDisplayAdapter mAdapter2;
 
 
     @Nullable
@@ -72,13 +83,12 @@ public class RadioResultActivity
         systemSetting = SettingHelper.getSystemSetting();
 
         results = TestCache.getInstance().getResults();
-        Log.e("TAG----",results.toString());
+        initResult();
         if (systemSetting.getTestPattern() == SystemSetting.GROUP_PATTERN) {
             mTvGroupName.setText(InteractUtils.generateGroupText(TestCache.getInstance().getGroup()));
             mTvGroupName.setVisibility(View.VISIBLE);
             updateGroupState();
         }
-
         for (int i = 0; i < TestConfigs.getMaxTestCount(this); i++) {
             TextView textView = new TextView(this);
             textView.setGravity(Gravity.CENTER);
@@ -86,14 +96,19 @@ public class RadioResultActivity
             textView.setText("成绩" + (i + 1));
             mLlTitle.addView(textView);
         }
-
+        initAdapter();
+        initAdapter2();
         mRvResults.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        rv_results_resit.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this);
         dividerItemDecoration.setDrawBorderTopAndBottom(false);
         dividerItemDecoration.setDrawBorderLeftAndRight(false);
         mRvResults.addItemDecoration(dividerItemDecoration);
 
-        initAdapter();
+        DividerItemDecoration dividerItemDecoration2 = new DividerItemDecoration(this);
+        dividerItemDecoration2.setDrawBorderTopAndBottom(false);
+        dividerItemDecoration2.setDrawBorderLeftAndRight(false);
+        rv_results_resit.addItemDecoration(dividerItemDecoration2);
 
         if (systemSetting.isAutoPrint()) {
             printResult();
@@ -128,6 +143,52 @@ public class RadioResultActivity
 //				ServerMessage.uploadResult(/*null,*/ uploadResults);
 //			}
 //		}
+
+
+
+    }
+
+    private void initAdapter2() {
+        int sum = 0;
+        Set<Student> students = resitResult.keySet();
+        for (Student student : students){
+            List<RoundResult> results = resitResult.get(student);
+            if (results.size() > sum){
+                sum = results.size();
+            }
+        }
+        for (int i = 0 ; i < sum ; i++){
+            TextView textView = new TextView(this);
+            textView.setGravity(Gravity.CENTER);
+            textView.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1));
+            textView.setText("成绩" + (i + 1));
+            ll_title_resit.addView(textView);
+        }
+        mAdapter2 = new ResultDisplayAdapter(resitResult, sum);
+        rv_results_resit.setAdapter(mAdapter2);
+    }
+
+    private void initResult() {
+        resitResult = new IdentityHashMap<>();
+        nomalResult = new IdentityHashMap<>();
+        if (results != null){
+            Set<Student> students = results.keySet();
+            for (Student student : students){
+                List<RoundResult> results = this.results.get(student);
+                List<RoundResult> resitResultList = new ArrayList<>();
+                List<RoundResult> nomalResultList = new ArrayList<>();
+                for (RoundResult result : results){
+                    if (result.getExamType() == 2){
+                        resitResultList.add(result);
+                    }else {
+                        nomalResultList.add(result);
+                    }
+                }
+                resitResult.put(student,resitResultList);
+                nomalResult.put(student,nomalResultList);
+            }
+        }
+
     }
 
     private void updateGroupState() {
@@ -154,7 +215,7 @@ public class RadioResultActivity
     }
 
     private void initAdapter() {
-        mAdapter = new ResultDisplayAdapter(results, TestConfigs.getMaxTestCount(this));
+        mAdapter = new ResultDisplayAdapter(nomalResult, TestConfigs.getMaxTestCount(this));
         mRvResults.setAdapter(mAdapter);
     }
 

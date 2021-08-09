@@ -103,7 +103,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
     private TestState testState;
     private int baseTimer;//初始化时间 用于记录计时器开始计数的时间
     private TimerTask timerKeeper;
-    private SparseArray<Integer> array;
+    private SparseArray<Integer> array;//有起终点时各道次终点状态
     private static final String TAG = "NewRadioGroupActivity";
     ExecutorService service = Executors.newFixedThreadPool(2);
     @Override
@@ -508,7 +508,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                 return;
             if (deviceId <= runNum) {
                 if (mList.get(deviceId - 1).getConnectState() != state) {
-                    if ( state == 2) {//不处于计时状态
+                    if ( state == 2) {//计时状态
                         mList.get(deviceId - 1).setConnectState(2);
                         mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
                     } else if (testState == TestState.UN_STARTED) {

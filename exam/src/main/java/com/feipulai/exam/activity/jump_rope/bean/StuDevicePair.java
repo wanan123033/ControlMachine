@@ -19,6 +19,8 @@ public class StuDevicePair implements Serializable {
 	private int battery;
 
 	private int currentRoundNo;  //当前轮次
+	private boolean again = false;
+
 	public IDeviceResult getDeviceResult(){
 		return deviceResult;
 	}
@@ -75,5 +77,13 @@ public class StuDevicePair implements Serializable {
 
 	public void setCurrentRoundNo(int currentRoundNo) {
 		this.currentRoundNo = currentRoundNo;
+	}
+
+	public void setIsAgain(boolean again) {
+		this.again = again;
+	}
+
+	public boolean isAgain() {
+		return again;
 	}
 }

@@ -63,10 +63,13 @@ public class CheckUtils {
         return state;
     }
 
-    public static List<StuDevicePair> newPairs(int size) {
+    public static List<StuDevicePair> newPairs(int size,List<BaseStuPair> pairss) {
         List<StuDevicePair> pairs = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             StuDevicePair pair = new StuDevicePair();
+            if (pairss != null && pairss.size() == size) {
+                pair.setCurrentRoundNo(pairss.get(i).getRoundNo());
+            }
             pair.setBaseDevice(createBaseDeviceState(i + 1));
             pairs.add(pair);
         }

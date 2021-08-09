@@ -546,7 +546,12 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                     tvDelete.setEnabled(false);
                     txtWaiting.setEnabled(true);
                     testState = TestState.UN_STARTED;
-                    sportPresent.saveResult(roundNo, mStudentItem, testResults.get(roundNo - 1));
+                    if (pair.getCurrentRoundNo() != 0){
+                        sportPresent.saveResult(pair.getCurrentRoundNo(), mStudentItem, testResults.get(roundNo - 1));
+                        pair.setCurrentRoundNo(0);
+                    }else {
+                        sportPresent.saveResult(roundNo, mStudentItem, testResults.get(roundNo - 1));
+                    }
                     sportPresent.showStuInfo(llStuDetail, pair.getStudent(), testResults);
                     if (roundNo < testNum) {
                         partResultAdapter.replaceData(testResults.get(roundNo).getSportTimeResults());
@@ -807,5 +812,12 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
         message.what = UPDATE_ON_TEXT;
         message.arg1 = time;
         mHandler.sendMessage(message);
+    }
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
+        Student student1 = pair.getStudent();
+        if (student1 != null && student1.getStudentCode().equals(student.getStudentCode())){
+            pair.setCurrentRoundNo(roundNo);
+        }
     }
 }

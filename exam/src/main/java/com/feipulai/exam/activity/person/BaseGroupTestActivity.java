@@ -27,14 +27,11 @@ import com.feipulai.device.serial.RadioManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
-import com.feipulai.exam.activity.data.DataDisplayActivity;
-import com.feipulai.exam.activity.data.DataRetrieveActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.adapter.BaseGroupTestStuAdapter;
 import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
-import com.feipulai.exam.bean.DataRetrieveBean;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.BaseEvent;
@@ -52,7 +49,6 @@ import com.feipulai.exam.view.EditResultDialog;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
-import org.apache.poi.ss.formula.functions.T;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.UnsupportedEncodingException;
@@ -65,7 +61,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * 分组
@@ -203,7 +198,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     }
 
     @Override
-    public void setRoundNo(int roundNo) {
+    public void setRoundNo(Student student, int roundNo) {
 
     }
 
@@ -893,7 +888,12 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         }
 
         roundResult.setTestTime(baseStuPair.getTestTime());
-        roundResult.setRoundNo(roundNo);
+        if (baseStuPair.getRoundNo() != 0){
+            roundResult.setRoundNo(baseStuPair.getRoundNo());
+            baseStuPair.setRoundNo(0);
+        }else {
+            roundResult.setRoundNo(roundNo);
+        }
         roundResult.setTestNo(1);
         roundResult.setGroupId(group.getId());
 //        roundResult.setExamType(group.getExamType());

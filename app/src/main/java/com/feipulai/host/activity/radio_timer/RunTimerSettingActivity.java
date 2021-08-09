@@ -275,6 +275,8 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     @Override
     protected void onStop() {
         super.onStop();
+        TestConfigs.sCurrentItem.setCarryMode(runTimerSetting.getMarkDegree());
+        TestConfigs.sCurrentItem.setDigital(runTimerSetting.isSecond() ? 2:1);
         runTimerSetting.setInterceptPoint(runTimerSetting.getStartPoint() + runTimerSetting.getEndPoint());
         SharedPrefsUtil.save(this, runTimerSetting);
     }

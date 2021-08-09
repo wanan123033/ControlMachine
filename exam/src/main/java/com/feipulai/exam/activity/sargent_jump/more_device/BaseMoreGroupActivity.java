@@ -94,7 +94,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
     }
 
     @Override
-    public void setRoundNo(int roundNo) {
+    public void setRoundNo(Student student, int roundNo) {
         SystemSetting systemSetting = SettingHelper.getSystemSetting();
         if (systemSetting.isResit())
             this.roundNo = roundNo;
@@ -1293,7 +1293,12 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         roundResult.setResultState(baseStuPair.getResultState());
         roundResult.setTestTime(baseStuPair.getTestTime());
         roundResult.setEndTime(DateUtil.getCurrentTime() + "");
-        roundResult.setRoundNo(roundNo);
+        if (baseStuPair.getRoundNo() != 0){
+            roundResult.setRoundNo(baseStuPair.getRoundNo());
+            baseStuPair.setRoundNo(0);
+        }else {
+            roundResult.setRoundNo(roundNo);
+        }
         roundResult.setTestNo(1);
         roundResult.setGroupId(group.getId());
         roundResult.setExamType(group.getExamType());

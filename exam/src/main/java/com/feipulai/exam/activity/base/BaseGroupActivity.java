@@ -233,9 +233,9 @@ public class BaseGroupActivity extends BaseTitleActivity {
                                 }
 
                                 @Override
-                                public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results) {
+                                public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results,int roundNo) {
                                     stuPairsList.get(position).setTestNo(1);
-                                    stuPairsList.get(position).setRoundNo(1);
+                                    stuPairsList.get(position).setRoundNo(0);
                                     stuPairsList.get(position).setCanTest(true);
                                     stuAdapter.notifyItemChanged(position);
                                 }
@@ -254,12 +254,12 @@ public class BaseGroupActivity extends BaseTitleActivity {
                                 }
 
                                 @Override
-                                public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results) {
+                                public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results,int roundNo) {
                                     for (int i = 0 ; i < results.size() ; i++){
                                         RoundResult result = results.get(i);
                                         if (result.isDelete()){
-                                            stuPairsList.get(position).setTestNo(1);
-                                            stuPairsList.get(position).setRoundNo(result.getRoundNo());
+                                            stuPairsList.get(position).setTestNo(TestConfigs.getMaxTestCount());
+                                            stuPairsList.get(position).setRoundNo(roundNo);
                                             stuPairsList.get(position).setCanTest(true);
                                             stuAdapter.notifyItemChanged(position);
                                             break;

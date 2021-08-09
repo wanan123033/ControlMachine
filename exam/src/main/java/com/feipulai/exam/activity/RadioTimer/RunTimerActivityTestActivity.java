@@ -28,6 +28,7 @@ import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseAFRFragment;
+import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
@@ -333,7 +334,12 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
                 markConfirm();
                 for (RunStudent runStudent : mList) {
                     if (runStudent.getStudent() != null) {
-                        disposeManager.saveResult(runStudent.getStudent(), runStudent.getOriginalMark(), currentTestTime, testNo + 1,startTime);
+                        if (runStudent.getRoundNo() != 0){
+                            disposeManager.saveResult(runStudent.getStudent(), runStudent.getOriginalMark(), runStudent.getRoundNo(), testNo + 1, startTime);
+                            runStudent.setRoundNo(0);
+                        }else {
+                            disposeManager.saveResult(runStudent.getStudent(), runStudent.getOriginalMark(), currentTestTime, testNo + 1, startTime);
+                        }
                         List<RoundResult> resultList = DBManager.getInstance().queryResultsByStudentCode(runStudent.getStudent().getStudentCode());
                         List<String> list = new ArrayList<>();
                         for (RoundResult result : resultList) {
@@ -644,5 +650,13 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
 
 
     }
-
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
+        for (RunStudent runStudent : mList){
+            Student student1 = runStudent.getStudent();
+            if (student1.getStudentCode().equals(student.getStudentCode())){
+                runStudent.setRoundNo(roundNo);
+            }
+        }
+    }
 }

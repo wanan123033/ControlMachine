@@ -18,6 +18,7 @@ import java.util.List;
 public class ScoreAdapter extends BaseQuickAdapter<RoundResult, ScoreAdapter.ScoreViewHolder> {
     private final List<RoundResult> data;
     private OnItemChildClickListener listener;
+    private int selPos = -1;
 
     public ScoreAdapter(@Nullable List<RoundResult> data) {
         super(R.layout.item_score,data);
@@ -38,26 +39,26 @@ public class ScoreAdapter extends BaseQuickAdapter<RoundResult, ScoreAdapter.Sco
         }else {
             helper.setText(R.id.tv_result,ResultDisplayUtils.setResultState(item.getResultState()));
         }
-        if (item.isDelete()){
-            helper.setBackgroundColor(R.id.tv_result, Color.BLUE);
+        if (helper.getAdapterPosition() == selPos){
+            helper.setBackgroundColor(R.id.tv_result, Color.YELLOW);
         }else {
             helper.setBackgroundColor(R.id.tv_result, Color.WHITE);
         }
-
+        helper.getView(R.id.tv_result).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null){
+                    listener.onItemChildClick(ScoreAdapter.this,null,helper.getAdapterPosition());
+                }
+            }
+        });
         if (item.getExamType() == 2){
             textView.append("(补考)");
         }
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e("TAG","onClick-------------");
-                for (RoundResult result : data){
-                    result.setIsDelete(false);
-                }
-                item.setIsDelete(true);
-                notifyDataSetChanged();
-            }
-        });
+    }
+
+    public void setselPos(int selectPos) {
+        this.selPos = selectPos;
     }
 
     static class ScoreViewHolder extends BaseViewHolder{

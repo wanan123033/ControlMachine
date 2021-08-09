@@ -20,6 +20,7 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.beans.RunTimerResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
+import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
@@ -421,7 +422,19 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
     private void confirmResult() {
         for (RunStudent runStudent : mList) {
             if (runStudent.getStudent() != null && !TextUtils.isEmpty(runStudent.getMark())) {
-                disposeManager.saveGroupResult(runStudent.getStudent(), runStudent.getOriginalMark(), currentTestTime + 1, group,startTime);
+                if (runStudent.getRoundNo() != 0){
+                    disposeManager.saveGroupResult(runStudent.getStudent(), runStudent.getOriginalMark(), runStudent.getRoundNo(), group,startTime);
+                    runStudent.setRoundNo(0);
+                    List<BaseStuPair> stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
+                    if (stuPairs != null){
+                        for (BaseStuPair pp : stuPairs){
+                            if (pp.getStudent().getStudentCode().equals(runStudent.getStudent().getStudentCode()))
+                                pp.setRoundNo(0);
+                        }
+                    }
+                }else {
+                    disposeManager.saveGroupResult(runStudent.getStudent(), runStudent.getOriginalMark(), currentTestTime + 1, group,startTime);
+                }
                 List<RoundResult> resultList = DBManager.getInstance().queryGroupRound(runStudent.getStudent().getStudentCode(), group.getId() + "");
                 List<String> list = new ArrayList<>();
                 for (RoundResult result : resultList) {
@@ -625,5 +638,14 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
 
     private void gotoItemSetting() {
         startActivity(new Intent(this, RunTimerSettingActivity.class));
+    }
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
+        for (BaseStuPair pair : pairs){
+            Student student1 = pair.getStudent();
+            if (student1 != null && student1.getStudentCode().equals(student.getStudentCode())){
+                pair.setRoundNo(roundNo);
+            }
+        }
     }
 }

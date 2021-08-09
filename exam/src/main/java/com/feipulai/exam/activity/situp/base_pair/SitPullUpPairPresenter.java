@@ -8,6 +8,7 @@ import com.feipulai.device.sitpullup.SitPullLinker;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.check.CheckUtils;
+import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.TestConfigs;
 
@@ -38,7 +39,8 @@ public abstract class SitPullUpPairPresenter
 	
 	@Override
 	public void start() {
-		pairs = CheckUtils.newPairs(getDeviceSum());
+		List stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
+		pairs = CheckUtils.newPairs(getDeviceSum(),stuPairs);
 		view.initView(isAutoPair(), pairs);
 		RadioManager.getInstance().setOnRadioArrived(this);
 		if (linker==null){

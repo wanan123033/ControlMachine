@@ -28,7 +28,6 @@ import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.sargent_jump.adapter.StuAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
-import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
 import com.feipulai.exam.activity.volleyball.VolleyBallSettingActivity;
 import com.feipulai.exam.activity.volleyball.adapter.DeviceListAdapter;
@@ -77,7 +76,7 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
     private int currentStudentIndex;  //当前正在测试的学生下标
 
     @Override
-    public void setRoundNo(int roundNo) {
+    public void setRoundNo(Student student, int roundNo) {
 
     }
     @Nullable
