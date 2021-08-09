@@ -158,16 +158,9 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
             rgModel.setVisibility(View.GONE);
         }
         //成绩精度
-        boolean isSecond;
-        int di = TestConfigs.sCurrentItem.getDigital();
-        if (di != 0) {
-            isSecond = di == 1;
-            rbHundredSecond.setEnabled(false);
-            rbTenSecond.setEnabled(false);
-        } else {
-            isSecond = runTimerSetting.isSecond();
-        }
-        radioGroupDegree.check(isSecond ? R.id.rb_ten_second : R.id.rb_hundred_second);
+        int digital = TestConfigs.sCurrentItem.getDigital();
+
+        radioGroupDegree.check(digital == 1 ? R.id.rb_ten_second : R.id.rb_hundred_second);
 
 
         //拦截方式
@@ -282,10 +275,10 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
 
         switch (checkId) {
             case R.id.rb_hundred_second:
-                runTimerSetting.setSecond(false);
+                runTimerSetting.setDigital(2);
                 break;
             case R.id.rb_ten_second:
-                runTimerSetting.setSecond(true);
+                runTimerSetting.setDigital(1);
                 break;
 
             case R.id.rb_continue:
@@ -357,6 +350,8 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     @Override
     protected void onPause() {
         super.onPause();
+        TestConfigs.sCurrentItem.setCarryMode(runTimerSetting.getMarkDegree());
+        TestConfigs.sCurrentItem.setDigital(runTimerSetting.getDigital());
         String senNum = etSensitivityNum.getText().toString();
         runTimerSetting.setSensitivityNum(TextUtils.isEmpty(senNum) ? 5 : Integer.parseInt(senNum));
         getInterceptPoint();

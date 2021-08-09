@@ -42,7 +42,7 @@
                 android:layout_marginBottom="@dimen/dp_10"
                 android:layout_marginRight="20dp"
                 android:layout_toLeftOf="@+id/tv_start_test"
-                android:background="@drawable/selector_blue_grey_press"
+                android:background="@drawable/btn_background"
                 android:focusable="true"
                 android:gravity="center"
                 android:text="自检"
@@ -57,7 +57,7 @@
                 android:layout_marginBottom="@dimen/dp_10"
                 android:layout_marginRight="20dp"
                 android:layout_toLeftOf="@+id/tv_start_test"
-                android:background="@drawable/selector_blue_grey_press"
+                android:background="@drawable/btn_background"
                 android:focusable="true"
                 android:gravity="center"
                 android:visibility="gone"
@@ -228,7 +228,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="开放跑到数量：" />
+                    android:text="开放跑道数量：" />
 
                 <EditText
                     android:id="@+id/et_run_num"

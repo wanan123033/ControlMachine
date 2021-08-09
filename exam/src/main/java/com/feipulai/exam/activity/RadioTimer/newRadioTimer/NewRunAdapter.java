@@ -72,13 +72,13 @@ public class NewRunAdapter extends BaseQuickAdapter<RunStudent, BaseViewHolder> 
         }
         switch (item.getConnectState()){
             case 0:
-                helper.setBackgroundRes(R.id.tv_state_color,  R.drawable.red_circle);
+                helper.setBackgroundRes(R.id.tv_state_color,  R.drawable.red_circle);//异常链接
                 break;
             case 1:
-                helper.setBackgroundRes(R.id.tv_state_color,  R.drawable.green_circle);
+                helper.setBackgroundRes(R.id.tv_state_color,  R.drawable.green_circle);//正常连接
                 break;
             case 2:
-                helper.setBackgroundRes(R.id.tv_state_color,  R.drawable.yellow_circle);
+                helper.setBackgroundRes(R.id.tv_state_color,  R.drawable.yellow_circle);//计时状态
                 break;
         }
     }
