@@ -108,7 +108,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     private int select;
     private int runNum;
     private int[] independent;
-    private SparseArray<Integer> array;
+    private SparseArray<Integer> array;//有起终点时各道次终点状态 0异常 1正常 2计时
     private TimerTask timerTask;
     @Override
     protected int setLayoutResID() {
@@ -227,7 +227,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
             if (mList.size() == 0)
                 return;
             if (mList.get(deviceId - 1).getConnectState() != state) {
-                if (state == 2) {//不处于计时状态
+                if (state == 2) {//计时状态
                     mList.get(deviceId - 1).setConnectState(2);
                     mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
                 }else if (testState == TestState.UN_STARTED){
@@ -241,7 +241,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
             if (deviceId / 2 > runNum)
                 return;
             if (deviceId <= runNum) {
-                if ( state == 2) {//不处于计时状态
+                if ( state == 2) {//计时状态
                     mList.get(deviceId - 1).setConnectState(2);
                     mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
                 }else if (testState == TestState.UN_STARTED){
