@@ -346,6 +346,21 @@ public class PenalizeDialog {
         } else if (null != roundResultList && roundResultList.size() > mAdapter.getClick()) {
             roundResultList.get(mAdapter.getClick()).setResultState(resultState);
             DBManager.getInstance().updateRoundResult(roundResultList.get(mAdapter.getClick()));
+            RoundResult r = roundResultList.get(0);
+            for (RoundResult roundResult : roundResultList) {
+                if (roundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL){
+                    r =  roundResult;
+                }
+            }
+            for (RoundResult result : roundResultList) {
+                if (result.getResultState() == RoundResult.RESULT_STATE_NORMAL && result.getResult()>r.getResult()){
+                    r = result;
+                }
+            }
+            if (r.getResultState() == RoundResult.RESULT_STATE_NORMAL){
+                r.setIsLastResult(1);
+                DBManager.getInstance().updateRoundResult(r);
+            }
             LogUtils.operation("判定为：" + tvTitle.getText().toString() + roundResultList.get(mAdapter.getClick()).toString());
             EventBus.getDefault().post(new BaseEvent(roundResultList.get(mAdapter.getClick()), EventConfigs.UPDATE_RESULT));
         }
