@@ -90,11 +90,11 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
 
     @Override
     public int setTestCount() {
-        SystemSetting setting = SettingHelper.getSystemSetting();
-        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),baseStuPair.getStudent().getStudentCode());
-        if (setting.isResit() || studentItem.getMakeUpType() == 1){
-            return baseStuPair.getTestNo();
-        }
+//        SystemSetting setting = SettingHelper.getSystemSetting();
+//        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),baseStuPair.getStudent().getStudentCode());
+//        if (setting.isResit() || studentItem.getMakeUpType() == 1){
+//            return baseStuPair.getTestNo();
+//        }
         if (TestConfigs.sCurrentItem.getTestNum() != 0) {
             return TestConfigs.sCurrentItem.getTestNum();
         } else {

@@ -82,10 +82,11 @@ public class PenalizeDialog {
     private int resultState;
     private long groupId = -1;
     private int selectPosition = -1;
+
     /**
      * @param context
      */
-    public PenalizeDialog(Context context,int testTimes) {
+    public PenalizeDialog(Context context, int testTimes) {
         this.context = context;
         this.testTimes = testTimes;
         results = new String[testTimes];
@@ -122,12 +123,13 @@ public class PenalizeDialog {
             case R.id.turn_last:
                 turnNext.setVisibility(View.VISIBLE);
                 turnLast.setVisibility(View.INVISIBLE);
-                if (null == lastStudent){
+                if (null == lastStudent) {
                     setDialogDismiss("未找到考生");
                 }
                 mList.clear();
                 mList.addAll(Arrays.asList(lastResult));//上一个
                 setSelect(lastResult);
+                setStuInfo(lastStudent);
                 mAdapter.notifyDataSetChanged();
                 break;
             case R.id.turn_next:
@@ -136,19 +138,25 @@ public class PenalizeDialog {
                 mList.clear();
                 mList.addAll(Arrays.asList(results));//当前
                 setSelect(results);
+                setStuInfo(student);
                 mAdapter.notifyDataSetChanged();
                 break;
             case R.id.view_txt_cancel:
                 dismissDialog();
                 break;
             case R.id.view_txt_confirm:
-                if (state == 0){
-                    updateResult(lastStudent,resultState);
-                }else {
-                    if (turnLast.getVisibility() == View.VISIBLE){
-                        updateResult(student,resultState);
-                    }else {
-                        updateResult(lastStudent,resultState);
+                if (state == 0) {
+                    updateResult(lastStudent, resultState);
+                } else {
+                    if (turnLast.getVisibility() == View.VISIBLE) {
+                        updateResult(student, resultState);
+                    } else {
+                        if (lastStudent == null) {
+                            updateResult(student, resultState);
+                        } else {
+                            updateResult(lastStudent, resultState);
+                        }
+
                     }
                 }
 
@@ -162,7 +170,7 @@ public class PenalizeDialog {
             dialog.show();
         }
         tvTitle.setText(title[tip]);
-        switch (tip){
+        switch (tip) {
             case 0:
                 resultState = RoundResult.RESULT_STATE_FOUL;
                 break;
@@ -176,26 +184,26 @@ public class PenalizeDialog {
                 resultState = RoundResult.RESULT_STATE_NORMAL;
                 break;
         }
-        if (lastStudent == null && student==null){
+        if (lastStudent == null && student == null) {
             setDialogDismiss("未找到考生");
         }
-        if (selectPosition != -1){
+        if (selectPosition != -1) {
             mAdapter.setClick(selectPosition);
             mAdapter.notifyItemChanged(selectPosition);
         }
     }
 
-    public void setData(int state,Student student ,String[] result,Student lastStudent,String[] lastResult){
+    public void setData(int state, Student student, String[] result, Student lastStudent, String[] lastResult) {
         this.lastResult = lastResult;
         this.results = result;
         this.student = student;
         this.lastStudent = lastStudent;
         this.state = state;
-        switch (state){
+        switch (state) {
             case 0:
-                if (null == lastStudent){
+                if (null == lastStudent) {
                     setDialogDismiss("未找到考生");
-                }else {
+                } else {
                     mList.clear();
                     mList.addAll(Arrays.asList(lastResult));//上一个
                     setSelect(lastResult);
@@ -204,30 +212,30 @@ public class PenalizeDialog {
                 mAdapter.notifyDataSetChanged();
                 break;
             case 1:
-                if (groupId == -1){//个人模式
-                    if (resultState == RoundResult.RESULT_STATE_NORMAL){
-                        if (lastStudent !=null){
+                if (groupId == -1) {//个人模式
+                    if (resultState == RoundResult.RESULT_STATE_NORMAL) {
+                        if (lastStudent != null) {
                             setStuInfo(lastStudent);
                             mList.clear();
                             mList.addAll(Arrays.asList(lastResult));//上一个
                             setSelect(lastResult);
-                        }else {
+                        } else {
                             setDialogDismiss("未找到考生");
                         }
                     } else {
                         turnLast.setVisibility(View.VISIBLE);
-                        if (student!=null){
+                        if (student != null) {
                             setStuInfo(student);
                             mList.clear();
                             mList.addAll(Arrays.asList(result));//当前
                             setSelect(result);
                         }
                     }
-                }else {//分组模式
-                    if (lastStudent != null){
+                } else {//分组模式
+                    if (lastStudent != null) {
                         turnLast.setVisibility(View.VISIBLE);
                     }
-                    if (student!=null){
+                    if (student != null) {
                         setStuInfo(student);
                         mList.clear();
                         mList.addAll(Arrays.asList(result));//当前
@@ -238,13 +246,13 @@ public class PenalizeDialog {
                 mAdapter.notifyDataSetChanged();
                 break;
             case 2:
-                if (student!=null){
+                if (student != null) {
                     setStuInfo(student);
                     mList.clear();
                     mList.addAll(Arrays.asList(result));//当前
                     selectPosition = -1;
                     setSelect(result);
-                    if (selectPosition == -1){
+                    if (selectPosition == -1) {
                         setDialogDismiss("成绩不能为空");
                     }
                     mAdapter.notifyDataSetChanged();
@@ -275,10 +283,10 @@ public class PenalizeDialog {
             public void run() {
                 dismissDialog();
             }
-        },2000);
+        }, 2000);
     }
 
-    private void dismissDialog(){
+    private void dismissDialog() {
         llContent.setVisibility(View.VISIBLE);
         tvNoStudent.setVisibility(View.GONE);
         turnLast.setVisibility(View.GONE);
@@ -290,56 +298,55 @@ public class PenalizeDialog {
         selectPosition = -1;
         txtStuCode.setText("");
         txtStuName.setText("");
-        if (dialog!=null && dialog.isShowing())
+        if (dialog != null && dialog.isShowing())
             dialog.dismiss();
     }
 
 
     /**
      * 更新成绩状态
+     *
      * @param queryStudent
      * @param resultState
      */
-    private void updateResult(Student queryStudent,int resultState){
-        if (null == queryStudent){
+    private void updateResult(Student queryStudent, int resultState) {
+        if (null == queryStudent) {
             return;
         }
 //        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(queryStudent.getStudentCode());
 //        List<RoundResult> roundResultList = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(student.getStudentCode(), studentItem.getExamType());
         List<RoundResult> roundResultList = DBManager.getInstance().queryResultsByStudentCode(queryStudent.getStudentCode());
         //如果是空值判罚应该增加一个值 包含groupId?
-        if (resultState== RoundResult.RESULT_STATE_FOUL && mAdapter.getClick()>= roundResultList.size()){
-            RoundResult roundResult;
-            if (roundResultList.size()>0 ){
-                roundResult   = roundResultList.get(0);
-            }else {
-                roundResult = new RoundResult();
-                StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(queryStudent.getStudentCode());
-                roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
-                roundResult.setStudentCode(queryStudent.getStudentCode());
-                roundResult.setItemCode(TestConfigs.getCurrentItemCode());
-                roundResult.setRoundNo(0);
-                roundResult.setTestNo(0);
-                roundResult.setExamType(studentItem.getExamType());
-                roundResult.setScheduleNo(studentItem.getScheduleNo());
-                roundResult.setUpdateState(0);
-                roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
-                if (getGroupId() != -1){
-                    roundResult.setGroupId(getGroupId());
-                }
+        if (resultState == RoundResult.RESULT_STATE_FOUL && mAdapter.getClick() >= roundResultList.size()) {
+            RoundResult roundResult = new RoundResult();
+            StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(queryStudent.getStudentCode());
+            roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
+            roundResult.setStudentCode(queryStudent.getStudentCode());
+            roundResult.setItemCode(TestConfigs.getCurrentItemCode());
+            roundResult.setMachineResult(0);
+            roundResult.setTestNo(1);
+            roundResult.setExamType(studentItem.getExamType());
+            roundResult.setScheduleNo(studentItem.getScheduleNo());
+            roundResult.setUpdateState(0);
+            roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
+            if (getGroupId() != -1) {
+                roundResult.setGroupId(getGroupId());
             }
-            roundResult.setResult(-9999);
+            roundResult.setRoundNo(roundResultList.size() + 1);
+            roundResult.setIsLastResult(0);
+            roundResult.setUpdateState(0);
+            roundResult.setResult(-999);
             roundResult.setResultState(resultState);
             roundResult.setTestTime(System.currentTimeMillis() + "");
             roundResult.setEndTime(System.currentTimeMillis() + "");
             roundResultList.add(roundResult);
             DBManager.getInstance().insertRoundResult(roundResult);
             EventBus.getDefault().post(new BaseEvent(roundResult, EventConfigs.INSTALL_RESULT));
-            LogUtils.operation("新增判罚："+roundResult.toString());
-        }else if (null!=roundResultList && roundResultList.size()>mAdapter.getClick()){
+            LogUtils.operation("新增判罚：" + roundResult.toString());
+        } else if (null != roundResultList && roundResultList.size() > mAdapter.getClick()) {
             roundResultList.get(mAdapter.getClick()).setResultState(resultState);
             DBManager.getInstance().updateRoundResult(roundResultList.get(mAdapter.getClick()));
-            LogUtils.operation("判定为："+tvTitle.getText().toString()+roundResultList.get(mAdapter.getClick()).toString());
+            LogUtils.operation("判定为：" + tvTitle.getText().toString() + roundResultList.get(mAdapter.getClick()).toString());
             EventBus.getDefault().post(new BaseEvent(roundResultList.get(mAdapter.getClick()), EventConfigs.UPDATE_RESULT));
         }
 

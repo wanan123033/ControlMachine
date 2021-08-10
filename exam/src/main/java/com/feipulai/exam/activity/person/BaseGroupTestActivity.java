@@ -340,6 +340,11 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                             roundNo = roundResultList.size() + 1;
                         }
                     }else {
+                        int pos = stuAdapter.getTestPosition()-1;
+                        if (pos>=0){
+                            lastResult[roundResult.getRoundNo() - 1] = ((roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
+                                    ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()));
+                        }
                         uploadServer(baseStuPair, roundResult);
                     }
                 }
