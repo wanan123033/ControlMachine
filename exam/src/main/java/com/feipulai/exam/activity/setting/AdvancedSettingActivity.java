@@ -83,6 +83,8 @@ public class AdvancedSettingActivity extends BaseTitleActivity implements TextWa
     EditText etResitPass;
     @BindView(R.id.cb_resit_pass)
     CheckBox cbResitPass;
+    @BindView(R.id.sw_person_confirm)
+    CheckBox cbPersonConfirm;
     private SystemSetting systemSetting;
     private SitUpSetting sitUpSetting;
     private PullUpSetting pullUpSetting;
@@ -159,6 +161,7 @@ public class AdvancedSettingActivity extends BaseTitleActivity implements TextWa
 
         cbResit.setChecked(systemSetting.isResit());
         cbAgain.setChecked(systemSetting.isAgainTest());
+        cbPersonConfirm.setChecked(systemSetting.isResultConfirm());
     }
 
     @OnItemSelected({R.id.sp_situp_angle, R.id.sp_jump_rope_state_count})
@@ -194,7 +197,9 @@ public class AdvancedSettingActivity extends BaseTitleActivity implements TextWa
         SharedPrefsUtil.save(this, sargentSetting);
     }
 
-    @OnCheckedChanged({R.id.sw_pullup, R.id.sw_situp, R.id.sw_volleyball, R.id.sw_sit_reach, R.id.sw_standjump2, R.id.sw_sargent, R.id.sw_medicine_ball, R.id.cb_input_test,R.id.cb_again,R.id.cb_resit,R.id.cb_again_pass,R.id.cb_resit_pass})
+    @OnCheckedChanged({R.id.sw_pullup, R.id.sw_situp, R.id.sw_volleyball, R.id.sw_sit_reach,
+            R.id.sw_standjump2, R.id.sw_sargent, R.id.sw_medicine_ball, R.id.cb_input_test,
+            R.id.cb_again,R.id.cb_resit,R.id.cb_again_pass,R.id.cb_resit_pass,R.id.sw_person_confirm})
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()) {
 
@@ -235,6 +240,9 @@ public class AdvancedSettingActivity extends BaseTitleActivity implements TextWa
                 break;
             case R.id.cb_again_pass:
                 systemSetting.setAgainPassBool(isChecked);
+                break;
+            case R.id.sw_person_confirm:
+                systemSetting.setResultConfirm(isChecked);
                 break;
         }
     }

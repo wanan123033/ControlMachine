@@ -345,6 +345,7 @@ public class PenalizeDialog {
             LogUtils.operation("新增判罚：" + roundResult.toString());
         } else if (null != roundResultList && roundResultList.size() > mAdapter.getClick()) {
             roundResultList.get(mAdapter.getClick()).setResultState(resultState);
+            roundResultList.get(mAdapter.getClick()).setIsLastResult(0);
             DBManager.getInstance().updateRoundResult(roundResultList.get(mAdapter.getClick()));
             RoundResult r = roundResultList.get(0);
             for (RoundResult roundResult : roundResultList) {

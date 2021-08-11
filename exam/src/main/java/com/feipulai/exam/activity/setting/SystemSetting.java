@@ -143,7 +143,7 @@ public class SystemSetting {
     private String resitPass;
     private boolean resitPassBool;
     private boolean againPassBool;
-
+    private boolean resultConfirm;
     public int getAfrContrast() {
         return afrContrast;
     }
@@ -520,5 +520,13 @@ public class SystemSetting {
 
     public boolean getAgainPassBool() {
         return againPassBool;
+    }
+
+    public boolean isResultConfirm() {
+        return resultConfirm;
+    }
+
+    public void setResultConfirm(boolean resultConfirm) {
+        this.resultConfirm = resultConfirm;
     }
 }

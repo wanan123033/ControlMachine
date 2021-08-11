@@ -785,7 +785,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 if (pair.getStudent() == null) {
                     return;
                 }
-                if (doResult()) return;
+                doResult();
+//                if (doResult()) return;
 //                if (isFault && pair.getResultState() != RoundResult.RESULT_STATE_FOUL) {
 //                    showPenalize();
 //                } else {
@@ -798,7 +799,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 
     }
 
-    private boolean doResult() {
+    private void  doResult() {
         //ResultDisplayUtils.getStrResultForDisplay(pair.getResult())
         result[roundNo - 1] = ((pair.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(pair.getResult()));
         resultList.clear();
@@ -824,13 +825,13 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             if (pair.getResultState() == RoundResult.RESULT_STATE_NORMAL && pair.isFullMark()) {
                 if (isShowPenalizeFoul() == View.VISIBLE) {
                     toastSpeak("是否需要判罚,否则请选择跳过");
-                    return true;
+                    return ;
                 }
                 //测试结束学生清除 ，设备设置空闲状态
                 roundNo = 1;
                 //4秒后清理学生信息
                 clearHandler.sendEmptyMessageDelayed(0, 4000);
-                return true;
+                return ;
             }
             roundNo++;
             txtStuResult.setText("");
@@ -857,7 +858,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 
 
         }
-        return false;
+
     }
 
     boolean clicked = false;
