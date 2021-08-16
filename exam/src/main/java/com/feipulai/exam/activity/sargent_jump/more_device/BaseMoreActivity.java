@@ -40,7 +40,6 @@ import com.feipulai.exam.activity.sargent_jump.adapter.DeviceListAdapter;
 import com.feipulai.exam.activity.sargent_jump.pair.SargentPairActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
-import com.feipulai.exam.activity.volleyball.more_devices.BaseVolleyBallMoreActivity;
 import com.feipulai.exam.bean.DataRetrieveBean;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.bean.RoundResultBean;
@@ -58,7 +57,6 @@ import com.feipulai.exam.view.EditResultDialog;
 import com.feipulai.exam.view.StuSearchEditText;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
-import com.serenegiant.usb.IFrameCallback;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;

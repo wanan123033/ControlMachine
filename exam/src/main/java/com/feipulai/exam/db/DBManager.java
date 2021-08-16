@@ -45,7 +45,6 @@ import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
 import org.greenrobot.greendao.database.Database;
-import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,8 +54,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import okhttp3.internal.connection.RouteDatabase;
 
 import static com.feipulai.exam.activity.MiddleDistanceRace.TimingBean.GROUP_FINISH;
 

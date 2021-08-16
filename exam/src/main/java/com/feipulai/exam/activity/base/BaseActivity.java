@@ -1,12 +1,8 @@
 package com.feipulai.exam.activity.base;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
-import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.net.ConnectivityManager;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -19,11 +15,8 @@ import com.feipulai.common.utils.ActivityCollector;
 import com.feipulai.common.utils.ActivityUtils;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
-import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.SharedPrefsConfigs;
-import com.feipulai.exam.config.TestConfigs;
-import com.feipulai.exam.receiver.WifiReceiver;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
