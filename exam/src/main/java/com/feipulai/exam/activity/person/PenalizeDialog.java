@@ -112,6 +112,7 @@ public class PenalizeDialog {
             @Override
             public void onItemChildClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 mAdapter.setClick(i);
+                selectPosition = i;
             }
         });
     }

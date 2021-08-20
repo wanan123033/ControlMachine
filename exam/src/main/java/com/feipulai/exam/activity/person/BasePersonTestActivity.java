@@ -283,7 +283,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 if (TextUtils.equals(pair.getStudent().getStudentCode(), iRoundResult.getStudentCode())) {
                     String[] timeResult = result;
 
-                    timeResult[iRoundResult.getRoundNo() - 1] = ((iRoundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
+                    timeResult[penalizeDialog.getSelectPosition()] = ((iRoundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
                             ResultDisplayUtils.getStrResultForDisplay(iRoundResult.getResult()));
                     pair.setTimeResult(timeResult);
                 }
@@ -317,7 +317,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 if (TextUtils.equals(pair.getStudent().getStudentCode(), roundResult.getStudentCode())) {
                     String[] timeResult = result;
 
-                    timeResult[roundResult.getRoundNo() - 1] = ((roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
+                    timeResult[penalizeDialog.getSelectPosition()] = ((roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
                             ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()));
                     pair.setTimeResult(timeResult);
                 }

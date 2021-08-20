@@ -321,7 +321,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                     if (TextUtils.equals(baseStuPair.getStudent().getStudentCode(), roundResult.getStudentCode())) {
                         String[] timeResult = baseStuPair.getTimeResult();
 
-                        timeResult[roundResult.getRoundNo() - 1] = ((roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
+                        timeResult[penalizeDialog.getSelectPosition()] = ((roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
                                 ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()));
                         baseStuPair.setTimeResult(timeResult);
                         resultList.clear();
