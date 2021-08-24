@@ -974,7 +974,10 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             stuPairsList.get(stuAdapter.getTestPosition()).setResit(true);
         }
         uploadServer(baseStuPair, roundResult);
-
+        if (studentItem.getExamType() == 2){
+            //是否测试到最后一位
+            continuousTest();
+        }
 
     }
 

@@ -8,6 +8,7 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.exam.activity.SubItemsSelectActivity;
 import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.pushUp.check.PushUpCheckActivity;
+import com.feipulai.exam.activity.pushUp.distance.PushUpDistanceActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.entity.Item;
@@ -24,6 +25,7 @@ public class PushPatternSelectActivity extends SubItemsSelectActivity {
         itemList.clear();
         itemList.add(new Item("有线模式"));
         itemList.add(new Item("无线模式"));
+        itemList.add(new Item("距离传感器模式"));
         adapter.notifyDataSetChanged();
         getToolbar().setTitle("俯卧撑模式选择");
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -35,7 +37,9 @@ public class PushPatternSelectActivity extends SubItemsSelectActivity {
                     if ((position == PushUpSetting.WIRELESS_TYPE && setting.getDeviceSum() == 1) || position == PushUpSetting.WIRED_TYPE) {
                         startActivity(new Intent(PushPatternSelectActivity.this,
                                 PushUpIndividualActivity.class));
-                    } else {
+                    }else if (position == 2){
+                        startActivity(new Intent(PushPatternSelectActivity.this, PushUpDistanceActivity.class));
+                    }else {
                         startActivity(new Intent(PushPatternSelectActivity.this,
                                 PushUpCheckActivity.class));
                     }

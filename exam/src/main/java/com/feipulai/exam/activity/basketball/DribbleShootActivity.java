@@ -339,6 +339,9 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
                 resultAdapter.notifyDataSetChanged();
                 testRound++;
                 saved = true;
+                if (studentItem.getExamType() == 2){
+                    prepareForCheckIn();
+                }
                 break;
             case R.id.txt_finish_test:
                 LogUtils.operation("篮球运球投篮点击了结束测试...");
@@ -354,7 +357,16 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
         }
     }
 
-
+    private void prepareForCheckIn() {
+        resultList.clear();
+        resultAdapter.notifyDataSetChanged();
+        TestCache.getInstance().clear();
+        getPairs().get(0).setStudent(null);
+        InteractUtils.showStuInfo(llStuDetail, null, null);
+        tvResult.setText("请检录");
+        state = WAIT_CHECK_IN;
+        setOperationUI();
+    }
 
     @Override
     public void disposeConnect(RunTimerConnectState connectState) {

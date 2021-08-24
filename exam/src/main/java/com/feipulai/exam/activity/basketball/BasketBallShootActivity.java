@@ -334,6 +334,9 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
                 saved = true;
                 state  = WAIT_FREE;
                 setOperationUI();
+                if (studentItem.getExamType() == 2){
+                    prepareForCheckIn();
+                }
                 break;
             case R.id.txt_finish_test:
                 if (state!= WAIT_FREE){

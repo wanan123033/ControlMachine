@@ -1,11 +1,16 @@
 package com.feipulai.exam.activity.setting;
 
+import android.app.Dialog;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -16,6 +21,7 @@ import com.arcsoft.face.FaceEngine;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.common.view.dialog.DialogUtils;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
@@ -227,7 +233,9 @@ public class AdvancedSettingActivity extends BaseTitleActivity implements TextWa
                 medicineBallSetting.setPenalizeFoul(isChecked);
                 break;
             case R.id.cb_input_test:
-                systemSetting.setInputTest(isChecked);
+                //fairplay.test
+                showAdvancedPwdDialog(isChecked);
+
                 break;
             case R.id.cb_again:
                 systemSetting.setAgainTest(isChecked);
@@ -303,5 +311,36 @@ public class AdvancedSettingActivity extends BaseTitleActivity implements TextWa
     public void afterTextChanged(Editable s) {
         systemSetting.setAgainPass(etAgainPass.getText().toString());
         systemSetting.setResitPass(etResitPass.getText().toString());
+    }
+
+    public void showAdvancedPwdDialog(boolean isChecked) {
+        if (isChecked) {
+            View view = LayoutInflater.from(this).inflate(R.layout.view_advanced_pwd, null);
+            final EditText editPwd = view.findViewById(R.id.edit_pwd);
+            Button btnCancel = view.findViewById(R.id.btn_cancel);
+            Button btnConfirm = view.findViewById(R.id.btn_confirm);
+
+            final Dialog dialog = DialogUtils.create(this, view, true);
+            dialog.show();
+            btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+
+                }
+            });
+            btnConfirm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (TextUtils.equals(editPwd.getText().toString(), MyApplication.ADVANCED_AUTO_PWD)) {
+                        systemSetting.setInputTest(true);
+                        dialog.dismiss();
+                    } else {
+                        systemSetting.setInputTest(false);
+                        ToastUtils.showShort("密码错误");
+                    }
+                }
+            });
+        }
     }
 }

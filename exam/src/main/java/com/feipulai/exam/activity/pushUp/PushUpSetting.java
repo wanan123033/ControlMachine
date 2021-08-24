@@ -38,7 +38,7 @@ public class PushUpSetting {
      */
     private int timeoutDispose = 0;
 
-    private int testType = 0;//0 有线 1 无线
+    private int testType = 0;//0 有线 1 无线  2  无线距离
 
     public int getTestTime() {
         return testTime;

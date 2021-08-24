@@ -497,7 +497,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         List<MachineResult> machineResultList = DBManager.getInstance().getItemGroupFRoundMachineResult(student.getStudentCode()
                 , group.getId(),
                 roundNo);
-
+        List<RoundResult> resultList1 = DBManager.getInstance().queryResultsByStudentCode(TestConfigs.getCurrentItemCode(),student.getStudentCode(),roundNo);
         MachineResult machineResult = new MachineResult();
         machineResult.setItemCode(TestConfigs.getCurrentItemCode());
         machineResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
@@ -507,7 +507,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         machineResult.setResult(result.getResult());
         machineResult.setGroupId(group.getId());
         //第一次拦截保存成绩，其他拦截只保存
-        if (machineResultList.size() == 0 || machineResultList == null) {
+        if (machineResultList.size() == 0 || machineResultList == null || resultList1 == null ||resultList1.size() == 0) {
             machineResultList.add(machineResult);
             addRoundResult(result);
             resultList.get(resultAdapter.getSelectPosition()).setMachineResultList(machineResultList);
@@ -869,6 +869,9 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         //获取所有成绩设置为非最好成绩
         List<RoundResult> results = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");
         TestCache.getInstance().getResults().put(student, results);
+        if (studentItem.getExamType() == 2){
+            continuousTestNext();
+        }
     }
 
     /**
@@ -1246,11 +1249,11 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
     }
 
     private int setTestCount() {
-        SystemSetting setting = SettingHelper.getSystemSetting();
-        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(position()).getStudent().getStudentCode());
-        if (setting.isResit() || studentItem.getMakeUpType()==1){
-            return stuPairs.get(position()).getTestNo() == -1 ? TestConfigs.getMaxTestCount() : stuPairs.get(position()).getTestNo();
-        }
+//        SystemSetting setting = SettingHelper.getSystemSetting();
+//        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(position()).getStudent().getStudentCode());
+//        if (setting.isResit() || studentItem.getMakeUpType()==1){
+//            return stuPairs.get(position()).getTestNo() == -1 ? TestConfigs.getMaxTestCount() : stuPairs.get(position()).getTestNo();
+//        }
         return TestConfigs.getMaxTestCount();
     }
 

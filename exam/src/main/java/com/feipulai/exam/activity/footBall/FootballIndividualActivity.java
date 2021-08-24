@@ -572,7 +572,9 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         machineResult.setStudentCode(student.getStudentCode());
         machineResult.setResult(result.getResult());
         //第一次拦截保存成绩，其他拦截只保存
-        if (machineResultList.size() == 0 || machineResultList == null) {
+        List<RoundResult> results1 = DBManager.getInstance().queryResultsByStudentCode(TestConfigs.getCurrentItemCode(),student.getStudentCode(),roundNo);
+
+        if (machineResultList.size() == 0 || machineResultList == null || results1 == null || results1.size() == 0) {
             machineResultList.add(machineResult);
             addRoundResult(result);
             resultList.get(resultAdapter.getSelectPosition()).setMachineResultList(machineResultList);
@@ -1254,6 +1256,9 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(mStudentItem);
         TestCache.getInstance().getResults().put(student, results);
         showStuInfoResult();
+        if (mStudentItem.getExamType() == 2){
+            prepareForCheckIn();
+        }
     }
 
     private void showStuInfoResult() {

@@ -1,27 +1,19 @@
-package com.feipulai.exam.activity.situp.setting;
+package com.feipulai.exam.activity.pushUp.distance;
 
 import android.content.Context;
 import android.util.Log;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
-import com.feipulai.exam.activity.jump_rope.base.setting.RadioSettingContract;
 import com.feipulai.exam.activity.jump_rope.base.setting.AbstractRadioSettingPresenter;
-import com.orhanobut.logger.Logger;
+import com.feipulai.exam.activity.jump_rope.base.setting.RadioSettingContract;
 
-/**
- * Created by James on 2019/1/18 0018.
- * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
- */
-
-public class SitUpSettingPresenter extends AbstractRadioSettingPresenter {
-
-    private SitUpSetting setting;
+public class PushUpDistanceSettingPresenter extends AbstractRadioSettingPresenter {
+    private PushUpDistanceSetting setting;
     private Context context;
-
-    public SitUpSettingPresenter(Context context, RadioSettingContract.View view) {
+    public PushUpDistanceSettingPresenter(Context context, RadioSettingContract.View view) {
         super(context, view);
         this.context = context;
-        setting = SharedPrefsUtil.loadFormSource(context, SitUpSetting.class);
+        this.setting = SharedPrefsUtil.loadFormSource(context,PushUpDistanceSetting.class);
 
     }
 
@@ -67,8 +59,7 @@ public class SitUpSettingPresenter extends AbstractRadioSettingPresenter {
 
     @Override
     protected void saveSettings() {
+        Log.e("TAG","setting="+setting);
         SharedPrefsUtil.save(context, setting);
-        Logger.i("situp setting changed:" + setting.toString());
     }
-
 }

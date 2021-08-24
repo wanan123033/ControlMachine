@@ -124,8 +124,7 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
     private String name;
     private String testDate;
     private boolean saved;
-    private List<BaseStuPair> stuPairsList;
-
+    List<BaseStuPair> stuPairs;
     protected int setLayoutResID() {
         return R.layout.activity_basket_ball_shoot_group;
     }
@@ -148,7 +147,8 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
         tvGroupName.setText(String.format(Locale.CHINA, "%s第%d组", type, group.getGroupNo()));
         //获取分组学生数据
         TestCache.getInstance().init();
-        List<BaseStuPair> stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
+
+        stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
         pairs = CheckUtils.newPairs(stuPairs.size(),stuPairs);
         LogUtils.operation("篮球获取到分组学生:" + pairs.size() + "---" + pairs.toString());
         CheckUtils.groupCheck(pairs);
@@ -722,14 +722,13 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
         LogUtils.operation("篮球投篮确认保存成绩:result = " + roundResult.getResult() + "---" + roundResult.toString());
         DBManager.getInstance().insertRoundResult(roundResult);
         SystemSetting setting = SettingHelper.getSystemSetting();
-        //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
-        if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairsList.get(stuPairAdapter.getTestPosition()).isResit()){
-            stuPairsList.get(stuPairAdapter.getTestPosition()).setResit(true);
-        }
+
         //获取所有成绩设置为非最好成绩
         List<RoundResult> results = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");
         TestCache.getInstance().getResults().put(student, results);
-
+        if (studentItem.getExamType() == 2){
+            continuousTestNext();
+        }
     }
 
     /**

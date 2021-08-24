@@ -566,7 +566,23 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                     tvConfirm.setEnabled(false);
                     penalize(false);
                 }
-
+                if (mStudentItem.getExamType() == 2){
+                    txtFinishTest.setEnabled(false);
+                    txtWaiting.setEnabled(true);
+                    InteractUtils.showStuInfo(llStuDetail, null, null);
+                    tvResult.setText("请检录");
+                    for (SportTestResult testResult : testResults) {
+                        testResult.setResult(-1);
+                        List<SportTimeResult> sportTimeResults = testResult.getSportTimeResults();
+                        for (SportTimeResult result : sportTimeResults) {
+                            result.setResult(-1);
+                            result.setPartResult(-1);
+                            result.setReceiveIndex(-1);
+                        }
+                    }
+                    testCountAdapter.notifyDataSetChanged();
+                    partResultAdapter.notifyDataSetChanged();
+                }
                 break;
             case R.id.txt_finish_test:
                 if (testState != TestState.UN_STARTED) {

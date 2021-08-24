@@ -35,7 +35,7 @@ public class ScoreAdapter extends BaseQuickAdapter<RoundResult, ScoreAdapter.Sco
         TextView textView = helper.getView(R.id.tv_result);
         textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT,1));
         if (item.getResultState() == RoundResult.RESULT_STATE_NORMAL){
-            helper.setText(R.id.tv_result,item.getRoundNo()+"-"+ResultDisplayUtils.getStrResultForDisplay(item.getResult()));
+            helper.setText(R.id.tv_result,item.getRoundNo()+"."+ResultDisplayUtils.getStrResultForDisplay(item.getResult()));
         }else {
             helper.setText(R.id.tv_result,ResultDisplayUtils.setResultState(item.getResultState()));
         }

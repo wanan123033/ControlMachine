@@ -283,6 +283,13 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         uploadResults();
         boolean isAllTest = isAllTest(roundResults, student);
         dispatch(isAllTest);
+        if (studentItem.getExamType() == 2){
+            //是否测试到最后一位
+            int nextPos = nextPosition();
+            if (nextPos != -1) {
+                switchToPosition(nextPosition());
+            }
+        }
         // List<Student> tmpList = new ArrayList<>(1);
         // tmpList.add(student);
         // Map<Student, List<RoundResult>> tmpMap = new HashMap<>(2);

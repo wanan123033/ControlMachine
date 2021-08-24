@@ -104,6 +104,9 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
                         RoundResult roundResult = results.get(selectPos);
                         roundResult.setIsDelete(true);
                         Log.e("TAG----",roundResult.getId()+"----"+roundResult.getIsDelete());
+//                        if (roundResult.getIsLastResult() == RoundResult.LAST_RESULT){
+//                            roundResult.setIsLastResult(RoundResult.NOT_LAST_RESULT);
+//                        }
                         DBManager.getInstance().updateRoundResult(roundResult);
                         listener.onCommit(student, studentItem, results,roundResult.getRoundNo());
                         dismiss();
@@ -114,6 +117,9 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
                     RoundResult roundResult = results.get(selectPos);
                     roundResult.setIsDelete(true);
                     Log.e("TAG----",roundResult.getId()+"----"+roundResult.getIsDelete());
+//                    if (roundResult.getIsLastResult() == RoundResult.LAST_RESULT){
+//                        roundResult.setIsLastResult(RoundResult.NOT_LAST_RESULT);
+//                    }
                     DBManager.getInstance().updateRoundResult(roundResult);
                     listener.onCommit(student, studentItem, this.results,roundResult.getRoundNo());
                     dismiss();

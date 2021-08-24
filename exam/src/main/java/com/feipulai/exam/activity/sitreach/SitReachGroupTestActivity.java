@@ -106,10 +106,10 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
 
     @Override
     public int setTestCount() {
-        int testNo = getTestPair().getTestNo();
-        if (testNo != -1){
-            return testNo;
-        }
+//        int testNo = getTestPair().getTestNo();
+//        if (testNo != -1){
+//            return testNo;
+//        }
         if (TestConfigs.sCurrentItem.getTestNum() != 0) {
             return TestConfigs.sCurrentItem.getTestNum();
         } else {

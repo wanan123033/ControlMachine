@@ -53,6 +53,7 @@ public class MyApplication extends MultiDexApplication {
      */
     public static String TOKEN = "";
     public static String ADVANCED_PWD = "fpl2019";
+    public static String ADVANCED_AUTO_PWD = "fairplay.test";
 
     public void onCreate() {
         super.onCreate();

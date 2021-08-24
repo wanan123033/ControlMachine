@@ -302,11 +302,11 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
     }
 
     public int setTestCount() {
-        SystemSetting setting = SettingHelper.getSystemSetting();
-        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),pairs.get(select).getStudent().getStudentCode());
-        if (setting.isResit() || studentItem.getMakeUpType() == 1){
-            return pairs.get(select).getTestNo();
-        }
+//        SystemSetting setting = SettingHelper.getSystemSetting();
+//        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),pairs.get(select).getStudent().getStudentCode());
+//        if (setting.isResit() || studentItem.getMakeUpType() == 1){
+//            return pairs.get(select).getTestNo();
+//        }
         if (TestConfigs.sCurrentItem.getTestNum() != 0) {
             return TestConfigs.sCurrentItem.getTestNum();
         } else {
@@ -420,12 +420,12 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
      * 成绩确认
      */
     private void confirmResult() {
+        List<BaseStuPair> stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
         for (RunStudent runStudent : mList) {
             if (runStudent.getStudent() != null && !TextUtils.isEmpty(runStudent.getMark())) {
                 if (runStudent.getRoundNo() != 0){
                     disposeManager.saveGroupResult(runStudent.getStudent(), runStudent.getOriginalMark(), runStudent.getRoundNo(), group,startTime);
                     runStudent.setRoundNo(0);
-                    List<BaseStuPair> stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
                     if (stuPairs != null){
                         for (BaseStuPair pp : stuPairs){
                             if (pp.getStudent().getStudentCode().equals(runStudent.getStudent().getStudentCode()))

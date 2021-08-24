@@ -293,6 +293,10 @@ public class PullUpGroupActivity extends BaseTitleActivity
         }
 
         dispatch(isAllTest);
+        if (studentItem.getExamType() == 2){
+            if(nextPosition() != -1)
+                switchToPosition(nextPosition());
+        }
     }
 
     private void switchToPosition(int position) {

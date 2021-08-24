@@ -337,6 +337,10 @@ public class PushUpGroupActivity extends BaseTitleActivity
 //        }
 
         dispatch(isAllTest);
+        if (studentItem.getExamType() == 2){
+            if (nextPosition() != -1)
+                switchToPosition(nextPosition());
+        }
     }
 
     private void switchToPosition(int position) {
@@ -742,11 +746,11 @@ public class PushUpGroupActivity extends BaseTitleActivity
     }
 
     public int setTestCount() {
-        SystemSetting setting = SettingHelper.getSystemSetting();
-        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(position()).getStudent().getStudentCode());
-        if (setting.isResit() || studentItem.getMakeUpType() == 1){
-            return stuPairs.get(position()).getTestNo();
-        }
+//        SystemSetting setting = SettingHelper.getSystemSetting();
+//        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(position()).getStudent().getStudentCode());
+//        if (setting.isResit() || studentItem.getMakeUpType() == 1){
+//            return stuPairs.get(position()).getTestNo();
+//        }
         if (TestConfigs.sCurrentItem.getTestNum() != 0) {
             return TestConfigs.sCurrentItem.getTestNum();
         } else {

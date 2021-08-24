@@ -46,6 +46,7 @@ import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.utils.PrintResultUtil;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.google.gson.Gson;
@@ -135,6 +136,8 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
     private final int UPDATE_ON_WAIT = 0XF4;
     private final int UPDATE_ON_TEXT = 0XF5;
     private TimerTask timerTask;
+    private List<BaseStuPair> stuPairs;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_group_sport_timer;
@@ -227,7 +230,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
         tvGroupName.setText(String.format(Locale.CHINA, "%s第%d组", type, group.getGroupNo()));
         //获取分组学生数据
         TestCache.getInstance().init();
-        List stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
+        stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
         pairs = CheckUtils.newPairs(stuPairs.size(),stuPairs);
         LogUtils.operation("运动计时获取到分组学生:" + pairs.size() + "---" + pairs.toString());
         CheckUtils.groupCheck(pairs);
@@ -456,6 +459,15 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
 //                    }
                     tvConfirm.setEnabled(false);
                     penalize(false);
+                }
+                StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(position()).getStudent().getStudentCode());
+                if (studentItem.getExamType()== 2){
+                    //是否测试到最后一位
+                    if (position() == pairs.size() - 1) {
+                        firstCheckTest();
+                    } else {
+                        continuousTestNext();
+                    }
                 }
                 break;
             case R.id.txt_finish_test:

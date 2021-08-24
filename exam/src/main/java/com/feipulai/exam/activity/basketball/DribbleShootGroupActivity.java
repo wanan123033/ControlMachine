@@ -785,7 +785,9 @@ public class DribbleShootGroupActivity extends BaseTitleActivity implements Base
         }
         List<RoundResult> results = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");
         TestCache.getInstance().getResults().put(student, results);
-
+        if (studentItem.getExamType() == 2){
+            continuousTestNext();
+        }
 
     }
 
@@ -925,11 +927,11 @@ public class DribbleShootGroupActivity extends BaseTitleActivity implements Base
             timer.dispose();
     }
     private int setTestCount() {
-        SystemSetting setting = SettingHelper.getSystemSetting();
-        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(position()).getStudent().getStudentCode());
-        if (setting.isResit() || studentItem.getMakeUpType()==1){
-            return stuPairs.get(position()).getTestNo() == -1 ? TestConfigs.getMaxTestCount() : stuPairs.get(position()).getTestNo();
-        }
+//        SystemSetting setting = SettingHelper.getSystemSetting();
+//        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(position()).getStudent().getStudentCode());
+//        if (setting.isResit() || studentItem.getMakeUpType()==1){
+//            return stuPairs.get(position()).getTestNo() == -1 ? TestConfigs.getMaxTestCount() : stuPairs.get(position()).getTestNo();
+//        }
         return TestConfigs.getMaxTestCount();
     }
 }

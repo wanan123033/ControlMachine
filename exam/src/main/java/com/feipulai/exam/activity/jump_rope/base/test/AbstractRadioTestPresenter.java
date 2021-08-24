@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
+import android.util.Log;
 
 import com.feipulai.common.jump_rope.facade.CountTimingTestFacade;
 import com.feipulai.common.jump_rope.task.GetDeviceStatesTask;
@@ -19,6 +20,7 @@ import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.check.CheckUtils;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
+import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.TestConfigs;
@@ -71,6 +73,15 @@ public abstract class AbstractRadioTestPresenter<Setting>
     @Override
     public void start() {
         pairs = TestCache.getInstance().getTestingPairs();
+        if (pairs.isEmpty()){
+            List<BaseStuPair> basePairStu = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
+            if (basePairStu != null)
+                pairs = CheckUtils.newPairs(basePairStu.size(),basePairStu);
+        }
+        if (pairs.isEmpty()){
+            view.quitTest();
+            return;
+        }
         setting = getSetting();
         deviceDispatcher = new DeviceDispatcher(TestConfigs.getMaxTestCount(context));
         systemSetting = SettingHelper.getSystemSetting();
@@ -140,7 +151,6 @@ public abstract class AbstractRadioTestPresenter<Setting>
         testState = TEST_COUNTING;
         ToastUtils.showShort("测试开始,请勿退出当前界面");
         onTestStarted();
-
     }
 
     @Override

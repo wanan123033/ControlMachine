@@ -41,6 +41,7 @@ import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.pushUp.PushUpGroupActivity;
 import com.feipulai.exam.activity.pushUp.PushUpSetting;
+import com.feipulai.exam.activity.pushUp.distance.PushUpDistanceTestActivity;
 import com.feipulai.exam.activity.sargent_jump.SargentSetting;
 import com.feipulai.exam.activity.sargent_jump.more_device.SargentTestGroupActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -599,7 +600,9 @@ public class BaseGroupActivity extends BaseTitleActivity {
                         startActivity(new Intent(this, PushUpGroupActivity.class));
                         return;
                     }
-
+                    if (setting.getTestType() == 2){
+                        startActivity(new Intent(this, PushUpDistanceTestActivity.class));
+                    }
                 }
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_MG &&
                         SharedPrefsUtil.loadFormSource(this, SargentSetting.class).getType() == 2) {
@@ -645,7 +648,6 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     startActivity(new Intent(this, SitUpArmCheckActivity.class));
                     return;
                 }
-
                 startActivity(new Intent(this, TestConfigs.groupActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
                 break;
 
@@ -708,26 +710,31 @@ public class BaseGroupActivity extends BaseTitleActivity {
      */
     public void setStuPairsData(BaseStuPair pair, List<RoundResult> roundResultList) {
 
-        String[] result = new String[TestConfigs.getMaxTestCount(this)];
+        String[] result = new String[TestConfigs.getMaxTestCount()];
         for (int j = 0; j < roundResultList.size(); j++) {
-            switch (roundResultList.get(j).getResultState()) {
-                case RoundResult.RESULT_STATE_FOUL:
-                    result[j] = "X";
-                    break;
-                case -2:
-                    result[j] = "中退";
-                    break;
-                default:
-                    result[j] = ResultDisplayUtils.getStrResultForDisplay(roundResultList.get(j).getResult());
-                    break;
+            if (j < result.length) {
+                switch (roundResultList.get(j).getResultState()) {
+                    case RoundResult.RESULT_STATE_FOUL:
+                        result[j] = "X";
+                        break;
+                    case -2:
+                        result[j] = "中退";
+                        break;
+                    default:
+                        result[j] = ResultDisplayUtils.getStrResultForDisplay(roundResultList.get(j).getResult());
+                        break;
+                }
+            }else {
+                break;
             }
-
         }
         pair.setTimeResult(result);
     }
 
     private boolean isAllTest() {
+
         for (BaseStuPair stuPair : stuPairsList) {
+            Log.e("TAG----",stuPair.getTimeResult()+"");
             if (stuPair.getTimeResult()!=null){
                 for (String s : stuPair.getTimeResult()) {
                     if (TextUtils.isEmpty(s)) {

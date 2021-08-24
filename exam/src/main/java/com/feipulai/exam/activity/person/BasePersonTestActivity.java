@@ -961,6 +961,10 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         DBManager.getInstance().insertRoundResult(roundResult);
         LogUtils.operation("保存成绩:" + roundResult.toString());
         uploadServer(baseStuPair, studentItem, roundResult);
+
+        if (studentItem.getExamType() == 2){
+            clearHandler.sendEmptyMessageDelayed(0, 4000);
+        }
     }
 
     private void uploadServer(@NonNull BaseStuPair baseStuPair, StudentItem studentItem, RoundResult roundResult) {

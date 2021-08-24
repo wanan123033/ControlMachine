@@ -430,6 +430,10 @@ public class PushUpIndividualActivity extends BaseTitleActivity
         } else {
             prepareForFinish();
         }
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),pair.getStudent().getStudentCode());
+        if (studentItem.getExamType() == 2){
+            prepareForFinish();
+        }
     }
 
     private boolean shouldContinue(int result) {

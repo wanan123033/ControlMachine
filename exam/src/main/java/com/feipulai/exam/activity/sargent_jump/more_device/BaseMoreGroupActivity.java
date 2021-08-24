@@ -1338,6 +1338,10 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 , "1", group, RoundResultBean.beanCope(roundResultList, group));
 
         uploadResult(uploadResults);
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),roundResult.getStudentCode());
+        if (studentItem.getExamType() == 2){
+            toSkip(stuAdapter.getTestPosition());
+        }
     }
 
     private void uploadResult(UploadResults uploadResults) {

@@ -453,6 +453,10 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         } else {
             prepareForFinish();
         }
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),pair.getStudent().getStudentCode());
+        if (studentItem.getExamType() == 2){
+            prepareForCheckIn();
+        }
     }
 
     private boolean shouldContinue(int result) {

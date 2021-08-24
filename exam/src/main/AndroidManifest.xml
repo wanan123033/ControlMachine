@@ -461,6 +461,10 @@
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
         <activity android:name=".activity.jump_rope.setting.JumpRopeCorrespondTestActivity" />
+        <activity android:name=".activity.pushUp.distance.PushUpDistanceActivity" />
+        <activity android:name=".activity.pushUp.distance.PushUpDistanceSettingActivity" />
+        <activity android:name=".activity.pushUp.distance.PushUpDistancePairActivity" />
+        <activity android:name=".activity.pushUp.distance.PushUpDistanceTestActivity" />
 
         <receiver android:name="com.feipulai.device.spputils.SppReciver" />
 
