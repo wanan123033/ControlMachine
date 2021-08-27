@@ -18,7 +18,7 @@ android {
         targetSdkVersion 26
         versionCode 1
         // 新版本1.0.1 测试加后面版本
-        versionName "2.0.0"
+        versionName "2.0.1"
         multiDexEnabled true
         ndk {
             abiFilters "armeabi-v7a"
