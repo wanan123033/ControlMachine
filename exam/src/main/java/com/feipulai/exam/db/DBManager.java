@@ -1220,6 +1220,17 @@ public class DBManager {
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .list();
     }
+    public List<RoundResult> queryResultsByStudentCode(int examType,String itemCode, String studentCode) {
+        Log.e("tat", "itemCode=" + itemCode + ",studentCode=" + studentCode);
+        return roundResultDao
+                .queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
+                .where(RoundResultDao.Properties.ExamType.eq(examType))
+                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .list();
+    }
 
     public List<Student> getStudentsByGroup(Group group) {
         List<GroupItem> groupItems = groupItemDao

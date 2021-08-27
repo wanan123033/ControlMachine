@@ -14,7 +14,7 @@ import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.IDeviceResult;
-import com.feipulai.exam.activity.jump_rope.DeviceDispatcher;
+import com.feipulai.exam.activity.jump_rope.DeviceDispatchers;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
@@ -60,7 +60,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
     protected RadioTestContract.View<Setting> view;
     protected int[] deviceIdPIV;
     protected boolean mLinking;
-    private DeviceDispatcher deviceDispatcher;
+    private DeviceDispatchers deviceDispatcher;
     protected int focusPosition;
     protected Handler handler;
     private HandlerThread handlerThread;
@@ -82,8 +82,9 @@ public abstract class AbstractRadioTestPresenter<Setting>
             view.quitTest();
             return;
         }
+        Log.e("TAG-----85",pairs.toString());
         setting = getSetting();
-        deviceDispatcher = new DeviceDispatcher(TestConfigs.getMaxTestCount(context));
+        deviceDispatcher = new DeviceDispatchers(TestConfigs.getMaxTestCount(context));
         systemSetting = SettingHelper.getSystemSetting();
         int size = pairs.size();
         int possibleMaxDeviceId = pairs.get(size - 1).getBaseDevice().getDeviceId();
@@ -250,6 +251,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
 
     @Override
     public void dispatchDevices() {
+
         boolean sucess = deviceDispatcher.dispatchDevice(pairs, getGroupModeFromSetting());
         view.updateStates();
         if (!sucess) {

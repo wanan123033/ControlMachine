@@ -80,7 +80,7 @@ public class GetStateLedFacade {
     public void finish() {
         mGetDeviceStatesTask.finish();
         mLEDDisplayTask.finish();
-        mExecutor.shutdownNow();
+        mExecutor.shutdown();
     }
 
     public void setmGetDeviceStatesLoopCount(int loopCount) {

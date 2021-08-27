@@ -307,7 +307,7 @@ public class InteractUtils {
             results.add(0,roundResult);
 
             DBManager.getInstance().insertRoundResult(roundResult);
-
+            TestCache.getInstance().getResults().put(student, results);
             LogUtils.operation("保存成绩:" + roundResult.toString());
         }
         ToastUtils.showShort("成绩保存成功");

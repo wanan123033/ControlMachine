@@ -70,7 +70,6 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         } else {
             pairs = TestCache.getInstance().getTestingPairs();
         }
-        Log.e("PAIR",pairs.toString());
 
         mCurrentConnect = new int[pairs.size() + 1];
         TestCache.getInstance().init();

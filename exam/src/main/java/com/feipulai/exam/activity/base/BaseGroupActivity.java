@@ -62,6 +62,7 @@ import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
+import com.feipulai.exam.config.StudentCache;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
@@ -186,6 +187,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
 
     private void initView() {
         TestConfigs.baseGroupMap.clear();
+        TestCache.getInstance().clear();
         rvTestStu.setLayoutManager(new LinearLayoutManager(this));
         stuPairsList = new ArrayList<>();
         stuAdapter = new BaseGroupAdapter(stuPairsList);
@@ -541,6 +543,8 @@ public class BaseGroupActivity extends BaseTitleActivity {
 
                 break;
             case R.id.img_last:
+                TestConfigs.baseGroupMap.clear();
+                TestCache.getInstance().clear();
                 if (groupList.size() <= groupAdapter.getTestPosition())
                     return;
                 if (groupAdapter.getTestPosition() > 0) {
@@ -548,6 +552,8 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 }
                 break;
             case R.id.img_next:
+                TestConfigs.baseGroupMap.clear();
+                TestCache.getInstance().clear();
                 if (groupList.size() <= groupAdapter.getTestPosition())
                     return;
                 if (groupList.size() > 0 && groupAdapter.getTestPosition() != groupList.size() - 1) {
@@ -558,7 +564,8 @@ public class BaseGroupActivity extends BaseTitleActivity {
 //                startActivity(new Intent(this, TestConfigs.settingActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
 //                break;
             case R.id.txt_start_test:
-
+                TestCache.getInstance().clear();
+                TestConfigs.baseGroupMap.clear();
                 if (groupAdapter.getTestPosition() == -1) {
                     toastSpeak("请先选择分组");
                     return;
@@ -592,6 +599,10 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 }
                 isBack = true;
                 TestConfigs.baseGroupMap.put("basePairStu", pairs);
+                StudentCache.getStudentCaChe().clear();
+                for (int i = 0 ; i < pairs.size() ; i++){
+                    StudentCache.getStudentCaChe().addStudent(pairs.get(i).getStudent());
+                }
                 LogUtils.operation("分组进入测试学生:" + pairs.toString());
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_FWC) {
                     PushUpSetting setting = SharedPrefsUtil.loadFormSource(this, PushUpSetting.class);
@@ -753,6 +764,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
     public void onBackPressed() {
         super.onBackPressed();
         TestConfigs.baseGroupMap.clear();
+        TestCache.getInstance().clear();
     }
 
     // LED 显示学生

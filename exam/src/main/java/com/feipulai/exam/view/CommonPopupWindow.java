@@ -18,7 +18,9 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.adapter.GroupAdapter;
+import com.feipulai.exam.config.TestConfigs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,12 +103,15 @@ public class CommonPopupWindow extends Dialog {
     }
 
     public void updateAdapter(List group){
+        TestCache.getInstance().clear();
+        TestConfigs.baseGroupMap.clear();
         results = new ArrayList();
         results.addAll(group);
         mAdapter.getData().clear();
         mAdapter.getData().addAll(results);
 
         mAdapter.notifyDataSetChanged();
+
     }
 
     private void setAdapter(BaseQuickAdapter adapter) {

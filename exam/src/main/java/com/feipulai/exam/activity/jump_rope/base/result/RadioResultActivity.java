@@ -169,6 +169,7 @@ public class RadioResultActivity
     }
 
     private void initResult() {
+        Log.e("TAG----",results.toString());
         resitResult = new IdentityHashMap<>();
         nomalResult = new IdentityHashMap<>();
         if (results != null){

@@ -123,8 +123,8 @@ public class TestConfigs {
     public static final String WEIGHT_ITEM_CODE = "E02";
     public static final Map<Object, Object> baseGroupMap = new HashMap<>();
 
-    public static final int GROUP_PATTERN_SUCCESIVE = 0x0;
-    public static final int GROUP_PATTERN_LOOP = 0x1;
+    public static final int GROUP_PATTERN_SUCCESIVE = 0x0;  //连续模式
+    public static final int GROUP_PATTERN_LOOP = 0x1;   //循环模式
 
     //项目默认取值范围
     public static final Map<Integer, Integer> itemMinScope = new HashMap<>();

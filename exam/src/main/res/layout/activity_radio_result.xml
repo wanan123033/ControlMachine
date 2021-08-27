@@ -11,8 +11,7 @@
         android:layout_height="40dp"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
-        android:textSize="20sp"
-        android:visibility="gone"/>
+        android:textSize="20sp"/>
 
     <TextView
         android:layout_width="match_parent"
