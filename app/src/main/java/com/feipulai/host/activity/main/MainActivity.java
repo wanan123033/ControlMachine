@@ -78,7 +78,9 @@ public class MainActivity extends BaseActivity {
         public void timer(Long time) {
 
             long todayTime = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0l);
-
+            if (activateBean == null || activateBean.getValidEndTime() == 0 || activateBean.getValidRunTime() != 0) {
+                activateBean = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), ActivateBean.class);
+            }
             SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, todayTime + 60 * 1000);
             if (activateBean.getValidEndTime() - DateUtil.getCurrentTime() <= 3 * 24 * 60 * 60 * 1000 ||
                     activateBean.getValidRunTime() - todayTime <= 24 * 60 * 60 * 1000) {
