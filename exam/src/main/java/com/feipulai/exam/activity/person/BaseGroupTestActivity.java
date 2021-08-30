@@ -10,6 +10,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
@@ -927,9 +928,11 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         if (baseStuPair.getRoundNo() != 0){
             roundResult.setRoundNo(baseStuPair.getRoundNo());
             baseStuPair.setRoundNo(0);
+            stuPairsList.get(stuAdapter.getTestPosition()).setRoundNo(0);
         }else {
             roundResult.setRoundNo(roundNo);
         }
+        Log.e("TAG","round="+roundResult.getRoundNo());
         roundResult.setTestNo(1);
         roundResult.setGroupId(group.getId());
 //        roundResult.setExamType(group.getExamType());
@@ -965,7 +968,6 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             roundResult.setIsLastResult(1);
             updateLastResultLed(roundResult);
         }
-
         DBManager.getInstance().insertRoundResult(roundResult);
         LogUtils.operation("保存成绩:" + roundResult.toString());
         SystemSetting setting = SettingHelper.getSystemSetting();
