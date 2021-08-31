@@ -10,6 +10,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
@@ -928,10 +929,12 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             roundResult.setRoundNo(baseStuPair.getRoundNo());
             baseStuPair.setRoundNo(0);
             roundResult.setResultTestState(1);
+            stuPairsList.get(stuAdapter.getTestPosition()).setRoundNo(0);
         }else {
             roundResult.setRoundNo(roundNo);
             roundResult.setResultTestState(0);
         }
+        Log.e("TAG","round="+roundResult.getRoundNo());
         roundResult.setTestNo(1);
         roundResult.setGroupId(group.getId());
 //        roundResult.setExamType(group.getExamType());
