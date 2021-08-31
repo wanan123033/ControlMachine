@@ -259,6 +259,7 @@ public class InteractUtils {
             if (pair.getCurrentRoundNo() != 0){
                 roundResult.setRoundNo(pair.getCurrentRoundNo());
                 pair.setCurrentRoundNo(0);
+                roundResult.setResultTestState(1);
                 List<BaseStuPair> stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
                 if (stuPairs != null){
                     for (BaseStuPair pp : stuPairs){
@@ -272,6 +273,7 @@ public class InteractUtils {
                 } else {
                     roundResult.setRoundNo(results.size() + 1);
                 }
+                roundResult.setResultTestState(0);
             }
             if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN) {
                 // 分组模式下,在一个分组只允许测试一次

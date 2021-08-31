@@ -9,6 +9,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CheckBox;
@@ -223,6 +224,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 String displayResult = ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult());
                 tvResult.setText(displayResult);
                 addRoundResult(deviceResult);
+
                 resultList.get(resultAdapter.getSelectPosition()).setSelectMachineResult(deviceResult.getResult());
                 resultList.get(resultAdapter.getSelectPosition()).setResult(deviceResult.getResult());
                 resultList.get(resultAdapter.getSelectPosition()).setPenalizeNum(0);
@@ -372,7 +374,6 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                     return;
                 }
             }
-
             resultAdapter.setSelectPosition(-1);
             mStudentItem = studentItem;
             state = WAIT_CHECK_IN;
@@ -514,6 +515,9 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         if (machineResultList.size() == 0 || machineResultList == null || results1 == null || results1.size() == 0) {
             machineResultList.add(machineResult);
             addRoundResult(result);
+            if (resultList.isEmpty()){
+                resultList.add(new BasketBallTestResult(roundNo,machineResultList,0, -999, 0, -999));
+            }
             resultList.get(resultAdapter.getSelectPosition()).setMachineResultList(machineResultList);
             resultList.get(resultAdapter.getSelectPosition()).setSelectMachineResult(machineResult.getResult());
             resultList.get(resultAdapter.getSelectPosition()).setResult(machineResult.getResult());
@@ -664,6 +668,10 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         resultList.clear();
         for (int i = 0; i < TestConfigs.getMaxTestCount(this); i++) {
             RoundResult roundResult = DBManager.getInstance().queryRoundByRoundNo(student.getStudentCode(), testNo, i + 1);
+            StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
+            if (studentItem.getExamType() == 2){
+                roundResult = null;
+            }
             if (roundResult == null) {
                 resultList.add(new BasketBallTestResult(i + 1, null, 0, -999, 0, -999));
                 if (resultAdapter.getSelectPosition() == -1) {
@@ -673,9 +681,8 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 List<MachineResult> machineResultList = DBManager.getInstance().getItemRoundMachineResult(student.getStudentCode(),
                         testNo, i + 1);
                 resultList.add(new BasketBallTestResult(i + 1, machineResultList, roundResult.getMachineResult(), roundResult.getResult(), roundResult.getPenaltyNum(), roundResult.getResultState()));
-
             }
-
+            Log.e("TAG----",resultList.size()+"---");
         }
 
     }
@@ -861,7 +868,6 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                     ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "", Paint.Align.RIGHT);
 
                 }
-
                 break;
             case R.id.img_AFR:
                 showAFR();
@@ -1145,7 +1151,13 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         roundResult.setItemCode(TestConfigs.getCurrentItemCode());
         roundResult.setResult(basketballResult.getResult());
         roundResult.setMachineResult(basketballResult.getResult());
-        roundResult.setRoundNo(roundNo);
+        if (pairs.get(0).getCurrentRoundNo() != 0){
+            roundResult.setRoundNo(pairs.get(0).getCurrentRoundNo());
+            pairs.get(0).setCurrentRoundNo(0);
+            roundResult.setResultTestState(1);
+        }else {
+            roundResult.setRoundNo(roundNo);
+        }
         roundResult.setTestNo(TestCache.getInstance().getTestNoMap().get(student));
         roundResult.setExamType(mStudentItem.getExamType());
         roundResult.setScheduleNo(mStudentItem.getScheduleNo());
@@ -1173,10 +1185,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(mStudentItem);
         TestCache.getInstance().getResults().put(student, results);
         showStuInfoResult();
-        SystemSetting setting = SettingHelper.getSystemSetting();
-        if (mStudentItem.getExamType() == 2){
-            prepareForCheckIn();
-        }
+
     }
 
     /**

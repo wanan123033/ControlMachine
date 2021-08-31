@@ -880,7 +880,14 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         roundResult.setResultState(baseStuPair.getResultState());
         roundResult.setTestTime(baseStuPair.getTestTime());
         roundResult.setEndTime(DateUtil.getCurrentTime() + "");
-        roundResult.setRoundNo(deviceDetails.get(index).getRound());
+        if (baseStuPair.getRoundNo() != 0){
+            roundResult.setRoundNo(baseStuPair.getRoundNo());
+            roundResult.setResultTestState(1);
+            baseStuPair.setRoundNo(0);
+        }else {
+            roundResult.setRoundNo(deviceDetails.get(index).getRound());
+            roundResult.setResultTestState(0);
+        }
         roundResult.setTestNo(testNo);
         roundResult.setExamType(studentItem.getExamType());
         roundResult.setScheduleNo(studentItem.getScheduleNo());

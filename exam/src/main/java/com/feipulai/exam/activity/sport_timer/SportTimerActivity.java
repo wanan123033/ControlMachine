@@ -547,10 +547,10 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                     txtWaiting.setEnabled(true);
                     testState = TestState.UN_STARTED;
                     if (pair.getCurrentRoundNo() != 0){
-                        sportPresent.saveResult(pair.getCurrentRoundNo(), mStudentItem, testResults.get(roundNo - 1));
+                        sportPresent.saveResult(pair.getCurrentRoundNo(), mStudentItem, testResults.get(roundNo - 1),true);
                         pair.setCurrentRoundNo(0);
                     }else {
-                        sportPresent.saveResult(roundNo, mStudentItem, testResults.get(roundNo - 1));
+                        sportPresent.saveResult(roundNo, mStudentItem, testResults.get(roundNo - 1),false);
                     }
                     sportPresent.showStuInfo(llStuDetail, pair.getStudent(), testResults);
                     if (roundNo < testNum) {

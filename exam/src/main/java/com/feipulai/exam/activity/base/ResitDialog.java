@@ -97,6 +97,7 @@ public class ResitDialog extends DialogFragment{
                     if (pass.equals(systemSetting.getResitPass())){
                         studentItem.setExamType(2);
                         DBManager.getInstance().updateStudentItem(studentItem);
+                        results.clear();
                         listener.onCommit(student, studentItem, results,0);
                         dismiss();
                     }else {
@@ -105,6 +106,7 @@ public class ResitDialog extends DialogFragment{
                 }else {
                     studentItem.setExamType(2);
                     DBManager.getInstance().updateStudentItem(studentItem);
+                    results.clear();
                     listener.onCommit(student, studentItem, results,0);
                     dismiss();
                 }

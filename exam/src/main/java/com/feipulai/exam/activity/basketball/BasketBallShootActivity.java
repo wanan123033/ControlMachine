@@ -217,6 +217,7 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
                     return;
                 }
                 List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
+
                 if (results != null && results.size() >= getSetting().getTestNo()) {
                     InteractUtils.toastSpeak(BasketBallShootActivity.this, "该考生已测试");
                     return;
@@ -319,9 +320,9 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
                     }
                 }
                 if (roundNo != 0) {
-                    disposeResult(testResult, student, roundNo, testNo);
+                    disposeResult(testResult, student, roundNo, testNo,true);
                 }else {
-                    disposeResult(testResult, student, testRound, testNo);
+                    disposeResult(testResult, student, testRound, testNo,false);
                 }
                 StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
                 List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);

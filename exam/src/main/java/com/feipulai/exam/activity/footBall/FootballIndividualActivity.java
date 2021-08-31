@@ -1227,7 +1227,14 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         roundResult.setItemCode(TestConfigs.getCurrentItemCode());
         roundResult.setResult(basketballResult.getResult());
         roundResult.setMachineResult(basketballResult.getResult());
-        roundResult.setRoundNo(roundNo);
+        if (pairs.get(0).getCurrentRoundNo() != 0){
+            roundResult.setRoundNo(pairs.get(0).getCurrentRoundNo());
+            roundResult.setResultTestState(1);
+            pairs.get(0).setCurrentRoundNo(0);
+        }else {
+            roundResult.setRoundNo(roundNo);
+            roundResult.setResultTestState(0);
+        }
         roundResult.setTestNo(TestCache.getInstance().getTestNoMap().get(student));
         roundResult.setExamType(mStudentItem.getExamType());
         roundResult.setScheduleNo(mStudentItem.getScheduleNo());

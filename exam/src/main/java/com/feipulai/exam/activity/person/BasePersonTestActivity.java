@@ -923,8 +923,10 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         if (pair.getRoundNo() != 0){
             roundResult.setRoundNo(pair.getRoundNo());
             pair.setRoundNo(0);
+            roundResult.setResultTestState(1);
         }else {
             roundResult.setRoundNo(roundNo);
+            roundResult.setResultTestState(0);
         }
 
         roundResult.setTestNo(testNo);

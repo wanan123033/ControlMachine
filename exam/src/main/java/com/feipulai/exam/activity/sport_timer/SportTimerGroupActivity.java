@@ -419,7 +419,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                     Student stu = pairs.get(position()).getStudent();
                     if (pairs.get(position()).getCurrentRoundNo() != 0){
                         sportPresent.saveGroupResult(stu, resultList.get(roundNo - 1).getResult(),resultList.get(roundNo - 1).getResultState(),
-                                pairs.get(position()).getCurrentRoundNo(),group, resultList.get(roundNo - 1).getTestTime());
+                                pairs.get(position()).getCurrentRoundNo(),group, resultList.get(roundNo - 1).getTestTime(),true);
                         pairs.get(position()).setCurrentRoundNo(0);
                         List<BaseStuPair> stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
                         if (stuPairs != null){
@@ -430,7 +430,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                         }
                     }else {
                         sportPresent.saveGroupResult(stu, resultList.get(roundNo - 1).getResult(), resultList.get(roundNo - 1).getResultState(),
-                                roundNo, group, resultList.get(roundNo - 1).getTestTime());
+                                roundNo, group, resultList.get(roundNo - 1).getTestTime(),false);
                     }
                     List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(stu.getStudentCode());
                     if (results != null) {

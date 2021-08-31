@@ -690,8 +690,10 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
         if (pairs.get(position()).getCurrentRoundNo() != 0){
             roundResult.setRoundNo(pairs.get(position()).getCurrentRoundNo());
             pairs.get(position()).setCurrentRoundNo(0);
+            roundResult.setResultTestState(1);
         }else {
             roundResult.setRoundNo(roundNo);
+            roundResult.setResultTestState(0);
         }
         roundResult.setTestNo(1);
 //        roundResult.setExamType(group.getExamType());
