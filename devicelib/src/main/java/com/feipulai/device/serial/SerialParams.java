@@ -55,6 +55,16 @@ public enum SerialParams {
                 }.getType();
                 serialList = new Gson().fromJson(JsonData, type);
             }
+
+        } else if (model.startsWith("se328")) {
+            if (serialList == null) {
+                String JsonData = getJson(context, "SerialPort_v3.json");//获取assets目录下的json文件数据
+                Type type = new TypeToken<List<SerialParamsBean>>() {
+                }.getType();
+                serialList = new Gson().fromJson(JsonData, type);
+            }
+        }
+        if (serialList != null) {
             for (SerialParamsBean paramsBean : serialList) {
                 if (TextUtils.equals(paramsBean.getName(), "QR_CODE")) {
                     setParams(QR_CODE, paramsBean);
