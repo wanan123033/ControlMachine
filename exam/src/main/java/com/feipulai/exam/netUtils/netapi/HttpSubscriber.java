@@ -270,7 +270,7 @@ public class HttpSubscriber {
                         }
                         return;
                     }
-                    if (TextUtils.equals(itemBean.getMachineCode(), "-1")) {
+                    if (TextUtils.equals(itemBean.getMachineCode(), "0")) {
                         continue;
                     }
 
