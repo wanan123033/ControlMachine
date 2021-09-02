@@ -270,6 +270,9 @@ public class HttpSubscriber {
                         }
                         return;
                     }
+                    if (TextUtils.equals(itemBean.getMachineCode(), "-1")) {
+                        continue;
+                    }
 
                     Item item = new Item();
                     item.setCarryMode(itemBean.getCarryMode());
@@ -507,13 +510,13 @@ public class HttpSubscriber {
 //                        }
                         StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
                                 studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
-                                studentBean.getExamType(),  studentBean.getScheduleNo());
+                                studentBean.getExamType(), studentBean.getScheduleNo());
                         studentItemList.add(studentItem);
                     } else {
                         SettingHelper.getSystemSetting().setTestPattern(SystemSetting.GROUP_PATTERN);
                         StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
                                 studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
-                                studentBean.getExamType(),  studentBean.getScheduleNo());
+                                studentBean.getExamType(), studentBean.getScheduleNo());
                         studentItemList.add(studentItem);
                     }
                     if (!TextUtils.isEmpty(student.getFaceFeature())) {
