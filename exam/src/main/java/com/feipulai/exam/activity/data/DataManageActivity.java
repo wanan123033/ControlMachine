@@ -527,6 +527,7 @@ public class DataManageActivity
                     public void onFinish(String fileName) {
 
                         if (!new File(MyApplication.PATH_IMAGE + fileName).exists()) {
+                            HandlerUtil.sendMessage(myHandler, 1, 1, "头像下载失败");
                             return;
                         }
 

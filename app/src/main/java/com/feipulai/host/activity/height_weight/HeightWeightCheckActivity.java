@@ -210,6 +210,7 @@ public class HeightWeightCheckActivity
     @Override
     public void onRS232Result(Message msg) {
         // 只有测试状态下,才理会机器信息
+        LogUtils.operation("身高体重:isTesting"+isTesting +"isTestFinished"+isTestFinished);
         if (!isTesting || isTestFinished) {
             return;
         }
