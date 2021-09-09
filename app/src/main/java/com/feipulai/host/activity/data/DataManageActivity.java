@@ -20,6 +20,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.arcsoft.face.ErrorInfo;
+import com.arcsoft.face.FaceEngine;
 import com.arcsoft.imageutil.ArcSoftImageFormat;
 import com.arcsoft.imageutil.ArcSoftImageUtil;
 import com.arcsoft.imageutil.ArcSoftImageUtilError;
@@ -73,6 +75,7 @@ import com.feipulai.host.view.OperateProgressBar;
 import com.github.mjdev.libaums.fs.UsbFile;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
+import com.ww.fpl.libarcface.common.Constants;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.libarcface.model.FaceRegisterInfo;
 import com.ww.fpl.libarcface.widget.ProgressDialog;
@@ -815,6 +818,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
 //    }
 
     public void uploadFace() {
+        progressDialog = new ProgressDialog(DataManageActivity.this);
         DataBaseExecutor.addTask(new DataBaseTask(this, "获取考生人脸特征，请稍后...", false) {
             @Override
             public DataBaseRespon executeOper() {
@@ -828,49 +832,55 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                     ToastUtils.showShort("当前所有考生无头像信息，请先进行名单下载");
                     return;
                 }
-                executorService.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        final int totalCount = studentList.size();
+                int activeCode = FaceEngine.activeOnline(DataManageActivity.this, Constants.APP_ID, Constants.SDK_KEY);
+                if (SettingHelper.getSystemSetting().getCheckTool() == 4 && activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressDialog.setMaxProgress(totalCount);
-                                progressDialog.show();
-                            }
-                        });
-                        if (FaceServer.getFaceRegisterInfoList() != null) {
-                            FaceServer.getFaceRegisterInfoList().clear();
-                        }
+                    executorService.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            final int totalCount = studentList.size();
 
-                        List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
-                        for (int i = 0; i < studentList.size(); i++) {
-
-                            Student student = studentList.get(i);
-                            registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
-                            final int finalI = i;
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (progressDialog != null) {
-                                        progressDialog.refreshProgress(finalI);
-                                    }
+                                    progressDialog.setMaxProgress(totalCount);
+                                    progressDialog.show();
                                 }
                             });
-                        }
-                        FaceServer.getInstance().addFaceList(registerInfoList);
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ToastUtils.showShort("人脸特征检入成功");
-                                progressDialog.dismiss();
+                            if (FaceServer.getFaceRegisterInfoList() != null) {
+                                FaceServer.getFaceRegisterInfoList().clear();
                             }
-                        });
-                        Log.i("DataManageActivity", "run: " + executorService.isShutdown());
-                    }
-                });
+
+                            List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
+                            for (int i = 0; i < studentList.size(); i++) {
+
+                                Student student = studentList.get(i);
+                                registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+                                final int finalI = i;
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (progressDialog != null) {
+                                            progressDialog.refreshProgress(finalI);
+                                        }
+                                    }
+                                });
+                            }
+                            FaceServer.getInstance().addFaceList(registerInfoList);
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ToastUtils.showShort("人脸特征检入成功");
+                                    progressDialog.dismiss();
+                                }
+                            });
+                            Log.i("DataManageActivity", "run: " + executorService.isShutdown());
+                        }
+                    });
+                } else {
+                    ToastUtils.showShort("请启用人脸识别与激活");
+                }
             }
 
             @Override
@@ -1109,7 +1119,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
             } else {
                 Log.i("zipFile", Environment.getExternalStorageDirectory().getAbsolutePath() + excelFile + "file1 is not exists");
             }
-            zipFile.addFolder(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + MyApplication.LOG_PATH_NAME , parameters);
+            zipFile.addFolder(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + MyApplication.LOG_PATH_NAME, parameters);
 
             UsbFile copeFile = FileSelectActivity.sSelectedFile.createFile(fileName + ".zip");
             FileUtil.copyFile(zipFile.getFile(), copeFile);

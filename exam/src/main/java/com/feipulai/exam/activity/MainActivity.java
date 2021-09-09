@@ -90,7 +90,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
             long todayTime = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0l);
 
             SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, todayTime + 60 * 1000);
-            if (activateBean == null || activateBean.getValidEndTime() == 0 || activateBean.getValidRunTime() != 0) {
+            if (activateBean == null || activateBean.getValidEndTime() == 0 || activateBean.getValidRunTime() == 0) {
                 activateBean = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), ActivateBean.class);
             }
 

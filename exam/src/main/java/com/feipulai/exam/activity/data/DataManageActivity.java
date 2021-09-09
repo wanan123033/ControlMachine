@@ -20,6 +20,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.arcsoft.face.ErrorInfo;
+import com.arcsoft.face.FaceEngine;
 import com.arcsoft.imageutil.ArcSoftImageFormat;
 import com.arcsoft.imageutil.ArcSoftImageUtil;
 import com.arcsoft.imageutil.ArcSoftImageUtilError;
@@ -48,6 +50,7 @@ import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LoginActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.setting.SettingActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.adapter.IndexTypeAdapter;
 import com.feipulai.exam.bean.SoftApp;
@@ -80,6 +83,7 @@ import com.feipulai.exam.view.OperateProgressBar;
 import com.github.mjdev.libaums.fs.UsbFile;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
+import com.ww.fpl.libarcface.common.Constants;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.libarcface.model.FaceRegisterInfo;
 import com.ww.fpl.libarcface.widget.ProgressDialog;
@@ -1457,6 +1461,7 @@ public class DataManageActivity
 //    }
 
     public void uploadFace() {
+        progressDialog = new ProgressDialog(DataManageActivity.this);
         DataBaseExecutor.addTask(new DataBaseTask(this, "获取考生人脸特征，请稍后...", false) {
             @Override
             public DataBaseRespon executeOper() {
@@ -1470,46 +1475,55 @@ public class DataManageActivity
                     ToastUtils.showShort("当前所有考生无头像信息，请先进行名单下载");
                     return;
                 }
-                executorService.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        final int totalCount = studentList.size();
+                int activeCode = FaceEngine.activeOnline(DataManageActivity.this, Constants.APP_ID, Constants.SDK_KEY);
+                if (SettingHelper.getSystemSetting().getCheckTool() == 4 && activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressDialog.setMaxProgress(totalCount);
-                                progressDialog.show();
-                            }
-                        });
-                        List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
-                        for (int i = 0; i < studentList.size(); i++) {
+                    executorService.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            final int totalCount = studentList.size();
 
-
-                            Student student = studentList.get(i);
-                            registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
-                            final int finalI = i;
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (progressDialog != null) {
-                                        progressDialog.refreshProgress(finalI);
-                                    }
+                                        progressDialog.setMaxProgress(totalCount);
+                                        progressDialog.show();
+
+
                                 }
                             });
-                        }
-                        FaceServer.getInstance().addFaceList(registerInfoList);
+                            List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
+                            for (int i = 0; i < studentList.size(); i++) {
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ToastUtils.showShort("人脸特征检入成功");
-                                progressDialog.dismiss();
+
+                                Student student = studentList.get(i);
+                                registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+                                final int finalI = i;
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (progressDialog != null) {
+                                            progressDialog.refreshProgress(finalI);
+                                        }
+                                    }
+                                });
                             }
-                        });
-                        Log.i("DataManageActivity", "run: " + executorService.isShutdown());
-                    }
-                });
+                            FaceServer.getInstance().addFaceList(registerInfoList);
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ToastUtils.showShort("人脸特征检入成功");
+                                    progressDialog.dismiss();
+                                }
+                            });
+                            Log.i("DataManageActivity", "run: " + executorService.isShutdown());
+                        }
+                    });
+                } else {
+                    ToastUtils.showShort("请启用人脸识别与激活");
+                }
+
             }
 
             @Override

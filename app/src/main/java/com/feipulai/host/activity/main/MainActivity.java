@@ -78,18 +78,22 @@ public class MainActivity extends BaseActivity {
         public void timer(Long time) {
 
             long todayTime = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0l);
-            if (activateBean == null || activateBean.getValidEndTime() == 0 || activateBean.getValidRunTime() != 0) {
+            if (activateBean == null || activateBean.getValidEndTime() == 0 || activateBean.getValidRunTime() == 0) {
                 activateBean = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), ActivateBean.class);
             }
             SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, todayTime + 60 * 1000);
-            if (activateBean.getValidEndTime() - DateUtil.getCurrentTime() <= 3 * 24 * 60 * 60 * 1000 ||
-                    activateBean.getValidRunTime() - todayTime <= 24 * 60 * 60 * 1000) {
+            if (activateBean.getValidRunTime() != 0 && activateBean.getValidEndTime() != 0
+                            && (activateBean.getValidEndTime() - DateUtil.getCurrentTime() <= 3 * 24 * 60 * 60 * 1000 ||
+                    activateBean.getValidRunTime() - todayTime <= 24 * 60 * 60 * 1000)) {
                 txtCutTime.setVisibility(View.VISIBLE);
                 txtCutTime.setText("截止时间：" + DateUtil.formatTime1(activateBean.getValidEndTime(), "yyyy年MM月dd日"));
-                if (activateBean.getValidEndTime() - DateUtil.getCurrentTime() <= 3 * 24 * 60 * 60 * 1000){
+                if (activateBean.getValidEndTime() - DateUtil.getCurrentTime() <= 3 * 24 * 60 * 60 * 1000) {
                     txtUseTime.setVisibility(View.VISIBLE);
                     txtUseTime.setText("可用时长：" + DateUtil.getUseTime(activateBean.getValidRunTime() - todayTime));
                 }
+            } else {
+                txtCutTime.setVisibility(View.GONE);
+                txtCutTime.setVisibility(View.GONE);
             }
         }
     });

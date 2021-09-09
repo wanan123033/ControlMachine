@@ -3,14 +3,17 @@ package com.feipulai.exam.activity.explain;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.MyApplication;
@@ -63,7 +66,18 @@ public class ExplainActivity extends BaseTitleActivity {
                     Intent intent = new Intent();
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.setAction(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.fromFile(fileList.get(position)), "application/pdf");
+                    //若有，则在该Task上创建Activity；若没有则新建具有该Activity属性的Task，并在该新建的Task上创建Activity。
+                    intent.addCategory(Intent.CATEGORY_DEFAULT);//按照普通Activity的执行方式执行
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    LogUtil.logDebugMessage(getPackageName());
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        //  此处注意替换包名，
+                        Uri contentUri = FileProvider.getUriForFile(ExplainActivity.this, "com.feipulai.host.provider", fileList.get(position));
+                        intent.setDataAndType(contentUri, "application/pdf");
+                    } else {
+                        intent.setDataAndType(Uri.fromFile(fileList.get(position)), "application/pdf");
+                    }
                     startActivity(intent);
                     Intent.createChooser(intent, "请选择对应的软件打开该附件！");
                 } catch (ActivityNotFoundException e) {
