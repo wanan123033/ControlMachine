@@ -49,7 +49,7 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
     TextView tv_stu_info;
     @BindView(R.id.rv_score)
     RecyclerView rv_score;
-    private int selectPos;
+    private int selectPos = -1;
     @BindView(R.id.et_password)
     EditText et_password;
     private SystemSetting systemSetting;
@@ -98,6 +98,10 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
                 dismiss();
                 break;
             case R.id.tv_commit:
+                if (selectPos == -1){
+                    Toast.makeText(getContext(),"请选择轮次成绩进行重测",Toast.LENGTH_LONG).show();
+                    return;
+                }
                 if (systemSetting.getAgainPassBool()){
                     String pass = et_password.getText().toString().trim();
                     if (pass.equals(systemSetting.getAgainPass())){
@@ -108,6 +112,7 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
 //                            roundResult.setIsLastResult(RoundResult.NOT_LAST_RESULT);
 //                        }
                         DBManager.getInstance().updateRoundResult(roundResult);
+                        TestCache.getInstance().getResults().put(student,results);
                         listener.onCommit(student, studentItem, results,roundResult.getRoundNo());
                         dismiss();
                     }else {
@@ -121,6 +126,7 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
 //                        roundResult.setIsLastResult(RoundResult.NOT_LAST_RESULT);
 //                    }
                     DBManager.getInstance().updateRoundResult(roundResult);
+                    TestCache.getInstance().getResults().put(student,results);
                     listener.onCommit(student, studentItem, this.results,roundResult.getRoundNo());
                     dismiss();
                 }

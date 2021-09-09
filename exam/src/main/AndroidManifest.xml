@@ -465,6 +465,8 @@
         <activity android:name=".activity.pushUp.distance.PushUpDistanceSettingActivity" />
         <activity android:name=".activity.pushUp.distance.PushUpDistancePairActivity" />
         <activity android:name=".activity.pushUp.distance.PushUpDistanceTestActivity" />
+        <activity android:name=".activity.basketball.motion.BasketBallMotionTestActivity" />
+        <activity android:name=".activity.basketball.motion.BasketBallMotionGroupActivity" />
 
         <receiver android:name="com.feipulai.device.spputils.SppReciver" />
 

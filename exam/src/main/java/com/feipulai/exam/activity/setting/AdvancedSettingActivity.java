@@ -334,9 +334,11 @@ public class AdvancedSettingActivity extends BaseTitleActivity implements TextWa
                 public void onClick(View v) {
                     if (TextUtils.equals(editPwd.getText().toString(), MyApplication.ADVANCED_AUTO_PWD)) {
                         systemSetting.setInputTest(true);
+                        cbInputTest.setChecked(true);
                         dialog.dismiss();
                     } else {
                         systemSetting.setInputTest(false);
+                        cbInputTest.setChecked(false);
                         ToastUtils.showShort("密码错误");
                     }
                 }

@@ -329,7 +329,18 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
                     toastSpeak("已保存，请勿重复点击");
                     return;
                 }
-                disposeResult(timeResult, student, testRound, testNo);
+                for (int i = 0 ; i < getPairs().size() ; i++){
+                    StuDevicePair pair = getPairs().get(i);
+                    if (pair.getStudent().getStudentCode().equals(student.getStudentCode()) && pair.getCurrentRoundNo() != 0){
+                        disposeResult(timeResult, student, pair.getCurrentRoundNo(), testNo, false);
+                        pair.setCurrentRoundNo(0);
+                        break;
+                    }else if (pair.getStudent().getStudentCode().equals(student.getStudentCode())){
+                        disposeResult(timeResult, student, testRound, testNo, false);
+                        break;
+                    }
+                }
+
                 StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
                 List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
                 InteractUtils.showStuInfo(llStuDetail, student, results);

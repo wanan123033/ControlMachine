@@ -1,5 +1,7 @@
 package com.feipulai.exam.activity.jump_rope;
 
+import android.util.Log;
+
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
@@ -40,7 +42,7 @@ public class DeviceDispatchers {
 
         index = students.indexOf(pairs.get(pairs.size() - 1).getStudent());
         if (index == students.size() - 1){
-            index = 0;
+            index = -1;
         }
         if (groupMode == TestConfigs.GROUP_PATTERN_LOOP){  //循环模式
             return dispatchDeviceLoop(pairs);
@@ -57,7 +59,7 @@ public class DeviceDispatchers {
             Student student = nextStudent();
             pair.setStudent(student);
             if (student == null) {
-                break;
+                continue;
             }
         }
         for (int i = 0 ; i < pairs.size() ; i++){
@@ -70,10 +72,12 @@ public class DeviceDispatchers {
 
     private Student nextStudent() {
         index++;
-        if (index == students.size()) {
+        if (index >= students.size()) {
             return null;
         }
+
         Student student = students.get(index);
+        Log.e("TAG---79",student.toString());
         StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
         if (studentItem.getExamType() == 2){
             List<RoundResult> results = TestCache.getInstance().getResults().get(student);
@@ -104,7 +108,7 @@ public class DeviceDispatchers {
                     pairs.get(i).setStudent(nextStudent());
                 }
             }else {
-                List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
+                List<RoundResult> results = TestCache.getInstance().getResults().get(student);
                 if (results == null || results.size() < testNo){
                     pairs.get(i).setStudent(student);
                 }else {
@@ -130,7 +134,7 @@ public class DeviceDispatchers {
                 continue;
             }
             // 有测试次数没完的,继续测试
-            List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
+            List<RoundResult> results = TestCache.getInstance().getResults().get(student);
             if(results == null || results.size() < testNo){
                 needAnotherTest = true;
             }else{

@@ -461,7 +461,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
         for (RunStudent runStudent : mList) {
             if (runStudent.getStudent() != null && !TextUtils.isEmpty(runStudent.getMark())) {
                 List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(runStudent.getStudent().getStudentCode());
-                sportPresent.saveGroupResult(runStudent.getStudent(), runStudent.getOriginalMark(), RoundResult.RESULT_STATE_NORMAL,results.size() + 1, group, startTime);
+                sportPresent.saveGroupResult(runStudent.getStudent(), runStudent.getOriginalMark(), RoundResult.RESULT_STATE_NORMAL,results.size() + 1, group, startTime, false);
                 List<RoundResult> resultList = DBManager.getInstance().queryGroupRound(runStudent.getStudent().getStudentCode(), group.getId() + "");
                 List<String> list = new ArrayList<>();
                 for (RoundResult result : resultList) {

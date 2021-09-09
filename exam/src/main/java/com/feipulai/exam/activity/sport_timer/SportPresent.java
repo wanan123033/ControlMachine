@@ -16,7 +16,7 @@ import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.SportResult;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
-import com.feipulai.exam.activity.jump_rope.bean.TestCache;
+import com.feipulai.exam.activity.basketball.motion.BasketBallMotionTestActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.sport_timer.bean.SportTestResult;
@@ -435,14 +435,19 @@ public class SportPresent implements SportContract.Presenter {
 
     /**
      * 成绩保存
-     *
-     * @param roundNo
+     *  @param roundNo
      * @param mStudentItem
      * @param testResults
+     * @param b
      */
-    public void saveResult(int roundNo, StudentItem mStudentItem, SportTestResult testResults) {
+    public void saveResult(int roundNo, StudentItem mStudentItem, SportTestResult testResults, boolean b) {
         int testNo = 1;
         RoundResult roundResult = new RoundResult();
+        if (b){
+            roundResult.setResultTestState(1);
+        }else {
+            roundResult.setResultTestState(0);
+        }
         roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
         roundResult.setStudentCode(mStudentItem.getStudentCode());
         roundResult.setItemCode(TestConfigs.getCurrentItemCode());
@@ -787,14 +792,19 @@ public class SportPresent implements SportContract.Presenter {
 
     /**
      * 保存分组成绩
-     *
-     * @param student
+     *  @param student
      * @param result
      * @param currentTestTime
      * @param group
+     * @param b
      */
-    public void saveGroupResult(Student student, int result, int resultState,int currentTestTime, Group group, String startTime) {
+    public void saveGroupResult(Student student, int result, int resultState, int currentTestTime, Group group, String startTime, boolean b) {
         RoundResult roundResult = new RoundResult();
+        if (b){
+            roundResult.setResultTestState(1);
+        }else {
+            roundResult.setResultTestState(0);
+        }
         roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
         roundResult.setStudentCode(student.getStudentCode());
         roundResult.setItemCode(TestConfigs.getCurrentItemCode());

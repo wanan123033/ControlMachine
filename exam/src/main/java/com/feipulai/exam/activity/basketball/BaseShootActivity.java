@@ -10,7 +10,6 @@ import android.view.View;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
-import com.feipulai.device.manager.RunTimerManager;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.RunTimerConnectState;
 import com.feipulai.device.serial.beans.RunTimerResult;
@@ -18,11 +17,8 @@ import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.basketball.util.RunTimerImpl;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
-import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.fragment.IndividualCheckFragment;
-import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
-import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.RoundResult;
@@ -159,10 +155,15 @@ public abstract class BaseShootActivity extends BaseTitleActivity
         return false;
     }
 
-    public void disposeResult(int order,Student student, int testRound ,int testNo) {
+    public void disposeResult(int order, Student student, int testRound, int testNo, boolean b) {
 
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
         RoundResult roundResult = new RoundResult();
+        if (b){
+            roundResult.setResultTestState(1);
+        }else {
+            roundResult.setResultTestState(0);
+        }
         roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
         roundResult.setStudentCode(student.getStudentCode());
         roundResult.setItemCode(TestConfigs.getCurrentItemCode());

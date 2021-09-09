@@ -135,6 +135,7 @@ public class RunTimerDisposeManager {
         roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
         roundResult.setTestTime(startTime);
         roundResult.setEndTime(System.currentTimeMillis() + "");
+
         roundResult.setRoundNo(currentTestTime);
         roundResult.setTestNo(1);
         roundResult.setGroupId(group.getId());

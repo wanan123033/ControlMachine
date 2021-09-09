@@ -1296,8 +1296,10 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         if (baseStuPair.getRoundNo() != 0){
             roundResult.setRoundNo(baseStuPair.getRoundNo());
             baseStuPair.setRoundNo(0);
+            roundResult.setResultTestState(1);
         }else {
             roundResult.setRoundNo(roundNo);
+            roundResult.setResultTestState(0);
         }
         roundResult.setTestNo(1);
         roundResult.setGroupId(group.getId());
