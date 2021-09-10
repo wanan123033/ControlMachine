@@ -139,7 +139,7 @@ public class SportResult {
 
             LogUtils.normal("运动计时返回设备数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
         } else {
-            LogUtils.operation("运动计时返回设备数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
+            LogUtils.normal("运动计时返回设备数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
 
         }
     }

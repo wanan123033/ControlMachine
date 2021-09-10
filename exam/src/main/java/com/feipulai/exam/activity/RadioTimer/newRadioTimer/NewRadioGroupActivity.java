@@ -557,7 +557,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
         mHandler.sendEmptyMessage(RUN_START);
         timerKeeper.setStart();
         startTime = System.currentTimeMillis() + "";
-        sportPresent.clearLed();
+        sportPresent.clearLed(1);
     }
 
     @Override

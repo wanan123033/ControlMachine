@@ -460,6 +460,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 startActivity(new Intent(this, SportPairActivity.class));
                 break;
             case R.id.txt_waiting:
+                LogUtils.operation("等待计时");
                 Logger.i("运动计时测试次数"+roundNo);
                 if (roundNo > testNum) {
                     toastSpeak("已超过测试次数");
@@ -509,6 +510,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 tvResult.setText(ResultDisplayUtils.getStrResultForDisplay(testResults.get(roundNo - 1).getResult()));
                 break;
             case R.id.txt_illegal_return:
+                LogUtils.operation("违规返回");
                 if (testState == TestState.WAIT_RESULT) {
                     timerTask.stopKeepTime();
                     sportPresent.setDeviceStateStop();
@@ -521,6 +523,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 }
                 break;
             case R.id.txt_stop_timing:
+                LogUtils.operation("停止计时");
                 timerTask.stopKeepTime();
                 if (testState == TestState.WAIT_RESULT) {
                     sportPresent.setDeviceStateStop();
@@ -531,6 +534,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 sportPresent.getDeviceState();
                 break;
             case R.id.tv_print:
+                LogUtils.operation("打印");
                 if (testState == TestState.UN_STARTED) {
                     printResult();
                 } else {
@@ -539,6 +543,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
 
                 break;
             case R.id.tv_confirm:
+                LogUtils.operation("成绩确认");
 //                resultMap.put(roundNo,partResultList);
                 if (testState == TestState.RESULT_CONFIRM) {
                     tvResult.setText("");
@@ -585,6 +590,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 }
                 break;
             case R.id.txt_finish_test:
+                LogUtils.operation("结束测试");
                 if (testState != TestState.UN_STARTED) {
                     toastSpeak("测试成绩未保存不可结束");
                 }else {
@@ -693,6 +699,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 initTime = sportResult.getLongTime();
                 mHandler.sendEmptyMessage(UPDATE_STOP_ENABLE);
                 timerTask.setStart();
+                sportPresent.clearLed(0);
             }
             if (receiveTime >= testResults.get(roundNo - 1).getSportTimeResults().size())
                 return;
@@ -807,14 +814,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                     txtDeviceStatus.setText("计时");
                     break;
                 case UPDATE_ON_TEXT:
-                    int time = msg.arg1;
-                    String formatTime ;
-                    if (time<60*60*1000){
-                        formatTime = DateUtil.formatTime1(time, "mm:ss.SSS");
-                    }else {
-                        formatTime = DateUtil.formatTime1(time, "HH:mm:ss");
-                    }
-                    tvResult.setText(formatTime);
+                    tvResult.setText(ResultDisplayUtils.getStrResultForDisplay(msg.arg1, false));
                     break;
 
             }
@@ -828,6 +828,16 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
         message.what = UPDATE_ON_TEXT;
         message.arg1 = time;
         mHandler.sendMessage(message);
+
+        if (testState == TestState.WAIT_RESULT){
+            String formatTime ;
+            if (time<60*60*1000){
+                formatTime = DateUtil.formatTime1(time, "mm:ss.SSS");
+            }else {
+                formatTime = DateUtil.formatTime1(time, "HH:mm:ss");
+            }
+            sportPresent.showLedString(formatTime);
+        }
     }
     @Override
     public void setRoundNo(Student student, int roundNo) {

@@ -775,6 +775,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                 initTime = sportResult.getLongTime();
                 mHandler.sendEmptyMessage(UPDATE_STOP);
                 timerTask.setStart();
+                sportPresent.clearLed(0);
             }
             if (receiveTime >= resultList.get(roundNo - 1).getSportTimeResults().size())
                 return;
@@ -865,14 +866,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                     txtDeviceStatus.setText("计时");
                     break;
                 case UPDATE_ON_TEXT:
-                    int time = (int) msg.obj;
-                    String formatTime ;
-                    if (time<60*60*1000){
-                        formatTime = DateUtil.formatTime1(time, "mm:ss.SSS");
-                    }else {
-                        formatTime = DateUtil.formatTime1(time, "HH:mm:ss");
-                    }
-                    tvResult.setText(formatTime);
+                    tvResult.setText(ResultDisplayUtils.getStrResultForDisplay(msg.arg1, false));
                     break;
             }
             return false;
@@ -885,5 +879,15 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
         message.what = UPDATE_ON_TEXT;
         message.obj = time;
         mHandler.sendMessage(message);
+
+        if (testState == TestState.WAIT_RESULT){
+            String formatTime ;
+            if (time<60*60*1000){
+                formatTime = DateUtil.formatTime1(time, "mm:ss.SSS");
+            }else {
+                formatTime = DateUtil.formatTime1(time, "HH:mm:ss");
+            }
+            sportPresent.showLedString(formatTime);
+        }
     }
 }

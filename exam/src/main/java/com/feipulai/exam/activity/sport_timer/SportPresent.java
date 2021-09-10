@@ -665,10 +665,10 @@ public class SportPresent implements SportContract.Presenter {
         service.submit(r);
     }
 
-    public void clearLed() {
+    public void clearLed(int t) {
         mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
         mLEDManager.showString(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId(),"菲普莱体育",3,0,false,true);
-        mLEDManager.showString(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId(),"红外计时",4,1,false,true);
+        mLEDManager.showString(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId(),t == 0?"运动计时":"红外计时",4,1,false,true);
     }
 
     public void showLedString(String time) {

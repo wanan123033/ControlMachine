@@ -290,7 +290,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         mHandler.sendEmptyMessage(RUN_START);
         currentTestTime++;
         startTime = System.currentTimeMillis() + "";
-        sportPresent.clearLed();
+        sportPresent.clearLed(1);
         timerTask.setStart();
     }
 
