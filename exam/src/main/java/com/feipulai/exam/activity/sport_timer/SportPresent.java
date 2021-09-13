@@ -64,6 +64,7 @@ public class SportPresent implements SportContract.Presenter {
     private boolean keepTime;//是否开始计时
     private boolean pause;//暂停
     private int synKeep = -1;//计时标记
+    private boolean syncTime;
     private static final String TAG = "SportPresent";
     public SportPresent(SportContract.SportView sportView, int deviceCount) {
         mLEDManager = new LEDManager();
@@ -84,6 +85,7 @@ public class SportPresent implements SportContract.Presenter {
 //            syncTime[i] = false;
         }
         checkService = Executors.newSingleThreadScheduledExecutor();
+        getDeviceTime(1);
     }
 
     @Override
@@ -182,6 +184,10 @@ public class SportPresent implements SportContract.Presenter {
         }
     }
 
+    public void getDeviceTime(int i){
+        sportTimerManger.getTime(i+1, SettingHelper.getSystemSetting().getHostId());
+    }
+
     public int getSynKeep() {
         return synKeep;
     }
@@ -200,6 +206,9 @@ public class SportPresent implements SportContract.Presenter {
     @Override
     public void waitStart() {
         try {
+            if (!isSyncTime()){
+                sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());
+            }
             synKeep = -1;
             keepTime = true;
             setPause(true);
@@ -250,6 +259,7 @@ public class SportPresent implements SportContract.Presenter {
         if (null!=service){
             service.shutdownNow();
         }
+        syncTime = false;
     }
 
     private void setDeviceState(int deviceId, int state) {
@@ -279,6 +289,11 @@ public class SportPresent implements SportContract.Presenter {
         @Override
         public void onGetTime(SportResult result) {
 //            syncTime[result.getDeviceId()-1] = true;
+            syncTime = true;
+            if (Math.abs( getTime() - result.getLongTime())> 2000){
+                sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());
+            }
+
         }
 
         @Override
@@ -678,6 +693,10 @@ public class SportPresent implements SportContract.Presenter {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean isSyncTime() {
+        return syncTime;
     }
 
     private class MyRunnable implements Runnable {
