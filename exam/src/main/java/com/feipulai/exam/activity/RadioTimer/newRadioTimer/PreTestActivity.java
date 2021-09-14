@@ -29,6 +29,8 @@ import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.adapter.RunNumberAdapter;
+import com.feipulai.exam.config.BaseEvent;
+import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.RoundResult;
@@ -133,6 +135,23 @@ public class PreTestActivity extends BaseCheckActivity {
             }
         });
         etInputText.setData(lvResults, this);
+    }
+
+    @Override
+    public void onEventMainThread(BaseEvent baseEvent) {
+        switch (baseEvent.getTagInt()) {
+            case EventConfigs.UPDATE_TEST_COUNT:
+            getSetting();
+            mList.clear();
+            for (int i = 0; i < runNum; i++) {
+                RunStudent runStudent = new RunStudent();
+                runStudent.setResultList(new ArrayList<RunStudent.WaitResult>());
+                mList.add(runStudent);
+            }
+            mAdapter.notifyDataSetChanged();
+            break;
+
+        }
     }
 
     /**

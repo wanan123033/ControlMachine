@@ -110,6 +110,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     private int[] independent;
     private SparseArray<Integer> array;//有起终点时各道次终点状态 0异常 1正常 2计时
     private TimerTask timerTask;
+    private boolean testing;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_new_radio_test;
@@ -410,6 +411,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_wait_start:
+                testing = true;
                 LogUtils.operation("红外计时点击了等待发令");
                 boolean flag = false;//标记学生是否全部测试完
                 for (RunStudent runStudent : mList) {
@@ -461,6 +463,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 tvWaitReady.setSelected(false);
                 break;
             case R.id.tv_fault_back:
+                testing = false;
                 timerTask.stopKeepTime();
                 sportPresent.setDeviceStateStop();
                 setView(false);
@@ -486,6 +489,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 break;
             case R.id.tv_mark_confirm:
                 if (testState == TestState.WAIT_RESULT) {
+                    testing = false;
                     LogUtils.operation("红外计时点击了成绩确认");
                     testState = TestState.UN_STARTED;
                     timerTask.stopKeepTime();
@@ -564,6 +568,15 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         super.onDestroy();
         sportPresent.presentRelease();
         timerTask.release();
+    }
+
+    @Override
+    public void finish() {
+        if (testing){
+            toastSpeak("测试中,不允许退出当前界面");
+            return;
+        }
+        super.finish();
     }
 
     @Override

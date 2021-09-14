@@ -106,6 +106,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
     private SparseArray<Integer> array;//有起终点时各道次终点状态
     private static final String TAG = "NewRadioGroupActivity";
     ExecutorService service = Executors.newFixedThreadPool(2);
+    private boolean testing;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_new_radio_group;
@@ -311,6 +312,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_wait_start://等待发令
+                testing = true;
                 LogUtils.operation("红外计时点击了等待发令");
                 boolean flag = false;//标记学生是否全部测试完
                 for (RunStudent runStudent : mList) {
@@ -368,6 +370,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                 tvWaitReady.setSelected(false);
                 break;
             case R.id.tv_fault_back://违规返回
+                testing = false;
                 LogUtils.operation("红外计时点击了违规返回");
                 sportPresent.setDeviceStateStop();
                 setView(false);
@@ -385,6 +388,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                 break;
             case R.id.tv_mark_confirm://成绩确认
                 if (testState == TestState.WAIT_RESULT) {
+                    testing = false;
                     timerKeeper.stopKeepTime();
                     sportPresent.setShowLed(mList);
                     LogUtils.operation("红外计时点击了成绩确认");
@@ -724,5 +728,14 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
         sportPresent.presentRelease();
         timerKeeper.release();
         service.shutdown();
+    }
+
+    @Override
+    public void finish() {
+        if (testing){
+            toastSpeak("测试中,不允许退出当前界面");
+            return;
+        }
+        super.finish();
     }
 }
