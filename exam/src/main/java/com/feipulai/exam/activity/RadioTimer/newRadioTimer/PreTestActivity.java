@@ -110,6 +110,7 @@ public class PreTestActivity extends BaseCheckActivity {
     public void setRoundNo(Student student, int roundNo) {
 
     }
+
     @Override
     protected void initData() {
         getSetting();
@@ -138,18 +139,27 @@ public class PreTestActivity extends BaseCheckActivity {
     }
 
     @Override
+    public int setAFRFrameLayoutResID() {
+        return R.id.frame_camera;
+    }
+
+    @Override
     public void onEventMainThread(BaseEvent baseEvent) {
         switch (baseEvent.getTagInt()) {
             case EventConfigs.UPDATE_TEST_COUNT:
-            getSetting();
-            mList.clear();
-            for (int i = 0; i < runNum; i++) {
-                RunStudent runStudent = new RunStudent();
-                runStudent.setResultList(new ArrayList<RunStudent.WaitResult>());
-                mList.add(runStudent);
-            }
-            mAdapter.notifyDataSetChanged();
-            break;
+                int tmp = runNum;
+                getSetting();
+                if (tmp!= runNum){
+                    mList.clear();
+                    for (int i = 0; i < runNum; i++) {
+                        RunStudent runStudent = new RunStudent();
+                        runStudent.setResultList(new ArrayList<RunStudent.WaitResult>());
+                        mList.add(runStudent);
+                    }
+                    mAdapter.notifyDataSetChanged();
+                }
+
+                break;
 
         }
     }
@@ -297,7 +307,7 @@ public class PreTestActivity extends BaseCheckActivity {
         startActivity(new Intent(this, RunTimerSettingActivity.class));
     }
 
-    @OnClick({R.id.btn_start, R.id.btn_led, R.id.btn_device_pair,R.id.img_AFR})
+    @OnClick({R.id.btn_start, R.id.btn_led, R.id.btn_device_pair, R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_start:
@@ -306,7 +316,7 @@ public class PreTestActivity extends BaseCheckActivity {
                     ToastUtils.showShort("请先添加学生");
                     return;
                 }
-                Intent intent = new Intent(this,NewRadioTestActivity.class);
+                Intent intent = new Intent(this, NewRadioTestActivity.class);
                 intent.putExtra("runStudent", (Serializable) mList);
                 startActivity(intent);
                 break;
@@ -332,7 +342,7 @@ public class PreTestActivity extends BaseCheckActivity {
                 if (student == null) {
                     InteractUtils.toastSpeak(PreTestActivity.this, "该考生不存在");
                     return;
-                }else{
+                } else {
                     afrFrameLayout.setVisibility(View.GONE);
                 }
                 StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
@@ -341,7 +351,7 @@ public class PreTestActivity extends BaseCheckActivity {
                     return;
                 }
                 // 可以直接检录
-                checkInUIThread(student,studentItem);
+                checkInUIThread(student, studentItem);
             }
         });
 
