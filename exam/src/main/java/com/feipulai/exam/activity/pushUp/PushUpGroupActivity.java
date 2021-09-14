@@ -621,6 +621,9 @@ public class PushUpGroupActivity extends BaseTitleActivity
         if (isConfigurableNow()) {
             return;
         }
+        if (state == WAIT_CONFIRM){
+            return;
+        }
         Message msg = Message.obtain();
         msg.what = UPDATE_SCORE;
         msg.obj = result;

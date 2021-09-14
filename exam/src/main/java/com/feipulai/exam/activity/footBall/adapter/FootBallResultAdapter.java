@@ -68,7 +68,7 @@ public class FootBallResultAdapter extends BaseQuickAdapter<BasketBallTestResult
         helper.spRoundResult.setItemClick(new MySpinner.ItemClick() {
             @Override
             public void onClick(int position) {
-                item.setResult(item.getMachineResultList().get(position).getResult() + (setting.getPenaltySecond() * item.getPenalizeNum() * 1000));
+                item.setResult(item.getMachineResultList().get(position).getResult() + ((int)(setting.getPenaltySecond() * item.getPenalizeNum() * 1000.0)));
                 item.setSelectMachineResult(item.getMachineResultList().get(position).getResult());
                 notifyDataSetChanged();
             }

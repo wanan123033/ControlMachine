@@ -22,7 +22,7 @@ public class BasketBallSelectActivity
         this.itemList.add(new Item("无线运球模式（V6.4）"));
         this.itemList.add(new Item("往返运球投篮模式"));
         this.itemList.add(new Item("无线运球模式（V6.6）"));
-//        this.itemList.add(new Item("运动计时模式"));
+        this.itemList.add(new Item("运动计时模式"));
 //        this.itemList.add(new Item("投篮模式"));
         this.adapter.notifyDataSetChanged();
         getToolbar().setTitle("篮球模式选择");

@@ -107,6 +107,9 @@ public class RoundResultBean implements Serializable {
         }
 
         for (RoundResult roundResult : roundResults) {
+            if (roundResult.isDelete()){
+                continue;
+            }
             roundResultBeans.add(new RoundResultBean(roundResult.getId(), roundResult.getStudentCode(), roundResult.getItemCode(), roundResult.getMachineCode()
                     , roundResult.getRoundNo(), roundResult.getTestNo(), roundResult.getMachineResult(),
                     roundResult.getPenaltyNum(), roundResult.getResult(), roundResult.getResultState()
@@ -123,6 +126,9 @@ public class RoundResultBean implements Serializable {
         }
         List<RoundResultBean> roundResultBeans = new ArrayList<>();
         for (RoundResult roundResult : roundResults) {
+            if (roundResult.isDelete()){
+                continue;
+            }
             roundResultBeans.add(new RoundResultBean(roundResult.getId(), roundResult.getStudentCode(), roundResult.getItemCode(), roundResult.getMachineCode()
                     , roundResult.getRoundNo(), roundResult.getTestNo(), roundResult.getMachineResult(),
                     roundResult.getPenaltyNum(), roundResult.getResult(), roundResult.getResultState()
@@ -135,6 +141,9 @@ public class RoundResultBean implements Serializable {
 
     public static List<RoundResultBean> beanCope2(RoundResult roundResult, Group group) {
         if (roundResult == null) {
+            return null;
+        }
+        if (roundResult.isDelete()){
             return null;
         }
         List<RoundResultBean> roundResultBeans = new ArrayList<>();
@@ -150,6 +159,9 @@ public class RoundResultBean implements Serializable {
 
     public static List<RoundResultBean> beanCope2(RoundResult roundResult) {
         if (roundResult == null) {
+            return null;
+        }
+        if (roundResult.isDelete()){
             return null;
         }
         List<RoundResultBean> roundResultBeans = new ArrayList<>();

@@ -439,7 +439,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             //更新页面轮次数据
             machineResultList.add(machineResult);
             BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
-            int pResult = result.getResult() + (testResult.getPenalizeNum() * setting.getPenaltySecond() * 1000);
+            int pResult = result.getResult() + (testResult.getPenalizeNum() * (int)(setting.getPenaltySecond() * 1000.0));
             testResult.setSelectMachineResult(machineResult.getResult());
             testResult.setResult(pResult);
             if (testResult.getMachineResultList() == null) {
@@ -846,7 +846,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                 }
             }
             LogUtils.operation("判罚后成绩判罚数:" + penalizeNum);
-            int result = testResult.getSelectMachineResult() + (testResult.getPenalizeNum() * setting.getPenaltySecond() * 1000);
+            int result = testResult.getSelectMachineResult() + (testResult.getPenalizeNum() * (int)(setting.getPenaltySecond() * 1000.0));
             testResult.setResult(result);
 
             resultAdapter.notifyDataSetChanged();

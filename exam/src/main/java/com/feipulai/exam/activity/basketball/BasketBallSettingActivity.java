@@ -34,6 +34,8 @@ import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.basketball.pair.BasketBallPairActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.activity.sport_timer.SportTimerActivity;
+import com.feipulai.exam.activity.sport_timer.pair.SportPairActivity;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
@@ -244,7 +246,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
     @Override
     public void finish() {
         if (!TextUtils.isEmpty(etPenaltySecond.getText().toString()))
-            setting.setPenaltySecond(Integer.valueOf(etPenaltySecond.getText().toString()));
+            setting.setPenaltySecond(Double.parseDouble(etPenaltySecond.getText().toString()));
         EventBus.getDefault().post(new BaseEvent(EventConfigs.ITEM_SETTING_UPDATE));
         SharedPrefsUtil.save(this, setting);
         DBManager.getInstance().updateItem(TestConfigs.sCurrentItem);
@@ -326,6 +328,10 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
 
     @OnClick(R.id.tv_pair)
     public void onViewClicked() {
+        if (setting.getTestType() == 4){
+            IntentUtil.gotoActivity(this, SportPairActivity.class);
+            return;
+        }
         IntentUtil.gotoActivity(this, BasketBallPairActivity.class);
     }
 
