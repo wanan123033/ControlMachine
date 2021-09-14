@@ -657,6 +657,9 @@ public class PushUpIndividualActivity extends BaseTitleActivity
         if (isConfigurableNow()) {
             return;
         }
+        if (state == WAIT_CONFIRM){
+            return;
+        }
         Message msg = Message.obtain();
         msg.what = UPDATE_SCORE;
         msg.obj = result;

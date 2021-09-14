@@ -327,7 +327,7 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
                 StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
                 List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
                 InteractUtils.showStuInfo(llStuDetail, student, results);
-                result[testRound - 1] = (ResultDisplayUtils.getStrResultForDisplay(testResult));
+                result[testRound - 1] = ResultDisplayUtils.getStrResultForDisplay(testResult);
                 resultList.clear();
                 resultList.addAll(Arrays.asList(result));
                 adapter.notifyDataSetChanged();

@@ -467,7 +467,7 @@ public class DBManager {
      * @param student 学生
      */
     public void insertStudent(Student student) {
-        studentDao.insert(student);
+        studentDao.insertInTx(student);
     }
 
     /**
@@ -1088,7 +1088,7 @@ public class DBManager {
      * @param studentItem
      */
     public void insertStudentItem(StudentItem studentItem) {
-        studentItemDao.insert(studentItem);
+        studentItemDao.insertInTx(studentItem);
     }
 
     public List<StudentItem> querystuItemsByMachineItemCode(int machineCode, String itemCode) {
@@ -2808,5 +2808,13 @@ public class DBManager {
 
     public List<Schedule> getSchedules() {
         return scheduleDao.loadAll();
+    }
+
+    public void insertItem(List<Item> itemInfos) {
+        itemDao.insertOrReplaceInTx(itemInfos);
+    }
+
+    public void saveSchedules(List<Schedule> schedules) {
+        scheduleDao.insertInTx(schedules);
     }
 }

@@ -1,5 +1,7 @@
 package com.feipulai.exam.activity.basketball.motion;
 
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
@@ -7,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -14,6 +17,7 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.ActivityUtils;
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
@@ -21,6 +25,7 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.beans.SportResult;
 import com.feipulai.device.udp.result.BasketballResult;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.RadioTimer.newRadioTimer.TimerTask;
 import com.feipulai.exam.activity.base.BaseAFRFragment;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.basketball.BasketBallSetting;
@@ -37,21 +42,28 @@ import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.sport_timer.SportContract;
 import com.feipulai.exam.activity.sport_timer.SportPresent;
 import com.feipulai.exam.activity.sport_timer.TestState;
+import com.feipulai.exam.activity.sport_timer.bean.DeviceState;
+import com.feipulai.exam.activity.sport_timer.pair.SportPairActivity;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.MachineResult;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
+import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
-public class BasketBallMotionTestActivity extends BaseTitleActivity implements BaseAFRFragment.onAFRCompareListener, IndividualCheckFragment.OnIndividualCheckInListener, SportContract.SportView {
+public class BasketBallMotionTestActivity extends BaseTitleActivity implements BaseAFRFragment.onAFRCompareListener, IndividualCheckFragment.OnIndividualCheckInListener, SportContract.SportView, TimerTask.TimeUpdateListener {
+    private static final int UPDATE_ON_STOP = 0XF3;
     private IndividualCheckFragment individualCheckFragment;
     protected volatile int state = WAIT_FREE;
     private static final int WAIT_FREE = 0x0;
@@ -60,6 +72,10 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements B
     private static final int TESTING = 0x3;
     private static final int WAIT_STOP = 0x4;
     private static final int WAIT_CONFIRM = 0x5;
+    private static final int WAIT_SCORE_CONFRIM = 0x6;
+
+    private final int UPDATE_ON_TEXT = 0XF5;
+    private final int UPDATE_ON_WAIT = 0XF4;
 
     private BaseAFRFragment afrFragment;
     private FrameLayout afrFrameLayout;
@@ -68,6 +84,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements B
     private List<BasketBallTestResult> resultList = new ArrayList<>();
     private BasketBallResultAdapter resultAdapter;
     private SportPresent sportPresent;
+    private TimerTask timerTask;
 
     @BindView(R.id.ll_stu_detail)
     LinearLayout llStuDetail;
@@ -90,10 +107,43 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements B
     TextView txtDeviceStatus;
     @BindView(R.id.tv_pair)
     TextView tvPair;
+    @BindView(R.id.cb_near)
+    CheckBox cbDeviceState;
     private StudentItem mStudentItem;
     private int roundNo;
 
+    private Handler mHandler = new Handler(new Handler.Callback() {
 
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case UPDATE_ON_TEXT:
+                    int time = msg.arg1;
+                    String formatTime ;
+                    if (time<60*60*1000){
+                        formatTime = DateUtil.formatTime1(time, "mm:ss.SSS");
+                    }else {
+                        formatTime = DateUtil.formatTime1(time, "HH:mm:ss");
+                    }
+                    tvResult.setText(formatTime);
+                    break;
+                case UPDATE_ON_WAIT:
+                    txtWaiting.setEnabled(false);
+                    txtIllegalReturn.setEnabled(true);
+                    sportPresent.setRunState(1);
+                    state = WAIT_SCORE_CONFRIM;
+                    txtDeviceStatus.setText("计时");
+                    break;
+                case UPDATE_ON_STOP:
+                    txtStopTiming.setEnabled(false);
+                    txtIllegalReturn.setEnabled(false);
+                    txtDeviceStatus.setText("停止计时");
+                    break;
+            }
+            return true;
+        }
+    });
+    private List<DeviceState> deviceStates;
 
     @Nullable
     @Override
@@ -173,6 +223,32 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements B
             }
         });
 
+        deviceStates = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            DeviceState deviceState1 = new DeviceState();
+            deviceState1.setDeviceId(i + 1);
+            deviceState1.setDeviceState(0);
+            deviceStates.add(deviceState1);
+        }
+
+        timerTask = new TimerTask(this,100);
+        prepareForCheckIn();
+        state = WAIT_FREE;
+        setOperationUI();
+        txtContinueRun.setVisibility(View.GONE);
+    }
+    /**
+     * 检入
+     */
+    private void prepareForCheckIn() {
+        resultList.clear();
+        resultAdapter.notifyDataSetChanged();
+        TestCache.getInstance().clear();
+        pairs.get(0).setStudent(null);
+        InteractUtils.showStuInfo(llStuDetail, null, null);
+        tvResult.setText("请检录");
+        state = WAIT_CHECK_IN;
+        setOperationUI();
     }
     public int setAFRFrameLayoutResID() {
         return R.id.frame_camera;
@@ -351,36 +427,121 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements B
             case R.id.txt_waiting:
                 if ((state == WAIT_CHECK_IN || state == WAIT_CONFIRM || state == WAIT_STOP) && isExistTestPlace()) {
                     sportPresent.waitStart();
+                    state = WAIT_BEGIN;
+                    setOperationUI();
                 } else {
                     ToastUtils.showShort("当前设备不可用或当前学生为空");
                 }
+
                 break;
             case R.id.txt_illegal_return:
+                showIllegalReturnDialog();
                 break;
             case R.id.txt_continue_run:
                 break;
             case R.id.txt_stop_timing:
+                timerTask.stopKeepTime();
+                sportPresent.setDeviceStateStop();
+                state = WAIT_STOP;
+                setOperationUI();
                 break;
             case R.id.tv_print:
+                if (state == WAIT_SCORE_CONFRIM){
+                    printResult();
+                }else {
+                    toastSpeak("测试成绩未保存不可打印");
+                }
                 break;
             case R.id.tv_confirm:
+                state = WAIT_SCORE_CONFRIM;
+                InteractUtils.saveResults(pairs,System.currentTimeMillis()+"");
+
                 break;
             case R.id.txt_finish_test:
+                state = WAIT_CHECK_IN;
+                setOperationUI();
+                InteractUtils.showStuInfo(llStuDetail, null, null);
                 break;
             case R.id.tv_punish_add:
+                setPunish(1);
                 break;
             case R.id.tv_punish_subtract:
+                setPunish(-1);
                 break;
             case R.id.tv_foul:
+                setResultState(RoundResult.RESULT_STATE_FOUL);
                 break;
             case R.id.tv_inBack:
+                setResultState(RoundResult.RESULT_STATE_BACK);
                 break;
             case R.id.tv_abandon:
+                setResultState(RoundResult.RESULT_STATE_WAIVE);
                 break;
             case R.id.tv_normal:
+                setResultState(RoundResult.RESULT_STATE_NORMAL);
                 break;
 
         }
+    }
+    private void setResultState(int resultState){
+        if (state == TESTING || state == WAIT_BEGIN) {
+            toastSpeak("测试中,不允许更改考试成绩状态");
+        } else {
+            if (resultAdapter.getSelectPosition() == -1)
+                return;
+            BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
+            if (testResult.getResult() == 0 && testResult.getResultState() != RoundResult.RESULT_STATE_NORMAL
+                    && resultState == RoundResult.RESULT_STATE_NORMAL) {
+                toastSpeak("成绩不存在，不允许修改为正常状态");
+                return;
+            }
+            if (testResult.getResult() < 0 && resultState == RoundResult.RESULT_STATE_NORMAL) {
+                resultList.get(resultAdapter.getSelectPosition()).setResultState(-999);
+            } else {
+                resultList.get(resultAdapter.getSelectPosition()).setResultState(resultState);
+            }
+
+            resultAdapter.notifyDataSetChanged();
+            LogUtils.operation("修改成绩状态:resultState=" + resultState);
+        }
+    }
+    private void setPunish(int punishType) {
+        if (state == TESTING || state == WAIT_BEGIN) {
+            toastSpeak("测试中,不允许更改考试成绩");
+        } else {
+            if (resultAdapter.getSelectPosition() == -1)
+                return;
+            BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
+            if ((testResult.getResult() <= 0 && (testResult.getResultState() == -999
+                    || testResult.getResultState() != RoundResult.RESULT_STATE_NORMAL))) {
+                toastSpeak("成绩不存在");
+                return;
+            }
+            int penalizeNum = testResult.getPenalizeNum();
+            Logger.i("原始成绩:" + penalizeNum + "判罚:" + punishType);
+            if (punishType >= 0) {//+
+                testResult.setPenalizeNum(penalizeNum + 1);
+            } else {//-
+                if (penalizeNum > 0) {
+                    testResult.setPenalizeNum(penalizeNum - 1);
+                }
+            }
+            int result = testResult.getSelectMachineResult() + (testResult.getPenalizeNum() * (int)(setting.getPenaltySecond() * 1000.0));
+            testResult.setResult(result);
+
+            resultAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void printResult() {
+        List<Student> students = new ArrayList<>();
+        students.add(pairs.get(0).getStudent());
+        List<RoundResult> roundResults = DBManager.getInstance().queryResultsByStuItem(mStudentItem);
+        Map<Student, List<RoundResult>> map = new HashMap<>();
+        map.put(pairs.get(0).getStudent(), roundResults);
+        Map<Student, Integer> m = new HashMap<>();
+        m.put(pairs.get(0).getStudent(), roundNo);
+        sportPresent.print(students, this, map, m);
     }
     private boolean isExistTestPlace() {
         if (resultAdapter.getSelectPosition() == -1)
@@ -426,7 +587,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements B
     @OnClick(R.id.tv_pair)
     public void onViewClicked() {
         LogUtils.operation("跳转至篮球设备配对界面");
-        IntentUtil.gotoActivity(this, BasketBallPairActivity.class);
+        IntentUtil.gotoActivity(this, SportPairActivity.class);
     }
     @Override
     public void setRoundNo(Student student, int roundNo) {
@@ -437,15 +598,62 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements B
             }
         }
     }
-
-    @Override
-    public void updateDeviceState(int deviceId, int state) {
+    private void showIllegalReturnDialog() {
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.warning))
+                .setContentText(getString(R.string.illegal_return_hint))
+                .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                LogUtils.operation("篮球违规返回弹窗点击了确定...");
+                sweetAlertDialog.dismissWithAnimation();
+                timerTask.stopKeepTime();
+                sportPresent.setDeviceStateStop();
+                state = WAIT_CHECK_IN;
+                setOperationUI();
+                InteractUtils.showStuInfo(llStuDetail,null,null);
+                resultList.clear();
+                resultAdapter.notifyDataSetChanged();
+                tvResult.setText("");
+            }
+        }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                LogUtils.operation("篮球违规返回弹窗点击了取消...");
+                sweetAlertDialog.dismissWithAnimation();
+            }
+        }).show();
 
     }
 
     @Override
-    public void getDeviceStart() {
+    public void updateDeviceState(int deviceId, int state) {
+        if (deviceStates.get(deviceId - 1).getDeviceState() != state) {
+            deviceStates.get(deviceId - 1).setDeviceState(state);
+        }
+        boolean flag = false;
+        for (DeviceState deviceState : deviceStates) {
+            if (deviceState.getDeviceState() == 0) {//1 2为连接正常
+                flag = false;
+                break;
+            } else {
+                flag = true;
+            }
+        }
+        if (flag != cbDeviceState.isChecked()) {
+            final boolean b = flag;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    cbDeviceState.setChecked(b);
+                }
+            });
 
+        }
+    }
+
+    @Override
+    public void getDeviceStart() {
+        mHandler.sendEmptyMessage(UPDATE_ON_WAIT);
     }
 
     @Override
@@ -455,6 +663,15 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements B
 
     @Override
     public void getDeviceStop() {
+        sportPresent.setRunState(0);
+        mHandler.sendEmptyMessage(UPDATE_ON_STOP);
+    }
 
+    @Override
+    public void onTimeTaskUpdate(int time) {
+        Message message = mHandler.obtainMessage();
+        message.what = UPDATE_ON_TEXT;
+        message.arg1 = time;
+        mHandler.sendMessage(message);
     }
 }

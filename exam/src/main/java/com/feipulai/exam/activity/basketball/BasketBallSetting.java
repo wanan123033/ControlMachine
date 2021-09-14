@@ -15,7 +15,7 @@ public class BasketBallSetting {
     private int sensitivity = 20;//灵敏度
     private String hostIp = "192.168.0.227";//计时仪IP
     private int post = 1026;//端口
-    private int penaltySecond;//违例罚秒
+    private double penaltySecond;//违例罚秒
     /**
      * 满分跳过
      */
@@ -76,11 +76,11 @@ public class BasketBallSetting {
         this.post = post;
     }
 
-    public int getPenaltySecond() {
+    public double getPenaltySecond() {
         return penaltySecond;
     }
 
-    public void setPenaltySecond(int penaltySecond) {
+    public void setPenaltySecond(double penaltySecond) {
         this.penaltySecond = penaltySecond;
     }
 

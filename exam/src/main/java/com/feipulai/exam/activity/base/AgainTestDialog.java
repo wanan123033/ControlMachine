@@ -112,7 +112,7 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
 //                            roundResult.setIsLastResult(RoundResult.NOT_LAST_RESULT);
 //                        }
                         DBManager.getInstance().updateRoundResult(roundResult);
-                        TestCache.getInstance().getResults().put(student,results);
+                        results.remove(selectPos);
                         listener.onCommit(student, studentItem, results,roundResult.getRoundNo());
                         dismiss();
                     }else {
@@ -126,8 +126,8 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
 //                        roundResult.setIsLastResult(RoundResult.NOT_LAST_RESULT);
 //                    }
                     DBManager.getInstance().updateRoundResult(roundResult);
-                    TestCache.getInstance().getResults().put(student,results);
-                    listener.onCommit(student, studentItem, this.results,roundResult.getRoundNo());
+                    results.remove(selectPos);
+                    listener.onCommit(student, studentItem, results,roundResult.getRoundNo());
                     dismiss();
                 }
 

@@ -10,7 +10,7 @@ public class FootBallSetting {
     private int sensitivity = 20;//灵敏度
     private String hostIp = "192.168.0.227";//计时仪IP
     private int post = 1026;//端口
-    private int penaltySecond;//违例罚秒
+    private double penaltySecond;//违例罚秒
     private int resultAccuracy = 1;//0 十分秒  1 百分秒
     private int carryMode = 1;//进位方式 对应项目进位（1.四舍五入 2.舍位 3.非零进取）
     private int useMode = 0 ;
@@ -74,11 +74,11 @@ public class FootBallSetting {
         this.post = post;
     }
 
-    public int getPenaltySecond() {
+    public double getPenaltySecond() {
         return penaltySecond;
     }
 
-    public void setPenaltySecond(int penaltySecond) {
+    public void setPenaltySecond(double penaltySecond) {
         this.penaltySecond = penaltySecond;
     }
 
