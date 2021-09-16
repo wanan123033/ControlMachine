@@ -271,7 +271,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
-
+        deviceManager.setRS232ResiltListener(null);
     }
 
     @Override
@@ -430,6 +430,13 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
 //        setting[10] = (byte) sum;
 //        return setting;
 //    }
+
+
+    @Override
+    protected void onStop() {
+
+        super.onStop();
+    }
 
     @Override
     protected void onDestroy() {
