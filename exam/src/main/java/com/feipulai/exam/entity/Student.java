@@ -275,11 +275,11 @@ public class Student implements Serializable {
     @Override
     public String toString() {
         return "Student{" +
-                "id=" + id +
                 ", 考号='" + studentCode + '\'' +
                 ", 姓名='" + studentName + '\'' +
                 ", 姓别=" + sex +
                 ", 身份证号='" + idCardNo + '\'' +
+                "id=" + id +
                 // ", daoSession=" + daoSession +
                 // ", myDao=" + myDao +
                 '}';

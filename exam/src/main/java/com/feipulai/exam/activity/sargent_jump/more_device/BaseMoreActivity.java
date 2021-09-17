@@ -712,8 +712,8 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     public synchronized void updateDevice(@NonNull BaseDeviceState deviceState) {
         int deviceId = deviceState.getDeviceId();
-        if (deviceState != null)
-            LogUtils.operation("更新设备状态:deviceId=" + deviceId + ",deviceState=" + deviceState.toString());
+//        if (deviceState != null)
+//            LogUtils.operation("更新设备状态:deviceId=" + deviceId + ",deviceState=" + deviceState.toString());
         BaseStuPair pair = null;
         int index = 0;
         for (int i = 0; i < deviceCount; i++) {
@@ -867,7 +867,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     }
 
     private void saveResult(BaseStuPair baseStuPair, int index) {
-        LogUtils.operation("保存成绩:" + baseStuPair.toString());
+        LogUtils.all("保存成绩:" + baseStuPair.toString());
         if (baseStuPair.getStudent() == null)
             return;
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(baseStuPair.getStudent().getStudentCode());

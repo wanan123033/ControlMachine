@@ -20,14 +20,9 @@ public class VitalCapacityResult {
         index = (data[1] & 0xff);
         frequency = (data[06] & 0xff);
         velocity = (data[07] & 0xff);
-        if (SerialConfigs.LOGGER_STATE == 0) {
 
-            LogUtils.normal("肺活量返回数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
-        } else {
-            LogUtils.operation("肺活量返回数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
-
-        }
-
+        LogUtils.serial("肺活量返回数据(解析前):" + StringUtility.bytesToHexString(data));
+        LogUtils.serial("肺活量返回数据(解析后):" + toString());
     }
 
     private int deviceId;

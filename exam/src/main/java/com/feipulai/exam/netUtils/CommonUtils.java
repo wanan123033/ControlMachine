@@ -18,6 +18,7 @@ import com.feipulai.exam.utils.EncryptUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -176,7 +177,7 @@ public class CommonUtils {
         respost.setSign(EncryptUtil.getSignData(gson.toJson(object)));
         respost.setData(EncryptUtil.setEncryptData(object));
         respost.setRequestTime(String.valueOf(System.currentTimeMillis()));
-        Logger.d("请求请口参数：" + respost.toString());
+//        LogUtils.net("请求请口参数：" + respost.toString());
         return respost;
     }
 

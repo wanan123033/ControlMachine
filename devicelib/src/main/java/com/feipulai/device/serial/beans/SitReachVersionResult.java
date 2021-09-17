@@ -28,14 +28,9 @@ public class SitReachVersionResult{
 		int D = data[12] & 0xff;
 		version = "V" + H + "." + I + "." + J + "\t20" + String.format("%02d",Y) +  String.format("%02d",M)  + String.format("%02d",D) ;
 		//Logger.i(version);
-		if (SerialConfigs.LOGGER_STATE == 0) {
 
-			LogUtils.normal("坐位体前屈返回设备数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
-		}else{
-			LogUtils.operation("坐位体前屈返回设备数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
-
-		}
-
+		LogUtils.serial("坐位体前屈返回设备版本(解析前):" + StringUtility.bytesToHexString(data));
+		LogUtils.serial("坐位体前屈返回设备版本(解析后):" + toString());
 	}
 	
 	public String getVersion(){

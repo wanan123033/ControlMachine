@@ -97,7 +97,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
             public void onClick(View v) {
                 if (sargentSetting.getType() == 1) {
                     RadioChannelCommand command = new RadioChannelCommand(0);
-                    LogUtils.normal(command.getCommand().length + "---" + StringUtility.bytesToHexString(command.getCommand()) + "---摸高切频指令");
+                    LogUtils.serial(command.getCommand().length + "摸高切频指令" + StringUtility.bytesToHexString(command.getCommand()));
                     RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(0)));
                     currentFrequency = 0;
                     showChangeBadDialog();
@@ -123,7 +123,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        LogUtils.normal(SerialConfigs.CMD_SARGENT_JUMP_GET_SCORE.length + "---" + StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_GET_SCORE) + "---摸高获取成绩指令");
+                        LogUtils.serial("摸高获取成绩指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_GET_SCORE) + "---");
                         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, SerialConfigs.CMD_SARGENT_JUMP_GET_SCORE));
                         dialog.dismiss();
                     }
@@ -145,7 +145,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
 
     public void sendEmpty() {
         check++;
-        LogUtils.normal(SerialConfigs.CMD_SARGENT_JUMP_EMPTY.length + "---" + StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_EMPTY) + "摸高空指令");
+        LogUtils.serial("摸高空指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_EMPTY) + "");
         if (sargentSetting.getType() == 1) {
             RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, SerialConfigs.CMD_SARGENT_JUMP_EMPTY));
         } else {
@@ -167,7 +167,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
             return;
         }
         this.baseStuPair = baseStuPair;
-        LogUtils.normal(SerialConfigs.CMD_SARGENT_JUMP_EMPTY.length + "---" + StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_EMPTY) + "摸高空指令");
+        LogUtils.serial("摸高空指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_EMPTY));
         if (sargentSetting.getType() == 1) {
             RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                     SerialConfigs.CMD_SARGENT_JUMP_EMPTY));
@@ -188,7 +188,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
         if (isConnect) {
             toastSpeak("开始测试");
             pair.setTestTime(DateUtil.getCurrentTime() + "");
-            LogUtils.normal(SerialConfigs.CMD_SARGENT_JUMP_START.length + "---" + StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_START) + "摸高开始测试指令");
+            LogUtils.serial("摸高开始测试指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_START));
 
             if (sargentSetting.getType() == 1) {
                 //无线
@@ -201,7 +201,6 @@ public class SargentTestActivity extends BasePersonTestActivity {
             }
         }
         testState = TestState.WAIT_RESULT;
-        LogUtils.operation("实心球发送==sendTestCommand》" + testState);
         baseStuPair.setTestTime(DateUtil.getCurrentTime() + "");
     }
 
@@ -248,11 +247,11 @@ public class SargentTestActivity extends BasePersonTestActivity {
 
                     cmd[8] = (byte) (frequency);
                     cmd[13] = (byte) (sum(cmd) & 0xff);
-                    LogUtils.normal(cmd.length + "---" + StringUtility.bytesToHexString(cmd) + "---摸高设置参数指令");
+                    LogUtils.serial("摸高设置参数指令" + StringUtility.bytesToHexString(cmd) + "---");
 
                     RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
                     RadioChannelCommand command = new RadioChannelCommand(frequency);
-                    LogUtils.normal(command.getCommand().length + "---" + StringUtility.bytesToHexString(command.getCommand()) + "---摸高切频指令");
+                    LogUtils.serial("摸高切频指令" + StringUtility.bytesToHexString(command.getCommand()) + "---");
                     RadioManager.getInstance().sendCommand(new ConvertCommand(command));
                     currentFrequency = frequency;
                 case MATCH_SUCCESS:
@@ -326,26 +325,26 @@ public class SargentTestActivity extends BasePersonTestActivity {
         if (testState == TestState.WAIT_RESULT) {
             testState = TestState.UN_STARTED;
             LogUtils.operation("实心球发送==onResultArrived》" + testState);
-        if (sargentSetting.isFullReturn()) {
-            if (stuPair.getStudent().getSex() == Student.MALE) {
-                stuPair.setFullMark(stuPair.getResult() >= Integer.parseInt(sargentSetting.getMaleFull()) * 10);
-            } else {
-                stuPair.setFullMark(stuPair.getResult() >= Integer.parseInt(sargentSetting.getFemaleFull()) * 10);
+            if (sargentSetting.isFullReturn()) {
+                if (stuPair.getStudent().getSex() == Student.MALE) {
+                    stuPair.setFullMark(stuPair.getResult() >= Integer.parseInt(sargentSetting.getMaleFull()) * 10);
+                } else {
+                    stuPair.setFullMark(stuPair.getResult() >= Integer.parseInt(sargentSetting.getFemaleFull()) * 10);
+                }
             }
-        }
-        stuPair.setEndTime(DateUtil.getCurrentTime() + "");
-        stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
-        updateResult(stuPair);
-        updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, 1));
-        // 发送结束命令
-        LogUtils.normal(SerialConfigs.CMD_SARGENT_JUMP_STOP.length + "---" + StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_STOP) + "摸高结束测试指令");
+            stuPair.setEndTime(DateUtil.getCurrentTime() + "");
+            stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
+            updateResult(stuPair);
+            updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, 1));
+            // 发送结束命令
+            LogUtils.serial("摸高结束测试指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_STOP) + "");
 
-        if (sargentSetting.getType() == 1) {
-            RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, SerialConfigs.CMD_SARGENT_JUMP_STOP));
+            if (sargentSetting.getType() == 1) {
+                RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, SerialConfigs.CMD_SARGENT_JUMP_STOP));
 
-        } else {
-            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SARGENT_JUMP_STOP));
-        }
+            } else {
+                SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SARGENT_JUMP_STOP));
+            }
 
         }
     }
@@ -416,7 +415,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
             int fre = match.getFrequency();
             if (currentFrequency != frequency) {
                 RadioChannelCommand command = new RadioChannelCommand(fre);
-                LogUtils.normal(command.getCommand().length + "---" + StringUtility.bytesToHexString(command.getCommand()) + "---摸高切频指令");
+                LogUtils.serial( "摸高切频指令" + StringUtility.bytesToHexString(command.getCommand()) + "---");
                 RadioManager.getInstance().sendCommand(new ConvertCommand(command));
                 mHandler.sendEmptyMessageDelayed(SET_MATCH, 600);
                 currentFrequency = fre;

@@ -486,7 +486,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         }
 
         roundNo = roundResultList.size() + 1;
-        LogUtils.operation("当前轮次 roundNo = " + roundNo);
+        LogUtils.operation("当前轮次 = " + roundNo);
         result = null;
         result = new String[setTestCount()];
         for (int i = 0; i < roundResultList.size(); i++) {
@@ -906,7 +906,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
      * @param baseStuPair 当前设备
      */
     private void saveResult(@NonNull BaseStuPair baseStuPair) {
-        LogUtils.operation("保存成绩:" + baseStuPair.toString());
+        LogUtils.all("保存成绩:" + baseStuPair.toString());
         if (baseStuPair.getStudent() == null)
             return;
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(baseStuPair.getStudent().getStudentCode());

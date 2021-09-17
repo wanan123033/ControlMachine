@@ -380,7 +380,7 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
             case R.id.tv_accuracy_use:
                 int type = sargentSetting.getType();
                 byte[] buf = SerialConfigs.CMD_SARGENT_JUMP_GET_SET_0(sargentSetting.getBaseHeight());
-                LogUtils.normal(buf.length+"---"+StringUtility.bytesToHexString(buf)+"摸高0点设置指令");
+                LogUtils.serial( "摸高0点设置指令"+StringUtility.bytesToHexString(buf)+"");
                 switch (type){
                     case 0:
                         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,

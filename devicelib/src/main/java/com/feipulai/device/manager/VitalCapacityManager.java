@@ -21,7 +21,8 @@ public class VitalCapacityManager {
             sum += data[i];
         }
         data[14] = (byte) sum;
-        LogUtils.normal("肺活量开始测试指令:"+ StringUtility.bytesToHexString(data));
+
+        LogUtils.serial("肺活量开始测试指令:"+ StringUtility.bytesToHexString(data));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
     }
 
@@ -39,7 +40,7 @@ public class VitalCapacityManager {
             sum += data[i];
         }
         data[16] = (byte) sum;
-        LogUtils.normal("肺活量开始测试指令:"+ StringUtility.bytesToHexString(data));
+        LogUtils.serial("肺活量开始测试指令:"+ StringUtility.bytesToHexString(data));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
     }
 }

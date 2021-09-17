@@ -155,11 +155,11 @@ public class BasketballResult implements IDeviceResult {
                 ", 秒=" + second +
                 ", 毫秒=" + hund +
                 ",拦截时间=" + getResult() +
-                ", uPrecision=" + uPrecision +
-                ", ucFD=" + ucFD +
-                ", tNum=" + tNum +
-                ", flag=" + flag +
-                ", ucStatus=" + ucStatus +
+                ", 精度=" + uPrecision +
+                ", 遮挡1,2=" + ucFD +
+                ", 传感器=" + tNum +
+                ", 标志=" + flag +
+                ", 设备工作状态=" + ucStatus +
                 '}';
     }
 

@@ -9,6 +9,7 @@ import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.examlogger.CrashLogAdapter;
 import com.orhanobut.logger.examlogger.NormalLogAdapter;
 import com.orhanobut.logger.examlogger.OperaLogAdapter;
+import com.orhanobut.logger.examlogger.SerialLogAdapter;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -23,8 +24,9 @@ import java.util.Locale;
 
 public class LogUtils {
     public static final String ALL_TAG = "ALL_TAG";                 //所有日志TAG
-    public static final String NORMAL_TAG = "NORMAL_TAG";       //正常日志
+    public static final String NORMAL_TAG = "NORMAL_TAG";       //正常日志,接口日志
     public static final String OPERATION_TAG = "OPERATION_TAG"; //操作日志TAG
+    public static final String SERIAL_TAG = "SERIAL_TAG"; //串口日志TAG
     public static final String CRASH_TAG = "CRASH_TAG";
     public static final String LOG_ENCRYPT_KEY = "19834762";
     /**
@@ -56,8 +58,12 @@ public class LogUtils {
         Logger.addLogAdapter(new EncryptDiskLogAdapter(encryptLogFilePath, LOG_ENCRYPT_KEY));
 
         // 保存正常日志
-        String exam_normal = Environment.getExternalStorageDirectory() + "/" + pathName + "/" + "/examlogger/" + "exam_normal_" + logFileName;
+        String exam_normal = Environment.getExternalStorageDirectory() + "/" + pathName + "/" + "/examlogger/" + "exam_net_" + logFileName;
         Logger.addLogAdapter(new DiskLogAdapter(new NormalLogAdapter(exam_normal)));
+        //串品日志
+        String exam_serial = Environment.getExternalStorageDirectory() + "/" + pathName + "/" + "/examlogger/" + "exam_serial_" + logFileName;
+        Logger.addLogAdapter(new DiskLogAdapter(new SerialLogAdapter(exam_serial)));
+
         // 保存操作日志
         String exam_operation = Environment.getExternalStorageDirectory() + "/" + pathName + "/" + "/operationLogger/" + "exam_operation_" + logFileName;
         Logger.addLogAdapter(new DiskLogAdapter(new OperaLogAdapter(exam_operation)));
@@ -172,8 +178,24 @@ public class LogUtils {
      *
      * @param message
      */
+    public static void net(String message) {
+        Logger.t(NORMAL_TAG).i(message);
+    }
+    /**
+     * 发送接收日志打印
+     *
+     * @param message
+     */
     public static void normal(String message) {
         Logger.t(NORMAL_TAG).i(message);
+    }
+    /**
+     * 发送串品日志打印
+     *
+     * @param message
+     */
+    public static void serial(String message) {
+        Logger.t(SERIAL_TAG).i(message);
     }
 
     /**

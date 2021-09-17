@@ -59,7 +59,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
 
     @Override
     protected int isShowPenalizeFoul() {
-        return medicineBallSetting.isPenalizeFoul() ? View.VISIBLE:View.GONE;
+        return medicineBallSetting.isPenalizeFoul() ? View.VISIBLE : View.GONE;
     }
 
     private void init() {
@@ -124,7 +124,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
         else
             baseDevice = new BaseDeviceState(BaseDeviceState.STATE_FREE, 1);
         baseStuPair.setBaseDevice(baseDevice);
-        baseStuPair.setTestTime(System.currentTimeMillis()+"");
+        baseStuPair.setTestTime(System.currentTimeMillis() + "");
         updateDevice(baseDevice);
     }
 
@@ -180,7 +180,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
                     basePair.setStudent(activity.student);
                     basePair.setBaseDevice(new BaseDeviceState(BaseDeviceState.STATE_END, 1));
                     int beginPoint = Integer.parseInt(SharedPrefsUtil.getValue(activity, "SXQ", "beginPoint", "0"));
-                    Logger.i("result ===实心球" + result.getResult()+"sweepPoint"+result.getSweepPoint());
+                    Logger.i("result ===实心球" + result.getResult() + "sweepPoint" + result.getSweepPoint());
                     if (result.getSweepPoint() < 2) {
                         activity.showValidResult(result.getResult() * 10 + beginPoint * 10, result.isFault(), basePair);
                     } else {
@@ -215,15 +215,15 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (!checkFlag){
-                    updateDevice(new BaseDeviceState(BaseDeviceState.STATE_ERROR,1));
+                if (!checkFlag) {
+                    updateDevice(new BaseDeviceState(BaseDeviceState.STATE_ERROR, 1));
                 }
             }
-        },4000);
+        }, 4000);
     }
 
     private void sendFree() {
-        LogUtils.normal(SerialConfigs.CMD_MEDICINE_BALL_EMPTY.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_MEDICINE_BALL_EMPTY)+"---实心球空闲指令");
+        LogUtils.serial("实心球空闲指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_MEDICINE_BALL_EMPTY) + "---");
         mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
     }
 
@@ -271,7 +271,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
 
 
     private void onResultArrived(int result, boolean fault, BaseStuPair stuPair) {
-        stuPair.setEndTime(DateUtil.getCurrentTime()+"");
+        stuPair.setEndTime(DateUtil.getCurrentTime() + "");
         stuPair.setResult(result);
         if (testState == TestState.WAIT_RESULT) {
             if (medicineBallSetting.isFullReturn()) {
@@ -295,14 +295,14 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
     }
 
     private void showValidResult(final int result, final boolean fault, final BaseStuPair stuPair) {
-        LogUtils.operation("成绩只扫描到两个点："+result);
+        LogUtils.operation("成绩只扫描到两个点：" + result);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("成绩是否有效");
         builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // 发送结束命令
-                LogUtils.normal(SerialConfigs.CMD_MEDICINE_BALL_STOP.length+"---"+StringUtility.bytesToHexString(SerialConfigs.CMD_MEDICINE_BALL_STOP)+"---实心球结束指令");
+                LogUtils.serial( "实心球结束指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_MEDICINE_BALL_STOP) + "---");
                 mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_STOP));
                 testState = TestState.UN_STARTED;
                 dialog.dismiss();
@@ -345,8 +345,8 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
                     // 开始测试后,会收到1次终端自检结果(终端自检结果可能在开始测试响应之前,也可能在开始测试响应之后)
                     mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                             SerialConfigs.CMD_MEDICINE_BALL_START));
-                    pair.setTestTime(DateUtil.getCurrentTime()+"");
-                    mHandler.sendEmptyMessageDelayed(START_DEVICE,1000);
+                    pair.setTestTime(DateUtil.getCurrentTime() + "");
+                    mHandler.sendEmptyMessageDelayed(START_DEVICE, 1000);
 
                     setBegin(0);
                     executorService.shutdown();
@@ -359,7 +359,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
 
     @Override
     public void gotoItemSetting() {
-        LogUtils.operation("实心球跳转MedicineBallSettingActivity");
+        LogUtils.operation("实心球跳转设置界面");
         startActivity(new Intent(this, MedicineBallSettingActivity.class));
     }
 

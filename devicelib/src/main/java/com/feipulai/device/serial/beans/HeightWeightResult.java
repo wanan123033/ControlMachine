@@ -18,12 +18,8 @@ public class HeightWeightResult {
         //Logger.e(raw);
         weight = Double.parseDouble(raw.substring(2, 7));
         height = Double.parseDouble(raw.substring(10, 15));
-        if (SerialConfigs.LOGGER_STATE == 0) {
-
-            LogUtils.normal("身高体重返回数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
-        } else {
-            LogUtils.operation("身高体重返回数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
-        }
+        LogUtils.serial("身高体重返回数据(解析前):" + StringUtility.bytesToHexString(data));
+        LogUtils.serial("身高体重返回数据(解析后):" + toString());
     }
 
     // 测试用

@@ -264,7 +264,7 @@ public class ServerMessage {
      * 自动上传成绩,不处理没有项目代码等(处理项目代码等可能会导致 项目代码 变更,在测试过程中不应该出现这种情况)
      */
     public static void uploadResult(final List<UploadResults> uploadResultsList) {
-        Logger.i("自动上传成绩:" + uploadResultsList.toString());
+//        Logger.i("自动上传成绩:" + uploadResultsList.toString());
         if (uploadResultsList == null || uploadResultsList.size() == 0) {
             ToastUtils.showShort("没有需要上传的成绩");
             return;

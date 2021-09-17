@@ -19,14 +19,9 @@ public class VolleyBallResult implements IDeviceResult {
     public VolleyBallResult(byte[] data) {
         isFoul = (((data[11] & 0xff) == 0xff) && ((data[12] & 0xff) == 0xff) && ((data[13] & 0xff) == 0xff)) || ((data[8] & 0x80) == 0x80);
         result = ((data[9] & 0xff) << 8) + (data[10] & 0xff);
-        if (SerialConfigs.LOGGER_STATE == 0) {
 
-            LogUtils.normal("排球返回数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
-        } else {
-            LogUtils.operation("排球返回数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
-
-        }
-
+        LogUtils.serial("排球返回成绩(解析前):" + StringUtility.bytesToHexString(data));
+        LogUtils.serial("排球返回成绩(解析后):" + toString());
     }
 
     public int getResult() {

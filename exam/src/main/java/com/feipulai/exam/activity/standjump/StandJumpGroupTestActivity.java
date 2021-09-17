@@ -111,9 +111,9 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
 
     @Override
     public void startTest(BaseStuPair stuPair) {
-        LogUtils.operation("立定跳远开始测试:"+stuPair.toString());
+        LogUtils.operation("立定跳远开始测试:" + stuPair.getStudent().toString());
         baseStuPair = stuPair;
-        baseStuPair.setTestTime(System.currentTimeMillis()+"");
+        baseStuPair.setTestTime(System.currentTimeMillis() + "");
 //        sendCheck();
 //        //开始测试
 //        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
@@ -140,17 +140,19 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
         super.onPause();
 
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         mHandler.removeCallbacksAndMessages(null);
         LogUtils.life("StandJumpGroupTestActivity onPause");
         //结束测试 发送结束指令
-        LogUtils.normal(SerialConfigs.CMD_END_JUMP.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_END_JUMP)+"---跳远结束指令");
+        LogUtils.serial("跳远结束指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_END_JUMP) + "---");
 
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_END_JUMP));
         SerialDeviceManager.getInstance().close();
     }
+
     /**
      * 发送检测设备指令
      */
@@ -158,7 +160,7 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
         isDisconnect = true;
         if (SerialDeviceManager.getInstance() != null) {
             //测量垫自检,校验连接是否正常
-            LogUtils.normal(SerialConfigs.CMD_SELF_CHECK_JUMP.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_SELF_CHECK_JUMP)+"---跳远自检指令");
+            LogUtils.serial("跳远自检指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_SELF_CHECK_JUMP) + "---");
 
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SELF_CHECK_JUMP));
             mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
@@ -205,7 +207,7 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
                         ToastUtils.showShort("设备错误,考生请重测");
                         activity.sendCheck();
                         //开始测试
-                        LogUtils.normal(SerialConfigs.CMD_START_JUMP.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_START_JUMP)+"---跳远开始测试指令");
+                        LogUtils.serial("跳远开始测试指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_START_JUMP) + "---");
                         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
                         //设置当前设置为空闲状态
                         activity.updateDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE));
@@ -269,7 +271,7 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
             isDisconnect = !isCheckDevice;
             if (isCheckDevice && standResiltListener.getTestState() == StandResiltListener.TestState.START_TEST) {
                 //开始测试
-                LogUtils.normal(SerialConfigs.CMD_START_JUMP.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_START_JUMP)+"---跳远开始测试指令");
+                LogUtils.serial("跳远开始测试指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_START_JUMP) + "---");
 
                 SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
             }

@@ -146,8 +146,8 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
         rvTimer.setAdapter(mAdapter);
         group = (Group) TestConfigs.baseGroupMap.get("group");
         pairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
-        if (group != null)
-            LogUtils.operation("红外计时获取到分组信息:" + group.toString());
+//        if (group != null)
+//            LogUtils.operation("红外计时获取到分组信息:" + group.toString());
         if (pairs != null)
             LogUtils.operation("红外计时获取到分组信息:" + pairs.toString());
         mAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {

@@ -38,10 +38,8 @@ public class FootBallItemSelectActivity extends SubItemsSelectActivity {
 
                 SharedPrefsUtil.save(FootBallItemSelectActivity.this, setting);
                 if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
-                    LogUtils.operation("跳转至FootballIndividualActivity");
                     IntentUtil.gotoActivity(FootBallItemSelectActivity.this, FootballIndividualActivity.class);
                 } else {
-                    LogUtils.operation("跳转至BaseGroupActivity");
                     IntentUtil.gotoActivity(FootBallItemSelectActivity.this, BaseGroupActivity.class);
                 }
                 finish();

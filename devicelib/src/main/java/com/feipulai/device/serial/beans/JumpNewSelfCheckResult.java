@@ -26,12 +26,9 @@ public class JumpNewSelfCheckResult {
             jumpPoleState[2] = buf[14];
             jumpPoleState[3] = buf[15];
         }
-        if (SerialConfigs.LOGGER_STATE == 0) {
 
-            LogUtils.normal("立定跳远自检新返回数据(解析前):" + buf.length + "---" + StringUtility.bytesToHexString(buf) + "---\n(解析后):" + toString());
-        } else {
-            LogUtils.operation("立定跳远自检新返回数据(解析前):" + buf.length + "---" + StringUtility.bytesToHexString(buf) + "---\n(解析后):" + toString());
-        }
+        LogUtils.serial("立定跳远自检新返回数据(解析前):" + StringUtility.bytesToHexString(buf));
+        LogUtils.serial("立定跳远自检新返回数据(解析后):" + toString());
     }
 
     public int[] getJumpPoleState() {

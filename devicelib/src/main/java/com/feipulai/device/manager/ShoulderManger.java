@@ -66,10 +66,10 @@ public class ShoulderManger {
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
-        LogUtils.normal(buf.length+"---"+StringUtility.bytesToHexString(buf)+"---仰卧起坐肩胛设置参数指令");
+        LogUtils.serial("仰卧起坐肩胛设置参数指令:" + StringUtility.bytesToHexString(buf));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
         RadioChannelCommand command1 = new RadioChannelCommand(targetChannel);
-        LogUtils.normal(command1.getCommand().length+"---"+StringUtility.bytesToHexString(command1.getCommand())+"---仰卧起坐肩胛切频指令");
+        LogUtils.serial("仰卧起坐肩胛切频指令:" + StringUtility.bytesToHexString(command1.getCommand()));
         RadioManager.getInstance().sendCommand(new ConvertCommand(command1));
     }
 
@@ -92,7 +92,7 @@ public class ShoulderManger {
         }
         data[12] = (byte) 0x0d;
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
-        LogUtils.normal(data.length + "---" + StringUtility.bytesToHexString(data) + "---仰卧起坐肩胛联络信号设备号是： "+deviceId);
+        LogUtils.serial("仰卧起坐肩胛获取状态:" + StringUtility.bytesToHexString(data));
     }
 
     public void syncTime(int hostId, int time){
@@ -117,7 +117,7 @@ public class ShoulderManger {
         }
         data[14] = (byte) 0x0d;
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
-        LogUtils.normal(data.length + "---" + StringUtility.bytesToHexString(data) + "---仰卧起坐肩胛同步时间");
+        LogUtils.serial("仰卧起坐肩胛同步时间:" + StringUtility.bytesToHexString(data));
     }
 
     public void getTime(int deviceId, int hostId){
@@ -138,7 +138,7 @@ public class ShoulderManger {
         }
         data[12] = (byte) 0x0d;
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
-        LogUtils.normal(data.length + "---" + StringUtility.bytesToHexString(data) + "---仰卧起坐肩胛获取时间设备号是： "+deviceId);
+        LogUtils.serial("仰卧起坐肩胛获取时间:" + StringUtility.bytesToHexString(data));
     }
 
     /**
@@ -179,7 +179,7 @@ public class ShoulderManger {
         }
         data[13] = (byte) 0x0d;
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
-        LogUtils.normal(data.length + "---" + StringUtility.bytesToHexString(data) + "---仰卧起坐肩胛读取缓存设备号是： "+deviceId+"包序是："+index);
+        LogUtils.serial("仰卧起坐肩胛读取缓存:" + StringUtility.bytesToHexString(data));
     }
 
     /**
@@ -217,7 +217,7 @@ public class ShoulderManger {
         }
         data[11] = (byte) 0x0d;
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
-        LogUtils.normal(data.length + "---" + StringUtility.bytesToHexString(data) + "---仰卧起坐肩胛设置工作状态");
+        LogUtils.serial("仰卧起坐肩胛设置工作状态:" + StringUtility.bytesToHexString(data));
     }
 
     /**
@@ -242,7 +242,7 @@ public class ShoulderManger {
             data[11] += data[i];
         }
         data[12] = (byte) 0x0d;
-        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
-        LogUtils.normal(data.length + "---" + StringUtility.bytesToHexString(data) + "---仰卧起坐肩胛获取设备状态： "+deviceId);
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data)); 
+        LogUtils.serial("仰卧起坐肩胛获取设备状态:" + StringUtility.bytesToHexString(data));
     }
 }

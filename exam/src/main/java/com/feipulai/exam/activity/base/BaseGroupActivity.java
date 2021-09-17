@@ -218,9 +218,9 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 if (stuPairsList.size() > 0) {
                     showStuInfo(stuPairsList.get(position).getStudent());
                 }
-                StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.sCurrentItem.getItemCode(),stuPairsList.get(position).getStudent().getStudentCode());
+                StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.sCurrentItem.getItemCode(), stuPairsList.get(position).getStudent().getStudentCode());
                 List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(TestConfigs.sCurrentItem.getItemCode(), stuPairsList.get(position).getStudent().getStudentCode());
-                Log.e("TAG",results.toString());
+                Log.e("TAG", results.toString());
                 if (results != null && results.size() >= TestConfigs.getMaxTestCount(getApplicationContext())) {
                     Log.e("TAG", systemSetting.isResit() + "---" + systemSetting.isAgainTest() + "---" + (studentItem.getMakeUpType() == 1));
                     if (systemSetting.isResit() || systemSetting.isAgainTest() || studentItem.getMakeUpType() == 1) {
@@ -236,7 +236,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                                 }
 
                                 @Override
-                                public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results,int roundNo) {
+                                public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results, int roundNo) {
                                     stuPairsList.get(position).setTestNo(1);
                                     stuPairsList.get(position).setRoundNo(0);
                                     stuPairsList.get(position).setCanTest(true);
@@ -245,9 +245,9 @@ public class BaseGroupActivity extends BaseTitleActivity {
                             });
                             dialog.show(getSupportFragmentManager(), "ResitDialog");
                         }
-                        if (systemSetting.isAgainTest()){
+                        if (systemSetting.isAgainTest()) {
                             AgainTestDialog dialog = new AgainTestDialog();
-                            dialog.setArguments(stuPairsList.get(position).getStudent(),results,studentItem);
+                            dialog.setArguments(stuPairsList.get(position).getStudent(), results, studentItem);
                             dialog.setOnIndividualCheckInListener(new ResitDialog.onClickQuitListener() {
                                 @Override
                                 public void onCancel() {
@@ -257,10 +257,10 @@ public class BaseGroupActivity extends BaseTitleActivity {
                                 }
 
                                 @Override
-                                public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results,int roundNo) {
-                                    for (int i = 0 ; i < results.size() ; i++){
+                                public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results, int roundNo) {
+                                    for (int i = 0; i < results.size(); i++) {
                                         RoundResult result = results.get(i);
-                                        if (result.isDelete()){
+                                        if (result.isDelete()) {
                                             stuPairsList.get(position).setTestNo(TestConfigs.getMaxTestCount());
                                             stuPairsList.get(position).setRoundNo(roundNo);
                                             stuPairsList.get(position).setCanTest(true);
@@ -270,7 +270,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                                     }
                                 }
                             });
-                            dialog.show(getSupportFragmentManager(),"AgainTestDialog");
+                            dialog.show(getSupportFragmentManager(), "AgainTestDialog");
                         }
                     }
                 }
@@ -358,7 +358,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
         txtGroupName.setText(sb.toString());
         groupAdapter.setTestPosition(position);
         updateStudents(groupList.get(position));
-        LogUtils.operation("分组模式选择分组:" + groupList.get(position).toString());
+        LogUtils.all("分组模式选择分组:" + groupList.get(position).toString());
     }
 
     /**
@@ -376,7 +376,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
         stuAdapter.notifyDataSetChanged();
         showLed(stuPairsList);
         if (stuPairsList.size() > 0) {
-            LogUtils.operation("分组模式获取分组学生:" + stuPairsList.toString());
+            LogUtils.all("分组模式获取分组学生:" + stuPairsList.toString());
             showStuInfo(stuPairsList.get(0).getStudent());
         }
 
@@ -533,7 +533,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
     }
 
     @SuppressWarnings("unchecked")
-    @OnClick({R.id.txt_group_name, R.id.img_last, R.id.img_next, R.id.txt_start_test, R.id.txt_print,R.id.score_upload})
+    @OnClick({R.id.txt_group_name, R.id.img_last, R.id.img_next, R.id.txt_start_test, R.id.txt_print, R.id.score_upload})
 // R.id.tv_project_setting,
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -600,10 +600,11 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 isBack = true;
                 TestConfigs.baseGroupMap.put("basePairStu", pairs);
                 StudentCache.getStudentCaChe().clear();
-                for (int i = 0 ; i < pairs.size() ; i++){
+                for (int i = 0; i < pairs.size(); i++) {
                     StudentCache.getStudentCaChe().addStudent(pairs.get(i).getStudent());
+                    LogUtils.operation("分组进入测试学生:" + pairs.get(i).getStudent().toString());
                 }
-                LogUtils.operation("分组进入测试学生:" + pairs.toString());
+
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_FWC) {
                     PushUpSetting setting = SharedPrefsUtil.loadFormSource(this, PushUpSetting.class);
                     if ((setting.getTestType() == PushUpSetting.WIRELESS_TYPE && setting.getDeviceSum() == 1)
@@ -611,7 +612,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                         startActivity(new Intent(this, PushUpGroupActivity.class));
                         return;
                     }
-                    if (setting.getTestType() == 2){
+                    if (setting.getTestType() == 2) {
                         startActivity(new Intent(this, PushUpDistanceTestActivity.class));
                     }
                 }
@@ -700,10 +701,10 @@ public class BaseGroupActivity extends BaseTitleActivity {
      */
     private void scoreUpload() {
         List<BaseStuPair> data = stuAdapter.getData();
-        for (BaseStuPair stuPair : data){
+        for (BaseStuPair stuPair : data) {
             List<RoundResult> roundResultList = getResults(stuPair.getStudent().getStudentCode());
             List<UploadResults> uploadResultsList = new ArrayList<>();
-            if (roundResultList != null && !roundResultList.isEmpty()){
+            if (roundResultList != null && !roundResultList.isEmpty()) {
                 RoundResult currentResult = roundResultList.get(0);
                 UploadResults uploadResults = new UploadResults(currentResult.getScheduleNo(), TestConfigs.getCurrentItemCode(),
                         currentResult.getStudentCode(), currentResult.getTestNo() + "", groupList.get(groupAdapter.getTestPosition()), RoundResultBean.beanCope(roundResultList));
@@ -735,7 +736,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                         result[j] = ResultDisplayUtils.getStrResultForDisplay(roundResultList.get(j).getResult());
                         break;
                 }
-            }else {
+            } else {
                 break;
             }
         }
@@ -745,14 +746,14 @@ public class BaseGroupActivity extends BaseTitleActivity {
     private boolean isAllTest() {
 
         for (BaseStuPair stuPair : stuPairsList) {
-            Log.e("TAG----",stuPair.getTimeResult()+"");
-            if (stuPair.getTimeResult()!=null){
+            Log.e("TAG----", stuPair.getTimeResult() + "");
+            if (stuPair.getTimeResult() != null) {
                 for (String s : stuPair.getTimeResult()) {
                     if (TextUtils.isEmpty(s)) {
                         return false;
                     }
                 }
-            }else{
+            } else {
                 return false;
             }
 
@@ -843,7 +844,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                             String rightStuName = showList.get(i * 6 + j * 2 + 1).getStudent().getStudentName();
                             rightStuName = InteractUtils.getStrWithLength(rightStuName, 4);
 
-                            if (MachineCode.machineCode == ItemDefault.CODE_ZFP&& SettingHelper.getSystemSetting().getRadioLed() == 0) {
+                            if (MachineCode.machineCode == ItemDefault.CODE_ZFP && SettingHelper.getSystemSetting().getRadioLed() == 0) {
                                 runLEDManager.showString(hostId, leftStuName + rightStuName, 0, j + 1, false, j == 2);
                             } else {
                                 mLEDManager.showString(hostId, leftStuName + rightStuName, 0, j + 1, false, j == 2);

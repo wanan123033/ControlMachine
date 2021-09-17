@@ -558,7 +558,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
             uploadResults.add(new UploadResults(scheduleNo,
                     TestConfigs.getCurrentItemCode(), student.getStudentCode()
                     , testNo, null, RoundResultBean.beanCope(roundResultList)));
-            LogUtils.operation("自动上传成绩:" + uploadResults.toString());
+//            LogUtils.operation("自动上传成绩:" + uploadResults.toString());
             ServerMessage.uploadResult(uploadResults);
         }
     }

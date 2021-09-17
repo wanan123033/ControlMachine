@@ -364,9 +364,8 @@ public class RoundResult implements Serializable {
 
     @Override
     public String toString() {
-        return "RoundResult{" +
-                "id=" + id +
-                ", 准考证号='" + studentCode + '\'' +
+        return "考生成绩{" +
+                "准考证号='" + studentCode + '\'' +
                 ", 项目代码='" + itemCode + '\'' +
                 ", 机器码=" + machineCode +
                 ", 轮次=" + roundNo +
@@ -377,15 +376,16 @@ public class RoundResult implements Serializable {
                 ", 成绩状态（1:正常2:犯规3:中退4:弃权）=" + resultState +
                 ", 考试类型（0.正常 2.补考）=" + examType +
                 ", 开始时间='" + testTime + '\'' +
-                ", printTime='" + printTime + '\'' +
                 ", 结束时间='" + endTime + '\'' +
-                ", 绊绳次数=" + stumbleCount +
-                ", groupId=" + groupId +
                 ", 日程编号='" + scheduleNo + '\'' +
+                ", 绊绳次数=" + stumbleCount +
                 ", 是否轮次重测=" + roundTestState +
                 ", 轮次成绩是否重测=" + resultTestState +
                 ", 是否无效=" + isDelete +
                 ", remark3='" + remark3 + '\'' +
+                ", id=" + id +
+                ", printTime='" + printTime + '\'' +
+                ", 分组ID=" + groupId +
                 '}';
     }
 

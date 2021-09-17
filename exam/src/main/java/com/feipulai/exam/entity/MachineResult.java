@@ -33,9 +33,10 @@ public class MachineResult implements Serializable {
     @NotNull
     private int result;////成绩      单位为"毫米(mm)"、"毫秒(ms)"、"克(g)"、"次","毫升"（中长跑最终成绩）
     private long groupId = RoundResult.DEAFULT_GROUP_ID;
+
     @Generated(hash = 2124802525)
     public MachineResult(Long id, @NotNull String studentCode, int roundNo, int testNo,
-            @NotNull String itemCode, int machineCode, int result, long groupId) {
+                         @NotNull String itemCode, int machineCode, int result, long groupId) {
         this.id = id;
         this.studentCode = studentCode;
         this.roundNo = roundNo;
@@ -49,6 +50,7 @@ public class MachineResult implements Serializable {
     @Generated(hash = 1551746015)
     public MachineResult() {
     }
+
     public Long getId() {
         return this.id;
     }
@@ -111,5 +113,19 @@ public class MachineResult implements Serializable {
 
     public void setGroupId(long groupId) {
         this.groupId = groupId;
+    }
+
+    @Override
+    public String toString() {
+        return "MachineResult{" +
+                " 准考证号='" + studentCode + '\'' +
+                ", 轮次=" + roundNo +
+                ", 测试次数=" + testNo +
+                ", 项目代码='" + itemCode + '\'' +
+                ", 机器码=" + machineCode +
+                ", 成绩=" + result +
+                ", groupId=" + groupId +
+                ",id=" + id +
+                '}';
     }
 }

@@ -56,7 +56,9 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         this.view = view;
         this.context = context;
     }
+
     List stuPairs;
+
     @Override
     public void start() {
         setting = getSetting();
@@ -64,9 +66,9 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         mLEDManager = new LEDManager();
 
         stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
-        if (    SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN
-                ||TestCache.getInstance().getTestingPairs() == null || TestCache.getInstance().getTestingPairs().size() == 0) {
-            pairs = CheckUtils.newPairs(getDeviceSumFromSetting(),stuPairs);
+        if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN
+                || TestCache.getInstance().getTestingPairs() == null || TestCache.getInstance().getTestingPairs().size() == 0) {
+            pairs = CheckUtils.newPairs(getDeviceSumFromSetting(), stuPairs);
         } else {
             pairs = TestCache.getInstance().getTestingPairs();
         }
@@ -82,7 +84,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         }
         RadioManager.getInstance().setOnRadioArrived(this);
         RadioChannelCommand command = new RadioChannelCommand(TARGET_FREQUENCY);
-        LogUtils.normal(command.getCommand().length + "---" + StringUtility.bytesToHexString(command.getCommand()) + "---切频指令");
+        LogUtils.serial("切频指令" + StringUtility.bytesToHexString(command.getCommand()) + "---");
         RadioManager.getInstance().sendCommand(new ConvertCommand(command));
         facade = new GetStateLedFacade(this);
         facade.setmGetDeviceStatesLoopCount(getDeviceStatesLoopCount());
@@ -126,7 +128,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
     public void refreshEveryThing() {
         TestCache.getInstance().init();
         focusPosition = 0;
-        pairs = CheckUtils.newPairs(getDeviceSumFromSetting(),stuPairs);
+        pairs = CheckUtils.newPairs(getDeviceSumFromSetting(), stuPairs);
         view.refreshPairs(pairs);
         view.showStuInfo(null, null);
         resetLED();
@@ -256,7 +258,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
     @Override
     public void settingChanged() {
         if (pairs != null && pairs.size() != getDeviceSumFromSetting()) {
-            List<StuDevicePair> newPairs = CheckUtils.newPairs(getDeviceSumFromSetting(),stuPairs);
+            List<StuDevicePair> newPairs = CheckUtils.newPairs(getDeviceSumFromSetting(), stuPairs);
             focusPosition = 0;
             for (int i = 0; i < pairs.size(); i++) {
                 if (i == newPairs.size()) {
@@ -306,12 +308,15 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         for (int i = 0; i < pairs.size(); i++) {
             StuDevicePair pair = pairs.get(i);
             Student stu = pair.getStudent();
-            for (RoundResult result : results){
-                if (result.getIsDelete()){
-                    pair.setCurrentRoundNo(result.getRoundNo());
-                    pair.setIsAgain(true);
+            if (results!=null){
+                for (RoundResult result : results) {
+                    if (result.getIsDelete()) {
+                        pair.setCurrentRoundNo(result.getRoundNo());
+                        pair.setIsAgain(true);
+                    }
                 }
             }
+
             if (stu != null && stu.getStudentCode().equals(student.getStudentCode())) {
                 view.showToast("该考生已绑定设备");
                 return;
@@ -406,11 +411,12 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         mCurrentConnect = new int[getDeviceSumFromSetting() + 1];
         endTest();
     }
+
     @Override
     public void setRoundNo(Student student, int roundNo) {
-        for (StuDevicePair pair : pairs){
+        for (StuDevicePair pair : pairs) {
             Student student1 = pair.getStudent();
-            if (student1 != null && student1.getStudentCode().equals(student.getStudentCode())){
+            if (student1 != null && student1.getStudentCode().equals(student.getStudentCode())) {
                 pair.setCurrentRoundNo(roundNo);
             }
         }

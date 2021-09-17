@@ -61,6 +61,7 @@ public class DeviceChangeActivity extends BaseTitleActivity implements GetDevice
     private WaitDialog changBadDialog;
     private SitPullLinker linker;
     private boolean mLinking;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_device_change;
@@ -108,7 +109,7 @@ public class DeviceChangeActivity extends BaseTitleActivity implements GetDevice
         statesTask = new GetDeviceStatesTask(this);
         RadioManager.getInstance().setOnRadioArrived(this);
         RadioChannelCommand command = new RadioChannelCommand(TARGET_FREQUENCY);
-        LogUtils.normal(command.getCommand().length + "---" + StringUtility.bytesToHexString(command.getCommand()) + "---切频指令");
+        LogUtils.serial("切频指令" + StringUtility.bytesToHexString(command.getCommand()) + "---");
         RadioManager.getInstance().sendCommand(new ConvertCommand(command));
         mExecutor = Executors.newFixedThreadPool(1);
         mExecutor.execute(statesTask);
@@ -141,7 +142,7 @@ public class DeviceChangeActivity extends BaseTitleActivity implements GetDevice
                 if (linker == null) {
                     linker = new SitPullLinker(machineCode, TARGET_FREQUENCY, this);
                 }
-                linker.startPair(mAdapter.getSelected()+1);
+                linker.startPair(mAdapter.getSelected() + 1);
                 mLinking = true;
                 showChangeBadDialog();
                 break;
@@ -168,7 +169,7 @@ public class DeviceChangeActivity extends BaseTitleActivity implements GetDevice
         if (linker != null) {
             linker.cancelPair();
         }
-        if (changBadDialog!= null && changBadDialog.isShowing()){
+        if (changBadDialog != null && changBadDialog.isShowing()) {
             changBadDialog.dismiss();
         }
         statesTask.resume();
@@ -183,12 +184,12 @@ public class DeviceChangeActivity extends BaseTitleActivity implements GetDevice
     @Override
     public void onStateRefreshed() {
         for (int i = 0; i < setting.getDeviceSum(); i++) {
-            if (shoulder[i] > 1 && shoulder[i]<3) {
+            if (shoulder[i] > 1 && shoulder[i] < 3) {
                 deviceCollects.get(i).getShoulderResult().setState(BaseDeviceState.STATE_DISCONNECT);
                 updateDevice(i + 1, 2);
             }
             shoulder[i]++;
-            if (sitUpUpdate[i]> 1 && sitUpUpdate[i]<3) {
+            if (sitUpUpdate[i] > 1 && sitUpUpdate[i] < 3) {
                 deviceCollects.get(i).getSitPushUpStateResult().setState(BaseDeviceState.STATE_DISCONNECT);
                 updateDevice(i + 1, 1);
             }
@@ -251,7 +252,7 @@ public class DeviceChangeActivity extends BaseTitleActivity implements GetDevice
         if (deviceId > setting.getDeviceSum()) {
             return;
         }
-        shoulder[deviceId-1] = 1;
+        shoulder[deviceId - 1] = 1;
         int oldState = deviceCollects.get(deviceId - 1).getShoulderResult().getState();
         if (oldState != deviceState) {
             if (deviceState != 4) {
@@ -319,13 +320,13 @@ public class DeviceChangeActivity extends BaseTitleActivity implements GetDevice
 
     @Override
     public void setFrequency(int deviceId, int originFrequency, int targetFrequency) {
-        if (mAdapter.getDevice() == 1){
-            deviceManager.setFrequency( targetFrequency,
+        if (mAdapter.getDevice() == 1) {
+            deviceManager.setFrequency(targetFrequency,
                     originFrequency,
                     deviceId,
                     SettingHelper.getSystemSetting().getHostId());
-        }else {
-            shoulderManger.setFrequency(targetFrequency,originFrequency,deviceId,SettingHelper.getSystemSetting().getHostId());
+        } else {
+            shoulderManger.setFrequency(targetFrequency, originFrequency, deviceId, SettingHelper.getSystemSetting().getHostId());
         }
     }
 }

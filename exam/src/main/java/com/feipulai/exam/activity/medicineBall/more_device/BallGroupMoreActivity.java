@@ -83,9 +83,9 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
 
         }
         for (DeviceDetail detail : deviceDetails) {
-            int hostId =  SettingHelper.getSystemSetting().getHostId();
+            int hostId = SettingHelper.getSystemSetting().getHostId();
             int deviceId = detail.getStuDevicePair().getBaseDevice().getDeviceId();
-            MedicineBallMore.sendGetState(hostId,deviceId);
+            MedicineBallMore.sendGetState(hostId, deviceId);
         }
         mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 1000);
     }
@@ -102,14 +102,14 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
     public void toStart(int pos) {
         BaseStuPair pair = deviceDetails.get(pos).getStuDevicePair();
         pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
-        pair.setTestTime(DateUtil.getCurrentTime()+"");
+        pair.setTestTime(DateUtil.getCurrentTime() + "");
         updateDevice(pair.getBaseDevice());
         sendStart((byte) pair.getBaseDevice().getDeviceId());
-        LogUtils.operation("实心球开始测试:pos="+pos+",pair="+pair.toString());
+        LogUtils.operation("实心球开始测试:" + pair.getStudent().toString());
     }
 
     private void sendStart(byte id) {
-        MedicineBallMore.sendStart(SettingHelper.getSystemSetting().getHostId(),id);
+        MedicineBallMore.sendStart(SettingHelper.getSystemSetting().getHostId(), id);
     }
 
     @Override
@@ -127,7 +127,7 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
     }
 
     private void sendFree(int deviceId) {
-        MedicineBallMore.sendEmpty(SettingHelper.getSystemSetting().getHostId(),deviceId);
+        MedicineBallMore.sendEmpty(SettingHelper.getSystemSetting().getHostId(), deviceId);
     }
 
     private boolean isInCorrect;
@@ -159,7 +159,7 @@ public class BallGroupMoreActivity extends BaseMoreGroupActivity {
     }
 
     private void onResultArrived(int result, BaseStuPair stuPair) {
-        stuPair.setEndTime(DateUtil.getCurrentTime()+"");
+        stuPair.setEndTime(DateUtil.getCurrentTime() + "");
         if (result < beginPoint * 10 || result > 5000 * 10) {
             toastSpeak("数据异常，请重测");
             return;

@@ -34,10 +34,10 @@ public class StandJumpManager {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---立定跳远设置参数指令");
+        LogUtils.serial("立定跳远设置参数指令:" + StringUtility.bytesToHexString(cmd));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
         RadioChannelCommand command = new RadioChannelCommand(targetChannel);
-        LogUtils.normal(command.getCommand().length+"---"+ StringUtility.bytesToHexString(command.getCommand())+"---立定跳远切频指令");
+        LogUtils.serial("立定跳远切频指令:" + StringUtility.bytesToHexString(cmd));
         RadioManager.getInstance().sendCommand(new ConvertCommand(command));
     }
 
@@ -55,7 +55,7 @@ public class StandJumpManager {
         cmd[12] = (byte) ((points >> 8) & 0xff);// 次低位
         cmd[13] = (byte) (points & 0xff);// 最低位
         cmd[19] = (byte) sum(cmd, 19);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---立定跳远设置使用长度指令");
+        LogUtils.serial("立定跳远设置使用长度指令:" + StringUtility.bytesToHexString(cmd));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -73,7 +73,7 @@ public class StandJumpManager {
         cmd[12] = (byte) ((points >> 8) & 0xff);// 次低位
         cmd[13] = (byte) (points & 0xff);// 最低位
         cmd[19] = (byte) sum(cmd, 19);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---立定跳远设置使用长度指令");
+        LogUtils.serial("立定跳远获取状态指令:" + StringUtility.bytesToHexString(cmd));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -87,7 +87,7 @@ public class StandJumpManager {
         cmd[5] = (byte) (hostId & 0xff);
         cmd[6] = (byte) (deviceId & 0xff);
         cmd[19] = (byte) sum(cmd, 19);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---立定跳远开始测试指令");
+        LogUtils.serial("立定跳远开始测试指令:" + StringUtility.bytesToHexString(cmd));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -102,7 +102,7 @@ public class StandJumpManager {
         cmd[5] = (byte) (hostId & 0xff);
         cmd[6] = (byte) (deviceId & 0xff);
         cmd[19] = (byte) sum(cmd, 19);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---立定跳远结束测试指令");
+        LogUtils.serial("立定跳远结束测试指令:" + StringUtility.bytesToHexString(cmd));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -117,7 +117,7 @@ public class StandJumpManager {
         cmd[5] = (byte) (hostId & 0xff);
         cmd[6] = (byte) (deviceId & 0xff);
         cmd[19] = (byte) sum(cmd, 19);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---立定跳远空闲指令");
+        LogUtils.serial("立定跳远空闲指令:" + StringUtility.bytesToHexString(cmd));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -126,7 +126,7 @@ public class StandJumpManager {
         cmd[5] = (byte) (hostId & 0xff);
         cmd[6] = (byte) (deviceId & 0xff);
         cmd[19] = (byte) sum(cmd, 19);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---立定跳远获取版本信息指令");
+        LogUtils.serial("立定跳远获取版本信息指令:" + StringUtility.bytesToHexString(cmd));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -135,7 +135,7 @@ public class StandJumpManager {
         cmd[5] = (byte) (hostId & 0xff);
         cmd[6] = (byte) (deviceId & 0xff);
         cmd[19] = (byte) sum(cmd, 19);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---立定跳远自检指令");
+        LogUtils.serial("立定跳远自检指令:" + StringUtility.bytesToHexString(cmd));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 

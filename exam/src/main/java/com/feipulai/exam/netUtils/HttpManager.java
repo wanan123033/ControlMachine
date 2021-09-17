@@ -1,10 +1,19 @@
 package com.feipulai.exam.netUtils;
 
+import com.baidu.tts.loopj.AsyncHttpClient;
 import com.feipulai.exam.netUtils.netapi.HttpApi;
 import com.feipulai.exam.netUtils.netapi.SSLSocketClient;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.TrustManager;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -43,8 +52,8 @@ public class HttpManager {
     private HttpManager() {
         //手动创建一个OkHttpClient并设置超时时间
         okHttpBuilder = new OkHttpClient.Builder();
-//        okHttpBuilder.sslSocketFactory(SSLSocketClient.getSSLSocketFactory());
-//        okHttpBuilder.hostnameVerifier(SSLSocketClient.getHostnameVerifier());
+        okHttpBuilder.sslSocketFactory(SSLSocketClient.getSSLSocketFactory());
+        okHttpBuilder.hostnameVerifier(SSLSocketClient.getHostnameVerifier());
 
         /**
          * 设置头信息
@@ -68,17 +77,21 @@ public class HttpManager {
 
 
 //        if (BuildConfig.DEBUG) {
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-            @Override
-            public void log(String message) {
-//                Logger.d(message);
-            }
+//        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+//            @Override
+//            public void log(String message) {
+////                Logger.d(message);
+//            }
+//
+//
+//        });
+//        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+//        //设置 Debug Log 模式
+//        okHttpBuilder.addInterceptor(loggingInterceptor);
+        okHttpBuilder       .addInterceptor(new LoggingInterceptor());
 
 
-        });
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        //设置 Debug Log 模式
-        okHttpBuilder.addInterceptor(loggingInterceptor);
+
 //        }
 
         /**

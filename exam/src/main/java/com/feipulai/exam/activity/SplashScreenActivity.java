@@ -86,7 +86,8 @@ public class SplashScreenActivity extends BaseActivity {
         activateBean = SharedPrefsUtil.loadFormSource(this, ActivateBean.class);
         runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0L);
         if (runTime == 0) {
-            showActivateConfirm(1);
+//            showActivateConfirm(1);
+            activate();
         } else if (activateBean != null && activateBean.getValidRunTime() > 0) {
 
             if (runTime > activateBean.getValidRunTime()) {

@@ -126,6 +126,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
     private boolean startTest = true;
     private EditResultDialog editResultDialog;
     List<BaseStuPair> stuPairs;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_group_basketball;
@@ -169,7 +170,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         TestCache.getInstance().init();
 
         stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
-        pairs = CheckUtils.newPairs(stuPairs.size(),stuPairs);
+        pairs = CheckUtils.newPairs(stuPairs.size(), stuPairs);
         CheckUtils.groupCheck(pairs);
 
         rvTestingPairs.setLayoutManager(new LinearLayoutManager(this));
@@ -403,7 +404,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
 
     @Override
     public void getResult(BasketballResult result) {
-        LogUtils.operation("篮球获取到结果数据:state=" + state + ",result=" + result);
+        LogUtils.operation("篮球获取到结果数据:状态=" + state + ",成绩=" + result);
 //        timerUtil.release();
         //非测试不做处理
         if (state == WAIT_FREE || state == WAIT_CHECK_IN || TextUtils.isEmpty(testDate)) {
@@ -417,7 +418,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         List<MachineResult> machineResultList = DBManager.getInstance().getItemGroupFRoundMachineResult(student.getStudentCode()
                 , group.getId(),
                 roundNo);
-        List<RoundResult> results1 = DBManager.getInstance().queryResultsByStudentCode(TestConfigs.getCurrentItemCode(),student.getStudentCode(),roundNo);
+        List<RoundResult> results1 = DBManager.getInstance().queryResultsByStudentCode(TestConfigs.getCurrentItemCode(), student.getStudentCode(), roundNo);
         MachineResult machineResult = new MachineResult();
         machineResult.setItemCode(TestConfigs.getCurrentItemCode());
         machineResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
@@ -492,7 +493,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
 
     @Override
     public void getStatusStop(BasketballResult result) {
-        LogUtils.operation("篮球停止计时:state = " + state + ",result = " + result);
+        LogUtils.operation("篮球停止计时:状态 = " + state + ",成绩 = " + result);
         //非测试不做处理
         if (state == WAIT_FREE || state == WAIT_CHECK_IN || state == WAIT_CONFIRM) {
             return;
@@ -777,16 +778,16 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         roundResult.setItemCode(TestConfigs.getCurrentItemCode());
         roundResult.setResult(basketballResult.getResult());
         roundResult.setMachineResult(basketballResult.getResult());
-        if (pairs.get(position()).getCurrentRoundNo() != 0){
+        if (pairs.get(position()).getCurrentRoundNo() != 0) {
             roundResult.setRoundNo(pairs.get(position()).getCurrentRoundNo());
             pairs.get(position()).setCurrentRoundNo(0);
-        }else {
+        } else {
             roundResult.setRoundNo(roundNo);
         }
         roundResult.setTestNo(1);
 //        roundResult.setExamType(group.getExamType());
-        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
-        if (studentItem != null){
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(), student.getStudentCode());
+        if (studentItem != null) {
             roundResult.setExamType(studentItem.getExamType());
         }
         roundResult.setScheduleNo(group.getScheduleNo());
@@ -809,12 +810,12 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                 DBManager.getInstance().updateRoundResult(bestResult);
             }
         }
-        LogUtils.operation("篮球确认保存成绩:result = " + roundResult.getResult() + "---" + roundResult.toString());
+        LogUtils.operation("篮球确认保存成绩:  " + roundResult.toString());
         DBManager.getInstance().insertRoundResult(roundResult);
         //获取所有成绩设置为非最好成绩
         List<RoundResult> results = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");
         TestCache.getInstance().getResults().put(student, results);
-        if (studentItem.getExamType() == 2){
+        if (studentItem.getExamType() == 2) {
             continuousTestNext();
         }
     }
@@ -1013,9 +1014,9 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                     resultList.get(i).setResult(0);
                     resultAdapter.notifyDataSetChanged();
                     SystemSetting setting = SettingHelper.getSystemSetting();
-                    StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
+                    StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(), stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
                     //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
-                    if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
+                    if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()) {
                         stuPairs.get(stuPairAdapter.getTestPosition()).setResit(true);
                     }
                 }
@@ -1437,6 +1438,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         }
 
     }
+
     private int setTestCount() {
 //        SystemSetting setting = SettingHelper.getSystemSetting();
 //        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(position()).getStudent().getStudentCode());

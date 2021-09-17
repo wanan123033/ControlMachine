@@ -56,6 +56,7 @@ import com.feipulai.exam.netUtils.download.DownloadListener;
 import com.feipulai.exam.netUtils.download.DownloadUtils;
 import com.feipulai.exam.utils.EncryptUtil;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.libarcface.model.FaceRegisterInfo;
 
@@ -182,7 +183,7 @@ public class HttpSubscriber {
 
             @Override
             public void onSuccess(ScheduleBean result) {
-//                Logger.e("getScheduleAll====>" + result.toString());
+                LogUtils.net("获取考点日程返回解析：" + result.toString());
                 if (result == null) {
                     if (onRequestEndListener != null) {
                         onRequestEndListener.onFault(SCHEDULE_BIZ);
@@ -247,7 +248,7 @@ public class HttpSubscriber {
 
             @Override
             public void onSuccess(List<ItemBean> result) {
-//                Logger.e("getItemAll====>" + result.toString());
+                LogUtils.net("获取考点考试所有项目解析：" + result.toString());
                 if (result == null)
                     return;
                 List<Item> itemList = new ArrayList<>();
@@ -446,7 +447,7 @@ public class HttpSubscriber {
 
             @Override
             public void onSuccess(BatchBean<List<StudentBean>> result) {
-//                Logger.e("getStudent===>"+result);
+                LogUtils.net("获取当前项目考生解析：" + result.toString());
                 if (result.getBatch() == 1) {
                     stuList.clear();
                 }
@@ -572,7 +573,7 @@ public class HttpSubscriber {
 
             @Override
             public void onSuccess(BatchBean<List<GroupBean>> result) {
-//                Logger.i("getItemGroupAll====>" + result.toString());
+                LogUtils.net("获取分组信息解析：" + result.toString());
                 if (result == null || result.getDataInfo() == null) {
                     if (onRequestEndListener != null)
                         onRequestEndListener.onSuccess(GROUP_BIZ);
@@ -709,6 +710,7 @@ public class HttpSubscriber {
 
             @Override
             public void onSuccess(RoundScoreBean result) {
+                LogUtils.net("获取服务端成绩解析：" + result.toString());
                 if (result.getExist() == 1) {
                     List<RoundScoreBean.ScoreBean> scoreBeanList = result.getRoundList();
                     for (RoundScoreBean.ScoreBean score : scoreBeanList) {
@@ -840,7 +842,7 @@ public class HttpSubscriber {
             uploadData = uploadResultsList.subList(pageNo, (pageNo + 1));
         }
 
-
+        LogUtils.net("上传成绩信息：" + uploadResultsList.toString());
         Logger.i("setUploadResult===>" + pageNo);
 
         TCPResultPackage rcPackage = new TCPResultPackage();
@@ -851,7 +853,7 @@ public class HttpSubscriber {
 
         final String data = rcPackage.EncodePackage(TestConfigs.sCurrentItem, uploadData, new PackageHeadInfo(), false, TCPConst.enumCodeType.CodeGB2312.getIndex());
         Log.i("data---", data);
-
+        LogUtils.net("上传成绩信息协议内容：" + data);
         if (tcpClientThread == null) {
             String tcpIp = SettingHelper.getSystemSetting().getTcpIp();
             if (TextUtils.isEmpty(tcpIp)) {
@@ -1008,6 +1010,7 @@ public class HttpSubscriber {
     }
 
     private void setUploadResult(final int pageNo, final int pageSum, final List<UploadResults> uploadResultsList) {
+        LogUtils.net("上传成绩信息：" + uploadResultsList.toString());
         final List<UploadResults> uploadData;
         if (pageNo == pageSum - 1) {
             uploadData = uploadResultsList.subList(pageNo * 20, uploadResultsList.size());
@@ -1026,6 +1029,7 @@ public class HttpSubscriber {
 
             @Override
             public void onSuccess(List<UploadResults> result) {
+                LogUtils.net("上传成绩返回解析：" + result.toString());
                 //更新上传状态
                 List<RoundResult> roundResultList = new ArrayList<>();
                 for (UploadResults uploadResults : uploadData) {

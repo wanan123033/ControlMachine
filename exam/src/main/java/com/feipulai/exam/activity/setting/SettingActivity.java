@@ -597,7 +597,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
             systemSetting.setChannel(Integer.valueOf(editCustomChannel.getText().toString().trim()));
         }
         RadioChannelCommand command = new RadioChannelCommand(systemSetting.getUseChannel());
-        LogUtils.normal(command.getCommand().length + "---" + StringUtility.bytesToHexString(command.getCommand()) + "---切频指令");
+        LogUtils.serial(  "切频指令" + StringUtility.bytesToHexString(command.getCommand()) + "---");
         RadioManager.getInstance().sendCommand(new ConvertCommand(command));
 
         HttpManager.resetManager();

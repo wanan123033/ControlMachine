@@ -16,11 +16,9 @@ public class JumpScore {
         checkFoul(result);
         //获取到的成绩需要加50cm
         score = ((result[9] & 0xff) << 8) + (result[10] & 0xff) + 50;
-        if (SerialConfigs.LOGGER_STATE == 0) {
-            LogUtils.normal("立定跳远返回数据(解析前):" + result.length + "---" + StringUtility.bytesToHexString(result) + "---\n(解析后):" + toString());
-        } else {
-            LogUtils.operation("立定跳远返回数据(解析前):" + result.length + "---" + StringUtility.bytesToHexString(result) + "---\n(解析后):" + toString());
-        }
+
+        LogUtils.serial("立定跳远返回数据(解析前):" + StringUtility.bytesToHexString(result));
+        LogUtils.serial("立定跳远返回数据(解析后):" + toString());
     }
 
     public JumpScore() {

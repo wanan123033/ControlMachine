@@ -6,6 +6,7 @@ import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
+import com.feipulai.device.udp.UDPBasketBallConfig;
 import com.orhanobut.logger.utils.LogUtils;
 
 /**
@@ -50,8 +51,7 @@ public class GripManager {
             e.printStackTrace();
         }
         RadioChannelCommand command = new RadioChannelCommand(targetChannel);
-        LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---握力计设置参数指令");
-        LogUtils.normal(command.getCommand().length+"---"+ StringUtility.bytesToHexString(command.getCommand())+"---握力计切换到指定频道指令");
+        LogUtils.serial("握力计设置频段参数指令:" + StringUtility.bytesToHexString(buf));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
         RadioManager.getInstance().sendCommand(new ConvertCommand(command));
     }
@@ -78,6 +78,7 @@ public class GripManager {
         data[16] = (byte) sum;
 
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
+        LogUtils.serial("握力计获取设备信息指令:" + StringUtility.bytesToHexString(data));
     }
 
 

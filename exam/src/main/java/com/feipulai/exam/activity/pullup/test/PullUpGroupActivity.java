@@ -141,7 +141,6 @@ public class PullUpGroupActivity extends BaseTitleActivity
         stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
         pairs = CheckUtils.newPairs(stuPairs.size(),stuPairs);
         CheckUtils.groupCheck(pairs);
-        LogUtils.operation("引体向上获取分组信息:" + pairs.size() + "---" + pairs.toString());
 
         rvTestingPairs.setLayoutManager(new LinearLayoutManager(this));
         stuPairAdapter = new VolleyBallGroupStuAdapter(pairs);
@@ -565,7 +564,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         int value = -1 * numberPicker.getValue();
-                        LogUtils.operation("引体向上判罚:pair=" + pairs.get(position()) + "---value=" + value);
+                        LogUtils.operation("引体向上判罚:=" + pairs.get(position()).getStudent().toString() + "---判罚值=" + value);
                         if (value != pairs.get(position()).getPenalty()) {
                             Logger.i("初始成绩：" + ResultDisplayUtils.getStrResultForDisplay(pairs.get(position()).getDeviceResult().getResult()) + "判罚" + value);
                             ledManager.showString(systemSetting.getHostId(), "判罚:" + ResultDisplayUtils.getStrResultForDisplay(value), 1, 2, false, false);

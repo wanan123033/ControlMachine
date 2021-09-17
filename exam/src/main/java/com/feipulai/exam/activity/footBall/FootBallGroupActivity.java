@@ -180,7 +180,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         //获取分组学生数据
         TestCache.getInstance().init();
         stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
-        pairs = CheckUtils.newPairs(stuPairs.size(),stuPairs);
+        pairs = CheckUtils.newPairs(stuPairs.size(), stuPairs);
         CheckUtils.groupCheck(pairs);
 
         rvTestingPairs.setLayoutManager(new LinearLayoutManager(this));
@@ -497,7 +497,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         List<MachineResult> machineResultList = DBManager.getInstance().getItemGroupFRoundMachineResult(student.getStudentCode()
                 , group.getId(),
                 roundNo);
-        List<RoundResult> resultList1 = DBManager.getInstance().queryResultsByStudentCode(TestConfigs.getCurrentItemCode(),student.getStudentCode(),roundNo);
+        List<RoundResult> resultList1 = DBManager.getInstance().queryResultsByStudentCode(TestConfigs.getCurrentItemCode(), student.getStudentCode(), roundNo);
         MachineResult machineResult = new MachineResult();
         machineResult.setItemCode(TestConfigs.getCurrentItemCode());
         machineResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
@@ -507,7 +507,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         machineResult.setResult(result.getResult());
         machineResult.setGroupId(group.getId());
         //第一次拦截保存成绩，其他拦截只保存
-        if (machineResultList.size() == 0 || machineResultList == null || resultList1 == null ||resultList1.size() == 0) {
+        if (machineResultList.size() == 0 || machineResultList == null || resultList1 == null || resultList1.size() == 0) {
             machineResultList.add(machineResult);
             addRoundResult(result);
             resultList.get(resultAdapter.getSelectPosition()).setMachineResultList(machineResultList);
@@ -836,18 +836,18 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         roundResult.setItemCode(TestConfigs.getCurrentItemCode());
         roundResult.setResult(basketballResult.getResult());
         roundResult.setMachineResult(basketballResult.getResult());
-        if (pairs.get(position()).getCurrentRoundNo() != 0){
+        if (pairs.get(position()).getCurrentRoundNo() != 0) {
             roundResult.setRoundNo(pairs.get(position()).getCurrentRoundNo());
             roundResult.setResultTestState(1);
             pairs.get(position()).setCurrentRoundNo(0);
-        }else {
+        } else {
             roundResult.setRoundNo(roundNo);
             roundResult.setResultTestState(0);
         }
         roundResult.setTestNo(1);
 //        roundResult.setExamType(group.getExamType());
-        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
-        if (studentItem != null){
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(), student.getStudentCode());
+        if (studentItem != null) {
             roundResult.setExamType(studentItem.getExamType());
         }
         roundResult.setScheduleNo(group.getScheduleNo());
@@ -871,12 +871,12 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                 Logger.i("更新成绩:" + bestResult.toString());
             }
         }
-        LogUtils.operation("足球确认保存成绩:result = " + roundResult.getResult() + "---" + roundResult.toString());
+        LogUtils.operation("足球确认保存成绩:  " + roundResult.toString());
         DBManager.getInstance().insertRoundResult(roundResult);
         //获取所有成绩设置为非最好成绩
         List<RoundResult> results = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");
         TestCache.getInstance().getResults().put(student, results);
-        if (studentItem.getExamType() == 2){
+        if (studentItem.getExamType() == 2) {
             continuousTestNext();
         }
     }
@@ -1048,17 +1048,17 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                     roundResult.setResultState(testResult.getResultState());
                     roundResult.setTestTime(startTime);
                     roundResult.setEndTime(System.currentTimeMillis() + "");
-                    if (pairs.get(position()).getCurrentRoundNo() != 0){
+                    if (pairs.get(position()).getCurrentRoundNo() != 0) {
                         roundResult.setRoundNo(pairs.get(position()).getCurrentRoundNo());
                         pairs.get(position()).setCurrentRoundNo(0);
                         List<BaseStuPair> stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
-                        if (stuPairs != null){
-                            for (BaseStuPair pp : stuPairs){
+                        if (stuPairs != null) {
+                            for (BaseStuPair pp : stuPairs) {
                                 if (pp.getStudent().getStudentCode().equals(pairs.get(position()).getStudent().getStudentCode()))
                                     pp.setRoundNo(0);
                             }
                         }
-                    }else {
+                    } else {
                         roundResult.setRoundNo(resultList.get(i).getRoundNo());
                     }
                     roundResult.setTestNo(1);
@@ -1070,9 +1070,9 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
 
                     DBManager.getInstance().insertRoundResult(roundResult);
                     SystemSetting setting = SettingHelper.getSystemSetting();
-                    StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
+                    StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(), stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
                     //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
-                    if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
+                    if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()) {
                         stuPairs.get(stuPairAdapter.getTestPosition()).setResit(true);
                     }
                     resultList.get(i).setResult(0);

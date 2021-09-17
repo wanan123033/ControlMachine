@@ -23,13 +23,9 @@ public class JumpVersion{
 		versionCode = String.valueOf(result[8] >> 4 & 0x0f) + "." + (result[8] & 0x0f) + "."
 				+ (result[9] >> 4 & 0x0f) + (result[9] & 0x0f);
 		versionDate = String.valueOf(result[10]) + "年" + String.valueOf(result[11]) + "月" + String.valueOf(result[12]) + "日";
-		if (SerialConfigs.LOGGER_STATE == 0) {
-			LogUtils.normal("跳绳返回数据(解析前):"+result.length+"---"+StringUtility.bytesToHexString(result)+"---\n(解析后):"+toString());
 
-		}else{
-			LogUtils.operation("跳绳返回数据(解析前):"+result.length+"---"+StringUtility.bytesToHexString(result)+"---\n(解析后):"+toString());
-
-		}
+		LogUtils.serial("跳绳返回数据(解析前):" + StringUtility.bytesToHexString(result));
+		LogUtils.serial("跳绳返回数据(解析后):" + toString());
 	}
 	
 	public String getVersionCode(){

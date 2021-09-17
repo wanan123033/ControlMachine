@@ -41,6 +41,10 @@ public class Algorithm {
 
 //        byte d = (byte) 0xfd;
 //        System.out.println("======>" + d);
+
+
+        byte[] bytes = new byte[]{00, 0x38, 0x39, (byte) 0x91, 0x5a, 0x20, (byte) 0xff};
+        System.out.println("======>" + new String(bytes));
     }
 
 }

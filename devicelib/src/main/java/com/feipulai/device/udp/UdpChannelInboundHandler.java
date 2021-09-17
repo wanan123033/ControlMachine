@@ -8,6 +8,7 @@ import com.feipulai.device.udp.parse.BasketballParser;
 import com.feipulai.device.udp.parse.MiddleRaceParser;
 import com.feipulai.device.udp.parse.UDPParser;
 import com.feipulai.device.udp.result.UDPResult;
+import com.orhanobut.logger.utils.LogUtils;
 
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
@@ -85,6 +86,7 @@ public abstract class UdpChannelInboundHandler extends SimpleChannelInboundHandl
         if (parser != null) {
             result = parser.parse(datagramPacket.content().array());
             if (result != null) {
+                LogUtils.serial(result.toString());
                 receive(result);
             }
         }

@@ -572,7 +572,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         machineResult.setStudentCode(student.getStudentCode());
         machineResult.setResult(result.getResult());
         //第一次拦截保存成绩，其他拦截只保存
-        List<RoundResult> results1 = DBManager.getInstance().queryResultsByStudentCode(TestConfigs.getCurrentItemCode(),student.getStudentCode(),roundNo);
+        List<RoundResult> results1 = DBManager.getInstance().queryResultsByStudentCode(TestConfigs.getCurrentItemCode(), student.getStudentCode(), roundNo);
 
         if (machineResultList.size() == 0 || machineResultList == null || results1 == null || results1.size() == 0) {
             machineResultList.add(machineResult);
@@ -632,7 +632,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
     @Override
     public void getStatusStop(BasketballResult result) {
         if (result != null)
-            LogUtils.operation("足球停止计时:state=" + state + ",result=" + result.getResult() + "---" + result.toString());
+            LogUtils.operation("足球停止计时:state=" + state + "---" + result.toString());
         //非测试不做处理
         if (state == WAIT_FREE || state == WAIT_CHECK_IN || state == WAIT_CONFIRM) {
             return;
@@ -1023,7 +1023,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
             testResult.setResult(result);
 
             resultAdapter.notifyDataSetChanged();
-            LogUtils.operation("判罚成功:penalizeNum=" + penalizeNum);
+            LogUtils.operation("判罚成功，判罚值为：=" + penalizeNum);
         }
     }
 
@@ -1053,7 +1053,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
 
             resultAdapter.notifyDataSetChanged();
         }
-        LogUtils.operation("修改成绩状态:resultState=" + resultState);
+        LogUtils.operation("修改成绩状态:=" + resultState);
     }
 
     /**
@@ -1109,10 +1109,10 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                     roundResult.setResultState(testResult.getResultState());
                     roundResult.setTestTime(testDate);
                     roundResult.setEndTime(System.currentTimeMillis() + "");
-                    if (pair.getCurrentRoundNo() != 0){
+                    if (pair.getCurrentRoundNo() != 0) {
                         roundResult.setRoundNo(pair.getCurrentRoundNo());
                         pair.setCurrentRoundNo(0);
-                    }else {
+                    } else {
                         roundResult.setRoundNo(resultList.get(i).getRoundNo());
                     }
                     roundResult.setTestNo(testNo);
@@ -1227,11 +1227,11 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         roundResult.setItemCode(TestConfigs.getCurrentItemCode());
         roundResult.setResult(basketballResult.getResult());
         roundResult.setMachineResult(basketballResult.getResult());
-        if (pairs.get(0).getCurrentRoundNo() != 0){
+        if (pairs.get(0).getCurrentRoundNo() != 0) {
             roundResult.setRoundNo(pairs.get(0).getCurrentRoundNo());
             roundResult.setResultTestState(1);
             pairs.get(0).setCurrentRoundNo(0);
-        }else {
+        } else {
             roundResult.setRoundNo(roundNo);
             roundResult.setResultTestState(0);
         }
@@ -1256,14 +1256,14 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
                 DBManager.getInstance().updateRoundResult(bestResult);
             }
         }
-        LogUtils.operation("足球拦截添加新成绩:" + roundResult.getResult() + "---" + roundResult.toString());
+        LogUtils.operation("足球拦截添加新成绩:" + roundResult.toString());
 
         DBManager.getInstance().insertRoundResult(roundResult);
         //获取所有成绩设置为非最好成绩
         List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(mStudentItem);
         TestCache.getInstance().getResults().put(student, results);
         showStuInfoResult();
-        if (mStudentItem.getExamType() == 2){
+        if (mStudentItem.getExamType() == 2) {
             prepareForCheckIn();
         }
     }
@@ -1344,7 +1344,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         TestCache testCache = TestCache.getInstance();
         Student student = testCache.getAllStudents().get(0);
         boolean hasRemain = isExistTestPlace();// 测试次数未完成
-        LogUtils.operation("足球进入下一次测试:result=" + result + ",hasRemain=" + hasRemain + ",stuCode=" + student.getStudentCode());
+        LogUtils.operation("足球进入下一次测试:成绩=" + result + ",测试次数未完成=" + hasRemain + ",准考证号=" + student.getStudentCode());
         return hasRemain;
     }
 
@@ -1488,11 +1488,12 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
             }
         });
     }
+
     @Override
     public void setRoundNo(Student student, int roundNo) {
-        for (StuDevicePair pair : pairs){
+        for (StuDevicePair pair : pairs) {
             Student student1 = pair.getStudent();
-            if (student1 != null && student1.getStudentCode().equals(student.getStudentCode())){
+            if (student1 != null && student1.getStudentCode().equals(student.getStudentCode())) {
                 pair.setCurrentRoundNo(roundNo);
             }
         }

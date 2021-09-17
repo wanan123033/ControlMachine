@@ -63,7 +63,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
         this.hostId = hostId;
         TARGET_FREQUENCY = SettingHelper.getSystemSetting().getUseChannel();
         RadioChannelCommand command = new RadioChannelCommand(TARGET_FREQUENCY);
-        LogUtils.normal(command.getCommand().length + "---" + StringUtility.bytesToHexString(command.getCommand()) + "---引体向上切频指令");
+        LogUtils.serial("引体向上切频指令" + StringUtility.bytesToHexString(command.getCommand()) + "---");
         RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(TARGET_FREQUENCY)));
         this.listener = listener;
         executor = Executors.newCachedThreadPool();
@@ -190,21 +190,19 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
                         return;
                     }
                     sitUpLists.add(result);
-                    if(result.getResult() != hand){
+                    if (result.getResult() != hand) {
 //                        updateResult(result);
                         hand = result.getResult();
                         high = result;
                         updateResult();
                     }
 
-                    LogUtils.normal("手臂检测====" + result.toString());
+                    LogUtils.all("手臂检测====" + result.toString());
                 }
 
                 break;
         }
     }
-
-
 
 
     private synchronized void updateResult(PullUpStateResult pull) {
@@ -213,8 +211,8 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
         }
         high = getHeightSitResult();
         low = getLowSitResult();
-        LogUtils.normal(pull.getResult() + "==========引体向上数据变化更新===========" + tmp + "hand==" + hand);
-        LogUtils.normal(high.getAngle() + "======高点与低点角度===========" + low.getAngle());
+        LogUtils.all(pull.getResult() + "==========引体向上数据变化更新===========" + tmp + "hand==" + hand);
+        LogUtils.all(high.getAngle() + "======高点与低点角度===========" + low.getAngle());
 //        int t = hand - handCheck;
         if (Math.abs(high.getAngle() - low.getAngle()) > 55) {
 //            if (t > 1) {
@@ -223,7 +221,7 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
 //                tmp++;
 //            }
             tmp++;
-        } else{
+        } else {
             //此次操作违规
             invalid++;
         }
@@ -242,35 +240,36 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
     private ArmStateResult low;
     private final int sendPull = 0xf1;
     private volatile int delayPull;
-    private  void updateResult(ArmStateResult armState) {
+
+    private void updateResult(ArmStateResult armState) {
         if (tmpResult == null)
             return;
         high = getHeightSitResult();
         low = getLowSitResult();
         if (Math.abs(high.getAngle() - low.getAngle()) > 55) {
-            if (tmpResult.getResult()>tmp){
+            if (tmpResult.getResult() > tmp) {
                 tmp = tmpResult.getResult();
-                tmpResult.setValidCountNum(armState.getResult()-invalid);
+                tmpResult.setValidCountNum(armState.getResult() - invalid);
                 sitUpLists.clear();
                 listener.onScoreArrived(tmpResult);
                 String displayInLed = "成绩:" + ResultDisplayUtils.getStrResultForDisplay(tmpResult.getResult());
                 ledManager.showString(SettingHelper.getSystemSetting().getHostId(), displayInLed, 1, 1, false, true);
-            }else {
+            } else {
                 //此处可能是还没有收到数值变化，需要进一步判断再隔0.5s判断
-                mHandler.sendEmptyMessageDelayed(sendPull,500);
+                mHandler.sendEmptyMessageDelayed(sendPull, 500);
                 delayPull = armState.getResult();
             }
 
         }
     }
 
-    private void updateResult(){
+    private void updateResult() {
         Observable.zip(getStringObservable(), getIntegerObservable(), new BiFunction<PullUpStateResult, ArmStateResult, Integer>() {
             @Override
             public Integer apply(@NonNull PullUpStateResult s, @NonNull ArmStateResult result) throws Exception {
-                if (s.getResult()-tmp>2){
-                    invalid += s.getResult()-tmp;
-                    LogUtils.normal("invalid:"+invalid);
+                if (s.getResult() - tmp > 2) {
+                    invalid += s.getResult() - tmp;
+                    LogUtils.all("invalid:" + invalid);
                 }
                 tmp = s.getResult();
 
@@ -279,21 +278,22 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
         }).subscribe(new Consumer<Integer>() {
             @Override
             public void accept(@NonNull Integer r) throws Exception {
-                tmpResult.setValidCountNum(r-invalid);
+                tmpResult.setValidCountNum(r - invalid);
                 listener.onScoreArrived(tmpResult);
                 String displayInLed = "成绩:" + ResultDisplayUtils.getStrResultForDisplay(tmpResult.getResult());
                 ledManager.showString(SettingHelper.getSystemSetting().getHostId(), displayInLed, 1, 1, false, true);
             }
         });
     }
+
     private Observable<PullUpStateResult> getStringObservable() {
         return Observable.create(new ObservableOnSubscribe<PullUpStateResult>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<PullUpStateResult> e) throws Exception {
-                if (!e.isDisposed() && tmpResult!= null) {
+                if (!e.isDisposed() && tmpResult != null) {
                     e.onNext(tmpResult);
-                    Log.i("pullArm",tmpResult.toString());
-                    LogUtils.normal(tmpResult.toString());
+                    Log.i("pullArm", tmpResult.toString());
+                    LogUtils.all(tmpResult.toString());
                 }
             }
         });
@@ -303,26 +303,26 @@ public class PullSitUpTestFacade implements RadioManager.OnRadioArrivedListener,
         return Observable.create(new ObservableOnSubscribe<ArmStateResult>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<ArmStateResult> e) throws Exception {
-                if (!e.isDisposed() && high!=null) {
+                if (!e.isDisposed() && high != null) {
                     e.onNext(high);
-                    Log.i("pullArm",high.toString());
-                    LogUtils.normal(high.toString());
+                    Log.i("pullArm", high.toString());
+                    LogUtils.all(high.toString());
                 }
             }
         });
     }
 
-    private Handler mHandler = new Handler(Looper.myLooper()){
+    private Handler mHandler = new Handler(Looper.myLooper()) {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case sendPull:
-                    if (tmpResult.getResult()>tmp){
+                    if (tmpResult.getResult() > tmp) {
                         tmp = tmpResult.getResult();
-                    }else {
+                    } else {
                         invalid++;
                     }
-                    tmpResult.setValidCountNum(delayPull-invalid);
+                    tmpResult.setValidCountNum(delayPull - invalid);
                     sitUpLists.clear();
                     listener.onScoreArrived(tmpResult);
                     String displayInLed = "成绩:" + ResultDisplayUtils.getStrResultForDisplay(tmpResult.getResult());

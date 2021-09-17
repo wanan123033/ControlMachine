@@ -43,14 +43,9 @@ public class PullUpStateResult implements IDeviceResult {
         state = data[10] & 0xff;
         batteryLeft = data[11] & 0xff;
         interval = data[12] & 0xff;
-        if (SerialConfigs.LOGGER_STATE == 0) {
 
-            LogUtils.normal("引体向上返回数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
-        } else {
-            LogUtils.operation("引体向上返回数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
-
-        }
-
+        LogUtils.serial("引体向上返回数据(解析前):" + StringUtility.bytesToHexString(data));
+        LogUtils.serial("引体向上返回数据(解析后):" + toString());
     }
 
     public PullUpStateResult() {

@@ -139,9 +139,9 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
 
     @Override
     public void setRoundNo(Student student, int roundNo) {
-        for (StuDevicePair pair : pairs){
+        for (StuDevicePair pair : pairs) {
             Student student1 = pair.getStudent();
-            if (student1 != null && student1.getStudentCode().equals(student.getStudentCode())){
+            if (student1 != null && student1.getStudentCode().equals(student.getStudentCode())) {
                 pair.setCurrentRoundNo(roundNo);
             }
         }
@@ -503,7 +503,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         List<MachineResult> machineResultList = DBManager.getInstance().getItemRoundMachineResult(student.getStudentCode()
                 , testNo,
                 roundNo);
-        List<RoundResult> results1 = DBManager.getInstance().queryResultsByStudentCode(TestConfigs.getCurrentItemCode(),student.getStudentCode(),roundNo);
+        List<RoundResult> results1 = DBManager.getInstance().queryResultsByStudentCode(TestConfigs.getCurrentItemCode(), student.getStudentCode(), roundNo);
         MachineResult machineResult = new MachineResult();
         machineResult.setItemCode(TestConfigs.getCurrentItemCode());
         machineResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
@@ -515,8 +515,8 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         if (machineResultList.size() == 0 || machineResultList == null || results1 == null || results1.size() == 0) {
             machineResultList.add(machineResult);
             addRoundResult(result);
-            if (resultList.isEmpty()){
-                resultList.add(new BasketBallTestResult(roundNo,machineResultList,0, -999, 0, -999));
+            if (resultList.isEmpty()) {
+                resultList.add(new BasketBallTestResult(roundNo, machineResultList, 0, -999, 0, -999));
             }
             resultList.get(resultAdapter.getSelectPosition()).setMachineResultList(machineResultList);
             resultList.get(resultAdapter.getSelectPosition()).setSelectMachineResult(machineResult.getResult());
@@ -586,7 +586,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
     public void getStatusStop(BasketballResult result) {
         //非测试不做处理
         if (result != null)
-            LogUtils.operation("篮球停止计时:state=" + state + ",result=" + result.getResult() + "---" + result.toString());
+            LogUtils.operation("篮球停止计时:状态=" + state + ",成绩=" + result.getResult());
         if (state == WAIT_FREE || state == WAIT_CHECK_IN || state == WAIT_CONFIRM) {
             return;
         }
@@ -668,8 +668,8 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         resultList.clear();
         for (int i = 0; i < TestConfigs.getMaxTestCount(this); i++) {
             RoundResult roundResult = DBManager.getInstance().queryRoundByRoundNo(student.getStudentCode(), testNo, i + 1);
-            StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
-            if (studentItem.getExamType() == 2){
+            StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(), student.getStudentCode());
+            if (studentItem.getExamType() == 2) {
                 roundResult = null;
             }
             if (roundResult == null) {
@@ -682,7 +682,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                         testNo, i + 1);
                 resultList.add(new BasketBallTestResult(i + 1, machineResultList, roundResult.getMachineResult(), roundResult.getResult(), roundResult.getPenaltyNum(), roundResult.getResultState()));
             }
-            Log.e("TAG----",resultList.size()+"---");
+            Log.e("TAG----", resultList.size() + "---");
         }
 
     }
@@ -913,7 +913,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
     private void print() {
         if (pairs.get(0).getStudent() != null) {
             TestCache testCache = TestCache.getInstance();
-            LogUtils.operation("打印成绩信息:testCache=" + testCache.toString());
+
             InteractUtils.printResults(null, testCache.getAllStudents(), testCache.getResults(),
                     TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
         }
@@ -1034,10 +1034,10 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                     roundResult.setMachineResult(0);
                     roundResult.setResultState(testResult.getResultState());
                     roundResult.setTestTime(System.currentTimeMillis() + "");
-                    if (pair.getCurrentRoundNo() != 0){
+                    if (pair.getCurrentRoundNo() != 0) {
                         roundResult.setRoundNo(pair.getCurrentRoundNo());
                         pair.setCurrentRoundNo(0);
-                    }else {
+                    } else {
                         roundResult.setRoundNo(resultList.get(i).getRoundNo());
                     }
                     roundResult.setTestNo(testNo);
@@ -1151,11 +1151,11 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         roundResult.setItemCode(TestConfigs.getCurrentItemCode());
         roundResult.setResult(basketballResult.getResult());
         roundResult.setMachineResult(basketballResult.getResult());
-        if (pairs.get(0).getCurrentRoundNo() != 0){
+        if (pairs.get(0).getCurrentRoundNo() != 0) {
             roundResult.setRoundNo(pairs.get(0).getCurrentRoundNo());
             pairs.get(0).setCurrentRoundNo(0);
             roundResult.setResultTestState(1);
-        }else {
+        } else {
             roundResult.setRoundNo(roundNo);
         }
         roundResult.setTestNo(TestCache.getInstance().getTestNoMap().get(student));
@@ -1179,7 +1179,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 DBManager.getInstance().updateRoundResult(bestResult);
             }
         }
-        LogUtils.operation("篮球拦截添加新成绩:" + roundResult.getResult() + "---" + roundResult.toString());
+        LogUtils.operation("篮球拦截添加新成绩:" + roundResult.toString());
         DBManager.getInstance().insertRoundResult(roundResult);
         //获取所有成绩设置为非最好成绩
         List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(mStudentItem);

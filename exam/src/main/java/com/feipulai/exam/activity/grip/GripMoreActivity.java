@@ -131,7 +131,7 @@ public class GripMoreActivity extends BaseMoreActivity {
 
     @Override
     protected void sendTestCommand(BaseStuPair pair, int index) {
-        LogUtils.operation("、开始测试:index=" + index + ",pair=" + pair.toString());
+        LogUtils.operation("开始测试:设备号=" + index + "," + pair.getStudent().toString());
         pair.setTestTime(DateUtil.getCurrentTime() + "");
         pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
         updateDevice(pair.getBaseDevice());

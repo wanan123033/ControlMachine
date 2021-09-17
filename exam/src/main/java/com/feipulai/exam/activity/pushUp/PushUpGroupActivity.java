@@ -485,7 +485,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
         tvResult.setText(student.getStudentName());
 
         List<RoundResult> results = TestCache.getInstance().getResults().get(student);
-        LogUtils.operation("俯卧撑当前测试考生:" + student.toString() + "---当前已有成绩results = " + results.toString());
+        LogUtils.operation("俯卧撑当前测试考生:" + student.toString() + "---当前已有成绩 = " + results.toString());
 
         prepareView(true,
                 results == null || results.size() < TestConfigs.getMaxTestCount(this),

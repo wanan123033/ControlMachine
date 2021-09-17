@@ -39,12 +39,12 @@ public class AndroidDiskFormatStrategy implements FormatStrategy{
 		builder.append(dateFormat.format(date));
 		builder.append(SEPARATOR);
 		
-		// log level
-		builder.append(Utils.logLevel(priority));
-		
-		// tag
-		builder.append(SEPARATOR);
-		builder.append(tag);
+//		// log level
+//		builder.append(Utils.logLevel(priority));
+//
+//		// tag
+//		builder.append(SEPARATOR);
+//		builder.append(tag);
 		
 		// message
 		builder.append(SEPARATOR);

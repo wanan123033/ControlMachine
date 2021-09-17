@@ -150,7 +150,7 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
 
         stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
         pairs = CheckUtils.newPairs(stuPairs.size(),stuPairs);
-        LogUtils.operation("篮球获取到分组学生:" + pairs.size() + "---" + pairs.toString());
+//        LogUtils.operation("篮球获取到分组学生:" + pairs.size() + "---" + pairs.toString());
         CheckUtils.groupCheck(pairs);
 
         rvTestingPairs.setLayoutManager(new LinearLayoutManager(this));

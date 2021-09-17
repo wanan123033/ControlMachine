@@ -122,7 +122,6 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements B
     }
     private boolean isConfigurableNow() {
         boolean flag = !(state == WAIT_FREE || state == WAIT_CHECK_IN || state == WAIT_BEGIN);
-        LogUtils.operation("篮球isConfigurableNow(是否是使用中) = " + flag);
         return flag;
     }
     @Override

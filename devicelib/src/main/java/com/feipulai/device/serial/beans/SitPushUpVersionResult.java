@@ -32,12 +32,10 @@ public class SitPushUpVersionResult {
 		deviceId = data[4] & 0xff;
 		version = (data[8] >>> 4) + "." + (data[8] & 0x0f) + "." + (data[9] & 0xff);
 		publishDay = (2000 + (data[10] & 0xff)) + "" + String.format("%02d",(data[11] & 0xff)) + String.format("%02d",(data[12] & 0xff));
-		if (SerialConfigs.LOGGER_STATE == 0) {
-			LogUtils.normal("仰卧起坐俯卧撑返回设备版本数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
-		}else {
-			LogUtils.operation("仰卧起坐俯卧撑返回设备版本数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
 
-		}
+
+		LogUtils.serial("仰卧起坐俯卧撑返回设备版本数据(解析前):" + StringUtility.bytesToHexString(data));
+		LogUtils.serial("仰卧起坐俯卧撑返回设备版本数据(解析后):" + toString());
 	}
 	
 	public int getDeviceId(){

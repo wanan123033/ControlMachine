@@ -28,7 +28,7 @@ public class SystemSetting {
     /**
      * 服务器Ip
      */
-    private String serverIp;
+    private String serverIp="192.168.0.100:7979";
 
     /**
      * tcp ip

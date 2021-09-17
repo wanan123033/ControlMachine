@@ -45,7 +45,7 @@ public class PullUpTestFacade implements RadioManager.OnRadioArrivedListener,
         this.hostId = hostId;
         TARGET_FREQUENCY =  SettingHelper.getSystemSetting().getUseChannel();
         RadioChannelCommand command = new RadioChannelCommand(TARGET_FREQUENCY);
-        LogUtils.normal(command.getCommand().length+"---"+ StringUtility.bytesToHexString(command.getCommand())+"---引体向上切频指令");
+        LogUtils.serial( "引体向上切频指令"+ StringUtility.bytesToHexString(command.getCommand())+"---");
         RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(TARGET_FREQUENCY)));
         this.listener = listener;
         executor = Executors.newCachedThreadPool();

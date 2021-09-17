@@ -26,7 +26,7 @@ public class MedicineBallMore {
         cmd[5] = (byte) hosId;
         cmd[6] = (byte) deviceId;
         cmd[19] = (byte) sum(cmd, 19);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---实心球空指令");
+        LogUtils.serial("实心球空指令:" + StringUtility.bytesToHexString(cmd));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                 cmd));
     }
@@ -36,7 +36,7 @@ public class MedicineBallMore {
         cmd[5] = (byte) hostId;
         cmd[6] = (byte) (deviceId&0xff);
         cmd[19] = (byte) sum(cmd, 19);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---实心球开始指令");
+        LogUtils.serial("实心球开始指令:" + StringUtility.bytesToHexString(cmd));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                 cmd));
     }
@@ -46,7 +46,7 @@ public class MedicineBallMore {
         cmd[5] = (byte) hostId;
         cmd[6] = (byte) (deviceId&0xff);
         cmd[19] = (byte) sum(cmd, 19);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---实心球获取状态指令");
+        LogUtils.serial("实心球获取状态指令:" + StringUtility.bytesToHexString(cmd));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                 cmd));
     }
@@ -93,10 +93,8 @@ public class MedicineBallMore {
         buf[20] = 0x0d;   //包尾
         //Logger.i(StringUtility.bytesToHexString(buf));
         //先切到通信频段
-        LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---实心球设置参数指令");
+        LogUtils.serial("实心球配对指令:" + StringUtility.bytesToHexString(buf));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
-        RadioChannelCommand command1 = new RadioChannelCommand(targetChannel);
-        LogUtils.normal(command1.getCommand().length+"---"+ StringUtility.bytesToHexString(command1.getCommand())+"---实心球切频指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(targetChannel)));
     }
 }

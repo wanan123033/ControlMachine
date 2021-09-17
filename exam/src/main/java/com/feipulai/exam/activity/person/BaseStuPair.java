@@ -27,11 +27,11 @@ public class BaseStuPair implements Serializable {
     //轮次成绩
     private String[] timeResult;
     //可测试
-    private boolean canTest ;
+    private boolean canTest;
     //可检入
-    private boolean canCheck ;
+    private boolean canCheck;
     //是否最好
-    private boolean notBest ;
+    private boolean notBest;
     private int baseHeight;
     private boolean devicePairState = false;  //true 已配对  false 没有配对
     private int penaltyNum;
@@ -173,6 +173,7 @@ public class BaseStuPair implements Serializable {
     }
 
 
+
     public void setDevicePairState(boolean devicePairState) {
         this.devicePairState = devicePairState;
     }
@@ -184,6 +185,7 @@ public class BaseStuPair implements Serializable {
     public int getPenaltyNum() {
         return penaltyNum;
     }
+
     public void setPenaltyNum(int penaltyNum) {
         this.penaltyNum = penaltyNum;
     }

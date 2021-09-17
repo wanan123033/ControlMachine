@@ -812,7 +812,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
      * @param deviceState
      */
     public void updateDevice(@NonNull BaseDeviceState deviceState) {
-        LogUtils.operation("更新设备状态:" + deviceState);
+//        LogUtils.operation("更新设备状态:" + deviceState);
         if (stuAdapter == null || stuAdapter.getTestPosition() == -1)
             return;
 
@@ -910,7 +910,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
      * @param baseStuPair 当前设备
      */
     private void saveResult(@NonNull BaseStuPair baseStuPair) {
-        LogUtils.operation("保存成绩:" + baseStuPair.toString());
+        LogUtils.all("保存成绩:" + baseStuPair.toString());
         RoundResult roundResult = new RoundResult();
         roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
         roundResult.setStudentCode(baseStuPair.getStudent().getStudentCode());

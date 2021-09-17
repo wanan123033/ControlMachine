@@ -67,14 +67,9 @@ public class MedicineBallNewResult {
                 bit >>= 1;
             }
         }
-        if (SerialConfigs.LOGGER_STATE == 0) {
-            LogUtils.normal("实心球返回数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
 
-        } else {
-            LogUtils.operation("实心球返回数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
-
-        }
-
+        LogUtils.serial("实心球返回数据(解析前):" + StringUtility.bytesToHexString(data));
+        LogUtils.serial("实心球返回数据(解析后):" + toString());
     }
 
     public int getSweepPoint() {

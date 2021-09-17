@@ -50,8 +50,8 @@ public class SportTimerManger {
         data[14] = (byte) 0x0d;
 
         RadioChannelCommand command = new RadioChannelCommand(targetFrequency);
-        LogUtils.operation(data.length + "---" + StringUtility.bytesToHexString(data) + "---运动计时设置参数指令");
-        LogUtils.operation(command.getCommand().length + "---" + StringUtility.bytesToHexString(command.getCommand()) + "---运动计时切换到指定频道指令");
+        LogUtils.serial("运动计时设置参数指令" + StringUtility.bytesToHexString(data));
+        LogUtils.serial("运动计时切换到指定频道指令" + StringUtility.bytesToHexString(command.getCommand()));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
         RadioManager.getInstance().sendCommand(new ConvertCommand(command));
     }
@@ -80,11 +80,12 @@ public class SportTimerManger {
         }
         data[12] = (byte) 0x0d;
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
-        LogUtils.operation(data.length + "---" + StringUtility.bytesToHexString(data) + "---运动计时联络信号设备号是： "+deviceId);
+        LogUtils.serial("运动计时联络信号设备号是： " + StringUtility.bytesToHexString(data));
     }
 
     /**
      * 同步时间
+     *
      * @param hostId
      * @param time
      */
@@ -110,11 +111,12 @@ public class SportTimerManger {
         }
         data[14] = (byte) 0x0d;
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
-        LogUtils.operation(data.length + "---" + StringUtility.bytesToHexString(data) + "---运动计时同步时间");
+        LogUtils.serial("运动计时同步时间： " + StringUtility.bytesToHexString(data));
     }
 
     /**
      * 同步时间
+     *
      * @param deviceId
      * @param hostId
      * @param time
@@ -141,10 +143,10 @@ public class SportTimerManger {
         }
         data[14] = (byte) 0x0d;
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
-        LogUtils.operation(data.length + "---" + StringUtility.bytesToHexString(data) + "---运动计时同步时间deviceId:"+deviceId);
+        LogUtils.serial("运动计时同步时间deviceId： " + StringUtility.bytesToHexString(data));
     }
 
-    public void getTime(int deviceId, int hostId){
+    public void getTime(int deviceId, int hostId) {
         byte data[] = new byte[13];
         data[0] = (byte) 0xAA;
         data[1] = (byte) 13;
@@ -162,7 +164,7 @@ public class SportTimerManger {
         }
         data[12] = (byte) 0x0d;
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
-        LogUtils.operation(data.length + "---" + StringUtility.bytesToHexString(data) + "---运动计时获取时间设备号是： "+deviceId);
+        LogUtils.serial("运动计时获取时间设备号是： " + StringUtility.bytesToHexString(data));
     }
 
     /**
@@ -184,7 +186,7 @@ public class SportTimerManger {
      *                 【N-2】检验和，1字节，sum={1:N-3}
      *                 【N-1】包尾，1字节,0x0D
      */
-    public void getRecentCache(int deviceId, int hostId,int index) {
+    public void getRecentCache(int deviceId, int hostId, int index) {
         byte data[] = new byte[14];
         data[0] = (byte) 0xAA;
         data[1] = (byte) 14;
@@ -203,27 +205,27 @@ public class SportTimerManger {
         }
         data[13] = (byte) 0x0d;
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
-        LogUtils.operation(data.length + "---" + StringUtility.bytesToHexString(data) + "---运动计时读取缓存设备号是： "+deviceId+"包序是："+index);
+        LogUtils.serial("运动计时读取缓存： " + StringUtility.bytesToHexString(data));
     }
 
     /**
      * 设置子机工作状态
+     *
      * @param hostId
-     * @param state
-     * 【0】包头，1字节，0XAA
-     * 【1】包长，1字节，N=12
-     * 【2】项目编号，1字节，0x0E （运动计时仪）
-     * 【3】目标设备编号，1字节，0x03计时子机
-     * 【4】本设备编号，1字节，0x01 安卓机
-     * 【5】本主机号，1字节
-     * 【6】目标设备子机号，1字节，0xFF表示所有子机
-     * 【7】命令字，1字节，03
-     * 【8】状态，1字节，0停止计时 1开始计时
-     * 【N-3】预留，1字节，0x00
-     * 【N-2】检验和，1字节，sum={1:N-3}
-     * 【N-1】包尾，1字节,0x0D
+     * @param state  【0】包头，1字节，0XAA
+     *               【1】包长，1字节，N=12
+     *               【2】项目编号，1字节，0x0E （运动计时仪）
+     *               【3】目标设备编号，1字节，0x03计时子机
+     *               【4】本设备编号，1字节，0x01 安卓机
+     *               【5】本主机号，1字节
+     *               【6】目标设备子机号，1字节，0xFF表示所有子机
+     *               【7】命令字，1字节，03
+     *               【8】状态，1字节，0停止计时 1开始计时
+     *               【N-3】预留，1字节，0x00
+     *               【N-2】检验和，1字节，sum={1:N-3}
+     *               【N-1】包尾，1字节,0x0D
      */
-    public void setDeviceState( int hostId,int state){
+    public void setDeviceState(int hostId, int state) {
         byte data[] = new byte[12];
         data[0] = (byte) 0xAA;
         data[1] = (byte) 12;
@@ -233,17 +235,17 @@ public class SportTimerManger {
         data[5] = (byte) hostId;
         data[6] = (byte) 0xff;
         data[7] = (byte) 3;
-        data[8] = (byte) (state&0xff);
+        data[8] = (byte) (state & 0xff);
         data[9] = (byte) 0x00;
         for (int i = 1; i <= data.length - 3; i++) {
             data[10] += data[i];
         }
         data[11] = (byte) 0x0d;
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
-        LogUtils.operation(data.length + "---" + StringUtility.bytesToHexString(data) + "---运动计时设置工作状态");
+        LogUtils.serial("运动计时设置工作状态： " + StringUtility.bytesToHexString(data));
     }
 
-    public void setDeviceState(int deviceId, int hostId,int state){
+    public void setDeviceState(int deviceId, int hostId, int state) {
         byte data[] = new byte[12];
         data[0] = (byte) 0xAA;
         data[1] = (byte) 12;
@@ -251,20 +253,21 @@ public class SportTimerManger {
         data[3] = (byte) 0x03;
         data[4] = (byte) 0X01;
         data[5] = (byte) hostId;
-        data[6] = (byte) (deviceId&0xff);
+        data[6] = (byte) (deviceId & 0xff);
         data[7] = (byte) 3;
-        data[8] = (byte) (state&0xff);
+        data[8] = (byte) (state & 0xff);
         data[9] = (byte) 0x00;
         for (int i = 1; i <= data.length - 3; i++) {
             data[10] += data[i];
         }
         data[11] = (byte) 0x0d;
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
-        LogUtils.operation(data.length + "---" + StringUtility.bytesToHexString(data) + "---运动计时设置工作状态"+"deviceId:"+deviceId);
+        LogUtils.serial("运动计时设置工作状态： " + StringUtility.bytesToHexString(data));
     }
 
     /**
      * 获取工作状态
+     *
      * @param deviceId
      * @param hostId
      */
@@ -286,6 +289,6 @@ public class SportTimerManger {
         }
         data[12] = (byte) 0x0d;
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
-        LogUtils.operation(data.length + "---" + StringUtility.bytesToHexString(data) + "---运动计时获取设备状态： "+deviceId);
+        LogUtils.serial("运动计时获取设备状态： " + StringUtility.bytesToHexString(data));
     }
 }

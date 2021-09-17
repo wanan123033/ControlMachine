@@ -41,15 +41,10 @@ public class SargentJumpResult{
 		if (data[7] == 0x01){
 		    hostId = data[11];
         }
-//		Log.i("sargent",StringUtility.bytesToHexString(data));
-        if (SerialConfigs.LOGGER_STATE == 0) {
 
-            LogUtils.normal("跳远返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
-        }else{
-            LogUtils.operation("跳远返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
 
-        }
-
+        LogUtils.serial("跳远返回数据(解析前):" + StringUtility.bytesToHexString(data));
+        LogUtils.serial("跳远返回数据(解析后):" + toString());
     }
 	
 	public int getScore(){

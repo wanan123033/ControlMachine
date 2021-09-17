@@ -144,13 +144,9 @@ public class ShoulderResult implements IDeviceResult {
                 break;
 
         }
-        if (SerialConfigs.LOGGER_STATE == 0) {
-
-            LogUtils.normal("肩胛返回设备数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
-        } else {
-            LogUtils.operation("肩胛返回设备数据(解析前):" + data.length + "---" + StringUtility.bytesToHexString(data) + "---\n(解析后):" + toString());
-
-        }
+ 
+        LogUtils.serial("肩胛返回设备数据(解析前):" + StringUtility.bytesToHexString(data));
+        LogUtils.serial("肩胛返回设备数据(解析后):" + toString());
     }
 
     @Override

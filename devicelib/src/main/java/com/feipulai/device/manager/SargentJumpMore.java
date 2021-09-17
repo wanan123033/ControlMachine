@@ -24,7 +24,7 @@ public class SargentJumpMore {
         cmd[6] = 0x01;
         cmd[7] = 0x03;
         cmd[8] = (byte) sum(cmd, 8);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---摸高开始测试指令");
+        LogUtils.serial("摸高开始测试指令:" + StringUtility.bytesToHexString(cmd));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                 cmd));
     }
@@ -43,7 +43,7 @@ public class SargentJumpMore {
         cmd[6] = 0x01;
         cmd[7] = 0x02;
         cmd[8] = (byte) sum(cmd, 8);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---摸高空指令");
+        LogUtils.serial("摸高空指令:" + StringUtility.bytesToHexString(cmd));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                 cmd));
     }
@@ -53,6 +53,8 @@ public class SargentJumpMore {
         byte[] cmd = CMD_SARGENT_JUMP_LIGHT_UP;
         cmd[4] = (byte) deviceId;
         cmd[10] = (byte) sum(cmd, 10);
+        LogUtils.serial("摸高LED亮度:" + StringUtility.bytesToHexString(cmd));
+
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                 cmd));
     }
@@ -61,6 +63,7 @@ public class SargentJumpMore {
         byte[] cmd = CMD_SARGENT_JUMP_LIGHT_UP;
         cmd[4] = (byte) 1;
         cmd[10] = (byte) sum(cmd, 10);
+        LogUtils.serial("摸高LED亮度:" + StringUtility.bytesToHexString(cmd));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                 cmd));
     }
@@ -69,6 +72,7 @@ public class SargentJumpMore {
         byte[] cmd = CMD_SARGENT_JUMP_LIGHT_DOWN;
         cmd[4] = (byte) deviceId;
         cmd[10] = (byte) sum(cmd, 10);
+        LogUtils.serial("摸高LED亮度:" + StringUtility.bytesToHexString(cmd));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                 cmd));
     }
@@ -77,6 +81,7 @@ public class SargentJumpMore {
         byte[] cmd = CMD_SARGENT_JUMP_LIGHT_DOWN;
         cmd[4] = (byte) 1;
         cmd[10] = (byte) sum(cmd, 10);
+        LogUtils.serial("摸高LED亮度:" + StringUtility.bytesToHexString(cmd));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                 cmd));
     }
@@ -85,7 +90,7 @@ public class SargentJumpMore {
         byte[] cmd = CMD_SARGENT_JUMP_CHECK_SELF;
         cmd[4] = (byte) deviceId;
         cmd[8] = (byte) sum(cmd, 8);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---摸高自检指令");
+        LogUtils.serial("摸高自检指令:" + StringUtility.bytesToHexString(cmd));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                 cmd));
     }
@@ -97,7 +102,7 @@ public class SargentJumpMore {
         byte[] cmd = CMD_SARGENT_JUMP_CHECK_SELF;
         cmd[4] = (byte) 0;
         cmd[8] = (byte) sum(cmd, 8);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---摸高自检指令");
+        LogUtils.serial("摸高自检指令:" + StringUtility.bytesToHexString(cmd));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                 cmd));
     }
@@ -106,7 +111,7 @@ public class SargentJumpMore {
         byte[] cmd = CMD_SARGENT_JUMP_IGNORE_BREAK_POINT;
         cmd[4] = (byte) deviceId;
         cmd[8] = (byte) sum(cmd, 8);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---摸高0点设置指令");
+        LogUtils.serial("摸高忽略坏点指令:" + StringUtility.bytesToHexString(cmd));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                 cmd));
     }
@@ -118,7 +123,7 @@ public class SargentJumpMore {
         byte[] cmd = CMD_SARGENT_JUMP_IGNORE_BREAK_POINT;
         cmd[4] = (byte) 1;
         cmd[8] = (byte) sum(cmd, 8);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---摸高0点设置指令");
+        LogUtils.serial("摸高忽略坏点指令:" + StringUtility.bytesToHexString(cmd));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                 cmd));
     }
@@ -135,7 +140,7 @@ public class SargentJumpMore {
             sum += data[i] & 0xff;
         }
         data[10] = (byte) sum;
-        LogUtils.normal(data.length+"---"+ StringUtility.bytesToHexString(data)+"---摸高设置高度范围指令");
+        LogUtils.serial("摸高设置高度范围指令:" + StringUtility.bytesToHexString(data));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                 data));
     }
@@ -144,7 +149,7 @@ public class SargentJumpMore {
         byte[] cmd = CMD_SARGENT_JUMP_GET_DATA;
         cmd[4] = (byte) deviceId;
         cmd[8] = (byte) sum(cmd, 8);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---摸高0点设置指令");
+        LogUtils.serial("摸高获取信息指令:" + StringUtility.bytesToHexString(cmd));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,
                 cmd));
     }

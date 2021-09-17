@@ -137,7 +137,6 @@ public class MGsonConverterFactory extends Converter.Factory {
                     return t;
                 } else {
                     try {
-                        Logger.i("httpJson====>" + httpValue);
                         T t = gson.fromJson(httpValue, type);
                         return t;
                     } catch (Exception e) {

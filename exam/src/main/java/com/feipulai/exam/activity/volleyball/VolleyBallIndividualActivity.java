@@ -264,7 +264,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         if (student != null)
             LogUtils.operation("排球检入到学生:" + student.toString());
         if (studentItem != null)
-            LogUtils.operation("排球检入到学生StudentItem:" + studentItem.toString());
+            LogUtils.all("排球检入到学生StudentItem:" + studentItem.toString());
         if (results != null)
             LogUtils.operation("排球检入到学生成绩:" + results.size() + "----" + results.toString());
 
@@ -600,13 +600,13 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
 
         switch (msg.what) {
             case VolleyBallManager.VOLLEY_BALL_DISCONNECT:
-                LogUtils.normal("排球设备断开连接...");
+                LogUtils.all("排球设备断开连接...");
                 cbDeviceState.setChecked(false);
                 pairs.get(0).getBaseDevice().setState(BaseDeviceState.STATE_DISCONNECT);
                 break;
 
             case VolleyBallManager.VOLLEY_BALL_CONNECT:
-                LogUtils.normal("排球设备已连接...");
+                LogUtils.all("排球设备已连接...");
                 cbDeviceState.setChecked(true);
                 pairs.get(0).getBaseDevice().setState(BaseDeviceState.STATE_FREE);
                 break;

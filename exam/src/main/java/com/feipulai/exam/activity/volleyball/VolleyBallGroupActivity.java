@@ -136,7 +136,6 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         setting = SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class);
 
         group = (Group) TestConfigs.baseGroupMap.get("group");
-        LogUtils.operation("排球获取到分组信息:" + group.toString());
         String type = "男女混合";
         if (group.getGroupType() == Group.MALE) {
             type = "男子";
@@ -148,7 +147,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         TestCache.getInstance().init();
         stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
         pairs = CheckUtils.newPairs(stuPairs.size(),stuPairs);
-        LogUtils.operation("排球获取分组信息:" + pairs.size() + "---" + pairs.toString());
+        LogUtils.all("排球获取分组信息:" + pairs.size() + "---" + pairs.toString());
         CheckUtils.groupCheck(pairs);
 
         rvTestingPairs.setLayoutManager(new LinearLayoutManager(this));

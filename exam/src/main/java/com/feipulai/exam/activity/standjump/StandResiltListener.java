@@ -80,7 +80,7 @@ public class StandResiltListener implements SerialDeviceManager.RS232ResiltListe
                     //设置当前设置
                     handlerInterface.getDeviceState(new BaseDeviceState(BaseDeviceState.STATE_FREE, 1));
                     handlerInterface.CheckDevice(true, result.getBrokenLEDs());
-                }else{
+                } else {
                     //测量垫检测通过
                     handlerInterface.CheckDevice(true, null);
                     handlerInterface.getDeviceState(new BaseDeviceState(BaseDeviceState.STATE_FREE, 1));
@@ -156,7 +156,7 @@ public class StandResiltListener implements SerialDeviceManager.RS232ResiltListe
 
                     handlerInterface.getResult(stuPair);
                     //结束测试 发送结束指令
-                    LogUtils.normal(SerialConfigs.CMD_END_JUMP.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_END_JUMP)+"---跳远结束测试指令");
+                    LogUtils.serial("跳远结束测试指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_END_JUMP) + "---");
 
                     SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_END_JUMP));
                     handlerInterface.EndDevice(jumpScore.isFoul(), jumpScore.getScore());
