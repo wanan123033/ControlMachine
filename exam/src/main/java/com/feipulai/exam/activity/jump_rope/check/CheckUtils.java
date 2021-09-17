@@ -1,7 +1,5 @@
 package com.feipulai.exam.activity.jump_rope.check;
 
-import android.util.Log;
-
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.JumpDeviceState;
@@ -97,13 +95,20 @@ public class CheckUtils {
 
             Student student = pairList.get(i).getStudent();
             testCache.getAllStudents().add(student);
-            testCache.getResults().put(student, (List<RoundResult>) map.get(student));
+            StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+            if (studentItem.getExamType() != 2) {
+                testCache.getResults().put(student, (List<RoundResult>) map.get(student));
+            }
             testCache.getTrackNoMap().put(student, pairList.get(i).getTrackNo());
         }
         for (int i = size; i < pairList.size(); i++) {
             Student student = pairList.get(i).getStudent();
             testCache.getAllStudents().add(student);
-            testCache.getResults().put(student, (List<RoundResult>) map.get(student));
+
+            StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+            if (studentItem.getExamType() != 2) {
+                testCache.getResults().put(student, (List<RoundResult>) map.get(student));
+            }
             testCache.getTrackNoMap().put(student, pairList.get(i).getTrackNo());
         }
         map.clear();

@@ -448,15 +448,17 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         }
         uploadResult(pair.getStudent());
         // 是否需要进行下一次测试
-        if (shouldContinue(result)) {
-            prepareForBegin();
-        } else {
-            prepareForFinish();
-        }
         StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),pair.getStudent().getStudentCode());
         if (studentItem.getExamType() == 2){
             prepareForCheckIn();
+        }else {
+            if (shouldContinue(result)) {
+                prepareForBegin();
+            } else {
+                prepareForFinish();
+            }
         }
+
     }
 
     private boolean shouldContinue(int result) {

@@ -17,6 +17,7 @@ import com.feipulai.exam.activity.SplashScreenActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.entity.Account;
+import com.feipulai.exam.netUtils.NetUtil;
 import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
 import com.feipulai.exam.utils.bluetooth.BlueToothHelper;
 import com.kk.taurus.playerbase.config.PlayerConfig;
@@ -63,7 +64,9 @@ public class MyApplication extends MultiDexApplication {
         CrashHandler.getInstance().setUploadOpersion(new CrashHandler.UploadOpersion() {
             @Override
             public void upload(String erroMsg) {
-                new HttpSubscriber().uploadLog(erroMsg);
+                if (NetUtil.isNetworkConnected()){
+                    new HttpSubscriber().uploadLog(erroMsg);
+                }
                 IntentUtil.gotoActivity(instance, SplashScreenActivity.class);
             }
         });

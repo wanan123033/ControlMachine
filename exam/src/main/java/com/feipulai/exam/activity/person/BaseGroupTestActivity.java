@@ -509,7 +509,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 penalizeDialog.setGroupId(group.getId());
                 penalizeDialog.setData(1,stuPairsList.get(stuAdapter.getTestPosition()).getStudent(),
                         stuPairsList.get(stuAdapter.getTestPosition()).getTimeResult(),lastStudent,lastResult);
-                penalizeDialog.showDialog(1);
+                penalizeDialog.showDialog(2);
                 break;
             case R.id.tv_normal:
                 penalizeDialog.setGroupId(group.getId());

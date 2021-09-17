@@ -89,6 +89,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
     protected void onResume() {
         super.onResume();
         reLoad = false;
+        deviceManager.setRS232ResiltListener(runTimerListener);
         runTimerSetting = SharedPrefsUtil.loadFormSource(this, RunTimerSetting.class);
         if (null == runTimerSetting) {
             runTimerSetting = new RunTimerSetting();
