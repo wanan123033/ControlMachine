@@ -369,12 +369,12 @@ public class SargentTestActivity extends BasePersonTestActivity {
 
     @Override
     public void onEventMainThread(BaseEvent baseEvent) {
+        super.onEventMainThread(baseEvent);
         switch (baseEvent.getTagInt()) {
             case EventConfigs.ITEM_SETTING_UPDATE:
                 initData();
                 break;
         }
-
     }
 
     private SargentJumpImpl resultImpl = new SargentJumpImpl(new SargentJumpImpl.SargentJumpListener() {
