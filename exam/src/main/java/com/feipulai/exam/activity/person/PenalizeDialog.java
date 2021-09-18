@@ -318,7 +318,7 @@ public class PenalizeDialog {
 //        List<RoundResult> roundResultList = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(student.getStudentCode(), studentItem.getExamType());
         List<RoundResult> roundResultList = DBManager.getInstance().queryResultsByStudentCode(queryStudent.getStudentCode());
         //如果是空值判罚应该增加一个值 包含groupId?
-        if (resultState == RoundResult.RESULT_STATE_FOUL && mAdapter.getClick() >= roundResultList.size()) {
+        if (resultState != RoundResult.RESULT_STATE_NORMAL && mAdapter.getClick() >= roundResultList.size()) {
             RoundResult roundResult = new RoundResult();
             StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(queryStudent.getStudentCode());
             roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());

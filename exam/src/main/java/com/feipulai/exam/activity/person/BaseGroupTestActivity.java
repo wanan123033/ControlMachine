@@ -318,19 +318,29 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 if (null !=getTestPair()){
                     RoundResult roundResult = (RoundResult) baseEvent.getData();
                     BaseStuPair baseStuPair = getTestPair();
+                    String tmp ="";
+                    if (roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL){
+                        tmp = "X";
+                    }else if (roundResult.getResultState() == RoundResult.RESULT_STATE_WAIVE){
+                        tmp = "放弃";
+                    }
+                    else if (roundResult.getResultState() == RoundResult.RESULT_STATE_BACK){
+                        tmp = "中退";
+                    }
                     //仍是当前考生
                     if (TextUtils.equals(baseStuPair.getStudent().getStudentCode(), roundResult.getStudentCode())) {
                         String[] timeResult = baseStuPair.getTimeResult();
 
-                        timeResult[penalizeDialog.getSelectPosition()] = ((roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
-                                ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()));
+                        timeResult[penalizeDialog.getSelectPosition()] = ((roundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) ?
+                                ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()):tmp);
                         baseStuPair.setTimeResult(timeResult);
                         resultList.clear();
                         resultList.addAll(Arrays.asList(timeResult));
                         testResultAdapter.notifyDataSetChanged();
                         uploadServer(baseStuPair, roundResult);
                         if (roundResult.getRoundNo() == roundNo) {
-                            updateResultLed(((roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult())));
+                            updateResultLed(((roundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) ?
+                                    ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()):tmp));
                         }
 
                         updateLastResultLed(DBManager.getInstance().queryGroupBestScore(roundResult.getStudentCode(), group.getId()));
@@ -343,8 +353,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                     }else {
                         int pos = stuAdapter.getTestPosition()-1;
                         if (pos>=0){
-                            lastResult[roundResult.getRoundNo() - 1] = ((roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
-                                    ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()));
+                            lastResult[roundResult.getRoundNo() - 1] = ((roundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) ?
+                                    ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()):tmp);
                         }
                         uploadServer(baseStuPair, roundResult);
                     }

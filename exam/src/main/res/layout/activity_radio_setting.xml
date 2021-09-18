@@ -328,8 +328,6 @@
                 android:button="@null"
                 android:drawableRight="@drawable/checkbox_switch_selected"
                 android:drawablePadding="@dimen/dp_10" />
-
-
         </LinearLayout>
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

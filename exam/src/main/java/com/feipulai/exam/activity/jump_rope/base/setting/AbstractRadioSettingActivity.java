@@ -64,8 +64,8 @@ public abstract class AbstractRadioSettingActivity
     @BindView(R.id.tv_angle_use)
     TextView mAngleUse;
     @BindView(R.id.cb_show_led)
-    CheckBox mCbShowLed;
-    private SitPushUpManager sitUpManager = new SitPushUpManager(SitPushUpManager.PROJECT_CODE_SIT_UP_HAND);
+    public CheckBox mCbShowLed;
+    public SitPushUpManager sitUpManager = new SitPushUpManager(SitPushUpManager.PROJECT_CODE_SIT_UP_HAND);
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_radio_setting;
