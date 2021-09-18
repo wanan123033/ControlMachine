@@ -51,6 +51,7 @@ public class SitReachMoreActivity extends BaseMoreActivity {
         super.initData();
         manager = new SitReachManager(SitReachManager.PROJECT_CODE_SIT_REACH);
         resultUpdate = new boolean[setting.getTestDeviceCount()];
+        setFaultEnable(setting.isPenalize());
     }
 
     @Override

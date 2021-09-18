@@ -33,6 +33,7 @@ import com.feipulai.exam.R;
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForGroupActivity;
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForPersonActivity;
 import com.feipulai.exam.activity.MiddleDistanceRace.MyTcpService;
+import com.feipulai.exam.activity.RadioTimer.RunTimerSelectActivity;
 import com.feipulai.exam.activity.base.BaseActivity;
 import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.basketball.util.TimerUtil;
@@ -366,7 +367,13 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                 startActivity(new Intent(Settings.ACTION_SETTINGS));
                 break;
             case R.id.card_led:
-                startActivity(new Intent(MainActivity.this, LEDSettingActivity.class));
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP){
+                    Intent intent = new Intent(MainActivity.this, RunTimerSelectActivity.class);
+                    intent.putExtra(RunTimerSelectActivity.GOTO_FLAG,11);
+                    startActivity(intent);
+                }else {
+                    startActivity(new Intent(MainActivity.this, LEDSettingActivity.class));
+                }
                 break;
             case R.id.card_device_cut:
                 startActivity(new Intent(this, MachineSelectActivity.class));
