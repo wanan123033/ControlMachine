@@ -252,6 +252,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         } else {
             toastSpeak("测试中,不允许修改设置");
         }
+
     }
 
     @Override
@@ -745,9 +746,12 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         Student student = TestCache.getInstance().getAllStudents().get(0);
         List<RoundResult> roundResults = TestCache.getInstance().getResults().get(student);
         List<String> results = new ArrayList<>(maxTestNo);
+        for (int i = 0 ; i < maxTestNo ; i++){
+            results.add(new String());
+        }
         if (roundResults != null) {
-            for (RoundResult result : roundResults) {
-                results.add(ResultDisplayUtils.getStrResultForDisplay(result.getResult()));
+            for (int i = 0 ; i < roundResults.size() ; i++) {
+                results.set(i,ResultDisplayUtils.getStrResultForDisplay(roundResults.get(i).getResult()));
             }
         }
         BasePersonTestResultAdapter adapter = new BasePersonTestResultAdapter(results);

@@ -347,8 +347,21 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                         //更新考生轮次位置
                         if (setTestPattern() == TestConfigs.GROUP_PATTERN_SUCCESIVE) {
                             //考生分组测试的成绩
-                            List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound(roundResult.getStudentCode(), group.getId() + "");
-                            roundNo = roundResultList.size() + 1;
+//                            List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound(roundResult.getStudentCode(), group.getId() + "");
+//                            roundNo = roundResultList.size() + 1;
+                            if (!SettingHelper.getSystemSetting().isIdentityMark()) {
+
+                                //连续测试
+                                if (setTestPattern() == 0) {
+                                    continuousTest();
+                                } else {
+                                    //循环
+                                    loopTest();
+                                }
+                            } else {
+                                //身份验证下一轮
+                                identityMarkTest();
+                            }
                         }
                     }else {
                         int pos = stuAdapter.getTestPosition()-1;

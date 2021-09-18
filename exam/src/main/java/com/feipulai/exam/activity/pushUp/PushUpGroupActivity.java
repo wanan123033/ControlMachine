@@ -655,9 +655,12 @@ public class PushUpGroupActivity extends BaseTitleActivity
         List<RoundResult> roundResults = TestCache.getInstance().getResults().get(student);
         // Log.i("james", roundResults.toString());
         List<String> results = new ArrayList<>(maxTestNo);
+        for (int i = 0 ; i < maxTestNo ; i++){
+            results.add(new String());
+        }
         if (roundResults != null) {
-            for (RoundResult result : roundResults) {
-                results.add(ResultDisplayUtils.getStrResultForDisplay(result.getResult()));
+            for (int j = 0 ; j < roundResults.size() ; j++){
+                results.set(j,ResultDisplayUtils.getStrResultForDisplay(roundResults.get(j).getResult()));
             }
         }
         BasePersonTestResultAdapter adapter = new BasePersonTestResultAdapter(results);

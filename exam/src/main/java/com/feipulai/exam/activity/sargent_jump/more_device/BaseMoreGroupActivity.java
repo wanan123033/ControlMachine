@@ -31,6 +31,7 @@ import com.feipulai.exam.activity.data.DataRetrieveActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
+import com.feipulai.exam.activity.person.PenalizeDialog;
 import com.feipulai.exam.activity.sargent_jump.adapter.DeviceListAdapter;
 import com.feipulai.exam.activity.sargent_jump.adapter.StuAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -79,6 +80,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
     public List<DeviceDetail> deviceDetails = new ArrayList<>();
     private int deviceCount;
     private boolean isPenalize;
+    private PenalizeDialog penalizeDialog;
     /**
      * 当前测试次数位
      */
@@ -136,6 +138,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
             }
         }, 3000);
         setDeviceCount(setTestDeviceCount());
+        penalizeDialog = new PenalizeDialog(this,setTestCount());
     }
 
     @Override
@@ -396,21 +399,25 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                     case R.id.txt_punish:
                         if (pair.getStudent() != null) {
 //                            penalize(pos);
-                            DataRetrieveBean bean = new DataRetrieveBean();
-                            bean.setStudentCode(pair.getStudent().getStudentCode());
-                            bean.setSex(pair.getStudent().getSex());
-                            bean.setTestState(1);
-                            bean.setGroupId(group.getId());
-                            bean.setScheduleNo(group.getScheduleNo());
-                            bean.setExamType(group.getExamType());
-                            bean.setStudentName(pair.getStudent().getStudentName());
-                            Intent intent = new Intent(BaseMoreGroupActivity.this, DataDisplayActivity.class);
-                            intent.putExtra(DataDisplayActivity.ISSHOWPENALIZEFOUL, isPenalize ? View.VISIBLE : View.GONE);
-                            intent.putExtra(DataRetrieveActivity.DATA_ITEM_CODE, getItemCode());
-                            intent.putExtra(DataDisplayActivity.TESTNO, setTestCount());
-                            intent.putExtra(DataRetrieveActivity.DATA_EXTRA, bean);
-
-                            startActivity(intent);
+//                            DataRetrieveBean bean = new DataRetrieveBean();
+//                            bean.setStudentCode(pair.getStudent().getStudentCode());
+//                            bean.setSex(pair.getStudent().getSex());
+//                            bean.setTestState(1);
+//                            bean.setGroupId(group.getId());
+//                            bean.setScheduleNo(group.getScheduleNo());
+//                            bean.setExamType(group.getExamType());
+//                            bean.setStudentName(pair.getStudent().getStudentName());
+//                            Intent intent = new Intent(BaseMoreGroupActivity.this, DataDisplayActivity.class);
+//                            intent.putExtra(DataDisplayActivity.ISSHOWPENALIZEFOUL, isPenalize ? View.VISIBLE : View.GONE);
+//                            intent.putExtra(DataRetrieveActivity.DATA_ITEM_CODE, getItemCode());
+//                            intent.putExtra(DataDisplayActivity.TESTNO, setTestCount());
+//                            intent.putExtra(DataRetrieveActivity.DATA_EXTRA, bean);
+//
+//                            startActivity(intent);
+                            penalizeDialog.setGroupId(group.getId());
+                            penalizeDialog.setData(1,pair.getStudent(),
+                                    pair.getTimeResult(),lastStu,lastResult);
+                            penalizeDialog.showDialog(0);
                         }
                         break;
                     case R.id.txt_get_data:
@@ -986,10 +993,14 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
 
         updateResultLed(baseStu, index);
     }
+    private Student lastStu;
+    private String[] lastResult;
 
     //处理结果
     private void doResult(BaseStuPair pair, int deviceIndex) {
         broadResult(pair);
+        lastStu = pair.getStudent();
+        lastResult = pair.getTimeResult();
         Logger.i("考生" + pair.getStudent().toString());
         //更新成绩
         String[] timeResult = deviceDetails.get(deviceIndex).getStuDevicePair().getTimeResult();

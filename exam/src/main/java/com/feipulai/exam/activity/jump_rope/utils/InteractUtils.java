@@ -306,7 +306,7 @@ public class InteractUtils {
                     Logger.i("更新成绩:" + bestResult.toString());
                 }
             }
-            results.add(0,roundResult);
+            results.add(roundResult);
 
             DBManager.getInstance().insertRoundResult(roundResult);
             TestCache.getInstance().getResults().put(student, results);

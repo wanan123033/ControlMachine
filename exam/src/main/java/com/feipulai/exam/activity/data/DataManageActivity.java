@@ -76,6 +76,8 @@ import com.feipulai.exam.netUtils.download.DownloadListener;
 import com.feipulai.exam.netUtils.download.DownloadUtils;
 import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
+import com.feipulai.exam.tcp.CommonListener;
+import com.feipulai.exam.tcp.TcpDownLoadUtil;
 import com.feipulai.exam.utils.FileUtils;
 import com.feipulai.exam.utils.ImageUtil;
 import com.feipulai.exam.utils.StringChineseUtil;
@@ -118,6 +120,8 @@ import java.util.concurrent.Executors;
 import butterknife.BindView;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.Headers;
+
+import static com.feipulai.exam.tcp.TCPConst.SCHEDULE;
 
 public class DataManageActivity
         extends BaseTitleActivity
@@ -596,7 +600,6 @@ public class DataManageActivity
                         downLoadProgressDialog.dismissDialog();
 
                     }
-
                 }
             }
 
@@ -1069,9 +1072,10 @@ public class DataManageActivity
                     }
                 }).create().show();
     }
-
+    int type = 0;
     private void showDownloadDataDialog() {
-        String[] exemType = new String[]{"正常", "补考", "缓考"};
+
+        String[] exemType = new String[]{"正常", "补考", "缓考","TCP下载"};
         new AlertDialog.Builder(this).setTitle("选择下载考试类型")
                 .setItems(exemType, new DialogInterface.OnClickListener() {
                     @Override
@@ -1087,10 +1091,17 @@ public class DataManageActivity
                             case 2:
                                 examType = StudentItem.EXAM_DELAYED;
                                 break;
+                            case 3:
+                                type = 3;
+                                break;
                         }
                         String downTime = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS,
                                 SharedPrefsConfigs.LAST_DOWNLOAD_TIME, "");
-
+                        if (type == 3){
+                            OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在下载最新数据...");
+                            dataDownload(SettingHelper.getSystemSetting().getTcpIp());
+                            return;
+                        }
                         if (!TextUtils.isEmpty(downTime)) {
                             showDownLoadDialog(examType);
                         } else {
@@ -1102,7 +1113,17 @@ public class DataManageActivity
                 }).create().show();
     }
 
+    public void dataDownload(String tcpip) {
+        String ip = tcpip.substring(0,tcpip.indexOf(":"));
+        String port = tcpip.substring(tcpip.indexOf(":")+1);
+        TcpDownLoadUtil tcpDownLoad = new TcpDownLoadUtil(MyApplication.getInstance(), ip, port, new CommonListener() {
+            @Override
+            public void onCommonListener(int no, String string) {
 
+            }
+        });
+        tcpDownLoad.getTcp(SCHEDULE, "");
+    }
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:

@@ -94,7 +94,6 @@ public class NewSitUpCheckPresenter extends AbstractRadioCheckPresenter<SitUpSet
             shoulderManger.getTime(position+1,systemSetting.getHostId());
 
         }
-
     }
 
     @Override

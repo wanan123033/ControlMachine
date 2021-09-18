@@ -6,6 +6,8 @@ import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.exam.activity.LEDSettingActivity;
+import com.feipulai.exam.activity.MainActivity;
 import com.feipulai.exam.activity.RadioTimer.newRadioTimer.NewRadioTestActivity;
 import com.feipulai.exam.activity.RadioTimer.newRadioTimer.PreTestActivity;
 import com.feipulai.exam.activity.SubItemsSelectActivity;
@@ -19,10 +21,13 @@ import com.feipulai.exam.entity.Item;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 public class RunTimerSelectActivity extends SubItemsSelectActivity {
+    public static final String GOTO_FLAG = "goto_flag";
+    private int gotoflag;
     private Context mContext;
     @Override
     protected void initData() {
         super.initData();
+        gotoflag = getIntent().getIntExtra(GOTO_FLAG,0);
         mContext = this;
         itemList.clear();
         itemList.add(new Item("V1版拦截器（有线）"));
@@ -32,15 +37,19 @@ public class RunTimerSelectActivity extends SubItemsSelectActivity {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                RunTimerSetting setting = SharedPrefsUtil.loadFormSource(mContext, RunTimerSetting.class);
-                setting.setConnectType(position);
-                SettingHelper.getSystemSetting().setRadioLed(position);
-                if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
-                    startActivity(new Intent(mContext, position == 1? PreTestActivity.class : RunTimerActivityTestActivity.class));
-                } else {
-                    startActivity(new Intent(mContext, BaseGroupActivity.class));
+                if (gotoflag == 0) {
+                    RunTimerSetting setting = SharedPrefsUtil.loadFormSource(mContext, RunTimerSetting.class);
+                    setting.setConnectType(position);
+                    SettingHelper.getSystemSetting().setRadioLed(position);
+                    if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
+                        startActivity(new Intent(mContext, position == 1 ? PreTestActivity.class : RunTimerActivityTestActivity.class));
+                    } else {
+                        startActivity(new Intent(mContext, BaseGroupActivity.class));
+                    }
+                    SharedPrefsUtil.save(mContext, setting);
+                }else {
+                    startActivity(new Intent(RunTimerSelectActivity.this, LEDSettingActivity.class));
                 }
-                SharedPrefsUtil.save(mContext, setting);
                 finish();
             }
         });

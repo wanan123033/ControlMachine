@@ -480,15 +480,15 @@
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
             </intent-filter>
         </receiver>
-<!--        <provider-->
-<!--            android:name="android.support.v4.content.FileProvider"-->
-<!--            android:authorities="com.feipulai.exam.provider"-->
-<!--            android:exported="false"-->
-<!--            android:grantUriPermissions="true">-->
-<!--            <meta-data-->
-<!--                android:name="android.support.FILE_PROVIDER_PATHS"-->
-<!--                android:resource="@xml/provider_paths" />-->
-<!--        </provider>-->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.feipulai.exam.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
     </application>
 
 </manifest>
