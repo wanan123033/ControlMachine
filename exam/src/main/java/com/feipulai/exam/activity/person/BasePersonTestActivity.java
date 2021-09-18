@@ -280,11 +280,19 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         switch (baseEvent.getTagInt()) {
             case EventConfigs.INSTALL_RESULT:
                 RoundResult iRoundResult = (RoundResult) baseEvent.getData();
+                String tmp ="";
+                if (iRoundResult.getResultState() == RoundResult.RESULT_STATE_FOUL){
+                    tmp = "X";
+                }else if (iRoundResult.getResultState() == RoundResult.RESULT_STATE_WAIVE){
+                    tmp = "放弃";
+                }
+                else if (iRoundResult.getResultState() == RoundResult.RESULT_STATE_BACK){
+                    tmp = "中退";
+                }
                 if (TextUtils.equals(pair.getStudent().getStudentCode(), iRoundResult.getStudentCode())) {
                     String[] timeResult = result;
-
-                    timeResult[penalizeDialog.getSelectPosition()] = ((iRoundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
-                            ResultDisplayUtils.getStrResultForDisplay(iRoundResult.getResult()));
+                    timeResult[penalizeDialog.getSelectPosition()] = ((iRoundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) ?
+                            ResultDisplayUtils.getStrResultForDisplay(iRoundResult.getResult()) :tmp);
                     pair.setTimeResult(timeResult);
                 }
                 StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(pair.getStudent().getStudentCode());
@@ -292,7 +300,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 resultList.clear();
                 resultList.addAll(Arrays.asList(result));
                 adapter.notifyDataSetChanged();
-                updateResultLed(((iRoundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(iRoundResult.getResult())));
+                updateResultLed(((iRoundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) ? ResultDisplayUtils.getStrResultForDisplay(iRoundResult.getResult()) : tmp));
                 roundNo++;
                 if (roundNo < setTestCount()) {
 

@@ -90,7 +90,7 @@ public class NewSitUpCheckPresenter extends AbstractRadioCheckPresenter<SitUpSet
         }
         shoulderManger.getState(position + 1, systemSetting.getHostId());
         if (!syncTime) {
-            shoulderManger.syncTime(systemSetting.getHostId(), getTime());
+            shoulderManger.syncTime(systemSetting.getHostId(), getTime(),setting.isShowLed()? 1: 0);
             shoulderManger.getTime(position+1,systemSetting.getHostId());
 
         }

@@ -71,4 +71,8 @@ public class SitUpSettingPresenter extends AbstractRadioSettingPresenter {
         Logger.i("situp setting changed:" + setting.toString());
     }
 
+    public void setLedShow(boolean show){
+        setting.setShowLed(show);
+    }
+
 }
