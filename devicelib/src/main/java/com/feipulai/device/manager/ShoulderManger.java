@@ -95,10 +95,10 @@ public class ShoulderManger {
         LogUtils.serial("仰卧起坐肩胛获取状态:" + StringUtility.bytesToHexString(data));
     }
 
-    public void syncTime(int hostId, int time){
+    public void syncTime(int hostId, int time,int show){
         byte data[] = new byte[15];
         data[0] = (byte) 0xAA;
-        data[1] = (byte) 15;
+        data[1] = (byte) 16;
         data[2] = (byte) 0x05;
         data[3] = (byte) 0x03;
         data[4] = (byte) 0X01;
@@ -111,11 +111,12 @@ public class ShoulderManger {
         data[10] = (byte) (time >> 8 & 0xff);
         data[11] = (byte) (time & 0xff);
 
-        data[12] = (byte) 00;
+        data[12] = (byte) show;
+        data[13] = 0;
         for (int i = 1; i <= data.length - 3; i++) {
-            data[13] += data[i];
+            data[14] += data[i];
         }
-        data[14] = (byte) 0x0d;
+        data[15] = (byte) 0x0d;
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
         LogUtils.serial("仰卧起坐肩胛同步时间:" + StringUtility.bytesToHexString(data));
     }
@@ -244,5 +245,31 @@ public class ShoulderManger {
         data[12] = (byte) 0x0d;
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data)); 
         LogUtils.serial("仰卧起坐肩胛获取设备状态:" + StringUtility.bytesToHexString(data));
+    }
+
+    /**
+     * 获取工作状态
+     * @param deviceId
+     * @param hostId
+     */
+    public void setLedShow(int deviceId, int hostId,int check) {
+        byte data[] = new byte[13];
+        data[0] = (byte) 0xAA;
+        data[1] = (byte) 13;
+        data[2] = (byte) 0x05;
+        data[3] = (byte) 0x03;
+        data[4] = (byte) 0X01;
+        data[5] = (byte) hostId;
+        data[6] = (byte) deviceId;
+        data[7] = (byte) 4;
+        data[8] = (byte) check;
+        data[9] = (byte) 0x00;
+        data[10] = (byte) 0x00;
+        for (int i = 1; i <= data.length - 3; i++) {
+            data[11] += data[i];
+        }
+        data[12] = (byte) 0x0d;
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
+        LogUtils.normal(data.length + "---" + StringUtility.bytesToHexString(data) + "---仰卧起坐肩胛获取设备状态： "+deviceId);
     }
 }

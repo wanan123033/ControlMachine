@@ -510,5 +510,26 @@ public class SitPushUpManager {
         wrapAndSend(cmd);
     }
 
+    public void setLedShow(int deviceId, int show) {
+        //[00] [01]：包头高字节0x54  低字节0x44
+        //[02] [03]：长度高字节0x00  低字节0x10
+        //[04]：0   --表示所有子机都要响应
+        //[05]：项目编号   5—仰卧起坐    8—俯卧撑
+        //[06]：0   –单机模式
+        //[07]：7   -- SetBaselineCmd命令
+        //[08]: 主机baseline (易中难，分别对应角度是55，65，75度，默认65度)
+        //[09]-[12]: 0 0 0 0
+        //[13]：累加和(从02到12共11个字节算术和的低字节)
+        //[14] [15]：包尾高字节0x27   低字节0x0d
+        byte[] cmd = {0x54, 0x44, 0, 0x10, 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0x27, 0x0d};
+        cmd[4] = (byte) (deviceId & 0xff);
+        cmd[5] = (byte) (5 & 0xff);
+        cmd[8] = (byte) (show & 0xff);
+        for (int i = 2; i < 13; i++) {
+            cmd[13] += cmd[i] & 0xff;
+        }
+        wrapAndSend(cmd);
+    }
+
 
 }
