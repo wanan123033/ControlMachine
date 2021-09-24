@@ -1114,15 +1114,31 @@ public class DataManageActivity
     }
 
     public void dataDownload(String tcpip) {
-        String ip = tcpip.substring(0,tcpip.indexOf(":"));
-        String port = tcpip.substring(tcpip.indexOf(":")+1);
-        TcpDownLoadUtil tcpDownLoad = new TcpDownLoadUtil(MyApplication.getInstance(), ip, port, new CommonListener() {
-            @Override
-            public void onCommonListener(int no, String string) {
-
-            }
-        });
-        tcpDownLoad.getTcp(SCHEDULE, "");
+        if(TextUtils.isEmpty(tcpip)){
+            OperateProgressBar.removeLoadingUiIfExist(this);
+            Toast.makeText(getApplicationContext(),"请输入正确的TCP地址",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (tcpip.contains(":")) {
+            String ip = tcpip.substring(0, tcpip.indexOf(":"));
+            String port = tcpip.substring(tcpip.indexOf(":") + 1);
+            TcpDownLoadUtil tcpDownLoad = new TcpDownLoadUtil(MyApplication.getInstance(), ip, port, new CommonListener() {
+                @Override
+                public void onCommonListener(int no, String string) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
+                        }
+                    });
+                }
+            });
+            tcpDownLoad.getTcp(SCHEDULE, "");
+        }else {
+            OperateProgressBar.removeLoadingUiIfExist(this);
+            Toast.makeText(getApplicationContext(),"请输入正确的TCP地址",Toast.LENGTH_SHORT).show();
+            return;
+        }
     }
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

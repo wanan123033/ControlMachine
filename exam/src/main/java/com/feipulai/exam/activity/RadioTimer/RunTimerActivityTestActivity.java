@@ -23,6 +23,9 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.device.led.LEDManager;
+import com.feipulai.device.led.RunLEDManager;
 import com.feipulai.device.serial.beans.RunTimerResult;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
@@ -236,6 +239,8 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
             initView();
         }
     }
+
+
 
     private void showPop(int pos, View view) {
         marks.clear();

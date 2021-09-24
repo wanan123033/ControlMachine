@@ -367,7 +367,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                 startActivity(new Intent(Settings.ACTION_SETTINGS));
                 break;
             case R.id.card_led:
-                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP){
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZFP){
                     Intent intent = new Intent(MainActivity.this, RunTimerSelectActivity.class);
                     intent.putExtra(RunTimerSelectActivity.GOTO_FLAG,11);
                     startActivity(intent);
