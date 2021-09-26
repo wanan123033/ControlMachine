@@ -129,7 +129,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
         resultRunnable.setFinish(true);
         statesRunnable = null;
         resultRunnable = null;
-        mHandler = null;
+        mHandler.removeCallbacksAndMessages(null);
         mExecutorService.shutdown();
     }
 

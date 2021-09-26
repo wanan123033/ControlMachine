@@ -137,17 +137,20 @@ public class VisionCheckActivity extends BaseCheckActivity implements RadioManag
 
     @Override
     public void onRadioArrived(Message msg) {
-        byte key = (byte) msg.obj;
-        if (key == 0x35 && !isClear) {//确定
-            if (mStudent != null) {
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("STUDENT", mStudent);
-                IntentUtil.gotoActivity(this, VisionTestActivity.class, bundle);
-            }
-        } else if (key == 0x42) {//返回
+        if (msg.obj!=null){
+            byte key = (byte) msg.obj;
+            if (key == 0x35 && !isClear) {//确定
+                if (mStudent != null) {
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("STUDENT", mStudent);
+                    IntentUtil.gotoActivity(this, VisionTestActivity.class, bundle);
+                }
+            } else if (key == 0x42) {//返回
 
-            myHandler.sendEmptyMessageDelayed(CLEAR_INFO, 100);
+                myHandler.sendEmptyMessageDelayed(CLEAR_INFO, 100);
+            }
         }
+
     }
 
     @Override
