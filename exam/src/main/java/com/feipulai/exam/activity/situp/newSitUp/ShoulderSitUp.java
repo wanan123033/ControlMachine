@@ -4,6 +4,24 @@ public class ShoulderSitUp {
     private int deviceId;
     private int deviceResult;
     private boolean sitUpUpdate;
+    private int back;//背部
+    private int waist;//腰部
+
+    public int getBack() {
+        return back;
+    }
+
+    public void setBack(int back) {
+        this.back = back;
+    }
+
+    public int getWaist() {
+        return waist;
+    }
+
+    public void setWaist(int waist) {
+        this.waist = waist;
+    }
 
     public ShoulderSitUp(int deviceId, boolean sitUpUpdate, boolean shoulderUpdate) {
         this.deviceId = deviceId;

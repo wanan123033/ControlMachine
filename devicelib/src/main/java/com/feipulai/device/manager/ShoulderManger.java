@@ -96,7 +96,7 @@ public class ShoulderManger {
     }
 
     public void syncTime(int hostId, int time,int show){
-        byte data[] = new byte[15];
+        byte data[] = new byte[16];
         data[0] = (byte) 0xAA;
         data[1] = (byte) 16;
         data[2] = (byte) 0x05;

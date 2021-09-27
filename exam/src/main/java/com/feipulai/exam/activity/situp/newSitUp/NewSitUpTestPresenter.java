@@ -240,11 +240,14 @@ public class NewSitUpTestPresenter extends SitPullUpTestPresenter<SitUpSetting> 
         ShoulderSitUp shoulderSitUp = shoulderSitUpList.get(index);
         if (deviceType == 1){
             shoulderSitUp.setSitUpUpdate(true);
+            shoulderSitUp.setBack(state.getResult());
         }else {
             shoulderSitUp.setShoulderUpdate(true);
+            shoulderSitUp.setWaist(state.getResult());
         }
         if (shoulderSitUp.isShoulderUpdate() && shoulderSitUp.isSitUpUpdate()){
-            shoulderSitUp.setDeviceResult(shoulderSitUp.getDeviceResult()+1);
+//            shoulderSitUp.getDeviceResult()+1;
+            shoulderSitUp.setDeviceResult(Math.min(shoulderSitUp.getBack(),shoulderSitUp.getWaist()));
             shoulderSitUp.setSitUpUpdate(false);
             shoulderSitUp.setShoulderUpdate(false);
             state.setResult(shoulderSitUp.getDeviceResult());
