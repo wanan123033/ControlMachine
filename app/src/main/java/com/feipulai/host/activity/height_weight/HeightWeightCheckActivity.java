@@ -173,8 +173,8 @@ public class HeightWeightCheckActivity
             case UPDATE_NEW_RESULT:
                 String displayHeight = ResultDisplayUtils.getStrResultForDisplay(mHeightResult.getResult(), HWConfigs.HEIGHT_ITEM);
                 String displayWeight = ResultDisplayUtils.getStrResultForDisplay(mWeightResult.getResult(), HWConfigs.WEIGHT_ITEM);
-                LogUtils.operation("获取到学生成绩:mHeightResult=" + mHeightResult.toString());
-                LogUtils.operation("获取到学生成绩:mWeightResult=" + mWeightResult.toString());
+                LogUtils.operation("获取到学生成绩:身高=" + mHeightResult.toString());
+                LogUtils.operation("获取到学生成绩:体重=" + mWeightResult.toString());
                 txtHeightResult.setText(displayHeight);
                 txtWeightResult.setText(displayWeight);
                 txtTestResult.setText(displayHeight + "\n" + displayWeight);

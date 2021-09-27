@@ -1436,8 +1436,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             nettyClient.sendMsgToServer(TcpConfig.CMD_CONNECT, this);
     }
 
-    private void sendDisConnect() {
-        if (nettyClient != null)
+    private void sendDisConnect() { if (nettyClient != null)
             nettyClient.sendMsgToServer(TcpConfig.getCmdEndTiming(), this);
     }
 

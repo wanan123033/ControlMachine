@@ -18,6 +18,7 @@ import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SystemBrightUtils;
 import com.feipulai.common.view.baseToolbar.StatusBarUtil;
+import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
@@ -73,6 +74,7 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.txt_use_time)
     TextView txtUseTime;
     private ActivateBean activateBean;
+    private LEDManager ledManager= new LEDManager();
     private TimerUtil timerUtil = new TimerUtil(new TimerUtil.TimerAccepListener() {
         @Override
         public void timer(Long time) {
@@ -167,6 +169,19 @@ public class MainActivity extends BaseActivity {
         if (machineCode != SharedPrefsConfigs.DEFAULT_MACHINE_CODE) {
             sb.append("-").append(
                     String.format(getString(R.string.host_name), TestConfigs.machineNameMap.get(machineCode), systemSetting.getHostId()));
+            String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
+                    + " " + systemSetting.getHostId();
+            if (SettingHelper.getSystemSetting().getLedVersion() == 0) {
+                ledManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), systemSetting.getHostId(), 1);
+
+                ledManager.showSubsetString(systemSetting.getHostId(), 1, title, 0, true, false, LEDManager.MIDDLE);
+                ledManager.showSubsetString(systemSetting.getHostId(), 1, "菲普莱体育", 3, 3, false, true);
+            } else {
+                ledManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), systemSetting.getHostId());
+
+                ledManager.showString(systemSetting.getHostId(), title, 0, true, false, LEDManager.MIDDLE);
+                ledManager.showString(systemSetting.getHostId(), "菲普莱体育", 3, 3, false, true);
+            }
         }
         if (!TextUtils.isEmpty(systemSetting.getTestName())) {
             sb.append("-").append(systemSetting.getTestName());

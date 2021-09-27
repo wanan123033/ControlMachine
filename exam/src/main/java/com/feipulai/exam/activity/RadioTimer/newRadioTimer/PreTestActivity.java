@@ -19,6 +19,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.led.LEDManager;
+import com.feipulai.device.led.RunLEDManager;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
@@ -138,6 +140,38 @@ public class PreTestActivity extends BaseCheckActivity {
         etInputText.setData(lvResults, this);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initLed();
+    }
+
+    private void initLed() {
+        RunLEDManager runLEDManager = null;
+        LEDManager mLEDManager = null;
+        int hostId = SettingHelper.getSystemSetting().getHostId();
+        String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
+                + " " + hostId;
+        int flag = 0;
+        if (SettingHelper.getSystemSetting().getRadioLed() == 0) {
+            runLEDManager = new RunLEDManager();
+            flag = 0;
+        } else {
+            mLEDManager = new LEDManager();
+            flag = 1;
+        }
+        if (flag == 0) {
+            runLEDManager.resetLEDScreen(hostId,title);
+        } else {
+            if (SettingHelper.getSystemSetting().getLedVersion() == 0) {
+                mLEDManager.showSubsetString(hostId, 1, title, 0, true, false, LEDManager.MIDDLE);
+                mLEDManager.showSubsetString(hostId, 1, "菲普莱体育", 3, 3, false, true);
+            } else {
+                mLEDManager.showString(hostId, title, 0, true, false, LEDManager.MIDDLE);
+                mLEDManager.showString(hostId, "菲普莱体育", 3, 3, false, true);
+            }
+        }
+    }
     @Override
     public int setAFRFrameLayoutResID() {
         return R.id.frame_camera;

@@ -76,7 +76,7 @@ public interface HttpApi {
     @Headers("Content-Type:application/json;charset=UTF-8")
     Observable<HttpResult<UpdateApp>> updateSoftApp(@Body RequestBody body);
 
-    @POST("run/compareFaceFeature")
+    @POST("/run/compareFaceFeature")
     @Headers("Content-Type:application/json;charset=UTF-8")
     Observable<HttpResult<UserPhoto>> netSh(@Header("Authorization") String token, @Body ResponseParame data);
     @POST("https://api.soft.fplcloud.com/terminal/softwareactivate/active")
