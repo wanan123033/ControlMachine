@@ -236,8 +236,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
         txtIllegalReturn.setEnabled(false);
         txtStopTiming.setEnabled(false);
 
-        sportPresent = new SportPresent(this, setting.getDeviceCount());
-        sportPresent.rollConnect();
+
 
         partResultAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -285,6 +284,8 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
     @Override
     protected void onResume() {
         super.onResume();
+        sportPresent = new SportPresent(this, setting.getDeviceCount());
+        sportPresent.rollConnect();
         int frequency = SettingHelper.getSystemSetting().getUseChannel();
         RadioChannelCommand command = new RadioChannelCommand(frequency);
         LogUtils.serial("切频指令" + StringUtility.bytesToHexString(command.getCommand()) + "---");

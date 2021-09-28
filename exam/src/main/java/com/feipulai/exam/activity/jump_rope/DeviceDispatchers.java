@@ -44,10 +44,35 @@ public class DeviceDispatchers {
         if (index == students.size() - 1){
             index = -1;
         }
+        boolean isFlag = false;
         if (groupMode == TestConfigs.GROUP_PATTERN_LOOP){  //循环模式
-            return dispatchDeviceLoop(pairs);
+            isFlag =  dispatchDeviceLoop(pairs);
+        }else {
+            isFlag = dispatchDeviceSuccesive(pairs);
         }
-        return dispatchDeviceSuccesive(pairs);
+        checkStuRoundNoInfo(pairs);
+        return isFlag;
+    }
+
+    /**
+     * 检查学生的轮次信息是否一致
+     * @param pairs
+     */
+    private void checkStuRoundNoInfo(List<StuDevicePair> pairs) {
+        for (int i = 0 ; i < pairs.size() ; i++){
+            Student student = pairs.get(i).getStudent();
+            if (student == null){
+                for (int j = i ; j < pairs.size() ; j++){
+                    pairs.get(j).setStudent(null);
+                }
+                index = students.indexOf(pairs.get(i - 1).getStudent());
+                if (index == students.size() - 1){
+                    index = -1;
+                }
+                break;
+            }
+        }
+
     }
 
     private boolean dispatchDeviceLoop(List<StuDevicePair> pairs) {
