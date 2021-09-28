@@ -206,7 +206,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 BaseStuPair pair = deviceDetails.get(pos).getStuDevicePair();
                 switch (view.getId()) {
                     case R.id.txt_start:
-                        LogUtils.operation("使用设备点击开始 ：" + pair.toString());
+
                         if (pair.getStudent() == null) {
                             toastSpeak("当前无学生测试");
                             LogUtils.operation("使用设备点击开始 ：当前无学生测试");
@@ -218,6 +218,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                             stuSkip(pos);
                             return;
                         }
+                        LogUtils.operation("使用设备点击开始 ：" + pair.getStudent().toString());
                         startTime = System.currentTimeMillis();
                         if (pair.getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
                             LogUtils.operation("使用设备点击开始 ：开始测试");
@@ -228,8 +229,9 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                         }
                         break;
                     case R.id.txt_skip:
-                        LogUtils.operation("使用设备点击跳过 ： " + pair.toString());
+
                         if (pair.getStudent() != null) {
+                            LogUtils.operation("使用设备点击跳过 ： " + pair.getStudent().toString());
                             stuSkipDialog(pair.getStudent(), pos);
                         }
                         break;
@@ -248,7 +250,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Logger.i("stuSkip:" + student.toString());
+                        LogUtils.operation("跳过测试考生 ："+student.toString());
                         //测试结束学生清除 ，设备设置空闲状态
                         stuSkip(pos);
                         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));

@@ -156,7 +156,7 @@ public class MainActivity extends Activity
         SerialParams.init(this);
         RadioManager.getInstance().init();
         CheckDeviceOpener.getInstance().setOnCheckDeviceArrived(this);
-        CheckDeviceOpener.getInstance().open(this, true, true, true);
+        CheckDeviceOpener.getInstance().open(this, true, false, false);
         requestDevicePermission();
 //        IOPower.getInstance().setFingerPwr(1);
         try {

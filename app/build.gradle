@@ -54,7 +54,7 @@ android {
             resValue "string", "hardware_uuid","FP-KTA2108_TC_ANDROID"
         }
         ruiLiHeng {
-            initWith(buildTypes.release)
+            initWith(buildTypes.debug)
             applicationIdSuffix ".ruiliheng"
             resValue "string", "software_uuid","FP-KTA2108_TC-RLH"
             resValue "string", "hardware_uuid","FP-KTA2108_TC-RLH_ANDROID"
