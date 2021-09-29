@@ -178,10 +178,10 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
 
                 byte[] data = new byte[16];
                 try {
-                    if (student != null && !TextUtils.isEmpty(student.getLEDStuName())) {
-                        byte[] resultData = student.getLEDStuName().getBytes("GB2312");
-                        System.arraycopy(resultData, 0, data, 0, resultData.length);
-                    }
+//                    if (student != null && !TextUtils.isEmpty(student.getLEDStuName())) {
+//                        byte[] resultData = student.getLEDStuName().getBytes("GB2312");
+//                        System.arraycopy(resultData, 0, data, 0, resultData.length);
+//                    }
                     byte[] resultData = showtime.getBytes("GB2312");
                     System.arraycopy(resultData, 0, data, 14, resultData.length);
                 } catch (UnsupportedEncodingException e) {
@@ -267,42 +267,45 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                byte key = (byte) msg.obj;
+                if (msg.obj!=null){
+                    byte key = (byte) msg.obj;
 
-                switch (key) {
-                    case 0x38://上
-                        checkKey(VisionBean.DIRECTION_TOP);
-                        break;
-                    case 0x36://右
-                        checkKey(VisionBean.DIRECTION_RIGHT);
-                        break;
-                    case 0x32://下
-                        checkKey(VisionBean.DIRECTION_BOTTOM);
-                        break;
-                    case 0x34://左
-                        checkKey(VisionBean.DIRECTION_LEFT);
-                        break;
-                    case 0x42://返回
-                        checkKey(0);
-                        break;
-                    case 0x35://确定
-                        if (index == -1) {
-                            index = 0;
-                            errorCount = 0;
-                            ivE.setVisibility(View.VISIBLE);
-                            txtHint.setVisibility(View.GONE);
-                            visionData = visionBean.getVisions().get(index);
-                            setImageWidth();
-                            if (visionSetting.getStopTime() != 0) {
-                                txt_time.setText(visionSetting.getStopTime() + "");
-                                intervalUtil.startTime();
-                            } else {
-                                txt_time.setVisibility(View.GONE);
-                            }
+                    switch (key) {
+                        case 0x38://上
+                            checkKey(VisionBean.DIRECTION_TOP);
+                            break;
+                        case 0x36://右
+                            checkKey(VisionBean.DIRECTION_RIGHT);
+                            break;
+                        case 0x32://下
+                            checkKey(VisionBean.DIRECTION_BOTTOM);
+                            break;
+                        case 0x34://左
+                            checkKey(VisionBean.DIRECTION_LEFT);
+                            break;
+                        case 0x42://返回
+                            checkKey(0);
+                            break;
+                        case 0x35://确定
+                            if (index == -1) {
+                                index = 0;
+                                errorCount = 0;
+                                ivE.setVisibility(View.VISIBLE);
+                                txtHint.setVisibility(View.GONE);
+                                visionData = visionBean.getVisions().get(index);
+                                setImageWidth();
+                                if (visionSetting.getStopTime() != 0) {
+                                    txt_time.setText(visionSetting.getStopTime() + "");
+                                    intervalUtil.startTime();
+                                } else {
+                                    txt_time.setVisibility(View.GONE);
+                                }
 //                            isStartCheck = true;
-                        }
-                        break;
+                            }
+                            break;
+                    }
                 }
+
             }
         });
 
@@ -464,5 +467,8 @@ public class VisionTestActivity extends BaseTitleActivity implements RadioManage
 //        isStartThrand = false;
 //        isStartCheck = false;
         intervalUtil.stop();
+        byte[] data = new byte[16];
+        ledManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 3, false, true);
+
     }
 }

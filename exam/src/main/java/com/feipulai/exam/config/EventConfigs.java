@@ -34,4 +34,7 @@ public class EventConfigs {
 
     //篮球状态
     public static final int BALL_STATE = 16;
+
+    public static final int SERVICE_UPLOAD_DATA_SUCCEED = 17;
+    public static final int SERVICE_UPLOAD_DATA_ERROR = 18;
 }

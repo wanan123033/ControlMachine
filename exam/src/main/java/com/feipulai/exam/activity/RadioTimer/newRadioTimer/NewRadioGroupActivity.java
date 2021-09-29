@@ -361,6 +361,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                     LogUtils.operation("红外计时点击了开始");
                     testState = TestState.FORCE_START;
                     setBeginTime();
+                    playUtils.play(15);
                 }
 
                 break;
@@ -663,7 +664,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case RUN_START:
-                    playUtils.play(15);
+
                     tvWaitStart.setSelected(false);
                     tvWaitReady.setSelected(false);
                     tvForceStart.setSelected(false);
@@ -714,7 +715,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
         if (testState == TestState.WAIT_RESULT){
             String formatTime ;
             if (time<60*60*1000){
-                formatTime = DateUtil.formatTime1(time, "mm:ss.SSS");
+                formatTime = DateUtil.formatTime1(time, "mm:ss.S");
             }else {
                 formatTime = DateUtil.formatTime1(time, "HH:mm:ss");
             }

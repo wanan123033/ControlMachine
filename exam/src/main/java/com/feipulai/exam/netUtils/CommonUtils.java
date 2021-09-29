@@ -187,7 +187,7 @@ public class CommonUtils {
             ipAddress = "https://gkapidev.exam.fplcloud.com";
         }
         if (!ipAddress.startsWith("http")) {
-            ipAddress = "http://" + ipAddress + "/app/";
+            ipAddress = "http://" + ipAddress ;
         }
         return ipAddress;
     }

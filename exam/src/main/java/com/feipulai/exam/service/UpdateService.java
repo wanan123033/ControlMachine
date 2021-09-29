@@ -16,6 +16,8 @@ import com.feipulai.common.utils.archiver.IArchiverListener;
 import com.feipulai.common.utils.archiver.ZipArchiver;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.activity.data.DownLoadPhotoHeaders;
+import com.feipulai.exam.config.BaseEvent;
+import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.StudentItem;
@@ -25,6 +27,8 @@ import com.feipulai.exam.netUtils.download.DownloadHelper;
 import com.feipulai.exam.netUtils.download.DownloadListener;
 import com.feipulai.exam.netUtils.download.DownloadUtils;
 import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.HashMap;
@@ -56,7 +60,22 @@ public class UpdateService extends IntentService {
         String lastDownLoadTime = SharedPrefsUtil.getValue(getApplicationContext(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.LAST_DOWNLOAD_TIME, "");
         HttpSubscriber subscriber = new HttpSubscriber();
         subscriber.getItemStudent(lastDownLoadTime,TestConfigs.getCurrentItemCode(), 1, StudentItem.EXAM_NORMAL);
-
+//        subscriber.setOnRequestEndListener(new HttpSubscriber.OnRequestEndListener() {
+//            @Override
+//            public void onSuccess(int bizType) {
+//                EventBus.getDefault().post(new BaseEvent(EventConfigs.SERVICE_UPLOAD_DATA_SUCCEED));
+//            }
+//
+//            @Override
+//            public void onFault(int bizType) {
+//                EventBus.getDefault().post(new BaseEvent(EventConfigs.SERVICE_UPLOAD_DATA_ERROR));
+//            }
+//
+//            @Override
+//            public void onRequestData(Object data) {
+//
+//            }
+//        });
         photoHeaders = SharedPrefsUtil.loadFormSource(this, DownLoadPhotoHeaders.class);
         uploadPhotos(1, photoHeaders.getUploadTime());
     }
