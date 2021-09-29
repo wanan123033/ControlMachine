@@ -418,23 +418,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
             case R.id.tv_wait_start:
                 testing = true;
                 LogUtils.operation("红外计时点击了等待发令");
-                boolean flag = false;//标记学生是否全部测试完
-                for (RunStudent runStudent : mList) {
-                    if (null != runStudent.getStudent()) {
-                        List<RoundResult> resultList = DBManager.getInstance().queryResultsByStudentCode(runStudent.getStudent().getStudentCode());
-                        flag = false;
-                        if (resultList.size() >= maxTestTimes) {//说明
-                            Logger.i(runStudent.getStudent().getId() + "已完成所有测试次数");
-                            runStudent.setStudent(null);
-                            flag = true;
-                            adapter.notifyDataSetChanged();
-                        }
-                    }
-                }
-                if (flag) {
-                    ToastUtils.showShort("已完成所有测试次数");
-                    return;
-                }
+
                 if (currentTestTime >= maxTestTimes) {
                     ToastUtils.showShort("已完成所有测试");
                     return;

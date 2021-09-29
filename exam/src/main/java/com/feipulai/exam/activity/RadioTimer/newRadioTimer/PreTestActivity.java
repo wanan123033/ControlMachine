@@ -115,6 +115,7 @@ public class PreTestActivity extends BaseCheckActivity {
 
     @Override
     protected void initData() {
+        super.initData();
         getSetting();
         for (int i = 0; i < runNum; i++) {
             RunStudent runStudent = new RunStudent();

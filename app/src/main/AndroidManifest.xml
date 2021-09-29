@@ -29,6 +29,7 @@
     <uses-permission android:name="android.permission.SET_TIME_ZONE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
+
     <uses-feature
         android:name="android.hardware.usb.host"
         android:required="true" />
@@ -189,17 +190,25 @@
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity android:name=".activity.radio_timer.newRadioTimer.RadioDeviceDetailActivity"></activity>
-        <activity android:name=".activity.radio_timer.newRadioTimer.pair.NewRadioPairActivity"
+        <activity
+            android:name=".activity.radio_timer.newRadioTimer.pair.NewRadioPairActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.radio_timer.newRadioTimer.NewRadioTestActivity"
             android:configChanges="keyboardHidden|keyboard"
-            android:windowSoftInputMode="adjustPan|stateHidden"/>
-        <activity android:name=".activity.radio_timer.newRadioTimer.NewRadioTestActivity"
             android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.radio_timer.newRadioTimer.PreTestActivity"
             android:configChanges="keyboardHidden|keyboard"
-            android:windowSoftInputMode="adjustPan|stateHidden"/>
-        <activity android:name=".activity.radio_timer.newRadioTimer.PreTestActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.setting.CorrespondTestActivity"
             android:configChanges="keyboardHidden|keyboard"
-            android:windowSoftInputMode="adjustPan|stateHidden"/>
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.feipulai.host.provider"

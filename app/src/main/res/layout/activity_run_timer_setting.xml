@@ -27,6 +27,7 @@
                 android:layout_marginBottom="@dimen/dp_10"
                 android:layout_marginRight="20dp"
                 android:layout_toLeftOf="@+id/tv_start_test"
+                android:background="@drawable/selector_blue_grey_press"
                 android:enabled="false"
                 android:gravity="center"
                 android:text="查看标准"
@@ -41,10 +42,26 @@
                 android:layout_marginBottom="@dimen/dp_10"
                 android:layout_marginRight="20dp"
                 android:layout_toLeftOf="@+id/tv_start_test"
-                android:background="@drawable/btn_bg_blue"
+                android:background="@drawable/btn_background"
                 android:focusable="true"
                 android:gravity="center"
                 android:text="自检"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_16" />
+
+            <TextView
+                android:id="@+id/btn_sync_time"
+                android:layout_width="120dp"
+                android:layout_height="45dp"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="@dimen/dp_10"
+                android:layout_marginRight="20dp"
+                android:layout_toLeftOf="@+id/tv_start_test"
+                android:background="@drawable/btn_background"
+                android:focusable="true"
+                android:gravity="center"
+                android:visibility="gone"
+                android:text="同步时间"
                 android:textColor="@color/white"
                 android:textSize="@dimen/sp_16" />
 
@@ -53,7 +70,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_10"
                 android:gravity="center_vertical"
-                android:visibility="gone"
                 android:orientation="horizontal">
 
                 <TextView
@@ -175,7 +191,7 @@
                         android:text="成绩进位：" />
 
                     <Spinner
-                        android:id="@+id/sp_mark_degree"
+                        android:id="@+id/sp_carry_mode"
                         android:layout_width="100dp"
                         android:layout_height="30dp"
                         android:layout_marginLeft="50dp"
@@ -212,7 +228,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="开放跑到数量：" />
+                    android:text="开放跑道数量：" />
 
                 <EditText
                     android:id="@+id/et_run_num"
@@ -223,6 +239,28 @@
                     android:gravity="center"
                     android:inputType="number"
                     android:text="8" />
+                <!--android:inputType="number"-->
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="灵敏度：" />
+
+                <EditText
+                    android:id="@+id/et_sensitivity_num"
+                    android:layout_width="60dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="50dp"
+                    android:background="@drawable/black_border"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:text="5" />
                 <!--android:inputType="number"-->
             </LinearLayout>
 
@@ -283,6 +321,38 @@
                 </LinearLayout>
 
             </LinearLayout>
+            <Button
+                android:id="@+id/btn_connect"
+                android:layout_width="120dp"
+                android:layout_height="35dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/btn_click_bg"
+                android:text="通信质量测试"
+                android:visibility="gone"/>
+            <RadioGroup
+                android:id="@+id/rg_timer_select"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone">
+                <RadioButton
+                    android:id="@+id/rb_unified"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@null"
+                    android:checked="true"
+                    android:drawableRight="@drawable/checkbox_switch_selected"
+                    android:text="统一计时：" />
+
+                <RadioButton
+                    android:id="@+id/rb_independent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="60dp"
+                    android:button="@null"
+                    android:drawableRight="@drawable/checkbox_switch_selected"
+                    android:text="独立计时：" />
+            </RadioGroup>
 
             <LinearLayout
                 android:layout_width="match_parent"

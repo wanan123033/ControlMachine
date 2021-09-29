@@ -7,6 +7,7 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
+import com.feipulai.host.activity.height_weight.HWConfigs;
 import com.feipulai.host.activity.height_weight.HeightWeightCheckActivity;
 import com.feipulai.host.activity.jump_rope.check.JumpRopeCheckActivity;
 import com.feipulai.host.activity.jump_rope.setting.JumpRopeSetting;
@@ -15,6 +16,7 @@ import com.feipulai.host.activity.medicine_ball.MedicineBallSetting;
 import com.feipulai.host.activity.pullup.PullUpSelectActivity;
 import com.feipulai.host.activity.pullup.setting.PullUpSetting;
 import com.feipulai.host.activity.radio_timer.RunTimerFreeTestActivity;
+import com.feipulai.host.activity.radio_timer.RunTimerSelectActivity;
 import com.feipulai.host.activity.radio_timer.RunTimerSetting;
 import com.feipulai.host.activity.radio_timer.RunTimerTestActivity;
 import com.feipulai.host.activity.ranger.RangerPersonTestActivity;
@@ -84,7 +86,7 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_ZWTQQ, SitReachSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_LDTY, StandJumpSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallSelectActivity.class);
-        TestConfigs.proActivity.put(ItemDefault.CODE_ZFP, RunTimerTestActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_ZFP, RunTimerSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_WLJ, VitalTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_YTXS, PullUpSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_SL, VisionCheckActivity.class);
@@ -197,6 +199,7 @@ public class TestConfigs {
         // 身高体重特殊处理,设置itemcode为身高项目
         if (machineCode == ItemDefault.CODE_HW) {
             sCurrentItem = DBManager.getInstance().queryItemByItemCode(TestConfigs.HEIGHT_ITEM_CODE);
+            HWConfigs.init();
             SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, machineCode);
             SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, TestConfigs.HEIGHT_ITEM_CODE);
             Logger.i("sCurrentItem:" + sCurrentItem.toString());
@@ -272,6 +275,7 @@ public class TestConfigs {
         return item.getItemCode() == null ? DEFAULT_ITEM_CODE :
                 item.getItemCode();
     }
+
     public static int getMaxTestCount(Context context) {
         int result = TestConfigs.sCurrentItem.getTestNum();
         if (result > 0) {
@@ -288,6 +292,7 @@ public class TestConfigs {
         }
         return result;
     }
+
     public static int getMaxTestCount() {
         return getMaxTestCount(MyApplication.getInstance());
     }

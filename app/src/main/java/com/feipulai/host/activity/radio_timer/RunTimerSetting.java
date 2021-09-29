@@ -1,4 +1,4 @@
-package com.feipulai.host.activity.radio_timer; 
+package com.feipulai.host.activity.radio_timer;
 
 /**
  * Created by pengjf on 2018/12/3.
