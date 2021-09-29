@@ -441,12 +441,12 @@ public abstract class BaseCheckActivity
             return;
         }
         List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
-        if (results != null && results.size() >= TestConfigs.getMaxTestCount(this)) {
+//        if (results != null && results.size() >= TestConfigs.getMaxTestCount(this)) {
 //            InteractUtils.toastSpeak(this, "该考生已测试");
-            //TODO  考虑重测
-
-            return;
-        }
+//            //TODO  考虑重测
+//
+//            return;
+//        }
         mStudent = student;
         mStudentItem = studentItem;
         mResults = results;

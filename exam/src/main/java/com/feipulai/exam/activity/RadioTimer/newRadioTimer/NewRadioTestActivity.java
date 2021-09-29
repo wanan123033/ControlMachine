@@ -28,6 +28,8 @@ import com.feipulai.exam.activity.sport_timer.SportContract;
 import com.feipulai.exam.activity.sport_timer.SportPresent;
 import com.feipulai.exam.activity.sport_timer.TestState;
 import com.feipulai.exam.adapter.PopAdapter;
+import com.feipulai.exam.config.BaseEvent;
+import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.RoundResult;
@@ -37,6 +39,8 @@ import com.feipulai.exam.view.CommonPopupWindow;
 import com.feipulai.exam.view.ResultPopWindow;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -293,6 +297,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         startTime = System.currentTimeMillis() + "";
         sportPresent.clearLed(1);
         timerTask.setStart();
+
     }
 
     @Override
@@ -455,7 +460,9 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
 //                    testState = TestState.DATA_DEALING;
 //                    sportPresent.waitStart();
 //                }
+                sportPresent.showReadyLed(mList);
                 sportPresent.waitStart();
+
                 break;
             case R.id.tv_wait_ready:
                 LogUtils.operation("红外计时点击了预备");
@@ -485,6 +492,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                     LogUtils.operation("红外计时点击了开始");
                     testState = TestState.FORCE_START;
                     setBeginTime();
+                    playUtils.play(15);
                 }
                 break;
             case R.id.tv_mark_confirm:
@@ -510,6 +518,15 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                         }
                     }
                     setIndependent();
+                    toastSpeak("成绩保存成功，返回中，请等待");
+                    EventBus.getDefault().post(new BaseEvent(EventConfigs.UPDATE_TEST_COUNT));
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            finish();
+                        }
+                    },5000);
+
                 }
 
                 break;
@@ -524,7 +541,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case RUN_START:
-                    playUtils.play(15);
+
                     tvWaitStart.setSelected(false);
                     tvWaitReady.setSelected(false);
                     tvForceStart.setSelected(false);
@@ -588,7 +605,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         if (testState == TestState.WAIT_RESULT){
             String formatTime ;
             if (time<60*60*1000){
-                formatTime = DateUtil.formatTime1(time, "mm:ss.SSS");
+                formatTime = DateUtil.formatTime1(time, "mm:ss.S");
             }else {
                 formatTime = DateUtil.formatTime1(time, "HH:mm:ss");
             }

@@ -161,7 +161,7 @@ public class PreTestActivity extends BaseCheckActivity {
             flag = 1;
         }
         if (flag == 0) {
-            runLEDManager.resetLEDScreen(hostId,title);
+            runLEDManager.resetLEDScreen(hostId, title);
         } else {
             if (SettingHelper.getSystemSetting().getLedVersion() == 0) {
                 mLEDManager.showSubsetString(hostId, 1, title, 0, true, false, LEDManager.MIDDLE);
@@ -172,6 +172,7 @@ public class PreTestActivity extends BaseCheckActivity {
             }
         }
     }
+
     @Override
     public int setAFRFrameLayoutResID() {
         return R.id.frame_camera;
@@ -179,19 +180,18 @@ public class PreTestActivity extends BaseCheckActivity {
 
     @Override
     public void onEventMainThread(BaseEvent baseEvent) {
+        super.onEventMainThread(baseEvent);
         switch (baseEvent.getTagInt()) {
             case EventConfigs.UPDATE_TEST_COUNT:
                 int tmp = runNum;
                 getSetting();
-                if (tmp!= runNum){
-                    mList.clear();
-                    for (int i = 0; i < runNum; i++) {
-                        RunStudent runStudent = new RunStudent();
-                        runStudent.setResultList(new ArrayList<RunStudent.WaitResult>());
-                        mList.add(runStudent);
-                    }
-                    mAdapter.notifyDataSetChanged();
+                mList.clear();
+                for (int i = 0; i < runNum; i++) {
+                    RunStudent runStudent = new RunStudent();
+                    runStudent.setResultList(new ArrayList<RunStudent.WaitResult>());
+                    mList.add(runStudent);
                 }
+                mAdapter.notifyDataSetChanged();
 
                 break;
 
@@ -367,28 +367,5 @@ public class PreTestActivity extends BaseCheckActivity {
         }
     }
 
-    @Override
-    public void compareStu(final Student student) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
 
-                if (student == null) {
-                    InteractUtils.toastSpeak(PreTestActivity.this, "该考生不存在");
-                    return;
-                } else {
-                    afrFrameLayout.setVisibility(View.GONE);
-                }
-                StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
-                if (studentItem == null) {
-                    InteractUtils.toastSpeak(PreTestActivity.this, "无此项目");
-                    return;
-                }
-                // 可以直接检录
-                checkInUIThread(student, studentItem);
-            }
-        });
-
-
-    }
 }

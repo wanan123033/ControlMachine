@@ -17,6 +17,8 @@ import com.feipulai.common.utils.archiver.ZipArchiver;
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.activity.data.DataManageActivity;
 import com.feipulai.host.activity.data.DownLoadPhotoHeaders;
+import com.feipulai.host.config.BaseEvent;
+import com.feipulai.host.config.EventConfigs;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.netUtils.CommonUtils;
@@ -25,6 +27,9 @@ import com.feipulai.host.netUtils.download.DownloadHelper;
 import com.feipulai.host.netUtils.download.DownloadListener;
 import com.feipulai.host.netUtils.download.DownloadUtils;
 import com.feipulai.host.netUtils.netapi.ItemSubscriber;
+import com.feipulai.host.netUtils.netapi.OnRequestEndListener;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.HashMap;
@@ -56,7 +61,22 @@ public class UpdateService extends IntentService {
         String lastDownLoadTime = SharedPrefsUtil.getValue(getApplicationContext(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.LAST_DOWNLOAD_TIME, "");
         ItemSubscriber subscriber = new ItemSubscriber();
         subscriber.getStudentData(1,lastDownLoadTime);
-
+//        subscriber.setOnRequestEndListener(new OnRequestEndListener() {
+//            @Override
+//            public void onSuccess(int bizType) {
+//                EventBus.getDefault().post(new BaseEvent(EventConfigs.SERVICE_UPLOAD_DATA_SUCCEED));
+//            }
+//
+//            @Override
+//            public void onFault(int bizType) {
+//                EventBus.getDefault().post(new BaseEvent(EventConfigs.SERVICE_UPLOAD_DATA_ERROR));
+//            }
+//
+//            @Override
+//            public void onRequestData(Object data) {
+//
+//            }
+//        });
         photoHeaders = SharedPrefsUtil.loadFormSource(this, DownLoadPhotoHeaders.class);
         uploadPhotos(1, photoHeaders.getUploadTime());
     }

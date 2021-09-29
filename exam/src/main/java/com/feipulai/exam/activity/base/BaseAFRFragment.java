@@ -25,12 +25,15 @@ import com.arcsoft.face.GenderInfo;
 import com.arcsoft.face.LivenessInfo;
 import com.arcsoft.face.enums.DetectFaceOrientPriority;
 import com.arcsoft.face.enums.DetectMode;
+import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.utils.print.ViewImageUtils;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.UserPhoto;
+import com.feipulai.exam.config.BaseEvent;
+import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Student;
@@ -710,7 +713,24 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 //        bs.recycle();
 //        bs = null;
     }
-
+    @Override
+    public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
+//        if (event.getTagInt()== EventConfigs.SERVICE_UPLOAD_DATA_SUCCEED){
+//            OperateProgressBar.removeLoadingUiIfExist(getActivity());
+//            isStartFace = true;
+//            isOpenCamera = true;
+//            retryRecognizeDelayed(faceId);
+//            ToastUtils.showShort("拉取服务器数据完成");
+//            TtsManager.getInstance().speak("拉取服务器数据完成");
+//        }else if (event.getTagInt()==EventConfigs.SERVICE_UPLOAD_DATA_ERROR){
+//            isStartFace = true;
+//            isOpenCamera = true;
+//            OperateProgressBar.removeLoadingUiIfExist(getActivity());
+//            ToastUtils.showShort("拉取服务器数据失败，请重试");
+//            TtsManager.getInstance().speak("拉取服务器数据失败，请重试");
+//        }
+    }
     private boolean isNetface = false; //控制netFace()是否还没有走完  只有走完了才能再次调用哟
 
     public void netFace() {
@@ -719,6 +739,18 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             isNetWork = false;
             isStartFace = false;
             LogUtils.operation("进行在线人脸识别");
+//            if (getActivity() != null){
+//                getActivity().runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        OperateProgressBar.showLoadingUi(getActivity(), "正在拉取服务器数据，请稍后");
+//                    }
+//                });
+//                Intent intent = new Intent(mContext, UpdateService.class);
+//                mContext.startService(intent);
+//                isNetface = false;
+//                return;
+//            }
             if (getActivity() != null)
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
@@ -786,8 +818,8 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                         } else {
                             //识别成功，当前考生是否存在，不存在下载当前考生数据
                             Student student = DBManager.getInstance().queryStudentByCode(photo.getStudentcode());
-                            LogUtils.operation("进行在线人脸识别成功：" + student.toString());
                             if (student != null) {
+                                LogUtils.operation("进行在线人脸识别成功：" + student.toString());
                                 compareListener.compareStu(student);
                                 Intent intent = new Intent(mContext, UpdateService.class);
                                 mContext.startService(intent);
@@ -821,8 +853,8 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                                 @Override
                                 public void onClick(SweetAlertDialog sweetAlertDialog) {
                                     sweetAlertDialog.dismissWithAnimation();
-                                    isStartFace = true;
-                                    retryRecognizeDelayed(faceId);
+//                                    isStartFace = true;
+//                                    retryRecognizeDelayed(faceId);
 
                                 }
                             });
@@ -893,7 +925,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
             }
         });
-        itemSubscriber.getItemStudent(TestConfigs.getCurrentItemCode(), 1, StudentItem.EXAM_NORMAL, studentCode);
+        itemSubscriber.getItemStudent(TestConfigs.getCurrentItemCode(), 1, StudentItem.EXAM_NORMAL,"", studentCode);
     }
 
     private onAFRCompareListener compareListener;

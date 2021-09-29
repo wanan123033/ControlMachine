@@ -421,6 +421,75 @@ public class HttpSubscriber {
     }
 
     /**
+     * 获取分组信息
+     */
+    public void getItemGroupAll(final String itemCode, final String scheduleNo, int batch, final int examType) {
+        Map<String, Object> parameData = new HashMap<>();
+        parameData.put("examItemCode", itemCode);
+        parameData.put("scheduleNo", scheduleNo);
+        parameData.put("batch", batch);
+        parameData.put("examType", examType);
+        Observable<HttpResult<BatchBean<List<GroupBean>>>> observable = HttpManager.getInstance().getHttpApi().getGroupAll("bearer " + MyApplication.TOKEN,
+                CommonUtils.encryptQuery(GROUP_BIZ + "", parameData));
+        HttpManager.getInstance().toSubscribe(observable, new RequestSub<BatchBean<List<GroupBean>>>(new OnResultListener<BatchBean<List<GroupBean>>>() {
+            @Override
+            public void onResponseTime(String responseTime) {
+
+            }
+
+            @Override
+            public void onSuccess(BatchBean<List<GroupBean>> result) {
+                LogUtils.net("获取分组信息解析：" + result.toString());
+                if (result == null || result.getDataInfo() == null) {
+                    if (onRequestEndListener != null)
+                        onRequestEndListener.onSuccess(GROUP_BIZ);
+                    return;
+                }
+                final List<Group> groupList = new ArrayList<>();
+                final List<GroupItem> groupItemList = new ArrayList<>();
+
+                for (GroupBean groupBean : result.getDataInfo()) {
+                    //int groupType, String sortName, int groupNo, String scheduleNo,String itemCode, int examType, int isTestComplete
+                    Group group = new Group(groupBean.getGroupType(), groupBean.getSortName(), groupBean.getGroupNo()
+                            , groupBean.getScheduleNo(), itemCode, groupBean.getExamType(), 0);
+                    groupList.add(group);
+
+                    if (groupBean.getStudentCodeList() != null) {
+                        for (StudentBean student : groupBean.getStudentCodeList()) {
+                            //String itemCode, int groupType, String sortName, int groupNo, String scheduleNo, String studentCode, int trackNo, int identityMark
+                            GroupItem groupItem = new GroupItem(itemCode, groupBean.getGroupType(), groupBean.getSortName(), groupBean.getGroupNo()
+                                    , groupBean.getScheduleNo(), student.getStudentCode(), student.getTrackNo(), 0);
+                            groupItemList.add(groupItem);
+                        }
+                    }
+
+                }
+
+                DBManager.getInstance().insertGroupList(groupList);
+                DBManager.getInstance().insertGroupItemList(groupItemList);
+                if (result.getBatch() < result.getBatchTotal()) {
+                    getItemGroupAll(itemCode, scheduleNo, result.getBatch() + 1, examType);
+                } else {
+                    if (onRequestEndListener != null)
+                        onRequestEndListener.onSuccess(GROUP_BIZ);
+                }
+
+
+            }
+
+            @Override
+            public void onFault(int code, String errorMsg) {
+                Logger.i("getItemGroupAll  onFault");
+                EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_FAULT));
+                ToastUtils.showShort("获取分组：" + errorMsg);
+                if (onRequestEndListener != null) {
+                    onRequestEndListener.onFault(GROUP_BIZ);
+                }
+            }
+        }));
+    }
+
+    /**
      * 获取当前项目考生
      *
      * @param itemCode
@@ -530,7 +599,9 @@ public class HttpSubscriber {
                 SettingHelper.updateSettingCache(SettingHelper.getSystemSetting());
                 DBManager.getInstance().insertStudentList(studentList);
                 DBManager.getInstance().insertStuItemList(studentItemList);
-
+                if (onRequestEndListener != null) {
+                    onRequestEndListener.onRequestData(studentList);
+                }
                 if (result.getBatch() < result.getBatchTotal()) {
                     getItemStudent(itemCode, result.getBatch() + 1, examType, lastDownLoadTime, studentCode);
                 } else {
@@ -549,75 +620,6 @@ public class HttpSubscriber {
                 ToastUtils.showShort("获取考生：" + errorMsg);
                 if (onRequestEndListener != null) {
                     onRequestEndListener.onFault(STUDENT_BIZ);
-                }
-            }
-        }));
-    }
-
-    /**
-     * 获取分组信息
-     */
-    public void getItemGroupAll(final String itemCode, final String scheduleNo, int batch, final int examType) {
-        Map<String, Object> parameData = new HashMap<>();
-        parameData.put("examItemCode", itemCode);
-        parameData.put("scheduleNo", scheduleNo);
-        parameData.put("batch", batch);
-        parameData.put("examType", examType);
-        Observable<HttpResult<BatchBean<List<GroupBean>>>> observable = HttpManager.getInstance().getHttpApi().getGroupAll("bearer " + MyApplication.TOKEN,
-                CommonUtils.encryptQuery(GROUP_BIZ + "", parameData));
-        HttpManager.getInstance().toSubscribe(observable, new RequestSub<BatchBean<List<GroupBean>>>(new OnResultListener<BatchBean<List<GroupBean>>>() {
-            @Override
-            public void onResponseTime(String responseTime) {
-
-            }
-
-            @Override
-            public void onSuccess(BatchBean<List<GroupBean>> result) {
-                LogUtils.net("获取分组信息解析：" + result.toString());
-                if (result == null || result.getDataInfo() == null) {
-                    if (onRequestEndListener != null)
-                        onRequestEndListener.onSuccess(GROUP_BIZ);
-                    return;
-                }
-                final List<Group> groupList = new ArrayList<>();
-                final List<GroupItem> groupItemList = new ArrayList<>();
-
-                for (GroupBean groupBean : result.getDataInfo()) {
-                    //int groupType, String sortName, int groupNo, String scheduleNo,String itemCode, int examType, int isTestComplete
-                    Group group = new Group(groupBean.getGroupType(), groupBean.getSortName(), groupBean.getGroupNo()
-                            , groupBean.getScheduleNo(), itemCode, groupBean.getExamType(), 0);
-                    groupList.add(group);
-
-                    if (groupBean.getStudentCodeList() != null) {
-                        for (StudentBean student : groupBean.getStudentCodeList()) {
-                            //String itemCode, int groupType, String sortName, int groupNo, String scheduleNo, String studentCode, int trackNo, int identityMark
-                            GroupItem groupItem = new GroupItem(itemCode, groupBean.getGroupType(), groupBean.getSortName(), groupBean.getGroupNo()
-                                    , groupBean.getScheduleNo(), student.getStudentCode(), student.getTrackNo(), 0);
-                            groupItemList.add(groupItem);
-                        }
-                    }
-
-                }
-
-                DBManager.getInstance().insertGroupList(groupList);
-                DBManager.getInstance().insertGroupItemList(groupItemList);
-                if (result.getBatch() < result.getBatchTotal()) {
-                    getItemGroupAll(itemCode, scheduleNo, result.getBatch() + 1, examType);
-                } else {
-                    if (onRequestEndListener != null)
-                        onRequestEndListener.onSuccess(GROUP_BIZ);
-                }
-
-
-            }
-
-            @Override
-            public void onFault(int code, String errorMsg) {
-                Logger.i("getItemGroupAll  onFault");
-                EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_FAULT));
-                ToastUtils.showShort("获取分组：" + errorMsg);
-                if (onRequestEndListener != null) {
-                    onRequestEndListener.onFault(GROUP_BIZ);
                 }
             }
         }));
