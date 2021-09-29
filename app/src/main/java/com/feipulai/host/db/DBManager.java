@@ -82,7 +82,7 @@ public class DBManager {
         int[] supportMachineCodes = {ItemDefault.CODE_HW, ItemDefault.CODE_TS, ItemDefault.CODE_YWQZ,
                 ItemDefault.CODE_LDTY, ItemDefault.CODE_ZWTQQ,
                 ItemDefault.CODE_HWSXQ, ItemDefault.CODE_FHL, ItemDefault.CODE_ZFP, ItemDefault.CODE_WLJ, ItemDefault.CODE_YTXS,
-                ItemDefault.CODE_JGCJ, ItemDefault.CODE_SL, ItemDefault.CODE_SGBQS};
+                ItemDefault.CODE_JGCJ, ItemDefault.CODE_SL, ItemDefault.CODE_SGBQS,ItemDefault.CODE_SPORT_TIMER};
         for (int machineCode : supportMachineCodes) {
             //查询是否已经存在该机器码的项,如果存在就放弃,避免重复添加
             List<Item> items = itemDao.queryBuilder().where(ItemDao.Properties.MachineCode.eq(machineCode)).list();
@@ -121,6 +121,9 @@ public class DBManager {
                 case ItemDefault.CODE_ZFP:
                     insertItem(machineCode, "红外计时", "毫秒");
                     break;
+                case ItemDefault.CODE_SPORT_TIMER:
+                    insertItem(machineCode, "运动计时", "毫秒");
+                    break;
                 case ItemDefault.CODE_WLJ:
                     insertItem(machineCode, "握力", "千克");
                     break;
@@ -136,6 +139,7 @@ public class DBManager {
                 case ItemDefault.CODE_SGBQS:
                     insertItem(machineCode, "双杠臂屈伸", "次");
                     break;
+
             }
         }
         Logger.i("数据库初始化完成");
@@ -996,7 +1000,18 @@ public class DBManager {
                 .limit(1)
                 .unique();
     }
-
+    public RoundResult queryBestScore(String studentCode, int testNo) {
+        Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
+                + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\ttestNo:" + testNo);
+        return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(RoundResultDao.Properties.TestNo.eq(testNo))
+                .where(RoundResultDao.Properties.IsLastResult.eq(1))
+                .limit(1)
+                .unique();
+    }
     /**
      * 获取学生最好的成绩
      *
@@ -1040,7 +1055,15 @@ public class DBManager {
                 .limit(1)
                 .unique();
     }
-
+    public RoundResult queryRoundByRoundNo(String studentCode, int testNo, int roundNo) {
+        return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(RoundResultDao.Properties.RoundNo.eq(roundNo))
+                .where(RoundResultDao.Properties.TestNo.eq(testNo))
+                .unique();
+    }
     /********************************************多表操作**********************************************************************/
 
     /**

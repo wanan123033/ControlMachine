@@ -155,11 +155,10 @@ public abstract class BaseCheckActivity
             ToastUtils.showShort("未选择人脸识别检录功能");
             return;
         }
-        initAFR();
         if (afrFrameLayout == null) {
             return;
         }
-
+        initAFR();
         boolean isGoto = afrFragment.gotoUVCFaceCamera(!afrFragment.isOpenCamera);
         if (isGoto) {
             if (afrFragment.isOpenCamera) {

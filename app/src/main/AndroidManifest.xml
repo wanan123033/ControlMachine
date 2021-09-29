@@ -179,6 +179,11 @@
         <activity
             android:name=".activity.explain.ExplainActivity"
             android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".activity.sporttime.SportPairActivity" />
+        <activity android:name=".activity.sporttime.SportSettingActivity" />
+        <activity android:name=".activity.sporttime.SportInitWayActivity" />
+        <activity android:name=".activity.sporttime.SportTimeActivity" />
+        <activity android:name=".activity.vccheck.GripSettingActivity" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

@@ -1,11 +1,14 @@
 package com.feipulai.host.activity.vccheck;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.feipulai.common.utils.DateUtil;
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.manager.VitalCapacityManager;
 import com.feipulai.device.serial.MachineCode;
@@ -36,6 +39,7 @@ public class VitalTestActivity extends BaseMoreActivity {
     private final int GET_SCORE_RESPONSE = 2;
     int hostId = SettingHelper.getSystemSetting().getHostId();
     private int frequency = SettingHelper.getSystemSetting().getUseChannel();
+    GripSetting setting;
     ;
     //    private int velocity = SerialConfigs.VITAL_VELOCITY;
     private int VERSION = 363;
@@ -43,30 +47,35 @@ public class VitalTestActivity extends BaseMoreActivity {
     @Override
     protected void initData() {
         super.initData();
+        setting = SharedPrefsUtil.loadFormSource(this,GripSetting.class);
+        if (setting == null){
+            setting = new GripSetting();
+        }
         for (int i = 0; i < deviceState.length; i++) {
 
             deviceState[i] = 0;//连续5次检测不到认为掉线
         }
 //        getToolbar().getRightView(0).setVisibility(View.GONE);
-        getToolbar().getRightView(1).setVisibility(View.GONE);
-        getToolbar().getRightView(2).setVisibility(View.GONE);
+//        getToolbar().getRightView(1).setVisibility(View.GONE);
+//        getToolbar().getRightView(2).setVisibility(View.GONE);
     }
 
     @Override
     public void gotoItemSetting() {
-
+        Intent intent = new Intent(this,GripSettingActivity.class);
+        startActivity(intent);
     }
 
     @Override
     public int setTestDeviceCount() {
-        return MAX_DEVICE_COUNT;
+        return setting.getDeviceSum();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        LogUtils.operation("VitalTestActivity onResume");
-        RadioManager.getInstance().setOnRadioArrived(resultImpl);
+
+
         RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(frequency)));
 
         sendEmpty();
@@ -134,7 +143,7 @@ public class VitalTestActivity extends BaseMoreActivity {
     public void sendEmpty() {
         LogUtils.operation("肺活量 sendEmpty");
         Log.i(TAG, "send_empty");
-        for (int i = 0; i < deviceState.length; i++) {
+        for (int i = 0; i < setTestDeviceCount(); i++) {
             BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
             if (deviceState[i] == 0) {
                 if (baseDevice.getState() != BaseDeviceState.STATE_ERROR) {
@@ -211,7 +220,6 @@ public class VitalTestActivity extends BaseMoreActivity {
                         if (detail.getStuDevicePair().getBaseDevice().getDeviceId() == result.getDeviceId()) {
                             onResultArrived(result.getResult(), detail.getStuDevicePair());
                         }
-
                     }
                     break;
                 case SEND_EMPTY:

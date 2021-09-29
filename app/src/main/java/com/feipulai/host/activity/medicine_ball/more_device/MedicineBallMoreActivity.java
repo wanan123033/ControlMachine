@@ -84,7 +84,7 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
     private void sendEmpty() {
         LogUtils.operation("MedicineBallMoreActivity sendEmpty");
         Log.i(TAG, "james_send_empty");
-        for (int i = 0; i < setting.getTestDeviceCount(); i++) {
+        for (int i = 0; i < deviceDetails.size(); i++) {
             BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
             if (deviceState[i] == 0) {
                 if (baseDevice.getState() != BaseDeviceState.STATE_ERROR) {

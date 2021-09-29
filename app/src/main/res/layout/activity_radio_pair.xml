@@ -44,7 +44,17 @@
             android:layout_height="wrap_content"/>
 
         </LinearLayout>
-
+        <TextView
+            android:id="@+id/tv_init_way"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/btn_background"
+            android:gravity="center"
+            android:visibility="gone"
+            android:text="自定义路线"
+            android:textColor="@color/white"
+            android:textSize="18dp" />
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
