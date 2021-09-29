@@ -2,6 +2,7 @@ package com.feipulai.host.bean;
 
 import com.feipulai.host.entity.Student;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -9,7 +10,7 @@ import java.util.List;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 
-public class RunStudent {
+public class RunStudent implements Serializable {
     private Student student ;
     private int runId ;
     private String mark ;
@@ -18,6 +19,8 @@ public class RunStudent {
     private int trackNo ;
     private List<WaitResult> resultList;
     private int originalMark ;
+    private int independentTime;
+    private int roundNo;
     public Student getStudent() {
         return student;
     }
@@ -84,9 +87,25 @@ public class RunStudent {
         this.originalMark = originalMark;
     }
 
+    public int getIndependentTime() {
+        return independentTime;
+    }
+
+    public void setIndependentTime(int independentTime) {
+        this.independentTime = independentTime;
+    }
+
+    public void setRoundNo(int roundNo) {
+        this.roundNo = roundNo;
+    }
+
+    public int getRoundNo() {
+        return roundNo;
+    }
+
     public static class WaitResult{
-       private String waitResult;
-       private int oriResult;
+        private String waitResult;
+        private int oriResult;
 
         public String getWaitResult() {
             return waitResult;

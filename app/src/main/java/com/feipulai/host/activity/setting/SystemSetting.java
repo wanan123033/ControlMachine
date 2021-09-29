@@ -85,7 +85,7 @@ public class SystemSetting {
      * 3 90
      */
     private int afrContrast = 3;
-
+    private int radioLed;//用于区分红外计时版本0带盒子版，1不带盒子
     public int getAfrContrast() {
         return afrContrast;
     }
@@ -245,6 +245,14 @@ public class SystemSetting {
 
     public void setLedVersion(int ledVersion) {
         this.ledVersion = ledVersion;
+    }
+
+    public int getRadioLed() {
+        return radioLed;
+    }
+
+    public void setRadioLed(int radioLed) {
+        this.radioLed = radioLed;
     }
 
     /***

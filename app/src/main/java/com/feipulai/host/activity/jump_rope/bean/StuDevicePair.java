@@ -16,6 +16,7 @@ public class StuDevicePair implements Serializable {
 	private IDeviceResult deviceResult;
 	private long startTime;
 	private long endTime;
+    private int battery;
 	public IDeviceResult getDeviceResult(){
 		return deviceResult;
 	}
@@ -48,6 +49,14 @@ public class StuDevicePair implements Serializable {
 				", deviceResult=" + deviceResult +
 				'}';
 	}
+
+    public int getBattery() {
+        return battery;
+    }
+
+    public void setBattery(int battery) {
+        this.battery = battery;
+    }
 
     public long getStartTime() {
         return startTime;

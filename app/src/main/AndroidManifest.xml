@@ -184,7 +184,22 @@
         <activity android:name=".activity.sporttime.SportInitWayActivity" />
         <activity android:name=".activity.sporttime.SportTimeActivity" />
         <activity android:name=".activity.vccheck.GripSettingActivity" />
-
+        <activity
+            android:name=".activity.radio_timer.RunTimerSelectActivity"
+            android:configChanges="keyboardHidden|keyboard"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity android:name=".activity.radio_timer.newRadioTimer.RadioDeviceDetailActivity"></activity>
+        <activity android:name=".activity.radio_timer.newRadioTimer.pair.NewRadioPairActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|keyboard"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <activity android:name=".activity.radio_timer.newRadioTimer.NewRadioTestActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|keyboard"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <activity android:name=".activity.radio_timer.newRadioTimer.PreTestActivity"
+            android:configChanges="keyboardHidden|keyboard"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.feipulai.host.provider"

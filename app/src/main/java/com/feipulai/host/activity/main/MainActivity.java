@@ -18,6 +18,7 @@ import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SystemBrightUtils;
 import com.feipulai.common.view.baseToolbar.StatusBarUtil;
+import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.device.serial.MachineCode;
@@ -28,6 +29,7 @@ import com.feipulai.host.activity.base.BaseActivity;
 import com.feipulai.host.activity.data.DataManageActivity;
 import com.feipulai.host.activity.data.DataRetrieveActivity;
 import com.feipulai.host.activity.explain.ExplainActivity;
+import com.feipulai.host.activity.radio_timer.RunTimerSelectActivity;
 import com.feipulai.host.activity.setting.LEDSettingActivity;
 import com.feipulai.host.activity.setting.SettingActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
@@ -247,7 +249,13 @@ public class MainActivity extends BaseActivity {
                 startActivity(new Intent(Settings.ACTION_SETTINGS));
                 break;
             case R.id.card_led:
-                IntentUtil.gotoActivity(MainActivity.this, LEDSettingActivity.class);
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZFP){
+                    Intent intent = new Intent(MainActivity.this, RunTimerSelectActivity.class);
+                    intent.putExtra(RunTimerSelectActivity.GOTO_FLAG,11);
+                    startActivity(intent);
+                }else {
+                    startActivity(new Intent(MainActivity.this, LEDSettingActivity.class));
+                }
                 break;
             case R.id.card_device_cut:
                 IntentUtil.gotoActivity(this, MachineSelectActivity.class);
