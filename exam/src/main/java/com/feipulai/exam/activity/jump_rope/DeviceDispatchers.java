@@ -65,9 +65,11 @@ public class DeviceDispatchers {
                 for (int j = i ; j < pairs.size() ; j++){
                     pairs.get(j).setStudent(null);
                 }
-                index = students.indexOf(pairs.get(i - 1).getStudent());
-                if (index == students.size() - 1){
-                    index = -1;
+                if (i >= 1) {
+                    index = students.indexOf(pairs.get(i - 1).getStudent());
+                    if (index == students.size() - 1) {
+                        index = -1;
+                    }
                 }
                 break;
             }
