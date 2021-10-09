@@ -39,8 +39,10 @@ public class DeviceDispatchers {
         if(testPattern == SystemSetting.PERSON_PATTERN){
             return dispatchDevicePersonal(pairs);
         }
-
-        index = students.indexOf(pairs.get(pairs.size() - 1).getStudent());
+        if (pairs.size() >= 1)
+            index = students.indexOf(pairs.get(pairs.size() - 1).getStudent());
+        else
+            index = -1;
         if (index == students.size() - 1){
             index = -1;
         }
@@ -126,6 +128,9 @@ public class DeviceDispatchers {
     private boolean dispatchDeviceSuccesive(List<StuDevicePair> pairs) {
         for (int i = 0 ; i < pairs.size() ; i++){
             Student student = pairs.get(i).getStudent();
+            if (student == null){
+                continue;
+            }
             StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
             if (studentItem.getExamType() == 2){
                 List<RoundResult> results = TestCache.getInstance().getResults().get(student);

@@ -1340,7 +1340,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
             roundResult.setIsLastResult(1);
 
         }
-
+        roundResult.setPrintTime(System.currentTimeMillis()+"");
         DBManager.getInstance().insertRoundResult(roundResult);
         LogUtils.operation("保存成绩:" + roundResult.toString());
         updateLastResultLed(roundResult.getResultState() != RoundResult.RESULT_STATE_NORMAL ? "X" : ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()), index);

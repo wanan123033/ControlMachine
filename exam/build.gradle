@@ -34,7 +34,7 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.releaseConfig
-
+0
             resValue "string", "software_uuid", "FP-KTA2108_KS"
             resValue "string", "hardware_uuid", "FP-KTA2108_KS_ANDROID"
         }
