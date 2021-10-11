@@ -90,8 +90,6 @@ public class SplashScreenActivity extends BaseActivity {
             }
             activate();
             gotoMain();
-
-
         } else {
             activate();
         }
