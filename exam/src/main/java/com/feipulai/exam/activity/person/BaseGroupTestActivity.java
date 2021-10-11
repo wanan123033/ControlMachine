@@ -149,11 +149,12 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         rvTestStu.setAdapter(stuAdapter);
 
         StringBuffer sbName = new StringBuffer();
-        sbName.append(group.getGroupType() == Group.MALE ? "男子" :
-                (group.getGroupType() == Group.FEMALE ? "女子" : "男女混合"));
-        sbName.append(group.getSortName() + String.format("第%1$d组", group.getGroupNo()));
-        txtGroupName.setText(sbName);
-
+        if (group != null) {
+            sbName.append(group.getGroupType() == Group.MALE ? "男子" :
+                    (group.getGroupType() == Group.FEMALE ? "女子" : "男女混合"));
+            sbName.append(group.getSortName() + String.format("第%1$d组", group.getGroupNo()));
+            txtGroupName.setText(sbName);
+        }
         stuAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
@@ -740,8 +741,10 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 SystemSetting setting = SettingHelper.getSystemSetting();
                 StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairsList.get(i).getStudent().getStudentCode());
                 //判断是否开启补考需要加上是否已完成本次补考，不然一直会停留在这个人上面测试
-                if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairsList.get(i).isResit()){
-                    roundResultList.clear();
+                if (studentItem != null) {
+                    if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairsList.get(i).isResit()) {
+                        roundResultList.clear();
+                    }
                 }
                 int testNo = stuPairsList.get(i).getTestNo() == -1 ? setTestCount() : stuPairsList.get(i).getTestNo();
                 if (roundResultList == null || roundResultList.size() == 0 || roundResultList.size() < testNo) {
@@ -998,13 +1001,17 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         LogUtils.operation("保存成绩:" + roundResult.toString());
         SystemSetting setting = SettingHelper.getSystemSetting();
         //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
-        if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairsList.get(stuAdapter.getTestPosition()).isResit()){
-            stuPairsList.get(stuAdapter.getTestPosition()).setResit(true);
+        if (studentItem != null) {
+            if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairsList.get(stuAdapter.getTestPosition()).isResit()) {
+                stuPairsList.get(stuAdapter.getTestPosition()).setResit(true);
+            }
         }
         uploadServer(baseStuPair, roundResult);
-        if (studentItem.getExamType() == 2){
-            //是否测试到最后一位
-            continuousTest();
+        if (studentItem != null) {
+            if (studentItem.getExamType() == 2) {
+                //是否测试到最后一位
+                continuousTest();
+            }
         }
 
     }

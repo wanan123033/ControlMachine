@@ -39,8 +39,10 @@ public class DeviceDispatchers {
         if(testPattern == SystemSetting.PERSON_PATTERN){
             return dispatchDevicePersonal(pairs);
         }
-
-        index = students.indexOf(pairs.get(pairs.size() - 1).getStudent());
+        if (pairs.size() >= 1)
+            index = students.indexOf(pairs.get(pairs.size() - 1).getStudent());
+        else
+            index = -1;
         if (index == students.size() - 1){
             index = -1;
         }
@@ -65,9 +67,11 @@ public class DeviceDispatchers {
                 for (int j = i ; j < pairs.size() ; j++){
                     pairs.get(j).setStudent(null);
                 }
-                index = students.indexOf(pairs.get(i - 1).getStudent());
-                if (index == students.size() - 1){
-                    index = -1;
+                if (i >= 1) {
+                    index = students.indexOf(pairs.get(i - 1).getStudent());
+                    if (index == students.size() - 1) {
+                        index = -1;
+                    }
                 }
                 break;
             }
@@ -104,7 +108,8 @@ public class DeviceDispatchers {
         Student student = students.get(index);
         Log.e("TAG---79",student.toString());
         StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
-        if (studentItem.getExamType() == 2){
+
+        if (studentItem != null && studentItem.getExamType() == 2){
             List<RoundResult> results = TestCache.getInstance().getResults().get(student);
             if (results == null || results.isEmpty()){
                 return student;
@@ -124,8 +129,11 @@ public class DeviceDispatchers {
     private boolean dispatchDeviceSuccesive(List<StuDevicePair> pairs) {
         for (int i = 0 ; i < pairs.size() ; i++){
             Student student = pairs.get(i).getStudent();
+            if (student == null){
+                continue;
+            }
             StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
-            if (studentItem.getExamType() == 2){
+            if (studentItem != null && studentItem.getExamType() == 2){
                 List<RoundResult> results = TestCache.getInstance().getResults().get(student);
                 if (results == null || results.isEmpty()){
                     pairs.get(i).setStudent(student);

@@ -1340,7 +1340,9 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
             roundResult.setIsLastResult(1);
 
         }
-
+        if (roundResult.getTestTime() == null){
+            roundResult.setTestTime(System.currentTimeMillis()+"");
+        }
         DBManager.getInstance().insertRoundResult(roundResult);
         LogUtils.operation("保存成绩:" + roundResult.toString());
         updateLastResultLed(roundResult.getResultState() != RoundResult.RESULT_STATE_NORMAL ? "X" : ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()), index);
@@ -1352,7 +1354,8 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
 
         uploadResult(uploadResults);
         StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),roundResult.getStudentCode());
-        if (studentItem.getExamType() == 2){
+
+        if (studentItem != null && studentItem.getExamType() == 2){
             toSkip(stuAdapter.getTestPosition());
         }
     }
