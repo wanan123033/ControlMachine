@@ -49,9 +49,12 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
+import static com.feipulai.exam.config.EventConfigs.CONNECT_SETTING;
+import static com.feipulai.exam.config.EventConfigs.SETTING_SUCCEED;
+
 public class RunTimerSettingActivity extends BaseTitleActivity implements AdapterView.OnItemSelectedListener,
         RadioGroup.OnCheckedChangeListener, CompoundButton.OnCheckedChangeListener,
-        TextWatcher, RunTimerImpl.RunTimerListener, RadioManager.OnRadioArrivedListener {
+        TextWatcher,  RadioManager.OnRadioArrivedListener {
 
     @BindView(R.id.sp_test_times)
     Spinner spTestTimes;
@@ -94,7 +97,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     private RunTimerSetting runTimerSetting;
     private int intercept_point;
     private SweetAlertDialog alertDialog;
-    private SerialDeviceManager deviceManager;
+//    private SerialDeviceManager deviceManager;
     private SportTimerManger sportTimerManger;
 
     @Override
@@ -125,7 +128,6 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
 //        etFullMale.addTextChangedListener(this);
 //        etFullFemale.addTextChangedListener(this);
         etRunNum.addTextChangedListener(this);
-        deviceManager = SerialDeviceManager.getInstance();
         etSensitivityNum.setText(String.format("%d", runTimerSetting.getSensitivityNum()));
         if (runTimerSetting.getConnectType() == 1) {
             selfCheck.setText("设备配对");
@@ -271,7 +273,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
-        deviceManager.setRS232ResiltListener(null);
+
     }
 
     @Override
@@ -349,6 +351,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
 //        runTimerSetting.setFemaleFull(etFullFemale.getText().toString().trim());
 //        runTimerSetting.setMaleFull(etFullMale.getText().toString().trim());
         runTimerSetting.setRunNum(etRunNum.getText().toString());
+        EventBus.getDefault().post(new BaseEvent(EventConfigs.UPDATE_TEST_COUNT));
     }
 
     @Override
@@ -359,8 +362,9 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         String senNum = etSensitivityNum.getText().toString();
         runTimerSetting.setSensitivityNum(TextUtils.isEmpty(senNum) ? 5 : Integer.parseInt(senNum));
         getInterceptPoint();
-        EventBus.getDefault().post(new BaseEvent(null, EventConfigs.UPDATE_TEST_COUNT));
         SharedPrefsUtil.save(this, runTimerSetting);
+        EventBus.getDefault().post(new BaseEvent(EventConfigs.CONNECT_SETTING));
+
     }
 
     @OnClick({R.id.btn_self_check, R.id.btn_sync_time,R.id.btn_connect})
@@ -380,19 +384,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
                     alertDialog.setTitleText("终端自检中...");
                     alertDialog.setCancelable(false);
                     alertDialog.show();
-
-                    int hostId = SettingHelper.getSystemSetting().getHostId();
-//                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x02, (byte) hostId)));//主机号
-                    int runNum = Integer.parseInt(runTimerSetting.getRunNum());
-                    deviceManager.setRS232ResiltListener(new RunTimerImpl(this));
-//                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x01, (byte) runNum)));//跑道数
-                    int interceptPoint = runTimerSetting.getInterceptPoint();
-//                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x04, (byte) interceptPoint)));//拦截点
-                    int way = runTimerSetting.getInterceptWay();
-//                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x05, (byte) (way + 1))));//触发方式
-                    int sensor = runTimerSetting.getSensor();
-//                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x08, (byte) (sensor))));//传感器信道
-                    RunTimerManager.cmdSetting(runNum, hostId, interceptPoint, way, sensor, 10);
+                    EventBus.getDefault().post(new BaseEvent(EventConfigs.CONNECT_SETTING));
                     //3秒自检
                     mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 5000);
                 }
@@ -421,20 +413,8 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         return HH * 60 * 60 * 1000 + mm * 60 * 1000 + SS * 1000 + MI;
     }
 
-//    private byte[] cmd(byte cmd, byte mark, byte value) {
-//        byte[] setting = {(byte) 0xBB, 0x0C, (byte) 0xA0, 0x00, (byte) 0xA1, 0x00, cmd, mark, value, 0x00, 0x00, 0x0D};
-//        int sum = 0;
-//        for (int i = 0; i < 9; i++) {
-//            sum += setting[i];
-//        }
-//        setting[10] = (byte) sum;
-//        return setting;
-//    }
-
-
     @Override
     protected void onStop() {
-
         super.onStop();
     }
 
@@ -444,38 +424,17 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     }
 
     @Override
-    public void onGetTime(RunTimerResult result) {
-
-    }
-
-    @Override
-    public void onConnected(RunTimerConnectState connectState) {
-        int intercept = runTimerSetting.getInterceptPoint();
-        switch (intercept) {
-            case 1:
-                if (connectState.getStartIntercept() == 1) {
-                    mHandler.sendEmptyMessage(MSG_CONNECT);
-                }
-                break;
-            case 2:
-                if (connectState.getEndIntercept() == 1) {
-                    mHandler.sendEmptyMessage(MSG_CONNECT);
-                }
-                break;
-            case 3:
-                if (connectState.getEndIntercept() == 1 || connectState.getStartIntercept() == 1) {
-                    mHandler.sendEmptyMessage(MSG_CONNECT);
-                }
+    public void onEventMainThread(BaseEvent baseEvent) {
+        super.onEventMainThread(baseEvent);
+        switch (baseEvent.getTagInt()){
+            case SETTING_SUCCEED:
+                Log.i("CONNECT_SETTING","SETTING_SUCCEED");
+                mHandler.sendEmptyMessage(MSG_CONNECT);
                 break;
         }
-
-
     }
 
-    @Override
-    public void onTestState(int state) {
 
-    }
 
     private final int MSG_DISCONNECT = 0x1001;
     private final int MSG_CONNECT = 0x1002;

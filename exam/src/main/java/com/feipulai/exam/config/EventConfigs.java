@@ -1,7 +1,5 @@
 package com.feipulai.exam.config;
 
-import com.feipulai.common.utils.print.PdfUtil;
-
 /**
  * Created by zzs on  2018/12/29
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
@@ -37,4 +35,6 @@ public class EventConfigs {
 
     public static final int SERVICE_UPLOAD_DATA_SUCCEED = 17;
     public static final int SERVICE_UPLOAD_DATA_ERROR = 18;
+    public static final int CONNECT_SETTING = 19;
+    public static final int SETTING_SUCCEED = 20;
 }
