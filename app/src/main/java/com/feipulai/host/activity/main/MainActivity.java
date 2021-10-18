@@ -224,6 +224,7 @@ public class MainActivity extends BaseActivity {
 
                 break;
             case R.id.card_print:
+//                DBManager.getInstance().deleteAllStudent();
                 PrinterManager.getInstance().init();
                 PrinterManager.getInstance().selfCheck();
                 PrinterManager.getInstance().print("\n\n");
@@ -233,6 +234,7 @@ public class MainActivity extends BaseActivity {
 //                    result.setResultState(RoundResult.RESULT_STATE_NORMAL);
 //                }
 //                DBManager.getInstance().updateRoundResult(results);
+
                 break;
             case R.id.card_parameter_setting:
                 IntentUtil.gotoActivity(MainActivity.this, SettingActivity.class);
