@@ -250,7 +250,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        LogUtils.operation("跳过测试考生 ："+student.toString());
+                        LogUtils.operation("跳过测试考生 ：" + student.toString());
                         //测试结束学生清除 ，设备设置空闲状态
                         stuSkip(pos);
                         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
