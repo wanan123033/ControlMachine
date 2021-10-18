@@ -289,7 +289,13 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             toastSpeak("当前无设备可添加学生测试");
             return;
         }
-
+        for (DeviceDetail deviceDetail : deviceDetails) {
+            Student deviceStu = deviceDetail.getStuDevicePair().getStudent();
+            if (deviceStu != null && TextUtils.equals(student.getStudentCode(), deviceStu.getStudentCode())) {
+                toastSpeak("该考生正在测试，无法添加");
+                return;
+            }
+        }
 
         addStudent(student, index);
         if (!isNextClickStart) {
