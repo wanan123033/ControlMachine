@@ -1,16 +1,12 @@
 package com.feipulai.device.serial.runnable;
 
 import android.os.Message;
-import android.util.Log;
 
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.MachineCode;
-import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialParams;
 import com.feipulai.device.serial.SerialPorter;
-import com.feipulai.device.serial.beans.ConverterVersion;
 import com.feipulai.device.serial.beans.RS232Result;
-import com.feipulai.device.serial.beans.Radio868Result;
 import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.parser.DistanceParser;
 import com.feipulai.device.serial.parser.GPSParser;
