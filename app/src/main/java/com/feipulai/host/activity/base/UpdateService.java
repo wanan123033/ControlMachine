@@ -61,22 +61,22 @@ public class UpdateService extends IntentService {
         String lastDownLoadTime = SharedPrefsUtil.getValue(getApplicationContext(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.LAST_DOWNLOAD_TIME, "");
         ItemSubscriber subscriber = new ItemSubscriber();
         subscriber.getStudentData(1,lastDownLoadTime);
-//        subscriber.setOnRequestEndListener(new OnRequestEndListener() {
-//            @Override
-//            public void onSuccess(int bizType) {
-//                EventBus.getDefault().post(new BaseEvent(EventConfigs.SERVICE_UPLOAD_DATA_SUCCEED));
-//            }
-//
-//            @Override
-//            public void onFault(int bizType) {
-//                EventBus.getDefault().post(new BaseEvent(EventConfigs.SERVICE_UPLOAD_DATA_ERROR));
-//            }
-//
-//            @Override
-//            public void onRequestData(Object data) {
-//
-//            }
-//        });
+        subscriber.setOnRequestEndListener(new OnRequestEndListener() {
+            @Override
+            public void onSuccess(int bizType) {
+                EventBus.getDefault().post(new BaseEvent(EventConfigs.SERVICE_UPLOAD_DATA_SUCCEED));
+            }
+
+            @Override
+            public void onFault(int bizType) {
+                EventBus.getDefault().post(new BaseEvent(EventConfigs.SERVICE_UPLOAD_DATA_ERROR));
+            }
+
+            @Override
+            public void onRequestData(Object data) {
+
+            }
+        });
         photoHeaders = SharedPrefsUtil.loadFormSource(this, DownLoadPhotoHeaders.class);
         uploadPhotos(1, photoHeaders.getUploadTime());
     }

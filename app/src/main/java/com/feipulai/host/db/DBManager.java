@@ -175,6 +175,10 @@ public class DBManager {
     /********************************************
      * 学生表
      ********************************************/
+    public void deleteAllStudent(){
+        studentItemDao.deleteAll();
+        studentDao.deleteAll();
+    }
     /**
      * 根据学生考号获取学生信息
      *
