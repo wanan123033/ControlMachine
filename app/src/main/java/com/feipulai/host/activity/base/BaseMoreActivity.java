@@ -250,7 +250,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        LogUtils.operation("跳过测试考生 ："+student.toString());
+                        LogUtils.operation("跳过测试考生 ：" + student.toString());
                         //测试结束学生清除 ，设备设置空闲状态
                         stuSkip(pos);
                         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
@@ -289,7 +289,13 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             toastSpeak("当前无设备可添加学生测试");
             return;
         }
-
+        for (DeviceDetail deviceDetail : deviceDetails) {
+            Student deviceStu = deviceDetail.getStuDevicePair().getStudent();
+            if (deviceStu != null && TextUtils.equals(student.getStudentCode(), deviceStu.getStudentCode())) {
+                toastSpeak("该考生正在测试，无法添加");
+                return;
+            }
+        }
 
         addStudent(student, index);
         if (!isNextClickStart) {
