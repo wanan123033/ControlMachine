@@ -55,6 +55,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
     private boolean isForce;
 //    private boolean isAuto;
     private boolean isBaseTime ;//是否已经计算误差时间
+    private boolean startKeepTime;
     /**
      * 跑到数量
      */
@@ -157,6 +158,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
                 case 6://停止计时
                     baseTimer = 0;
                     changeState(new boolean[]{true, false, false, false,false});// 0 等待 1 强制 2 违规 3 成绩确认 4 预备
+                    startKeepTime = false;
                     break;
                 case 2://等待计时
                     if (isOverTimes) {
@@ -176,7 +178,10 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
                         baseTimer = System.currentTimeMillis() - baseTimer;
                         isBaseTime = false;
                     }
-                    disposeManager.keepTime();
+                    if (!startKeepTime){
+                        startKeepTime = true;
+                        disposeManager.keepTime();
+                    }
                     changeState(new boolean[]{false, false, true, false, false});
                     keepTime();
                     startTime = DateUtil.getCurrentTime();
@@ -485,6 +490,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
     public void stopRun() {
 //        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc5, (byte) 0x00, (byte) 0x00)));
         RunTimerManager.stopRun();
+        startKeepTime = false;
     }
 
     private void showConfirm() {
