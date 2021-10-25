@@ -365,25 +365,28 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
     private long disposeTime;
 
     public void keepTime() {
-        disposable = Observable.interval(0, 100, TimeUnit.MILLISECONDS)
-                .observeOn(Schedulers.io())
+        if (disposable == null || disposable.isDisposed()){
+            disposable = Observable.interval(0, 100, TimeUnit.MILLISECONDS)
+                    .observeOn(Schedulers.io())
 //                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Long>() {
-                    @Override
-                    public void accept(Long aLong) throws Exception {
+                    .subscribe(new Consumer<Long>() {
+                        @Override
+                        public void accept(Long aLong) throws Exception {
 
-                        if (testState == 3 || testState == 4) {
-                            disposeTime = aLong * 100;
-                            updateTimeText((int) disposeTime);
-                        }
-                        if (testState == 2 || testState == 5 || testState == 6) {
-                            disposeTime = 0;
-                            updateText("00:00.00");
-                            stop();
-                        }
+                            if (testState == 3 || testState == 4) {
+                                disposeTime = aLong * 100;
+                                updateTimeText((int) disposeTime);
+                            }
+                            if (testState == 2 || testState == 5 || testState == 6) {
+                                disposeTime = 0;
+                                updateText("00:00.00");
+                                stop();
+                            }
 
-                    }
-                });
+                        }
+                    });
+        }
+
     }
 
     public void stop() {
