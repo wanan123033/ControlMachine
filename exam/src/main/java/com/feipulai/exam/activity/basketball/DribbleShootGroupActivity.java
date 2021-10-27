@@ -752,7 +752,7 @@ public class DribbleShootGroupActivity extends BaseTitleActivity implements Base
             roundResult.setResultTestState(0);
         }
         roundResult.setTestNo(1);
-//        roundResult.setExamType(group.getExamType());
+        roundResult.setExamType(group.getExamType());
         StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
         if (studentItem != null){
             roundResult.setExamType(studentItem.getExamType());

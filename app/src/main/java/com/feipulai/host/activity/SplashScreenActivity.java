@@ -19,6 +19,7 @@ import com.feipulai.common.db.DataBaseRespon;
 import com.feipulai.common.db.DataBaseTask;
 import com.feipulai.common.utils.ActivityCollector;
 import com.feipulai.common.utils.DateUtil;
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.host.activity.setting.SettingHelper;
@@ -32,7 +33,6 @@ import com.feipulai.host.netUtils.HttpManager;
 import com.feipulai.host.netUtils.HttpSubscriber;
 import com.feipulai.host.netUtils.OnResultListener;
 import com.feipulai.host.netUtils.netapi.UserSubscriber;
-import com.lgh.uvccamera.utils.LogUtil;
 import com.orhanobut.logger.Logger;
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.SoundPlayUtils;
@@ -78,8 +78,6 @@ public class SplashScreenActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-// 这里是否还需要延时需要再测试后再修改
-        RadioManager.getInstance().init();
 
         DateUtil.setTimeZone(this, "Asia/Shanghai");
 
@@ -209,8 +207,6 @@ public class SplashScreenActivity extends BaseActivity {
                             SoundPlayUtils.init(MyApplication.getInstance());
 
                             ToastUtils.init(getApplicationContext());
-                            //这里初始化时间很长,大约需要3s左右
-                            TtsManager.getInstance().init(SplashScreenActivity.this, TtsConfig.APP_ID, TtsConfig.APP_KEY, TtsConfig.SECRET_KEY);
                             LogUtils.initLogger(true, BuildConfig.DEBUG, MyApplication.LOG_PATH_NAME);
                             boolean isEngine = ConfigUtil.getISEngine(SplashScreenActivity.this);
                             if (isEngine) {
@@ -221,6 +217,8 @@ public class SplashScreenActivity extends BaseActivity {
                                 }
                                 gotoMain();
                             }
+                            //这里初始化时间很长,大约需要3s左右
+                            TtsManager.getInstance().init(SplashScreenActivity.this, TtsConfig.APP_ID, TtsConfig.APP_KEY, TtsConfig.SECRET_KEY);
 
                         } else {
                             gotoMain();
@@ -244,13 +242,19 @@ public class SplashScreenActivity extends BaseActivity {
         boolean isFaceInit = FaceServer.getInstance().init(SplashScreenActivity.this);
         if (SettingHelper.getSystemSetting().getCheckTool() == 4) {
 
-            DataBaseExecutor.addTask(new DataBaseTask(this, "数据加载中...", true) {
+            DataBaseExecutor.addTask(new DataBaseTask(this, "数据加载中...", false) {
                 @Override
                 public DataBaseRespon executeOper() {
                     List<Student> studentList = DBManager.getInstance().queryStudentFeatures();
                     List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
                     for (Student student : studentList) {
-                        registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+                        try {
+                            byte[] faceByte = Base64.decode(student.getFaceFeature(), Base64.DEFAULT);
+                            registerInfoList.add(new FaceRegisterInfo(faceByte, student.getStudentCode()));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
                     }
                     FaceServer.getInstance().addFaceList(registerInfoList);
                     return new DataBaseRespon(true, "", null);
@@ -258,13 +262,11 @@ public class SplashScreenActivity extends BaseActivity {
 
                 @Override
                 public void onExecuteSuccess(DataBaseRespon respon) {
-
                     gotoMain();
                 }
 
                 @Override
                 public void onExecuteFail(DataBaseRespon respon) {
-
                 }
             });
 

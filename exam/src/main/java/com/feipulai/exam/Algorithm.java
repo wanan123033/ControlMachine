@@ -1,10 +1,14 @@
 package com.feipulai.exam;
 
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.print.PrintBean;
 import com.feipulai.exam.utils.EncryptUtil;
 import com.orhanobut.logger.Logger;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
+import java.util.TimeZone;
 
 public class Algorithm {
 
@@ -43,8 +47,14 @@ public class Algorithm {
 //        System.out.println("======>" + d);
 
 
-        byte[] bytes = new byte[]{00, 0x38, 0x39, (byte) 0x91, 0x5a, 0x20, (byte) 0xff};
-        System.out.println("======>" + new String(bytes));
-    }
+//        byte[] bytes = new byte[]{00, 0x38, 0x39, (byte) 0x91, 0x5a, 0x20, (byte) 0xff};
+//        System.out.println("======>" + new String(bytes));
 
+        System.out.println("======>" + formatTime2(1635147285883L,"yyyyMMddHHmmss.SSS"));
+    }
+    public static String formatTime2(long timeMillis, String pattern) {
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));//时钟时间换算需要加8
+        return sdf.format(new Date(timeMillis));
+    }
 }

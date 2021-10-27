@@ -185,10 +185,6 @@ public abstract class BaseCheckActivity
         });
         if (student == null) {
             InteractUtils.toastSpeak(this, "该考生不存在");
-            if (SettingHelper.getSystemSetting().isNetCheckTool()) {
-                showAddHint(student);
-                afrFrameLayout.setVisibility(View.GONE);
-            }
             return;
         }
 
@@ -382,20 +378,20 @@ public abstract class BaseCheckActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                 new SweetAlertDialog(BaseCheckActivity.this).setTitleText(getString(R.string.addStu_dialog_title))
+                new SweetAlertDialog(BaseCheckActivity.this).setTitleText(getString(R.string.addStu_dialog_title))
                         .setContentText(getString(R.string.addStu_dialog_content))
                         .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                sweetAlertDialog.dismissWithAnimation();
-                                new AddStudentDialog(BaseCheckActivity.this).showDialog(student, false);
-                            }
-                        }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                sweetAlertDialog.dismissWithAnimation();
-                            }
-                        }).show();
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                        new AddStudentDialog(BaseCheckActivity.this).showDialog(student, false);
+                    }
+                }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                    }
+                }).show();
 //                new AlertDialog.Builder(BaseCheckActivity.this)
 //                        .setCancelable(false)
 //                        .setTitle("提示")

@@ -15,6 +15,7 @@ import com.feipulai.device.serial.SerialParams;
 import com.feipulai.host.activity.SplashScreenActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.SharedPrefsConfigs;
+import com.feipulai.host.db.DBManager;
 import com.feipulai.host.netUtils.HttpSubscriber;
 import com.feipulai.host.netUtils.netapi.UserSubscriber;
 import com.orhanobut.logger.utils.LogUtils;
@@ -65,6 +66,7 @@ public class MyApplication extends MultiDexApplication {
 
         LogUtils.initLogger(true, BuildConfig.DEBUG, MyApplication.LOG_PATH_NAME);
         SerialParams.init(this);
+        DBManager.getInstance();
 //        registerActivityLifecycleCallbacks(new ActivityLifeCycle(SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME));
         SOFTWAREUUID = MyApplication.getInstance().getString(R.string.software_uuid);//软件识别码
         HARDWAREUUID = MyApplication.getInstance().getString(R.string.hardware_uuid);//硬件识别码

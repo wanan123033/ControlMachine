@@ -48,21 +48,6 @@ public class StudentItem {
         this.scheduleNo = scheduleNo;
     }
 
-//    public StudentItem(String studentCode, String itemCode, int machineCode, int studentType, int examType, int makeUpType, String scheduleNo) {
-//        this.studentCode = studentCode;
-//        this.itemCode = itemCode;
-//        this.machineCode = machineCode;
-//        this.studentType = studentType;
-//        this.examType = examType;
-//        this.scheduleNo = scheduleNo;
-//    }
-
-
-
-    @Generated(hash = 383807586)
-    public StudentItem() {
-    }
-
     @Generated(hash = 1437511224)
     public StudentItem(Long id, @NotNull String studentCode, @NotNull String itemCode, int machineCode, int studentType, int examType, int makeUpType,
             String scheduleNo, String remark1, String remark2, String remark3) {
@@ -78,6 +63,22 @@ public class StudentItem {
         this.remark2 = remark2;
         this.remark3 = remark3;
     }
+
+    @Generated(hash = 383807586)
+    public StudentItem() {
+    }
+
+//    public StudentItem(String studentCode, String itemCode, int machineCode, int studentType, int examType, int makeUpType, String scheduleNo) {
+//        this.studentCode = studentCode;
+//        this.itemCode = itemCode;
+//        this.machineCode = machineCode;
+//        this.studentType = studentType;
+//        this.examType = examType;
+//        this.scheduleNo = scheduleNo;
+//    }
+
+
+ 
 
     @Override
     public String toString() {

@@ -279,7 +279,7 @@ public class InteractUtils {
                 // 分组模式下,在一个分组只允许测试一次
                 roundResult.setTestNo(1);
                 roundResult.setGroupId(TestCache.getInstance().getGroup().getId());
-//                roundResult.setExamType(TestCache.getInstance().getGroup().getExamType());
+                roundResult.setExamType(TestCache.getInstance().getGroup().getExamType());
                 StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
                 if (studentItem != null){
                     roundResult.setExamType(studentItem.getExamType());

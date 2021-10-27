@@ -48,9 +48,11 @@ public class StudentItem{
         this.scheduleNo = scheduleNo;
     }
 
+
+
     @Generated(hash = 1667857632)
     public StudentItem(Long id, @NotNull String studentCode, @NotNull String itemCode, int machineCode, int studentType, int examType,
-                       String scheduleNo, String remark1, String remark2, String remark3) {
+            String scheduleNo, String remark1, String remark2, String remark3) {
         this.id = id;
         this.studentCode = studentCode;
         this.itemCode = itemCode;
@@ -63,9 +65,13 @@ public class StudentItem{
         this.remark3 = remark3;
     }
 
+
+
     @Generated(hash = 383807586)
     public StudentItem() {
     }
+
+    
 
     @Override
     public String toString() {

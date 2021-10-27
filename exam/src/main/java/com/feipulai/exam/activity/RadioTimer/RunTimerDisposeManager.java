@@ -139,7 +139,7 @@ public class RunTimerDisposeManager {
         roundResult.setRoundNo(currentTestTime);
         roundResult.setTestNo(1);
         roundResult.setGroupId(group.getId());
-//        roundResult.setExamType(group.getExamType());
+        roundResult.setExamType(group.getExamType());
         StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
         if (studentItem != null){
             roundResult.setExamType(studentItem.getExamType());

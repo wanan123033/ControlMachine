@@ -76,7 +76,7 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.txt_use_time)
     TextView txtUseTime;
     private ActivateBean activateBean;
-    private LEDManager ledManager= new LEDManager();
+    private LEDManager ledManager = new LEDManager();
     private TimerUtil timerUtil = new TimerUtil(new TimerUtil.TimerAccepListener() {
         @Override
         public void timer(Long time) {
@@ -87,7 +87,7 @@ public class MainActivity extends BaseActivity {
             }
             SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, todayTime + 60 * 1000);
             if (activateBean.getValidRunTime() != 0 && activateBean.getValidEndTime() != 0
-                            && (activateBean.getValidEndTime() - DateUtil.getCurrentTime() <= 3 * 24 * 60 * 60 * 1000 ||
+                    && (activateBean.getValidEndTime() - DateUtil.getCurrentTime() <= 3 * 24 * 60 * 60 * 1000 ||
                     activateBean.getValidRunTime() - todayTime <= 24 * 60 * 60 * 1000)) {
                 txtCutTime.setVisibility(View.VISIBLE);
                 txtCutTime.setText("截止时间：" + DateUtil.formatTime1(activateBean.getValidEndTime(), "yyyy年MM月dd日"));
@@ -168,7 +168,7 @@ public class MainActivity extends BaseActivity {
         StringBuilder sb = new StringBuilder(String.format(systemSetting.isFreedomTest() ? getString(R.string.versions_name_2)
                 : getString(R.string.versions_name), SystemBrightUtils.getCurrentVersion(this)));
 
-        if (machineCode != SharedPrefsConfigs.DEFAULT_MACHINE_CODE) {
+        if (TestConfigs.sCurrentItem != null && machineCode != SharedPrefsConfigs.DEFAULT_MACHINE_CODE) {
             sb.append("-").append(
                     String.format(getString(R.string.host_name), TestConfigs.machineNameMap.get(machineCode), systemSetting.getHostId()));
             String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
@@ -251,11 +251,11 @@ public class MainActivity extends BaseActivity {
                 startActivity(new Intent(Settings.ACTION_SETTINGS));
                 break;
             case R.id.card_led:
-                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZFP){
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZFP) {
                     Intent intent = new Intent(MainActivity.this, RunTimerSelectActivity.class);
-                    intent.putExtra(RunTimerSelectActivity.GOTO_FLAG,11);
+                    intent.putExtra(RunTimerSelectActivity.GOTO_FLAG, 11);
                     startActivity(intent);
-                }else {
+                } else {
                     startActivity(new Intent(MainActivity.this, LEDSettingActivity.class));
                 }
                 break;

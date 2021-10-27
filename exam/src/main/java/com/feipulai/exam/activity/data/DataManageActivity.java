@@ -406,9 +406,7 @@ public class DataManageActivity
                                     @Override
                                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                                         sweetAlertDialog.dismissWithAnimation();
-                                        FileUtil.deleteDirectory(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + MyApplication.PATH_LOG_NAME);
-                                        LogUtils.initLogger(true, true, MyApplication.PATH_LOG_NAME);
-                                        toastSpeak("日志文件删除成功");
+                                        showAuthCodeDialog();
                                     }
                                 }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
@@ -1072,10 +1070,12 @@ public class DataManageActivity
                     }
                 }).create().show();
     }
+
     int type = 0;
+
     private void showDownloadDataDialog() {
 
-        String[] exemType = new String[]{"正常", "补考", "缓考","TCP下载"};
+        String[] exemType = new String[]{"正常", "补考", "缓考", "TCP下载"};
         new AlertDialog.Builder(this).setTitle("选择下载考试类型")
                 .setItems(exemType, new DialogInterface.OnClickListener() {
                     @Override
@@ -1097,7 +1097,7 @@ public class DataManageActivity
                         }
                         String downTime = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS,
                                 SharedPrefsConfigs.LAST_DOWNLOAD_TIME, "");
-                        if (type == 3){
+                        if (type == 3) {
                             OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在下载最新数据...");
                             dataDownload(SettingHelper.getSystemSetting().getTcpIp());
                             return;
@@ -1114,9 +1114,9 @@ public class DataManageActivity
     }
 
     public void dataDownload(String tcpip) {
-        if(TextUtils.isEmpty(tcpip)){
+        if (TextUtils.isEmpty(tcpip)) {
             OperateProgressBar.removeLoadingUiIfExist(this);
-            Toast.makeText(getApplicationContext(),"请输入正确的TCP地址",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "请输入正确的TCP地址", Toast.LENGTH_SHORT).show();
             return;
         }
         if (tcpip.contains(":")) {
@@ -1134,12 +1134,13 @@ public class DataManageActivity
                 }
             });
             tcpDownLoad.getTcp(SCHEDULE, "");
-        }else {
+        } else {
             OperateProgressBar.removeLoadingUiIfExist(this);
-            Toast.makeText(getApplicationContext(),"请输入正确的TCP地址",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "请输入正确的TCP地址", Toast.LENGTH_SHORT).show();
             return;
         }
     }
+
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -1413,8 +1414,11 @@ public class DataManageActivity
                 FileUtil.mkdirs(MyApplication.PATH_IMAGE);
                 FileUtil.delete(MyApplication.PATH_PDF_IMAGE);//清理成绩PDF与图片
                 FileUtil.mkdirs(MyApplication.PATH_PDF_IMAGE);
+                FileUtil.delete(MyApplication.BACKUP_DIR);
+                FileUtil.mkdirs2(MyApplication.BACKUP_DIR);
                 FileUtil.delete(FaceServer.ROOT_PATH);
                 FileUtil.mkdirs2(FaceServer.ROOT_PATH);
+
                 Glide.get(DataManageActivity.this).clearDiskCache();
                 FaceServer.getInstance().unInit();
                 FaceServer.getInstance().init(DataManageActivity.this);
@@ -1523,8 +1527,8 @@ public class DataManageActivity
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                        progressDialog.setMaxProgress(totalCount);
-                                        progressDialog.show();
+                                    progressDialog.setMaxProgress(totalCount);
+                                    progressDialog.show();
 
 
                                 }
@@ -1569,6 +1573,32 @@ public class DataManageActivity
             }
         });
 
+
+    }
+
+    private void showAuthCodeDialog() {
+        //每次调用都需要重新生成,因为每次要生成新的验证码
+//        final EditText editText = new EditText(context);
+//        //设置只允许输入数字
+//        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+//        editText.setSingleLine();
+//        editText.setBackgroundColor(0xffcccccc);
+        final int authCode = (int) (Math.random() * 9000 + 1000);
+        Logger.i("生成验证码:" + authCode);
+
+        new EditDialog.Builder(this).setTitle("清空本地日志文件")
+                .setCanelable(false)
+                .setMessage(String.format(getString(com.feipulai.common.R.string.clear_data_content), "\n" + authCode))
+                .setEditHint(String.format(getString(com.feipulai.common.R.string.clear_data_content), ""))
+                .setPositiveButton(new EditDialog.OnConfirmClickListener() {
+                    @Override
+                    public void OnClickListener(Dialog dialog, String content) {
+                        FileUtil.deleteDirectory(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + MyApplication.PATH_LOG_NAME);
+                        LogUtils.initLogger(true, true, MyApplication.PATH_LOG_NAME);
+                        toastSpeak("日志文件删除成功");
+                    }
+                })
+                .build().show();
 
     }
 }

@@ -43,9 +43,10 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
     private static final int UPDATE_DEVICE = 0X102;
     private static final int UPDATE_RESULT = 0X103;
     private static final int TOAST_SPEAK = 0X104;
+    private static final int CHECK_CMD = 0X105;
     private MyHandler mHandler;
     private GetResultRunnable resultRunnable;
-    private CheckDeviceRunnable statesRunnable;
+//    private CheckDeviceRunnable statesRunnable;
     private SitReachResiltListener sitReachResiltListener;
     private ExecutorService mExecutorService;
     private long disconnectTime;
@@ -85,11 +86,12 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
         SerialDeviceManager.getInstance().setRS232ResiltListener(sitReachResiltListener);
         mExecutorService = Executors.newFixedThreadPool(2);
         resultRunnable = new GetResultRunnable();
-        statesRunnable = new CheckDeviceRunnable();
+//        statesRunnable = new CheckDeviceRunnable();
         mExecutorService.submit(resultRunnable);
-        mExecutorService.submit(statesRunnable);
+//        mExecutorService.submit(statesRunnable);
+        mHandler.sendEmptyMessage(CHECK_CMD);
         resultRunnable.setTestState(sitReachResiltListener.getTestState());
-        statesRunnable.setTestState(sitReachResiltListener.getTestState());
+//        statesRunnable.setTestState(sitReachResiltListener.getTestState());
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE, 1));
         if (SerialDeviceManager.getInstance() != null && sitReachResiltListener.getTestState() != SitReachResiltListener.TestState.UN_STARTED) {
             //开始测试
@@ -108,7 +110,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_END));
         sitReachResiltListener.setTestState(SitReachResiltListener.TestState.UN_STARTED);
         resultRunnable.setTestState(sitReachResiltListener.getTestState());
-        statesRunnable.setTestState(sitReachResiltListener.getTestState());
+//        statesRunnable.setTestState(sitReachResiltListener.getTestState());
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE, 1));
     }
 
@@ -118,8 +120,12 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
         LogUtils.operation("坐位体前屈开始测试:" + baseStuPair.getStudent().toString());
         Logger.i(TAG + ":sendTestCommand发送开始测试");
         sitReachResiltListener.setTestState(SitReachResiltListener.TestState.WAIT_RESULT);
-        resultRunnable.setTestState(sitReachResiltListener.getTestState());
-        statesRunnable.setTestState(sitReachResiltListener.getTestState());
+        if (resultRunnable != null && sitReachResiltListener != null) {
+            resultRunnable.setTestState(sitReachResiltListener.getTestState());
+        }
+//        if (statesRunnable != null && sitReachResiltListener != null) {
+//            statesRunnable.setTestState(sitReachResiltListener.getTestState());
+//        }
         baseStuPair.setTestTime(System.currentTimeMillis() + "");
         if (SerialDeviceManager.getInstance() != null) {
             //开始测试
@@ -168,13 +174,10 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
         }
         SerialDeviceManager.getInstance().close();
         resultRunnable.setTestState(SitReachResiltListener.TestState.UN_STARTED);
-        statesRunnable.setTestState(sitReachResiltListener.getTestState());
-        statesRunnable.setFinish(true);
+//        statesRunnable.setTestState(sitReachResiltListener.getTestState());
+//        statesRunnable.setFinish(true);
         resultRunnable.setFinish(true);
-        statesRunnable = null;
-        resultRunnable = null;
-        mHandler = null;
-        mExecutorService.shutdown();
+        mHandler.removeCallbacksAndMessages(null);
     }
 
 
@@ -192,15 +195,17 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
     public void getDeviceState(BaseDeviceState deviceState) {
         BaseDeviceState state = new BaseDeviceState();
         state.setState(deviceState.getState());
-        Message msg = mHandler.obtainMessage();
-        msg.obj = state;
-        msg.what = UPDATE_DEVICE;
-        mHandler.sendMessage(msg);
-
+        if (mHandler != null && mHandler.obtainMessage() != null) {
+            Message msg = mHandler.obtainMessage();
+            msg.obj = state;
+            msg.what = UPDATE_DEVICE;
+            mHandler.sendMessage(msg);
+        }
     }
 
     @Override
     public void getResult(boolean isEnd, BaseStuPair stuPair) {
+        isDisconnect=false;
         if (isEnd) {
             if (stuPair.getResult() <= -15) {
                 confirmResult(stuPair);
@@ -214,7 +219,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
             }
         }
         Logger.i(TAG + ":getResult--->" + stuPair.toString());
-        Message msg = mHandler.obtainMessage();
+        Message msg = new Message();
         msg.obj = stuPair;
         msg.what = UPDATE_RESULT;
         mHandler.sendMessage(msg);
@@ -223,13 +228,13 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
     @Override
     public void EndDevice(boolean isFoul, int result) {
         resultRunnable.setTestState(sitReachResiltListener.getTestState());
-        statesRunnable.setTestState(sitReachResiltListener.getTestState());
+//        statesRunnable.setTestState(sitReachResiltListener.getTestState());
     }
 
     @Override
     public void AgainTest(BaseDeviceState deviceState) {
         resultRunnable.setTestState(sitReachResiltListener.getTestState());
-        statesRunnable.setTestState(sitReachResiltListener.getTestState());
+//        statesRunnable.setTestState(sitReachResiltListener.getTestState());
         toastSpeak("设备错误重测");
     }
 
@@ -344,9 +349,15 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
                             }
 
                         }
+                        sendEmptyMessage(CHECK_CMD);
                         break;
                     case TOAST_SPEAK:
                         activity.toastSpeak("开始测试");
+                        break;
+                    case CHECK_CMD:
+                        activity.isDisconnect = true;
+                        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_EMPTY));
+                        sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
                         break;
                 }
             }
@@ -408,7 +419,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
         @Override
         public void run() {
             while (!isFinish) {
-                //开始测试不发送自检指令，会出现4秒内未收到返回数据 ，因为在这个时间段还在接收获取成绩的数据
+                //开始测试不发送自检指令，rr ，因为在这个时间段还在接收获取成绩的数据
                 if (testState == SitReachResiltListener.TestState.UN_STARTED) {
                     Log.i("james", "===>" + "sendCheckCommand");
                     if (SerialDeviceManager.getInstance() != null) {
