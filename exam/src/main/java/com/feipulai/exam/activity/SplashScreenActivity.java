@@ -257,7 +257,13 @@ public class SplashScreenActivity extends BaseActivity {
                     Log.i("faceRegisterInfoList", "->" + studentList.size());
                     List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
                     for (Student student : studentList) {
-                        registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+                        try {
+                            byte[] faceByte = Base64.decode(student.getFaceFeature(), Base64.DEFAULT);
+                            registerInfoList.add(new FaceRegisterInfo(faceByte, student.getStudentCode()));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
                     }
                     FaceServer.getInstance().addFaceList(registerInfoList);
                     return new DataBaseRespon(true, "", null);

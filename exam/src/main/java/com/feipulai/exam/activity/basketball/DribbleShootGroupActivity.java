@@ -323,7 +323,7 @@ public class DribbleShootGroupActivity extends BaseTitleActivity implements Base
         SystemSetting setting = SettingHelper.getSystemSetting();
         StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
         //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
-        if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
+        if (studentItem != null && (setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
             roundResultList.clear();
         }
         //成绩数量是否小于测试次数
@@ -782,12 +782,12 @@ public class DribbleShootGroupActivity extends BaseTitleActivity implements Base
         //获取所有成绩设置为非最好成绩
         SystemSetting setting = SettingHelper.getSystemSetting();
         //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
-        if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
+        if (studentItem != null && (setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
             stuPairs.get(stuPairAdapter.getTestPosition()).setResit(true);
         }
         List<RoundResult> results = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");
         TestCache.getInstance().getResults().put(student, results);
-        if (studentItem.getExamType() == 2){
+        if (studentItem!=null&&studentItem.getExamType() == 2){
             continuousTestNext();
         }
 

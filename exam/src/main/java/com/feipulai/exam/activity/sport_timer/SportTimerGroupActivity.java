@@ -461,7 +461,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                     penalize(false);
                 }
                 StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(position()).getStudent().getStudentCode());
-                if (studentItem.getExamType()== 2){
+                if (studentItem!=null&&studentItem.getExamType()== 2){
                     //是否测试到最后一位
                     if (position() == pairs.size() - 1) {
                         firstCheckTest();

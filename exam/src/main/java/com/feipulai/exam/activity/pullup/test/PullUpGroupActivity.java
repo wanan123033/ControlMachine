@@ -118,6 +118,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
     private WaitDialog changBadDialog;
     private EditResultDialog editResultDialog;
     private List<BaseStuPair> stuPairs;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_group_pullup;
@@ -139,7 +140,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
 
         TestCache.getInstance().init();
         stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
-        pairs = CheckUtils.newPairs(stuPairs.size(),stuPairs);
+        pairs = CheckUtils.newPairs(stuPairs.size(), stuPairs);
         CheckUtils.groupCheck(pairs);
 
         rvTestingPairs.setLayoutManager(new LinearLayoutManager(this));
@@ -172,9 +173,9 @@ public class PullUpGroupActivity extends BaseTitleActivity
                 List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound
                         (pair.getStudent().getStudentCode(), group.getId() + "");
                 SystemSetting setting = SettingHelper.getSystemSetting();
-                StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
+                StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(), stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
                 //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
-                if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
+                if (studentItem != null && (setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()) {
                     roundResultList.clear();
                 }
                 if ((roundResultList == null || roundResultList.size() == 0 || roundResultList.size() < TestConfigs.getMaxTestCount(this))) {
@@ -266,9 +267,9 @@ public class PullUpGroupActivity extends BaseTitleActivity
         pairList.add(pairs.get(position()));
         InteractUtils.saveResults(pairList, testDate);
         SystemSetting setting = SettingHelper.getSystemSetting();
-        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(), stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
         //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
-        if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
+        if (studentItem != null && (setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()) {
             stuPairs.get(stuPairAdapter.getTestPosition()).setResit(true);
         }
         int isTestComplete = group.getIsTestComplete();
@@ -292,8 +293,8 @@ public class PullUpGroupActivity extends BaseTitleActivity
         }
 
         dispatch(isAllTest);
-        if (studentItem.getExamType() == 2){
-            if(nextPosition() != -1)
+        if (studentItem != null && studentItem.getExamType() == 2) {
+            if (nextPosition() != -1)
                 switchToPosition(nextPosition());
         }
     }

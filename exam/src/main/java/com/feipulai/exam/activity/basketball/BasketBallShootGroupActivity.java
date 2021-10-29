@@ -728,7 +728,7 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
         //获取所有成绩设置为非最好成绩
         List<RoundResult> results = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");
         TestCache.getInstance().getResults().put(student, results);
-        if (studentItem.getExamType() == 2){
+        if (studentItem!=null&&studentItem.getExamType() == 2){
             continuousTestNext();
         }
     }

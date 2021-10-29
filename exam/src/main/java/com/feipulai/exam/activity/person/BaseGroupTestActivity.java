@@ -1007,11 +1007,9 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             }
         }
         uploadServer(baseStuPair, roundResult);
-        if (studentItem != null) {
-            if (studentItem.getExamType() == 2) {
-                //是否测试到最后一位
-                continuousTest();
-            }
+        if (studentItem != null && studentItem.getExamType() == 2) {
+            //是否测试到最后一位
+            continuousTest();
         }
 
     }

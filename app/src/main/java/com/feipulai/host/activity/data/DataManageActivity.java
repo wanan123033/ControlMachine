@@ -874,7 +874,13 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                             for (int i = 0; i < studentList.size(); i++) {
 
                                 Student student = studentList.get(i);
-                                registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+
+                                try {
+                                    registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                                 final int finalI = i;
                                 runOnUiThread(new Runnable() {
                                     @Override

@@ -1538,8 +1538,13 @@ public class DataManageActivity
 
 
                                 Student student = studentList.get(i);
-                                registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
-                                final int finalI = i;
+                                try{
+                                    registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+                               final int finalI = i;
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {

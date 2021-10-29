@@ -383,7 +383,7 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
                 SystemSetting setting = SettingHelper.getSystemSetting();
                 StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),pairs.get(select).getStudent().getStudentCode());
                 //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
-                if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !pairs.get(select).isResit()){
+                if (studentItem != null && (setting.isResit() || studentItem.getMakeUpType() == 1) && !pairs.get(select).isResit()){
                     size = 0;
                 }
                 if (size < setTestCount()) {
@@ -461,14 +461,14 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
     public void onCheckIn(Student student) {
 //        RoundResult roundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
-        List<RoundResult> roundResult = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(student.getStudentCode(), studentItem.getExamType());
-
-        if (roundResult != null) {
-//            selectTestDialog(student);
-            return;
-        } else {
-            addStudent(student);
+        if (studentItem!=null){
+            List<RoundResult> roundResult = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(student.getStudentCode(), studentItem.getExamType());
+            if (roundResult != null) {
+                return;
+            }
         }
+        addStudent(student);
+
 
     }
 
