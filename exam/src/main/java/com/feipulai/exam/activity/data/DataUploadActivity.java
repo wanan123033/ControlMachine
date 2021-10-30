@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Spinner;
 
@@ -13,6 +14,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.db.DataBaseExecutor;
 import com.feipulai.common.db.DataBaseRespon;
 import com.feipulai.common.db.DataBaseTask;
+import com.feipulai.common.utils.IntentUtil;
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.R;
@@ -20,13 +23,16 @@ import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.data.adapter.ItemSelectAdapter;
 import com.feipulai.exam.activity.data.adapter.ResultDateAdapter;
 import com.feipulai.exam.activity.data.adapter.ResultDateStuAdapter;
+import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.DataRetrieveBean;
+import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.HWConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Item;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 
 import java.util.ArrayList;
@@ -38,6 +44,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * 数据上传
@@ -118,8 +125,29 @@ public class DataUploadActivity extends BaseTitleActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btnAllUpload:
+
+                uploadResultAll();
                 break;
             case R.id.btnUpload:
+                List<String> studentCode = new ArrayList<>();
+
+                for (int i = 0; i < retrieveBeanList.size(); i++) {
+                    DataRetrieveBean bean = retrieveBeanList.get(i);
+                    studentCode.add(bean.getStudentCode());
+                }
+                if (studentCode.size() == 0) {
+                    ToastUtils.showShort("无数据可以上传");
+                } else {
+                    //tcp
+                    if (SettingHelper.getSystemSetting().isTCP()) {
+                        ServerMessage.uploadTCPResult(this, DBManager.getInstance().getUploadResultsByStuCode(mCurrentItem.getItemCode(), studentCode));
+                    } else {
+                        ServerMessage.uploadResult(this, DBManager.getInstance().getUploadResultsByStuCode(mCurrentItem.getItemCode(), studentCode));
+
+                    }
+                }
+
+
                 break;
         }
     }
@@ -202,4 +230,38 @@ public class DataUploadActivity extends BaseTitleActivity {
             return lhs.getTestTime().compareTo(rhs.getTestTime());
         }
     });
+
+    private void uploadResultAll() {
+        DataBaseExecutor.addTask(new DataBaseTask(this, "成绩上传中，请稍后...", false) {
+            @Override
+            public DataBaseRespon executeOper() {
+                List<UploadResults> uploadResultsList = new ArrayList<>();
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+                    List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
+                    for (Item item : itemList) {
+                        List<UploadResults> dbResultsList = DBManager.getInstance().getUploadResultsAll(true, item.getItemCode());
+                        if (dbResultsList != null && dbResultsList.size() > 0)
+                            uploadResultsList.addAll(dbResultsList);
+                    }
+                } else {
+                    uploadResultsList = DBManager.getInstance().getUploadResultsAll(true, TestConfigs.getCurrentItemCode());
+                }
+
+                return new DataBaseRespon(true, "", uploadResultsList);
+            }
+
+            @Override
+            public void onExecuteSuccess(DataBaseRespon respon) {
+                List<UploadResults> results = (List<UploadResults>) respon.getObject();
+                Log.e("UploadResults", "---------" + results.size());
+                ServerMessage.uploadResult(DataUploadActivity.this, results);
+
+            }
+
+            @Override
+            public void onExecuteFail(DataBaseRespon respon) {
+
+            }
+        });
+    }
 }
