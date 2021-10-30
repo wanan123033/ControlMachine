@@ -2,6 +2,7 @@ package com.feipulai.host.db;
 
 import android.database.Cursor;
 
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.host.BuildConfig;
 import com.feipulai.host.MyApplication;
@@ -18,6 +19,7 @@ import com.feipulai.host.entity.StudentItem;
 import com.feipulai.host.entity.StudentItemDao;
 import com.feipulai.host.utils.EncryptUtil;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.query.QueryBuilder;
@@ -71,8 +73,8 @@ public class DBManager {
         // if (db != null) {
         //     db.close();
         // }
-        QueryBuilder.LOG_SQL = true;
-        QueryBuilder.LOG_VALUES = true;
+//        QueryBuilder.LOG_SQL = true;
+//        QueryBuilder.LOG_VALUES = true;
         helper = new DBOpenHelper(MyApplication.getInstance(), DB_NAME);
 //        db = helper.getWritableDb();
         db = BuildConfig.DEBUG ? helper.getWritableDb() : helper.getEncryptedReadableDb(DB_PASSWORD);
@@ -1079,6 +1081,21 @@ public class DBManager {
                 .where(RoundResultDao.Properties.RoundNo.eq(roundNo))
                 .where(RoundResultDao.Properties.TestNo.eq(testNo))
                 .unique();
+    }
+
+
+    public List<String> getResultTimeData() {
+        StringBuffer sqlBuf = new StringBuffer("SELECT  DISTINCT FROM_UNIXTIME(" + RoundResultDao.Properties.TestTime.columnName + ",'%Y-%m-%d') as time");
+        sqlBuf.append(" FROM " + RoundResultDao.TABLENAME);
+        sqlBuf.append(" WHERE " + RoundResultDao.Properties.ItemCode.columnName + " ? ");
+        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{TestConfigs.getCurrentItemCode()});
+
+        List<String> timeList = new ArrayList<>();
+        if (c.moveToNext()) {
+            timeList.add(c.getString(0));
+        }
+        LogUtil.logDebugMessage(timeList.toString());
+        return null;
     }
     /********************************************多表操作**********************************************************************/
 

@@ -85,7 +85,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
     private Intent serverIntent;
     private Intent bindIntent;
     private ActivateBean activateBean;
-    private LEDManager ledManager= new LEDManager();
+    private LEDManager ledManager = new LEDManager();
     private TimerUtil timerUtil = new TimerUtil(new TimerUtil.TimerAccepListener() {
         @Override
         public void timer(Long time) {
@@ -382,11 +382,11 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                 startActivity(new Intent(Settings.ACTION_SETTINGS));
                 break;
             case R.id.card_led:
-                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZFP){
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZFP) {
                     Intent intent = new Intent(MainActivity.this, RunTimerSelectActivity.class);
-                    intent.putExtra(RunTimerSelectActivity.GOTO_FLAG,11);
+                    intent.putExtra(RunTimerSelectActivity.GOTO_FLAG, 11);
                     startActivity(intent);
-                }else {
+                } else {
                     startActivity(new Intent(MainActivity.this, LEDSettingActivity.class));
                 }
                 break;

@@ -125,10 +125,10 @@ public class DBManager {
         chipInfoDao = daoSession.getChipInfoDao();
         accountDao = daoSession.getAccountDao();
         thermometerDao = daoSession.getStudentThermometerDao();
-        Account account = accountDao.queryBuilder().where(AccountDao.Properties.Account.eq("fairplay")).unique();
-        if (account == null) {
-            insterAccount("fairplay", "fpl.2021", 0);
-        }
+//        Account account = accountDao.queryBuilder().where(AccountDao.Properties.Account.eq("fairplay")).unique();
+//        if (account == null) {
+//            insterAccount("fairplay", "fpl.2021", 0);
+//        }
         int[] supportMachineCodes = {/*ItemDefault.CODE_HW, */ItemDefault.CODE_TS, ItemDefault.CODE_YWQZ, ItemDefault.CODE_YTXS,
                 ItemDefault.CODE_LDTY, ItemDefault.CODE_ZWTQQ,
                 ItemDefault.CODE_HWSXQ, ItemDefault.CODE_FHL, ItemDefault.CODE_ZFP,
@@ -1195,7 +1195,8 @@ public class DBManager {
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .list();
     }
-    public List<RoundResult> queryResultsByStudentCode(String itemCode, String studentCode,int roundNo) {
+
+    public List<RoundResult> queryResultsByStudentCode(String itemCode, String studentCode, int roundNo) {
         Log.e("tat", "itemCode=" + itemCode + ",studentCode=" + studentCode);
         return roundResultDao
                 .queryBuilder()
@@ -1220,7 +1221,8 @@ public class DBManager {
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .list();
     }
-    public List<RoundResult> queryResultsByStudentCode(int examType,String itemCode, String studentCode) {
+
+    public List<RoundResult> queryResultsByStudentCode(int examType, String itemCode, String studentCode) {
         Log.e("tat", "itemCode=" + itemCode + ",studentCode=" + studentCode);
         return roundResultDao
                 .queryBuilder()
@@ -1815,7 +1817,7 @@ public class DBManager {
                 .list();
     }
 
-    public List<RoundResult> queryGroupRound(String studentCode, String groupId,int examType) {
+    public List<RoundResult> queryGroupRound(String studentCode, String groupId, int examType) {
         return roundResultDao.queryBuilder()
                 .where(RoundResultDao.Properties.IsDelete.eq(false))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
@@ -2257,6 +2259,40 @@ public class DBManager {
         return stuResults;
     }
 
+    public List<String> getResultTimeData(String itemCode) {
+        StringBuffer sqlBuf = new StringBuffer("SELECT  DISTINCT date( " + RoundResultDao.Properties.TestTime.columnName + "/1000, 'unixepoch') as T ");
+        sqlBuf.append(" FROM " + RoundResultDao.TABLENAME);
+        sqlBuf.append(" WHERE " + RoundResultDao.Properties.ItemCode.columnName + "= ? ");
+        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{itemCode});
+
+        List<String> timeList = new ArrayList<>();
+        while (c.moveToNext()) {
+            timeList.add(c.getString(0));
+        }
+        c.close();
+        LogUtil.logDebugMessage(timeList.toString());
+        return timeList;
+    }
+
+    public List<Student> getResultTimeDataStudent(String itemCode, String resultDate) {
+        StringBuffer sqlBuf = new StringBuffer("SELECT S.* FROM " + StudentDao.TABLENAME + " S");
+        sqlBuf.append(" WHERE S." + StudentDao.Properties.StudentCode.columnName + " IN ( ");
+        sqlBuf.append(" SELECT  " + RoundResultDao.Properties.StudentCode.columnName);
+        sqlBuf.append(" FROM " + RoundResultDao.TABLENAME);
+        sqlBuf.append(" WHERE  date( " + RoundResultDao.Properties.TestTime.columnName + "/1000, 'unixepoch') = ? ");
+        sqlBuf.append(" AND " + RoundResultDao.Properties.ItemCode.columnName + " = ?  ");
+
+        sqlBuf.append(" )");
+        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{resultDate, itemCode});
+
+        List<Student> students = new ArrayList<>();
+        while (c.moveToNext()) {
+            Student student = studentDao.readEntity(c, 0);
+            students.add(student);
+        }
+        c.close();
+        return students;
+    }
 
     /****************************分组***********************************/
 

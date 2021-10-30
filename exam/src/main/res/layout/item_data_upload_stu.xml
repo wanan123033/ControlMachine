@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="35dp"
+    android:background="#E6E6E6"
+    android:orientation="horizontal"
+    android:paddingBottom="1dp">
+
+
+    <TextView
+        android:id="@+id/item_txt_stu_name"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="1dp"
+        android:layout_weight="1.5"
+        android:background="@drawable/data_retieve_selector"
+        android:gravity="center"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/item_txt_stu_code"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="1dp"
+        android:layout_weight="1.2"
+        android:background="@drawable/data_retieve_selector"
+        android:gravity="center"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/item_txt_stu_sex"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="1dp"
+        android:layout_weight="1"
+
+        android:background="@drawable/data_retieve_selector"
+        android:gravity="center"
+        android:textSize="18sp" />
+
+
+    <TextView
+        android:id="@+id/item_txt_score"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="1dp"
+        android:layout_weight="1"
+        android:background="@drawable/data_retieve_selector"
+        android:gravity="center"
+        android:textSize="18sp" />
+
+
+</LinearLayout>

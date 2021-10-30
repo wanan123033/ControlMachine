@@ -731,7 +731,25 @@ public class DataManageActivity
             public void onExecuteSuccess(DataBaseRespon respon) {
                 List<UploadResults> results = (List<UploadResults>) respon.getObject();
                 Log.e("UploadResults", "---------" + results.size());
-                ServerMessage.uploadResult(DataManageActivity.this, results);
+                if (results.size() == 0) {
+                    new SweetAlertDialog(DataManageActivity.this, SweetAlertDialog.WARNING_TYPE).setTitleText("无可上传数据")
+                            .setContentText("是否进行日期筛查上传").setConfirmText(getString(R.string.confirm))
+                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    sweetAlertDialog.dismissWithAnimation();
+                                    IntentUtil.gotoActivity(DataManageActivity.this, DataUploadActivity.class);
+                                }
+                            }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismissWithAnimation();
+                        }
+                    }).show();
+                } else {
+                    ServerMessage.uploadResult(DataManageActivity.this, results);
+                }
+
             }
 
             @Override
@@ -1054,21 +1072,22 @@ public class DataManageActivity
     }
 
     private void showUploadDataDialog() {
-        String[] uploadType = new String[]{"上传全部成绩", "上传未上传考生成绩"};
-        new AlertDialog.Builder(this).setTitle("选择成绩上传类型")
-                .setItems(uploadType, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
-                            List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
-                            if (itemList != null && itemList.size() > 0)
-                                showZcpSelect(which == 0, itemList);
-                        } else {
-                            uploadData(which == 0);
-                        }
-
-                    }
-                }).create().show();
+        uploadData(false);
+//        String[] uploadType = new String[]{"上传全部成绩", "上传未上传考生成绩"};
+//        new AlertDialog.Builder(this).setTitle("选择成绩上传类型")
+//                .setItems(uploadType, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+//                            List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
+//                            if (itemList != null && itemList.size() > 0)
+//                                showZcpSelect(which == 0, itemList);
+//                        } else {
+//                            uploadData(which == 0);
+//                        }
+//
+//                    }
+//                }).create().show();
     }
 
     int type = 0;
@@ -1538,13 +1557,13 @@ public class DataManageActivity
 
 
                                 Student student = studentList.get(i);
-                                try{
+                                try {
                                     registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
 
-                                }catch (Exception e){
+                                } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-                               final int finalI = i;
+                                final int finalI = i;
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {

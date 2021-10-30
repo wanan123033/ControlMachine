@@ -31,6 +31,7 @@
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
     <uses-permission android:name="android.permission.SET_TIME" />
+
     <uses-feature
         android:name="android.hardware.usb.host"
         android:required="true" />
@@ -50,21 +51,25 @@
         <activity android:name=".activity.situp.newSitUp.NewSitUpPairActivity" />
         <activity android:name=".activity.situp.newSitUp.DeviceChangeActivity" />
         <activity android:name=".activity.situp.newSitUp.SitUpArmCheckActivity" />
-        <activity android:name=".activity.RadioTimer.newRadioTimer.NewRadioGroupActivity"
+        <activity
+            android:name=".activity.RadioTimer.newRadioTimer.NewRadioGroupActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:screenOrientation="landscape"
-            android:windowSoftInputMode="adjustPan|stateHidden"/>
-        <activity android:name=".activity.RadioTimer.newRadioTimer.pair.NewRadioPairActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.RadioTimer.newRadioTimer.pair.NewRadioPairActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.RadioTimer.newRadioTimer.NewRadioTestActivity"
             android:configChanges="keyboardHidden|keyboard"
-            android:windowSoftInputMode="adjustPan|stateHidden"/>
-        <activity android:name=".activity.RadioTimer.newRadioTimer.NewRadioTestActivity"
             android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.RadioTimer.newRadioTimer.PreTestActivity"
             android:configChanges="keyboardHidden|keyboard"
-            android:windowSoftInputMode="adjustPan|stateHidden"/>
-        <activity android:name=".activity.RadioTimer.newRadioTimer.PreTestActivity"
-            android:configChanges="keyboardHidden|keyboard"
-            android:windowSoftInputMode="adjustPan|stateHidden"/>
+            android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity android:name=".activity.data.UpdateAppActivity" />
         <activity android:name=".activity.basketball.DribbleShootGroupActivity" />
         <activity android:name=".activity.basketball.BasketBallShootGroupActivity" />
@@ -250,8 +255,8 @@
             android:configChanges="keyboardHidden|keyboard" />
         <activity
             android:name=".activity.pullup.test.PullUpIndividualActivity"
-            android:screenOrientation="landscape"
-            android:configChanges="keyboardHidden|keyboard" />
+            android:configChanges="keyboardHidden|keyboard"
+            android:screenOrientation="landscape" />
         <activity
             android:name=".activity.pullup.test.PullAndSitUpIndividualActivity"
             android:configChanges="keyboardHidden|keyboard" />
@@ -467,6 +472,10 @@
         <activity android:name=".activity.pushUp.distance.PushUpDistanceTestActivity" />
         <activity android:name=".activity.basketball.motion.BasketBallMotionTestActivity" />
         <activity android:name=".activity.basketball.motion.BasketBallMotionGroupActivity" />
+        <activity
+            android:name=".activity.data.DataUploadActivity"
+            android:configChanges="keyboardHidden|keyboard"
+            android:windowSoftInputMode="stateHidden" />
 
         <receiver android:name="com.feipulai.device.spputils.SppReciver" />
 
