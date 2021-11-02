@@ -95,12 +95,17 @@ public class ToastUtils {
     public static void showLong(CharSequence message) {
         LogUtils.operation("页面提示:" + message);
         if (isShowAble) {
-            if (mToast == null) {
-                mToast = Toast.makeText(context, message, Toast.LENGTH_LONG);
-            } else {
-                mToast.setText(message);
+            try {
+                if (mToast == null) {
+                    mToast = Toast.makeText(context, message, Toast.LENGTH_LONG);
+                } else {
+                    mToast.setText(message);
+                }
+                mToast.show();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            mToast.show();
+
         }
     }
 

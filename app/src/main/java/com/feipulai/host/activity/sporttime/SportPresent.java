@@ -54,7 +54,7 @@ public class SportPresent implements SportContract.Presenter {
     private int[] connectState;
     //    private int[] disConnect;
     private volatile int[] sendIndex;
-//    private volatile int[] timeState;
+    //    private volatile int[] timeState;
     private LEDManager mLEDManager;
     private volatile int interval;
     private ScheduledExecutorService checkService;
@@ -207,7 +207,7 @@ public class SportPresent implements SportContract.Presenter {
     @Override
     public void waitStart() {
         try {
-            if (!isSyncTime()){
+            if (!isSyncTime()) {
                 sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());
             }
             synKeep = -1;
@@ -293,7 +293,7 @@ public class SportPresent implements SportContract.Presenter {
         public void onGetTime(SportResult result) {
 //            syncTime[result.getDeviceId()-1] = true;
             syncTime = true;
-            if (Math.abs( getTime() - result.getLongTime())> 2000){
+            if (Math.abs(getTime() - result.getLongTime()) > 2000) {
                 sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());
             }
 
@@ -652,8 +652,8 @@ public class SportPresent implements SportContract.Presenter {
             if (i <= 3) {
                 if (student != null) {
                     String name = getFormatName(student.getStudentName());
-                    if (runs.get(i).getResultList() != null && runs.get(i).getResultList().size()>0) {
-                        int ori = runs.get(i).getResultList().get(runs.get(i).getResultList().size()-1).getOriResult();
+                    if (runs.get(i).getResultList() != null && runs.get(i).getResultList().size() > 0) {
+                        int ori = runs.get(i).getResultList().get(runs.get(i).getResultList().size() - 1).getOriResult();
                         name = name + ResultDisplayUtils.getStrResultForDisplay(ori, false);
                     }
                     mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), name,
@@ -679,16 +679,18 @@ public class SportPresent implements SportContract.Presenter {
         }
     }
 
-    public void showReadyLed(List<RunStudent> runs){
+    public void showReadyLed(List<RunStudent> runs) {
         ShowReady r = new ShowReady(runs);
         service.submit(r);
     }
 
     private class ShowReady implements Runnable {
         private List<RunStudent> runs;
+
         private ShowReady(List<RunStudent> runs) {
             this.runs = runs;
         }
+
         @Override
         public void run() {
             showReady(runs);
@@ -701,15 +703,15 @@ public class SportPresent implements SportContract.Presenter {
             Student student = runs.get(i).getStudent();
             if (student != null) {
                 String studentName = getFormatName(student.getStudentName());
-                if (i<3) {
+                if (i < 3) {
                     mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), String.format("%1d %-4s  %s", i + 1, studentName, "准备"),
                             0, i, false, true);
-                }else {
+                } else {
                     try {
                         Thread.sleep(4000);
                         mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
                         mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), String.format("%1d %-4s  %s", i + 1, studentName, "准备"),
-                                0, i-3, false, true);
+                                0, i - 3, false, true);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -734,7 +736,6 @@ public class SportPresent implements SportContract.Presenter {
         }
         mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 1, false, true);
     }
-
 
 
     /**

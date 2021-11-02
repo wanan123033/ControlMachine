@@ -2,6 +2,7 @@ package com.feipulai.host.db;
 
 import android.database.Cursor;
 
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.host.BuildConfig;
 import com.feipulai.host.MyApplication;
@@ -18,8 +19,10 @@ import com.feipulai.host.entity.StudentItem;
 import com.feipulai.host.entity.StudentItemDao;
 import com.feipulai.host.utils.EncryptUtil;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 
 import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,7 +73,10 @@ public class DBManager {
         // if (db != null) {
         //     db.close();
         // }
+//        QueryBuilder.LOG_SQL = true;
+//        QueryBuilder.LOG_VALUES = true;
         helper = new DBOpenHelper(MyApplication.getInstance(), DB_NAME);
+//        db = helper.getWritableDb();
         db = BuildConfig.DEBUG ? helper.getWritableDb() : helper.getEncryptedReadableDb(DB_PASSWORD);
         daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();
@@ -82,7 +88,7 @@ public class DBManager {
         int[] supportMachineCodes = {ItemDefault.CODE_HW, ItemDefault.CODE_TS, ItemDefault.CODE_YWQZ,
                 ItemDefault.CODE_LDTY, ItemDefault.CODE_ZWTQQ,
                 ItemDefault.CODE_HWSXQ, ItemDefault.CODE_FHL, ItemDefault.CODE_ZFP, ItemDefault.CODE_WLJ, ItemDefault.CODE_YTXS,
-                ItemDefault.CODE_JGCJ, ItemDefault.CODE_SL, ItemDefault.CODE_SGBQS,ItemDefault.CODE_SPORT_TIMER};
+                ItemDefault.CODE_JGCJ, ItemDefault.CODE_SL, ItemDefault.CODE_SGBQS, ItemDefault.CODE_SPORT_TIMER};
         for (int machineCode : supportMachineCodes) {
             //查询是否已经存在该机器码的项,如果存在就放弃,避免重复添加
             List<Item> items = itemDao.queryBuilder().where(ItemDao.Properties.MachineCode.eq(machineCode)).list();
@@ -172,13 +178,15 @@ public class DBManager {
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .buildDelete().executeDeleteWithoutDetachingEntities();
     }
+
     /********************************************
      * 学生表
      ********************************************/
-    public void deleteAllStudent(){
+    public void deleteAllStudent() {
         studentItemDao.deleteAll();
         studentDao.deleteAll();
     }
+
     /**
      * 根据学生考号获取学生信息
      *
@@ -408,6 +416,7 @@ public class DBManager {
 //        }
 //        return students;
     }
+
     public List<String> getResultsStudentByItem(String itemCode) {
         List<String> stuCodeList = new ArrayList<>();
         StringBuffer sqlBuf1 = new StringBuffer("SELECT  DISTINCT " + RoundResultDao.Properties.StudentCode.columnName);
@@ -421,6 +430,7 @@ public class DBManager {
         c.close();
         return stuCodeList;
     }
+
     /**
      * 根据用户筛选获取学生列表
      *
@@ -960,9 +970,10 @@ public class DBManager {
     }
 
     public List<RoundResult> getResultsListAll() {
-        return roundResultDao.queryBuilder() 
+        return roundResultDao.queryBuilder()
                 .list();
     }
+
     /**
      * 添加成绩
      *
@@ -1004,6 +1015,7 @@ public class DBManager {
                 .limit(1)
                 .unique();
     }
+
     public RoundResult queryBestScore(String studentCode, int testNo) {
         Logger.i("studentCode:" + studentCode + "\tMachineCode:" + TestConfigs.sCurrentItem.getMachineCode()
                 + "\tItemCode:" + TestConfigs.getCurrentItemCode() + "\ttestNo:" + testNo);
@@ -1016,6 +1028,7 @@ public class DBManager {
                 .limit(1)
                 .unique();
     }
+
     /**
      * 获取学生最好的成绩
      *
@@ -1059,6 +1072,7 @@ public class DBManager {
                 .limit(1)
                 .unique();
     }
+
     public RoundResult queryRoundByRoundNo(String studentCode, int testNo, int roundNo) {
         return roundResultDao.queryBuilder()
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
@@ -1067,6 +1081,21 @@ public class DBManager {
                 .where(RoundResultDao.Properties.RoundNo.eq(roundNo))
                 .where(RoundResultDao.Properties.TestNo.eq(testNo))
                 .unique();
+    }
+
+
+    public List<String> getResultTimeData() {
+        StringBuffer sqlBuf = new StringBuffer("SELECT  DISTINCT FROM_UNIXTIME(" + RoundResultDao.Properties.TestTime.columnName + ",'%Y-%m-%d') as time");
+        sqlBuf.append(" FROM " + RoundResultDao.TABLENAME);
+        sqlBuf.append(" WHERE " + RoundResultDao.Properties.ItemCode.columnName + " ? ");
+        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{TestConfigs.getCurrentItemCode()});
+
+        List<String> timeList = new ArrayList<>();
+        if (c.moveToNext()) {
+            timeList.add(c.getString(0));
+        }
+        LogUtil.logDebugMessage(timeList.toString());
+        return null;
     }
     /********************************************多表操作**********************************************************************/
 

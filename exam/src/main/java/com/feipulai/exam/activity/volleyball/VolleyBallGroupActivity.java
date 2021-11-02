@@ -146,7 +146,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
 
         TestCache.getInstance().init();
         stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
-        pairs = CheckUtils.newPairs(stuPairs.size(),stuPairs);
+        pairs = CheckUtils.newPairs(stuPairs.size(), stuPairs);
         LogUtils.all("排球获取分组信息:" + pairs.size() + "---" + pairs.toString());
         CheckUtils.groupCheck(pairs);
 
@@ -257,9 +257,9 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         pairList.add(pairs.get(position()));
         InteractUtils.saveResults(pairList, testDate);
         SystemSetting setting = SettingHelper.getSystemSetting();
-        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(), stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
         //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
-        if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
+        if (studentItem != null && (setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()) {
             stuPairs.get(stuPairAdapter.getTestPosition()).setResit(true);
         }
         int isTestComplete = group.getIsTestComplete();
@@ -282,7 +282,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         uploadResults();
         boolean isAllTest = isAllTest(roundResults, student);
         dispatch(isAllTest);
-        if (studentItem.getExamType() == 2){
+        if (studentItem != null && studentItem.getExamType() == 2) {
             //是否测试到最后一位
             int nextPos = nextPosition();
             if (nextPos != -1) {
@@ -310,9 +310,9 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
                 List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound
                         (pair.getStudent().getStudentCode(), group.getId() + "");
                 SystemSetting setting = SettingHelper.getSystemSetting();
-                StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),pair.getStudent().getStudentCode());
+                StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(), pair.getStudent().getStudentCode());
                 //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
-                if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(position()).isResit()){
+                if (studentItem != null && (setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(position()).isResit()) {
                     roundResultList.clear();
                 }
                 if ((roundResultList == null || roundResultList.size() == 0 || roundResultList.size() < setTestCount())) {
@@ -358,7 +358,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
                 DBManager.getInstance().updateGroup(group);
                 if (systemSetting.isAutoPrint()) {
                     TestCache testCache = TestCache.getInstance();
-                    if (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 ||SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP){
+                    if (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 || SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP) {
                         InteractUtils.printA4Result(this, group);
                     } else {
                         InteractUtils.printResults(group, testCache.getAllStudents(), testCache.getResults(),
@@ -624,12 +624,12 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         List<RoundResult> roundResults = TestCache.getInstance().getResults().get(student);
         // Log.i("james", roundResults.toString());
         List<String> results = new ArrayList<>(maxTestNo);
-        for (int i = 0 ; i < maxTestNo ; i++){
+        for (int i = 0; i < maxTestNo; i++) {
             results.add(new String());
         }
         if (roundResults != null) {
-            for (int i = 0 ; i < roundResults.size() ; i++) {
-                results.set(i,ResultDisplayUtils.getStrResultForDisplay(roundResults.get(i).getResult()));
+            for (int i = 0; i < roundResults.size(); i++) {
+                results.set(i, ResultDisplayUtils.getStrResultForDisplay(roundResults.get(i).getResult()));
             }
         }
         BasePersonTestResultAdapter adapter = new BasePersonTestResultAdapter(results);
@@ -638,8 +638,8 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
 
     public int setTestCount() {
         SystemSetting setting = SettingHelper.getSystemSetting();
-        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(position()).getStudent().getStudentCode());
-        if (setting.isResit() || studentItem.getMakeUpType() == 1){
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(), stuPairs.get(position()).getStudent().getStudentCode());
+        if (studentItem != null && setting.isResit() || studentItem.getMakeUpType() == 1) {
             return stuPairs.get(position()).getTestNo();
         }
         if (TestConfigs.sCurrentItem.getTestNum() != 0) {

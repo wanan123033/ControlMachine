@@ -5,7 +5,7 @@ import java.util.concurrent.Executors;
 
 public class TimerTask {
     private TimeUpdateListener timeUpdateListener;
-    private ExecutorService checkService ;
+    private ExecutorService checkService;
     private TimeRunnable timeRunnable;
 
     public TimerTask(TimeUpdateListener timeUpdateListener, int period) {
@@ -16,7 +16,7 @@ public class TimerTask {
 
     private volatile long disposeTime;
     private boolean keepTime;
-
+    private boolean isTrue = true;
 
     public void keepTime() {
         checkService.submit(timeRunnable);
@@ -25,16 +25,17 @@ public class TimerTask {
     private class TimeRunnable implements Runnable {
         private int period;
         private int realTime;
+
         TimeRunnable(int period) {
             this.period = period;
         }
 
         @Override
         public void run() {
-            while (true) {
-                if (keepTime){
+            while (isTrue) {
+                if (keepTime) {
 //                    realTime = (int) (SystemClock.elapsedRealtime()-disposeTime);
-                    realTime = (int) (System.currentTimeMillis()-disposeTime);
+                    realTime = (int) (System.currentTimeMillis() - disposeTime);
                     timeUpdateListener.onTimeTaskUpdate(realTime);
                     try {
                         Thread.sleep(period);
@@ -59,6 +60,7 @@ public class TimerTask {
 
     public void release() {
         if (null != checkService) {
+            isTrue = false;
             checkService.shutdownNow();
             stopKeepTime();
         }

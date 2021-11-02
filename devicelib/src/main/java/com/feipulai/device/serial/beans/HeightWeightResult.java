@@ -22,6 +22,7 @@ public class HeightWeightResult {
             LogUtils.serial("身高体重返回数据(解析前):" + StringUtility.bytesToHexString(data));
             LogUtils.serial("身高体重返回数据(解析后):" + toString());
         } catch (Exception e) {
+            LogUtils.serial("身高体重返回错误数据(解析前):" + StringUtility.bytesToHexString(data));
             LogUtils.serial("身高体重返回错误数据：" + raw);
         }
 

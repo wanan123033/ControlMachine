@@ -300,7 +300,7 @@ public class RunTimerTestActivity extends BaseRunTimerActivity {
                         BaseStuPair baseStuPair = new BaseStuPair();
                         baseStuPair.setStudent(runStudent.getStudent());
                         baseStuPair.setResult(runStudent.getOriginalMark());
-                        baseStuPair.setResultState(runStudent.getOriginalMark() == 0? RoundResult.RESULT_STATE_WAIVE:RoundResult.RESULT_STATE_NORMAL);
+                        baseStuPair.setResultState(runStudent.getOriginalMark() == 0 ? RoundResult.RESULT_STATE_WAIVE : RoundResult.RESULT_STATE_NORMAL);
                         baseStuPair.setStartTime(startTime);
                         baseStuPair.setEndTime(DateUtil.getCurrentTime());
                         disposeManager.saveResult(baseStuPair);
@@ -407,7 +407,9 @@ public class RunTimerTestActivity extends BaseRunTimerActivity {
 
     @Override
     public void updateTableUI(RunTimerResult result) {
-
+        if (result.getTrackNum() == 0) {
+            return;
+        }
         int realTime = (int) (result.getResult() - baseTimer);
         mList.get(result.getTrackNum() - 1).setMark(getFormatTime(realTime));
         mList.get(result.getTrackNum() - 1).setOriginalMark(realTime);

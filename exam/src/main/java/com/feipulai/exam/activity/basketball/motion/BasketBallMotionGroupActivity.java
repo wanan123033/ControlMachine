@@ -679,7 +679,7 @@ public class BasketBallMotionGroupActivity extends BaseTitleActivity implements 
                     SystemSetting setting = SettingHelper.getSystemSetting();
                     StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
                     //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
-                    if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
+                    if (studentItem != null && (setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
                         stuPairs.get(stuPairAdapter.getTestPosition()).setResit(true);
                     }
                 }

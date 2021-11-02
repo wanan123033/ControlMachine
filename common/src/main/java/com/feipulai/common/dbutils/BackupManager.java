@@ -94,6 +94,13 @@ public class BackupManager {
         }
         boolean autoBackupSuccess = autoBackup();
         ToastUtils.showShort(autoBackupSuccess ? "数据库自动备份成功" : "数据库自动备份失败");
+//        File file1 = new File(AUTO_BACKUP_DIR + mDateFormat.format(Calendar.getInstance(Locale.CHINA).getTime()) + "11111.db");
+//        try {
+//            file1.createNewFile();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        restore(file, file1);
         return restore(file, database);
     }
 
@@ -146,7 +153,7 @@ public class BackupManager {
         try {
             InputStream is;
             // 内部存储文件
-            if (file instanceof UsbFileAdapter) {
+             if (file instanceof UsbFileAdapter) {
                 is = new FileInputStream(((UsbFileAdapter) file).getFile());
             } else {
                 is = new UsbFileInputStream(file);

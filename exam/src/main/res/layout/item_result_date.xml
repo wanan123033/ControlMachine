@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp">
+
+    <TextView
+        android:id="@+id/item_txt_date"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/result_date_selector"
+        android:gravity="center"
+        android:text="@string/app_name"
+        android:textColor="@color/FireBrick"
+        android:textSize="@dimen/sp_18" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorAccent" />
+</RelativeLayout>

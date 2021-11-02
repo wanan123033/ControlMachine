@@ -272,9 +272,8 @@ public class ItemSubscriber {
                     }
                     ToastUtils.showShort("数据下载成功");
                     if (result.getDataInfo() != null && result.getDataInfo().size() > 0) {
-                        if (studentCode != null && studentCode.length != 0)
-                            SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS,
-                                    SharedPrefsConfigs.LAST_DOWNLOAD_TIME, result.getDataInfo().get(result.getDataInfo().size() - 1).getDownloadTime());
+                        SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS,
+                                SharedPrefsConfigs.LAST_DOWNLOAD_TIME, result.getDataInfo().get(result.getDataInfo().size() - 1).getDownloadTime());
                     }
                 }
 

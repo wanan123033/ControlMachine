@@ -222,8 +222,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(TestConfigs.sCurrentItem.getItemCode(), stuPairsList.get(position).getStudent().getStudentCode());
                 Log.e("TAG", results.toString());
                 if (results != null && results.size() >= TestConfigs.getMaxTestCount(getApplicationContext())) {
-                    Log.e("TAG", systemSetting.isResit() + "---" + systemSetting.isAgainTest() + "---" + (studentItem.getMakeUpType() == 1));
-                    if (systemSetting.isResit() || systemSetting.isAgainTest() || studentItem.getMakeUpType() == 1) {
+                    if (studentItem != null && (systemSetting.isResit() || systemSetting.isAgainTest() || studentItem.getMakeUpType() == 1)) {
                         if (systemSetting.isResit() || studentItem.getMakeUpType() == 1) {
                             ResitDialog dialog = new ResitDialog();
                             dialog.setArguments(stuPairsList.get(position).getStudent(), results, studentItem);
