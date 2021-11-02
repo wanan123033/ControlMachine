@@ -58,7 +58,7 @@ public class SportPresent implements SportContract.Presenter {
     private LEDManager mLEDManager;
     private volatile int interval;
     private ScheduledExecutorService checkService;
-    ExecutorService service = Executors.newCachedThreadPool();
+//    ExecutorService service = Executors.newCachedThreadPool();
 //    private volatile boolean[] syncTime;//与子机同步时间是否结束
     private boolean keepTime;//是否开始计时
     private boolean pause;//暂停
@@ -253,10 +253,10 @@ public class SportPresent implements SportContract.Presenter {
             if (checkService != null)
                 checkService.shutdown();
             checkService = null;
-            if (null!=service){
-                service.shutdownNow();
-            }
-            service = null;
+//            if (null!=service){
+//                service.shutdownNow();
+//            }
+//            service = null;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -604,7 +604,7 @@ public class SportPresent implements SportContract.Presenter {
      */
     public void setShowLed(List<RunStudent> runs) {
         MyRunnable r = new MyRunnable(runs);
-        service.submit(r);
+//        service.submit(r);
     }
 
     public void clearLed(int t) {
@@ -681,7 +681,7 @@ public class SportPresent implements SportContract.Presenter {
 
     public void showReadyLed(List<RunStudent> runs) {
         ShowReady r = new ShowReady(runs);
-        service.submit(r);
+//        service.submit(r);
     }
 
     private class ShowReady implements Runnable {

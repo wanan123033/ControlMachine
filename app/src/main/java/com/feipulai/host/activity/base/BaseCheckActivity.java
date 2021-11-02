@@ -262,7 +262,11 @@ public abstract class BaseCheckActivity
         switch (flag) {
 
             case ID_CARD_NO:
+                LogUtils.all("StringCode====>" + code);
                 student = DBManager.getInstance().queryStudentByIDCode(code);
+                if (student!= null){
+                    LogUtils.all("StringCode====>" + student.toString());
+                }
                 break;
 
             case STUDENT_CODE:
@@ -279,6 +283,9 @@ public abstract class BaseCheckActivity
         }
         LogUtil.logDebugMessage("检入考生：" + student.toString());
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+        if (studentItem!= null){
+            LogUtils.all("studentItem====>" + studentItem.toString());
+        }
         if (studentItem == null) {
             if (needAdd) {
                 registerStuItem(student);

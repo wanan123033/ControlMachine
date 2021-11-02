@@ -17,6 +17,7 @@ import com.feipulai.host.entity.Item;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.entity.StudentItem;
+import com.feipulai.host.utils.EncryptUtil;
 import com.github.mjdev.libaums.fs.UsbFile;
 import com.orhanobut.logger.Logger;
 
@@ -170,7 +171,7 @@ public class StuItemExLReader extends ExlReader {
             student.setStudentCode(bean.getStudentCode());
             student.setStudentName(bean.getStudentName());
             student.setSex(bean.getSex());
-            student.setIdCardNo(bean.getIdCardNo());
+            student.setIdCardNo(EncryptUtil.setEncryptString(Student.ENCRYPT_KEY, bean.getIdCardNo()));
             student.setIcCardNo(bean.getIcCardNo());
             stuList.add(student);
 

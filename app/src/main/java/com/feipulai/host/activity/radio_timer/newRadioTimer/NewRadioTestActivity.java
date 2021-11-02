@@ -144,7 +144,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         rvTimer2.setAdapter(adapter);
         runTimerSetting = SharedPrefsUtil.loadFormSource(this, RunTimerSetting.class);
         runNum = Integer.parseInt(runTimerSetting.getRunNum());
-        timerTask = new TimerTask(this,100);
+        timerTask = new TimerTask(this,500);
         timerTask.keepTime();
         maxTestTimes = runTimerSetting.getTestTimes();
         playUtils = SoundPlayUtils.init(this);
@@ -181,7 +181,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         currentTestTime = 0;
         independent = new int[runNum];
         setIndependent();
-        sportPresent.showReadyLed(mList);
+//        sportPresent.showReadyLed(mList);
     }
 
     @Override
@@ -428,10 +428,10 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 testing = true;
                 LogUtils.operation("红外计时点击了等待发令");
 
-                if (currentTestTime >= maxTestTimes) {
-                    ToastUtils.showShort("已完成所有测试");
-                    return;
-                }
+//                if (currentTestTime >= maxTestTimes) {
+//                    ToastUtils.showShort("已完成所有测试");
+//                    return;
+//                }
                 for (RunStudent runStudent : mList) {
                     if (null == runStudent.getStudent()) {
                         continue;
@@ -596,15 +596,15 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         msg.what = RUN_UPDATE_TEXT;
         msg.arg1 = time;
         mHandler.sendMessage(msg);
-        if (testState == TestState.WAIT_RESULT){
-            String formatTime ;
-            if (time<60*60*1000){
-                formatTime = DateUtil.formatTime1(time, "mm:ss.S");
-            }else {
-                formatTime = DateUtil.formatTime1(time, "HH:mm:ss");
-            }
-            sportPresent.showLedString(formatTime);
-        }
+//        if (testState == TestState.WAIT_RESULT){
+//            String formatTime ;
+//            if (time<60*60*1000){
+//                formatTime = DateUtil.formatTime1(time, "mm:ss.S");
+//            }else {
+//                formatTime = DateUtil.formatTime1(time, "HH:mm:ss");
+//            }
+//            sportPresent.showLedString(formatTime);
+//        }
 
     }
 }
