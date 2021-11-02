@@ -278,8 +278,17 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        sportPresent.setRunState(1);
-
+        boolean flag  = true;//可以开始计时
+        for (int i = 0; i < mList.size(); i++) {
+            if (mList.get(i).getConnectState() != 2){
+                sportPresent.setDeviceState(i+1,1);
+                flag = false;
+                break;
+            }
+        }
+        if (flag){
+            sportPresent.setRunState(1);
+        }
     }
 
     private void setBeginTime() {
@@ -569,6 +578,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         super.onDestroy();
         sportPresent.presentRelease();
         timerTask.release();
+        sportPresent = null;
     }
 
     @Override

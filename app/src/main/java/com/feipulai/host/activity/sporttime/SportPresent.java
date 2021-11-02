@@ -58,7 +58,7 @@ public class SportPresent implements SportContract.Presenter {
     private LEDManager mLEDManager;
     private volatile int interval;
     private ScheduledExecutorService checkService;
-    ExecutorService service = Executors.newFixedThreadPool(2);
+    ExecutorService service = Executors.newCachedThreadPool();
 //    private volatile boolean[] syncTime;//与子机同步时间是否结束
     private boolean keepTime;//是否开始计时
     private boolean pause;//暂停
@@ -91,16 +91,18 @@ public class SportPresent implements SportContract.Presenter {
     public void rollConnect() {
         sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
 //        sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());//向所有子机发同步时间
-        checkService.scheduleWithFixedDelay(new Runnable() {
-            @Override
-            public void run() {
-                intervalRun();
-            }
-        }, 1000, 1000, TimeUnit.MILLISECONDS);
+        checkService.scheduleWithFixedDelay(checkRun, 1000, 1000, TimeUnit.MILLISECONDS);
 
     }
 
+    private CheckRun checkRun = new CheckRun();
+    private class CheckRun implements Runnable{
 
+        @Override
+        public void run() {
+            intervalRun();
+        }
+    }
 
     private void intervalRun() {
         while (connect) {
@@ -251,17 +253,19 @@ public class SportPresent implements SportContract.Presenter {
             if (checkService != null)
                 checkService.shutdown();
             checkService = null;
+            if (null!=service){
+                service.shutdownNow();
+            }
+            service = null;
         } catch (Exception e) {
             e.printStackTrace();
         }
         RadioManager.getInstance().setOnRadioArrived(null);
-        if (null!=service){
-            service.shutdownNow();
-        }
+
         syncTime = false;
     }
 
-    private void setDeviceState(int deviceId, int state) {
+    public void setDeviceState(int deviceId, int state) {
         sportTimerManger.setDeviceState(deviceId, SettingHelper.getSystemSetting().getHostId(), state);
     }
 
