@@ -181,7 +181,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         currentTestTime = 0;
         independent = new int[runNum];
         setIndependent();
-        sportPresent.showReadyLed(mList);
+//        sportPresent.showReadyLed(mList);
     }
 
     @Override
@@ -598,10 +598,11 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
 
     @Override
     public void onTimeTaskUpdate(int time) {
-        Message msg = Message.obtain();
-        msg.what = RUN_UPDATE_TEXT;
-        msg.arg1 = time;
-        mHandler.sendMessage(msg);
+//        Message msg = Message.obtain();
+//        msg.what = RUN_UPDATE_TEXT;
+//        msg.arg1 = time;
+//        mHandler.sendMessage(msg);
+        EventBus.getDefault().post(new BaseEvent(time,RUN_UPDATE_TEXT));
         if (testState == TestState.WAIT_RESULT){
             String formatTime ;
             if (time<60*60*1000){
@@ -610,6 +611,15 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 formatTime = DateUtil.formatTime1(time, "HH:mm:ss");
             }
             sportPresent.showLedString(formatTime);
+        }
+
+    }
+
+    @Override
+    public void onEventMainThread(BaseEvent baseEvent) {
+        super.onEventMainThread(baseEvent);
+        if (baseEvent.getTagInt() == RUN_UPDATE_TEXT){
+            tvTimer.setText(ResultDisplayUtils.getStrResultForDisplay(baseEvent.getTagInt(), false));
         }
 
     }
