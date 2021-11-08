@@ -29,6 +29,7 @@ public class MyApplication extends MultiDexApplication {
     public static String HARDWAREUUID = "FP-KTA2108_TC_ANDROID";//硬件识别码
     public static final String DEVICECODE = "111";//硬件识别码
     public static final String BACKUP_DIR = FileUtil.PATH_BASE + "/TC_BACKUP/";
+    public static boolean RADIO_TIME_SYNC;
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);

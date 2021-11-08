@@ -22,6 +22,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.manager.RunTimerManager;
 import com.feipulai.device.manager.SportTimerManger;
@@ -31,6 +32,7 @@ import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.RunTimerConnectState;
 import com.feipulai.device.serial.beans.RunTimerResult;
 import com.feipulai.device.serial.beans.SportResult;
+import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.NewRadioPairActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
@@ -467,25 +469,24 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
                     }
                     break;
                 case MSG_SYNC_TIME:
-                    int runNum = Integer.parseInt(runTimerSetting.getRunNum());
-                    if (runTimerSetting.getInterceptPoint() == 3) {
-                        runNum = runNum * 2;
-                    }
-                    for (int i = 0; i < runNum; i++) {
-                        try {
-                            sportTimerManger.getTime(i + 1, SettingHelper.getSystemSetting().getHostId());
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    sportTimerManger.getTime(1, SettingHelper.getSystemSetting().getHostId());
+//                    int runNum = Integer.parseInt(runTimerSetting.getRunNum());
+//                    if (runTimerSetting.getInterceptPoint() == 3) {
+//                        runNum = runNum * 2;
+//                    }
+//                    for (int i = 0; i < runNum; i++) {
+//                        try {
+//                            sportTimerManger.getTime(i + 1, SettingHelper.getSystemSetting().getHostId());
+//                            Thread.sleep(500);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
                     break;
             }
             if (!isDialogShow && alertDialog != null && alertDialog.isShowing()) {
                 alertDialog.dismiss();
             }
-
-
             return false;
         }
     });
@@ -496,7 +497,8 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
             case SerialConfigs.SPORT_TIMER_GET_TIME:
                 if (msg.obj instanceof SportResult) {
                     if (((SportResult) msg.obj).getLongTime() > 0) {
-                        Log.i("SportResultListener", "获取时间");
+                        MyApplication.RADIO_TIME_SYNC = true;
+                        ToastUtils.showShort("时间同步成功");
                     }
 
                 }

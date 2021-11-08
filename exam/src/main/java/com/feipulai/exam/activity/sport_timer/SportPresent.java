@@ -64,7 +64,6 @@ public class SportPresent implements SportContract.Presenter {
     private boolean keepTime;//是否开始计时
     private boolean pause;//暂停
     private int synKeep = -1;//计时标记
-    private boolean syncTime;
     private static final String TAG = "SportPresent";
     public SportPresent(SportContract.SportView sportView, int deviceCount) {
         mLEDManager = new LEDManager();
@@ -85,23 +84,31 @@ public class SportPresent implements SportContract.Presenter {
 //            syncTime[i] = false;
         }
         checkService = Executors.newSingleThreadScheduledExecutor();
-        getDeviceTime(1);
     }
 
     @Override
     public void rollConnect() {
-        sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
+        try {
+            sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
 //        sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());//向所有子机发同步时间
-        checkService.scheduleWithFixedDelay(new Runnable() {
-            @Override
-            public void run() {
-                intervalRun();
-            }
-        }, 1000, 1000, TimeUnit.MILLISECONDS);
+            checkService.scheduleWithFixedDelay(checkRun, 1000, 1000, TimeUnit.MILLISECONDS);
+            Thread.sleep(100);
+            getDeviceTime(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 
+    private CheckRun checkRun = new CheckRun();
 
+    private class CheckRun implements Runnable {
+
+        @Override
+        public void run() {
+            intervalRun();
+        }
+    }
 
     private void intervalRun() {
         while (connect) {
@@ -206,7 +213,7 @@ public class SportPresent implements SportContract.Presenter {
     @Override
     public void waitStart() {
         try {
-            if (!isSyncTime()){
+            if (!MyApplication.RADIO_TIME_SYNC) {
                 sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());
             }
             synKeep = -1;
@@ -250,7 +257,7 @@ public class SportPresent implements SportContract.Presenter {
         sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
         try {
             if (checkService != null)
-                checkService.shutdown();
+                checkService.shutdownNow();
             checkService = null;
         } catch (Exception e) {
             e.printStackTrace();
@@ -259,7 +266,6 @@ public class SportPresent implements SportContract.Presenter {
 //        if (null!=service){
 //            service.shutdownNow();
 //        }
-        syncTime = false;
     }
 
     private void setDeviceState(int deviceId, int state) {
@@ -289,7 +295,7 @@ public class SportPresent implements SportContract.Presenter {
         @Override
         public void onGetTime(SportResult result) {
 //            syncTime[result.getDeviceId()-1] = true;
-            syncTime = true;
+            MyApplication.RADIO_TIME_SYNC = true;
             if (Math.abs( getTime() - result.getLongTime())> 2000){
                 sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());
             }
@@ -693,10 +699,6 @@ public class SportPresent implements SportContract.Presenter {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-    }
-
-    public boolean isSyncTime() {
-        return syncTime;
     }
 
     private class MyRunnable implements Runnable {
