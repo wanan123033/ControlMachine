@@ -344,7 +344,7 @@ public class InteractUtils {
             jumpRopeSetting = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), JumpRopeSetting.class);
         }
         boolean isGroupMode = systemSetting.getTestPattern() == SystemSetting.GROUP_PATTERN;
-        String machineName = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode());
+        String machineName = TestConfigs.sCurrentItem.getItemName();
         machineName = InteractUtils.getStrWithLength(machineName, 8);
         if (isGroupMode) {
             title = String.format(Locale.CHINA, "%8s%d号机%d组",
