@@ -96,8 +96,9 @@ public class SplashScreenActivity extends BaseActivity {
                 showActivateConfirm(2);
                 return;
             }
-            activate();
-//            gotoMain();
+//            activate();
+            //激活成功
+            init();
 
 
         } else {
@@ -219,7 +220,7 @@ public class SplashScreenActivity extends BaseActivity {
                             if (isEngine) {
                                 initLocalFace();
                             } else {
-                                    if (SettingHelper.getSystemSetting().getCheckTool() == 4) {
+                                if (SettingHelper.getSystemSetting().getCheckTool() == 4) {
                                     ToastUtils.showShort("请在参数设置激活人脸识别");
                                 }
 //                                activeEngine();

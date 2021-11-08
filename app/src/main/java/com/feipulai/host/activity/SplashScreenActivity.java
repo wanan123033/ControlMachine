@@ -95,9 +95,9 @@ public class SplashScreenActivity extends BaseActivity {
                 showActivateConfirm(2);
                 return;
             }
-            activate();
+//            activate();
 //            gotoMain();
-
+            init();
 
         } else {
             activate();

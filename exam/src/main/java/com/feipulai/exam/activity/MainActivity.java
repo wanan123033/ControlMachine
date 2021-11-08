@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.feipulai.common.utils.ActivityCollector;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SystemBrightUtils;
@@ -53,6 +54,8 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.netUtils.CommonUtils;
+import com.feipulai.exam.netUtils.OnResultListener;
+import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.service.UploadService;
 import com.feipulai.exam.view.BatteryView;
@@ -67,6 +70,7 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class MainActivity extends BaseActivity/* implements DialogInterface.OnClickListener */ {
     @BindView(R.id.img_code)
@@ -85,6 +89,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
     private Intent serverIntent;
     private Intent bindIntent;
     private ActivateBean activateBean;
+    private SweetAlertDialog activateDialog;
     private LEDManager ledManager = new LEDManager();
     private TimerUtil timerUtil = new TimerUtil(new TimerUtil.TimerAccepListener() {
         @Override
@@ -146,7 +151,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
             }
         });
         timerUtil.startTime(60, TimeUnit.SECONDS);
-
+        activate();
 //        测试数据
 //        List<GroupItem> items = DBManager.getInstance().queryGroupItemByCode("11");
 //        List<RoundResult> roundResults = new ArrayList<>();
@@ -507,5 +512,70 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                     })
                     .show();
         }
+    }
+
+
+    private void activate() {
+        final long runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0L);
+        new HttpSubscriber().activate(runTime, new OnResultListener<ActivateBean>() {
+            @Override
+            public void onSuccess(ActivateBean result) {
+
+                activateBean = result;
+                SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, result.getCurrentRunTime());
+                SharedPrefsUtil.save(MainActivity.this, result);
+                if (result.getCurrentTime() > result.getValidEndTime()) {
+                    LogUtil.logDebugMessage(result.getCurrentTime() + "-----" + result.getValidEndTime());
+                    //超出使用时间 重新激活
+                    showActivateConfirm();
+                    return;
+                } else if (runTime > result.getValidRunTime()) {
+                    //超出使用时长
+                    //弹窗确定重新激活
+                    showActivateConfirm();
+                    return;
+                }
+                if (activateDialog != null && activateDialog.isShowing()) {
+                    activateDialog.dismissWithAnimation();
+                }
+            }
+
+            @Override
+            public void onFault(int code, String errorMsg) {
+
+            }
+
+            @Override
+            public void onResponseTime(String responseTime) {
+
+            }
+        });
+    }
+
+    private void showActivateConfirm() {
+
+        if (activateDialog != null && activateDialog.isShowing()) {
+            return;
+        }
+        activateDialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText("激活设备")
+
+                .setContentText("已超出可使用时长\n请联系管理员重新激活设备" + "\n" + CommonUtils.getDeviceId(this))
+                .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                        sweetAlertDialog.dismissWithAnimation();
+//                        activateDialog = null;
+                        activate();
+                    }
+                }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                        activateDialog = null;
+                        finish();
+                    }
+                });
+        activateDialog.setCanceledOnTouchOutside(false);
+        activateDialog.show();
     }
 }
