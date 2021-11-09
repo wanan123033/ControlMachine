@@ -60,6 +60,8 @@ import com.google.gson.reflect.TypeToken;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,6 +71,8 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
+
+import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_UPDATE_TEXT;
 
 /**
  * 根据实测知道频段换成25最好
@@ -767,6 +771,8 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
             Student student = (Student) baseEvent.getData();
             StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
             onIndividualCheckIn(student, studentItem, new ArrayList<RoundResult>());
+        }else if (baseEvent.getTagInt() == RUN_UPDATE_TEXT){
+            tvResult.setText(ResultDisplayUtils.getStrResultForDisplay((Integer) baseEvent.getData(), false));
         }
     }
 
@@ -814,9 +820,9 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                     receiveTime = 0;
                     txtDeviceStatus.setText("计时");
                     break;
-                case UPDATE_ON_TEXT:
-                    tvResult.setText(ResultDisplayUtils.getStrResultForDisplay(msg.arg1, false));
-                    break;
+//                case UPDATE_ON_TEXT:
+//                    tvResult.setText(ResultDisplayUtils.getStrResultForDisplay(msg.arg1, false));
+//                    break;
 
             }
             return false;
@@ -825,11 +831,11 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
 
     @Override
     public void onTimeTaskUpdate(int time) {
-        Message message = mHandler.obtainMessage();
-        message.what = UPDATE_ON_TEXT;
-        message.arg1 = time;
-        mHandler.sendMessage(message);
-
+//        Message message = mHandler.obtainMessage();
+//        message.what = UPDATE_ON_TEXT;
+//        message.arg1 = time;
+//        mHandler.sendMessage(message);
+        EventBus.getDefault().post(new BaseEvent(time,UPDATE_ON_TEXT));
         if (testState == TestState.WAIT_RESULT){
             String formatTime ;
             if (time<60*60*1000){
@@ -847,4 +853,5 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
             pair.setCurrentRoundNo(roundNo);
         }
     }
+
 }

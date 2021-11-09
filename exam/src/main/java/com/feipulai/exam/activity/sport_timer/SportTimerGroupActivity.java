@@ -41,6 +41,7 @@ import com.feipulai.exam.activity.sport_timer.bean.SportTestResult;
 import com.feipulai.exam.activity.sport_timer.bean.SportTimeResult;
 import com.feipulai.exam.activity.sport_timer.bean.SportTimerSetting;
 import com.feipulai.exam.adapter.VolleyBallGroupStuAdapter;
+import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
@@ -54,6 +55,8 @@ import com.google.gson.reflect.TypeToken;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -61,6 +64,8 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
+
+import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_UPDATE_TEXT;
 
 public class SportTimerGroupActivity extends BaseTitleActivity implements SportContract.SportView, BaseQuickAdapter.OnItemClickListener, TimerTask.TimeUpdateListener {
     @BindView(R.id.rv_testing_pairs)
@@ -875,11 +880,11 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
 
     @Override
     public void onTimeTaskUpdate(int time) {
-        Message message = mHandler.obtainMessage();
-        message.what = UPDATE_ON_TEXT;
-        message.obj = time;
-        mHandler.sendMessage(message);
-
+//        Message message = mHandler.obtainMessage();
+//        message.what = UPDATE_ON_TEXT;
+//        message.obj = time;
+//        mHandler.sendMessage(message);
+        EventBus.getDefault().post(new BaseEvent(time,UPDATE_ON_TEXT));
         if (testState == TestState.WAIT_RESULT){
             String formatTime ;
             if (time<60*60*1000){
@@ -889,5 +894,14 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
             }
             sportPresent.showLedString(formatTime);
         }
+    }
+
+    @Override
+    public void onEventMainThread(BaseEvent baseEvent) {
+        super.onEventMainThread(baseEvent);
+        if (baseEvent.getTagInt() == UPDATE_ON_TEXT){
+            tvResult.setText(ResultDisplayUtils.getStrResultForDisplay((Integer) baseEvent.getData(), false));
+        }
+
     }
 }

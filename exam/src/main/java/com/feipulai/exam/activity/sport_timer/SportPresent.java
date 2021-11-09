@@ -59,7 +59,7 @@ public class SportPresent implements SportContract.Presenter {
     private LEDManager mLEDManager;
     private volatile int interval;
     private ScheduledExecutorService checkService;
-//    ExecutorService service = Executors.newFixedThreadPool(2);
+    ExecutorService service ;
 //    private volatile boolean[] syncTime;//与子机同步时间是否结束
     private boolean keepTime;//是否开始计时
     private boolean pause;//暂停
@@ -84,6 +84,7 @@ public class SportPresent implements SportContract.Presenter {
 //            syncTime[i] = false;
         }
         checkService = Executors.newSingleThreadScheduledExecutor();
+        service = Executors.newCachedThreadPool();
     }
 
     @Override
@@ -249,9 +250,7 @@ public class SportPresent implements SportContract.Presenter {
 
     //释放资源
     public void presentRelease() {
-//        if (disposable != null) {
-//            disposable.dispose();
-//        }
+        Log.i("present","presentRelease");
         connect = false;
         keepTime = false;
         sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
@@ -263,9 +262,12 @@ public class SportPresent implements SportContract.Presenter {
             e.printStackTrace();
         }
         RadioManager.getInstance().setOnRadioArrived(null);
-//        if (null!=service){
-//            service.shutdownNow();
-//        }
+        showReady = false;
+        runLed = false;
+        if (null!=service){
+            service.shutdownNow();
+        }
+        service = null;
     }
 
     private void setDeviceState(int deviceId, int state) {
@@ -683,7 +685,7 @@ public class SportPresent implements SportContract.Presenter {
      */
     public void setShowLed(List<RunStudent> runs) {
         MyRunnable r = new MyRunnable(runs);
-//        service.submit(r);
+        service.submit(r);
     }
 
     public void clearLed(int t) {
@@ -708,10 +710,12 @@ public class SportPresent implements SportContract.Presenter {
         }
         @Override
         public void run() {
+            runLed = true;
             runLed(runs);
         }
     }
 
+    private boolean runLed;
     private void runLed(List<RunStudent> runs) {
         try {
             Thread.sleep(300);
@@ -722,6 +726,9 @@ public class SportPresent implements SportContract.Presenter {
         int y;
         int realSize = runs.size();
         for (int i = 0; i < realSize; i++) {
+            if (!runLed) {
+                return;
+            }
             Student student = runs.get(i).getStudent();
             y = i;
             if (i <= 3) {
@@ -756,7 +763,7 @@ public class SportPresent implements SportContract.Presenter {
 
     public void showReadyLed(List<RunStudent> runs){
         ShowReady r = new ShowReady(runs);
-//        service.submit(r);
+        service.submit(r);
     }
 
     private class ShowReady implements Runnable {
@@ -766,13 +773,18 @@ public class SportPresent implements SportContract.Presenter {
         }
         @Override
         public void run() {
+            showReady = true;
             showReady(runs);
         }
     }
 
+    private boolean showReady;
     private void showReady(List<RunStudent> runs) {
         mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
         for (int i = 0; i < runs.size(); i++) {
+            if (!showReady) {
+                return;
+            }
             Student student = runs.get(i).getStudent();
             if (student != null) {
                 String studentName = getFormatName(student.getStudentName());
