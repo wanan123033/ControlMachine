@@ -197,7 +197,7 @@ public class InteractUtils {
             }
             RoundResult saveResult = saveResults.get(student);
             String displayResult = ResultDisplayUtils.getStrResultForDisplay(saveResult.getResult());
-            String machineName = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode());
+            String machineName = TestConfigs.sCurrentItem.getItemName();
             PrinterManager.getInstance().print(MessageFormat.format("{0}{1}号机", machineName, hostId));
             PrinterManager.getInstance().print("考  号:" + pair.getStudent().getStudentCode());
             PrinterManager.getInstance().print("姓  名:" + pair.getStudent().getStudentName());
