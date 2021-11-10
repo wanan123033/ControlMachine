@@ -316,7 +316,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
     private String machine_port;
     private String server_Port;
     private Intent bindIntent;
-//    private long lastServiceTime;
+    //    private long lastServiceTime;
     private DataSource mDataSource;
     //    private VideoPlayWindow videoPlayer;
     private HkCameraManager hkCamera;
@@ -334,7 +334,6 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
     private String hk_user;
     private String hk_psw;
     private View parentView;
-    private ScannerGunManager scannerGunManager;
     private TextView tvVideoResult;
 
     @Override
@@ -486,7 +485,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
 
     @Override
     protected void initViews() {
-        scannerGunManager = new ScannerGunManager(new ScannerGunManager.OnScanListener() {
+        ScannerGunManager.getInstance().setScanListener(new ScannerGunManager.OnScanListener() {
             @Override
             public void onResult(String code) {
                 Log.i("scannerGunManager", "->" + code);
@@ -501,7 +500,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if (scannerGunManager != null && scannerGunManager.dispatchKeyEvent(event)) {
+        if (ScannerGunManager.getInstance().dispatchKeyEvent(event.getKeyCode(), event)) {
             return true;
         }
         return super.dispatchKeyEvent(event);
@@ -570,8 +569,8 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         itemList = DBManager.getInstance().queryItemsByMachineCode(TestConfigs.sCurrentItem.getMachineCode());
         for (int i = 0; i < itemList.size(); i++) {
             items[i] = itemList.get(i).getItemName();
-            if(itemName.equals(items[i])){
-                mItemPosition=i;
+            if (itemName.equals(items[i])) {
+                mItemPosition = i;
             }
         }
         itemAdapter = new ArrayAdapter<>(this, android.R.layout.simple_expandable_list_item_1, items);
@@ -1436,7 +1435,8 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             nettyClient.sendMsgToServer(TcpConfig.CMD_CONNECT, this);
     }
 
-    private void sendDisConnect() { if (nettyClient != null)
+    private void sendDisConnect() {
+        if (nettyClient != null)
             nettyClient.sendMsgToServer(TcpConfig.getCmdEndTiming(), this);
     }
 
@@ -2247,7 +2247,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                 //自动打印
 
                 if (SettingHelper.getSystemSetting().isAutoPrint() &&
-                        (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 ||SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP)) {
+                        (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 || SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP)) {
                     InteractUtils.printA4Result(mContext, dbGroupList);
 
                 } else {
@@ -2529,7 +2529,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                         }
                         break;
                     case 2:
-                        MiddlePrintUtil.print2(mContext,groupItemBeans.get(groupPosition), digital, carryMode);
+                        MiddlePrintUtil.print2(mContext, groupItemBeans.get(groupPosition), digital, carryMode);
                         break;
                     default:
                         break;

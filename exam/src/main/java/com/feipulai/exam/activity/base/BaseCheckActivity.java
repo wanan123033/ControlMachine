@@ -97,7 +97,6 @@ public abstract class BaseCheckActivity
     private volatile boolean isStartThermometer = false;
     private SweetAlertDialog thermometerDialog;
     private SweetAlertDialog thermometerOpenDialog;
-    private ScannerGunManager scannerGunManager;
 
     public void setOpenDevice(boolean openDevice) {
         isOpenDevice = openDevice;
@@ -117,7 +116,7 @@ public abstract class BaseCheckActivity
             afrFragment.setCompareListener(this);
             initAFR();
         }
-        scannerGunManager = new ScannerGunManager(new ScannerGunManager.OnScanListener() {
+        ScannerGunManager.getInstance().setScanListener(new ScannerGunManager.OnScanListener() {
             @Override
             public void onResult(String code) {
                 boolean needAdd = checkQulification(code, STUDENT_CODE);
@@ -133,7 +132,7 @@ public abstract class BaseCheckActivity
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if (scannerGunManager.dispatchKeyEvent(event)) {
+        if (ScannerGunManager.getInstance().dispatchKeyEvent(event.getKeyCode(), event)) {
             return true;
         }
         return super.dispatchKeyEvent(event);
@@ -366,7 +365,7 @@ public abstract class BaseCheckActivity
         final List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
         if (results != null && results.size() >= TestConfigs.getMaxTestCount(this)) {
             SystemSetting setting = SettingHelper.getSystemSetting();
-            if (setting.isAgainTest() && setting.isResit()){
+            if (setting.isAgainTest() && setting.isResit()) {
                 final Student finalStudent = student;
                 new SweetAlertDialog(this).setContentText("需要重测还是补考呢?")
                         .setCancelText("重测")
@@ -375,9 +374,9 @@ public abstract class BaseCheckActivity
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 AgainTestDialog dialog = new AgainTestDialog();
-                                dialog.setArguments(finalStudent,results,studentItem);
+                                dialog.setArguments(finalStudent, results, studentItem);
                                 dialog.setOnIndividualCheckInListener(BaseCheckActivity.this);
-                                dialog.show(getSupportFragmentManager(),"AgainTestDialog");
+                                dialog.show(getSupportFragmentManager(), "AgainTestDialog");
                                 sweetAlertDialog.dismissWithAnimation();
                             }
                         })
@@ -385,27 +384,27 @@ public abstract class BaseCheckActivity
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 ResitDialog dialog = new ResitDialog();
-                                dialog.setArguments(finalStudent,results,studentItem);
+                                dialog.setArguments(finalStudent, results, studentItem);
                                 dialog.setOnIndividualCheckInListener(BaseCheckActivity.this);
-                                dialog.show(getSupportFragmentManager(),"ResitDialog");
+                                dialog.show(getSupportFragmentManager(), "ResitDialog");
                                 sweetAlertDialog.dismissWithAnimation();
                             }
                         }).show();
                 return false;
             }
-            if (setting.isAgainTest()){
+            if (setting.isAgainTest()) {
                 AgainTestDialog dialog = new AgainTestDialog();
-                dialog.setArguments(student,results,studentItem);
+                dialog.setArguments(student, results, studentItem);
                 dialog.setOnIndividualCheckInListener(this);
-                dialog.show(getSupportFragmentManager(),"AgainTestDialog");
+                dialog.show(getSupportFragmentManager(), "AgainTestDialog");
                 return false;
             }
-            if (setting.isResit()){
+            if (setting.isResit()) {
                 ResitDialog dialog = new ResitDialog();
-                dialog.setArguments(student,results,studentItem);
+                dialog.setArguments(student, results, studentItem);
                 dialog.setOnIndividualCheckInListener(this);
-                dialog.show(getSupportFragmentManager(),"ResitDialog");
-            }else {
+                dialog.show(getSupportFragmentManager(), "ResitDialog");
+            } else {
                 InteractUtils.toastSpeak(this, "该考生已测试");
             }
 
@@ -594,9 +593,9 @@ public abstract class BaseCheckActivity
     }
 
     @Override
-    public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results,int roundNo) {
-        onIndividualCheckIn(student,studentItem,results);
-        setRoundNo(student,roundNo);
+    public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results, int roundNo) {
+        onIndividualCheckIn(student, studentItem, results);
+        setRoundNo(student, roundNo);
     }
 
 
