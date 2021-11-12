@@ -59,12 +59,11 @@ public class SportPresent implements SportContract.Presenter {
     private LEDManager mLEDManager;
     private volatile int interval;
     private ScheduledExecutorService checkService;
-//    ExecutorService service = Executors.newFixedThreadPool(2);
+    ExecutorService service ;
 //    private volatile boolean[] syncTime;//与子机同步时间是否结束
     private boolean keepTime;//是否开始计时
     private boolean pause;//暂停
     private int synKeep = -1;//计时标记
-    private boolean syncTime;
     private static final String TAG = "SportPresent";
     public SportPresent(SportContract.SportView sportView, int deviceCount) {
         mLEDManager = new LEDManager();
@@ -85,23 +84,32 @@ public class SportPresent implements SportContract.Presenter {
 //            syncTime[i] = false;
         }
         checkService = Executors.newSingleThreadScheduledExecutor();
-        getDeviceTime(1);
+        service = Executors.newCachedThreadPool();
     }
 
     @Override
     public void rollConnect() {
-        sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
+        try {
+            sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
 //        sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());//向所有子机发同步时间
-        checkService.scheduleWithFixedDelay(new Runnable() {
-            @Override
-            public void run() {
-                intervalRun();
-            }
-        }, 1000, 1000, TimeUnit.MILLISECONDS);
+            checkService.scheduleWithFixedDelay(checkRun, 1000, 1000, TimeUnit.MILLISECONDS);
+            Thread.sleep(100);
+            getDeviceTime(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 
+    private CheckRun checkRun = new CheckRun();
 
+    private class CheckRun implements Runnable {
+
+        @Override
+        public void run() {
+            intervalRun();
+        }
+    }
 
     private void intervalRun() {
         while (connect) {
@@ -206,7 +214,7 @@ public class SportPresent implements SportContract.Presenter {
     @Override
     public void waitStart() {
         try {
-            if (!isSyncTime()){
+            if (!MyApplication.RADIO_TIME_SYNC) {
                 sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());
             }
             synKeep = -1;
@@ -242,24 +250,24 @@ public class SportPresent implements SportContract.Presenter {
 
     //释放资源
     public void presentRelease() {
-//        if (disposable != null) {
-//            disposable.dispose();
-//        }
+        Log.i("present","presentRelease");
         connect = false;
         keepTime = false;
         sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
         try {
             if (checkService != null)
-                checkService.shutdown();
+                checkService.shutdownNow();
             checkService = null;
         } catch (Exception e) {
             e.printStackTrace();
         }
         RadioManager.getInstance().setOnRadioArrived(null);
-//        if (null!=service){
-//            service.shutdownNow();
-//        }
-        syncTime = false;
+        showReady = false;
+        runLed = false;
+        if (null!=service){
+            service.shutdownNow();
+        }
+        service = null;
     }
 
     private void setDeviceState(int deviceId, int state) {
@@ -289,7 +297,7 @@ public class SportPresent implements SportContract.Presenter {
         @Override
         public void onGetTime(SportResult result) {
 //            syncTime[result.getDeviceId()-1] = true;
-            syncTime = true;
+            MyApplication.RADIO_TIME_SYNC = true;
             if (Math.abs( getTime() - result.getLongTime())> 2000){
                 sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());
             }
@@ -677,7 +685,7 @@ public class SportPresent implements SportContract.Presenter {
      */
     public void setShowLed(List<RunStudent> runs) {
         MyRunnable r = new MyRunnable(runs);
-//        service.submit(r);
+        service.submit(r);
     }
 
     public void clearLed(int t) {
@@ -695,10 +703,6 @@ public class SportPresent implements SportContract.Presenter {
         }
     }
 
-    public boolean isSyncTime() {
-        return syncTime;
-    }
-
     private class MyRunnable implements Runnable {
         private List<RunStudent> runs;
         private MyRunnable(List<RunStudent> runs) {
@@ -706,10 +710,12 @@ public class SportPresent implements SportContract.Presenter {
         }
         @Override
         public void run() {
+            runLed = true;
             runLed(runs);
         }
     }
 
+    private boolean runLed;
     private void runLed(List<RunStudent> runs) {
         try {
             Thread.sleep(300);
@@ -720,6 +726,9 @@ public class SportPresent implements SportContract.Presenter {
         int y;
         int realSize = runs.size();
         for (int i = 0; i < realSize; i++) {
+            if (!runLed) {
+                return;
+            }
             Student student = runs.get(i).getStudent();
             y = i;
             if (i <= 3) {
@@ -754,7 +763,7 @@ public class SportPresent implements SportContract.Presenter {
 
     public void showReadyLed(List<RunStudent> runs){
         ShowReady r = new ShowReady(runs);
-//        service.submit(r);
+        service.submit(r);
     }
 
     private class ShowReady implements Runnable {
@@ -764,13 +773,18 @@ public class SportPresent implements SportContract.Presenter {
         }
         @Override
         public void run() {
+            showReady = true;
             showReady(runs);
         }
     }
 
+    private boolean showReady;
     private void showReady(List<RunStudent> runs) {
         mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
         for (int i = 0; i < runs.size(); i++) {
+            if (!showReady) {
+                return;
+            }
             Student student = runs.get(i).getStudent();
             if (student != null) {
                 String studentName = getFormatName(student.getStudentName());

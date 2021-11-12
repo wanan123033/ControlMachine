@@ -3,6 +3,7 @@ package com.feipulai.exam.activity;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -81,7 +82,9 @@ public class SplashScreenActivity extends BaseActivity {
         setContentView(R.layout.activity_splash_screen);
         // 这里是否还需要延时需要再测试后再修改
         RadioManager.getInstance().init();
-        DateUtil.setTimeZone(this, "Asia/Shanghai");
+        if (!Build.MODEL.equals("FPL")){
+            DateUtil.setTimeZone(this, "Asia/Shanghai");
+        }
 
         activateBean = SharedPrefsUtil.loadFormSource(this, ActivateBean.class);
         runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0L);
@@ -96,8 +99,9 @@ public class SplashScreenActivity extends BaseActivity {
                 showActivateConfirm(2);
                 return;
             }
-            activate();
-//            gotoMain();
+//            activate();
+            //激活成功
+            init();
 
 
         } else {
@@ -131,7 +135,10 @@ public class SplashScreenActivity extends BaseActivity {
         new HttpSubscriber().activate(runTime, new OnResultListener<ActivateBean>() {
             @Override
             public void onSuccess(ActivateBean result) {
-                DateUtil.setSysDate(SplashScreenActivity.this, result.getCurrentTime());
+                if (!Build.MODEL.equals("FPL")){
+                    DateUtil.setSysDate(SplashScreenActivity.this, result.getCurrentTime());
+                }
+
                 activateBean = result;
                 runTime = result.getCurrentRunTime();
                 SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, result.getCurrentRunTime());
@@ -219,7 +226,7 @@ public class SplashScreenActivity extends BaseActivity {
                             if (isEngine) {
                                 initLocalFace();
                             } else {
-                                    if (SettingHelper.getSystemSetting().getCheckTool() == 4) {
+                                if (SettingHelper.getSystemSetting().getCheckTool() == 4) {
                                     ToastUtils.showShort("请在参数设置激活人脸识别");
                                 }
 //                                activeEngine();

@@ -700,9 +700,11 @@ public class BaseGroupActivity extends BaseTitleActivity {
      */
     private void scoreUpload() {
         List<BaseStuPair> data = stuAdapter.getData();
+
+        List<UploadResults> uploadResultsList = new ArrayList<>();
         for (BaseStuPair stuPair : data) {
             List<RoundResult> roundResultList = getResults(stuPair.getStudent().getStudentCode());
-            List<UploadResults> uploadResultsList = new ArrayList<>();
+
             if (roundResultList != null && !roundResultList.isEmpty()) {
                 RoundResult currentResult = roundResultList.get(0);
                 UploadResults uploadResults = new UploadResults(currentResult.getScheduleNo(), TestConfigs.getCurrentItemCode(),
@@ -710,8 +712,9 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 uploadResultsList.add(uploadResults);
             }
 //            ServerMessage.uploadResult(uploadResultsList);
-            ServerMessage.uploadResult(this, uploadResultsList);
+
         }
+        ServerMessage.uploadResult(this, uploadResultsList);
     }
 
     /**

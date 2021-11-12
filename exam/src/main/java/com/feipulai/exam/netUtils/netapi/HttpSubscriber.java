@@ -281,7 +281,12 @@ public class HttpSubscriber {
                     item.setItemCode(itemBean.getExamItemCode());
                     item.setItemName(itemBean.getItemName());
                     item.setLastResultMode(itemBean.getLastResultMode());
-                    item.setMachineCode(Integer.valueOf(itemBean.getMachineCode()));
+                    try {
+                        item.setMachineCode(Integer.valueOf(itemBean.getMachineCode()));
+                    } catch (Exception e) {
+                        ToastUtils.showShort("下载项目数据机器码信息异常");
+                        return;
+                    }
                     item.setMaxValue(itemBean.getMaxResult());
                     item.setMinValue(itemBean.getMinResult());
                     item.setTestNum(itemBean.getResultTestNum());

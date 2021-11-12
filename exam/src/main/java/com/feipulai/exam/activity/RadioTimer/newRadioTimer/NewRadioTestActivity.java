@@ -181,7 +181,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         currentTestTime = 0;
         independent = new int[runNum];
         setIndependent();
-//        sportPresent.showReadyLed(mList);
+        sportPresent.showReadyLed(mList);
     }
 
     @Override
@@ -619,7 +619,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     public void onEventMainThread(BaseEvent baseEvent) {
         super.onEventMainThread(baseEvent);
         if (baseEvent.getTagInt() == RUN_UPDATE_TEXT){
-            tvTimer.setText(ResultDisplayUtils.getStrResultForDisplay(baseEvent.getTagInt(), false));
+            tvTimer.setText(ResultDisplayUtils.getStrResultForDisplay((Integer) baseEvent.getData(), false));
         }
 
     }

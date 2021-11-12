@@ -3,6 +3,7 @@ package com.feipulai.host.activity;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -78,8 +79,10 @@ public class SplashScreenActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
+        if (!Build.MODEL.equals("FPL")){
+            DateUtil.setTimeZone(this, "Asia/Shanghai");
+        }
 
-        DateUtil.setTimeZone(this, "Asia/Shanghai");
 
 
         activateBean = SharedPrefsUtil.loadFormSource(this, ActivateBean.class);
@@ -95,9 +98,9 @@ public class SplashScreenActivity extends BaseActivity {
                 showActivateConfirm(2);
                 return;
             }
-            activate();
+//            activate();
 //            gotoMain();
-
+            init();
 
         } else {
             activate();
@@ -129,6 +132,9 @@ public class SplashScreenActivity extends BaseActivity {
         new UserSubscriber().activate(runTime, new OnResultListener<ActivateBean>() {
             @Override
             public void onSuccess(ActivateBean result) {
+                if (!Build.MODEL.equals("FPL")){
+                    DateUtil.setSysDate(SplashScreenActivity.this, result.getCurrentTime());
+                }
                 activateBean = result;
                 SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, result.getCurrentRunTime());
                 SharedPrefsUtil.save(SplashScreenActivity.this, result);

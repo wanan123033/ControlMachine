@@ -116,7 +116,13 @@ public class AddStudentDialog {
 
             } else {
                 LogUtils.operation("考生添加" + student.toString());
-                DBManager.getInstance().insertStudent(student);
+                try {
+                    // 插入学生信息
+                    DBManager.getInstance().insertStudent(student);
+                } catch (Exception e) {
+                    ToastUtils.showShort("该考生考好已存在");
+                    return;
+                }
             }
 
         }
