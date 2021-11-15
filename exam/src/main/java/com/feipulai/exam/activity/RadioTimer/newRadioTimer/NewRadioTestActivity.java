@@ -47,6 +47,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_RESULT;
 import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_START;
@@ -183,6 +184,35 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         independent = new int[runNum];
         setIndependent();
         sportPresent.showReadyLed(mList);
+        adapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(BaseQuickAdapter baseQuickAdapter, View view, int pos) {
+
+                alertConfirm(pos);
+                return true;
+            }
+        });
+    }
+
+    private void alertConfirm(final int pos){
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.clear_dialog_title))
+                .setContentText("是否获取新成绩?")
+                .setConfirmText(getString(com.feipulai.common.R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                if (mList.get(pos).getResultList()!= null|| mList.get(pos).getResultList().size()> 0){
+                    sportPresent.getDeviceCacheResult(pos+1,mList.get(pos).getResultList().size()+1);
+                }else {
+                    sportPresent.getDeviceCacheResult(pos+1,1);
+                }
+            }
+        }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+            }
+        }).show();
     }
 
     @Override
@@ -267,6 +297,32 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
             }
         }
 
+
+    }
+
+    /**
+     * 判断计时器是否进入计时状态
+     */
+    private boolean isDeviceReady(){
+        boolean flag = true;
+        for (int i = 0; i < mList.size(); i++) {
+            if (mList.get(i).getConnectState() != 2 ){
+              flag = false;
+              break;
+            }
+        }
+
+        if (runTimerSetting.getInterceptPoint() == 3) {
+            for (int i = 0; i < array.size(); i++) {
+                Integer index = array.valueAt(i);
+                if (index != 2){
+                    flag = false;
+                    break;
+                }
+            }
+        }
+
+        return flag;
     }
 
     /**
@@ -274,13 +330,13 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
      */
     @Override
     public void getDeviceStart() {
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(100);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 //        sportPresent.setRunState(1);
-        mHandler.sendEmptyMessage(RUN_UPDATE_VIEW_VISIBLE);
+//        mHandler.sendEmptyMessage(RUN_UPDATE_VIEW_VISIBLE);
     }
 
     private void setBeginTime() {
@@ -490,6 +546,10 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 setIndependent();
                 break;
             case R.id.tv_force_start:
+                if (!isDeviceReady()){
+                    alertConfirm();
+                    return;
+                }
                 if (testState == TestState.UN_STARTED || testState == TestState.DATA_DEALING) {
                     LogUtils.operation("红外计时点击了开始");
                     testState = TestState.FORCE_START;
@@ -537,6 +597,27 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 break;
         }
     }
+
+    private void alertConfirm(){
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText("存在设备非计时状态")
+                .setContentText("开始计时?")
+                .setConfirmText(getString(com.feipulai.common.R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                testState = TestState.FORCE_START;
+                setBeginTime();
+                playUtils.play(15);
+            }
+        }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+            }
+        }).show();
+    }
+
+
 
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
