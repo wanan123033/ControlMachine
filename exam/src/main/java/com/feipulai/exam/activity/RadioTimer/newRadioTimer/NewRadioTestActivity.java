@@ -54,6 +54,7 @@ import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioCons
 import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_UPDATE_ADD_TIME;
 import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_UPDATE_DEVICE;
 import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_UPDATE_TEXT;
+import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_UPDATE_VIEW_VISIBLE;
 
 public class NewRadioTestActivity extends BaseTitleActivity implements SportContract.SportView,  TimerTask.TimeUpdateListener {
 
@@ -278,18 +279,19 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        sportPresent.setRunState(1);
-
+//        sportPresent.setRunState(1);
+        mHandler.sendEmptyMessage(RUN_UPDATE_VIEW_VISIBLE);
     }
 
     private void setBeginTime() {
         sportPresent.setRunState(1);
-        if (sportPresent.getSynKeep()>0){
-            baseTimer = sportPresent.getSynKeep();
-        }else {
-            baseTimer = sportPresent.getTime();
-            sportPresent.setSynKeep(baseTimer);
-        }
+        baseTimer = sportPresent.getTime();
+//        if (sportPresent.getSynKeep()>0){
+//            baseTimer = sportPresent.getSynKeep();
+//        }else {
+//            baseTimer = sportPresent.getTime();
+//            sportPresent.setSynKeep(baseTimer);
+//        }
         LogUtils.operation("红外计时开始时间："+baseTimer);
         testState = TestState.WAIT_RESULT;
         mHandler.sendEmptyMessage(RUN_START);
@@ -336,7 +338,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         } else {
             //红外拦截并且有起终点
             if (testState == TestState.DATA_DEALING) {
-                setBeginTime();
+//                setBeginTime();
                 return;
             }
             //假使都是认为发射指令，起点终点不相关
@@ -562,11 +564,15 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 case RUN_UPDATE_TEXT:
                     tvTimer.setText(ResultDisplayUtils.getStrResultForDisplay(msg.arg1, false));
                     break;
+                case RUN_UPDATE_VIEW_VISIBLE:
+                    setView(true);
+                    break;
             }
             return false;
         }
     });
 
+    //独立轮询计时
     private void addTime() {
         if (testState == TestState.WAIT_RESULT) {
             mHandler.sendEmptyMessageDelayed(RUN_UPDATE_ADD_TIME, 100);

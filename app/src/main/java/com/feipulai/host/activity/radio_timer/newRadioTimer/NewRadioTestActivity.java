@@ -13,11 +13,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SoundPlayUtils;
-import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.beans.SportResult;
 import com.feipulai.host.R;
@@ -41,14 +40,13 @@ import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 import static com.feipulai.host.activity.radio_timer.newRadioTimer.pair.RadioConstant.RUN_RESULT;
 import static com.feipulai.host.activity.radio_timer.newRadioTimer.pair.RadioConstant.RUN_START;
@@ -185,7 +183,37 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         independent = new int[runNum];
         setIndependent();
 //        sportPresent.showReadyLed(mList);
+        adapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(BaseQuickAdapter baseQuickAdapter, View view, int pos) {
+
+                alertConfirm(pos);
+                return true;
+            }
+        });
     }
+
+    private void alertConfirm(final int pos){
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.clear_dialog_title))
+                .setContentText("是否获取新成绩?")
+                .setConfirmText(getString(com.feipulai.common.R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                if (mList.get(pos).getResultList()!= null|| mList.get(pos).getResultList().size()> 0){
+                    sportPresent.getDeviceCacheResult(pos+1,mList.get(pos).getResultList().size()+1);
+                }else {
+                    sportPresent.getDeviceCacheResult(pos+1,1);
+                }
+            }
+        }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+            }
+        }).show();
+    }
+
 
     @Override
     protected void onResume() {
@@ -281,18 +309,21 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        sportPresent.setRunState(1);
     }
 
     private void setBeginTime() {
-        sportPresent.setRunState(1);
-        if (sportPresent.getSynKeep() > 0) {
-            baseTimer = sportPresent.getSynKeep();
-        } else {
-            baseTimer = sportPresent.getTime();
-            sportPresent.setSynKeep(baseTimer);
+        if (!sportPresent.keepTime){
+            return;
         }
-        LogUtils.operation("红外计时开始时间：" + baseTimer);
+        sportPresent.setRunState(1);
+        baseTimer = sportPresent.getTime();
+//        if (sportPresent.getSynKeep() > 0) {
+//            baseTimer = sportPresent.getSynKeep();
+//        } else {
+//            baseTimer = sportPresent.getTime();
+//            sportPresent.setSynKeep(baseTimer);
+//        }
+        LogUtils.operation("红外计时开始时间baseTimer：" + baseTimer);
         testState = TestState.WAIT_RESULT;
         mHandler.sendEmptyMessage(RUN_START);
         currentTestTime++;
@@ -338,7 +369,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         } else {
             //红外拦截并且有起终点
             if (testState == TestState.DATA_DEALING) {
-                setBeginTime();
+//                setBeginTime();
                 return;
             }
             //假使都是认为发射指令，起点终点不相关
@@ -359,6 +390,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 }
                 if (null == mList.get(temp).getStudent())
                     return;
+                LogUtils.operation("baseTimer:"+baseTimer+"result.getLongTime():"+result.getLongTime());
                 int realTime = (result.getLongTime() - baseTimer);
                 setRunWayTime(temp, realTime);
             }
@@ -380,6 +412,9 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         }
         mList.get(temp).setMark(getFormatTime(realTime));
         mList.get(temp).setOriginalMark(realTime);
+        if (!TextUtils.isEmpty(mList.get(temp).getStudent().getStudentName())){
+            LogUtils.operation("baseTimer:"+mList.get(temp).getStudent().getStudentName()+realTime);
+        }
         RunStudent.WaitResult waitResult = new RunStudent.WaitResult();
         waitResult.setOriResult(realTime);
         waitResult.setWaitResult(getFormatTime(realTime));
@@ -456,6 +491,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 tvWaitReady.setSelected(false);
                 break;
             case R.id.tv_fault_back:
+                sportPresent.keepTime = false;
                 testing = false;
                 timerTask.stopKeepTime();
                 sportPresent.setDeviceStateStop();
@@ -477,6 +513,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 if (testState == TestState.UN_STARTED || testState == TestState.DATA_DEALING) {
                     LogUtils.operation("红外计时点击了开始");
                     testState = TestState.FORCE_START;
+                    sportPresent.keepTime = true;
                     setBeginTime();
                     playUtils.play(15);
                 }
@@ -484,7 +521,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
             case R.id.tv_mark_confirm:
                 if (testState == TestState.WAIT_RESULT) {
                     testing = false;
-                    LogUtils.operation("红外计时点击了成绩确认");
+                    LogUtils.operation("红外计时点击了成绩确认+");
                     testState = TestState.UN_STARTED;
                     timerTask.stopKeepTime();
                     sportPresent.setDeviceStateStop();
@@ -504,6 +541,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                         }
                     }
                     setIndependent();
+                    sportPresent.keepTime = false;
                     toastSpeak("成绩保存成功，返回中，请等待");
                     EventBus.getDefault().post(new BaseEvent(EventConfigs.UPDATE_TEST_COUNT));
                     new Handler().postDelayed(new Runnable() {
