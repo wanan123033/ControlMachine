@@ -60,7 +60,7 @@ public class SportPresent implements SportContract.Presenter {
     private ScheduledExecutorService checkService;
     //    ExecutorService service = Executors.newFixedThreadPool(2);
 //    private volatile boolean[] syncTime;//与子机同步时间是否结束
-    private boolean keepTime;//是否开始计时
+    public boolean keepTime;//是否开始计时
     private boolean pause;//暂停
     private int synKeep = -1;//计时标记
     private static final String TAG = "SportPresent";
@@ -185,7 +185,6 @@ public class SportPresent implements SportContract.Presenter {
                 sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());
             }
             synKeep = -1;
-            keepTime = true;
             setPause(true);
 //            sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
             Thread.sleep(1000);
@@ -396,6 +395,17 @@ public class SportPresent implements SportContract.Presenter {
 
     private void getDeviceState(int deviceId) {
         sportTimerManger.getDeviceState(deviceId, SettingHelper.getSystemSetting().getHostId());
+    }
+
+    //获取缓冲区成绩
+    public void getDeviceCacheResult(int deviceId,int resultIndex) {
+        setPause(true);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        sportTimerManger.getRecentCache(deviceId, SettingHelper.getSystemSetting().getHostId(), resultIndex);
     }
 
     private void setPause(boolean pause) {
