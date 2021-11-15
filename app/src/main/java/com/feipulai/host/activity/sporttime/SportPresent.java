@@ -56,7 +56,6 @@ public class SportPresent implements SportContract.Presenter {
     private volatile int[] sendIndex;
     //    private volatile int[] timeState;
     private LEDManager mLEDManager;
-    private volatile int interval;
     private ScheduledExecutorService checkService;
     //    ExecutorService service = Executors.newFixedThreadPool(2);
 //    private volatile boolean[] syncTime;//与子机同步时间是否结束
@@ -75,13 +74,9 @@ public class SportPresent implements SportContract.Presenter {
         this.deviceCount = deviceCount;
         connectState = new int[deviceCount];
         sendIndex = new int[deviceCount];
-//        timeState = new int[deviceCount];
-//        syncTime = new boolean[deviceCount];
         for (int i = 0; i < connectState.length; i++) {
             connectState[i] = 0;
             sendIndex[i] = 1;
-//            timeState[i] = -1;
-//            syncTime[i] = false;
         }
         checkService = Executors.newSingleThreadScheduledExecutor();
     }
@@ -114,7 +109,6 @@ public class SportPresent implements SportContract.Presenter {
         while (connect) {
             if (getRunState() == 0) {//处于空闲时
                 if (!pause) {
-                    if (interval % 4 == 0) {
                         for (int i = 0; i < deviceCount; i++) {
                             try {
                                 sportTimerManger.connect(i + 1, SettingHelper.getSystemSetting().getHostId());
@@ -122,23 +116,17 @@ public class SportPresent implements SportContract.Presenter {
                                 if (connectState[i] > 10) {
                                     sportView.updateDeviceState(i + 1, 0);//连接状态失去
                                 }
-                                Thread.sleep(100);
+                                Thread.sleep(200);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
 
                         }
-                    }
-                    interval++;
-
                 }
-
             }
-
 
             if (getRunState() == 1) {//处于计时状态
                 if (!pause) {
-                    interval = 0;
                     for (int i = 0; i < deviceCount; i++) {
                         try {
                             sportTimerManger.getRecentCache(i + 1, SettingHelper.getSystemSetting().getHostId(), sendIndex[i]);
@@ -185,12 +173,11 @@ public class SportPresent implements SportContract.Presenter {
                 sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());
             }
             synKeep = -1;
-            setPause(true);
-//            sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
+            setPause(false);
+            setRunState(1);
             Thread.sleep(1000);
             for (int i = 0; i < connectState.length; i++) {
                 sendIndex[i] = 1;
-//                timeState[i] = -1;
             }
             sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 1);
             Thread.sleep(500);
@@ -589,7 +576,7 @@ public class SportPresent implements SportContract.Presenter {
      * @param runs
      */
     public void setShowLed(List<RunStudent> runs) {
-        MyRunnable r = new MyRunnable(runs);
+//        MyRunnable r = new MyRunnable(runs);
 //        service.submit(r);
     }
 
@@ -671,7 +658,7 @@ public class SportPresent implements SportContract.Presenter {
     }
 
     public void showReadyLed(List<RunStudent> runs) {
-        ShowReady r = new ShowReady(runs);
+//        ShowReady r = new ShowReady(runs);
 //        service.submit(r);
     }
 
