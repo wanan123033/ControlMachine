@@ -54,7 +54,6 @@ public class GroupingDialog extends Dialog {
     private List<Student> groupIngStudents = new ArrayList<>();
     private GroupingAdapter groupingAdapter;
     private List<Group> groups;
-    private ScannerGunManager scannerGunManager;
 
     public GroupingDialog(@NonNull Context context) {
         super(context);
@@ -82,7 +81,7 @@ public class GroupingDialog extends Dialog {
         this.setContentView(R.layout.pop_group);
         setCanceledOnTouchOutside(false);
 
-        scannerGunManager = new ScannerGunManager(new ScannerGunManager.OnScanListener() {
+        ScannerGunManager.getInstance().setScanListener(new ScannerGunManager.OnScanListener() {
             @Override
             public void onResult(String code) {
                 if (listener != null) {
@@ -98,7 +97,7 @@ public class GroupingDialog extends Dialog {
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         Log.d("scan", "event= " + event);
-        if (scannerGunManager != null && scannerGunManager.dispatchKeyEvent(event)) {
+        if (ScannerGunManager.getInstance().dispatchKeyEvent(event.getKeyCode(), event)) {
             return true;
         }
         return super.dispatchKeyEvent(event);

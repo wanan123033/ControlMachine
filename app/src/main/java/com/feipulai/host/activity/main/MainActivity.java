@@ -113,7 +113,6 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        DateUtil.setTimeZone(this, "Asia/Shanghai");
         RadioManager.getInstance().init();
         StatusBarUtil.setImmersiveTransparentStatusBar(this);//设置沉浸式透明状态栏 配合使用
         timerUtil.startTime(60, TimeUnit.SECONDS);
