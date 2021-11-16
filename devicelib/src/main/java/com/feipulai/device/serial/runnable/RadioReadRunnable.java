@@ -33,18 +33,18 @@ public class RadioReadRunnable extends SerialReadRunnable {
                 Thread.sleep(10);
             }
 
-            if (MachineCode.machineCode == ItemDefault.CODE_HW) {
-                byte[] data = new byte[17];
-                mInputStream.read(data);
-                if ((data[0] & 0xff) != 0x57) {
-                    RS232Result rs232Result = new RS232Result(data);
-                    msg.what = rs232Result.getType();
-                    msg.arg1 = 0XD2;
-                    msg.obj = rs232Result.getResult();
-                }
-
-                return;
-            }
+//            if (MachineCode.machineCode == ItemDefault.CODE_HW) {
+//                byte[] data = new byte[17];
+//                mInputStream.read(data);
+//                if ((data[0] & 0xff) != 0x57) {
+//                    RS232Result rs232Result = new RS232Result(data);
+//                    msg.what = rs232Result.getType();
+//                    msg.arg1 = 0XD2;
+//                    msg.obj = rs232Result.getResult();
+//                }
+//
+//                return;
+//            }
 
             //找协议头
             //可能存在协议头冲突:如果协议头冲突，协议尾会出错，最多丢失两帧
