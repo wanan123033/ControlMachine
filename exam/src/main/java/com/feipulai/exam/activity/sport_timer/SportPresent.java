@@ -113,22 +113,6 @@ public class SportPresent implements SportContract.Presenter {
     private void intervalRun() {
         while (connect) {
             if (getRunState() == 0) {//处于空闲时
-//                if (synKeep< 10){
-//                    for (int i = 0; i < syncTime.length; i++) {
-//                        try {
-//                            if (!syncTime[i]) {
-//                                sportTimerManger.syncTime(i + 1, SettingHelper.getSystemSetting().getHostId(), getTime());
-//                                Thread.sleep(1000);
-//                                sportTimerManger.getTime(i+1, SettingHelper.getSystemSetting().getHostId());
-//                                Thread.sleep(1000);
-//                            }
-//
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }
-//                synKeep++;
                 if (!pause) {
                     for (int i = 0; i < deviceCount; i++) {
                         try {
@@ -138,12 +122,6 @@ public class SportPresent implements SportContract.Presenter {
                                 sportView.updateDeviceState(i + 1, 0);//连接状态失去
                             }
                             Thread.sleep(200);
-//                                if (timeState[i] != 0) {
-//                                    setDeviceState(i + 1, 0);
-//                                    Thread.sleep(100);
-//                                    getDeviceState(i + 1);
-//                                    Thread.sleep(100);
-//                                }
 
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -165,12 +143,7 @@ public class SportPresent implements SportContract.Presenter {
                                 sportView.updateDeviceState(i + 1, 0);//连接状态失去
                             }
                             Thread.sleep(200);
-//                            if (timeState[i] != 1) {
-//                                setDeviceState(i + 1, 1);
-//                                Thread.sleep(100);
-//                                getDeviceState(i + 1);
-//                                Thread.sleep(100);
-//                            }
+
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -238,6 +211,17 @@ public class SportPresent implements SportContract.Presenter {
             e.printStackTrace();
         }
 
+    }
+
+    //获取缓冲区成绩
+    public void getDeviceCacheResult(int deviceId,int resultIndex) {
+        setPause(true);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        sportTimerManger.getRecentCache(deviceId, SettingHelper.getSystemSetting().getHostId(), resultIndex);
     }
 
     //释放资源

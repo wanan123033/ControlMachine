@@ -182,7 +182,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         currentTestTime = 0;
         independent = new int[runNum];
         setIndependent();
-//        sportPresent.showReadyLed(mList);
+        sportPresent.showReadyLed(mList);
         adapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(BaseQuickAdapter baseQuickAdapter, View view, int pos) {
