@@ -55,6 +55,7 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.PrintResultUtil;
+import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
@@ -536,11 +537,17 @@ public class BasketBallMotionGroupActivity extends BaseTitleActivity implements 
 
     @Override
     public void onTimeTaskUpdate(int time) {
-        Message message = mHandler.obtainMessage();
-        message.what = UPDATE_ON_TEXT;
-        message.obj = time;
-        mHandler.sendMessage(message);
+//        Message message = mHandler.obtainMessage();
+//        message.what = UPDATE_ON_TEXT;
+//        message.obj = time;
+//        mHandler.sendMessage(message);
+//        tvResult.setText(ResultDisplayUtils.getStrResultForDisplay(time, false));
     }
+
+    public void onTimeIOTaskUpdate(int time) {
+
+    }
+
     private void setPunish(int punishType) {
         if (state == TESTING || state == WAIT_BEGIN) {
             toastSpeak("测试中,不允许更改考试成绩");

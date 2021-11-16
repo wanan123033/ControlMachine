@@ -29,6 +29,7 @@ import com.feipulai.exam.activity.sport_timer.SportContract;
 import com.feipulai.exam.activity.sport_timer.SportPresent;
 import com.feipulai.exam.activity.sport_timer.TestState;
 import com.feipulai.exam.adapter.PopAdapter;
+import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
@@ -40,6 +41,8 @@ import com.feipulai.exam.view.CommonPopupWindow;
 import com.feipulai.exam.view.ResultPopWindow;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -787,10 +790,35 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
 
     @Override
     public void onTimeTaskUpdate(int time) {
-        Message msg = Message.obtain();
-        msg.what = RUN_UPDATE_TEXT;
-        msg.arg1 = time;
-        mHandler.sendMessage(msg);
+//        Message msg = Message.obtain();
+//        msg.what = RUN_UPDATE_TEXT;
+//        msg.arg1 = time;
+//        mHandler.sendMessage(msg);
+//        if (testState == TestState.WAIT_RESULT){
+//            String formatTime ;
+//            if (time<60*60*1000){
+//                formatTime = DateUtil.formatTime1(time, "mm:ss.S");
+//            }else {
+//                formatTime = DateUtil.formatTime1(time, "HH:mm:ss");
+//            }
+//            sportPresent.showLedString(formatTime);
+//        }
+        EventBus.getDefault().post(new BaseEvent(time,RUN_UPDATE_TEXT));
+//        tvTimer.setText(ResultDisplayUtils.getStrResultForDisplay(time, false));
+        onTimeIOTaskUpdate(time);
+    }
+
+    @Override
+    public void onEventMainThread(BaseEvent baseEvent) {
+        super.onEventMainThread(baseEvent);
+        if (baseEvent.getTagInt() == RUN_UPDATE_TEXT){
+            tvTimer.setText(ResultDisplayUtils.getStrResultForDisplay((Integer) baseEvent.getData(), false));
+        }
+
+    }
+
+
+    public void onTimeIOTaskUpdate(int time) {
         if (testState == TestState.WAIT_RESULT){
             String formatTime ;
             if (time<60*60*1000){

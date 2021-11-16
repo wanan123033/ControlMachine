@@ -1,68 +1,52 @@
 package com.feipulai.exam.activity.RadioTimer.newRadioTimer;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import com.orhanobut.logger.Logger;
+
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 public class TimerTask {
-    private TimeUpdateListener timeUpdateListener;
-    private ExecutorService checkService;
-    private TimeRunnable timeRunnable;
+    private TimeUpdateListener listener;
+    private int period = 0;
+    private Disposable disposable;
+    public TimerTask(final TimeUpdateListener timeListener, final int period) {
+        this.listener = timeListener;
+        this.period = period;
 
-    public TimerTask(TimeUpdateListener timeUpdateListener, int period) {
-        this.timeUpdateListener = timeUpdateListener;
-        checkService = Executors.newSingleThreadScheduledExecutor();
-        timeRunnable = new TimeRunnable(period);
     }
-
-    private volatile long disposeTime;
-    private boolean keepTime;
-    private boolean isTrue = true;
 
     public void keepTime() {
-        checkService.submit(timeRunnable);
-    }
 
-    private class TimeRunnable implements Runnable {
-        private int period;
-        private int realTime;
-
-        TimeRunnable(int period) {
-            this.period = period;
-        }
-
-        @Override
-        public void run() {
-            while (isTrue) {
-                if (keepTime) {
-//                    realTime = (int) (SystemClock.elapsedRealtime()-disposeTime);
-                    realTime = (int) (System.currentTimeMillis() - disposeTime);
-                    timeUpdateListener.onTimeTaskUpdate(realTime);
-                    try {
-                        Thread.sleep(period);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
     }
 
     public void setStart() {
-//        disposeTime = SystemClock.elapsedRealtime();
-        disposeTime = System.currentTimeMillis();
-        keepTime = true;
+        disposable = Observable.interval(0, period, TimeUnit.MILLISECONDS)
+                .observeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Long>() {
+                    @Override
+                    public void accept(Long aLong) throws Exception {
+                        Logger.i("accept-------->" + aLong);
+                        if (listener != null)
+                            listener.onTimeTaskUpdate(aLong.intValue()*period);
+                    }
+                });
     }
 
     public void stopKeepTime() {
-        keepTime = false;
-        disposeTime = 0;
+        if (disposable != null) {
+            disposable.dispose();
+        }
     }
 
     public void release() {
-        if (null != checkService) {
-            isTrue = false;
-            checkService.shutdownNow();
-            stopKeepTime();
+        if (disposable != null) {
+            disposable.dispose();
         }
     }
 

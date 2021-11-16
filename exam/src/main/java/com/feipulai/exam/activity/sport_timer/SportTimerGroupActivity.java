@@ -884,7 +884,14 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
 //        message.what = UPDATE_ON_TEXT;
 //        message.obj = time;
 //        mHandler.sendMessage(message);
+
         EventBus.getDefault().post(new BaseEvent(time,UPDATE_ON_TEXT));
+        onTimeIOTaskUpdate(time);
+//        tvResult.setText(ResultDisplayUtils.getStrResultForDisplay(time, false));
+    }
+
+
+    public void onTimeIOTaskUpdate(int time) {
         if (testState == TestState.WAIT_RESULT){
             String formatTime ;
             if (time<60*60*1000){

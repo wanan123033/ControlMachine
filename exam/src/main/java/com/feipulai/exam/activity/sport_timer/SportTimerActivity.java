@@ -835,7 +835,15 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
 //        message.what = UPDATE_ON_TEXT;
 //        message.arg1 = time;
 //        mHandler.sendMessage(message);
+
+
         EventBus.getDefault().post(new BaseEvent(time,UPDATE_ON_TEXT));
+//        tvResult.setText(ResultDisplayUtils.getStrResultForDisplay(time, false));
+        onTimeIOTaskUpdate(time);
+    }
+
+
+    public void onTimeIOTaskUpdate(int time) {
         if (testState == TestState.WAIT_RESULT){
             String formatTime ;
             if (time<60*60*1000){
@@ -846,6 +854,8 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
             sportPresent.showLedString(formatTime);
         }
     }
+
+
     @Override
     public void setRoundNo(Student student, int roundNo) {
         Student student1 = pair.getStudent();
