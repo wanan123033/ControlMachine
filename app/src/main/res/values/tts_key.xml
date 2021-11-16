@@ -2,5 +2,5 @@
     <string name="tts_app_id">17752794</string>
     <string name="tts_app_key">I9GnSTGgtoCQEwFj6SmXsEz7</string>
     <string name="tts_secret_key">rGE5hMOnytMZC9SFshZ1AWlQISAh2hxF</string>
-
+  <string name="ic_card_read_type">main</string>
 </resources>

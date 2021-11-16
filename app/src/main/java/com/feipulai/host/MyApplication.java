@@ -3,6 +3,7 @@ package com.feipulai.host;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
+import android.text.TextUtils;
 
 import com.feipulai.common.CrashHandler;
 import com.feipulai.common.utils.ActivityLifeCycle;
@@ -30,6 +31,7 @@ public class MyApplication extends MultiDexApplication {
     public static final String DEVICECODE = "111";//硬件识别码
     public static final String BACKUP_DIR = FileUtil.PATH_BASE + "/TC_BACKUP/";
     public static boolean RADIO_TIME_SYNC;
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -71,7 +73,10 @@ public class MyApplication extends MultiDexApplication {
 //        registerActivityLifecycleCallbacks(new ActivityLifeCycle(SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME));
         SOFTWAREUUID = MyApplication.getInstance().getString(R.string.software_uuid);//软件识别码
         HARDWAREUUID = MyApplication.getInstance().getString(R.string.hardware_uuid);//硬件识别码
-//        AdaptiveConfig.initIC(AdaptiveConfig.LIN_NAN_SHI_FAN, AdaptiveConfig.DEFAULT, new char[]{0x73, 0x79, 0x6E, 0x70, 0x75, 0x62});
+        if (TextUtils.equals(getString(R.string.ic_card_read_type), "linNan")) {
+            //        TODO 岭南IC
+            AdaptiveConfig.initIC(AdaptiveConfig.LIN_NAN_SHI_FAN, AdaptiveConfig.DEFAULT, new char[]{0x73, 0x79, 0x6E, 0x70, 0x75, 0x62});
+        }
     }
 
     public static MyApplication getInstance() {

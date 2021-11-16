@@ -1,0 +1,7 @@
+<resources>
+    <string name="tts_app_id">17994357</string>
+    <string name="tts_app_key">XgRt1EWYVNv0IrBSCrHBlG43</string>
+    <string name="tts_secret_key">m0bf78Ti92P11FUgjZCcgM1Bl5PtemsK</string>
+
+    <string name="ic_card_read_type">linNan</string>
+</resources>
