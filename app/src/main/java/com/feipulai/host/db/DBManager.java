@@ -95,6 +95,10 @@ public class DBManager {
             if (items != null && items.size() != 0) {
                 continue;
             }
+            items = itemDao.queryBuilder().where(ItemDao.Properties.ItemName.eq(TestConfigs.machineNameMap.get(machineCode))).list();
+            if (items != null && items.size() != 0) {
+                continue;
+            }
             switch (machineCode) {
                 case ItemDefault.CODE_HW:
                     insertItem(machineCode, TestConfigs.HEIGHT_ITEM_CODE, "身高", "厘米");
