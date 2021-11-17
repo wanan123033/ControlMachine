@@ -79,9 +79,9 @@ public class SplashScreenActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        if (!Build.MODEL.equals("FPL")){
-            DateUtil.setTimeZone(this, "Asia/Shanghai");
-        }
+//        if (!Build.MODEL.equals("FPL")){
+//            DateUtil.setTimeZone(this, "Asia/Shanghai");
+//        }
 
 
 
@@ -132,9 +132,9 @@ public class SplashScreenActivity extends BaseActivity {
         new UserSubscriber().activate(runTime, new OnResultListener<ActivateBean>() {
             @Override
             public void onSuccess(ActivateBean result) {
-                if (!Build.MODEL.equals("FPL")){
-                    DateUtil.setSysDate(SplashScreenActivity.this, result.getCurrentTime());
-                }
+//                if (!Build.MODEL.equals("FPL")){
+//                    DateUtil.setSysDate(SplashScreenActivity.this, result.getCurrentTime());
+//                }
                 activateBean = result;
                 SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, result.getCurrentRunTime());
                 SharedPrefsUtil.save(SplashScreenActivity.this, result);
