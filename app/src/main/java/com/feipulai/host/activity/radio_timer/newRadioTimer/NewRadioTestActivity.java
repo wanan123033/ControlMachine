@@ -338,7 +338,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
 
     @Override
     public void receiveResult(SportResult result) {
-        if (map.get(result.getDeviceId())){
+        if (map.get(result.getDeviceId()) != null && map.get(result.getDeviceId())){
             map.put(result.getDeviceId(),false);
             if (result.getSumTimes() != result.getCurrentTime()){
                 sportPresent.getDeviceCacheResult(result.getDeviceId(),result.getSumTimes());
