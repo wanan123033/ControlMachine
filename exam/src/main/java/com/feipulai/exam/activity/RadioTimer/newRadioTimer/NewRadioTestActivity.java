@@ -196,16 +196,21 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
 
     private void alertConfirm(final int pos){
         new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.clear_dialog_title))
-                .setContentText("是否获取新成绩?")
+                .setContentText(pos == -1? "是否保存成绩?":"是否获取新成绩?")
                 .setConfirmText(getString(com.feipulai.common.R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
-                if (mList.get(pos).getResultList()!= null|| mList.get(pos).getResultList().size()> 0){
-                    sportPresent.getDeviceCacheResult(pos+1,mList.get(pos).getResultList().size()+1);
+                if (pos == -1){
+                    saveResult();
                 }else {
-                    sportPresent.getDeviceCacheResult(pos+1,1);
+                    if (mList.get(pos).getResultList()!= null|| mList.get(pos).getResultList().size()> 0){
+                        sportPresent.getDeviceCacheResult(pos+1,mList.get(pos).getResultList().size()+1);
+                    }else {
+                        sportPresent.getDeviceCacheResult(pos+1,1);
+                    }
                 }
+
             }
         }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
@@ -559,43 +564,57 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 }
                 break;
             case R.id.tv_mark_confirm:
-                if (testState == TestState.WAIT_RESULT) {
-                    testing = false;
-                    LogUtils.operation("红外计时点击了成绩确认");
-                    testState = TestState.UN_STARTED;
-                    timerTask.stopKeepTime();
-                    sportPresent.setDeviceStateStop();
-                    sportPresent.setShowLed(mList);
-                    for (RunStudent runStudent : mList) {
-                        if (runStudent.getStudent() != null) {
-                            List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(runStudent.getStudent().getStudentCode());
-                            sportPresent.saveResultRadio(runStudent.getStudent(), runStudent.getOriginalMark(), results.size() + 1, 1, startTime);
-                            //是否可以直接增加list.add(getFormatTime(runStudent.getOriginalMark())) ,而不需查询两次数据库
-                            List<RoundResult> resultList = DBManager.getInstance().queryResultsByStudentCode(runStudent.getStudent().getStudentCode());
-                            List<String> list = new ArrayList<>();
-                            for (RoundResult result : resultList) {
-                                list.add(getFormatTime(result.getResult()));
-                            }
-                            sportPresent.printResult(runStudent.getStudent(), list, resultList.size(), maxTestTimes, -1);
-                            list.clear();
-                        }
+                boolean b  = true;
+                for (RunStudent runStudent : mList) {
+                    if (TextUtils.isEmpty(runStudent.getMark())){
+                        b = false;
+                        break;
                     }
-                    setIndependent();
-                    toastSpeak("成绩保存成功，返回中，请等待");
-                    EventBus.getDefault().post(new BaseEvent(EventConfigs.UPDATE_TEST_COUNT));
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            finish();
-                        }
-                    },5000);
-
                 }
-
+                if (!b){
+                    alertConfirm(-1);
+                    return;
+                }
+                saveResult();
                 break;
             case R.id.tv_device_detail:
                 IntentUtil.gotoActivity(this, RadioDeviceDetailActivity.class);
                 break;
+        }
+    }
+
+    private void saveResult() {
+        if (testState == TestState.WAIT_RESULT) {
+            testing = false;
+            LogUtils.operation("红外计时点击了成绩确认");
+            testState = TestState.UN_STARTED;
+            timerTask.stopKeepTime();
+            sportPresent.setDeviceStateStop();
+            sportPresent.setShowLed(mList);
+            for (RunStudent runStudent : mList) {
+                if (runStudent.getStudent() != null) {
+                    List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(runStudent.getStudent().getStudentCode());
+                    sportPresent.saveResultRadio(runStudent.getStudent(), runStudent.getOriginalMark(), results.size() + 1, 1, startTime);
+                    //是否可以直接增加list.add(getFormatTime(runStudent.getOriginalMark())) ,而不需查询两次数据库
+                    List<RoundResult> resultList = DBManager.getInstance().queryResultsByStudentCode(runStudent.getStudent().getStudentCode());
+                    List<String> list = new ArrayList<>();
+                    for (RoundResult result : resultList) {
+                        list.add(getFormatTime(result.getResult()));
+                    }
+                    sportPresent.printResult(runStudent.getStudent(), list, resultList.size(), maxTestTimes, -1);
+                    list.clear();
+                }
+            }
+            setIndependent();
+            toastSpeak("成绩保存成功，返回中，请等待");
+            EventBus.getDefault().post(new BaseEvent(EventConfigs.UPDATE_TEST_COUNT));
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    finish();
+                }
+            },5000);
+
         }
     }
 

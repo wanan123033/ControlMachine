@@ -291,4 +291,50 @@ public class SportTimerManger {
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
         LogUtils.serial("运动计时获取设备状态： " + StringUtility.bytesToHexString(data));
     }
+
+    /**
+     * 设置 子机 按钮重复按下间隔时间
+     * @param deviceId
+     * @param hostId
+     * @param time 0-255
+     */
+    public void setMinTime( int hostId, int time) {
+        byte data[] = new byte[12];
+        data[0] = (byte) 0xAA;
+        data[1] = (byte) 12;
+        data[2] = (byte) 0x0E;
+        data[3] = (byte) 0x03;
+        data[4] = (byte) 0X01;
+        data[5] = (byte) hostId;
+        data[6] = (byte) (0xff);
+        data[7] = (byte) 18;
+        data[8] = (byte) (time & 0xff);
+        data[9] = (byte) 0x00;
+        for (int i = 1; i <= data.length - 3; i++) {
+            data[10] += data[i];
+        }
+        data[11] = (byte) 0x0d;
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
+        LogUtils.serial("运动计时设置工作状态： " + StringUtility.bytesToHexString(data));
+    }
+
+    public void setSensitiveTime( int hostId, int time) {
+        byte data[] = new byte[12];
+        data[0] = (byte) 0xAA;
+        data[1] = (byte) 12;
+        data[2] = (byte) 0x0E;
+        data[3] = (byte) 0x03;
+        data[4] = (byte) 0X01;
+        data[5] = (byte) hostId;
+        data[6] = (byte) (0xff);
+        data[7] = (byte) 5;
+        data[8] = (byte) (time & 0xff);
+        data[9] = (byte) 0x00;
+        for (int i = 1; i <= data.length - 3; i++) {
+            data[10] += data[i];
+        }
+        data[11] = (byte) 0x0d;
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
+        LogUtils.serial("运动计时设置工作状态： " + StringUtility.bytesToHexString(data));
+    }
 }

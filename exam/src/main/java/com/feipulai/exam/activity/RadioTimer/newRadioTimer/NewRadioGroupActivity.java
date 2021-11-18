@@ -203,16 +203,21 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
 
     private void alertConfirm(final int pos){
         new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.clear_dialog_title))
-                .setContentText("是否获取新成绩?")
+                .setContentText(pos == -1? "是否保存成绩?":"是否获取新成绩?")
                 .setConfirmText(getString(com.feipulai.common.R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
-                if (mList.get(pos).getResultList()!= null|| mList.get(pos).getResultList().size()> 0){
-                    sportPresent.getDeviceCacheResult(pos+1,mList.get(pos).getResultList().size()+1);
+                if (pos == -1){
+                    saveResult();
                 }else {
-                    sportPresent.getDeviceCacheResult(pos+1,1);
+                    if (mList.get(pos).getResultList()!= null|| mList.get(pos).getResultList().size()> 0){
+                        sportPresent.getDeviceCacheResult(pos+1,mList.get(pos).getResultList().size()+1);
+                    }else {
+                        sportPresent.getDeviceCacheResult(pos+1,1);
+                    }
                 }
+
             }
         }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
@@ -426,19 +431,34 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                 setIndependent();
                 break;
             case R.id.tv_mark_confirm://成绩确认
-                if (testState == TestState.WAIT_RESULT) {
-                    testing = false;
-                    timerKeeper.stopKeepTime();
-                    sportPresent.setShowLed(mList);
-                    LogUtils.operation("红外计时点击了成绩确认");
-                    sportPresent.setDeviceStateStop();
-                    testState = TestState.UN_STARTED;
-                    updateComplete();
+                boolean b  = true;
+                for (RunStudent runStudent : mList) {
+                    if (TextUtils.isEmpty(runStudent.getMark())){
+                        b = false;
+                        break;
+                    }
                 }
+                if (!b){
+                    alertConfirm(-1);
+                    return;
+                }
+                saveResult();
                 break;
             case R.id.tv_device_detail:
                 IntentUtil.gotoActivity(this, RadioDeviceDetailActivity.class);
                 break;
+        }
+    }
+
+    private void saveResult() {
+        if (testState == TestState.WAIT_RESULT) {
+            testing = false;
+            timerKeeper.stopKeepTime();
+            sportPresent.setShowLed(mList);
+            LogUtils.operation("红外计时点击了成绩确认");
+            sportPresent.setDeviceStateStop();
+            testState = TestState.UN_STARTED;
+            updateComplete();
         }
     }
 
