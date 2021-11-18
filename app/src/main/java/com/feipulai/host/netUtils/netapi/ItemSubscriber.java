@@ -110,6 +110,11 @@ public class ItemSubscriber {
                         ToastUtils.showShort("项目机器码不能为空，请联系管理员进行数据更新");
                         return;
                     }
+
+                    if (TextUtils.equals(itemBean.getMachineCode(), "0")) {
+                        continue;
+                    }
+
                     Item item = new Item();
                     item.setCarryMode(itemBean.getCarryMode());
                     item.setDigital(itemBean.getDecimalDigits());
