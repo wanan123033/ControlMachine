@@ -1,19 +1,17 @@
 package com.feipulai.exam.activity.RadioTimer.newRadioTimer;
 
-import com.orhanobut.logger.Logger;
+import android.os.SystemClock;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 public class TimerTask {
     private TimeUpdateListener listener;
-    private int period = 0;
-    private Disposable disposable;
+    private int period ;
+    private ScheduledExecutorService checkService;
+    private volatile long disposeTime;
+    private volatile boolean keepTime;
     public TimerTask(final TimeUpdateListener timeListener, final int period) {
         this.listener = timeListener;
         this.period = period;
@@ -21,32 +19,41 @@ public class TimerTask {
     }
 
     public void keepTime() {
-
+        checkService = Executors.newSingleThreadScheduledExecutor();
+        checkService.scheduleWithFixedDelay(checkRun, 1000, period, TimeUnit.MILLISECONDS);
     }
 
-    public void setStart() {
-        disposable = Observable.interval(0, period, TimeUnit.MILLISECONDS)
-                .observeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Long>() {
-                    @Override
-                    public void accept(Long aLong) throws Exception {
-                        Logger.i("accept-------->" + aLong);
-                        if (listener != null)
-                            listener.onTimeTaskUpdate(aLong.intValue()*period);
-                    }
-                });
-    }
+    private CheckRun checkRun = new CheckRun();
 
-    public void stopKeepTime() {
-        if (disposable != null) {
-            disposable.dispose();
+    private class CheckRun implements Runnable {
+
+        @Override
+        public void run() {
+            intervalRun();
         }
     }
 
+    private void intervalRun() {
+        if (keepTime){
+            int realTime = (int) (SystemClock.elapsedRealtime() - disposeTime);
+            listener.onTimeTaskUpdate(realTime);
+        }
+    }
+
+    public void setStart() {
+        keepTime = true;
+        disposeTime  = SystemClock.elapsedRealtime();
+    }
+
+    public void stopKeepTime() {
+        keepTime = false;
+        disposeTime = 0;
+    }
+
     public void release() {
-        if (disposable != null) {
-            disposable.dispose();
+        if (null != checkService) {
+            checkService.shutdownNow();
+            stopKeepTime();
         }
     }
 

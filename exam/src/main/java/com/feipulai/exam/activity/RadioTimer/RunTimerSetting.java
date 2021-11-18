@@ -67,6 +67,9 @@ public class RunTimerSetting {
         return maleFull;
     }
 
+    private int minEidit = 1;
+    private int sensity = 50;
+
     public void setMaleFull(String maleFull) {
         this.maleFull = maleFull;
     }
@@ -215,5 +218,21 @@ public class RunTimerSetting {
 
     public void setTimer_select(boolean timer_select) {
         this.timer_select = timer_select;
+    }
+
+    public int getMinEidit() {
+        return minEidit;
+    }
+
+    public void setMinEidit(int minEidit) {
+        this.minEidit = minEidit;
+    }
+
+    public int getSensity() {
+        return sensity;
+    }
+
+    public void setSensity(int sensity) {
+        this.sensity = sensity;
     }
 }

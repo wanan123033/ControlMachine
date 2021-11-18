@@ -42,7 +42,9 @@ import com.orhanobut.logger.utils.LogUtils;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -115,7 +117,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     private SparseArray<Integer> array;//有起终点时各道次终点状态 0异常 1正常 2计时
     private TimerTask timerTask;
     private boolean testing;
-
+    private Map<Integer,Boolean> map = new HashMap<>();//是否获取最新结果
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_new_radio_test;
@@ -202,6 +204,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 sweetAlertDialog.dismissWithAnimation();
                 if (mList.get(pos).getResultList()!= null|| mList.get(pos).getResultList().size()> 0){
                     sportPresent.getDeviceCacheResult(pos+1,mList.get(pos).getResultList().size()+1);
+                    map.put(pos+1,true);
                 }else {
                     sportPresent.getDeviceCacheResult(pos+1,1);
                 }
@@ -335,6 +338,13 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
 
     @Override
     public void receiveResult(SportResult result) {
+        if (map.get(result.getDeviceId())){
+            map.put(result.getDeviceId(),false);
+            if (result.getSumTimes() != result.getCurrentTime()){
+                sportPresent.getDeviceCacheResult(result.getDeviceId(),result.getSumTimes());
+            }
+
+        }
         //起终点拦截 独立计时
         if (runTimerSetting.getInterceptPoint() == 3 && runTimerSetting.isTimer_select()) {
             if (testState == TestState.DATA_DEALING) {
@@ -521,7 +531,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
             case R.id.tv_mark_confirm:
                 if (testState == TestState.WAIT_RESULT) {
                     testing = false;
-                    LogUtils.operation("红外计时点击了成绩确认+");
+                    LogUtils.operation("红外计时点击了成绩确认");
                     testState = TestState.UN_STARTED;
                     timerTask.stopKeepTime();
                     sportPresent.setDeviceStateStop();

@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -96,6 +97,16 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     TextView syncTime;
     @BindView(R.id.btn_connect)
     Button btnConnect;
+    @BindView(R.id.et_test_min)
+    EditText etTestMin;
+    @BindView(R.id.et_sense)
+    EditText etSense;
+    @BindView(R.id.ll_test_min)
+    LinearLayout llTestMin;
+    @BindView(R.id.ll_sensitive)
+    LinearLayout llSense;
+    @BindView(R.id.ll_sensitivity_num)
+    LinearLayout llSensitivity;
     private RunTimerSetting runTimerSetting;
     private int intercept_point;
     private SweetAlertDialog alertDialog;
@@ -145,6 +156,11 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
             sportTimerManger = new SportTimerManger();
             sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
             btnConnect.setVisibility(View.VISIBLE);
+            etSense.setText(runTimerSetting.getSensity()+"");
+            etTestMin.setText(runTimerSetting.getMinEidit()+"");
+            llSense.setVisibility(View.VISIBLE);
+            llTestMin.setVisibility(View.VISIBLE);
+            llSensitivity.setVisibility(View.GONE);
         }
     }
 
@@ -364,6 +380,20 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         String senNum = etSensitivityNum.getText().toString();
         runTimerSetting.setSensitivityNum(TextUtils.isEmpty(senNum) ? 5 : Integer.parseInt(senNum));
         getInterceptPoint();
+        if (sportTimerManger!= null){
+            if (TextUtils.isEmpty(etSense.getText().toString())){
+                runTimerSetting.setSensity(20);
+            }else {
+                runTimerSetting.setSensity(Integer.parseInt(etSense.getText().toString().trim()));
+            }
+            sportTimerManger.setSensitiveTime(SettingHelper.getSystemSetting().getHostId(),runTimerSetting.getMinEidit());
+            if (TextUtils.isEmpty(etTestMin.getText().toString())){
+                runTimerSetting.setMinEidit(1);
+            }else {
+                runTimerSetting.setMinEidit(Integer.parseInt(etTestMin.getText().toString().trim()));
+            }
+            sportTimerManger.setMinTime(SettingHelper.getSystemSetting().getHostId(),runTimerSetting.getMinEidit());
+        }
         SharedPrefsUtil.save(this, runTimerSetting);
         EventBus.getDefault().post(new BaseEvent(EventConfigs.CONNECT_SETTING));
 

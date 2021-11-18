@@ -1,13 +1,16 @@
 package com.feipulai.exam.activity.sport_timer;
 
 import android.content.Intent;
-import android.os.Handler;
+import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -27,6 +30,7 @@ import com.feipulai.exam.config.TestConfigs;
 import java.util.Calendar;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class SportSettingActivity extends BaseTitleActivity implements AdapterView.OnItemSelectedListener, RadioGroup.OnCheckedChangeListener, RadioManager.OnRadioArrivedListener {
@@ -45,12 +49,21 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
     RadioGroup rg_model;
     @BindView(R.id.btn_sync_time)
     TextView syncTime;
+    @BindView(R.id.et_test_min)
+    EditText etTestMin;
+    @BindView(R.id.et_sense)
+    EditText etSense;
+    @BindView(R.id.rb_continue)
+    RadioButton rbContinue;
+    @BindView(R.id.rb_recycle)
+    RadioButton rbRecycle;
+    @BindView(R.id.tv_pair)
+    TextView tvPair;
     private SportTimerSetting setting;
     private String[] carryMode = new String[]{"四舍五入", "不进位", "非零进位"};
     private String[] digital = new String[]{"十分位", "百分位", "千分位"};
     private String[] deviceCount = new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
     private String[] testCount = new String[]{"1", "2", "3"};
-    private SportTimerManger sportTimerManger;
 
     @Override
     protected int setLayoutResID() {
@@ -111,9 +124,9 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
         }
 
         RadioManager.getInstance().setOnRadioArrived(this);
-        sportTimerManger = new SportTimerManger();
-        sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
-
+        stm.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
+        etSense.setText(setting.getSensity()+"");
+        etTestMin.setText(setting.getMinEidit()+"");
     }
 
     @Override
@@ -135,10 +148,22 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
                 break;
         }
     }
-
+    SportTimerManger stm = new SportTimerManger();
     @Override
     protected void onStop() {
         super.onStop();
+        if (TextUtils.isEmpty(etSense.getText().toString())){
+            setting.setSensity(20);
+        }else {
+            setting.setSensity(Integer.parseInt(etSense.getText().toString().trim()));
+        }
+        stm.setSensitiveTime(SettingHelper.getSystemSetting().getHostId(),setting.getMinEidit());
+        if (TextUtils.isEmpty(etTestMin.getText().toString())){
+            setting.setMinEidit(1);
+        }else {
+            setting.setMinEidit(Integer.parseInt(etTestMin.getText().toString().trim()));
+        }
+        stm.setMinTime(SettingHelper.getSystemSetting().getHostId(),setting.getMinEidit());
         SharedPrefsUtil.save(this, setting);
     }
 
@@ -164,7 +189,7 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
                 startActivity(new Intent(this, SportPairActivity.class));
                 break;
             case R.id.btn_sync_time:
-                sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());
+                stm.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());
 //                new Handler().postDelayed(new Runnable() {
 //                    @Override
 //                    public void run() {
@@ -209,4 +234,5 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
     public void onRadioArrived(Message msg) {
 
     }
+
 }

@@ -743,6 +743,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
     protected void onStop() {
         super.onStop();
         sportPresent.setContinueRoll(false);
+        timerTask.release();
     }
 
     public void showAFR() {
@@ -771,7 +772,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
             Student student = (Student) baseEvent.getData();
             StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
             onIndividualCheckIn(student, studentItem, new ArrayList<RoundResult>());
-        }else if (baseEvent.getTagInt() == RUN_UPDATE_TEXT){
+        }else if (baseEvent.getTagInt() == UPDATE_ON_TEXT){
             tvResult.setText(ResultDisplayUtils.getStrResultForDisplay((Integer) baseEvent.getData(), false));
         }
     }
