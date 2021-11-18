@@ -480,6 +480,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_wait_start:
+                timerTask.stopKeepTime();
                 testing = true;
                 LogUtils.operation("红外计时点击了等待发令");
                 boolean flag = false;//标记学生是否全部测试完

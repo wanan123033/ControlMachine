@@ -351,6 +351,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_wait_start://等待发令
+                timerKeeper.stopKeepTime();
                 testing = true;
                 LogUtils.operation("红外计时点击了等待发令");
                 boolean flag = false;//标记学生是否全部测试完
@@ -659,7 +660,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
         //红外拦截并且有起终点
         else {
             if (testState == TestState.DATA_DEALING) {
-                setBeginTime();
+//                setBeginTime();
                 return;
             }
             //假使都是认为发射指令，起点终点不相关
