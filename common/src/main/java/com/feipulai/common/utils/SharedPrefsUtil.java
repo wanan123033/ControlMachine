@@ -473,7 +473,12 @@ public class SharedPrefsUtil {
                     } else if (fieldType.equals(Float.class) || fieldType.equals(float.class)) {
                         value = sp.getFloat(key, 0);
                     } else if (fieldType.equals(Double.class) || fieldType.equals(double.class)) {
-                        value = Double.valueOf(sp.getString(key, "0.00"));
+                        String intValue = sp.getString(key, "0.00");
+                        if (intValue.equals("0")) {
+                            value = 0.0;
+                        } else {
+                            value = Double.valueOf(sp.getString(key, "0.00"));
+                        }
                     } else if (fieldType.equals(Boolean.class) || fieldType.equals(boolean.class)) {
                         value = sp.getBoolean(key, false);
                     } else if (fieldType.equals(Character.class) || fieldType.equals(char.class)) {
