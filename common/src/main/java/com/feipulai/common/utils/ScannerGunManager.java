@@ -4,6 +4,8 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 
+import com.orhanobut.logger.utils.LogUtils;
+
 import java.util.ArrayList;
 
 /**
@@ -183,13 +185,11 @@ public class ScannerGunManager {
         }
 
         String result = "";
-
         boolean hasShift = false;
         for (int keyCode : scannedCodes) {
             result += keyCodeToChar(keyCode, hasShift);
             hasShift = (keyCode == KeyEvent.KEYCODE_SHIFT_LEFT);
         }
-
         if (!TextUtils.isEmpty(result) && listener != null) {
             listener.onResult(result);
         }
@@ -201,17 +201,18 @@ public class ScannerGunManager {
         if (event.getDeviceId() == -1) {
             return false;
         }
+        if (event.getAction() == KeyEvent.ACTION_UP){
+            if (keyCode != KeyEvent.KEYCODE_ENTER && keyCode != KeyEvent.KEYCODE_TAB) {
+                scannedCodes.add(keyCode);
+                mHandler.removeCallbacks(mScanningFinishRunnable);
+                mHandler.postDelayed(mScanningFinishRunnable, MESSAGE_DELAY);
+            } else {
+                mHandler.removeCallbacks(mScanningFinishRunnable);
 
-        if (keyCode != KeyEvent.KEYCODE_ENTER && keyCode != KeyEvent.KEYCODE_TAB) {
-            scannedCodes.add(keyCode);
-
-            mHandler.removeCallbacks(mScanningFinishRunnable);
-            mHandler.postDelayed(mScanningFinishRunnable, MESSAGE_DELAY);
-        } else {
-            mHandler.removeCallbacks(mScanningFinishRunnable);
-
-            handleKeyCodes();
+                handleKeyCodes();
+            }
         }
+
 
         return true;
     }
