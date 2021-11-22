@@ -119,6 +119,7 @@ public abstract class BaseCheckActivity
         ScannerGunManager.getInstance().setScanListener(new ScannerGunManager.OnScanListener() {
             @Override
             public void onResult(String code) {
+                LogUtils.operation("扫描结果："+code);
                 boolean needAdd = checkQulification(code, STUDENT_CODE);
                 if (needAdd) {
                     Student student = new Student();
