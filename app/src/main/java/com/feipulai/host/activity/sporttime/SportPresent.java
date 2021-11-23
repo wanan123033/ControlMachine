@@ -118,7 +118,7 @@ public class SportPresent implements SportContract.Presenter {
                                 if (connectState[i] > 10) {
                                     sportView.updateDeviceState(i + 1, 0);//连接状态失去
                                 }
-                                Thread.sleep(100);
+                                Thread.sleep(200);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -136,7 +136,7 @@ public class SportPresent implements SportContract.Presenter {
                             if (connectState[i] > 10) {
                                 sportView.updateDeviceState(i + 1, 0);//连接状态失去
                             }
-                            Thread.sleep(100);
+                            Thread.sleep(200);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -480,6 +480,9 @@ public class SportPresent implements SportContract.Presenter {
         LogUtils.operation("保存成绩:" + roundResult.toString());
         List<RoundResult> roundResultList = new ArrayList<>();
         roundResultList.add(roundResult);
+        if (!SettingHelper.getSystemSetting().isRtUpload()) {
+            return;
+        }
         ServerIml.uploadResult(UploadResultUtil.getUploadData(roundResult, roundResult));
 
     }
@@ -768,6 +771,9 @@ public class SportPresent implements SportContract.Presenter {
 
         List<RoundResult> roundResultList = new ArrayList<>();
         roundResultList.add(roundResult);
+        if (!SettingHelper.getSystemSetting().isRtUpload()) {
+            return;
+        }
         ServerIml.uploadResult(UploadResultUtil.getUploadData(roundResult, roundResult));
     }
 

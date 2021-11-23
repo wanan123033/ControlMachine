@@ -268,13 +268,15 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
             if (mList.size() == 0)
                 return;
             if (mList.get(deviceId - 1).getConnectState() != state) {
-                if (state == 2) {//计时状态
-                    mList.get(deviceId - 1).setConnectState(2);
-                    mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
-                }else if (testState == TestState.UN_STARTED){
-                    mList.get(deviceId - 1).setConnectState(state);
-                    mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
-                }
+//                if (state == 2) {//计时状态
+//                    mList.get(deviceId - 1).setConnectState(2);
+//                    mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
+//                }else if (testState == TestState.UN_STARTED){
+//                    mList.get(deviceId - 1).setConnectState(state);
+//                    mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
+//                }
+                mList.get(deviceId - 1).setConnectState(state);
+                mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
 
             }
 
@@ -282,22 +284,26 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
             if (deviceId / 2 > runNum)
                 return;
             if (deviceId <= runNum) {
-                if ( state == 2) {//计时状态
-                    mList.get(deviceId - 1).setConnectState(2);
-                    mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
-                }else if (testState == TestState.UN_STARTED){
-                    mList.get(deviceId - 1).setConnectState(state);
-                    mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
-                }
+//                if ( state == 2) {//计时状态
+//                    mList.get(deviceId - 1).setConnectState(2);
+//                    mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
+//                }else if (testState == TestState.UN_STARTED){
+//                    mList.get(deviceId - 1).setConnectState(state);
+//                    mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
+//                }
+                mList.get(deviceId - 1).setConnectState(state);
+                mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
             } else {
                 if (array.get(deviceId - runNum - 1) != state) {
-                    if ( state == 2) {//即将计时
-                        array.put(deviceId - runNum - 1, 2);
-                        mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
-                    }else if (testState == TestState.UN_STARTED) {
-                        array.put(deviceId - runNum - 1, state);
-                        mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
-                    }
+//                    if ( state == 2) {//即将计时
+//                        array.put(deviceId - runNum - 1, 2);
+//                        mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
+//                    }else if (testState == TestState.UN_STARTED) {
+//                        array.put(deviceId - runNum - 1, state);
+//                        mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
+//                    }
+                    array.put(deviceId - runNum - 1, state);
+                    mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
                 }
             }
         }
