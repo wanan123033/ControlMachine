@@ -117,7 +117,8 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     private SparseArray<Integer> array;//有起终点时各道次终点状态 0异常 1正常 2计时
     private TimerTask timerTask;
     private boolean testing;
-    private Map<Integer,Boolean> map = new HashMap<>();//是否获取最新结果
+    private Map<Integer, Boolean> map = new HashMap<>();//是否获取最新结果
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_new_radio_test;
@@ -195,18 +196,18 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         });
     }
 
-    private void alertConfirm(final int pos){
+    private void alertConfirm(final int pos) {
         new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.clear_dialog_title))
                 .setContentText("是否获取新成绩?")
                 .setConfirmText(getString(com.feipulai.common.R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
-                if (mList.get(pos).getResultList()!= null|| mList.get(pos).getResultList().size()> 0){
-                    sportPresent.getDeviceCacheResult(pos+1,mList.get(pos).getResultList().size()+1);
-                    map.put(pos+1,true);
-                }else {
-                    sportPresent.getDeviceCacheResult(pos+1,1);
+                if (mList.get(pos).getResultList() != null || mList.get(pos).getResultList().size() > 0) {
+                    sportPresent.getDeviceCacheResult(pos + 1, mList.get(pos).getResultList().size() + 1);
+                    map.put(pos + 1, true);
+                } else {
+                    sportPresent.getDeviceCacheResult(pos + 1, 1);
                 }
             }
         }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
@@ -266,36 +267,41 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
             if (mList.size() == 0)
                 return;
             if (mList.get(deviceId - 1).getConnectState() != state) {
-                if (state == 2) {//计时状态
-                    mList.get(deviceId - 1).setConnectState(2);
-                    mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
-                } else if (testState == TestState.UN_STARTED) {
-                    mList.get(deviceId - 1).setConnectState(state);
-                    mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
-                }
-
+//                if (state == 2) {//计时状态
+//                    mList.get(deviceId - 1).setConnectState(2);
+//                    mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
+//                } else if (testState == TestState.UN_STARTED) {
+//                    mList.get(deviceId - 1).setConnectState(state);
+//                    mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
+//                }
+                mList.get(deviceId - 1).setConnectState(state);
+                mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
             }
 
         } else {
             if (deviceId / 2 > runNum)
                 return;
             if (deviceId <= runNum) {
-                if (state == 2) {//计时状态
-                    mList.get(deviceId - 1).setConnectState(2);
-                    mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
-                } else if (testState == TestState.UN_STARTED) {
-                    mList.get(deviceId - 1).setConnectState(state);
-                    mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
-                }
+//                if (state == 2) {//计时状态
+//                    mList.get(deviceId - 1).setConnectState(2);
+//                    mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
+//                } else if (testState == TestState.UN_STARTED) {
+//                    mList.get(deviceId - 1).setConnectState(state);
+//                    mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
+//                }
+                mList.get(deviceId - 1).setConnectState(state);
+                mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
             } else {
                 if (array.get(deviceId - runNum - 1) != state) {
-                    if (state == 2) {//即将计时
-                        array.put(deviceId - runNum - 1, 2);
-                        mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
-                    } else if (testState == TestState.UN_STARTED) {
-                        array.put(deviceId - runNum - 1, state);
-                        mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
-                    }
+//                    if (state == 2) {//即将计时
+//                        array.put(deviceId - runNum - 1, 2);
+//                        mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
+//                    } else if (testState == TestState.UN_STARTED) {
+//                        array.put(deviceId - runNum - 1, state);
+//                        mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
+//                    }
+                    array.put(deviceId - runNum - 1, state);
+                    mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
                 }
             }
         }
@@ -315,7 +321,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     }
 
     private void setBeginTime() {
-        if (!sportPresent.keepTime){
+        if (!sportPresent.keepTime) {
             return;
         }
         sportPresent.setRunState(1);
@@ -338,10 +344,10 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
 
     @Override
     public void receiveResult(SportResult result) {
-        if (map.get(result.getDeviceId()) != null && map.get(result.getDeviceId())){
-            map.put(result.getDeviceId(),false);
-            if (result.getSumTimes() != result.getCurrentTime()){
-                sportPresent.getDeviceCacheResult(result.getDeviceId(),result.getSumTimes());
+        if (map.get(result.getDeviceId()) != null && map.get(result.getDeviceId())) {
+            map.put(result.getDeviceId(), false);
+            if (result.getSumTimes() != result.getCurrentTime()) {
+                sportPresent.getDeviceCacheResult(result.getDeviceId(), result.getSumTimes());
             }
 
         }
@@ -400,7 +406,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 }
                 if (null == mList.get(temp).getStudent())
                     return;
-                LogUtils.operation("baseTimer:"+baseTimer+"result.getLongTime():"+result.getLongTime());
+                LogUtils.operation("baseTimer:" + baseTimer + "result.getLongTime():" + result.getLongTime());
                 int realTime = (result.getLongTime() - baseTimer);
                 setRunWayTime(temp, realTime);
             }
@@ -422,8 +428,8 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         }
         mList.get(temp).setMark(getFormatTime(realTime));
         mList.get(temp).setOriginalMark(realTime);
-        if (!TextUtils.isEmpty(mList.get(temp).getStudent().getStudentName())){
-            LogUtils.operation("baseTimer:"+mList.get(temp).getStudent().getStudentName()+realTime);
+        if (!TextUtils.isEmpty(mList.get(temp).getStudent().getStudentName())) {
+            LogUtils.operation("baseTimer:" + mList.get(temp).getStudent().getStudentName() + realTime);
         }
         RunStudent.WaitResult waitResult = new RunStudent.WaitResult();
         waitResult.setOriResult(realTime);
@@ -637,7 +643,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
 //        msg.what = RUN_UPDATE_TEXT;
 //        msg.arg1 = time;
 //        mHandler.sendMessage(msg);
-        EventBus.getDefault().post(new BaseEvent(time,EventConfigs.UPDATE_TIME));
+        EventBus.getDefault().post(new BaseEvent(time, EventConfigs.UPDATE_TIME));
 //        if (testState == TestState.WAIT_RESULT){
 //            String formatTime ;
 //            if (time<60*60*1000){
@@ -653,7 +659,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     @Override
     public void onEventMainThread(BaseEvent baseEvent) {
         super.onEventMainThread(baseEvent);
-        if (baseEvent.getTagInt() == EventConfigs.UPDATE_TIME){
+        if (baseEvent.getTagInt() == EventConfigs.UPDATE_TIME) {
             tvTimer.setText(ResultDisplayUtils.getStrResultForDisplay((Integer) baseEvent.getData(), false));
         }
     }
