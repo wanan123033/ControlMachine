@@ -170,7 +170,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
             @Override
             public void itemClick(int position) {
                 String result = marks.get(position);
-                mList.get(select).setMark(result);
+                mList.get(select).setMark(result.split("-")[0]);
                 mList.get(select).setOriginalMark(mList.get(select).getResultList().get(position).getOriResult());
                 adapter.notifyDataSetChanged();
             }
@@ -486,7 +486,6 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 testing = false;
                 timerTask.stopKeepTime();
                 sportPresent.setDeviceStateStop();
-                setView(false);
                 mHandler.sendEmptyMessage(RUN_STOP);
                 for (RunStudent runStudent : mList) {
                     if (runStudent == null) {
@@ -543,7 +542,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                         public void run() {
                             finish();
                         }
-                    }, 2000);
+                    }, 4000);
 
                 }
 

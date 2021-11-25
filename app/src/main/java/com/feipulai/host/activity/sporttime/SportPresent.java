@@ -195,7 +195,8 @@ public class SportPresent implements SportContract.Presenter {
     public void setDeviceStateStop() {
         synKeep = 0;
         try {
-            setPause(true);
+            setRunState(0);
+            setPause(false);
             keepTime = false;
             Thread.sleep(1000);
             sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
@@ -255,21 +256,10 @@ public class SportPresent implements SportContract.Presenter {
                     e.printStackTrace();
                 }
                 getDeviceState(result.getDeviceId());
-            } else {
-                sportView.updateDeviceState(result.getDeviceId(), 1);//正常连接
             }
+            sportView.updateDeviceState(result.getDeviceId(), 1);//正常连接
 
-            if (synKeep == -1){
-                if (result.getDeviceState() != 1){
-                    setDeviceState(result.getDeviceId(), 1);
-                }
-            }
 
-            if (synKeep != -1){
-                if (result.getDeviceState() == 1){
-                    setDeviceState(result.getDeviceId(), 0);
-                }
-            }
 
         }
 
@@ -287,6 +277,25 @@ public class SportPresent implements SportContract.Presenter {
         public void onGetResult(SportResult result) {//收到结果
             Log.i("SportResultListener", result.toString());
             FileUtils.log(result.toString());
+
+            if (synKeep == -1){
+                if (result.getDeviceState() != 1){
+                    setDeviceState(result.getDeviceId(), 1);
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    getDeviceState(result.getDeviceId());
+                }
+            }
+
+            if (synKeep != -1){
+                if (result.getDeviceState() == 1){
+                    setDeviceState(result.getDeviceId(), 0);
+                }
+            }
+
             if (result.getDeviceId() == 0 || (result.getDeviceId() - 1) >= connectState.length)
                 return;
             connectState[result.getDeviceId() - 1] = 1;
@@ -339,21 +348,17 @@ public class SportPresent implements SportContract.Presenter {
                 }
             }
 
-            if (deviceState == 1) {
-                if (keepTime) {
+            if (keepTime){//正在计时
+                if (deviceState == 1){
                     sportView.updateDeviceState(deviceId, 2);
-                    sportView.getDeviceStart();
-//                    timeState[deviceId - 1] = 1;
-                }
-//                timeState[deviceId - 1] = 1;
-            } else {
-                if (keepTime) {
+                }else {
+                    setDeviceState(deviceId, 1);
                     sportView.updateDeviceState(deviceId, 1);
-                } else {
-                    sportView.getDeviceStop();
                 }
-//                timeState[deviceId - 1] = 0;
+            }else {
+                sportView.updateDeviceState(deviceId, 1);
             }
+
         }
     });
 
