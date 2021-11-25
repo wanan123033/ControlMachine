@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseCheckActivity;
+import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.adapter.SearchResultAdapter;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.Student;
@@ -183,10 +184,10 @@ public class StuSearchEditText extends RelativeLayout {
                         return;
                     }
                     imgDelete.setVisibility(VISIBLE);
-//					//外接扫描不实时查
-//					if (SettingHelper.getSystemSetting().getCheckTool() == 3) {
-//						return;
-//					}
+					//外接扫描不实时查
+					if (SettingHelper.getSystemSetting().getCheckTool() == 3) {
+						return;
+					}
 
                     if (length == 18) {
                         //精确搜索身份证
