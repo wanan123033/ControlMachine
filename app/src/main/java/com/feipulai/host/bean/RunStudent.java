@@ -21,6 +21,7 @@ public class RunStudent implements Serializable {
     private int originalMark ;
     private int independentTime;
     private int roundNo;
+    private String flag;//标记错误项
     public Student getStudent() {
         return student;
     }
@@ -101,6 +102,14 @@ public class RunStudent implements Serializable {
 
     public int getRoundNo() {
         return roundNo;
+    }
+
+    public String getFlag() {
+        return flag;
+    }
+
+    public void setFlag(String flag) {
+        this.flag = flag;
     }
 
     public static class WaitResult{

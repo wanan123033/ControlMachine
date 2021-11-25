@@ -526,6 +526,10 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 setIndependent();
                 break;
             case R.id.tv_force_start:
+                if (!isDeviceReady()){
+                    alertConfirm();
+                    return;
+                }
                 if (testState == TestState.UN_STARTED || testState == TestState.DATA_DEALING) {
                     LogUtils.operation("红外计时点击了开始");
                     testState = TestState.FORCE_START;
@@ -565,7 +569,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                         public void run() {
                             finish();
                         }
-                    }, 5000);
+                    }, 2000);
 
                 }
 
@@ -574,6 +578,50 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 IntentUtil.gotoActivity(this, RadioDeviceDetailActivity.class);
                 break;
         }
+    }
+
+    /**
+     * 判断计时器是否进入计时状态
+     */
+    private boolean isDeviceReady(){
+        boolean flag = true;
+        for (int i = 0; i < mList.size(); i++) {
+            if (mList.get(i).getConnectState() != 2 ){
+                flag = false;
+                break;
+            }
+        }
+
+        if (runTimerSetting.getInterceptPoint() == 3) {
+            for (int i = 0; i < array.size(); i++) {
+                Integer index = array.valueAt(i);
+                if (index != 2){
+                    flag = false;
+                    break;
+                }
+            }
+        }
+
+        return flag;
+    }
+
+    private void alertConfirm(){
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText("存在设备非计时状态")
+                .setContentText("开始计时?")
+                .setConfirmText(getString(com.feipulai.common.R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                testState = TestState.FORCE_START;
+                setBeginTime();
+                playUtils.play(15);
+            }
+        }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+            }
+        }).show();
     }
 
     private Handler mHandler = new Handler(new Handler.Callback() {

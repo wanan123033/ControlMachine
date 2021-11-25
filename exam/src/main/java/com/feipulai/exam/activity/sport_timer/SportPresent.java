@@ -150,7 +150,7 @@ public class SportPresent implements SportContract.Presenter {
     }
 
     public void getDeviceTime(int i) {
-        sportTimerManger.getTime(i + 1, SettingHelper.getSystemSetting().getHostId());
+        sportTimerManger.getTime(i , SettingHelper.getSystemSetting().getHostId());
     }
 
     public int getSynKeep() {

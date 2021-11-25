@@ -32,7 +32,7 @@ public class NewRunAdapter extends BaseQuickAdapter<RunStudent, BaseViewHolder> 
     @Override
     protected void convert(BaseViewHolder helper, RunStudent item) {
         Student student = item.getStudent();
-        helper.setText(R.id.tv_num, helper.getLayoutPosition() + 1 + "");
+        helper.setText(R.id.tv_num, helper.getLayoutPosition() + 1 + item.getFlag());
         if (type == 1) {
             helper.getView(R.id.tv_stuMark).setVisibility(View.GONE);
             helper.setVisible(R.id.ll_test_time, true);
