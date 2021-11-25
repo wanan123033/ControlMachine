@@ -61,9 +61,10 @@ public class SportPresent implements SportContract.Presenter {
 //    private volatile boolean[] syncTime;//与子机同步时间是否结束
     public boolean keepTime;//是否开始计时
     private boolean pause;//暂停
-    private int synKeep = -1;//计时标记
+    private int synKeep = 0;//计时标记
     private static final String TAG = "SportPresent";
     private static final int INTERVAL = 200;
+    private static final int DISCONNECT_COUNT = 5;
     public SportPresent(SportContract.SportView sportView, int deviceCount) {
         mLEDManager = new LEDManager();
         mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
@@ -115,7 +116,7 @@ public class SportPresent implements SportContract.Presenter {
                             try {
                                 sportTimerManger.connect(i + 1, SettingHelper.getSystemSetting().getHostId());
                                 connectState[i]++;
-                                if (connectState[i] > 10) {
+                                if (connectState[i] > DISCONNECT_COUNT) {
                                     sportView.updateDeviceState(i + 1, 0);//连接状态失去
                                 }
                                 Thread.sleep(INTERVAL);
@@ -133,7 +134,7 @@ public class SportPresent implements SportContract.Presenter {
                         try {
                             sportTimerManger.getRecentCache(i + 1, SettingHelper.getSystemSetting().getHostId(), sendIndex[i]);
                             connectState[i]++;
-                            if (connectState[i] > 10) {
+                            if (connectState[i] > DISCONNECT_COUNT) {
                                 sportView.updateDeviceState(i + 1, 0);//连接状态失去
                             }
                             Thread.sleep(INTERVAL);
@@ -192,6 +193,7 @@ public class SportPresent implements SportContract.Presenter {
     }
 
     public void setDeviceStateStop() {
+        synKeep = 0;
         try {
             setPause(true);
             keepTime = false;
@@ -257,6 +259,18 @@ public class SportPresent implements SportContract.Presenter {
                 sportView.updateDeviceState(result.getDeviceId(), 1);//正常连接
             }
 
+            if (synKeep == -1){
+                if (result.getDeviceState() != 1){
+                    setDeviceState(result.getDeviceId(), 1);
+                }
+            }
+
+            if (synKeep != -1){
+                if (result.getDeviceState() == 1){
+                    setDeviceState(result.getDeviceId(), 0);
+                }
+            }
+
         }
 
         @Override
@@ -292,9 +306,9 @@ public class SportPresent implements SportContract.Presenter {
             }
 
             if (result.getSumTimes() > 0) {
-                if (synKeep == -1) {
-                    synKeep = result.getLongTime();
-                }
+//                if (synKeep == -1) {
+//                    synKeep = result.getLongTime();
+//                }
                 for (int i = 0; i < connectState.length; i++) {
                     if (i == result.getDeviceId() - 1) {
                         if (result.getSumTimes() < sendIndex[i]) {
@@ -313,6 +327,18 @@ public class SportPresent implements SportContract.Presenter {
         public void onGetDeviceState(int deviceState, int deviceId) {
             if (deviceId == 0 || deviceId > connectState.length)
                 return;
+            if (synKeep == -1){
+                if (deviceState != 1){
+                    setDeviceState(deviceId, 1);
+                }
+            }
+
+            if (synKeep!=-1){
+                if (deviceState == 1){
+                    setDeviceState(deviceId, 0);
+                }
+            }
+
             if (deviceState == 1) {
                 if (keepTime) {
                     sportView.updateDeviceState(deviceId, 2);

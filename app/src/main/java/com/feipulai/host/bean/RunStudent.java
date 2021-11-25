@@ -21,7 +21,7 @@ public class RunStudent implements Serializable {
     private int originalMark ;
     private int independentTime;
     private int roundNo;
-    private String flag;//标记错误项
+    private String flag ="";//标记错误项
     public Student getStudent() {
         return student;
     }
